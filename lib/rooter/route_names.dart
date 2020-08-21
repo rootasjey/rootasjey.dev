@@ -1,0 +1,14 @@
+const String AboutRoute           = '/about';
+const String AccountRoute         = '/account';
+const String AddPostRoute         = '/addpost';
+const String ContactRoute         = '/contact';
+const String DashboardRoute       = '/dashboard';
+const String DraftsRoute          = '/user/drafts';
+const String ForgotPasswordRoute  = '/forgotpassword';
+const String PrivacyRoute         = '/privacy';
+const String PublishedPostsRoute  = '/user/published';
+const String RootRoute            = '/';
+const String SearchRoute          = '/search';
+const String SigninRoute          = '/signin';
+const String SignupRoute          = '/signup';
+const String UndefinedRoute       = '/:route';
