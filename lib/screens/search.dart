@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:rootasjey/components/home_app_bar.dart';
 import 'package:rootasjey/rooter/route_names.dart';
 import 'package:rootasjey/state/colors.dart';
-import 'package:rootasjey/types/PostHeadline.dart';
+import 'package:rootasjey/types/post_headline.dart';
 import 'package:share/share.dart';
 import 'package:supercharged/supercharged.dart';
 import 'package:url_launcher/url_launcher.dart';
