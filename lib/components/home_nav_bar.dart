@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:rootasjey/rooter/route_names.dart';
+import 'package:rootasjey/rooter/router.dart';
 import 'package:rootasjey/state/colors.dart';
 
 class HomeNavBar extends StatelessWidget {
@@ -24,7 +26,9 @@ class HomeNavBar extends StatelessWidget {
           ),
 
           FlatButton.icon(
-            onPressed: () {},
+            onPressed: () {
+              FluroRouter.router.navigateTo(context, ProjectsRoute);
+            },
             icon: Icon(Icons.apps),
             label: Text(
               'Projects'
