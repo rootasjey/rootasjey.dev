@@ -67,6 +67,7 @@ class _PostCardState extends State<PostCard> {
         top: 8.0,
       ),
       child: Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Opacity(
             opacity: 0.6,

@@ -14,6 +14,11 @@ class FluroRouter {
     );
 
     router.define(
+      PostsRoute,
+      handler: WebRouteHandlers.posts,
+    );
+
+    router.define(
       ProjectsRoute,
       handler: WebRouteHandlers.projects,
     );

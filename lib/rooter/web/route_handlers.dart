@@ -2,6 +2,7 @@ import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/screens/about.dart';
 import 'package:rootasjey/screens/home.dart';
+import 'package:rootasjey/screens/posts.dart';
 import 'package:rootasjey/screens/projects.dart';
 import 'package:rootasjey/screens/search.dart';
 import 'package:rootasjey/screens/signin.dart';
@@ -16,6 +17,10 @@ class WebRouteHandlers {
   static Handler home = Handler(
     handlerFunc: (BuildContext context, Map<String, dynamic> params) =>
       Home());
+
+  static Handler posts = Handler(
+    handlerFunc: (BuildContext context, Map<String, dynamic> params) =>
+      Posts());
 
   static Handler projects = Handler(
     handlerFunc: (BuildContext context, Map<String, dynamic> params) =>

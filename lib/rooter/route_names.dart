@@ -4,6 +4,7 @@ const String AddPostRoute         = '/addpost';
 const String ContactRoute         = '/contact';
 const String DashboardRoute       = '/dashboard';
 const String ForgotPasswordRoute  = '/forgotpassword';
+const String PostsRoute           = '/posts';
 const String PrivacyRoute         = '/privacy';
 const String ProjectsRoute        = '/projects';
 const String DraftsRoute          = '/user/drafts';

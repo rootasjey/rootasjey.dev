@@ -36,7 +36,9 @@ class HomeNavBar extends StatelessWidget {
           ),
 
           FlatButton.icon(
-            onPressed: () {},
+            onPressed: () {
+              FluroRouter.router.navigateTo(context, PostsRoute);
+            },
             icon: Icon(Icons.edit),
             label: Text(
               'Posts'
