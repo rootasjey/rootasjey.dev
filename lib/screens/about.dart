@@ -3,11 +3,19 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/footer.dart';
 import 'package:rootasjey/components/home_app_bar.dart';
+import 'package:rootasjey/rooter/route_names.dart';
+import 'package:rootasjey/rooter/router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class About extends StatelessWidget {
+class About extends StatefulWidget {
+  @override
+  _AboutState createState() => _AboutState();
+}
+
+class _AboutState extends State<About> {
   final titleStyle = TextStyle(
-    fontSize: 20.0,
+    fontSize: 30.0,
+    fontWeight: FontWeight.w200,
   );
 
   final paragraphStyle = TextStyle(
@@ -16,30 +24,29 @@ class About extends StatelessWidget {
   );
 
   final titleOpacity = 0.9;
+
   final paragraphOpacity = 0.6;
+
   final captionOpacity = 0.6;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: CustomScrollView(
-        slivers: <Widget>[
-          HomeAppBar(
-            automaticallyImplyLeading: true,
-          ),
+        slivers: [
+          HomeAppBar(),
 
           SliverList(
             delegate: SliverChildListDelegate([
-              Column(
-                children: <Widget>[
-                  whatIs(context),
-                  differences(),
-                  whoIs(context),
-                  whoIs2(context),
-                  creditsSection(),
-                ],
-              ),
+              headerTitle(),
             ]),
+          ),
+
+          SliverPadding(
+            padding: const EdgeInsets.only(
+              left: 150.0,
+            ),
+            sliver: body(),
           ),
 
           SliverPadding(
@@ -55,64 +62,42 @@ class About extends StatelessWidget {
     );
   }
 
-  Widget differences() {
-    return SizedBox(
-      width: 600.0,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
+  Widget body() {
+    return SliverList(
+      delegate: SliverChildListDelegate([
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            thePurpose(),
+            theDevStack(),
+            theWork(),
+            theHobbies(),
+          ],
+        ),
+      ]),
+    );
+  }
+
+  Widget headerTitle() {
+    return Padding(
+      padding: const EdgeInsets.all(
+        90.0,
+      ),
+      child: Row(
+        children: [
           Padding(
-            padding: const EdgeInsets.only(top: 120.0),
-            child: Opacity(
-              opacity: titleOpacity,
-              child: Text(
-                'FEATURES',
-                style: titleStyle,
-              ),
+            padding: const EdgeInsets.only(right: 16.0),
+            child: IconButton(
+              onPressed: () => FluroRouter.router.pop(context),
+              icon: Icon(Icons.arrow_back),
             ),
           ),
 
-          Padding(
-            padding: const EdgeInsets.only(top: 25.0),
-            child: Opacity(
-              opacity: paragraphOpacity,
-              child: Text(
-                '👇 Available now:',
-                style: paragraphStyle,
-              ),
-            ),
-          ),
-
-          Padding(
-            padding: const EdgeInsets.only(top: 15.0),
-            child: Opacity(
-              opacity: paragraphOpacity,
-              child: Text(
-                '• Multi-patform: Android, iOS, Web\n• Multi-languages: English & French\n• You can add your own quotes to the app\n• A nice user interface\n• And more',
-                style: paragraphStyle,
-              ),
-            ),
-          ),
-
-          Padding(
-            padding: const EdgeInsets.only(top: 35.0),
-            child: Opacity(
-              opacity: paragraphOpacity,
-              child: Text(
-                '🚀 Future development:',
-                style: paragraphStyle,
-              ),
-            ),
-          ),
-
-          Opacity(
-            opacity: paragraphOpacity,
-            child: Padding(
-              padding: const EdgeInsets.only(top: 15.0),
-              child: Text(
-                '• API\n• Fitbit app\n• Chrome/Firefox extension\n• Desktop app widget',
-                style: paragraphStyle,
-              ),
+          Text(
+            'About',
+            style: TextStyle(
+              fontSize: 70.0,
+              fontWeight: FontWeight.bold,
             ),
           ),
         ],
@@ -120,116 +105,7 @@ class About extends StatelessWidget {
     );
   }
 
-  Widget creditsSection() {
-    return SizedBox(
-      width: 600.0,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Opacity(
-            opacity: titleOpacity,
-            child: Padding(
-              padding: const EdgeInsets.only(top: 120.0, bottom: 30.0),
-              child: Text(
-                'CREDITS',
-                style: titleStyle,
-              ),
-            ),
-          ),
-
-          FlatButton(
-            onPressed: () => launch('https://icons8.com'),
-            child: Row(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(right: 8.0),
-                  child: Text('💄'),
-                ),
-
-                Opacity(
-                  opacity: paragraphOpacity,
-                  child: Text(
-                    'Icons by Icons8',
-                    style: TextStyle(
-                      fontSize: 18.0,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          FlatButton(
-            onPressed: () => launch('https://orioniconlibrary.com'),
-            child: Row(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(right: 8.0),
-                  child: Text('💄'),
-                ),
-
-                Opacity(
-                  opacity: paragraphOpacity,
-                  child: Text(
-                    'Icons by Orion Icon Librairy',
-                    style: TextStyle(
-                      fontSize: 18.0,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          FlatButton(
-            onPressed: () => launch('https://www.flaticon.com/authors/pixel-perfect'),
-            child: Row(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(right: 8.0),
-                  child: Text('💄'),
-                ),
-
-                Opacity(
-                  opacity: paragraphOpacity,
-                  child: Text(
-                    'Icons by Pixel Perfect',
-                    style: TextStyle(
-                      fontSize: 18.0,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          FlatButton(
-            onPressed: () => launch('https://previewed.app/'),
-            child: Row(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(right: 8.0),
-                  child: Text('📷'),
-                ),
-
-                Opacity(
-                  opacity: paragraphOpacity,
-                  child: Text(
-                    'Mobile app screenshots created with Previewed',
-                    style: TextStyle(
-                      fontSize: 18.0,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget whatIs(BuildContext context) {
+  Widget thePurpose() {
     return Container(
       width: 600.0,
       padding: const EdgeInsets.only(
@@ -238,45 +114,12 @@ class About extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Ink.image(
-            image: AssetImage(
-              'assets/images/app-icon-text.png',
-            ),
-            height: 380.0,
-            child: InkWell(
-              onTap: () {
-                showDialog(
-                  context: context,
-                  barrierDismissible: true,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      content: Container(
-                        child: Image(
-                          image: AssetImage('assets/images/app-icon-text.png',),),
-                      ),
-                    );
-                  }
-                );
-              },
-            ),
-          ),
-
-          Center(
-            child: FlatButton(
-              onPressed: null,
-              child: Opacity(
-                opacity: captionOpacity,
-                child: Text('App text icon'),
-              ),
-            ),
-          ),
-
           Padding(
-            padding: const EdgeInsets.only(top: 80.0),
+            padding: const EdgeInsets.only(top: 0.0),
             child: Opacity(
               opacity: titleOpacity,
               child: Text(
-                'THE CONCEPT',
+                'THE PURPOSE',
                 style: titleStyle,
               ),
             ),
@@ -287,7 +130,7 @@ class About extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.only(top: 25.0),
               child: Text(
-                'Out Of Context is a quotes application and service. Its main purpose is to deliver you one meaningful quote each day. There are several categories like: fun, philosophy, and motivation. You can also browse quotes by topics, authors, references or search them.',
+                "This is my personal website where you'll find projects that I'm working on, some hobbies I want to share and how to contact me.",
                 style: paragraphStyle,
               ),
             ),
@@ -297,62 +140,32 @@ class About extends StatelessWidget {
     );
   }
 
-  Widget whoIs(BuildContext context) {
-    return SizedBox(
+  Widget theDevStack() {
+    return Container(
       width: 600.0,
+      padding: const EdgeInsets.only(
+        top: 40.0,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Opacity(
-            opacity: titleOpacity,
-            child: Padding(
-              padding: const EdgeInsets.only(top: 120.0),
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 80.0),
+            child: Opacity(
+              opacity: titleOpacity,
               child: Text(
-                'THE AUTHOR',
+                'DEV STACK',
                 style: titleStyle,
               ),
             ),
           ),
 
-          Center(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 60.0),
-              child: Material(
-                elevation: 1.0,
-                shape: CircleBorder(),
-                clipBehavior: Clip.hardEdge,
-                color: Colors.transparent,
-                child: Ink.image(
-                  image: AssetImage('assets/images/jeje-profile.jpg'),
-                  fit: BoxFit.cover,
-                  width: 200.0,
-                  height: 200.0,
-                  child: InkWell(
-                    onTap: () {
-                      showDialog(
-                        context: context,
-                        barrierDismissible: true,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            content: Container(
-                              child: Image(image: AssetImage('assets/images/jeje-profile.jpg'),),
-                            ),
-                          );
-                        }
-                      );
-                    },
-                  ),
-                ),
-              ),
-            ),
-          ),
-
-          Opacity(
+           Opacity(
             opacity: paragraphOpacity,
             child: Padding(
-              padding: const EdgeInsets.only(top: 15.0),
+              padding: const EdgeInsets.only(top: 25.0),
               child: Text(
-                "I'm Jérémie CORPINOT, a freelance developer living in France.",
+                "This website has been crafted by hand with Flutter & Firebase.\nAfter testing multiple solutions, I ended up here because it seems the cheapest and most flexble way for my usage.",
                 style: paragraphStyle,
               ),
             ),
@@ -361,53 +174,9 @@ class About extends StatelessWidget {
           Opacity(
             opacity: paragraphOpacity,
             child: Padding(
-              padding: const EdgeInsets.only(top: 20.0),
+              padding: const EdgeInsets.only(top: 25.0),
               child: Text(
-                "I'm originally from Guadeloupe and one day I traveled to Paris to study Architecture. But that didn't work out very weel as I never passed the entrance exam. So, I went to Versailles University where I was graduated with a Master in Computer Sciences.",
-                style: paragraphStyle,
-              ),
-            ),
-          ),
-
-          Opacity(
-            opacity: paragraphOpacity,
-            child: Padding(
-              padding: const EdgeInsets.only(top: 20.0),
-              child: Text(
-                "I love drawings, video games, heroic-fantasy books, to name a few. I started my freelancer journey in June, 2019 in order to work on what really matters.",
-                style: paragraphStyle,
-              ),
-            ),
-          ),
-
-          Opacity(
-            opacity: titleOpacity,
-            child: Padding(
-              padding: const EdgeInsets.only(top: 120.0),
-              child: Text(
-                "THE STORY",
-                style: titleStyle
-              ),
-            ),
-          ),
-
-          Opacity(
-            opacity: paragraphOpacity,
-            child: Padding(
-              padding: const EdgeInsets.only(top: 20.0),
-              child: Text(
-                "A few years ago, I was developping on the Windows Phone platform (RIP), improving my skills in mobile development. I loved quotes and I didn't find a suitable app for my needs.",
-                style: paragraphStyle,
-              ),
-            ),
-          ),
-
-          Padding(
-            padding: const EdgeInsets.only(top: 20.0),
-            child: Opacity(
-              opacity: paragraphOpacity,
-              child: Text(
-                "This is where I decided to build my own. The idea was to make the app send me a notification so I could wake up every morning with a funny or motivational quote.",
+                "If you want to learn how the technology behind this website, visit the GitHub repository. or stay tuned for future blog posts explanations.",
                 style: paragraphStyle,
               ),
             ),
@@ -415,205 +184,144 @@ class About extends StatelessWidget {
 
           Padding(
             padding: const EdgeInsets.only(
-              top: 20.0,
-              bottom: 20.0,
+              top: 10.0,
             ),
-            child: Opacity(
-              opacity: paragraphOpacity,
-              child: Text(
-                "For the data, I was scrapping the content of the Evene website. And only french was available as a language.",
-                style: paragraphStyle,
+            child: FlatButton.icon(
+              onPressed: () => launch('https://github.com/rootasjey/rootasjey.dev'),
+              icon: Icon(Icons.open_in_browser),
+              label: Text(
+                'Github',
               ),
             ),
-          ),
-
-          FlatButton.icon(
-            onPressed: () async {
-              await launch('http://evene.lefigaro.fr/');
-            },
-            icon: Icon(Icons.link),
-            label: Text('http://evene.lefigaro.fr/'),
           ),
         ],
       ),
     );
   }
 
-  Widget whoIs2(BuildContext context) {
-    return SizedBox(
+  Widget theWork() {
+    return Container(
       width: 600.0,
+      padding: const EdgeInsets.only(
+        top: 40.0,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
+        children: [
           Padding(
-            padding: const EdgeInsets.only(top: 120.0),
-            child: Center(
-              child: Column(
-                children: <Widget>[
-                  Ink.image(
-                    image: NetworkImage(
-                      'https://raw.githubusercontent.com/rootasjey/citations365/master/lockscreen.png',
-                    ),
-                    width: 230.0,
-                    height: 400.0,
-                    child: InkWell(
-                      onTap: () {
-                        showDialog(
-                          context: context,
-                          barrierDismissible: true,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              content: Container(
-                                child: Image(image: NetworkImage('https://raw.githubusercontent.com/rootasjey/citations365/master/lockscreen.png'),),
-                              ),
-                            );
-                          }
-                        );
-                      },
-                    ),
-                  ),
-
-                  FlatButton(
-                    onPressed: () async {
-                      await launch('https://raw.githubusercontent.com/rootasjey/citations365/master/lockscreen.png');
-                    },
-                    child: Opacity(
-                      opacity: captionOpacity,
-                      child: Text('Citations 365 lockscreen quote'),
-                    ),
-                  ),
-                ],
+            padding: const EdgeInsets.only(top: 80.0),
+            child: Opacity(
+              opacity: titleOpacity,
+              child: Text(
+                'MY WORK',
+                style: titleStyle,
               ),
             ),
           ),
 
-          Center(
+          Opacity(
+            opacity: paragraphOpacity,
             child: Padding(
-              padding: const EdgeInsets.only(top: 30.0),
-              child: Column(
-                children: <Widget>[
-                  Opacity(
-                    opacity: paragraphOpacity,
-                    child: Text(
-                      "I created a first prototype for Windows Phone:",
-                      style: paragraphStyle,
-                    ),
-                  ),
-
-                  Padding(
-                    padding: const EdgeInsets.only(top: 30.0),
-                    child: FlatButton(
-                      onPressed: () async {
-                        await launch('https://github.com/rootasjey/citations365');
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          'CITATIONS 365',
-                          style: titleStyle,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              )
+              padding: const EdgeInsets.only(top: 25.0),
+              child: Text(
+                "I work as a freelancer in web and mobile development but I'm currently coding my own applications. You can see them in the projects section. If you want to start a collaboration, go to the work with me page.",
+                style: paragraphStyle,
+              ),
             ),
           ),
 
           Padding(
-            padding: const EdgeInsets.only(top: 120.0),
-            child: Column(
-              children: <Widget>[
-                Ink.image(
-                  image: NetworkImage(
-                    'https://raw.githubusercontent.com/rootasjey/citations365-8/master/citations.windows.jpg',
-                  ),
-                  height: 380.0,
-                  child: InkWell(
-                    onTap: () {
-                      showDialog(
-                        context: context,
-                        barrierDismissible: true,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            content: Container(
-                              child: Image(image: NetworkImage('https://raw.githubusercontent.com/rootasjey/citations365-8/master/citations.windows.jpg'),),
-                            ),
-                          );
-                        }
-                      );
-                    },
+            padding: const EdgeInsets.symmetric(vertical: 16.0),
+            child: Wrap(
+              spacing: 10.0,
+              runSpacing: 10.0,
+              children: [
+                FlatButton.icon(
+                  onPressed: () => FluroRouter.router.navigateTo(context, ProjectsRoute),
+                  icon: Icon(Icons.apps),
+                  label: Text(
+                    'Projects',
                   ),
                 ),
 
-                FlatButton(
-                    onPressed: () async {
-                      await launch('https://raw.githubusercontent.com/rootasjey/citations365-8/master/citations.windows.jpg');
-                    },
-                    child: Opacity(
-                      opacity: captionOpacity,
-                      child: Text('Citations 365 for PC & tablet'),
-                    ),
+                FlatButton.icon(
+                  onPressed: () => FluroRouter.router.navigateTo(context, PricingRoute),
+                  icon: Icon(Icons.work),
+                  label: Text(
+                    'Work with me',
                   ),
+                ),
               ],
             ),
           ),
 
-          Opacity(
-            opacity: paragraphOpacity,
-            child: Padding(
-              padding: const EdgeInsets.only(top: 60.0),
+          Padding(
+            padding: const EdgeInsets.only(top: 50.0),
+            child: Opacity(
+              opacity: paragraphOpacity,
               child: Text(
-                "Then I made a Windows 8 version for PC and tablet.",
+                "Below are my freelancer profiles",
                 style: paragraphStyle,
               ),
             ),
           ),
 
-          Opacity(
-            opacity: paragraphOpacity,
-            child: Padding(
-              padding: const EdgeInsets.only(top: 20.0),
-              child: Text(
-                "Sadly, we all know how WP ended up, so I migrated to Android, and I stopped the development of Citations 365.",
-                style: paragraphStyle,
-              ),
-            ),
-          ),
-
-          Opacity(
-            opacity: paragraphOpacity,
-            child: Padding(
-              padding: const EdgeInsets.only(top: 20.0),
-              child: Text(
-                "When I started my freelancer's journey, I needed to fill up my portfolio and I had time. So I wanted to rebuild the quotes project on Android, iOS & Web. This time I would build a fullstack application.",
-                style: paragraphStyle,
-              ),
-            ),
-          ),
-
-          Center(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 70.0),
-              child: FlatButton(
-                onPressed: () async {
-                  await launch('https://github.com/outofcontextapp/app');
-                },
-                child: Padding(
-                  padding: const EdgeInsets.all(25.0),
-                  child: Column(
-                    children: <Widget>[
-                      Image.asset('assets/images/app-icon-64.png'),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          'OUT OF CONTEXT',
-                          style: paragraphStyle,
-                        ),
-                      ),
-                    ],
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16.0),
+            child: Wrap(
+              spacing: 10.0,
+              runSpacing: 10.0,
+              children: [
+                InkWell(
+                  onTap: () {
+                    launch('https://www.malt.fr/profile/jeremiecorpinot');
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Image.asset(
+                      'assets/images/malt-logo-white.png',
+                      color: Color(0xFFFF215B),
+                      width: 250.0,
+                    ),
                   ),
-                )
+                ),
+
+                InkWell(
+                  onTap: () {
+                    launch('https://app.comet.co/freelancer/profile/5xe7Awyb7r?params=eyJhbm9ueW1pemUiOmZhbHNlLCJkZXNpZ25Nb2RlIjpmYWxzZSwicmVhZE9ubHkiOnRydWV9');
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Image.asset(
+                      'assets/images/comet-logo-wide.jpg',
+                      width: 250.0,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget theHobbies() {
+    return Container(
+      width: 600.0,
+      padding: const EdgeInsets.only(
+        top: 40.0,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 80.0),
+            child: Opacity(
+              opacity: titleOpacity,
+              child: Text(
+                'MY HOBBIES',
+                style: titleStyle,
               ),
             ),
           ),
@@ -621,9 +329,9 @@ class About extends StatelessWidget {
           Opacity(
             opacity: paragraphOpacity,
             child: Padding(
-              padding: const EdgeInsets.only(top: 20.0),
+              padding: const EdgeInsets.only(top: 25.0),
               child: Text(
-                "A new name and a new framework (Flutter) learned later, I released this web app with its mobile version, while over-achieving my initial goal.",
+                "I like to draw, play video games, watch movies & TV series, and read.",
                 style: paragraphStyle,
               ),
             ),

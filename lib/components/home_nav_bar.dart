@@ -16,12 +16,14 @@ class HomeNavBar extends StatelessWidget {
         runSpacing: 20.0,
         children: [
           RaisedButton.icon(
-            onPressed: () {},
+            onPressed: () {
+              FluroRouter.router.navigateTo(context, ContactRoute);
+            },
             color: stateColors.primary,
             textColor: Colors.white,
             icon: Icon(Icons.work),
             label: Text(
-              'Hire me!',
+              'Contact me',
             ),
           ),
 
@@ -29,7 +31,10 @@ class HomeNavBar extends StatelessWidget {
             onPressed: () {
               FluroRouter.router.navigateTo(context, ProjectsRoute);
             },
-            icon: Icon(Icons.apps),
+            icon: Opacity(
+              opacity: 0.6,
+              child: Icon(Icons.apps),
+            ),
             label: Text(
               'Projects'
             ),
@@ -39,15 +44,36 @@ class HomeNavBar extends StatelessWidget {
             onPressed: () {
               FluroRouter.router.navigateTo(context, PostsRoute);
             },
-            icon: Icon(Icons.edit),
+            icon: Opacity(
+              opacity: 0.6,
+              child: Icon(Icons.edit),
+            ),
             label: Text(
               'Posts'
             ),
           ),
 
           FlatButton.icon(
-            onPressed: () {},
-            icon: Icon(Icons.help),
+            onPressed: () {
+              FluroRouter.router.navigateTo(context, PricingRoute);
+            },
+            icon: Opacity(
+              opacity: 0.6,
+              child: Icon(Icons.attach_money),
+            ),
+            label: Text(
+              'Pricing'
+            ),
+          ),
+
+          FlatButton.icon(
+            onPressed: () {
+              FluroRouter.router.navigateTo(context, AboutRoute);
+            },
+            icon: Opacity(
+              opacity: 0.6,
+              child: Icon(Icons.help),
+            ),
             label: Text(
               'About'
             ),

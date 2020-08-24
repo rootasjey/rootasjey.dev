@@ -169,7 +169,7 @@ class _SigninState extends State<Signin> {
   Widget forgotPassword() {
     return FlatButton(
       onPressed: () {
-        FluroRouter.router.navigateTo(context, ForgotPasswordRoute);
+        FluroRouter.router.navigateTo(context, MeRoute);
       },
       child: Opacity(
         opacity: .6,

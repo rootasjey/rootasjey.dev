@@ -29,6 +29,7 @@ Future<bool> checkEmailAvailability(String email) async {
   }
 }
 
+/// Return true if the value is a valid email.
 bool checkEmailFormat(String email) {
   return RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]{2,}")
     .hasMatch(email);

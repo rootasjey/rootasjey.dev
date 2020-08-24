@@ -14,6 +14,21 @@ class FluroRouter {
     );
 
     router.define(
+      ContactRoute,
+      handler: WebRouteHandlers.contact,
+    );
+
+    router.define(
+      PricingRoute,
+      handler: WebRouteHandlers.pricing,
+    );
+
+    router.define(
+      MeRoute,
+      handler: WebRouteHandlers.me,
+    );
+
+    router.define(
       PostsRoute,
       handler: WebRouteHandlers.posts,
     );
