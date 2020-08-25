@@ -23,6 +23,16 @@ class Footer extends StatefulWidget {
 }
 
 class _FooterState extends State<Footer> {
+  final titleStyle = TextStyle(
+    fontSize: 20.0,
+    fontWeight: FontWeight.w400,
+  );
+
+  final linkStyle = TextStyle(
+    fontSize: 17.0,
+    fontWeight: FontWeight.w300,
+  );
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -60,9 +70,7 @@ class _FooterState extends State<Footer> {
             opacity: .5,
             child: Text(
               'DEVELOPERS',
-              style: TextStyle(
-                fontSize: 18.0,
-              ),
+              style: titleStyle,
             ),
           ),
         ),
@@ -73,35 +81,7 @@ class _FooterState extends State<Footer> {
             opacity: .5,
             child: Text(
               'Documentation',
-              style: TextStyle(
-                fontSize: 15.0,
-              ),
-            ),
-          )
-        ),
-
-        FlatButton(
-          onPressed: null,
-          child: Opacity(
-            opacity: .5,
-            child: Text(
-              'API References',
-              style: TextStyle(
-                fontSize: 15.0,
-              ),
-            ),
-          )
-        ),
-
-        FlatButton(
-          onPressed: null,
-          child: Opacity(
-            opacity: .5,
-            child: Text(
-              'API Status',
-              style: TextStyle(
-                fontSize: 15.0,
-              ),
+              style: linkStyle,
             ),
           )
         ),
@@ -109,15 +89,13 @@ class _FooterState extends State<Footer> {
         FlatButton(
           onPressed: () async {
             onBeforeNav();
-            await launch('https://github.com/outofcontextapp/app');
+            await launch('https://github.com/rootasjey/rootasjey.dev');
           },
           child: Opacity(
             opacity: .5,
             child: Text(
               'GitHub',
-              style: TextStyle(
-                fontSize: 15.0,
-              ),
+              style: linkStyle,
             ),
           )
         ),
@@ -138,9 +116,7 @@ class _FooterState extends State<Footer> {
             opacity: .5,
             child: Text(
               'LANGUAGE',
-              style: TextStyle(
-                fontSize: 18.0,
-              ),
+              style: titleStyle,
             ),
           ),
         ),
@@ -155,9 +131,7 @@ class _FooterState extends State<Footer> {
             opacity: .5,
             child: Text(
               'English',
-              style: TextStyle(
-                fontSize: 15.0,
-              ),
+              style: linkStyle,
             ),
           )
         ),
@@ -172,9 +146,7 @@ class _FooterState extends State<Footer> {
             opacity: .5,
             child: Text(
               'Français',
-              style: TextStyle(
-                fontSize: 15.0,
-              ),
+              style: linkStyle,
             ),
           )
         ),
@@ -195,9 +167,7 @@ class _FooterState extends State<Footer> {
             opacity: .5,
             child: Text(
               'RESOURCES',
-              style: TextStyle(
-                fontSize: 18.0,
-              ),
+              style: titleStyle,
             ),
           ),
         ),
@@ -211,9 +181,7 @@ class _FooterState extends State<Footer> {
             opacity: .5,
             child: Text(
               'About',
-              style: TextStyle(
-                fontSize: 15.0,
-              ),
+              style: linkStyle,
             ),
           )
         ),
@@ -227,9 +195,7 @@ class _FooterState extends State<Footer> {
             opacity: .5,
             child: Text(
               'Contact',
-              style: TextStyle(
-                fontSize: 15.0,
-              ),
+              style: linkStyle,
             ),
           )
         ),
@@ -243,9 +209,7 @@ class _FooterState extends State<Footer> {
             opacity: .5,
             child: Text(
               'Privacy & Terms',
-              style: TextStyle(
-                fontSize: 15.0,
-              ),
+              style: linkStyle,
             ),
           )
         ),
