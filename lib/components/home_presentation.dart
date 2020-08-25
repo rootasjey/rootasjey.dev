@@ -41,7 +41,7 @@ class HomePresentation extends StatelessWidget {
                       height: 120.0,
                       child: InkWell(
                         onTap: () {
-                          FluroRouter.router.navigateTo(context, AboutRoute);
+                          FluroRouter.router.navigateTo(context, MeRoute);
                         },
                       ),
                     ),
