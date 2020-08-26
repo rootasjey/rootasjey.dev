@@ -177,12 +177,17 @@ class _FooterState extends State<Footer> {
             onBeforeNav();
             FluroRouter.router.navigateTo(context, AboutRoute);
           },
-          child: Opacity(
-            opacity: .5,
-            child: Text(
-              'About',
-              style: linkStyle,
-            ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Opacity(
+                opacity: .5,
+                child: Text(
+                  'About',
+                  style: linkStyle,
+                ),
+              ),
+            ],
           )
         ),
 
@@ -203,12 +208,12 @@ class _FooterState extends State<Footer> {
         FlatButton(
           onPressed: () {
             onBeforeNav();
-            FluroRouter.router.navigateTo(context, PrivacyRoute);
+            FluroRouter.router.navigateTo(context, MeRoute);
           },
           child: Opacity(
             opacity: .5,
             child: Text(
-              'Privacy & Terms',
+              'Who am I?',
               style: linkStyle,
             ),
           )
