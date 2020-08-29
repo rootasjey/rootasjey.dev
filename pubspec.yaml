@@ -48,6 +48,7 @@ dependencies:
   sticky_headers: 0.1.8+1
   supercharged: 1.10.0
   url_launcher: 5.5.0
+  verbal_expressions: 0.4.0
 
 dev_dependencies:
   build_runner:
