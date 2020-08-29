@@ -3,6 +3,7 @@ const String AccountRoute         = '/account';
 const String AddPostRoute         = '/addpost';
 const String ContactRoute         = '/contact';
 const String DashboardRoute       = '/dashboard';
+const String EnrollRoute       = '/enroll';
 const String ForgotPasswordRoute  = '/forgotpassword';
 const String MeRoute              = '/me';
 const String PostsRoute           = '/posts';

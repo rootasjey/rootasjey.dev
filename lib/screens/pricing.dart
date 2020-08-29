@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:rootasjey/components/features/web.dart';
 import 'package:rootasjey/components/footer.dart';
 import 'package:rootasjey/components/home_app_bar.dart';
+import 'package:rootasjey/rooter/route_names.dart';
 import 'package:rootasjey/rooter/router.dart';
 import 'package:rootasjey/state/colors.dart';
 
@@ -25,9 +27,7 @@ class _PricingState extends State<Pricing> {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          enroll();
-        },
+        onPressed: () => FluroRouter.router.navigateTo(context, EnrollRoute),
         backgroundColor: stateColors.primary,
         foregroundColor: Colors.white,
         icon: Icon(Icons.payment),
@@ -246,146 +246,9 @@ class _PricingState extends State<Pricing> {
   Widget features() {
     return Padding(
       padding: const EdgeInsets.only(
-        top: 60.0,
+        top: 100.0,
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(
-              bottom: 40.0,
-            ),
-            child: Text(
-              'What do you get for this price?',
-              style: TextStyle(
-                fontSize: 20.0,
-                fontWeight: FontWeight.w200,
-              ),
-            ),
-          ),
-
-          DataTable(
-            columns: const [
-              DataColumn(
-                label: Text(
-                  'Features',
-                  style: TextStyle(
-                    fontSize: 30.0,
-                  ),
-                ),
-              ),
-            ],
-            rows: [
-              featureRow(
-                label: 'Domain name',
-                description: 'Your website address (e.g. https://myawesomesite.com) will be bought for you, if available.',
-              ),
-
-              featureRow(
-                label: 'Website development',
-                description: 'Your website will be handfully crafted to meet your requirements.',
-              ),
-
-              featureRow(
-                label: 'Design integration',
-                description: 'If you already have a design template or specifications, they will perfectly be integrated.',
-              ),
-
-              featureRow(
-                label: 'Responsive layout',
-                description: 'Your website will be beautiful on desktop, tablet and mobile. We will make sure the presentation is perfect.',
-              ),
-
-              featureRow(
-                label: 'Deployment',
-                description: "Your site will be globally accessible through a robust & fast pipeline. Also upgrades will be done with no downtime and your website won't experience cold start.",
-              ),
-
-              featureRow(
-                label: 'Security checks',
-                description: 'Delivered with full HTTPS encryption & vulnerabilities checks.',
-              ),
-
-              featureRow(
-                label: 'Auto-scaling',
-                description: "Your site is robust and doesn't crash when you've connection spike.",
-              ),
-
-              featureRow(
-                label: 'Auto-upgrade',
-                description: "Whenever a bug is detected or a more recent dependency is available, we'll upgrade your website.",
-              ),
-
-              featureRow(
-                label: 'Personalized advices',
-                description: "We're avaiable for any question or asistance. You can contact us by email, phone or direct message.",
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  DataRow featureRow({String label, String description}) {
-    return DataRow(
-      cells: [
-        DataCell(
-          Tooltip(
-            message: description,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(right: 12.0),
-                  child: Icon(Icons.check),
-                ),
-
-                Text(
-                  label,
-                  style: TextStyle(
-                    fontSize: 18.0,
-                    fontWeight: FontWeight.w200,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          onTap: () {
-            showDialog(
-              context: context,
-              builder: (context) {
-                return SimpleDialog(
-                  title: Opacity(
-                    opacity: 0.8,
-                    child: Text(
-                      label,
-                      style: TextStyle(
-                        // fontSize: 15.0,
-                      ),
-                    ),
-                  ),
-                  children: <Widget>[
-                    Container(
-                      width: 400.0,
-                      padding: const EdgeInsets.only(
-                        left: 25.0,
-                        right: 25.0,
-                      ),
-                      child: Opacity(
-                        opacity: 0.6,
-                        child: Text(
-                          description,
-                        ),
-                      ),
-                    ),
-                  ],
-                );
-              },
-            );
-          }
-        ),
-      ]
+      child: WebFeatures(),
     );
   }
 
@@ -617,6 +480,4 @@ class _PricingState extends State<Pricing> {
       ),
     );
   }
-
-  void enroll() {}
 }

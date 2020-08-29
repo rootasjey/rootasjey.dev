@@ -19,8 +19,8 @@ class FluroRouter {
     );
 
     router.define(
-      PricingRoute,
-      handler: WebRouteHandlers.pricing,
+      EnrollRoute,
+      handler: WebRouteHandlers.enroll,
     );
 
     router.define(
@@ -31,6 +31,11 @@ class FluroRouter {
     router.define(
       PostsRoute,
       handler: WebRouteHandlers.posts,
+    );
+
+    router.define(
+      PricingRoute,
+      handler: WebRouteHandlers.pricing,
     );
 
     router.define(

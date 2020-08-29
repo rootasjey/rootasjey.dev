@@ -2,6 +2,7 @@ import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/screens/about.dart';
 import 'package:rootasjey/screens/contact.dart';
+import 'package:rootasjey/screens/enroll.dart';
 import 'package:rootasjey/screens/home.dart';
 import 'package:rootasjey/screens/me.dart';
 import 'package:rootasjey/screens/posts.dart';
@@ -24,6 +25,10 @@ class WebRouteHandlers {
   static Handler contact = Handler(
     handlerFunc: (BuildContext context, Map<String, dynamic> params) =>
       Contact());
+
+  static Handler enroll = Handler(
+    handlerFunc: (BuildContext context, Map<String, dynamic> params) =>
+      Enroll());
 
   static Handler me = Handler(
     handlerFunc: (BuildContext context, Map<String, dynamic> params) =>
