@@ -11,11 +11,13 @@ class HomeAppBar extends StatefulWidget {
   final bool automaticallyImplyLeading;
   final Function onTapIconHeader;
   final String title;
+  final VoidCallback onPressedRightButton;
 
   HomeAppBar({
     this.automaticallyImplyLeading = false,
     this.onTapIconHeader,
     this.title = '',
+    this.onPressedRightButton,
   });
 
   @override
@@ -59,8 +61,9 @@ class _HomeAppBarState extends State<HomeAppBar> {
                       ),
 
                     AppIconHeader(
-                      size: 40.0,
-                      padding: EdgeInsets.zero,
+                      padding: const EdgeInsets.only(
+                        bottom: 8.0,
+                      ),
                       onTap: widget.onTapIconHeader,
                     ),
 
@@ -281,6 +284,13 @@ class _HomeAppBarState extends State<HomeAppBar> {
         isNarrow
           ? children.add(userSigninMenu())
           : children.addAll([
+              if (widget.onPressedRightButton != null)
+                IconButton(
+                  color: stateColors.foreground,
+                  icon: Icon(Icons.menu),
+                  onPressed: widget.onPressedRightButton,
+                ),
+
               searchButton(),
             ]);
       }
