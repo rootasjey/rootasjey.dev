@@ -1,5 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/wide_post_card.dart';
+import 'package:rootasjey/types/post_headline.dart';
 
 class FeaturedPosts extends StatefulWidget {
   @override
@@ -7,6 +9,14 @@ class FeaturedPosts extends StatefulWidget {
 }
 
 class _FeaturedPostsState extends State<FeaturedPosts> {
+  List<PostHeadline> posts = [];
+
+  @override
+  void initState() {
+    super.initState();
+    fetch();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -45,15 +55,47 @@ class _FeaturedPostsState extends State<FeaturedPosts> {
             ],
           ),
 
-          WidePostCard(
-            imageUrl: 'https://picsum.photos/700/300',
-            title: 'How to build a blog with Flutter & Firebase?',
-            summary: 'I had trouble building my website because I switched of platform regurlary...',
-            metadata: 'August 21, 2020 - 6 min read',
-            tags: ['dev', 'flutter', 'firebase'],
+          Column(
+            children: posts.map((post) {
+              return WidePostCard(
+                id: post.id,
+                imageUrl: post.urls.image,
+                title: post.title,
+                summary: post.summary,
+                metadata: '${post.createdAt.toString().split(' ')[0]} - ${post.timeToRead}',
+                tags: post.tags,
+              );
+            }).toList()
           ),
         ],
       ),
     );
+  }
+
+  void fetch() async {
+    try {
+      final snapshot = await FirebaseFirestore.instance
+        .collection('posts')
+        .where('published', isEqualTo: true)
+        .where('featured', isEqualTo: true)
+        .limit(1)
+        .get();
+
+      if (snapshot.size == 0) {
+        return;
+      }
+
+      snapshot.docs.forEach((doc) {
+        final data = doc.data();
+        data['id'] = doc.id;
+
+        posts.add(PostHeadline.fromJSON(data));
+      });
+
+      setState(() {});
+
+    } catch (error) {
+      debugPrint(error.toStrring());
+    }
   }
 }
