@@ -62,7 +62,7 @@ class _AppIconHeaderState extends State<AppIconHeader> {
           child: Text(
             '>r.',
             style: TextStyle(
-              fontSize: 40.0,
+              fontSize: 30.0,
               color: foreground,
             ),
           ),
