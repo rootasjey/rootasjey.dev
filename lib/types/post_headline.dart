@@ -1,9 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:rootasjey/types/urls.dart';
 
 class PostHeadline {
-  final String id;
-  final String title;
+  @required final String id;
+  @required final String title;
   final String summary;
   final String timeToRead;
   final DateTime createdAt;
@@ -34,14 +35,14 @@ class PostHeadline {
     }
 
     return PostHeadline(
-      id: data['id'],
-      title: data['title'],
-      timeToRead: data['timeToRead'],
-      summary: data['summary'],
-      tags: _tags,
-      urls: Urls.fromJSON(data['urls']),
-      createdAt : (data['createdAt'] as Timestamp).toDate(),
-      updatedAt : (data['updatedAt'] as Timestamp).toDate(),
+      id          : data['id'],
+      title       : data['title'],
+      timeToRead  : data['timeToRead'],
+      summary     : data['summary'],
+      tags        : _tags,
+      urls        : Urls.fromJSON(data['urls']),
+      createdAt   : (data['createdAt'] as Timestamp).toDate(),
+      updatedAt   : (data['updatedAt'] as Timestamp).toDate(),
     );
   }
 }
