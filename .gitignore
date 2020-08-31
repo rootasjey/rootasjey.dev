@@ -46,7 +46,6 @@ app.*.map.json
 .DS_Store
 
 # Private config files
-assets/api.json
 .flutter-plugins-dependencies
 .packages
 .flutter-plugins
@@ -56,3 +55,5 @@ android/.idea
 .firebase/hosting.YnVpbGQvd2Vi.cache
 firebase.json
 ios/Runner/GoogleService-Info.plist
+
+.firebase/
