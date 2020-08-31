@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:rootasjey/rooter/route_names.dart';
+import 'package:rootasjey/rooter/router.dart';
+import 'package:rootasjey/types/post.dart';
 
 class PostCard extends StatefulWidget {
   final String title;
   final String summary;
   final String date;
   final String timeToRead;
+  final Post post;
 
   PostCard({
     this.title,
     this.summary,
     this.date,
     this.timeToRead,
+    this.post,
   });
 
   @override
@@ -23,7 +28,11 @@ class _PostCardState extends State<PostCard> {
     return Card(
       elevation: 2.0,
       child: InkWell(
-        onTap: () {},
+        onTap: () =>
+          FluroRouter.router.navigateTo(
+            context,
+            PostRoute.replaceFirst(':id', widget.post.id),
+          ),
         child: Container(
           width: 700.0,
           padding: const EdgeInsets.all(40.0),

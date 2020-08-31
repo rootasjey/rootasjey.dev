@@ -97,6 +97,7 @@ class _PostsState extends State<Posts> {
           final post = postsList.elementAt(index);
 
           return PostCard(
+            post: post,
             title: post.title,
             summary: post.summary,
             date: post.createdAt.toString(),
