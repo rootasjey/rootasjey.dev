@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:rootasjey/rooter/route_names.dart';
+import 'package:rootasjey/rooter/router.dart';
 import 'package:rootasjey/state/colors.dart';
 
 class WidePostCard extends StatefulWidget {
+  @required final String id;
   final String title;
   final String summary;
   final String metadata;
@@ -9,6 +12,7 @@ class WidePostCard extends StatefulWidget {
   final List<String> tags;
 
   WidePostCard({
+    this.id,
     this.imageUrl,
     this.metadata,
     this.summary,
@@ -48,7 +52,7 @@ class _WidePostCardState extends State<WidePostCard> {
               width: 700.0,
               height: 300.0,
               child: InkWell(
-                onTap: () {},
+                onTap: navigateToPost,
                 onHover: (isHover) {
                   isHover
                     ? setState(() => foreground = stateColors.primary)
@@ -135,9 +139,9 @@ class _WidePostCardState extends State<WidePostCard> {
     );
   }
 
-  postInkWell({Widget child}) {
+  Widget postInkWell({Widget child}) {
     return InkWell(
-      onTap: () {},
+      onTap: navigateToPost,
       hoverColor: Colors.transparent,
       onHover: (isHover) {
         isHover
@@ -145,6 +149,13 @@ class _WidePostCardState extends State<WidePostCard> {
           : setState(() => foreground = stateColors.foreground);
       },
       child: child,
+    );
+  }
+
+  void navigateToPost() {
+    FluroRouter.router.navigateTo(
+      context,
+      PostRoute.replaceFirst(':id', widget.id),
     );
   }
 }
