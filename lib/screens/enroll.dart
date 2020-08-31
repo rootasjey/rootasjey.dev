@@ -1340,9 +1340,7 @@ class _EnrollState extends State<Enroll> {
 
                     domainCheckTimer = Timer(
                       1.seconds,
-                      () async {
-                        checkDomainName();
-                      });
+                      () => checkDomainName());
                   },
                 ),
               ),
