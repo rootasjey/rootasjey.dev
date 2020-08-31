@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:rootasjey/rooter/route_names.dart';
 import 'package:rootasjey/rooter/router.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HomePresentation extends StatelessWidget {
   final width = 600.0;
@@ -68,16 +70,24 @@ class HomePresentation extends StatelessWidget {
                       Wrap(
                         children: [
                           IconButton(
-                            icon: Icon(Icons.image),
-                            onPressed: () {},
+                            icon: Icon(LineAwesomeIcons.github),
+                            onPressed: () => launch('https://github.com/rootasjey'),
                           ),
                           IconButton(
-                            icon: Icon(Icons.code),
-                            onPressed: () {},
+                            icon: Icon(LineAwesomeIcons.twitter),
+                            onPressed: () => launch('https://twitter.com/rootasjey'),
                           ),
                           IconButton(
-                            icon: Icon(Icons.edit),
-                            onPressed: () {},
+                            icon: Icon(LineAwesomeIcons.instagram),
+                            onPressed: () => launch('https://instagram.com/rootasjey'),
+                          ),
+                          IconButton(
+                            icon: Icon(LineAwesomeIcons.medium),
+                            onPressed: () => launch('https://medium.com/@rootasjey'),
+                          ),
+                          IconButton(
+                            icon: Icon(LineAwesomeIcons.hashtag),
+                            onPressed: () => launch('https://hashnode.com/@rootasjey'),
                           ),
                         ],
                       ),
