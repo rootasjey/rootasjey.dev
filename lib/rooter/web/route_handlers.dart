@@ -5,6 +5,7 @@ import 'package:rootasjey/screens/contact.dart';
 import 'package:rootasjey/screens/enroll.dart';
 import 'package:rootasjey/screens/home.dart';
 import 'package:rootasjey/screens/me.dart';
+import 'package:rootasjey/screens/post_page.dart';
 import 'package:rootasjey/screens/posts.dart';
 import 'package:rootasjey/screens/pricing.dart';
 import 'package:rootasjey/screens/projects.dart';
@@ -33,6 +34,10 @@ class WebRouteHandlers {
   static Handler me = Handler(
     handlerFunc: (BuildContext context, Map<String, dynamic> params) =>
       Me());
+
+  static Handler post = Handler(
+    handlerFunc: (BuildContext context, Map<String, dynamic> params) =>
+      PostPage(id: params['id'][0],));
 
   static Handler posts = Handler(
     handlerFunc: (BuildContext context, Map<String, dynamic> params) =>
