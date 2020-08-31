@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rootasjey/types/urls.dart';
 
 class Post {
+  final String id;
   final List<String> authors;
   final DateTime createdAt;
   final bool featured;
@@ -14,6 +15,7 @@ class Post {
   final Urls urls;
 
   Post({
+    this.id = '',
     this.authors    = const [],
     this.createdAt,
     this.featured   = false,
@@ -42,6 +44,7 @@ class Post {
     });
 
     return Post(
+      id          : data['id'],
       authors     : _authors,
       createdAt   : (data['createdAt'] as Timestamp).toDate(),
       featured    : data['featured'],
