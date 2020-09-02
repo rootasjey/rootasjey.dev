@@ -29,7 +29,7 @@ class _PostPageState extends State<PostPage> {
   Post post;
   bool isFabVisible = false;
 
-  final textWidth = 630.0;
+  final textWidth = 750.0;
 
   @override
   initState() {
@@ -94,7 +94,10 @@ class _PostPageState extends State<PostPage> {
         Row(
           children: [
             Spacer(),
-            markdownViewer(),
+            Expanded(
+              flex: 3,
+              child: markdownViewer(),
+            ),
             Spacer(),
           ],
         ),
@@ -135,76 +138,73 @@ class _PostPageState extends State<PostPage> {
   }
 
   Widget markdownViewer() {
-    return Expanded(
-      flex: 2,
-      child: Padding(
-        padding: const EdgeInsets.only(bottom: 400.0),
-        child: Html(
-          data: postData,
-          customRender: {
-            'a': (context, child, attributes, element) {
-              return textLink(
-                href: attributes['href'],
-                child: child,
-              );
-            },
-            'img': (context, child, attributes, element) {
-              return imageViewer(
-                context: context.buildContext,
-                src: attributes['src'],
-                alt: attributes['alt'],
-                width: double.parse(attributes['width'], (value) => 300.0),
-                height: double.parse(attributes['height'], (value) => 300.0),
-              );
-            }
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 400.0),
+      child: Html(
+        data: postData,
+        customRender: {
+          'a': (context, child, attributes, element) {
+            return textLink(
+              href: attributes['href'],
+              child: child,
+            );
           },
-          style: {
-            'p': Style(
-              width: textWidth,
-              fontSize: FontSize(24.0),
-              fontWeight: FontWeight.w200,
-              lineHeight: 1.5,
-              margin: EdgeInsets.only(
-                top: 40.0,
-                bottom: 20.0,
-              ),
+          'img': (context, child, attributes, element) {
+            return imageViewer(
+              context: context.buildContext,
+              src: attributes['src'],
+              alt: attributes['alt'],
+              width: double.parse(attributes['width'], (value) => 300.0),
+              height: double.parse(attributes['height'], (value) => 300.0),
+            );
+          }
+        },
+        style: {
+          'p': Style(
+            width: textWidth,
+            fontSize: FontSize(24.0),
+            fontWeight: FontWeight.w200,
+            lineHeight: 1.5,
+            margin: EdgeInsets.only(
+              top: 40.0,
+              bottom: 20.0,
             ),
-            'ul': Style(
-              fontSize: FontSize(22.0),
-              fontWeight: FontWeight.w300,
-              lineHeight: 1.6,
+          ),
+          'ul': Style(
+            fontSize: FontSize(22.0),
+            fontWeight: FontWeight.w300,
+            lineHeight: 1.6,
+          ),
+          'img': Style(
+            alignment: Alignment.center,
+            padding: EdgeInsets.only(
+              top: 40.0,
+              bottom: 20.0,
             ),
-            'img': Style(
-              alignment: Alignment.center,
-              padding: EdgeInsets.only(
-                top: 40.0,
-                bottom: 20.0,
-              ),
+          ),
+          'h1': Style(
+            width: textWidth,
+            fontSize: FontSize(60.0),
+            fontWeight: FontWeight.w600,
+            margin: EdgeInsets.only(
+              top: 100.0,
+              bottom: 60.0,
             ),
-            'h1': Style(
-              width: textWidth,
-              fontSize: FontSize(60.0),
-              fontWeight: FontWeight.w600,
-              margin: EdgeInsets.only(
-                top: 100.0,
-                bottom: 60.0,
-              ),
+          ),
+          'h2': Style(
+            width: textWidth,
+            fontSize: FontSize(50.0),
+            fontWeight: FontWeight.w500,
+            margin: EdgeInsets.only(
+              top: 80.0,
+              bottom: 40.0,
             ),
-            'h2': Style(
-              width: textWidth,
-              fontSize: FontSize(50.0),
-              fontWeight: FontWeight.w500,
-              margin: EdgeInsets.only(
-                top: 80.0,
-                bottom: 40.0,
-              ),
-            ),
-            'h3': Style(
-              fontSize: FontSize(30.0),
-              fontWeight: FontWeight.w400,
-            ),
-          },
-        ),
+          ),
+          'h3': Style(
+            fontSize: FontSize(30.0),
+            fontWeight: FontWeight.w400,
+          ),
+        },
       ),
     );
   }
