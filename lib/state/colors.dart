@@ -28,21 +28,23 @@ abstract class StateColorsBase with Store {
   ThemeData themeData;
 
   @action
-  void refreshTheme(Brightness brightness) {
+  void refreshTheme({
+    @required Brightness brightness,
+  }) {
     if (brightness == Brightness.dark) {
       foreground = Colors.white;
       background = Colors.black;
       appBackground = Color(0xFF303030);
       softBackground = Color(0xFF303030);
       iconExt = 'light';
-      return;
-    }
 
-    foreground = Colors.black;
-    background = Colors.white;
-    appBackground = Color(0xFAFAFA);
-    softBackground = Color(0xFFEEEEEE);
-    iconExt = 'dark';
+    } else {
+      foreground = Colors.black;
+      background = Colors.white;
+      appBackground = Color(0xFAFAFA);
+      softBackground = Color(0xFFEEEEEE);
+      iconExt = 'dark';
+    }
   }
 }
 

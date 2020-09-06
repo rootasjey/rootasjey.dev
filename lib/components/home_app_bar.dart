@@ -1,3 +1,4 @@
+import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:rootasjey/actions/users.dart';
@@ -6,6 +7,8 @@ import 'package:rootasjey/rooter/route_names.dart';
 import 'package:rootasjey/rooter/router.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/state/user_state.dart';
+import 'package:rootasjey/utils/app_local_storage.dart';
+import 'package:rootasjey/utils/brightness.dart';
 
 class HomeAppBar extends StatefulWidget {
   final bool automaticallyImplyLeading;
@@ -138,6 +141,63 @@ class _HomeAppBarState extends State<HomeAppBar> {
       },
       color: stateColors.foreground,
       icon: Icon(Icons.search),
+    );
+  }
+
+  /// Switch from dark to light and vice-versa.
+  Widget themeButton() {
+    IconData iconBrightness = Icons.brightness_auto;
+    final autoBrightness = appLocalStorage.getAutoBrightness();
+
+    if (!autoBrightness) {
+      final currentBrightness = appLocalStorage.getBrightness();
+
+      iconBrightness = currentBrightness == Brightness.dark
+        ? Icons.brightness_2
+        : Icons.brightness_low;
+    }
+
+    return PopupMenuButton<String>(
+      icon: Icon(iconBrightness, color: stateColors.foreground,),
+      tooltip: 'Brightness',
+      onSelected: (value) {
+        if (value == 'auto') {
+          setAutoBrightness(context: context);
+          return;
+        }
+
+        final brightness = value == 'dark'
+          ? Brightness.dark
+          : Brightness.light;
+
+        setBrightness(brightness: brightness, context: context);
+        DynamicTheme.of(context).setBrightness(brightness);
+      },
+      itemBuilder: (context) => [
+        const PopupMenuItem(
+          value: 'auto',
+          child: ListTile(
+            leading: Icon(Icons.brightness_auto),
+            title: Text('Auto'),
+          ),
+        ),
+
+        const PopupMenuItem(
+          value: 'dark',
+          child: ListTile(
+            leading: Icon(Icons.brightness_2),
+            title: Text('Dark'),
+          ),
+        ),
+
+        const PopupMenuItem(
+          value: 'light',
+          child: ListTile(
+            leading: Icon(Icons.brightness_5),
+            title: Text('Light'),
+          ),
+        ),
+      ],
     );
   }
 
@@ -292,6 +352,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
                 ),
 
               searchButton(),
+              themeButton(),
             ]);
       }
 
