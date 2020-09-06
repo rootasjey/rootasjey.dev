@@ -17,13 +17,13 @@ class HomeNavBar extends StatelessWidget {
         children: [
           RaisedButton.icon(
             onPressed: () {
-              FluroRouter.router.navigateTo(context, ContactRoute);
+              FluroRouter.router.navigateTo(context, EnrollRoute);
             },
             color: stateColors.primary,
             textColor: Colors.white,
             icon: Icon(Icons.work),
             label: Text(
-              'Contact me',
+              'Enroll',
             ),
           ),
 
@@ -63,6 +63,16 @@ class HomeNavBar extends StatelessWidget {
             ),
             label: Text(
               'Pricing'
+            ),
+          ),
+
+          FlatButton.icon(
+            onPressed: () {
+              FluroRouter.router.navigateTo(context, ContactRoute);
+            },
+            icon: Icon(Icons.work),
+            label: Text(
+              'Contact me',
             ),
           ),
 
