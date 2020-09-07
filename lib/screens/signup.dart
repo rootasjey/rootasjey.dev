@@ -592,35 +592,7 @@ class _SignupState extends State<Signup> {
         .doc(user.uid)
         .set({
           'email': user.email,
-          'flag': '',
-          'lang': 'en',
           'name': name,
-          'nameLowerCase': name,
-          'pricing': 'free',
-          'quota': {
-            'current': 0,
-            'date': DateTime.now(),
-            'limit': 1,
-          },
-          'rights': {
-            'user:managedata'     : false,
-            'user:manageauthor'   : false,
-            'user:managequote'    : false,
-            'user:managequotidian': false,
-            'user:managereference': false,
-            'user:proposequote'   : true,
-            'user:readquote'      : true,
-            'user:validatequote'  : false,
-          },
-          'stats': {
-            'favourites': 0,
-            'lists': 0,
-            'proposed': 0,
-          },
-          'urls': {
-            'image': 'local:user',
-          },
-          'uid': user.uid,
         });
 
       appLocalStorage.setCredentials(
