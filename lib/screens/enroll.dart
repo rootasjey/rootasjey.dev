@@ -1599,7 +1599,7 @@ class _EnrollState extends State<Enroll> {
         app: Firebase.app(),
         region: 'europe-west3',
       ).getHttpsCallable(
-        functionName: 'domainCheck',
+        functionName: 'enroll-domainCheck',
       );
 
       final resp = await callable.call({'domain': domainName});
