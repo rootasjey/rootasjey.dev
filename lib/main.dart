@@ -33,7 +33,7 @@ class AppState extends State<App> {
       final savedLang = appLocalStorage.getLang();
       userState.setLang(savedLang);
 
-      // autoLogin();
+      autoLogin();
 
       setState(() {
         isReady = true;
