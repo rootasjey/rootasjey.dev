@@ -139,6 +139,7 @@ async function checkUserName(
   data: FirebaseFirestore.DocumentData,
   payload: any,
 ) {
+
   if (!data) { return payload; }
 
   let nameLowerCase = '';
@@ -152,7 +153,10 @@ async function checkUserName(
     .limit(1)
     .get();
 
-  if (userNamesSnap.empty) { return payload; }
+  if (userNamesSnap.empty) {
+    payload.nameLowerCase = nameLowerCase;
+    return payload;
+  }
 
   const suffix = Date.now();
 
@@ -175,12 +179,13 @@ export const newAccountCheck = functions
 
     payload = await populateUserData(snapshot);
 
-    if (!data.name || !data.nameLowerCase) {
+    if (!data.name) {
       payload = populateUserNameIfEmpty(data, payload);
-      payload = await checkUserName(data, payload);
     }
 
-    if (!validateNameFormat(name)) {
+    payload = await checkUserName(data, payload);
+
+    if (!validateNameFormat(payload.name)) {
       const sampleName = `user_${Date.now()}`;
       payload.name = sampleName;
       payload.nameLowerCase = sampleName;
@@ -203,7 +208,7 @@ async function populateUserData(snapshot: functions.firestore.DocumentSnapshot) 
   const name: string = data.name ?? `user_${suffix}`;
 
   return {
-    'createdAt': Date.now(),
+    'createdAt': adminApp.firestore.FieldValue.serverTimestamp(),
     'email': email,
     'flag': '',
     'job': data.job ?? '',
@@ -224,7 +229,7 @@ async function populateUserData(snapshot: functions.firestore.DocumentSnapshot) 
       'image': '',
     },
     'uid': snapshot.id,
-    'updatedAt': Date.now(),
+    'updatedAt': adminApp.firestore.FieldValue.serverTimestamp(),
   };
 }
 
@@ -234,7 +239,7 @@ function populateUserNameIfEmpty(
 ): FirebaseFirestore.DocumentData {
 
   if (!data) { return payload; }
-  if (data.name && data.nameLowerCase) { return payload; }
+  if (data.name) { return payload; }
 
   let name = data.name || data.nameLowerCase;
   name = name || `user_${Date.now()}`;
