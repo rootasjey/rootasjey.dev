@@ -1,8 +1,7 @@
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/actions/users.dart';
-import 'package:rootasjey/components/loading_animation.dart';
+import 'package:rootasjey/components/home_app_bar.dart';
 import 'package:rootasjey/rooter/route_names.dart';
 import 'package:rootasjey/rooter/router.dart';
 import 'package:rootasjey/state/colors.dart';
@@ -21,7 +20,7 @@ class _SigninState extends State<Signin> {
 
   bool isCheckingAuth = false;
   bool isCompleted    = false;
-  bool isSigningIn    = false;
+  bool isLoading      = false;
 
   final passwordNode = FocusNode();
 
@@ -40,21 +39,27 @@ class _SigninState extends State<Signin> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ListView(
-        children: <Widget>[
-          Column(
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.only(
-                  top: 100.0,
-                  bottom: 300.0,
-                ),
-                child: SizedBox(
-                  width: 320.0,
-                  child: body(),
-                ),
+      body: CustomScrollView(
+        slivers: <Widget>[
+          HomeAppBar(),
+
+          SliverList(
+            delegate: SliverChildListDelegate.fixed([
+              Column(
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      top: 100.0,
+                      bottom: 300.0,
+                    ),
+                    child: SizedBox(
+                      width: 320.0,
+                      child: body(),
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ]),
           ),
         ],
       ),
@@ -63,46 +68,42 @@ class _SigninState extends State<Signin> {
 
   Widget body() {
     if (isCompleted) {
-      return completedContainer();
+      return completedView();
     }
 
-    if (isSigningIn) {
-      return Padding(
-        padding: const EdgeInsets.only(top: 80.0),
-        child: LoadingAnimation(
-          textTitle: 'Signing in...',
-        ),
-      );
+    if (isLoading) {
+      return loadingView();
     }
 
-    return idleContainer();
+    return idleView();
   }
 
-  Widget completedContainer() {
+  Widget completedView() {
     return Column(
       children: <Widget>[
         Padding(
-          padding: const EdgeInsets.only(top: 30.0),
+          padding: const EdgeInsets.only(top: 100.0),
           child: Icon(
-            Icons.check_circle,
-            size: 80.0,
+            Icons.check,
+            size: 100.0,
             color: Colors.green,
           ),
         ),
 
         Padding(
-          padding: const EdgeInsets.only(top: 30.0, bottom: 0.0),
+          padding: const EdgeInsets.only(top: 30.0),
           child: Text(
             'You are now logged in!',
             style: TextStyle(
-              fontSize: 20.0,
+              fontSize: 30.0,
+              fontWeight: FontWeight.w300,
             ),
           ),
         ),
 
         Padding(
-          padding: const EdgeInsets.only(top: 15.0,),
-          child: FlatButton(
+          padding: const EdgeInsets.only(top: 20.0,),
+          child: OutlineButton(
             onPressed: () {
               FluroRouter.router.navigateTo(
                 context,
@@ -112,7 +113,7 @@ class _SigninState extends State<Signin> {
             child: Opacity(
               opacity: .6,
               child: Text(
-                'Go to your dashboard',
+                'Dashboard',
               ),
             ),
           ),
@@ -121,7 +122,7 @@ class _SigninState extends State<Signin> {
     );
   }
 
-  Widget idleContainer() {
+  Widget idleView() {
     return Column(
       children: <Widget>[
         header(),
@@ -210,8 +211,8 @@ class _SigninState extends State<Signin> {
                 'Sign In',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 25.0,
-                  fontWeight: FontWeight.bold,
+                  fontSize: 40.0,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
             ),
@@ -228,6 +229,28 @@ class _SigninState extends State<Signin> {
     );
   }
 
+  Widget loadingView() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 150.0),
+      child: Column(
+        children: [
+          CircularProgressIndicator(),
+
+          Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Text(
+              'Connecting to your account...',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 25.0,
+                fontWeight: FontWeight.w300,
+              ),
+            ),
+          ),
+        ]
+      ),
+    );
+  }
   Widget noAccountButton() {
     return FlatButton(
       onPressed: () async {
@@ -309,8 +332,8 @@ class _SigninState extends State<Signin> {
                 'SIGN IN',
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: 15.0,
-                  fontWeight: FontWeight.bold,
+                  fontSize: 18.0,
+                  fontWeight: FontWeight.w300,
                 ),
               ),
               Padding(
@@ -376,7 +399,7 @@ class _SigninState extends State<Signin> {
     if (!inputValuesOk()) { return; }
 
     setState(() {
-      isSigningIn = true;
+      isLoading = true;
     });
 
     try {
@@ -401,7 +424,7 @@ class _SigninState extends State<Signin> {
       userState.setUserConnected();
 
       setState(() {
-        isSigningIn = false;
+        isLoading = false;
         isCompleted = true;
       });
 
@@ -423,7 +446,7 @@ class _SigninState extends State<Signin> {
       );
 
       setState(() {
-        isSigningIn = false;
+        isLoading = false;
       });
     }
   }

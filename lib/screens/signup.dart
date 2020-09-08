@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/actions/users.dart';
-import 'package:rootasjey/components/loading_animation.dart';
+import 'package:rootasjey/components/home_app_bar.dart';
 import 'package:rootasjey/rooter/route_names.dart';
 import 'package:rootasjey/rooter/router.dart';
 import 'package:rootasjey/state/colors.dart';
@@ -38,7 +38,7 @@ class _SignupState extends State<Signup> {
 
   bool isCheckingAuth = false;
   bool isCompleted    = false;
-  bool isSigningUp    = false;
+  bool isLoading      = false;
 
   final usernameNode = FocusNode();
   final passwordNode = FocusNode();
@@ -59,21 +59,27 @@ class _SignupState extends State<Signup> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ListView(
-        children: [
-          Column(
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.only(
-                  top: 60.0,
-                  bottom: 300.0,
-                ),
-                child: SizedBox(
-                  width: 300.0,
-                  child: body(),
-                ),
+      body: CustomScrollView(
+        slivers: [
+          HomeAppBar(),
+
+          SliverList(
+            delegate: SliverChildListDelegate.fixed([
+              Column(
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      top: 60.0,
+                      bottom: 300.0,
+                    ),
+                    child: SizedBox(
+                      width: 300.0,
+                      child: body(),
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ]),
           ),
         ],
       ),
@@ -82,47 +88,43 @@ class _SignupState extends State<Signup> {
 
   Widget body() {
     if (isCompleted) {
-      return completedContainer();
+      return completedView();
     }
 
-    if (isSigningUp) {
-      return Padding(
-        padding: const EdgeInsets.only(top: 80.0),
-        child: LoadingAnimation(
-          textTitle: 'Signing up...',
-        ),
-      );
+    if (isLoading) {
+      return loadingView();
     }
 
-    return idleContainer();
+    return idleView();
   }
 
-  Widget completedContainer() {
+  Widget completedView() {
     return Column(
       children: <Widget>[
         Padding(
-          padding: const EdgeInsets.only(top: 30.0),
+          padding: const EdgeInsets.only(top: 100.0),
           child: Icon(
-            Icons.check_circle,
-            size: 80.0,
+            Icons.check,
+            size: 100.0,
             color: Colors.green,
           ),
         ),
 
         Padding(
-          padding: const EdgeInsets.only(top: 30.0, bottom: 0.0),
+          padding: const EdgeInsets.only(top: 30.0),
           child: Text(
             'Your account has been successfully created!',
             textAlign: TextAlign.center,
             style: TextStyle(
-              fontSize: 20.0,
+              fontSize: 30.0,
+              fontWeight: FontWeight.w300,
             ),
           ),
         ),
 
         Padding(
-          padding: const EdgeInsets.only(top: 15.0,),
-          child: FlatButton(
+          padding: const EdgeInsets.only(top: 20.0,),
+          child: OutlineButton(
             onPressed: () {
               FluroRouter.router.navigateTo(
                 context,
@@ -132,7 +134,7 @@ class _SignupState extends State<Signup> {
             child: Opacity(
               opacity: .6,
               child: Text(
-                'Go to your dashboard',
+                'Dashboard',
               ),
             ),
           ),
@@ -220,6 +222,13 @@ class _SignupState extends State<Signup> {
     );
   }
 
+  Widget emailProgress() {
+    return Container(
+      padding: const EdgeInsets.only(left: 40.0,),
+      child: LinearProgressIndicator(),
+    );
+  }
+
   Widget header() {
     return Row(
       children: <Widget>[
@@ -241,8 +250,8 @@ class _SignupState extends State<Signup> {
                 'Sign Up',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 25.0,
-                  fontWeight: FontWeight.bold,
+                  fontSize: 40.0,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
             ),
@@ -259,7 +268,7 @@ class _SignupState extends State<Signup> {
     );
   }
 
-  Widget idleContainer() {
+  Widget idleView() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -288,10 +297,26 @@ class _SignupState extends State<Signup> {
     );
   }
 
-  Widget emailProgress() {
-    return Container(
-      padding: const EdgeInsets.only(left: 40.0,),
-      child: LinearProgressIndicator(),
+  Widget loadingView() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 150.0),
+      child: Column(
+        children: [
+          CircularProgressIndicator(),
+
+          Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Text(
+              'Creating your account...',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 25.0,
+                fontWeight: FontWeight.w300,
+              ),
+            ),
+          ),
+        ]
+      ),
     );
   }
 
@@ -475,8 +500,8 @@ class _SignupState extends State<Signup> {
                   'SIGN UP',
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 15.0,
-                    fontWeight: FontWeight.bold,
+                    fontSize: 18.0,
+                    fontWeight: FontWeight.w300,
                   ),
                 ),
                 Padding(
@@ -540,12 +565,12 @@ class _SignupState extends State<Signup> {
     if (!inputValuesOk()) { return; }
 
     setState(() {
-      isSigningUp = true;
+      isLoading = true;
     });
 
     if (!await valuesAvailabilityCheck()) {
       setState(() {
-        isSigningUp = false;
+        isLoading = false;
       });
 
       showSnack(
@@ -569,7 +594,7 @@ class _SignupState extends State<Signup> {
 
       if (user == null) {
         setState(() {
-          isSigningUp = false;
+          isLoading = false;
         });
 
         showSnack(
@@ -603,15 +628,17 @@ class _SignupState extends State<Signup> {
       userState.setUserConnected();
 
       setState(() {
-        isSigningUp = false;
+        isLoading = false;
         isCompleted = true;
       });
+
+      FluroRouter.router.navigateTo(context, RootRoute);
 
     } catch (error) {
       debugPrint(error.toString());
 
       setState(() {
-        isSigningUp = false;
+        isLoading = false;
       });
 
       showSnack(
