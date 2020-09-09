@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:rootasjey/rooter/route_names.dart';
-import 'package:rootasjey/rooter/router.dart';
 import 'package:rootasjey/types/post.dart';
 
 class PostCard extends StatefulWidget {
   final EdgeInsets padding;
   final Post post;
   final Widget popupMenuButton;
+  final VoidCallback onTap;
 
   PostCard({
     this.padding = EdgeInsets.zero,
     this.post,
     this.popupMenuButton,
+    this.onTap,
   });
 
   @override
@@ -28,11 +28,7 @@ class _PostCardState extends State<PostCard> {
       child: Card(
         elevation: 2.0,
         child: InkWell(
-          onTap: () =>
-            FluroRouter.router.navigateTo(
-              context,
-              PostRoute.replaceFirst(':postId', widget.post.id),
-            ),
+          onTap: widget.onTap,
           child: Container(
             width: 700.0,
             padding: const EdgeInsets.all(40.0),

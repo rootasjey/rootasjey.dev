@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:rootasjey/components/post_card.dart';
 import 'package:rootasjey/components/sliver_empty_view.dart';
 import 'package:rootasjey/components/home_app_bar.dart';
+import 'package:rootasjey/rooter/route_names.dart';
 import 'package:rootasjey/rooter/router.dart';
 import 'package:rootasjey/types/post.dart';
 
@@ -97,6 +98,11 @@ class _PostsState extends State<Posts> {
           final post = postsList.elementAt(index);
 
           return PostCard(
+            onTap: () =>
+              FluroRouter.router.navigateTo(
+                context,
+                PostRoute.replaceFirst(':postId', post.id),
+              ),
             post: post,
           );
         },
