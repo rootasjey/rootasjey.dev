@@ -4,18 +4,22 @@ import 'package:rootasjey/rooter/router.dart';
 import 'package:rootasjey/types/post.dart';
 
 class PostCard extends StatefulWidget {
-  final String title;
-  final String summary;
   final String date;
-  final String timeToRead;
+  final EdgeInsets padding;
   final Post post;
+  final String summary;
+  final String timeToRead;
+  final String title;
+  final Widget popupMenuButton;
 
   PostCard({
-    this.title,
-    this.summary,
     this.date,
-    this.timeToRead,
+    this.padding = EdgeInsets.zero,
     this.post,
+    this.summary,
+    this.timeToRead,
+    this.title,
+    this.popupMenuButton,
   });
 
   @override
@@ -25,45 +29,70 @@ class PostCard extends StatefulWidget {
 class _PostCardState extends State<PostCard> {
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 2.0,
-      child: InkWell(
-        onTap: () =>
-          FluroRouter.router.navigateTo(
-            context,
-            PostRoute.replaceFirst(':id', widget.post.id),
-          ),
-        child: Container(
-          width: 700.0,
-          padding: const EdgeInsets.all(40.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(
-                  bottom: 20.0,
-                ),
-                child: Text(
-                  widget.title,
-                  style: TextStyle(
-                    fontSize: 30.0,
-                    fontWeight: FontWeight.w600,
+    return Padding(
+      padding: widget.padding,
+      child: Card(
+        elevation: 2.0,
+        child: InkWell(
+          onTap: () =>
+            FluroRouter.router.navigateTo(
+              context,
+              PostRoute.replaceFirst(':postId', widget.post.id),
+            ),
+          child: Container(
+            width: 700.0,
+            padding: const EdgeInsets.all(40.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          bottom: 20.0,
+                        ),
+                        child: widget.title.isEmpty
+                          ? Opacity(
+                              opacity: 0.6,
+                              child: Text(
+                                'No title yet.',
+                                style: TextStyle(
+                                  fontSize: 30.0,
+                                  fontWeight: FontWeight.w600,
+                                  fontStyle: FontStyle.italic,
+                                ),
+                              ),
+                            )
+                          : Text(
+                            widget.title,
+                            style: TextStyle(
+                              fontSize: 30.0,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                      ),
+
+                      if (widget.summary.isNotEmpty)
+                        Opacity(
+                          opacity: 0.6,
+                          child: Text(
+                            widget.summary,
+                            style: TextStyle(
+                              fontSize: 18.0,
+                            ),
+                          ),
+                        ),
+
+                      metaData(),
+                    ],
                   ),
                 ),
-              ),
 
-              Opacity(
-                opacity: 0.6,
-                child: Text(
-                  widget.summary,
-                  style: TextStyle(
-                    fontSize: 18.0,
-                  ),
-                ),
-              ),
-
-              metaData(),
-            ],
+                if (widget.popupMenuButton != null)
+                  widget.popupMenuButton,
+              ],
+            ),
           ),
         ),
       ),
