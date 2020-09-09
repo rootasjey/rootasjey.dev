@@ -71,8 +71,26 @@ class _PostPageState extends State<PostPage> {
             HomeAppBar(
               automaticallyImplyLeading: true,
               title: post == null
-                ? 'Post'
-                : post.title,
+                ? Opacity(
+                    opacity: 0.6,
+                    child: Text(
+                      'Post',
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: stateColors.foreground,
+                      ),
+                    ),
+                  )
+                : Opacity(
+                    opacity: 0.6,
+                    child: Text(
+                      post.title,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: stateColors.foreground,
+                      ),
+                    ),
+                  ),
               onPressedRightButton: () => setState(
                 () => isTOCVisible = !isTOCVisible
               ),

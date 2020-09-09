@@ -13,13 +13,13 @@ import 'package:rootasjey/utils/brightness.dart';
 class HomeAppBar extends StatefulWidget {
   final bool automaticallyImplyLeading;
   final Function onTapIconHeader;
-  final String title;
+  final Widget title;
   final VoidCallback onPressedRightButton;
 
   HomeAppBar({
     this.automaticallyImplyLeading = false,
     this.onTapIconHeader,
-    this.title = '',
+    this.title,
     this.onPressedRightButton,
   });
 
@@ -70,23 +70,11 @@ class _HomeAppBarState extends State<HomeAppBar> {
                       onTap: widget.onTapIconHeader,
                     ),
 
-                    if (widget.title.isNotEmpty)
+                    if (widget.title != null)
                       Expanded(
                         child: Padding(
                           padding: const EdgeInsets.only(left: 40.0),
-                          child: Tooltip(
-                            message: widget.title,
-                            child: Opacity(
-                              opacity: 0.6,
-                              child: Text(
-                                widget.title,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  color: stateColors.foreground,
-                                ),
-                              ),
-                            ),
-                          ),
+                          child: widget.title,
                         ),
                       ),
 
@@ -103,8 +91,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
 
   Widget addNewPostButton() {
     return RaisedButton(
-      onPressed: () {
-      },
+      onPressed: () => FluroRouter.router.navigateTo(context, NewPostRoute),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.all(
           Radius.circular(30.0),
@@ -123,7 +110,6 @@ class _HomeAppBarState extends State<HomeAppBar> {
             'New Post',
             style: TextStyle(
               color: Colors.white,
-              // fontSize: 12.0,
             ),
           ),
         ],
@@ -231,7 +217,6 @@ class _HomeAppBarState extends State<HomeAppBar> {
             ),
           ),
         ),
-        // tooltip: 'More quick links',
         onSelected: (value) {
           if (value == 'signout') {
             userSignOut(context: context);
@@ -246,11 +231,11 @@ class _HomeAppBarState extends State<HomeAppBar> {
         itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
           if (isNarrow)
             const PopupMenuItem(
-              value: AddPostRoute,
+              value: NewPostRoute,
               child: ListTile(
                 leading: Icon(Icons.add),
                 title: Text(
-                  'Add quote',
+                  'New Post',
                   style: TextStyle(
                     fontWeight: FontWeight.bold
                   ),
@@ -258,18 +243,19 @@ class _HomeAppBarState extends State<HomeAppBar> {
               )
             ),
 
-          const PopupMenuItem(
-            value: SearchRoute,
-            child: ListTile(
-              leading: Icon(Icons.search),
-              title: Text(
-                'Search',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold
+          if (isNarrow)
+            const PopupMenuItem(
+              value: SearchRoute,
+              child: ListTile(
+                leading: Icon(Icons.search),
+                title: Text(
+                  'Search',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold
+                  ),
                 ),
-              ),
-            )
-          ),
+              )
+            ),
 
           const PopupMenuItem(
             value: DraftsRoute,
@@ -333,16 +319,23 @@ class _HomeAppBarState extends State<HomeAppBar> {
 
       if (userState.isUserConnected) {
         isNarrow
-          ? children.add(userAvatar(isNarrow: isNarrow))
+          ? children.addAll([
+              userAvatar(isNarrow: isNarrow),
+              themeButton(),
+            ])
           : children.addAll([
-              userAvatar(),
+              userAvatar(isNarrow: isNarrow),
               addNewPostButton(),
               searchButton(),
+              themeButton(),
             ]);
 
       } else {
         isNarrow
-          ? children.add(userSigninMenu())
+          ? children.addAll([
+              userSigninMenu(showSearch: true),
+              themeButton(),
+            ])
           : children.addAll([
               if (widget.onPressedRightButton != null)
                 IconButton(
@@ -351,6 +344,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
                   onPressed: widget.onPressedRightButton,
                 ),
 
+              userSigninMenu(),
               searchButton(),
               themeButton(),
             ]);
@@ -369,9 +363,19 @@ class _HomeAppBarState extends State<HomeAppBar> {
     });
   }
 
-  Widget userSigninMenu() {
+  Widget userSigninMenu({bool showSearch = false}) {
     return PopupMenuButton(
+      icon: Icon(Icons.more_vert, color: stateColors.foreground),
       itemBuilder: (context) => <PopupMenuEntry<String>>[
+        if (showSearch)
+          PopupMenuItem(
+            value: SearchRoute,
+            child: ListTile(
+              leading: Icon(Icons.search),
+              title: Text('Search'),
+            ),
+          ),
+
         PopupMenuItem(
           value: SigninRoute,
           child: ListTile(
@@ -379,18 +383,12 @@ class _HomeAppBarState extends State<HomeAppBar> {
             title: Text('Sign in'),
           ),
         ),
+
         PopupMenuItem(
           value: SignupRoute,
           child: ListTile(
             leading: Icon(Icons.open_in_browser),
             title: Text('Sign up'),
-          ),
-        ),
-        PopupMenuItem(
-          value: SearchRoute,
-          child: ListTile(
-            leading: Icon(Icons.search),
-            title: Text('Search'),
           ),
         ),
       ],

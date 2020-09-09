@@ -107,7 +107,16 @@ class _SearchState extends State<Search> {
           controller: scrollController,
           slivers: <Widget>[
             HomeAppBar(
-              title: 'Search',
+              title: Opacity(
+                opacity: 0.6,
+                child: Text(
+                  'Search',
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: stateColors.foreground,
+                  ),
+                ),
+              ),
               automaticallyImplyLeading: true,
             ),
 

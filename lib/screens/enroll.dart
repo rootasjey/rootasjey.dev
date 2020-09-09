@@ -11,6 +11,7 @@ import 'package:rootasjey/components/footer.dart';
 import 'package:rootasjey/components/home_app_bar.dart';
 import 'package:rootasjey/components/outline_toggle_button.dart';
 import 'package:rootasjey/rooter/router.dart';
+import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/types/enums.dart';
 import 'package:rootasjey/utils/snack.dart';
 import 'package:verbal_expressions/verbal_expressions.dart';
@@ -165,8 +166,17 @@ class _EnrollState extends State<Enroll> {
         slivers: [
           HomeAppBar(
             title: isCompleted
-              ? ''
-              : 'COST: ${mainCost + additionalCost} €',
+              ? null
+              : Opacity(
+                  opacity: 0.6,
+                  child: Text(
+                    'COST: ${mainCost + additionalCost} €',
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: stateColors.foreground,
+                    ),
+                  ),
+                ),
           ),
 
           SliverList(
@@ -1590,9 +1600,7 @@ class _EnrollState extends State<Enroll> {
       return;
     }
 
-    setState(() {
-      isCheckingDomain = true;
-    });
+    setState(() => isCheckingDomain = true);
 
     try {
       final callable = CloudFunctions(
@@ -1612,9 +1620,7 @@ class _EnrollState extends State<Enroll> {
           : 'This domain is already taken. Please choose another one.';
       });
 
-      setState(() {
-        isCheckingDomain = false;
-      });
+      setState(() => isCheckingDomain = false);
 
     } catch (error) {
       debugPrint(error.toString());
