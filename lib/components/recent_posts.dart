@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:rootasjey/components/post_card.dart';
 
 class RecentPosts extends StatefulWidget {
   @override
@@ -44,12 +43,12 @@ class _RecentPostsState extends State<RecentPosts> {
 
           Padding(padding: const EdgeInsets.only(bottom: 20.0),),
 
-          PostCard(
-            title: 'Why I love the movie Gatsby so much',
-            summary: 'After re-watching the movie multiple times, I decided to write down what worked on me...',
-            date: '1 week ago',
-            timeToRead: '10 min read',
-          ),
+          // PostCard(
+          //   title: 'Why I love the movie Gatsby so much',
+          //   summary: 'After re-watching the movie multiple times, I decided to write down what worked on me...',
+          //   date: '1 week ago',
+          //   timeToRead: '10 min read',
+          // ),
         ],
       ),
     );

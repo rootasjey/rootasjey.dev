@@ -98,10 +98,6 @@ class _PostsState extends State<Posts> {
 
           return PostCard(
             post: post,
-            title: post.title,
-            summary: post.summary,
-            date: post.createdAt.toString(),
-            timeToRead: '10 min read',
           );
         },
         childCount: postsList.length,

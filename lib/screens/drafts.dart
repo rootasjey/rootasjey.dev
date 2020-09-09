@@ -146,10 +146,6 @@ class _DraftsState extends State<Drafts> {
               ],
             ),
             post: post,
-            title: post.title,
-            summary: post.summary,
-            date: post.createdAt.toString(),
-            timeToRead: post.timeToRead,
             padding: const EdgeInsets.only(bottom: 20.0),
           );
         },

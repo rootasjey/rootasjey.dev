@@ -4,21 +4,13 @@ import 'package:rootasjey/rooter/router.dart';
 import 'package:rootasjey/types/post.dart';
 
 class PostCard extends StatefulWidget {
-  final String date;
   final EdgeInsets padding;
   final Post post;
-  final String summary;
-  final String timeToRead;
-  final String title;
   final Widget popupMenuButton;
 
   PostCard({
-    this.date,
     this.padding = EdgeInsets.zero,
     this.post,
-    this.summary,
-    this.timeToRead,
-    this.title,
     this.popupMenuButton,
   });
 
@@ -29,6 +21,8 @@ class PostCard extends StatefulWidget {
 class _PostCardState extends State<PostCard> {
   @override
   Widget build(BuildContext context) {
+    final post = widget.post;
+
     return Padding(
       padding: widget.padding,
       child: Card(
@@ -52,7 +46,7 @@ class _PostCardState extends State<PostCard> {
                         padding: const EdgeInsets.only(
                           bottom: 20.0,
                         ),
-                        child: widget.title.isEmpty
+                        child: post.title.isEmpty
                           ? Opacity(
                               opacity: 0.6,
                               child: Text(
@@ -65,7 +59,7 @@ class _PostCardState extends State<PostCard> {
                               ),
                             )
                           : Text(
-                            widget.title,
+                            post.title,
                             style: TextStyle(
                               fontSize: 30.0,
                               fontWeight: FontWeight.w600,
@@ -73,18 +67,18 @@ class _PostCardState extends State<PostCard> {
                           ),
                       ),
 
-                      if (widget.summary.isNotEmpty)
+                      if (post.summary.isNotEmpty)
                         Opacity(
                           opacity: 0.6,
                           child: Text(
-                            widget.summary,
+                            post.summary,
                             style: TextStyle(
                               fontSize: 18.0,
                             ),
                           ),
                         ),
 
-                      metaData(),
+                      metaData(post),
                     ],
                   ),
                 ),
@@ -99,7 +93,7 @@ class _PostCardState extends State<PostCard> {
     );
   }
 
-  Widget metaData() {
+  Widget metaData(Post post) {
     return Padding(
       padding: const EdgeInsets.only(
         top: 8.0,
@@ -110,7 +104,7 @@ class _PostCardState extends State<PostCard> {
           Opacity(
             opacity: 0.6,
             child: Text(
-              widget.date,
+              post.updatedAt.toString().split(' ')[0],
             ),
           ),
 
@@ -126,7 +120,7 @@ class _PostCardState extends State<PostCard> {
           Opacity(
             opacity: 0.6,
             child: Text(
-              widget.timeToRead,
+              post.timeToRead,
             ),
           ),
         ],
