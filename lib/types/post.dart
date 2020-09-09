@@ -8,6 +8,7 @@ class Post {
   final DateTime createdAt;
   final bool featured;
   final String path;
+  final bool published;
   final bool referenced;
   final String summary;
   final List<String> tags;
@@ -23,6 +24,7 @@ class Post {
     this.createdAt,
     this.featured   = false,
     this.path       = '',
+    this.published  = false,
     this.referenced = true,
     this.summary    = '',
     this.tags       = const [],
@@ -54,6 +56,7 @@ class Post {
       createdAt   : (data['createdAt'] as Timestamp).toDate(),
       featured    : data['featured'],
       path        : data['path'],
+      published   : data['published'],
       referenced  : data['referenced'],
       summary     : data['summary'],
       tags        : _tags,
