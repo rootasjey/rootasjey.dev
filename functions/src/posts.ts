@@ -1,6 +1,8 @@
 import * as functions from 'firebase-functions';
 import { adminApp } from './adminApp';
+import { admin } from 'firebase-admin/lib/auth';
 
+const firestore = adminApp.firestore();
 const storage = adminApp.storage();
 const auth = adminApp.auth();
 
@@ -38,27 +40,85 @@ export const fetch = functions
   .onCall(async (data, context) => {
     const postId: string = data.postId;
 
+    /** Used if the post is a draft or restricted to some members. */
+    const jwt: string = data.jwt;
+
     if (!postId) {
       throw new functions.https.HttpsError('invalid-argument', 'The function must be called with ' +
         'one (string) argument "postId" which is the post to fetch.');
     }
 
+    try { // Access Control
+      const postSnapshot = await firestore
+        .collection('posts')
+        .doc(postId)
+        .get();
+
+      if (!postSnapshot.exists) {
+        throw new functions.https.HttpsError('not-found', 'The post asked does not exist anymore.' +
+          ' You may be asking a deleted post.');
+      }
+
+      const postData = postSnapshot.data();
+
+      if (!postData) {
+        throw new functions.https.HttpsError('data-loss', 'The post data is null, which is weird.' +
+          ' Please contact us <3.');
+      }
+
+      if (!postData['published']) {
+        if (!jwt) {
+          throw new functions.https.HttpsError('unauthenticated', 'The post asked is a draft' +
+            ' and you do not have the right to get its content.');
+        }
+
+        const decodedToken = await auth.verifyIdToken(jwt, true);
+        const validExp = isJwtValidDate(decodedToken);
+
+        if (!validExp) {
+          throw new functions.https.HttpsError('unauthenticated', 'Your JWT is outdated.' +
+            ' Please sign in again.');
+        }
+
+        let hasAuthorAccess = false;
+
+        if (postData['author'] === decodedToken.uid) {
+          hasAuthorAccess = true;
+
+        } else if (postData['coauthors'].indexOf(decodedToken.uid) > -1) {
+          hasAuthorAccess = true;
+        }
+
+        if (!hasAuthorAccess) {
+          throw new functions.https.HttpsError('permission-denied', 'You do not have the right' +
+            " to view this post's content.");
+        }
+      } else if (postData['restrictedTo'].premium) {
+        // TODO: Handle premium users.
+      }
+
+    } catch (error) {
+      throw new functions.https.HttpsError('internal', 'There was an internal error' +
+        ' while retrieving the post content. Your JWT may be outdated.');
+    }
+
+    // Retrieve content (access control OK)
     const postFile = storage
       .bucket()
       .file(`blog/posts/${postId}/post.md`);
 
-    let postData = '';
+    let postContent = '';
 
     const stream = postFile.createReadStream();
 
     stream.on('data', (chunck) => {
-      postData = postData.concat(chunck.toString());
+      postContent = postContent.concat(chunck.toString());
     });
 
     await new Promise(fulfill => stream.on('end', fulfill));
     stream.destroy();
 
-    return { post: postData };
+    return { post: postContent };
   });
 
 /**
@@ -80,16 +140,10 @@ export const save = functions
 
     try {
       const decodedToken = await auth.verifyIdToken(jwt, true);
-      const date = new Date(decodedToken.exp);
-      const now = new Date(Date.now());
+      const validExp = isJwtValidDate(decodedToken);
 
-      const yearDiff  = date.getUTCFullYear() - now.getUTCFullYear();
-      const monthDiff = date.getMonth()       - now.getMonth();
-      const dayDiff   = date.getDay()         - now.getDay();
-      const hourDiff  = date.getHours()       - now.getHours();
-
-      if (yearDiff <= 0 && monthDiff <= 0 && dayDiff <= 0 && hourDiff <= 0) {
-        return { success: false, error: 'JWT expired' };
+      if (!validExp) {
+        return { success: false, error: 'JWT expired.' };
       }
 
     } catch (error) {
@@ -108,3 +162,19 @@ export const save = functions
       return { success: false, error: error.toString() };
     }
   });
+
+function isJwtValidDate(decodedToken: admin.auth.DecodedIdToken) {
+  const date = new Date(decodedToken.exp);
+  const now = new Date(Date.now());
+
+  const yearDiff = date.getUTCFullYear() - now.getUTCFullYear();
+  const monthDiff = date.getMonth() - now.getMonth();
+  const dayDiff = date.getDay() - now.getDay();
+  const hourDiff = date.getHours() - now.getHours();
+
+  if (yearDiff <= 0 && monthDiff <= 0 && dayDiff <= 0 && hourDiff <= 0) {
+    return false;
+  }
+
+  return true;
+}
