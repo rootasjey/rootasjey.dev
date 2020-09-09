@@ -124,7 +124,7 @@ async function checkRole(params: DataUpdateParams) {
 
   const data = snapshot.data();
 
-  if (!data || !canEditRole) {
+  if (!data || !canEditRole(data.role)) {
     return rollbackPayload;
   }
 
