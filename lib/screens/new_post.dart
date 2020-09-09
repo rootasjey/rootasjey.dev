@@ -277,7 +277,7 @@ class _NewPostState extends State<NewPost> {
             'premium': false,
           },
           'summary': '',
-          'tags': [],
+          'tags': {},
           'timeToRead': '',
           'title': '',
           'updatedAt': DateTime.now(),
