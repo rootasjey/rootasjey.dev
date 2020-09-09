@@ -3,7 +3,8 @@ import 'package:rootasjey/types/urls.dart';
 
 class Post {
   final String id;
-  final List<String> authors;
+  final String author;
+  final List<String> coauthors;
   final DateTime createdAt;
   final bool featured;
   final String path;
@@ -11,25 +12,28 @@ class Post {
   final String summary;
   final List<String> tags;
   final String title;
+  final String timeToRead;
   final DateTime updatedAt;
   final Urls urls;
 
   Post({
     this.id = '',
-    this.authors    = const [],
+    this.author,
+    this.coauthors  = const [],
     this.createdAt,
     this.featured   = false,
     this.path       = '',
     this.referenced = true,
     this.summary    = '',
     this.tags       = const [],
+    this.timeToRead = '',
     this.title      = '',
     this.updatedAt,
     this.urls,
   });
 
   factory Post.fromJSON(Map<String, dynamic> data) {
-    final _authors = <String>[];
+    final _coauthors = <String>[];
     final _tags = <String>[];
     final dataTags = data['tags'] as Map<String, dynamic>;
 
@@ -37,21 +41,23 @@ class Post {
       _tags.add(key);
     });
 
-    final dataAuthors = data['authors'] as List<dynamic>;
+    final dataAuthors = data['coauthors'] as List<dynamic>;
 
     dataAuthors.forEach((authorId) {
-      _authors.add(authorId);
+      _coauthors.add(authorId);
     });
 
     return Post(
       id          : data['id'],
-      authors     : _authors,
+      author      : data['author'],
+      coauthors   : _coauthors,
       createdAt   : (data['createdAt'] as Timestamp).toDate(),
       featured    : data['featured'],
       path        : data['path'],
       referenced  : data['referenced'],
       summary     : data['summary'],
       tags        : _tags,
+      timeToRead  : data['timeToRead'],
       title       : data['title'],
       updatedAt   : (data['updatedAt'] as Timestamp).toDate(),
       urls        : Urls.fromJSON(data['urls']),
