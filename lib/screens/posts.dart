@@ -54,7 +54,7 @@ class _PostsState extends State<Posts> {
       return SliverEmptyView();
     }
 
-    return projectsListView();
+    return postsListView();
   }
 
   Widget headerTitle() {
@@ -90,7 +90,7 @@ class _PostsState extends State<Posts> {
     );
   }
 
-  Widget projectsListView() {
+  Widget postsListView() {
     return SliverList(
       delegate: SliverChildBuilderDelegate(
         (context, index) {
