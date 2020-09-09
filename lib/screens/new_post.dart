@@ -119,7 +119,7 @@ class _NewPostState extends State<NewPost> {
           }
 
           saveTitleTimer = Timer(
-            2.seconds,
+            1.seconds,
             () => saveTitle()
           );
         },
@@ -155,7 +155,7 @@ class _NewPostState extends State<NewPost> {
           }
 
           saveContentTimer = Timer(
-            2.seconds,
+            1.seconds,
             () => saveContent()
           );
         },
