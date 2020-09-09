@@ -237,7 +237,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
                 title: Text(
                   'New Post',
                   style: TextStyle(
-                    fontWeight: FontWeight.bold
+                    fontWeight: FontWeight.w400,
                   ),
                 ),
               )
@@ -251,7 +251,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
                 title: Text(
                   'Search',
                   style: TextStyle(
-                    fontWeight: FontWeight.bold
+                    fontWeight: FontWeight.w400,
                   ),
                 ),
               )
@@ -264,7 +264,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
               title: Text(
                 'Drafts',
                 style: TextStyle(
-                  fontWeight: FontWeight.bold
+                  fontWeight: FontWeight.w400,
                 ),
               ),
             ),
@@ -277,7 +277,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
               title: Text(
                 'Published',
                 style: TextStyle(
-                  fontWeight: FontWeight.bold
+                  fontWeight: FontWeight.w400,
                 ),
               ),
             ),
@@ -290,7 +290,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
               title: Text(
                 'Settings',
                 style: TextStyle(
-                  fontWeight: FontWeight.bold
+                  fontWeight: FontWeight.w400,
                 ),
               ),
             ),
@@ -303,7 +303,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
               title: Text(
                 'Sign out',
                 style: TextStyle(
-                  fontWeight: FontWeight.bold
+                  fontWeight: FontWeight.w400,
                 ),
               ),
             ),
