@@ -25,14 +25,16 @@ class EditPost extends StatefulWidget {
 }
 
 class _EditPostState extends State<EditPost> {
+  bool isLoading = false;
   bool isSaving = false;
+  bool hasError = false;
 
   DocumentSnapshot postSnapshot;
 
   final availableLang = ['en', 'fr'];
   final clearFocusNode  = FocusNode();
   final postFocusNode   = FocusNode();
-  final postController  = TextEditingController();
+  final contentController  = TextEditingController();
   final titleFocusNode  = FocusNode();
   final titleController = TextEditingController();
 
@@ -70,7 +72,7 @@ class _EditPostState extends State<EditPost> {
                   child: Text(
                     isSaving
                       ? 'Saving...'
-                      : 'New Post',
+                      : (postTitle.isEmpty ? 'Edit Post' : postTitle),
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       color: stateColors.foreground,
@@ -87,11 +89,19 @@ class _EditPostState extends State<EditPost> {
   }
 
   Widget body() {
+    if (isLoading) {
+      return loadingView();
+    }
+
+    if (hasError) {
+      return errorView();
+    }
+
     return SliverList(
       delegate: SliverChildListDelegate.fixed([
         Padding(
           padding: const EdgeInsets.only(
-            top: 100.0,
+            top: 40.0,
             bottom: 400.0,
           ),
           child: Column(
@@ -106,39 +116,147 @@ class _EditPostState extends State<EditPost> {
     );
   }
 
-  Widget titleInput() {
-    return Container(
-      width: 700.0,
-      padding: const EdgeInsets.only(top: 50.0,),
-      child: TextField(
-        maxLines: 1,
-        autofocus: true,
-        focusNode: titleFocusNode,
-        controller: titleController,
-        keyboardType: TextInputType.multiline,
-        textCapitalization: TextCapitalization.sentences,
-        onChanged: (newValue) {
-          postTitle = newValue;
+  Widget errorView() {
+    return SliverList(
+      delegate: SliverChildListDelegate.fixed([
+        Padding(
+          padding: const EdgeInsets.only(
+            top: 200.0,
+            left: 40.0,
+            right: 40.0,
+          ),
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(bottom: 40.0),
+                child: Opacity(
+                  opacity: 0.6,
+                  child: Icon(
+                    Icons.sentiment_neutral,
+                    color: Colors.pink,
+                    size: 80.0,
+                  ),
+                ),
+              ),
 
-          if (saveTitleTimer != null) {
-            saveTitleTimer.cancel();
-          }
+              Container(
+                width: 600.0,
+                padding: const EdgeInsets.only(
+                  bottom: 40.0,
+                ),
+                child: Opacity(
+                  opacity: 0.7,
+                  child: Text(
+                    "An error occurred. Maybe the post doesn't exist anymore or there's a network issue.",
+                    style: TextStyle(
+                      fontSize: 30.0,
+                    ),
+                  ),
+                ),
+              ),
 
-          saveTitleTimer = Timer(
-            2.seconds,
-            () => saveTitle()
-          );
-        },
-        style: TextStyle(
-          fontSize: 22.0,
-        ),
-        decoration: InputDecoration(
-          icon: Icon(Icons.title),
-          hintText: 'Post Title...',
-          border: OutlineInputBorder(
-            borderSide: BorderSide.none
+              OutlineButton.icon(
+                onPressed: () => FluroRouter.router.pop(context),
+                icon: Icon(Icons.arrow_back, color: Colors.pink),
+                label: Opacity(
+                  opacity: 0.6,
+                  child: Text(
+                    'Navigate back',
+                    style: TextStyle(
+                        fontSize: 16.0,
+                      ),
+                  ),
+                )
+              ),
+            ],
           ),
         ),
+      ]),
+    );
+  }
+
+  Widget loadingView() {
+    return SliverList(
+      delegate: SliverChildListDelegate.fixed([
+        Padding(
+          padding: const EdgeInsets.only(
+            top: 200.0,
+            left: 40.0,
+            right: 40.0,
+          ),
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(
+                  bottom: 40.0,
+                ),
+                child: CircularProgressIndicator(),
+              ),
+
+              Text(
+                'Loading...',
+                style: TextStyle(
+                  fontSize: 30.0,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ]),
+    );
+  }
+
+  Widget titleInput() {
+    return Padding(
+      padding: const EdgeInsets.only(
+        left: 110.0,
+        top: 60.0,
+      ),
+      child: Row(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(right: 15.0),
+            child: IconButton(
+              onPressed: () => FluroRouter.router.pop(context),
+              icon: Icon(Icons.arrow_back),
+            ),
+          ),
+
+          Expanded(
+            child: Container(
+              width: 700.0,
+              child: TextField(
+                maxLines: 1,
+                autofocus: true,
+                focusNode: titleFocusNode,
+                controller: titleController,
+                keyboardType: TextInputType.multiline,
+                textCapitalization: TextCapitalization.sentences,
+                onChanged: (newValue) {
+                  postTitle = newValue;
+
+                  if (saveTitleTimer != null) {
+                    saveTitleTimer.cancel();
+                  }
+
+                  saveTitleTimer = Timer(
+                    1.seconds,
+                    () => saveTitle()
+                  );
+                },
+                style: TextStyle(
+                  fontSize: 42.0,
+                ),
+                decoration: InputDecoration(
+                  hintText: 'Post Title...',
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide.none
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -150,7 +268,7 @@ class _EditPostState extends State<EditPost> {
         maxLines: null,
         autofocus: false,
         focusNode: postFocusNode,
-        controller: postController,
+        controller: contentController,
         keyboardType: TextInputType.multiline,
         textCapitalization: TextCapitalization.sentences,
         onChanged: (newValue) {
@@ -161,7 +279,7 @@ class _EditPostState extends State<EditPost> {
           }
 
           saveContentTimer = Timer(
-            2.seconds,
+            1.seconds,
             () => saveContent()
           );
         },
@@ -192,7 +310,7 @@ class _EditPostState extends State<EditPost> {
             focusNode: clearFocusNode,
             onPressed: () {
               postContent = '';
-              postController.clear();
+              contentController.clear();
               postFocusNode.requestFocus();
             },
             icon: Opacity(opacity: 0.6, child: Icon(Icons.clear)),
@@ -264,9 +382,7 @@ class _EditPostState extends State<EditPost> {
     }
   }
 
-  void fetchMeta() async {
-    setState(() => isSaving = true);
-
+  Future fetchMeta() async {
     try {
       postSnapshot = await FirebaseFirestore.instance
         .collection('posts')
@@ -277,10 +393,17 @@ class _EditPostState extends State<EditPost> {
         .currentUser
         .getIdToken();
 
-      setState(() => isSaving = false);
+      setState(() {
+        postTitle = postSnapshot.data()['title'];
+        titleController.text = postTitle;
+      });
 
     } catch(error) {
-      setState(() => isSaving = false);
+      setState(() {
+        isLoading = false;
+        hasError = true;
+      });
+
       debugPrint(error.toSring());
 
       showSnack(
@@ -291,19 +414,8 @@ class _EditPostState extends State<EditPost> {
     }
   }
 
-  void fetchContent() async {
-    setState(() => isSaving = true);
-
+  Future fetchContent() async {
     try {
-      postSnapshot = await FirebaseFirestore.instance
-        .collection('posts')
-        .doc(widget.postId)
-        .get();
-
-      jwt = await FirebaseAuth.instance
-        .currentUser
-        .getIdToken();
-
       final callable = CloudFunctions(
         app: Firebase.app(),
         region: 'europe-west3',
@@ -316,13 +428,16 @@ class _EditPostState extends State<EditPost> {
         'jwt': jwt,
       });
 
-      postContent = response.data['post'];
-      print(postContent);
-
-      setState(() => isSaving = false);
+      setState(() {
+        postContent = response.data['post'];
+        contentController.text = postContent;
+      });
 
     } catch(error) {
-      setState(() => isSaving = false);
+      setState(() {
+        isLoading = false;
+        hasError = true;
+      });
       debugPrint(error.toSring());
 
       showSnack(
@@ -342,12 +457,15 @@ class _EditPostState extends State<EditPost> {
     final result = await checkAuth();
     if (!result) { return; }
 
-    fetchMeta();
+    setState(() => isLoading = true);
+
+    await fetchMeta();
+    await fetchContent();
+
+    setState(() => isLoading = false);
   }
 
   void saveTitle() async {
-    setState(() => isSaving = true);
-
     try {
       await postSnapshot
         .reference
@@ -371,9 +489,9 @@ class _EditPostState extends State<EditPost> {
       ).getHttpsCallable(functionName: 'posts-save ');
 
       final resp = await callable.call({
-        'postId': postSnapshot.id,
-        'jwt': jwt,
-        'content': postContent,
+        'postId'  : postSnapshot.id,
+        'jwt'     : jwt,
+        'content' : postContent,
       });
 
       print('success: ${resp.data['success']}');
