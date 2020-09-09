@@ -23,17 +23,17 @@ class _NewPostState extends State<NewPost> {
 
   DocumentReference postSnapshot;
 
-  final availableLang = ['en', 'fr'];
-  final clearFocusNode  = FocusNode();
-  final postFocusNode   = FocusNode();
-  final postController  = TextEditingController();
-  final titleFocusNode  = FocusNode();
-  final titleController = TextEditingController();
+  final availableLang     = ['en', 'fr'];
+  final clearFocusNode    = FocusNode();
+  final contentFocusNode  = FocusNode();
+  final contentController = TextEditingController();
+  final titleFocusNode    = FocusNode();
+  final titleController   = TextEditingController();
 
-  String postTitle    = '';
-  String postContent  = '';
-  String lang         = 'en';
-  String jwt = '';
+  String postTitle        = '';
+  String postContent      = '';
+  String lang             = 'en';
+  String jwt              = '';
 
   Timer saveTitleTimer;
   Timer saveContentTimer;
@@ -101,38 +101,56 @@ class _NewPostState extends State<NewPost> {
   }
 
   Widget titleInput() {
-    return Container(
-      width: 700.0,
-      padding: const EdgeInsets.only(top: 50.0,),
-      child: TextField(
-        maxLines: 1,
-        autofocus: true,
-        focusNode: titleFocusNode,
-        controller: titleController,
-        keyboardType: TextInputType.multiline,
-        textCapitalization: TextCapitalization.sentences,
-        onChanged: (newValue) {
-          postTitle = newValue;
-
-          if (saveTitleTimer != null) {
-            saveTitleTimer.cancel();
-          }
-
-          saveTitleTimer = Timer(
-            1.seconds,
-            () => saveTitle()
-          );
-        },
-        style: TextStyle(
-          fontSize: 22.0,
-        ),
-        decoration: InputDecoration(
-          icon: Icon(Icons.title),
-          hintText: 'Post Title...',
-          border: OutlineInputBorder(
-            borderSide: BorderSide.none
+    return Padding(
+      padding: const EdgeInsets.only(
+        left: 110.0,
+        top: 60.0,
+      ),
+      child: Row(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(right: 15.0),
+            child: IconButton(
+              onPressed: () => FluroRouter.router.pop(context),
+              icon: Icon(Icons.arrow_back),
+            ),
           ),
-        ),
+
+          Expanded(
+            child: Container(
+              width: 700.0,
+              child: TextField(
+                maxLines: 1,
+                autofocus: true,
+                focusNode: titleFocusNode,
+                controller: titleController,
+                keyboardType: TextInputType.multiline,
+                textCapitalization: TextCapitalization.sentences,
+                onChanged: (newValue) {
+                  postTitle = newValue;
+
+                  if (saveTitleTimer != null) {
+                    saveTitleTimer.cancel();
+                  }
+
+                  saveTitleTimer = Timer(
+                    1.seconds,
+                    () => saveTitle()
+                  );
+                },
+                style: TextStyle(
+                  fontSize: 42.0,
+                ),
+                decoration: InputDecoration(
+                  hintText: 'Post Title...',
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide.none
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -140,11 +158,14 @@ class _NewPostState extends State<NewPost> {
   Widget contentInput() {
     return Container(
       width: 700.0,
+      padding: const EdgeInsets.only(
+        top: 40.0,
+      ),
       child: TextField(
         maxLines: null,
         autofocus: false,
-        focusNode: postFocusNode,
-        controller: postController,
+        focusNode: contentFocusNode,
+        controller: contentController,
         keyboardType: TextInputType.multiline,
         textCapitalization: TextCapitalization.sentences,
         onChanged: (newValue) {
@@ -161,6 +182,7 @@ class _NewPostState extends State<NewPost> {
         },
         style: TextStyle(
           fontSize: 22.0,
+          fontWeight: FontWeight.w300,
         ),
         decoration: InputDecoration(
           icon: Icon(Icons.edit),
@@ -186,8 +208,8 @@ class _NewPostState extends State<NewPost> {
             focusNode: clearFocusNode,
             onPressed: () {
               postContent = '';
-              postController.clear();
-              postFocusNode.requestFocus();
+              contentController.clear();
+              contentFocusNode.requestFocus();
             },
             icon: Opacity(opacity: 0.6, child: Icon(Icons.clear)),
             label: Opacity(
@@ -201,7 +223,7 @@ class _NewPostState extends State<NewPost> {
           Padding(padding: const EdgeInsets.only(left: 20.0),),
 
           FlatButton.icon(
-            focusNode: postFocusNode,
+            focusNode: contentFocusNode,
             onPressed: () {
               saveTitle();
               saveContent();

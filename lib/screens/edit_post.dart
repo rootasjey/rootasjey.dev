@@ -264,6 +264,9 @@ class _EditPostState extends State<EditPost> {
   Widget contentInput() {
     return Container(
       width: 700.0,
+      padding: const EdgeInsets.only(
+        top: 40.0,
+      ),
       child: TextField(
         maxLines: null,
         autofocus: false,
@@ -285,6 +288,7 @@ class _EditPostState extends State<EditPost> {
         },
         style: TextStyle(
           fontSize: 22.0,
+          fontWeight: FontWeight.w300,
         ),
         decoration: InputDecoration(
           icon: Icon(Icons.edit),
