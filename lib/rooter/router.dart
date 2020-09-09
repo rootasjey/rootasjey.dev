@@ -19,11 +19,6 @@ class FluroRouter {
     );
 
     router.define(
-      DraftsRoute,
-      handler: WebRouteHandlers.drafts,
-    );
-
-    router.define(
       EditPostRoute,
       handler: WebRouteHandlers.editPost,
     );
@@ -36,6 +31,11 @@ class FluroRouter {
     router.define(
       MeRoute,
       handler: WebRouteHandlers.me,
+    );
+
+    router.define(
+      MyPostsRoute,
+      handler: WebRouteHandlers.myPosts,
     );
 
     router.define(

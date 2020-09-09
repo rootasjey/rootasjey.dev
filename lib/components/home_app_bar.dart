@@ -258,24 +258,11 @@ class _HomeAppBarState extends State<HomeAppBar> {
             ),
 
           const PopupMenuItem(
-            value: DraftsRoute,
+            value: MyPostsRoute,
             child: ListTile(
-              leading: Icon(Icons.edit),
+              leading: Icon(Icons.article),
               title: Text(
-                'Drafts',
-                style: TextStyle(
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
-            ),
-          ),
-
-          const PopupMenuItem(
-            value: PublishedPostsRoute,
-            child: ListTile(
-              leading: Icon(Icons.cloud_done),
-              title: Text(
-                'Published',
+                'My Posts',
                 style: TextStyle(
                   fontWeight: FontWeight.w400,
                 ),
