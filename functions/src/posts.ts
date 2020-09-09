@@ -69,7 +69,7 @@ export const fetch = functions
   });
 
 async function checkAccessControl({postId, jwt}: {postId: string, jwt: string}) {
-  try { // Access Control
+  try {
     const postSnapshot = await firestore
       .collection('posts')
       .doc(postId)
@@ -127,13 +127,15 @@ export const save = functions
   .https
   .onCall(async (data, context) => {
     const postId: string = data.postId;
-    // const jwt: string = data.jwt;
+    const jwt: string = data.jwt;
     const content: string = data.content;
 
     if (!content || !postId) {
       throw new functions.https.HttpsError('invalid-argument', 'The function must be called with ' +
         'two (string) arguments "postId": the post to save, "content": the post\'s content.');
     }
+
+    await checkAccessControl({postId, jwt});
 
     const postFile = storage
       .bucket()
