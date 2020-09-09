@@ -29,6 +29,11 @@ class FluroRouter {
     );
 
     router.define(
+      NewPostRoute,
+      handler: WebRouteHandlers.newPost,
+    );
+
+    router.define(
       PostRoute,
       handler: WebRouteHandlers.post,
     );

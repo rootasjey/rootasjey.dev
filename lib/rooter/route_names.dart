@@ -6,6 +6,7 @@ const String DashboardRoute       = '/dashboard';
 const String EnrollRoute          = '/enroll';
 const String ForgotPasswordRoute  = '/forgotpassword';
 const String MeRoute              = '/me';
+const String NewPostRoute         = '/newpost';
 const String PostsRoute           = '/posts';
 const String PostRoute            = '/post/:id';
 const String PricingRoute         = '/pricing';
