@@ -108,11 +108,14 @@ class _DraftsState extends State<Drafts> {
           final post = postsList.elementAt(index);
 
           return PostCard(
-            onTap: () =>
-              FluroRouter.router.navigateTo(
+            onTap: () async {
+              await FluroRouter.router.navigateTo(
                 context,
                 EditPostRoute.replaceFirst(':postId', post.id),
-              ),
+              );
+
+              fetch();
+            },
             popupMenuButton: PopupMenuButton<String>(
               icon: Icon(Icons.more_vert),
               onSelected: (value) {
