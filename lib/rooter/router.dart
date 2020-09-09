@@ -19,6 +19,16 @@ class FluroRouter {
     );
 
     router.define(
+      DraftsRoute,
+      handler: WebRouteHandlers.drafts,
+    );
+
+    router.define(
+      EditPostRoute,
+      handler: WebRouteHandlers.editPost,
+    );
+
+    router.define(
       EnrollRoute,
       handler: WebRouteHandlers.enroll,
     );

@@ -13,9 +13,9 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:supercharged/supercharged.dart';
 
 class PostPage extends StatefulWidget {
-  @required final String id;
+  @required final String postId;
 
-  PostPage({this.id});
+  PostPage({this.postId});
 
   @override
   _PostPageState createState() => _PostPageState();
@@ -306,7 +306,7 @@ class _PostPageState extends State<PostPage> {
     try {
       final doc = await FirebaseFirestore.instance
         .collection('posts')
-        .doc(widget.id)
+        .doc(widget.postId)
         .get();
 
       if (!doc.exists) {
@@ -333,14 +333,13 @@ class _PostPageState extends State<PostPage> {
         app: Firebase.app(),
         region: 'europe-west3',
       ).getHttpsCallable(
-        functionName: 'fetchPost',
+        functionName: 'posts-fetch',
       );
 
-      final response = await callable.call({'postId': widget.id});
+      final response = await callable.call({'postId': widget.postId});
       final markdownData = response.data['post'];
 
       postData = markdown.markdownToHtml(markdownData);
-      // print(postData);
 
       setState(() => isLoading = false);
 

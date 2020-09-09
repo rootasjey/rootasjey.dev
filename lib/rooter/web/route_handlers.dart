@@ -2,6 +2,8 @@ import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/screens/about.dart';
 import 'package:rootasjey/screens/contact.dart';
+import 'package:rootasjey/screens/drafts.dart';
+import 'package:rootasjey/screens/edit_post.dart';
 import 'package:rootasjey/screens/enroll.dart';
 import 'package:rootasjey/screens/home.dart';
 import 'package:rootasjey/screens/me.dart';
@@ -28,6 +30,14 @@ class WebRouteHandlers {
     handlerFunc: (BuildContext context, Map<String, dynamic> params) =>
       Contact());
 
+  static Handler drafts = Handler(
+    handlerFunc: (BuildContext context, Map<String, dynamic> params) =>
+      Drafts());
+
+  static Handler editPost = Handler(
+    handlerFunc: (BuildContext context, Map<String, dynamic> params) =>
+      EditPost(postId: params['postId'][0],));
+
   static Handler enroll = Handler(
     handlerFunc: (BuildContext context, Map<String, dynamic> params) =>
       Enroll());
@@ -42,7 +52,7 @@ class WebRouteHandlers {
 
   static Handler post = Handler(
     handlerFunc: (BuildContext context, Map<String, dynamic> params) =>
-      PostPage(id: params['id'][0],));
+      PostPage(postId: params['postId'][0],));
 
   static Handler posts = Handler(
     handlerFunc: (BuildContext context, Map<String, dynamic> params) =>
