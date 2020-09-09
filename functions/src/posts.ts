@@ -1,6 +1,5 @@
 import * as functions from 'firebase-functions';
 import { adminApp } from './adminApp';
-import { admin } from 'firebase-admin/lib/auth';
 
 const firestore = adminApp.firestore();
 const storage = adminApp.storage();
@@ -15,7 +14,7 @@ export const onCreateFile = functions
       .bucket()
       .file(`blog/posts/${snapshot.id}/post.md`);
 
-    await postFile.save('\n');
+    await postFile.save('');
   });
 
 export const onDeleteFile = functions
@@ -73,12 +72,6 @@ export const fetch = functions
         }
 
         const decodedToken = await auth.verifyIdToken(jwt, true);
-        const validExp = isJwtValidDate(decodedToken);
-
-        if (!validExp) {
-          throw new functions.https.HttpsError('unauthenticated', 'Your JWT is outdated.' +
-            ' Please sign in again.');
-        }
 
         let hasAuthorAccess = false;
 
@@ -91,7 +84,7 @@ export const fetch = functions
 
         if (!hasAuthorAccess) {
           throw new functions.https.HttpsError('permission-denied', 'You do not have the right' +
-            " to view this post's content.");
+          " to view this post's content.");
         }
       } else if (postData['restrictedTo'].premium) {
         // TODO: Handle premium users.
@@ -130,24 +123,12 @@ export const save = functions
   .https
   .onCall(async (data, context) => {
     const postId: string = data.postId;
-    const jwt: string = data.jwt;
+    // const jwt: string = data.jwt;
     const content: string = data.content;
 
     if (!content || !postId) {
       throw new functions.https.HttpsError('invalid-argument', 'The function must be called with ' +
         'two (string) arguments "postId": the post to save, "content": the post\'s content.');
-    }
-
-    try {
-      const decodedToken = await auth.verifyIdToken(jwt, true);
-      const validExp = isJwtValidDate(decodedToken);
-
-      if (!validExp) {
-        return { success: false, error: 'JWT expired.' };
-      }
-
-    } catch (error) {
-      return { success: false, error: error.toString() };
     }
 
     const postFile = storage
@@ -162,19 +143,3 @@ export const save = functions
       return { success: false, error: error.toString() };
     }
   });
-
-function isJwtValidDate(decodedToken: admin.auth.DecodedIdToken) {
-  const date = new Date(decodedToken.exp);
-  const now = new Date(Date.now());
-
-  const yearDiff = date.getUTCFullYear() - now.getUTCFullYear();
-  const monthDiff = date.getMonth() - now.getMonth();
-  const dayDiff = date.getDay() - now.getDay();
-  const hourDiff = date.getHours() - now.getHours();
-
-  if (yearDiff <= 0 && monthDiff <= 0 && dayDiff <= 0 && hourDiff <= 0) {
-    return false;
-  }
-
-  return true;
-}
