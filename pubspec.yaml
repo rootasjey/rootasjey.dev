@@ -42,6 +42,7 @@ dependencies:
   flutter_html: 1.0.2
   flutter_mobx: 1.1.0+2
   flutter_sticky_header: 0.4.5
+  jiffy: 3.0.1
   line_awesome_flutter: 1.0.1
   markdown: 2.1.8
   mobx: 1.2.1+2
