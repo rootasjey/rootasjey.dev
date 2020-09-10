@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:rootasjey/state/colors.dart';
+import 'package:github/github.dart';
+import 'package:rootasjey/components/activity_row.dart';
 
 class RecentCommits extends StatefulWidget {
   @override
@@ -7,6 +8,14 @@ class RecentCommits extends StatefulWidget {
 }
 
 class _RecentCommitsState extends State<RecentCommits> {
+  List<Event> userActivities = [];
+
+  @override
+  initState() {
+    super.initState();
+    fetchActivity();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -25,7 +34,6 @@ class _RecentCommitsState extends State<RecentCommits> {
                   opacity: 0.6,
                   child: Text(
                     'RECENT ACTIVITY',
-                    // 'Recent activity',
                     style: TextStyle(
                       fontSize: 20.0,
                     ),
@@ -40,63 +48,31 @@ class _RecentCommitsState extends State<RecentCommits> {
             ),
           ),
 
-          Row(
-            children: [
-              FlatButton.icon(
-                onPressed: () {},
-                icon: Icon(Icons.code, color: stateColors.primary,),
-                label: Text(
-                  'Created a new repository: rootasjey.dev',
-                ),
-              ),
-
-              Text(
-                'TODAY',
-                style: TextStyle(
-                  color: stateColors.primary,
-                ),
-              ),
-            ],
-          ),
-
-          Row(
-            children: [
-
-              FlatButton.icon(
-                onPressed: () {},
-                icon: Icon(Icons.code, color: stateColors.primary,),
-                label: Text(
-                  'Committed "Fix issue on Out Of Context"',
-                ),
-              ),
-              Text(
-                'YESTERDAY',
-                style: TextStyle(
-                  color: stateColors.primary,
-                ),
-              ),
-            ],
-          ),
-
-          Row(
-            children: [
-              FlatButton.icon(
-                onPressed: () {},
-                icon: Icon(Icons.code, color: stateColors.primary,),
-                label: Text(
-                  'Deployed a new web version',
-                ),
-              ),
-              Text(
-                '4 DAYS AGO',
-                style: TextStyle(
-                  color: stateColors.primary,
-                ),
-              ),
-            ],
+          Column(
+            children: userActivities.map((activity) {
+              return ActivityRow(activity: activity);
+            }).toList(),
           ),
         ],
       ),
     );
+  }
+
+  void fetchActivity() async {
+    try {
+      final github = GitHub();
+
+      github.activity.listPublicEventsPerformedByUser('rootasjey')
+        .take(3)
+        .toList()
+        .then((activities) {
+          setState(() {
+            userActivities = activities;
+          });
+        });
+
+    } catch (error) {
+      debugPrint(error.toString());
+    }
   }
 }
