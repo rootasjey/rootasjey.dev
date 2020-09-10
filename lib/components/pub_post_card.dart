@@ -1,4 +1,7 @@
+import 'package:cloud_functions/cloud_functions.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:jiffy/jiffy.dart';
 import 'package:rootasjey/rooter/route_names.dart';
 import 'package:rootasjey/rooter/router.dart';
 import 'package:rootasjey/types/post_headline.dart';
@@ -16,6 +19,13 @@ class PubPostCard extends StatefulWidget {
 
 class _PubPostCardState extends State<PubPostCard> {
   double elevation = 2.0;
+  String authorName = '';
+
+  @override
+  void initState() {
+    super.initState();
+    fetchAuthorName();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -97,10 +107,10 @@ class _PubPostCardState extends State<PubPostCard> {
               left: 8.0,
             ),
             child: Text(
-              postHeadline.createdAt.toString(),
+              '$authorName - ${Jiffy(postHeadline.createdAt).fromNow()}',
               style: TextStyle(
-                fontSize: 16.0,
-                fontWeight: FontWeight.w200,
+                fontSize: 15.0,
+                fontWeight: FontWeight.w300,
               ),
             ),
           ),
@@ -134,5 +144,26 @@ class _PubPostCardState extends State<PubPostCard> {
       context,
       PostRoute.replaceFirst(':postId', widget.postHeadline.id),
     );
+  }
+
+  void fetchAuthorName() async {
+    try {
+      final callable = CloudFunctions(
+        app: Firebase.app(),
+        region: 'europe-west3',
+      ).getHttpsCallable(
+        functionName: 'posts-fetchAuthorName',
+      );
+
+      final resp = await callable
+        .call({ 'authorId': widget.postHeadline.author });
+
+      setState(() {
+        authorName = resp.data['authorName'];
+      });
+
+    } catch (error) {
+      debugPrint(error.toString());
+    }
   }
 }
