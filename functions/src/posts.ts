@@ -68,6 +68,32 @@ export const fetch = functions
     return { post: postContent };
   });
 
+export const fetchAuthorName = functions
+  .region('europe-west3')
+  .https
+  .onCall(async (data, context) => {
+    const authorId = data.authorId;
+
+    if (!authorId) {
+      throw new functions.https.HttpsError('invalid-argument', 'The function must be called with ' +
+        'one (string) argument "authorId" which is the author to fetch.');
+    }
+
+    const author = await firestore
+      .collection('users')
+      .doc(authorId)
+      .get();
+
+    const authorData = author.data();
+
+    if (!authorData) {
+      throw new functions.https.HttpsError('data-loss', 'No data found for author ' +
+        `${authorId}. They may have been an issue while creating or deleting this author.`);
+    }
+
+    return { authorName: authorData.name };
+  });
+
 async function checkAccessControl({postId, jwt}: {postId: string, jwt: string}) {
   try {
     const postSnapshot = await firestore
