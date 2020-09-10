@@ -3,28 +3,33 @@ import 'package:flutter/foundation.dart';
 import 'package:rootasjey/types/urls.dart';
 
 class PostHeadline {
-  @required final String id;
-  @required final String title;
-  final String summary;
-  final String timeToRead;
+  final String author;
+  final List<String> coauthors;
   final DateTime createdAt;
-  final DateTime updatedAt;
+  @required final String id;
+  final String summary;
   final List<String> tags;
+  final String timeToRead;
+  @required final String title;
+  final DateTime updatedAt;
   Urls urls;
 
   PostHeadline({
-    this.id,
-    this.title,
-    this.summary,
-    this.timeToRead,
-    this.tags = const [],
+    this.author,
+    this.coauthors = const [],
     this.createdAt,
+    this.id,
+    this.summary,
+    this.tags = const [],
+    this.timeToRead,
+    this.title,
     this.updatedAt,
     this.urls,
   });
 
   factory PostHeadline.fromJSON(Map<String, dynamic> data) {
     final _tags = <String>[];
+    var _coauthors = <String>[];
 
     if (data['tags'] != null) {
       Map<String, dynamic> mapTags = data['tags'];
@@ -34,15 +39,24 @@ class PostHeadline {
       });
     }
 
+    if (data['coauthors'] != null) {
+      final dataCoauthors = data['coauthors'] as List<dynamic>;
+      dataCoauthors.forEach((value) {
+        _coauthors.add(value);
+      });
+    }
+
     return PostHeadline(
+      author      : data['author'],
+      coauthors   : _coauthors,
+      createdAt   : (data['createdAt'] as Timestamp).toDate(),
       id          : data['id'],
-      title       : data['title'],
-      timeToRead  : data['timeToRead'],
       summary     : data['summary'],
       tags        : _tags,
-      urls        : Urls.fromJSON(data['urls']),
-      createdAt   : (data['createdAt'] as Timestamp).toDate(),
+      timeToRead  : data['timeToRead'],
+      title       : data['title'],
       updatedAt   : (data['updatedAt'] as Timestamp).toDate(),
+      urls        : Urls.fromJSON(data['urls']),
     );
   }
 }
