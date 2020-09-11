@@ -55,6 +55,8 @@ class _ActivityRowState extends State<ActivityRow> {
     switch (type) {
       case 'PushEvent':
         return 'Push';
+      case 'WatchEvent':
+        return 'Watch';
       default:
         return type;
     }
@@ -64,6 +66,8 @@ class _ActivityRowState extends State<ActivityRow> {
     switch (type) {
       case 'PushEvent':
         return Icons.publish;
+      case 'WatchEvent':
+        return Icons.remove_red_eye;
       default:
         return Icons.code;
     }
