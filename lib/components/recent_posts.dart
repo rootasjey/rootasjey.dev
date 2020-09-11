@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:rootasjey/components/pub_post_card.dart';
 import 'package:rootasjey/rooter/route_names.dart';
 import 'package:rootasjey/rooter/router.dart';
+import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/types/post_headline.dart';
 
 class RecentPosts extends StatefulWidget {
@@ -31,25 +32,20 @@ class _RecentPostsState extends State<RecentPosts> {
         children: [
           Row(
             children: [
-              Padding(
-                padding: const EdgeInsets.only(
-                  right: 8.0,
-                ),
-                child: Opacity(
-                  opacity: 0.6,
-                  child: Icon(Icons.list),
-                ),
-              ),
-
-              FlatButton(
+              TextButton.icon(
                 onPressed: () =>
                   FluroRouter.router.navigateTo(context, PostsRoute),
-                child: Opacity(
+                icon: Icon(
+                  Icons.list,
+                  color: stateColors.foreground,
+                ),
+                label: Opacity(
                   opacity: 0.6,
                   child: Text(
                     'RECENT POSTS',
                     style: TextStyle(
                       fontSize: 20.0,
+                      color: stateColors.foreground,
                     ),
                   ),
                 ),

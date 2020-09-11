@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:github/github.dart';
 import 'package:rootasjey/components/activity_row.dart';
+import 'package:rootasjey/state/colors.dart';
 
 class RecentActivities extends StatefulWidget {
   @override
@@ -27,23 +28,28 @@ class _RecentActivitiesState extends State<RecentActivities> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.only(left: 12.0),
+            padding: const EdgeInsets.only(
+              bottom: 12.0,
+            ),
             child: Row(
               children: [
                 Opacity(
                   opacity: 0.6,
-                  child: Text(
-                    'RECENT ACTIVITY',
-                    style: TextStyle(
-                      fontSize: 20.0,
+                  child: TextButton.icon(
+                    onPressed: () {},
+                    icon: Icon(
+                      Icons.watch_later,
+                      color: stateColors.foreground,
+                    ),
+                    label: Text(
+                      'RECENT ACTIVITY',
+                      style: TextStyle(
+                        fontSize: 20.0,
+                        color: stateColors.foreground,
+                      ),
                     ),
                   ),
                 ),
-
-                IconButton(
-                  onPressed: () {},
-                  icon: Icon(Icons.arrow_forward),
-                )
               ],
             ),
           ),
