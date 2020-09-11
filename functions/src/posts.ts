@@ -110,7 +110,7 @@ async function checkAccessControl({postId, jwt}: {postId: string, jwt: string}) 
 
     if (!postData) {
       throw new functions.https.HttpsError('data-loss', 'The post data is null, which is weird.' +
-        ' Please contact us <3.');
+        ' Please contact us.');
     }
 
     if (!postData['published']) {

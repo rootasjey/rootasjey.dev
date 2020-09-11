@@ -353,7 +353,7 @@ class _NewPostState extends State<NewPost> {
       final callable = CloudFunctions(
         app: Firebase.app(),
         region: 'europe-west3',
-      ).getHttpsCallable(functionName: 'posts-save ');
+      ).getHttpsCallable(functionName: 'posts-save');
 
       final resp = await callable.call({
         'postId': postSnapshot.id,
@@ -361,7 +361,6 @@ class _NewPostState extends State<NewPost> {
         'content': postContent,
       });
 
-      print('success: ${resp.data['success']}');
       bool success = resp.data['success'];
 
       if (!success) {
