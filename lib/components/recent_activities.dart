@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:github/github.dart';
 import 'package:rootasjey/components/activity_row.dart';
 
-class RecentCommits extends StatefulWidget {
+class RecentActivities extends StatefulWidget {
   @override
-  _RecentCommitsState createState() => _RecentCommitsState();
+  _RecentActivitiesState createState() => _RecentActivitiesState();
 }
 
-class _RecentCommitsState extends State<RecentCommits> {
+class _RecentActivitiesState extends State<RecentActivities> {
   List<Event> userActivities = [];
 
   @override

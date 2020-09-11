@@ -5,7 +5,7 @@ import 'package:rootasjey/components/home_app_bar.dart';
 import 'package:rootasjey/components/home_nav_bar.dart';
 import 'package:rootasjey/components/home_presentation.dart';
 import 'package:rootasjey/components/newsletter.dart';
-import 'package:rootasjey/components/recent_commits.dart';
+import 'package:rootasjey/components/recent_activities.dart';
 import 'package:supercharged/supercharged.dart';
 
 class Home extends StatefulWidget {
@@ -36,7 +36,7 @@ class _HomeState extends State<Home> {
             delegate: SliverChildListDelegate([
               HomePresentation(),
               HomeNavBar(),
-              RecentCommits(),
+              RecentActivities(),
               RecentPosts(),
               Newsletter(),
               Footer(pageScrollController: scrollController,),
