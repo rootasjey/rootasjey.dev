@@ -165,6 +165,7 @@ class _ProjectsState extends State<Projects> {
     try {
       final snapshot = await FirebaseFirestore.instance
         .collection('projects')
+        .where('published', isEqualTo: true)
         .limit(limit)
         .get();
 
