@@ -158,6 +158,14 @@ class _PubPostCardState extends State<PubPostCard> {
       final resp = await callable
         .call({ 'authorId': widget.postHeadline.author });
 
+      // ?NOTE: Prevent setState if not mounted.
+      // This is due to each card having its own fetch & state,
+      // and Flutter having not displayed widget to dispose().
+      // So, lifecycle states are called in this order:
+      // iniState --> dispose --> (fetch) setState
+      // which is wrong cause the widget is no longer in the tree.
+      if (!mounted) { return; }
+
       setState(() {
         authorName = resp.data['authorName'];
       });
