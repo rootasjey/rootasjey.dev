@@ -58,30 +58,67 @@ class _EditPostState extends State<EditPost> {
       body: CustomScrollView(
         slivers: [
           HomeAppBar(
-            title: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (isSaving)
+            title: isSaving
+              ? Wrap(
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
                   Padding(
                     padding: const EdgeInsets.only(right: 16.0),
                     child: CircularProgressIndicator(strokeWidth: 2.0,),
                   ),
 
-                Opacity(
+                  Opacity(
+                    opacity: 0.6,
+                    child: Text(
+                      'Saving...',
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: stateColors.foreground,
+                      ),
+                    ),
+                  )
+                ],
+              )
+              : Opacity(
                   opacity: 0.6,
-                  child: Text(
-                    isSaving
-                      ? 'Saving...'
-                      : (postTitle.isEmpty ? 'Edit Post' : postTitle),
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      color: stateColors.foreground,
+                  child: TextButton(
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            contentPadding: const EdgeInsets.only(
+                              top: 40.0,
+                              left: 30.0,
+                              right: 30.0,
+                            ),
+                            content: SizedBox(
+                              width: 400.0,
+                              child: Text(
+                                postTitle,
+                              ),
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () => FluroRouter.router.pop(context),
+                                child: Text('CLOSE'),
+                              ),
+                            ],
+                          );
+                        }
+                      );
+                    },
+                    child: Text(
+                      (postTitle.isEmpty ? 'Edit Post' : postTitle),
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: stateColors.foreground,
+                      ),
                     ),
                   ),
                 ),
-              ],
-            ),
           ),
+
           body(),
         ],
       ),
@@ -498,7 +535,6 @@ class _EditPostState extends State<EditPost> {
         'content' : postContent,
       });
 
-      print('success: ${resp.data['success']}');
       bool success = resp.data['success'];
 
       if (!success) {
