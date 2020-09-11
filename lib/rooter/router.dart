@@ -14,6 +14,11 @@ class FluroRouter {
     );
 
     router.define(
+      ActivitiesRoute,
+      handler: WebRouteHandlers.activities,
+    );
+
+    router.define(
       ContactRoute,
       handler: WebRouteHandlers.contact,
     );

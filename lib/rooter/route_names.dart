@@ -1,5 +1,6 @@
 const String AboutRoute           = '/about';
 const String AccountRoute         = '/account';
+const String ActivitiesRoute      = '/activities';
 const String AddPostRoute         = '/addpost';
 const String ContactRoute         = '/contact';
 const String DashboardRoute       = '/dashboard';
