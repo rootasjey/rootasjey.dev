@@ -49,6 +49,7 @@ class _RecentCommitsState extends State<RecentCommits> {
           ),
 
           Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: userActivities.map((activity) {
               return ActivityRow(activity: activity);
             }).toList(),
