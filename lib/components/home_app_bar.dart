@@ -258,6 +258,19 @@ class _HomeAppBarState extends State<HomeAppBar> {
             ),
 
           const PopupMenuItem(
+            value: NewProjectRoute,
+            child: ListTile(
+              leading: Icon(Icons.add),
+              title: Text(
+                'New Project',
+                style: TextStyle(
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            )
+          ),
+
+          const PopupMenuItem(
             value: MyPostsRoute,
             child: ListTile(
               leading: Icon(Icons.article),

@@ -10,6 +10,7 @@ const String ForgotPasswordRoute  = '/forgotpassword';
 const String MeRoute              = '/me';
 const String MyPostsRoute         = '/user/myposts';
 const String NewPostRoute         = '/newpost';
+const String NewProjectRoute      = '/newproject';
 const String PostsRoute           = '/posts';
 const String PostRoute            = '/post/:postId';
 const String PricingRoute         = '/pricing';
