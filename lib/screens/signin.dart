@@ -107,13 +107,13 @@ class _SigninState extends State<Signin> {
             onPressed: () {
               FluroRouter.router.navigateTo(
                 context,
-                DashboardRoute,
+                RootRoute,
               );
             },
             child: Opacity(
               opacity: .6,
               child: Text(
-                'Dashboard',
+                'Home',
               ),
             ),
           ),
@@ -262,7 +262,7 @@ class _SigninState extends State<Signin> {
         if (userState.isUserConnected) {
           await FluroRouter.router.navigateTo(
             context,
-            DashboardRoute,
+            RootRoute,
             replace: true,
           );
         }
@@ -361,7 +361,7 @@ class _SigninState extends State<Signin> {
 
       if (userAuth != null) {
         userState.setUserConnected();
-        FluroRouter.router.navigateTo(context, DashboardRoute);
+        FluroRouter.router.navigateTo(context, RootRoute);
       }
 
     } catch (error) {
