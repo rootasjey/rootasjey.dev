@@ -22,7 +22,9 @@ class _MyPostsState extends State<MyPosts> {
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          HomeAppBar(),
+          HomeAppBar(
+            title: Text('Posts'),
+          ),
 
           SliverList(
             delegate: SliverChildListDelegate([
