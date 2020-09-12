@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/post_card.dart';
 import 'package:rootasjey/components/sliver_empty_view.dart';
@@ -7,12 +8,12 @@ import 'package:rootasjey/rooter/router.dart';
 import 'package:rootasjey/state/user_state.dart';
 import 'package:rootasjey/types/post.dart';
 
-class Published extends StatefulWidget {
+class DraftPosts extends StatefulWidget {
   @override
-  _PublishedState createState() => _PublishedState();
+  _DraftPostsState createState() => _DraftPostsState();
 }
 
-class _PublishedState extends State<Published> {
+class _DraftPostsState extends State<DraftPosts> {
   final postsList = List<Post>();
   final limit = 10;
 
@@ -99,21 +100,21 @@ class _PublishedState extends State<Published> {
               onSelected: (value) {
                 switch (value) {
                   case 'delete':
-                    showDeleteDialog(index);
+                    delete(index);
                     break;
-                  case 'unpublish':
-                    unpublish(index);
+                  case 'publish':
+                    publish(index);
                     break;
                   default:
                 }
               },
               itemBuilder: (context) => [
                 const PopupMenuItem(
-                  value: 'unpublish',
+                  value: 'publish',
                   child: ListTile(
-                    leading: Icon(Icons.public_off_sharp),
+                    leading: Icon(Icons.publish_outlined),
                     title: Text(
-                      'Unpublish',
+                      'Publish',
                       style: TextStyle(),
                     ),
                   ),
@@ -140,53 +141,11 @@ class _PublishedState extends State<Published> {
     );
   }
 
-  void showDeleteDialog(int index) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text(
-            "Are you sure?"
-          ),
-          content: SingleChildScrollView(
-            child: Opacity(
-              opacity: 0.6,
-              child: Text(
-                "This action is irreversible.",
-              ),
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => FluroRouter.router.pop(context),
-              child: Text(
-                'CANCEL',
-                textAlign: TextAlign.end,
-              ),
-            ),
-
-            TextButton(
-              onPressed: () {
-                FluroRouter.router.pop(context);
-                delete(index);
-              },
-              child: Text(
-                'DELETE',
-                textAlign: TextAlign.end,
-                style: TextStyle(
-                  color: Colors.pink,
-                ),
-              ),
-            ),
-          ],
-        );
-      }
-    );
-  }
-
   Future<bool> checkAuth() async {
     try {
-      final userAuth = await userState.userAuth;
+      // ?NOTE: setState() (called during build) issue
+      // ?if usinguser_state.
+      final userAuth = FirebaseAuth.instance.currentUser;
       if (userAuth != null) { return true; }
 
       FluroRouter.router.navigateTo(context, SigninRoute);
@@ -211,7 +170,7 @@ class _PublishedState extends State<Published> {
 
       final snapshot = await FirebaseFirestore.instance
         .collection('posts')
-        .where('published', isEqualTo: true)
+        .where('published', isEqualTo: false)
         .where('author', isEqualTo: uid)
         .limit(limit)
         .get();
@@ -266,7 +225,7 @@ class _PublishedState extends State<Published> {
     }
   }
 
-  void unpublish(int index) async {
+  void publish(int index) async {
     setState(() => isLoading = true);
 
     final removedPost = postsList.removeAt(index);
@@ -276,7 +235,7 @@ class _PublishedState extends State<Published> {
         .collection('posts')
         .doc(removedPost.id)
         .update({
-          'published': false,
+          'published': true,
         });
 
       setState(() => isLoading = false);

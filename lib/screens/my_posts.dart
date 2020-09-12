@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/home_app_bar.dart';
 import 'package:rootasjey/rooter/router.dart';
-import 'package:rootasjey/screens/drafts.dart';
-import 'package:rootasjey/screens/published.dart';
+import 'package:rootasjey/screens/draft_posts.dart';
+import 'package:rootasjey/screens/published_posts.dart';
 
 class MyPosts extends StatefulWidget {
   @override
@@ -13,8 +13,8 @@ class _MyPostsState extends State<MyPosts> {
   int bodyIndex = 0;
 
   final bodyChildren = [
-    Drafts(),
-    Published(),
+    DraftPosts(),
+    PublishedPosts(),
   ];
 
   @override

@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/post_card.dart';
 import 'package:rootasjey/components/sliver_empty_view.dart';
@@ -8,12 +7,12 @@ import 'package:rootasjey/rooter/router.dart';
 import 'package:rootasjey/state/user_state.dart';
 import 'package:rootasjey/types/post.dart';
 
-class Drafts extends StatefulWidget {
+class PublishedPosts extends StatefulWidget {
   @override
-  _DraftsState createState() => _DraftsState();
+  _PublishedPostsState createState() => _PublishedPostsState();
 }
 
-class _DraftsState extends State<Drafts> {
+class _PublishedPostsState extends State<PublishedPosts> {
   final postsList = List<Post>();
   final limit = 10;
 
@@ -100,21 +99,21 @@ class _DraftsState extends State<Drafts> {
               onSelected: (value) {
                 switch (value) {
                   case 'delete':
-                    delete(index);
+                    showDeleteDialog(index);
                     break;
-                  case 'publish':
-                    publish(index);
+                  case 'unpublish':
+                    unpublish(index);
                     break;
                   default:
                 }
               },
               itemBuilder: (context) => [
                 const PopupMenuItem(
-                  value: 'publish',
+                  value: 'unpublish',
                   child: ListTile(
-                    leading: Icon(Icons.publish_outlined),
+                    leading: Icon(Icons.public_off_sharp),
                     title: Text(
-                      'Publish',
+                      'Unpublish',
                       style: TextStyle(),
                     ),
                   ),
@@ -141,11 +140,53 @@ class _DraftsState extends State<Drafts> {
     );
   }
 
+  void showDeleteDialog(int index) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(
+            "Are you sure?"
+          ),
+          content: SingleChildScrollView(
+            child: Opacity(
+              opacity: 0.6,
+              child: Text(
+                "This action is irreversible.",
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => FluroRouter.router.pop(context),
+              child: Text(
+                'CANCEL',
+                textAlign: TextAlign.end,
+              ),
+            ),
+
+            TextButton(
+              onPressed: () {
+                FluroRouter.router.pop(context);
+                delete(index);
+              },
+              child: Text(
+                'DELETE',
+                textAlign: TextAlign.end,
+                style: TextStyle(
+                  color: Colors.pink,
+                ),
+              ),
+            ),
+          ],
+        );
+      }
+    );
+  }
+
   Future<bool> checkAuth() async {
     try {
-      // ?NOTE: setState() (called during build) issue
-      // ?if usinguser_state.
-      final userAuth = FirebaseAuth.instance.currentUser;
+      final userAuth = await userState.userAuth;
       if (userAuth != null) { return true; }
 
       FluroRouter.router.navigateTo(context, SigninRoute);
@@ -170,7 +211,7 @@ class _DraftsState extends State<Drafts> {
 
       final snapshot = await FirebaseFirestore.instance
         .collection('posts')
-        .where('published', isEqualTo: false)
+        .where('published', isEqualTo: true)
         .where('author', isEqualTo: uid)
         .limit(limit)
         .get();
@@ -225,7 +266,7 @@ class _DraftsState extends State<Drafts> {
     }
   }
 
-  void publish(int index) async {
+  void unpublish(int index) async {
     setState(() => isLoading = true);
 
     final removedPost = postsList.removeAt(index);
@@ -235,7 +276,7 @@ class _DraftsState extends State<Drafts> {
         .collection('posts')
         .doc(removedPost.id)
         .update({
-          'published': true,
+          'published': false,
         });
 
       setState(() => isLoading = false);
