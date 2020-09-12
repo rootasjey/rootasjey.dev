@@ -46,39 +46,6 @@ class _PublishedPostsState extends State<PublishedPosts> {
     return postsListView();
   }
 
-  Widget headerTitle() {
-    return Padding(
-      padding: const EdgeInsets.all(
-        90.0,
-      ),
-      child: Row(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16.0),
-            child: IconButton(
-              onPressed: () => FluroRouter.router.pop(context),
-              icon: Icon(Icons.arrow_back),
-            ),
-          ),
-
-          Text(
-            'Drafts',
-            style: TextStyle(
-              fontSize: 70.0,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-
-          if (isLoading)
-            Padding(
-              padding: const EdgeInsets.only(top: 12.0, left: 22.0),
-              child: CircularProgressIndicator(),
-            ),
-        ],
-      ),
-    );
-  }
-
   Widget postsListView() {
     return SliverList(
       delegate: SliverChildBuilderDelegate(
