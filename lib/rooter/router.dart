@@ -4,6 +4,7 @@ import 'package:rootasjey/rooter/web/route_handlers.dart';
 
 class FluroRouter {
   static Router router = Router();
+  static bool isReady = false;
 
   static void setupMobileRouter() {}
 
@@ -29,6 +30,11 @@ class FluroRouter {
     );
 
     router.define(
+      EditProjectRoute,
+      handler: WebRouteHandlers.editProject,
+    );
+
+    router.define(
       EnrollRoute,
       handler: WebRouteHandlers.enroll,
     );
@@ -41,6 +47,11 @@ class FluroRouter {
     router.define(
       MyPostsRoute,
       handler: WebRouteHandlers.myPosts,
+    );
+
+    router.define(
+      MyProjectsRoute,
+      handler: WebRouteHandlers.myProjects,
     );
 
     router.define(
@@ -98,5 +109,7 @@ class FluroRouter {
       UndefinedRoute,
       handler: WebRouteHandlers.undefined,
     );
+
+    isReady = true;
   }
 }

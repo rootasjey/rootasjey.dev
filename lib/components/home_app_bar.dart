@@ -284,6 +284,19 @@ class _HomeAppBarState extends State<HomeAppBar> {
           ),
 
           const PopupMenuItem(
+            value: MyProjectsRoute,
+            child: ListTile(
+              leading: Icon(Icons.apps_outlined),
+              title: Text(
+                'My Projects',
+                style: TextStyle(
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ),
+          ),
+
+          const PopupMenuItem(
             value: AccountRoute,
             child: ListTile(
               leading: Icon(Icons.settings),

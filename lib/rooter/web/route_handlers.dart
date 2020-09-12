@@ -4,10 +4,12 @@ import 'package:rootasjey/screens/about.dart';
 import 'package:rootasjey/screens/activities.dart';
 import 'package:rootasjey/screens/contact.dart';
 import 'package:rootasjey/screens/edit_post.dart';
+import 'package:rootasjey/screens/edit_project.dart';
 import 'package:rootasjey/screens/enroll.dart';
 import 'package:rootasjey/screens/home.dart';
 import 'package:rootasjey/screens/me.dart';
 import 'package:rootasjey/screens/my_posts.dart';
+import 'package:rootasjey/screens/my_projects.dart';
 import 'package:rootasjey/screens/new_post.dart';
 import 'package:rootasjey/screens/new_project.dart';
 import 'package:rootasjey/screens/post_page.dart';
@@ -40,6 +42,10 @@ class WebRouteHandlers {
     handlerFunc: (BuildContext context, Map<String, dynamic> params) =>
       EditPost(postId: params['postId'][0],));
 
+  static Handler editProject = Handler(
+    handlerFunc: (BuildContext context, Map<String, dynamic> params) =>
+      EditProject(projectId: params['projectId'][0],));
+
   static Handler enroll = Handler(
     handlerFunc: (BuildContext context, Map<String, dynamic> params) =>
       Enroll());
@@ -51,6 +57,10 @@ class WebRouteHandlers {
   static Handler myPosts = Handler(
     handlerFunc: (BuildContext context, Map<String, dynamic> params) =>
       MyPosts());
+
+  static Handler myProjects = Handler(
+    handlerFunc: (BuildContext context, Map<String, dynamic> params) =>
+      MyProjects());
 
   static Handler newPost = Handler(
     handlerFunc: (BuildContext context, Map<String, dynamic> params) =>

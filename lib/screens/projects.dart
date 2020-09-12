@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:rootasjey/components/project_card.dart';
 import 'package:rootasjey/components/sliver_empty_view.dart';
 import 'package:rootasjey/components/home_app_bar.dart';
 import 'package:rootasjey/rooter/router.dart';
@@ -99,59 +100,12 @@ class _ProjectsState extends State<Projects> {
       delegate: SliverChildBuilderDelegate(
         (context, index) {
           final project = projectsList.elementAt(index);
-          return projectCard(project);
+
+          return ProjectCard(
+            project: project,
+          );
         },
         childCount: projectsList.length,
-      ),
-    );
-  }
-
-  Widget projectCard(Project project) {
-    return SizedBox(
-      width: 300.0,
-      height: 300.0,
-      child: Card(
-        child: InkWell(
-          onTap: () {},
-          child: Padding(
-            padding: const EdgeInsets.all(40.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  project.title,
-                  style: TextStyle(
-                    fontSize: 30.0,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-
-                Padding(
-                  padding: const EdgeInsets.only(top: 16.0),
-                  child: Opacity(
-                    opacity: 0.6,
-                    child: Text(
-                      project.summary,
-                      style: TextStyle(
-                        fontSize: 18.0,
-                      ),
-                    ),
-                  ),
-                ),
-
-                // Wrap(
-                //   children: project.platforms.map((platform) {
-                //     return Chip(
-                //       label: Text(
-                //         platform,
-                //       ),
-                //     );
-                //   }).toList(),
-                // ),
-              ],
-            ),
-          ),
-        ),
       ),
     );
   }
