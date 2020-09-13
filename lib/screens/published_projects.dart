@@ -49,7 +49,7 @@ class _PublishedProjectsState extends State<PublishedProjects> {
   Widget projectsGrid() {
     return SliverGrid(
       gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-        maxCrossAxisExtent: 400.0,
+        maxCrossAxisExtent: 300.0,
       ),
       delegate: SliverChildBuilderDelegate(
         (context, index) {
@@ -57,19 +57,19 @@ class _PublishedProjectsState extends State<PublishedProjects> {
 
           return ProjectCard(
             onTap: () async {
-              await FluroRouter.router.navigateTo(
+              FluroRouter.router.navigateTo(
                 context,
-                EditPostRoute.replaceFirst(':postId', project.id),
+                ProjectRoute.replaceFirst(':projectId', project.id),
               );
-
-              fetch();
             },
             popupMenuButton: PopupMenuButton<String>(
-              // icon: Icon(Icons.more_vert),
               onSelected: (value) {
                 switch (value) {
                   case 'delete':
                     showDeleteDialog(index);
+                    break;
+                  case 'edit':
+                    goToEditPage(project);
                     break;
                   case 'unpublish':
                     unpublish(index);
@@ -79,12 +79,21 @@ class _PublishedProjectsState extends State<PublishedProjects> {
               },
               itemBuilder: (context) => [
                 const PopupMenuItem(
+                  value: 'edit',
+                  child: ListTile(
+                    leading: Icon(Icons.edit),
+                    title: Text(
+                      'Edit',
+                    ),
+                  ),
+                ),
+
+                const PopupMenuItem(
                   value: 'unpublish',
                   child: ListTile(
                     leading: Icon(Icons.public_off_sharp),
                     title: Text(
                       'Unpublish',
-                      style: TextStyle(),
                     ),
                   ),
                 ),
@@ -95,7 +104,6 @@ class _PublishedProjectsState extends State<PublishedProjects> {
                     leading: Icon(Icons.delete),
                     title: Text(
                       'Delete',
-                      style: TextStyle(),
                     ),
                   ),
                 ),
@@ -253,5 +261,14 @@ class _PublishedProjectsState extends State<PublishedProjects> {
         projectsList.insert(index, removedPost);
       });
     }
+  }
+
+  void goToEditPage(Project project) async {
+    await FluroRouter.router.navigateTo(
+      context,
+      EditProjectRoute.replaceFirst(':projectId', project.id),
+    );
+
+    fetch();
   }
 }
