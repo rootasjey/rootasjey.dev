@@ -80,6 +80,11 @@ class FluroRouter {
     );
 
     router.define(
+      ProjectRoute,
+      handler: WebRouteHandlers.project,
+    );
+
+    router.define(
       ProjectsRoute,
       handler: WebRouteHandlers.projects,
     );

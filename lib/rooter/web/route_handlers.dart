@@ -15,6 +15,7 @@ import 'package:rootasjey/screens/new_project.dart';
 import 'package:rootasjey/screens/post_page.dart';
 import 'package:rootasjey/screens/posts.dart';
 import 'package:rootasjey/screens/pricing.dart';
+import 'package:rootasjey/screens/project_page.dart';
 import 'package:rootasjey/screens/projects.dart';
 import 'package:rootasjey/screens/search.dart';
 import 'package:rootasjey/screens/signin.dart';
@@ -85,6 +86,10 @@ class WebRouteHandlers {
   static Handler projects = Handler(
     handlerFunc: (BuildContext context, Map<String, dynamic> params) =>
       Projects());
+
+  static Handler project = Handler(
+    handlerFunc: (BuildContext context, Map<String, dynamic> params) =>
+      ProjectPage(projectId: params['projectId'][0],));
 
   static Handler search = Handler(
     handlerFunc: (BuildContext context, Map<String, dynamic> params) =>

@@ -17,6 +17,7 @@ const String PostsRoute           = '/posts';
 const String PostRoute            = '/post/:postId';
 const String PricingRoute         = '/pricing';
 const String PrivacyRoute         = '/privacy';
+const String ProjectRoute         = '/project/:projectId';
 const String ProjectsRoute        = '/projects';
 const String RootRoute            = '/';
 const String SearchRoute          = '/search';
