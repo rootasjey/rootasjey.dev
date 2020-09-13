@@ -11,6 +11,7 @@ import 'package:rootasjey/rooter/router.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/state/user_state.dart';
 import 'package:rootasjey/utils/snack.dart';
+import 'package:rootasjey/utils/texts.dart';
 import 'package:supercharged/supercharged.dart';
 
 class EditProject extends StatefulWidget {
@@ -42,11 +43,34 @@ class _EditProjectState extends State<EditProject> {
   final summaryFocusNode  = FocusNode();
   final summaryController = TextEditingController();
 
-  String projectTitle   = '';
-  String projectContent = '';
-  String projectSummary = '';
-  String lang           = 'en';
-  String jwt            = '';
+  final newPlatformController = TextEditingController();
+  final newTagController = TextEditingController();
+
+  var platforms = {
+    'android'   : false,
+    'androidtv' : false,
+    'ios'       : false,
+    'ipados'    : false,
+    'linux'     : false,
+    'macos'     : false,
+    'web'       : false,
+    'windows'   : false,
+  };
+
+  var tags = Map<String, bool>();
+
+  static const PUBLISHED = 'published';
+  static const DRAFT = 'draft';
+
+  String publicationStatus = DRAFT;
+
+  String title              = '';
+  String content            = '';
+  String summary            = '';
+  String platformInputValue = '';
+  String tagInputValue      = '';
+  String lang               = 'en';
+  String jwt                = '';
 
   Timer saveTitleTimer;
   Timer saveSummaryTimer;
@@ -101,7 +125,7 @@ class _EditProjectState extends State<EditProject> {
                             content: SizedBox(
                               width: 400.0,
                               child: Text(
-                                projectTitle,
+                                title,
                               ),
                             ),
                             actions: [
@@ -115,9 +139,9 @@ class _EditProjectState extends State<EditProject> {
                       );
                     },
                     child: Text(
-                      projectTitle.isEmpty
+                      title.isEmpty
                         ? 'Edit Project'
-                        : projectTitle,
+                        : title,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         color: stateColors.foreground,
@@ -155,6 +179,8 @@ class _EditProjectState extends State<EditProject> {
               titleInput(),
               summaryInput(),
               contentInput(),
+              platformsSelection(),
+              tagsSelection(),
             ],
           ),
         ),
@@ -279,7 +305,7 @@ class _EditProjectState extends State<EditProject> {
                 keyboardType: TextInputType.multiline,
                 textCapitalization: TextCapitalization.sentences,
                 onChanged: (newValue) {
-                  projectTitle = newValue;
+                  title = newValue;
 
                   if (saveTitleTimer != null) {
                     saveTitleTimer.cancel();
@@ -333,7 +359,7 @@ class _EditProjectState extends State<EditProject> {
           color: stateColors.foreground.withOpacity(0.4),
         ),
         onChanged: (newValue) {
-          projectSummary = newValue;
+          summary = newValue;
 
           if (saveTitleTimer != null) {
             saveSummaryTimer.cancel();
@@ -362,7 +388,7 @@ class _EditProjectState extends State<EditProject> {
         keyboardType: TextInputType.multiline,
         textCapitalization: TextCapitalization.sentences,
         onChanged: (newValue) {
-          projectContent = newValue;
+          content = newValue;
 
           if (saveContentTimer != null) {
             saveContentTimer.cancel();
@@ -379,7 +405,7 @@ class _EditProjectState extends State<EditProject> {
         ),
         decoration: InputDecoration(
           icon: Icon(Icons.edit),
-          hintText: "Once upon a time...",
+          hintText: "Project's story...",
           border: OutlineInputBorder(
             borderSide: BorderSide.none
           ),
@@ -389,8 +415,11 @@ class _EditProjectState extends State<EditProject> {
   }
 
   Widget actionsInput() {
-    return SizedBox(
-      height: 100.0,
+    return Container(
+      height: 40.0,
+      padding: const EdgeInsets.only(
+        left: 120.0,
+      ),
       child: ListView(
         // spacing: 20.0,
         // alignment: WrapAlignment.start,
@@ -398,10 +427,12 @@ class _EditProjectState extends State<EditProject> {
         children: <Widget>[
           langSelect(),
 
+          Padding(padding: const EdgeInsets.only(right: 20.0)),
+
           FlatButton.icon(
             focusNode: clearFocusNode,
             onPressed: () {
-              projectContent = '';
+              content = '';
               contentController.clear();
               projectFocusNode.requestFocus();
             },
@@ -413,6 +444,8 @@ class _EditProjectState extends State<EditProject> {
               ),
             )
           ),
+
+          Padding(padding: const EdgeInsets.only(right: 20.0)),
 
           FlatButton.icon(
             focusNode: projectFocusNode,
@@ -429,7 +462,9 @@ class _EditProjectState extends State<EditProject> {
             )
           ),
 
-          // publishedDropDown(),
+          Padding(padding: const EdgeInsets.only(right: 20.0)),
+
+          publishedDropDown(),
         ],
       ),
     );
@@ -461,14 +496,237 @@ class _EditProjectState extends State<EditProject> {
 
   Widget publishedDropDown() {
     return DropdownButton(
-      value: 'draft',
-      items: ['draft', 'published'].map((value) {
+      value: publicationStatus,
+      underline: Container(),
+      onChanged: (value) => updatePubStatus(value),
+      items: [DRAFT, PUBLISHED].map((value) {
         return DropdownMenuItem(
           value: value,
-          child: Text(value)
+          child: Text(
+            value.toUpperCase(),
+          )
         );
       }).toList(),
-      onChanged: (value) {},
+    );
+  }
+
+  Widget platformsSelection() {
+    return Container(
+      width: 600.0,
+      padding: const EdgeInsets.only(
+        top: 100.0,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          platformsSelectionHeader(),
+          platformsSelectionContent(),
+          platformsSelectionInput(),
+        ],
+      ),
+    );
+  }
+
+  Widget platformsSelectionHeader() {
+    return Padding(
+      padding: const EdgeInsets.only(
+        bottom: 20.0,
+      ),
+      child: Opacity(
+        opacity: 0.6,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(right: 16.0),
+              child: Icon(Icons.device_unknown),
+            ),
+
+            Text(
+              'PLATFORMS',
+              style: TextStyle(
+                fontSize: 20.0,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget platformsSelectionContent() {
+    return Wrap(
+      spacing: 10.0,
+      runSpacing: 10.0,
+      children: platforms.entries.map((entry) {
+        return ChoiceChip(
+          label: Text(
+            getPlatformName(entry.key),
+            style: TextStyle(
+              color: entry.value
+                ? Colors.white
+                : TextStyle().color,
+            ),
+          ),
+          selectedColor: stateColors.primary,
+          selected: entry.value,
+          onSelected: (isSelected) {
+            platforms[entry.key] = isSelected;
+            savePlatforms();
+          },
+        );
+      }).toList()
+    );
+  }
+
+  Widget platformsSelectionInput() {
+    return Padding(
+      padding: const EdgeInsets.only(
+        top: 20.0,
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(
+            height: 50.0,
+            width: 250.0,
+            child: TextFormField(
+              controller: newPlatformController,
+              decoration: InputDecoration(
+                labelText: 'New platform...',
+                border: OutlineInputBorder(),
+              ),
+              onChanged: (value) {
+                platformInputValue = value.toLowerCase();
+              },
+            ),
+          ),
+
+          Padding(
+            padding: const EdgeInsets.only(left: 8.0),
+            child: FlatButton.icon(
+              onPressed: () {
+                platforms[platformInputValue] = true;
+                newPlatformController.clear();
+                savePlatforms();
+              },
+              icon: Icon(Icons.add),
+              label: Text('Add platform'),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget tagsSelection() {
+    return Container(
+      width: 600.0,
+      padding: const EdgeInsets.only(
+        top: 100.0,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          tagsSelectionHeader(),
+          tagsSelectionContent(),
+          tagsSelectionInput(),
+        ],
+      ),
+    );
+  }
+
+  Widget tagsSelectionHeader() {
+    return Padding(
+      padding: const EdgeInsets.only(
+        bottom: 20.0,
+      ),
+      child: Opacity(
+        opacity: 0.6,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(right: 16.0),
+              child: Icon(Icons.tag),
+            ),
+
+            Text(
+              'TAGS',
+              style: TextStyle(
+                fontSize: 20.0,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget tagsSelectionContent() {
+    return Wrap(
+      spacing: 10.0,
+      runSpacing: 10.0,
+      children: tags.entries.map((entry) {
+        return ChoiceChip(
+          label: Text(
+            '${entry.key.substring(0, 1).toUpperCase()}${entry.key.substring(1)}',
+            style: TextStyle(
+              color: entry.value
+                ? Colors.white
+                : TextStyle().color,
+            ),
+          ),
+          selectedColor: stateColors.primary,
+          selected: entry.value,
+          onSelected: (isSelected) {
+            tags[entry.key] = isSelected;
+            saveTags();
+          },
+        );
+      }).toList()
+    );
+  }
+
+  Widget tagsSelectionInput() {
+    return Padding(
+      padding: const EdgeInsets.only(
+        top: 20.0,
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(
+            height: 50.0,
+            width: 250.0,
+            child: TextFormField(
+              controller: newTagController,
+              decoration: InputDecoration(
+                labelText: 'New tag...',
+                border: OutlineInputBorder(),
+              ),
+              onChanged: (value) {
+                tagInputValue = value.toLowerCase();
+              },
+            ),
+          ),
+
+          Padding(
+            padding: const EdgeInsets.only(left: 8.0),
+            child: FlatButton.icon(
+              onPressed: () {
+                tags[tagInputValue] = true;
+                newTagController.clear();
+                saveTags();
+              },
+              icon: Icon(Icons.add),
+              label: Text('Add tag'),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -498,12 +756,28 @@ class _EditProjectState extends State<EditProject> {
         .currentUser
         .getIdToken();
 
-      setState(() {
-        projectTitle = projectSnapshot.data()['title'];
-        projectSummary = projectSnapshot.data()['summary'];
+      final data = projectSnapshot.data();
+      final dataPlatforms = data['platforms'] as Map<String, dynamic>;
+      final dataTags = data['tags'] as Map<String, dynamic>;
 
-        titleController.text = projectTitle;
-        summaryController.text = projectSummary;
+      setState(() {
+        publicationStatus = data['published']
+          ? PUBLISHED
+          : DRAFT;
+
+        title = data['title'];
+        summary = data['summary'];
+
+        dataPlatforms.forEach((key, value) {
+          platforms[key] = value;
+        });
+
+        dataTags.forEach((key, value) {
+          tags[key] = value;
+        });
+
+        titleController.text = title;
+        summaryController.text = summary;
       });
 
     } catch(error) {
@@ -537,8 +811,8 @@ class _EditProjectState extends State<EditProject> {
       });
 
       setState(() {
-        projectContent = response.data['project'];
-        contentController.text = projectContent;
+        content = response.data['project'];
+        contentController.text = content;
       });
 
     } catch(error) {
@@ -579,7 +853,7 @@ class _EditProjectState extends State<EditProject> {
     try {
       await projectSnapshot
         .reference
-        .update({'title': projectTitle});
+        .update({'title': title});
 
       setState(() => isSaving = false);
 
@@ -595,7 +869,39 @@ class _EditProjectState extends State<EditProject> {
     try {
       await projectSnapshot
         .reference
-        .update({'summary': projectSummary});
+        .update({'summary': summary});
+
+      setState(() => isSaving = false);
+
+    } catch (error) {
+      debugPrint(error.toString());
+      setState(() => isSaving = false);
+    }
+  }
+
+  void saveTags() async {
+    setState(() => isSaving = true);
+
+    try {
+      await projectSnapshot
+        .reference
+        .update({'tags': tags});
+
+      setState(() => isSaving = false);
+
+    } catch (error) {
+      debugPrint(error.toString());
+      setState(() => isSaving = false);
+    }
+  }
+
+  void savePlatforms() async {
+    setState(() => isSaving = true);
+
+    try {
+      await projectSnapshot
+        .reference
+        .update({'platforms': platforms});
 
       setState(() => isSaving = false);
 
@@ -617,7 +923,7 @@ class _EditProjectState extends State<EditProject> {
       final resp = await callable.call({
         'projectId' : projectSnapshot.id,
         'jwt'       : jwt,
-        'content'   : projectContent,
+        'content'   : content,
       });
 
       bool success = resp.data['success'];
@@ -631,6 +937,30 @@ class _EditProjectState extends State<EditProject> {
     } catch (error) {
       debugPrint(error.toString());
       setState(() => isSaving = false);
+    }
+  }
+
+  void updatePubStatus(String status) async {
+    final prevValue = publicationStatus;
+
+    setState(() {
+      publicationStatus = status;
+      isSaving = true;
+    });
+
+    try {
+      await projectSnapshot
+        .reference
+        .update({'published': status == PUBLISHED});
+
+      setState(() => isSaving = false);
+
+    } catch (error) {
+      debugPrint(error.toString());
+      setState(() {
+        publicationStatus = prevValue;
+        isSaving = false;
+      });
     }
   }
 }
