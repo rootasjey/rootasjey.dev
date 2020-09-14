@@ -3,6 +3,7 @@ import 'package:rootasjey/components/home_app_bar.dart';
 import 'package:rootasjey/rooter/router.dart';
 import 'package:rootasjey/screens/draft_projects.dart';
 import 'package:rootasjey/screens/published_projects.dart';
+import 'package:rootasjey/state/colors.dart';
 
 class MyProjects extends StatefulWidget {
   @override
@@ -23,7 +24,16 @@ class _MyProjectsState extends State<MyProjects> {
       body: CustomScrollView(
         slivers: [
           HomeAppBar(
-            title: Text('Projects'),
+            title: Opacity(
+              opacity: 0.6,
+              child: Text(
+                'Projects',
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: stateColors.foreground,
+                ),
+              ),
+            ),
           ),
 
           SliverList(
