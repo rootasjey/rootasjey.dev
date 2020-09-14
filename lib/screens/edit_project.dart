@@ -26,9 +26,10 @@ class EditProject extends StatefulWidget {
 }
 
 class _EditProjectState extends State<EditProject> {
-  bool isLoading = false;
-  bool isSaving = false;
-  bool hasError = false;
+  bool isLoading      = false;
+  bool isSaving       = false;
+  bool hasError       = false;
+  bool isMetaVisible  = false;
 
   DocumentSnapshot projectSnapshot;
 
@@ -43,10 +44,11 @@ class _EditProjectState extends State<EditProject> {
   final summaryFocusNode  = FocusNode();
   final summaryController = TextEditingController();
 
-  final newPlatformController = TextEditingController();
-  final newTagController = TextEditingController();
+  final platformController = TextEditingController();
+  final tagController = TextEditingController();
+  final pLangController = TextEditingController();
 
-  var platforms = {
+  final platforms = {
     'android'   : false,
     'androidtv' : false,
     'ios'       : false,
@@ -57,7 +59,9 @@ class _EditProjectState extends State<EditProject> {
     'windows'   : false,
   };
 
-  var tags = Map<String, bool>();
+  final programmingLanguages = Map<String, bool>();
+  final tags = Map<String, bool>();
+  final urls = Map<String, String>();
 
   static const PUBLISHED = 'published';
   static const DRAFT = 'draft';
@@ -68,9 +72,12 @@ class _EditProjectState extends State<EditProject> {
   String content            = '';
   String summary            = '';
   String platformInputValue = '';
+  String pLangInputValue    = '';
   String tagInputValue      = '';
   String lang               = 'en';
   String jwt                = '';
+  String urlName            = '';
+  String urlValue           = '';
 
   Timer saveTitleTimer;
   Timer saveSummaryTimer;
@@ -87,70 +94,7 @@ class _EditProjectState extends State<EditProject> {
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          HomeAppBar(
-            title: isSaving
-              ? Wrap(
-                crossAxisAlignment: WrapCrossAlignment.center,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(right: 16.0),
-                    child: CircularProgressIndicator(strokeWidth: 2.0,),
-                  ),
-
-                  Opacity(
-                    opacity: 0.6,
-                    child: Text(
-                      'Saving...',
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: stateColors.foreground,
-                      ),
-                    ),
-                  )
-                ],
-              )
-              : Opacity(
-                  opacity: 0.6,
-                  child: TextButton(
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                            contentPadding: const EdgeInsets.only(
-                              top: 40.0,
-                              left: 30.0,
-                              right: 30.0,
-                            ),
-                            content: SizedBox(
-                              width: 400.0,
-                              child: Text(
-                                title,
-                              ),
-                            ),
-                            actions: [
-                              TextButton(
-                                onPressed: () => FluroRouter.router.pop(context),
-                                child: Text('CLOSE'),
-                              ),
-                            ],
-                          );
-                        }
-                      );
-                    },
-                    child: Text(
-                      title.isEmpty
-                        ? 'Edit Project'
-                        : title,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: stateColors.foreground,
-                      ),
-                    ),
-                  ),
-                ),
-          ),
-
+          homeAppBar(),
           body(),
         ],
       ),
@@ -175,16 +119,49 @@ class _EditProjectState extends State<EditProject> {
           ),
           child: Column(
             children: [
-              actionsInput(),
+              actionsheader(),
               titleInput(),
               summaryInput(),
               contentInput(),
-              platformsSelection(),
-              tagsSelection(),
+              buttonToggleMetaView(),
+
+              if (isMetaVisible)
+                Column(
+                  children: [
+                    pLangsSelection(),
+                    platformsSelection(),
+                    tagsSelection(),
+                    urlsSections(),
+                  ],
+                ),
             ],
           ),
         ),
       ]),
+    );
+  }
+
+  Widget buttonToggleMetaView() {
+    return Container(
+      width: 600.0,
+      padding: const EdgeInsets.only(
+        top: 80.0,
+      ),
+      child: Row(
+        children: [
+          RaisedButton.icon(
+            onPressed: () => setState(() => isMetaVisible = !isMetaVisible),
+            icon: isMetaVisible
+              ? Icon(Icons.visibility_off)
+              : Icon(Icons.visibility),
+            label: Text(
+              isMetaVisible
+               ? 'Hide meta data'
+               : 'Show meta data',
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -247,6 +224,51 @@ class _EditProjectState extends State<EditProject> {
     );
   }
 
+  Widget homeAppBar() {
+    if (isSaving) {
+      return HomeAppBar(
+        title: Wrap(
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(right: 16.0),
+              child: CircularProgressIndicator(strokeWidth: 2.0,),
+            ),
+
+            Opacity(
+              opacity: 0.6,
+              child: Text(
+                'Saving...',
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: stateColors.foreground,
+                ),
+              ),
+            )
+          ],
+        ),
+      );
+    }
+
+    return HomeAppBar(
+      title: Opacity(
+        opacity: 0.6,
+        child: TextButton(
+          onPressed: showAppBarDialog,
+          child: Text(
+            title.isEmpty
+              ? 'Edit Project'
+              : title,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              color: stateColors.foreground,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget loadingView() {
     return SliverList(
       delegate: SliverChildListDelegate.fixed([
@@ -279,9 +301,9 @@ class _EditProjectState extends State<EditProject> {
   }
 
   Widget titleInput() {
-    return Padding(
+    return Container(
+      width: 720.0,
       padding: const EdgeInsets.only(
-        left: 110.0,
         top: 60.0,
       ),
       child: Row(
@@ -296,7 +318,7 @@ class _EditProjectState extends State<EditProject> {
 
           Expanded(
             child: Container(
-              width: 700.0,
+              width: 670.0,
               child: TextField(
                 maxLines: 1,
                 autofocus: true,
@@ -414,58 +436,56 @@ class _EditProjectState extends State<EditProject> {
     );
   }
 
-  Widget actionsInput() {
-    return Container(
-      height: 40.0,
-      padding: const EdgeInsets.only(
-        left: 120.0,
-      ),
-      child: ListView(
-        // spacing: 20.0,
-        // alignment: WrapAlignment.start,
-        scrollDirection: Axis.horizontal,
-        children: <Widget>[
-          langSelect(),
+  Widget actionsheader() {
+    return Center(
+      child: Container(
+        height: 40.0,
+        child: ListView(
+          shrinkWrap: true,
+          scrollDirection: Axis.horizontal,
+          children: <Widget>[
+            langSelect(),
 
-          Padding(padding: const EdgeInsets.only(right: 20.0)),
+            Padding(padding: const EdgeInsets.only(right: 20.0)),
 
-          FlatButton.icon(
-            focusNode: clearFocusNode,
-            onPressed: () {
-              content = '';
-              contentController.clear();
-              projectFocusNode.requestFocus();
-            },
-            icon: Opacity(opacity: 0.6, child: Icon(Icons.clear)),
-            label: Opacity(
-              opacity: 0.6,
-              child: Text(
-                'Clear content',
-              ),
-            )
-          ),
+            FlatButton.icon(
+              focusNode: clearFocusNode,
+              onPressed: () {
+                content = '';
+                contentController.clear();
+                projectFocusNode.requestFocus();
+              },
+              icon: Opacity(opacity: 0.6, child: Icon(Icons.clear)),
+              label: Opacity(
+                opacity: 0.6,
+                child: Text(
+                  'Clear content',
+                ),
+              )
+            ),
 
-          Padding(padding: const EdgeInsets.only(right: 20.0)),
+            Padding(padding: const EdgeInsets.only(right: 20.0)),
 
-          FlatButton.icon(
-            focusNode: projectFocusNode,
-            onPressed: () {
-              saveTitle();
-              saveContent();
-            },
-            icon: Opacity(opacity: 0.6, child: Icon(Icons.save)),
-            label: Opacity(
-              opacity: 0.6,
-              child: Text(
-                'Save draft',
-              ),
-            )
-          ),
+            FlatButton.icon(
+              focusNode: projectFocusNode,
+              onPressed: () {
+                saveTitle();
+                saveContent();
+              },
+              icon: Opacity(opacity: 0.6, child: Icon(Icons.save)),
+              label: Opacity(
+                opacity: 0.6,
+                child: Text(
+                  'Save draft',
+                ),
+              )
+            ),
 
-          Padding(padding: const EdgeInsets.only(right: 20.0)),
+            Padding(padding: const EdgeInsets.only(right: 20.0)),
 
-          publishedDropDown(),
-        ],
+            publishedDropDown(),
+          ],
+        ),
       ),
     );
   }
@@ -560,17 +580,25 @@ class _EditProjectState extends State<EditProject> {
       spacing: 10.0,
       runSpacing: 10.0,
       children: platforms.entries.map((entry) {
-        return ChoiceChip(
+        return InputChip(
           label: Text(
             getPlatformName(entry.key),
-            style: TextStyle(
-              color: entry.value
-                ? Colors.white
-                : TextStyle().color,
-            ),
+          ),
+          labelStyle: TextStyle(
+            color: entry.value
+              ? Colors.white
+              : stateColors.foreground,
           ),
           selectedColor: stateColors.primary,
           selected: entry.value,
+          checkmarkColor: Colors.white,
+          deleteIconColor: entry.value
+            ? Colors.white
+            : stateColors.foreground,
+          onDeleted: () {
+            platforms.remove(entry.key);
+            savePlatforms();
+          },
           onSelected: (isSelected) {
             platforms[entry.key] = isSelected;
             savePlatforms();
@@ -592,7 +620,7 @@ class _EditProjectState extends State<EditProject> {
             height: 50.0,
             width: 250.0,
             child: TextFormField(
-              controller: newPlatformController,
+              controller: platformController,
               decoration: InputDecoration(
                 labelText: 'New platform...',
                 border: OutlineInputBorder(),
@@ -608,11 +636,114 @@ class _EditProjectState extends State<EditProject> {
             child: FlatButton.icon(
               onPressed: () {
                 platforms[platformInputValue] = true;
-                newPlatformController.clear();
+                platformController.clear();
                 savePlatforms();
               },
               icon: Icon(Icons.add),
               label: Text('Add platform'),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget pLangsSelection() {
+    return Container(
+      width: 600.0,
+      padding: const EdgeInsets.only(
+        top: 100.0,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          pLangsSelectionHeader(),
+          pLangsSelectionContent(),
+          pLangsSelectionInput(),
+        ],
+      ),
+    );
+  }
+
+  Widget pLangsSelectionHeader() {
+    return Padding(
+      padding: const EdgeInsets.only(
+        bottom: 20.0,
+      ),
+      child: Opacity(
+        opacity: 0.6,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(right: 16.0),
+              child: Icon(Icons.code),
+            ),
+
+            Text(
+              'PROGRAMMING LANGUAGES',
+              style: TextStyle(
+                fontSize: 20.0,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget pLangsSelectionContent() {
+    return Wrap(
+      spacing: 10.0,
+      runSpacing: 10.0,
+      children: programmingLanguages.entries.map((entry) {
+        return InputChip(
+          label: Text(
+            entry.key,
+          ),
+          onDeleted: () {
+            programmingLanguages.remove(entry.key);
+            savePLanguages();
+          },
+        );
+      }).toList()
+    );
+  }
+
+  Widget pLangsSelectionInput() {
+    return Padding(
+      padding: const EdgeInsets.only(
+        top: 20.0,
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(
+            height: 50.0,
+            width: 300.0,
+            child: TextFormField(
+              controller: pLangController,
+              decoration: InputDecoration(
+                labelText: 'New programmin language...',
+                border: OutlineInputBorder(),
+              ),
+              onChanged: (value) {
+                pLangInputValue = value;
+              },
+            ),
+          ),
+
+          Padding(
+            padding: const EdgeInsets.only(left: 8.0),
+            child: FlatButton.icon(
+              onPressed: () {
+                programmingLanguages[pLangInputValue] = true;
+                pLangController.clear();
+                savePLanguages();
+              },
+              icon: Icon(Icons.add),
+              label: Text('Add'),
             ),
           ),
         ],
@@ -670,17 +801,25 @@ class _EditProjectState extends State<EditProject> {
       spacing: 10.0,
       runSpacing: 10.0,
       children: tags.entries.map((entry) {
-        return ChoiceChip(
+        return InputChip(
           label: Text(
             '${entry.key.substring(0, 1).toUpperCase()}${entry.key.substring(1)}',
             style: TextStyle(
               color: entry.value
                 ? Colors.white
-                : TextStyle().color,
+                : stateColors.foreground,
             ),
           ),
           selectedColor: stateColors.primary,
           selected: entry.value,
+          checkmarkColor: Colors.white,
+          deleteIconColor: entry.value
+            ? Colors.white
+            : stateColors.foreground,
+          onDeleted: () {
+            tags.remove(entry.key);
+            saveTags();
+          },
           onSelected: (isSelected) {
             tags[entry.key] = isSelected;
             saveTags();
@@ -702,7 +841,7 @@ class _EditProjectState extends State<EditProject> {
             height: 50.0,
             width: 250.0,
             child: TextFormField(
-              controller: newTagController,
+              controller: tagController,
               decoration: InputDecoration(
                 labelText: 'New tag...',
                 border: OutlineInputBorder(),
@@ -718,7 +857,7 @@ class _EditProjectState extends State<EditProject> {
             child: FlatButton.icon(
               onPressed: () {
                 tags[tagInputValue] = true;
-                newTagController.clear();
+                tagController.clear();
                 saveTags();
               },
               icon: Icon(Icons.add),
@@ -726,6 +865,87 @@ class _EditProjectState extends State<EditProject> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget urlsSections() {
+    return Container(
+      width: 600.0,
+      padding: const EdgeInsets.only(
+        top: 100.0,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(
+              bottom: 20.0,
+            ),
+            child: Opacity(
+              opacity: 0.6,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(right: 16.0),
+                    child: Icon(Icons.link),
+                  ),
+
+                  Text(
+                    'EXTERNAL URLS',
+                    style: TextStyle(
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          Wrap(
+            spacing: 10.0,
+            runSpacing: 10.0,
+            children: urls.entries.map((entry) {
+              return InputChip(
+                label: Text(entry.key),
+                labelStyle: TextStyle(
+                  color: entry.value != null && entry.value.isNotEmpty
+                    ? Colors.white
+                    : stateColors.foreground,
+                ),
+                selectedColor: stateColors.primary,
+                selected: entry.value?.isNotEmpty,
+                checkmarkColor: Colors.white,
+                deleteIconColor: entry.value.isNotEmpty
+                  ? Colors.white
+                  : stateColors.foreground,
+                onDeleted: () {
+                  urls.remove(entry.key);
+                  saveUrls();
+                },
+                onPressed: () {
+                  urlName = entry.key;
+                  urlValue = entry.value;
+
+                  showAddUrlSheet();
+                },
+              );
+            }).toList(),
+          ),
+
+          FlatButton.icon(
+            onPressed: () {
+              urlName = '';
+              urlValue = '';
+
+              showAddUrlSheet();
+            },
+            icon: Icon(Icons.add),
+            label: Text('Add URL'),
+          ),
+        ]
       ),
     );
   }
@@ -756,9 +976,11 @@ class _EditProjectState extends State<EditProject> {
         .currentUser
         .getIdToken();
 
-      final data = projectSnapshot.data();
+      final data          = projectSnapshot.data();
       final dataPlatforms = data['platforms'] as Map<String, dynamic>;
-      final dataTags = data['tags'] as Map<String, dynamic>;
+      final dataTags      = data['tags'] as Map<String, dynamic>;
+      final dataUrls      = data['urls'] as Map<String, dynamic>;
+      final dataLanguages = data['programmingLanguages'] as Map<String, dynamic>;
 
       setState(() {
         publicationStatus = data['published']
@@ -768,12 +990,20 @@ class _EditProjectState extends State<EditProject> {
         title = data['title'];
         summary = data['summary'];
 
-        dataPlatforms.forEach((key, value) {
+        dataPlatforms?.forEach((key, value) {
           platforms[key] = value;
         });
 
-        dataTags.forEach((key, value) {
+        dataTags?.forEach((key, value) {
           tags[key] = value;
+        });
+
+        dataUrls?.forEach((key, value) {
+          urls[key] = value;
+        });
+
+        dataLanguages?.forEach((key, value) {
+          programmingLanguages[key] = value;
         });
 
         titleController.text = title;
@@ -847,13 +1077,58 @@ class _EditProjectState extends State<EditProject> {
     setState(() => isLoading = false);
   }
 
-  void saveTitle() async {
+  void saveContent() async {
+    setState(() => isSaving = true);
+
+    try {
+      final callable = CloudFunctions(
+        app: Firebase.app(),
+        region: 'europe-west3',
+      ).getHttpsCallable(functionName: 'projects-save ');
+
+      final resp = await callable.call({
+        'projectId' : projectSnapshot.id,
+        'jwt'       : jwt,
+        'content'   : content,
+      });
+
+      bool success = resp.data['success'];
+
+      if (!success) {
+        throw ErrorDescription(resp.data['error']);
+      }
+
+      setState(() => isSaving = false);
+
+    } catch (error) {
+      debugPrint(error.toString());
+      setState(() => isSaving = false);
+    }
+  }
+
+  void savePLanguages() async {
     setState(() => isSaving = true);
 
     try {
       await projectSnapshot
         .reference
-        .update({'title': title});
+        .update({'programmingLanguages': programmingLanguages});
+
+      setState(() => isSaving = false);
+
+    } catch (error) {
+      debugPrint(error.toString());
+      setState(() => isSaving = false);
+    }
+  }
+
+  void savePlatforms() async {
+    setState(() => isSaving = true);
+
+    try {
+      await projectSnapshot
+        .reference
+        .update({'platforms': platforms});
 
       setState(() => isSaving = false);
 
@@ -895,13 +1170,13 @@ class _EditProjectState extends State<EditProject> {
     }
   }
 
-  void savePlatforms() async {
+  void saveTitle() async {
     setState(() => isSaving = true);
 
     try {
       await projectSnapshot
         .reference
-        .update({'platforms': platforms});
+        .update({'title': title});
 
       setState(() => isSaving = false);
 
@@ -911,26 +1186,13 @@ class _EditProjectState extends State<EditProject> {
     }
   }
 
-  void saveContent() async {
+  void saveUrls() async {
     setState(() => isSaving = true);
 
     try {
-      final callable = CloudFunctions(
-        app: Firebase.app(),
-        region: 'europe-west3',
-      ).getHttpsCallable(functionName: 'projects-save ');
-
-      final resp = await callable.call({
-        'projectId' : projectSnapshot.id,
-        'jwt'       : jwt,
-        'content'   : content,
-      });
-
-      bool success = resp.data['success'];
-
-      if (!success) {
-        throw ErrorDescription(resp.data['error']);
-      }
+      await projectSnapshot
+        .reference
+        .update({'urls': urls});
 
       setState(() => isSaving = false);
 
@@ -938,6 +1200,118 @@ class _EditProjectState extends State<EditProject> {
       debugPrint(error.toString());
       setState(() => isSaving = false);
     }
+  }
+
+  void showAddUrlSheet() {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return Column(
+          children: [
+            Container(
+              width: 900.0,
+              padding: EdgeInsets.only(
+                top: 40.0,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      bottom: 20.0,
+                    ),
+                    child: Text(
+                      'ADD URL',
+                      style: TextStyle(
+                        fontSize: 18.0,
+                      ),
+                    ),
+                  ),
+
+                  Wrap(
+                    spacing: 40.0,
+                    runSpacing: 20.0,
+                    alignment: WrapAlignment.center,
+                    children: [
+                      SizedBox(
+                        width: 250.0,
+                        child: TextFormField(
+                          autofocus: true,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            labelText: urlName,
+                          ),
+                          onChanged: (value) {
+                            urlName = value;
+                          },
+                        ),
+                      ),
+
+                      SizedBox(
+                        width: 320.0,
+                        child: TextFormField(
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            labelText: 'https://$urlName...',
+                          ),
+                          keyboardType: TextInputType.url,
+                          onChanged: (value) {
+                            urlValue = value;
+                          },
+                        ),
+                      ),
+
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          left: 16.0,
+                        ),
+                        child: TextButton.icon(
+                          onPressed: () {
+                            FluroRouter.router.pop(context);
+                            urls[urlName] = urlValue;
+                            saveUrls();
+                          },
+                          icon: Icon(Icons.check),
+                          label: Text('Add URL'),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void showAppBarDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          contentPadding: const EdgeInsets.only(
+            top: 40.0,
+            left: 30.0,
+            right: 30.0,
+          ),
+          content: SizedBox(
+            width: 400.0,
+            child: Text(
+              title,
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => FluroRouter.router.pop(context),
+              child: Text('CLOSE'),
+            ),
+          ],
+        );
+      }
+    );
   }
 
   void updatePubStatus(String status) async {
