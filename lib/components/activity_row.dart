@@ -79,9 +79,18 @@ class _ActivityRowState extends State<ActivityRow> {
         }
 
         return verb;
+      case 'IssuesEvent':
+        return getIssueString(type, payload);
       default:
         return type;
     }
+  }
+
+  String getIssueString(String type, Map<String, dynamic> payload) {
+    String action = payload['action'];
+    action = '${action.substring(0, 1).toUpperCase()}${action.substring(1)}';
+
+    return '$action issue';
   }
 
   String getPRAction(String action) {
