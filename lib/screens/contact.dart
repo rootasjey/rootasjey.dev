@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:rootasjey/actions/users.dart';
 import 'package:rootasjey/components/footer.dart';
 import 'package:rootasjey/components/home_app_bar.dart';
-import 'package:rootasjey/rooter/router.dart';
+import 'package:rootasjey/router//router.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/utils/snack.dart';
 import 'package:url_launcher/url_launcher.dart';

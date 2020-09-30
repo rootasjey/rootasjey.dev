@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:rootasjey/components/project_card.dart';
 import 'package:rootasjey/components/sliver_empty_view.dart';
 import 'package:rootasjey/components/home_app_bar.dart';
-import 'package:rootasjey/rooter/router.dart';
+import 'package:rootasjey/router//router.dart';
 import 'package:rootasjey/types/project.dart';
 
 class Projects extends StatefulWidget {

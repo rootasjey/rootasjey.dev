@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:rootasjey/rooter/route_names.dart';
-import 'package:rootasjey/rooter/router.dart';
+import 'package:rootasjey/router/route_names.dart';
+import 'package:rootasjey/router/router.dart';
 import 'package:rootasjey/state/colors.dart';
 
 class HomeNavBar extends StatelessWidget {

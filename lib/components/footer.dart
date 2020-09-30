@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:rootasjey/rooter/route_names.dart';
-import 'package:rootasjey/rooter/router.dart';
+import 'package:rootasjey/router/route_names.dart';
+import 'package:rootasjey/router/router.dart';
 import 'package:rootasjey/state/user_state.dart';
 import 'package:rootasjey/utils/snack.dart';
 import 'package:url_launcher/url_launcher.dart';

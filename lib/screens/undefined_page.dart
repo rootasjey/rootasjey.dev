@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/app_icon_header.dart';
-import 'package:rootasjey/rooter/route_names.dart';
-import 'package:rootasjey/rooter/router.dart';
+import 'package:rootasjey/router//route_names.dart';
+import 'package:rootasjey/router//router.dart';
 
 class UndefinedPage extends StatefulWidget {
   final String name;

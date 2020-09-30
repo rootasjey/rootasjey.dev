@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
-import 'package:rootasjey/rooter/route_names.dart';
-import 'package:rootasjey/rooter/router.dart';
+import 'package:rootasjey/router/route_names.dart';
+import 'package:rootasjey/router/router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HomePresentation extends StatelessWidget {

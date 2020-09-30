@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:rootasjey/rooter/router.dart';
+import 'package:rootasjey/router/router.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/utils/app_local_storage.dart';
 import 'package:rootasjey/utils/brightness.dart';

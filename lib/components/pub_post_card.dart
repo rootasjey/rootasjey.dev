@@ -2,8 +2,8 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
-import 'package:rootasjey/rooter/route_names.dart';
-import 'package:rootasjey/rooter/router.dart';
+import 'package:rootasjey/router/route_names.dart';
+import 'package:rootasjey/router/router.dart';
 import 'package:rootasjey/types/post_headline.dart';
 
 class PubPostCard extends StatefulWidget {

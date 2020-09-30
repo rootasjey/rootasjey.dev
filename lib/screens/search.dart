@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/home_app_bar.dart';
-import 'package:rootasjey/rooter/route_names.dart';
+import 'package:rootasjey/router//route_names.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/types/post_headline.dart';
 import 'package:share/share.dart';

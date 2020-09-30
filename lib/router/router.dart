@@ -1,6 +1,6 @@
 import 'package:fluro/fluro.dart';
-import 'package:rootasjey/rooter/route_names.dart';
-import 'package:rootasjey/rooter/web/route_handlers.dart';
+import 'package:rootasjey/router//route_names.dart';
+import 'package:rootasjey/router//web/route_handlers.dart';
 
 class FluroRouter {
   static Router router = Router();
