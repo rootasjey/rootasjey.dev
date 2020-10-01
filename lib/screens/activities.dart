@@ -13,6 +13,11 @@ class Activities extends StatefulWidget {
 
 class _ActivitiesState extends State<Activities> {
   bool isLoading  = false;
+  bool isNarrow = false;
+
+  final largeHorizPadding = 90.0;
+  final narrowHorizPadding = 20.0;
+
   int skipResults = 0;
   int limit       = 10;
   int skipIncr    = 0;
@@ -36,47 +41,78 @@ class _ActivitiesState extends State<Activities> {
         slivers: [
           HomeAppBar(),
 
-          SliverList(
-            delegate: SliverChildListDelegate([
-              headerTitle(),
-            ]),
-          ),
+          SliverLayoutBuilder(
+            builder: (context, constraints) {
+              final padding = constraints.crossAxisExtent < 700.0
+                ? narrowHorizPadding
+                : largeHorizPadding;
 
-          SliverPadding(
-            padding: const EdgeInsets.only(
-              left: 90.0,
-            ),
-            sliver: body(),
-          ),
-
-          SliverPadding(
-            padding: const EdgeInsets.only(
-              left: 90.0,
-              top: 50.0,
-              bottom: 300.0,
-            ),
-            sliver: SliverList(
-              delegate: SliverChildListDelegate([
-                if (!isLoading)
-                isLoading
-                  ? CircularProgressIndicator()
-                  : Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      TextButton.icon(
-                        onPressed: () {
-                          skipResults += skipIncr;
-                          fetch(skip: skipResults);
-                        },
-                        icon: Icon(Icons.arrow_downward),
-                        label: Text(
-                          'Load more'
-                        ),
-                      ),
-                    ],
+              return SliverList(
+                delegate: SliverChildListDelegate([
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: padding,
+                      vertical: 90.0,
+                    ),
+                    child: headerTitle(),
                   ),
-              ]),
-            ),
+                ]),
+              );
+            },
+          ),
+
+          SliverLayoutBuilder(
+            builder: (_, constraints) {
+              final padding = constraints.crossAxisExtent < 700.0
+                ? narrowHorizPadding
+                : largeHorizPadding;
+
+              return SliverPadding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: padding,
+                ),
+                sliver: body(),
+              );
+            },
+          ),
+
+          SliverLayoutBuilder(
+            builder: (_, constraints) {
+              final padding = constraints.crossAxisExtent < 700.0
+                ? narrowHorizPadding
+                : largeHorizPadding;
+
+              return SliverPadding(
+                padding: EdgeInsets.only(
+                  left: padding,
+                  right: padding,
+                  top: 50.0,
+                  bottom: 200.0,
+                ),
+                sliver: SliverList(
+                  delegate: SliverChildListDelegate([
+                    if (!isLoading)
+                    isLoading
+                      ? CircularProgressIndicator()
+                      : Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          TextButton.icon(
+                            onPressed: () {
+                              skipResults += skipIncr;
+                              fetch(skip: skipResults);
+                            },
+                            icon: Icon(Icons.arrow_downward),
+                            label: Text(
+                              'Load more'
+                            ),
+                          ),
+                        ],
+                      ),
+                  ]),
+                ),
+              );
+            },
           ),
 
           SliverList(
@@ -117,35 +153,32 @@ class _ActivitiesState extends State<Activities> {
   }
 
   Widget headerTitle() {
-    return Padding(
-      padding: const EdgeInsets.all(
-        90.0,
-      ),
-      child: Row(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16.0),
-            child: IconButton(
-              onPressed: () => FluroRouter.router.pop(context),
-              icon: Icon(Icons.arrow_back),
-            ),
+    return Row(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(right: 16.0),
+          child: IconButton(
+            onPressed: () => FluroRouter.router.pop(context),
+            icon: Icon(Icons.arrow_back),
           ),
+        ),
 
-          Text(
+        Expanded(
+          child: Text(
             'Activities',
             style: TextStyle(
               fontSize: 70.0,
               fontWeight: FontWeight.bold,
             ),
           ),
+        ),
 
-          if (isLoading)
-            Padding(
-              padding: const EdgeInsets.only(top: 12.0, left: 22.0),
-              child: CircularProgressIndicator(),
-            ),
-        ],
-      ),
+        if (isLoading)
+          Padding(
+            padding: const EdgeInsets.only(top: 12.0, left: 22.0),
+            child: CircularProgressIndicator(),
+          ),
+      ],
     );
   }
 
