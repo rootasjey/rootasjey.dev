@@ -8,9 +8,11 @@ import 'package:rootasjey/types/post_headline.dart';
 
 class PubPostCard extends StatefulWidget {
   @required final PostHeadline postHeadline;
+  final double size;
 
   PubPostCard({
     this.postHeadline,
+    this.size = 400.0,
   });
 
   @override
@@ -18,12 +20,20 @@ class PubPostCard extends StatefulWidget {
 }
 
 class _PubPostCardState extends State<PubPostCard> {
-  double elevation = 2.0;
+  double elevation;
+  double size;
+
   String authorName = '';
 
   @override
   void initState() {
     super.initState();
+
+    setState(() {
+      size = widget.size;
+      elevation = 8.0;
+    });
+
     fetchAuthorName();
   }
 
@@ -35,8 +45,8 @@ class _PubPostCardState extends State<PubPostCard> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(
-          height: 400.0,
-          width: 400.0,
+          height: size,
+          width: size,
           child: Card(
             elevation: elevation,
             shape: RoundedRectangleBorder(
@@ -49,7 +59,7 @@ class _PubPostCardState extends State<PubPostCard> {
                 setState(() {
                   elevation = isHover
                     ? 4.0
-                    : 2.0;
+                    : 8.0;
                 });
               },
               child: Stack(
@@ -95,7 +105,7 @@ class _PubPostCardState extends State<PubPostCard> {
               postHeadline.title,
               style: TextStyle(
                 // color: Colors.white,
-                fontSize: 36.0,
+                fontSize: 32.0,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -106,18 +116,21 @@ class _PubPostCardState extends State<PubPostCard> {
               top: 10.0,
               left: 8.0,
             ),
-            child: Text(
-              '$authorName - ${Jiffy(postHeadline.createdAt).fromNow()}',
-              style: TextStyle(
-                fontSize: 15.0,
-                fontWeight: FontWeight.w300,
+            child: Opacity(
+              opacity: 0.6,
+              child: Text(
+                '$authorName - ${Jiffy(postHeadline.createdAt).fromNow()}',
+                style: TextStyle(
+                  fontSize: 15.0,
+                  fontWeight: FontWeight.w300,
+                ),
               ),
             ),
           ),
 
           Padding(
             padding: const EdgeInsets.only(
-              top: 40.0,
+              top: 20.0,
             ),
             child: Wrap(
               spacing: 10.0,
@@ -126,6 +139,7 @@ class _PubPostCardState extends State<PubPostCard> {
                 return Opacity(
                   opacity: 0.6,
                   child: Chip(
+                    elevation: 2.0,
                     label: Text(
                       tag,
                     ),
