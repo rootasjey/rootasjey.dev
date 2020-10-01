@@ -6,8 +6,120 @@ import 'package:rootasjey/state/colors.dart';
 class HomeNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, boxConstraints) {
+        if (boxConstraints.maxWidth < 600.0) {
+          return narrowView(context);
+        }
+
+        return largeView(context);
+      }
+    );
+  }
+
+  Widget buttonLink({
+    @required BuildContext context,
+    @required IconData icon,
+    @required String titleText,
+    @required String route,
+  }) {
+    return FlatButton.icon(
+      onPressed: () => FluroRouter.router.navigateTo(context, route),
+      icon: Icon(icon),
+      label: Text(
+        titleText,
+      ),
+    );
+  }
+
+  Widget cardLink({
+    @required BuildContext context,
+    @required IconData icon,
+    @required String titleText,
+    @required String route,
+  }) {
+    return SizedBox(
+      width: 120.0,
+      height: 120.0,
+      child: Card(
+        elevation: 4.0,
+        child: InkWell(
+          onTap: () => FluroRouter.router.navigateTo(context, route),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon),
+              Text(
+                titleText,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget narrowView(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(
+      padding: EdgeInsets.only(
+        top: 20.0,
+        bottom: 60.0,
+        left: 20.0,
+      ),
+      child: Wrap(
+        spacing: 20.0,
+        runSpacing: 20.0,
+        alignment: WrapAlignment.center,
+        children: [
+          cardLink(
+            context: context,
+            icon: Icons.work,
+            titleText: 'Enroll',
+            route: EnrollRoute,
+          ),
+
+          cardLink(
+            context: context,
+            icon: Icons.apps,
+            titleText: 'Projects',
+            route: ProjectsRoute,
+          ),
+
+          cardLink(
+            context: context,
+            icon: Icons.edit,
+            titleText: 'Posts',
+            route: PostsRoute,
+          ),
+
+          cardLink(
+            context: context,
+            icon: Icons.attach_money,
+            titleText: 'Pricing',
+            route: PricingRoute,
+          ),
+
+          cardLink(
+            context: context,
+            icon: Icons.email_outlined,
+            titleText: 'Contact me',
+            route: ContactRoute,
+          ),
+
+          cardLink(
+            context: context,
+            icon: Icons.help_center,
+            titleText: 'About',
+            route: AboutRoute,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget largeView(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(
         bottom: 60.0,
         left: 100.0,
       ),
@@ -27,69 +139,43 @@ class HomeNavBar extends StatelessWidget {
             ),
           ),
 
-          FlatButton.icon(
-            onPressed: () {
-              FluroRouter.router.navigateTo(context, ProjectsRoute);
-            },
-            icon: Opacity(
-              opacity: 0.6,
-              child: Icon(Icons.apps),
-            ),
-            label: Text(
-              'Projects'
-            ),
+          buttonLink(
+            context: context,
+            icon: Icons.apps,
+            titleText: 'Projects',
+            route: ProjectsRoute,
           ),
 
-          FlatButton.icon(
-            onPressed: () {
-              FluroRouter.router.navigateTo(context, PostsRoute);
-            },
-            icon: Opacity(
-              opacity: 0.6,
-              child: Icon(Icons.edit),
-            ),
-            label: Text(
-              'Posts'
-            ),
+          buttonLink(
+            context: context,
+            icon: Icons.edit,
+            titleText: 'Posts',
+            route: PostsRoute,
           ),
 
-          FlatButton.icon(
-            onPressed: () {
-              FluroRouter.router.navigateTo(context, PricingRoute);
-            },
-            icon: Opacity(
-              opacity: 0.6,
-              child: Icon(Icons.attach_money),
-            ),
-            label: Text(
-              'Pricing'
-            ),
+          buttonLink(
+            context: context,
+            icon: Icons.attach_money,
+            titleText: 'Pricing',
+            route: PricingRoute,
           ),
 
-          FlatButton.icon(
-            onPressed: () {
-              FluroRouter.router.navigateTo(context, ContactRoute);
-            },
-            icon: Icon(Icons.work),
-            label: Text(
-              'Contact me',
-            ),
+          buttonLink(
+            context: context,
+            icon: Icons.email_outlined,
+            titleText: 'Contact me',
+            route: ContactRoute,
           ),
 
-          FlatButton.icon(
-            onPressed: () {
-              FluroRouter.router.navigateTo(context, AboutRoute);
-            },
-            icon: Opacity(
-              opacity: 0.6,
-              child: Icon(Icons.help),
-            ),
-            label: Text(
-              'About'
-            ),
+          buttonLink(
+            context: context,
+            icon: Icons.help_center,
+            titleText: 'About',
+            route: AboutRoute,
           ),
         ],
       ),
     );
   }
+
 }

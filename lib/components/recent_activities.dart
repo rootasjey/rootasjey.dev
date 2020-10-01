@@ -21,6 +21,18 @@ class _RecentActivitiesState extends State<RecentActivities> {
 
   @override
   Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, boxConstraints) {
+        if (boxConstraints.maxWidth < 700.0) {
+          return narrowView();
+        }
+
+        return largeView();
+      },
+    );
+  }
+
+  Widget largeView() {
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: 100.0,
@@ -29,39 +41,65 @@ class _RecentActivitiesState extends State<RecentActivities> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.only(
-              bottom: 12.0,
-            ),
-            child: Row(
-              children: [
-                Opacity(
-                  opacity: 0.6,
-                  child: TextButton.icon(
-                    onPressed: () =>
-                      FluroRouter.router.navigateTo(context, ActivitiesRoute),
-                    icon: Icon(
-                      Icons.watch_later,
-                      color: stateColors.foreground,
-                    ),
-                    label: Text(
-                      'RECENT ACTIVITY',
-                      style: TextStyle(
-                        fontSize: 20.0,
-                        color: stateColors.foreground,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
+          titleSection(),
 
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: userActivities.map((activity) {
               return ActivityRow(activity: activity);
             }).toList(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget narrowView() {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 10.0,
+        vertical: 20.0,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          titleSection(),
+
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: userActivities.map((activity) {
+              return ActivityRow(activity: activity);
+            }).toList(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget titleSection() {
+    return Padding(
+      padding: const EdgeInsets.only(
+        bottom: 12.0,
+      ),
+      child: Row(
+        children: [
+          Opacity(
+            opacity: 0.6,
+            child: TextButton.icon(
+              onPressed: () =>
+                FluroRouter.router.navigateTo(context, ActivitiesRoute),
+              icon: Icon(
+                Icons.watch_later,
+                color: stateColors.foreground,
+              ),
+              label: Text(
+                'RECENT ACTIVITY',
+                style: TextStyle(
+                  fontSize: 20.0,
+                  color: stateColors.foreground,
+                ),
+              ),
+            ),
           ),
         ],
       ),

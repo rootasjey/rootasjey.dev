@@ -25,7 +25,10 @@ class _NewsletterState extends State<Newsletter> {
   Widget build(BuildContext context) {
     return Container(
       color: Color.fromRGBO(0, 0, 0, 0.02),
-      padding: const EdgeInsets.all(60.0),
+      padding: const EdgeInsets.symmetric(
+        horizontal: 20.0,
+        vertical: 40.0,
+      ),
       child: body(),
     );
   }
@@ -45,102 +48,120 @@ class _NewsletterState extends State<Newsletter> {
   }
 
   Widget idleView() {
-    return Column(
-      children: [
-        Icon(
-          Icons.email_outlined,
-          size: 80.0,
-        ),
+    return LayoutBuilder(
+      builder: (context, boxContraints) {
+        final titleFontSize = boxContraints.maxWidth < 700.0
+          ? 24.0
+          : 40.0;
 
-        Padding(
-          padding: const EdgeInsets.only(
-            top: 20.0,
-            bottom: 8.0,
-          ),
-          child: Text(
-            'Subscribe to my newsletter',
-            style: TextStyle(
-              fontSize: 40.0,
+        final subtitleFontSize = boxContraints.maxWidth < 700.0
+          ? 20.0
+          : 16.0;
+
+        return Column(
+          children: [
+            Icon(
+              Icons.email_outlined,
+              size: 80.0,
             ),
-          ),
-        ),
 
-        Opacity(
-          opacity: 0.6,
-          child: Text(
-            'Get the latest posts in your inbox (~once per month).',
-            style: TextStyle(
-              fontSize: 20.0,
-            ),
-          ),
-        ),
-
-        Container(
-          width: 500.0,
-          padding: const EdgeInsets.only(
-            top: 60.0,
-            bottom: 40.0,
-          ),
-          child: TextFormField(
-            controller: newsreaderController,
-            decoration: InputDecoration(
-              labelText: 'Your email address',
-              border: OutlineInputBorder(),
-              errorText: errorText,
-            ),
-            keyboardType: TextInputType.emailAddress,
-            onChanged: (value) {
-              email = value;
-
-              final isWellFormatted = checkEmailFormat(email);
-              errorText = isWellFormatted
-                ? null
-                : 'The value entered is not a valid email address';
-
-              setState(() {});
-            },
-            validator: (value) {
-              if (value.isEmpty) {
-                return 'Email cannot be empty';
-              }
-
-              final isWellFormatted = checkEmailFormat(email);
-              if (!isWellFormatted) { return 'The value entered is not a valid email address'; }
-
-              return null;
-            },
-          ),
-        ),
-
-        RaisedButton(
-          onPressed: subscribe,
-          color: stateColors.primary,
-          padding: const EdgeInsets.symmetric(
-            horizontal: 20.0,
-            vertical: 16.0,
-          ),
-          child: SizedBox(
-            width: 200.0,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'SUBSCRIBE',
+            Padding(
+              padding: const EdgeInsets.only(
+                top: 20.0,
+                bottom: 8.0,
+              ),
+              child: Opacity(
+                opacity: 0.8,
+                child: Text(
+                  'Subscribe to my newsletter',
+                  textAlign: TextAlign.center,
                   style: TextStyle(
-                    fontSize: 18.0,
-                    color: Colors.white,
+                    fontSize: titleFontSize,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
-
-                Padding(
-                  padding: const EdgeInsets.only(left: 20.0),
-                  child: Icon(Icons.arrow_forward, color: Colors.white),
-                ),
-              ],
+              ),
             ),
-          ),
-        ),
-      ],
+
+            Opacity(
+              opacity: 0.6,
+              child: Text(
+                'Get the latest posts in your inbox (~once per month).',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: subtitleFontSize,
+                ),
+              ),
+            ),
+
+            Container(
+              width: 500.0,
+              padding: const EdgeInsets.only(
+                top: 60.0,
+                bottom: 40.0,
+              ),
+              child: TextFormField(
+                controller: newsreaderController,
+                decoration: InputDecoration(
+                  labelText: 'Your email address',
+                  border: OutlineInputBorder(),
+                  errorText: errorText,
+                ),
+                keyboardType: TextInputType.emailAddress,
+                onChanged: (value) {
+                  email = value;
+
+                  final isWellFormatted = checkEmailFormat(email);
+                  errorText = isWellFormatted
+                    ? null
+                    : 'The value entered is not a valid email address';
+
+                  setState(() {});
+                },
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return 'Email cannot be empty';
+                  }
+
+                  final isWellFormatted = checkEmailFormat(email);
+                  if (!isWellFormatted) { return 'The value entered is not a valid email address'; }
+
+                  return null;
+                },
+              ),
+            ),
+
+            RaisedButton(
+              onPressed: subscribe,
+              color: stateColors.primary,
+              padding: const EdgeInsets.symmetric(
+                horizontal: 20.0,
+                vertical: 16.0,
+              ),
+              child: SizedBox(
+                width: 200.0,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'SUBSCRIBE',
+                      style: TextStyle(
+                        fontSize: 18.0,
+                        color: Colors.white,
+                      ),
+                    ),
+
+                    Padding(
+                      padding: const EdgeInsets.only(left: 20.0),
+                      child: Icon(Icons.arrow_forward, color: Colors.white),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 

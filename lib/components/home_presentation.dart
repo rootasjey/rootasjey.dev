@@ -4,100 +4,201 @@ import 'package:rootasjey/router/route_names.dart';
 import 'package:rootasjey/router/router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class HomePresentation extends StatelessWidget {
+class HomePresentation extends StatefulWidget {
+  @override
+  _HomePresentationState createState() => _HomePresentationState();
+}
+
+class _HomePresentationState extends State<HomePresentation> {
   final width = 600.0;
+  bool isNarrow = false;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(100.0),
+    return LayoutBuilder(
+      builder: (context, boxConstraints) {
+        isNarrow = boxConstraints.maxWidth < 600.0;
+
+        return Padding(
+          padding: EdgeInsets.all(
+            isNarrow
+              ? 50.0
+              : 100.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              body(),
+            ],
+          ),
+        );
+      }
+    );
+  }
+
+  Widget body() {
+    if (isNarrow) {
+      return narrowView();
+    }
+
+    return largeView();
+  }
+
+  Widget largeView() {
+    return Container(
+      width: width,
+      padding: const EdgeInsets.only(
+        top: 100.0,
+      ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(
-            width: width,
-            child: Text(
-              'Welcome to rootasjey website. A virtual space about art & development.',
-              style: TextStyle(
-                fontSize: 50.0,
-              ),
+          Padding(
+            padding: const EdgeInsets.only(
+              bottom: 60.0,
             ),
+            child: titleIntro(),
           ),
 
-          Container(
-            width: width,
-            padding: const EdgeInsets.only(
-              top: 100.0,
-            ),
-            child: Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(
-                    right: 40.0,
-                  ),
-                  child: Material(
-                    shape: CircleBorder(),
-                    child: Ink.image(
-                      image: AssetImage('assets/images/jeje.jpg',),
-                      width: 120.0,
-                      height: 120.0,
-                      child: InkWell(
-                        onTap: () {
-                          FluroRouter.router.navigateTo(context, MeRoute);
-                        },
-                      ),
-                    ),
-                  ),
+          Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(
+                  right: 40.0,
                 ),
+                child: profilePicture(),
+              ),
 
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 14.0),
-                        child: Opacity(
-                          opacity: 0.7,
-                          child: Text(
-                            "I'm a french developer working on my personal projects and as a freelancer. I also like drawings and learning things.",
-                            style: TextStyle(
-                              fontSize: 17.0,
-                            ),
-                          ),
-                        ),
-                      ),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 14.0),
+                      child: profileSummary(),
+                    ),
 
-                      Wrap(
-                        children: [
-                          IconButton(
-                            icon: Icon(LineAwesomeIcons.github),
-                            onPressed: () => launch('https://github.com/rootasjey'),
-                          ),
-                          IconButton(
-                            icon: Icon(LineAwesomeIcons.twitter),
-                            onPressed: () => launch('https://twitter.com/rootasjey'),
-                          ),
-                          IconButton(
-                            icon: Icon(LineAwesomeIcons.instagram),
-                            onPressed: () => launch('https://instagram.com/rootasjey'),
-                          ),
-                          IconButton(
-                            icon: Icon(LineAwesomeIcons.medium),
-                            onPressed: () => launch('https://medium.com/@rootasjey'),
-                          ),
-                          IconButton(
-                            icon: Icon(LineAwesomeIcons.hashtag),
-                            onPressed: () => launch('https://hashnode.com/@rootasjey'),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                )
-              ],
-            ),
+                    socialNetworks(),
+                  ],
+                ),
+              )
+            ],
           ),
         ],
+      ),
+    );
+  }
+
+  Widget narrowView() {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(
+            top: 60.0,
+            bottom: 60.0,
+          ),
+          child: profilePicture(),
+        ),
+
+        titleIntro(),
+
+        Padding(
+          padding: const EdgeInsets.only(
+            top: 20.0,
+            bottom: 20
+          ),
+          child: profileSummary(),
+        ),
+
+        Padding(
+          padding: const EdgeInsets.only(
+            top: 28.0,
+          ),
+          child: socialNetworks(),
+        ),
+      ],
+    );
+  }
+
+  Widget profilePicture() {
+    return Material(
+      shape: CircleBorder(),
+      child: Ink.image(
+        image: AssetImage('assets/images/jeje.jpg',),
+        width: 120.0,
+        height: 120.0,
+        child: InkWell(
+          onTap: () {
+            FluroRouter.router.navigateTo(context, MeRoute);
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget profileSummary() {
+    return Opacity(
+      opacity: 0.7,
+      child: Text(
+        "I'm a french developer working on my personal projects and as a freelancer. I also like drawings and learning things.",
+        style: TextStyle(
+          fontSize: 17.0,
+        ),
+      ),
+    );
+  }
+
+  Widget socialNetworks() {
+    return Wrap(
+      children: [
+        IconButton(
+          icon: Icon(LineAwesomeIcons.github),
+          onPressed: () => launch('https://github.com/rootasjey'),
+        ),
+        IconButton(
+          icon: Icon(LineAwesomeIcons.twitter),
+          onPressed: () => launch('https://twitter.com/rootasjey'),
+        ),
+        IconButton(
+          icon: Icon(LineAwesomeIcons.instagram),
+          onPressed: () => launch('https://instagram.com/rootasjey'),
+        ),
+        IconButton(
+          icon: Icon(LineAwesomeIcons.medium),
+          onPressed: () => launch('https://medium.com/@rootasjey'),
+        ),
+        IconButton(
+          icon: Icon(LineAwesomeIcons.hashtag),
+          onPressed: () => launch('https://hashnode.com/@rootasjey'),
+        ),
+      ],
+    );
+  }
+
+  Widget titleIntro() {
+    final text = 'Welcome to rootasjey website. A virtual space about art & development.';
+
+    if (isNarrow) {
+      return SizedBox(
+        width: width,
+        child: Opacity(
+          opacity: 0.8,
+          child: Text(
+            text,
+            style: TextStyle(
+              fontSize: 40.0,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+      );
+    }
+
+    return SizedBox(
+      width: width,
+      child: Text(
+        text,
+        style: TextStyle(
+          fontSize: 50.0,
+        ),
       ),
     );
   }

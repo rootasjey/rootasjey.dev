@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/pub_post_card.dart';
+import 'package:rootasjey/components/pub_post_line_card.dart';
 import 'package:rootasjey/router//route_names.dart';
 import 'package:rootasjey/router//router.dart';
 import 'package:rootasjey/state/colors.dart';
@@ -22,6 +23,18 @@ class _RecentPostsState extends State<RecentPosts> {
 
   @override
   Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, boxConstraints) {
+        if (boxConstraints.maxWidth < 700.0) {
+          return narrowView();
+        }
+
+        return largeView();
+      },
+    );
+  }
+
+  Widget largeView() {
     return Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: 100.0,
@@ -30,28 +43,7 @@ class _RecentPostsState extends State<RecentPosts> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              TextButton.icon(
-                onPressed: () =>
-                  FluroRouter.router.navigateTo(context, PostsRoute),
-                icon: Icon(
-                  Icons.list,
-                  color: stateColors.foreground,
-                ),
-                label: Opacity(
-                  opacity: 0.6,
-                  child: Text(
-                    'RECENT POSTS',
-                    style: TextStyle(
-                      fontSize: 20.0,
-                      color: stateColors.foreground,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
+          titleSection(),
 
           Padding(
             padding: const EdgeInsets.only(
@@ -69,6 +61,61 @@ class _RecentPostsState extends State<RecentPosts> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget narrowView() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 10.0,
+        vertical: 40.0,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          titleSection(),
+
+          Padding(
+            padding: const EdgeInsets.only(
+              top: 16.0,
+            ),
+            child: Wrap(
+              spacing: 20.0,
+              runSpacing: 20.0,
+              children: posts.map((post) {
+                return PubPostLineCard(
+                  postHeadline: post,
+                );
+              }).toList()
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget titleSection() {
+    return Row(
+      children: [
+        TextButton.icon(
+          onPressed: () =>
+            FluroRouter.router.navigateTo(context, PostsRoute),
+          icon: Icon(
+            Icons.list,
+            color: stateColors.foreground,
+          ),
+          label: Opacity(
+            opacity: 0.6,
+            child: Text(
+              'RECENT POSTS',
+              style: TextStyle(
+                fontSize: 20.0,
+                color: stateColors.foreground,
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
