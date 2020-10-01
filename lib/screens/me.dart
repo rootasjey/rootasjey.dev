@@ -146,18 +146,6 @@ class _MeState extends State<Me> {
     );
   }
 
-  Widget body() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        avatarAndPresentation(),
-        formation(),
-        professionalExp(),
-        hobbies(),
-      ],
-    );
-  }
-
   Widget formation() {
     return Container(
       width: 600.0,
