@@ -84,7 +84,7 @@ class _EnrollState extends State<Enroll> {
   String domainName       = '';
   String domainErrorText;
 
-  String planningMode = 'START';
+  String planningMode = PLANNING_START;
 
   String callingCode      = '';
   String callingCodeErrorMessage;
@@ -1055,18 +1055,30 @@ class _EnrollState extends State<Enroll> {
   Widget dateButtonSelector() {
     String textDate = "SELECT A DATE";
 
-    if (planningMode == 'START' && selectedStartDate != null) {
+    if (planningMode == PLANNING_START && selectedStartDate != null) {
       textDate = selectedStartDate
         .toLocal()
         .toString()
         .split(' ')[0];
     }
 
-    if (planningMode == 'END' && selectedEndDate != null) {
+    if (planningMode == PLANNING_END && selectedEndDate != null) {
       textDate = selectedEndDate
         .toLocal()
         .toString()
         .split(' ')[0];
+    }
+
+    DateTime initialDate;
+
+    if (planningMode == PLANNING_START) {
+      initialDate = selectedStartDate ?? DateTime.now();
+
+    } else if (planningMode == PLANNING_END) {
+      initialDate = selectedEndDate ?? DateTime.now();
+
+    } else {
+      initialDate = DateTime.now();
     }
 
     return Padding(
@@ -1078,9 +1090,9 @@ class _EnrollState extends State<Enroll> {
         onPressed: () async {
           final picked = await showDatePicker(
             context: context,
-            initialDate: DateTime.now(),
+            initialDate: initialDate,
             firstDate: DateTime.now(),
-            lastDate: DateTime(2022),
+            lastDate: DateTime(DateTime.now().year + 4),
           );
 
           if (planningMode == PLANNING_START) {
