@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
-import 'package:rootasjey/router/route_names.dart';
-import 'package:rootasjey/router/router.dart';
+import 'package:rootasjey/screens/me.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HomePresentation extends StatefulWidget {
@@ -119,16 +118,25 @@ class _HomePresentationState extends State<HomePresentation> {
   }
 
   Widget profilePicture() {
-    return Material(
-      shape: CircleBorder(),
-      child: Ink.image(
-        image: AssetImage('assets/images/jeje.jpg',),
-        width: 120.0,
-        height: 120.0,
-        child: InkWell(
-          onTap: () {
-            FluroRouter.router.navigateTo(context, MeRoute);
-          },
+    return Hero(
+      tag: 'pp',
+      child: Material(
+        shape: CircleBorder(),
+        child: Ink.image(
+          image: AssetImage('assets/images/jeje.jpg',),
+          width: 120.0,
+          height: 120.0,
+          child: InkWell(
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) {
+                    return Me();
+                  },
+                ),
+              );
+            },
+          ),
         ),
       ),
     );
