@@ -669,7 +669,7 @@ class _EnrollState extends State<Enroll> {
   }
 
   Widget contactTypeBody() {
-    if (contactType == 'EMAIL') {
+    if (contactType == CONTACT_EMAIL) {
       return Container(
         width: 500.0,
         padding: const EdgeInsets.only(
