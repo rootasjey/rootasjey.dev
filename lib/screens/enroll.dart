@@ -345,7 +345,7 @@ class _EnrollState extends State<Enroll> {
           isActive: currentStep == 0,
           title: Text('Project'),
           subtitle: Text('Required'),
-          content: stepProject(),
+          content: dynamicStepContent(num: 0),
           state: computeStepState(
             stepIndex: 0,
           ),
@@ -355,7 +355,7 @@ class _EnrollState extends State<Enroll> {
           isActive: currentStep == 1,
           title: Text('Platform'),
           subtitle: Text('Required'),
-          content: stepPlatform(),
+          content: dynamicStepContent(num: 1),
           state: computeStepState(
             stepIndex: 1,
           ),
@@ -365,7 +365,7 @@ class _EnrollState extends State<Enroll> {
           isActive: currentStep == 2,
           title: Text('Size'),
           subtitle: Text('Required'),
-          content: stepSize(),
+          content: dynamicStepContent(num: 2),
           state: computeStepState(
             stepIndex: 2,
           ),
@@ -375,7 +375,7 @@ class _EnrollState extends State<Enroll> {
           isActive: currentStep == 3,
           title: Text('Domain name'),
           subtitle: Text('Required'),
-          content: stepDomainName(),
+          content: dynamicStepContent(num: 3),
           state: computeStepState(
             stepIndex: 3,
           ),
@@ -385,7 +385,7 @@ class _EnrollState extends State<Enroll> {
           isActive: currentStep == 4,
           title: Text('After project'),
           subtitle: Text('Required'),
-          content: stepAfterProject(),
+          content: dynamicStepContent(num: 4),
           state: computeStepState(
             stepIndex: 4,
           ),
@@ -395,7 +395,7 @@ class _EnrollState extends State<Enroll> {
           isActive: currentStep == 5,
           title: Text('Features'),
           subtitle: Text('Optional'),
-          content: stepFeatures(),
+          content: dynamicStepContent(num: 5),
           state: computeStepState(
             stepIndex: 5,
           ),
@@ -405,7 +405,7 @@ class _EnrollState extends State<Enroll> {
           isActive: currentStep == 6,
           title: Text('Additional features'),
           subtitle: Text('Optional'),
-          content: stepAdditionalFeatures(),
+          content: dynamicStepContent(num: 6),
           state: computeStepState(
             stepIndex: 6,
           ),
@@ -415,7 +415,7 @@ class _EnrollState extends State<Enroll> {
           isActive: currentStep == 7,
           title: Text('Planning'),
           subtitle: Text('Required'),
-          content: stepPlanning(),
+          content: dynamicStepContent(num: 7),
           state: computeStepState(
             stepIndex: 7,
           ),
@@ -425,7 +425,7 @@ class _EnrollState extends State<Enroll> {
           isActive: currentStep == 8,
           title: Text('Payment method'),
           subtitle: Text('Required'),
-          content: stepPlaymentMethod(),
+          content: dynamicStepContent(num: 8),
           state: computeStepState(
             stepIndex: 8,
           ),
@@ -435,7 +435,7 @@ class _EnrollState extends State<Enroll> {
           isActive: currentStep == 9,
           title: Text('Contact'),
           subtitle: Text('Required'),
-          content: stepContact(),
+          content: dynamicStepContent(num: 9),
           state: computeStepState(
             stepIndex: 9,
           ),
@@ -446,6 +446,41 @@ class _EnrollState extends State<Enroll> {
     totalSteps = stepper.steps.length;
 
     return stepper;
+  }
+
+  Widget dynamicStepContent({@required num}) {
+    if (currentStep != num) {
+      return Padding(
+        padding: EdgeInsets.zero,
+      );
+    }
+
+    switch (num) {
+      case 0:
+        return stepProject();
+      case 1:
+        return stepPlatform();
+      case 2:
+        return stepSize();
+      case 3:
+        return stepDomainName();
+      case 4:
+        return stepAfterProject();
+      case 5:
+        return stepFeatures();
+      case 6:
+        return stepAdditionalFeatures();
+      case 7:
+        return stepPlanning();
+      case 8:
+        return stepPaymentMethod();
+      case 9:
+        return stepContact();
+      default:
+        return Padding(
+          padding: EdgeInsets.zero,
+        );
+    }
   }
 
   Widget stepAfterProject() {
@@ -775,7 +810,7 @@ class _EnrollState extends State<Enroll> {
     );
   }
 
-  Widget stepPlaymentMethod() {
+  Widget stepPaymentMethod() {
     return Align(
       alignment: Alignment.topLeft,
       child: Column(
