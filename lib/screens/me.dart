@@ -31,23 +31,18 @@ class _MeState extends State<Me> {
         slivers: [
           HomeAppBar(),
 
-          SliverList(
-            delegate: SliverChildListDelegate([
-              pageTitle(),
-            ]),
-          ),
+          SliverLayoutBuilder(
+            builder: (context, constraints) {
+              if (constraints.crossAxisExtent < 700.0) {
+                return narrowView();
+              }
 
-          SliverPadding(
-            padding: const EdgeInsets.only(
-              left: 160.0,
-              right: 160.0,
-              bottom: 300.0,
-            ),
-            sliver: body(),
+              return largeView();
+            },
           ),
 
           SliverList(
-            delegate: SliverChildListDelegate([
+            delegate: SliverChildListDelegate.fixed([
               Footer(),
             ]),
           ),
@@ -138,51 +133,28 @@ class _MeState extends State<Me> {
   Widget avatarAndPresentation() {
     return Row(
       children: [
-        Padding(
+        profilePicture(
           padding: const EdgeInsets.only(
-            right: 40.0,
-          ),
-          child: Material(
-            shape: CircleBorder(),
-            child: Ink.image(
-              image: AssetImage('assets/images/jeje.jpg',),
-              width: 220.0,
-              height: 220.0,
-              child: InkWell(
-                onTap: () {},
-              ),
-            ),
+            right: 60.0,
           ),
         ),
 
         Expanded(
-          child: Opacity(
-            opacity: 0.6,
-            child: Text(
-              "Yep, that's me. I'm a french developer on the freelance journey. My skillset is mostly focused on coding and art but my insatiable curiosity makes me learn various subjects like social science.",
-              style: TextStyle(
-                fontSize: 26.0,
-              ),
-            ),
-          ),
+          child: profileSummary(),
         ),
       ],
     );
   }
 
   Widget body() {
-    return SliverList(
-      delegate: SliverChildListDelegate([
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            avatarAndPresentation(),
-            formation(),
-            professionalExp(),
-            hobbies(),
-          ],
-        ),
-      ]),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        avatarAndPresentation(),
+        formation(),
+        professionalExp(),
+        hobbies(),
+      ],
     );
   }
 
@@ -203,7 +175,10 @@ class _MeState extends State<Me> {
                   padding: const EdgeInsets.only(
                     right: 20.0,
                   ),
-                  child: Icon(Icons.school, size: 40.0),
+                  child: Icon(
+                    Icons.school,
+                    size: 40.0,
+                  ),
                 ),
 
                 Text(
@@ -262,11 +237,11 @@ class _MeState extends State<Me> {
     );
   }
 
-  Widget pageTitle() {
+  Widget pageTitle({
+    EdgeInsets padding = const EdgeInsets.all(90.0)
+  }) {
     return Padding(
-      padding: const EdgeInsets.all(
-        90.0,
-      ),
+      padding: padding,
       child: Row(
         children: [
           Padding(
@@ -547,11 +522,7 @@ class _MeState extends State<Me> {
           ),
 
           textBlock(
-            text: "During those years, I learned how to work on a project with a lot of people. From your colleague next to you to the Quality Assessment (QA) in another country.",
-          ),
-
-          textBlock(
-            text: "I also learned to deal with heavy processes when you have to add a new feature.",
+            text: "During those years, I learned how to work on a project with a lot of people. From your colleague next to you to the Quality Assessment (QA) in another country. I also learned to deal with heavy processes when you have to add a new feature.",
           ),
 
           textBlock(
@@ -559,11 +530,7 @@ class _MeState extends State<Me> {
           ),
 
           textBlock(
-            text: "But it turned out differently than I expected.\nAfter a month, I was tired of my commute (~4h a day) and I wanted to do remote work.",
-          ),
-
-          textBlock(
-            text: "Well, the company had other plans. And that's how I quit so quickly this second job (which I liked a lot even for this short time).",
+            text: "But it turned out differently than I expected.\nAfter a month, I was tired of my commute (~4h a day) and I wanted to do remote work. Well, the company had other plans. And that's how I quit so quickly this second job (which I liked a lot even for this short time).",
           ),
         ],
       ),
@@ -573,16 +540,124 @@ class _MeState extends State<Me> {
   Widget textBlock({String text}) {
     return Padding(
       padding: const EdgeInsets.only(
-        bottom: 20.0,
+        bottom: 40.0,
       ),
       child: Opacity(
         opacity: 0.6,
         child: Text(
           text,
           style: TextStyle(
-            fontSize: 24.0,
-            fontWeight: FontWeight.w200,
+            fontSize: 20.0,
+            fontWeight: FontWeight.w300,
+            height: 1.2,
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget largeView() {
+    return SliverPadding(
+      padding: const EdgeInsets.only(
+        bottom: 200.0,
+      ),
+      sliver: SliverList(
+        delegate: SliverChildListDelegate.fixed([
+          pageTitle(),
+
+          Padding(
+            padding: const EdgeInsets.only(left: 140.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  width: 800.0,
+                  child: avatarAndPresentation(),
+                ),
+
+                formation(),
+                professionalExp(),
+                hobbies(),
+              ],
+            ),
+          ),
+        ]),
+      ),
+    );
+  }
+
+  Widget narrowView() {
+    return SliverPadding(
+      padding: const EdgeInsets.only(
+        bottom: 200.0,
+      ),
+      sliver: SliverList(
+        delegate: SliverChildListDelegate.fixed([
+          pageTitle(
+            padding: const EdgeInsets.only(
+              left: 10.0,
+              top: 80.0,
+              bottom: 60.0,
+            ),
+          ),
+
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 20.0,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(
+                    bottom: 80.0,
+                  ),
+                  child: Center(
+                    child: profilePicture(),
+                  ),
+                ),
+
+                profileSummary(),
+
+                formation(),
+                professionalExp(),
+                hobbies(),
+              ],
+            ),
+          ),
+        ]),
+      ),
+    );
+  }
+
+  Widget profilePicture({EdgeInsets padding = EdgeInsets.zero}) {
+    return Padding(
+      padding: padding,
+      child: Hero(
+        tag: 'pp',
+        child: Material(
+          shape: CircleBorder(),
+          child: Ink.image(
+            image: AssetImage('assets/images/jeje.jpg',),
+            width: 220.0,
+            height: 220.0,
+            child: InkWell(
+              onTap: () {},
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget profileSummary() {
+    return Opacity(
+      opacity: 0.6,
+      child: Text(
+        "Yep, that's me. I'm a french developer on the freelance journey. My skillset is mostly focused on coding and art but my insatiable curiosity makes me learn various subjects in other subjects like social and science.",
+        style: TextStyle(
+          fontSize: 26.0,
+          fontWeight: FontWeight.w300,
         ),
       ),
     );
