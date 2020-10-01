@@ -73,11 +73,12 @@ class _ProjectCardState extends State<ProjectCard> {
                 ),
               ),
 
-              Positioned(
-                right: 20.0,
-                bottom: 20.0,
-                child: widget.popupMenuButton,
-              ),
+              if (widget.popupMenuButton != null)
+                Positioned(
+                  right: 20.0,
+                  bottom: 20.0,
+                  child: widget.popupMenuButton,
+                ),
             ],
           ),
         ),
