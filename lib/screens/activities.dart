@@ -13,7 +13,6 @@ class Activities extends StatefulWidget {
 
 class _ActivitiesState extends State<Activities> {
   bool isLoading  = false;
-  bool isNarrow = false;
 
   final largeHorizPadding = 90.0;
   final narrowHorizPadding = 20.0;
