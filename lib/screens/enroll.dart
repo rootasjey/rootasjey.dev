@@ -855,7 +855,7 @@ class _EnrollState extends State<Enroll> {
   }
 
   Widget paymentMethodDescription() {
-    if (paymentMethod == 'ONETIME') {
+    if (paymentMethod == PAYMENT_ONETIME) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
