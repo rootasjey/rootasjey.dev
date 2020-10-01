@@ -35,6 +35,10 @@ class _EnrollState extends State<Enroll> {
   double mainCost       = 0;
   double additionalCost = 0;
 
+  final largeHorizPadding   = 90.0;
+  final narrowHorizPadding  = 20.0;
+  final narrowWidthLimit    = 800.0;
+
   int projectIndex      = 0;
   int totalSteps        = 0;
   int currentStep       = 0;
@@ -179,19 +183,41 @@ class _EnrollState extends State<Enroll> {
                 ),
           ),
 
-          SliverList(
-            delegate: SliverChildListDelegate([
-              pageTitle(),
-            ]),
+          SliverLayoutBuilder(
+            builder: (_, constraints) {
+              final padding = constraints.crossAxisExtent < narrowWidthLimit
+                ? narrowHorizPadding
+                : largeHorizPadding;
+
+              return SliverList(
+                delegate: SliverChildListDelegate([
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: padding,
+                      vertical: 90.0,
+                    ),
+                    child: pageTitle(),
+                  ),
+                ]),
+              );
+            },
           ),
 
-          SliverPadding(
-            padding: const EdgeInsets.only(
-              left: 160.0,
-              right: 160.0,
-              bottom: 300.0,
-            ),
-            sliver: body(),
+          SliverLayoutBuilder(
+            builder: (_, constraints) {
+              final padding = constraints.crossAxisExtent < narrowWidthLimit
+                ? narrowHorizPadding
+                : largeHorizPadding * 2;
+
+              return SliverPadding(
+                padding: EdgeInsets.only(
+                  left: padding,
+                  right: padding,
+                  bottom: 300.0,
+                ),
+                sliver: body(),
+              );
+            },
           ),
 
           SliverList(
@@ -1323,45 +1349,53 @@ class _EnrollState extends State<Enroll> {
             top: 40.0,
             bottom: 20,
           ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Container(
-                width: 600.0,
-                height: 50.0,
-                padding: const EdgeInsets.only(right: 20.0),
-                child: TextFormField(
-                  decoration: InputDecoration(
-                    labelText: 'ontheshells.xyz',
-                    errorText: domainErrorText,
-                    border: OutlineInputBorder(),
-                    icon: Icon(Icons.search),
-                    suffixIcon: isDomainFree
-                      ? Icon(Icons.check_circle)
-                      : null,
+          child: LayoutBuilder(
+            builder: (_, constraints) {
+              final width = constraints.maxWidth < 600.0
+                ? 340.0
+                : 600.0;
+
+              return Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                    width: width,
+                    height: 50.0,
+                    padding: const EdgeInsets.only(right: 20.0),
+                    child: TextFormField(
+                      decoration: InputDecoration(
+                        labelText: 'ontheshells.xyz',
+                        errorText: domainErrorText,
+                        border: OutlineInputBorder(),
+                        icon: Icon(Icons.search),
+                        suffixIcon: isDomainFree
+                          ? Icon(Icons.check_circle)
+                          : null,
+                      ),
+                      onChanged: (value) {
+                        domainName = value;
+
+                        if (domainCheckTimer != null) {
+                          domainCheckTimer.cancel();
+                          domainCheckTimer = null;
+                        }
+
+                        domainCheckTimer = Timer(
+                          1.seconds,
+                          () => checkDomainName());
+                      },
+                    ),
                   ),
-                  onChanged: (value) {
-                    domainName = value;
 
-                    if (domainCheckTimer != null) {
-                      domainCheckTimer.cancel();
-                      domainCheckTimer = null;
-                    }
-
-                    domainCheckTimer = Timer(
-                      1.seconds,
-                      () => checkDomainName());
-                  },
-                ),
-              ),
-
-              if (isCheckingDomain)
-                Container(
-                  height: 30.0,
-                  width: 30.0,
-                  child: CircularProgressIndicator(),
-                ),
-            ],
+                  if (isCheckingDomain)
+                    Container(
+                      height: 30.0,
+                      width: 30.0,
+                      child: CircularProgressIndicator(),
+                    ),
+                ],
+              );
+            }
           ),
         ),
 
@@ -1377,8 +1411,10 @@ class _EnrollState extends State<Enroll> {
                   child: Icon(Icons.help),
                 ),
 
-                Text(
-                  'We may need additional verifications to ensure this domain is available.'
+                Expanded(
+                  child: Text(
+                    'We may need additional verifications to ensure this domain is available.'
+                  ),
                 ),
               ],
             ),
@@ -1514,35 +1550,34 @@ class _EnrollState extends State<Enroll> {
   }
 
   Widget pageTitle() {
-    return Padding(
-      padding: const EdgeInsets.all(
-        90.0,
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(
-              right: 16.0,
-              top: 20.0,
-            ),
-            child: IconButton(
-              onPressed: () => FluroRouter.router.pop(context),
-              icon: Icon(Icons.arrow_back),
-            ),
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(
+            right: 16.0,
+            top: 20.0,
           ),
+          child: IconButton(
+            onPressed: () => FluroRouter.router.pop(context),
+            icon: Icon(Icons.arrow_back),
+          ),
+        ),
 
-          Column(
+        Expanded(
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                    'Enroll',
-                    style: TextStyle(
-                      fontSize: 70.0,
-                      fontWeight: FontWeight.bold,
+                  Expanded(
+                    child: Text(
+                      'Enroll',
+                      style: TextStyle(
+                        fontSize: 70.0,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
 
@@ -1569,8 +1604,8 @@ class _EnrollState extends State<Enroll> {
               )
             ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
