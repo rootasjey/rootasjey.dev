@@ -14,6 +14,7 @@ class RecentPosts extends StatefulWidget {
 
 class _RecentPostsState extends State<RecentPosts> {
   List<PostHeadline> posts = [];
+  double maxWidth;
 
   @override
   void initState() {
@@ -25,7 +26,9 @@ class _RecentPostsState extends State<RecentPosts> {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, boxConstraints) {
-        if (boxConstraints.maxWidth < 700.0) {
+        maxWidth = boxConstraints.maxWidth;
+
+        if (maxWidth < 700.0) {
           return narrowView();
         }
 
@@ -55,6 +58,7 @@ class _RecentPostsState extends State<RecentPosts> {
               children: posts.map((post) {
                 return PubPostCard(
                   postHeadline: post,
+                  size: 350.0,
                 );
               }).toList()
             ),
