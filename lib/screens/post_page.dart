@@ -23,13 +23,16 @@ class PostPage extends StatefulWidget {
 
 class _PostPageState extends State<PostPage> {
   String postData = '';
-  bool isLoading = false;
-  final scrollController = ScrollController();
-  bool isTOCVisible = false;
-  Post post;
-  bool isFabVisible = false;
 
+  bool isLoading = false;
+  bool isTOCVisible = false;
+  bool isFabVisible = false;
+  bool isNarrow = false;
+
+  final scrollController = ScrollController();
   final textWidth = 750.0;
+
+  Post post;
 
   @override
   initState() {
@@ -107,19 +110,29 @@ class _PostPageState extends State<PostPage> {
       return loadingView();
     }
 
-    return SliverList(
-      delegate: SliverChildListDelegate([
-        Row(
-          children: [
-            Spacer(),
-            Expanded(
-              flex: 3,
-              child: markdownViewer(),
+    return SliverLayoutBuilder(
+      builder: (context, constraints) {
+        isNarrow = constraints.crossAxisExtent < 700.0;
+
+        return SliverList(
+          delegate: SliverChildListDelegate([
+            Row(
+              children: [
+                if (!isNarrow)
+                  Spacer(),
+
+                Expanded(
+                  flex: 3,
+                  child: markdownViewer(),
+                ),
+
+                if (!isNarrow)
+                  Spacer(),
+              ],
             ),
-            Spacer(),
-          ],
-        ),
-      ]),
+          ]),
+        );
+      },
     );
   }
 
@@ -157,7 +170,11 @@ class _PostPageState extends State<PostPage> {
 
   Widget markdownViewer() {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 400.0),
+      padding: const EdgeInsets.only(
+        bottom: 400.0,
+        left: 20.0,
+        right: 20.0,
+      ),
       child: Html(
         data: postData,
         customRender: {
@@ -211,8 +228,8 @@ class _PostPageState extends State<PostPage> {
           ),
           'h2': Style(
             width: textWidth,
-            fontSize: FontSize(50.0),
-            fontWeight: FontWeight.w500,
+            fontSize: FontSize(40.0),
+            fontWeight: FontWeight.w600,
             margin: EdgeInsets.only(
               top: 80.0,
               bottom: 40.0,
