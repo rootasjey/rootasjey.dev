@@ -13,9 +13,9 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:supercharged/supercharged.dart';
 
 class ProjectPage extends StatefulWidget {
-  @required final String projectId;
+  final String projectId;
 
-  ProjectPage({this.projectId});
+  ProjectPage({@required this.projectId});
 
   @override
   _ProjectPageState createState() => _ProjectPageState();
