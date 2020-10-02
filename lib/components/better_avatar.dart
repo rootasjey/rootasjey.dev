@@ -5,9 +5,11 @@ class BetterAvatar extends StatefulWidget {
   final VoidCallback onTap;
   final ImageProvider<Object> image;
   final double size;
+  final double elevation;
 
   BetterAvatar({
     @required this.image,
+    this.elevation = 4.0,
     this.onTap,
     this.size = 220.0,
   });
@@ -17,7 +19,7 @@ class BetterAvatar extends StatefulWidget {
 }
 
 class _BetterAvatarState extends State<BetterAvatar> {
-  double elevation = 4.0;
+  double elevation;
   double size;
 
   @override
@@ -26,6 +28,7 @@ class _BetterAvatarState extends State<BetterAvatar> {
 
     setState(() {
       size = widget.size;
+      elevation = widget.elevation;
     });
   }
 
@@ -42,13 +45,14 @@ class _BetterAvatarState extends State<BetterAvatar> {
           image: widget.image,
           width: size,
           height: size,
+          fit: BoxFit.cover,
           child: InkWell(
             onTap: widget.onTap,
             onHover: (isHover) {
               setState(() {
                 elevation = isHover
-                  ? 8.0
-                  : 4.0;
+                  ? widget.elevation * 2
+                  : widget.elevation;
 
                 size = isHover
                   ? widget.size + 5.0
