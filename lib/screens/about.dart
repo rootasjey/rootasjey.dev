@@ -23,11 +23,9 @@ class _AboutState extends State<About> {
     height: 1.5,
   );
 
-  final titleOpacity = 0.9;
-
-  final paragraphOpacity = 0.6;
-
-  final captionOpacity = 0.6;
+  final captionOpacity    = 0.6;
+  final paragraphOpacity  = 0.6;
+  final titleOpacity      = 0.9;
 
   @override
   Widget build(BuildContext context) {
