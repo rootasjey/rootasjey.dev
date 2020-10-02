@@ -23,12 +23,14 @@ class ProjectPage extends StatefulWidget {
 
 class _ProjectPageState extends State<ProjectPage> {
   String projectData = '';
+
+  bool isFabVisible = false;
   bool isLoading = false;
+  bool isNarrow = false;
 
   final scrollController = ScrollController();
 
   Project project;
-  bool isFabVisible = false;
 
   final textWidth = 800.0;
 
@@ -105,19 +107,29 @@ class _ProjectPageState extends State<ProjectPage> {
       return loadingView();
     }
 
-    return SliverList(
-      delegate: SliverChildListDelegate([
-        Row(
-          children: [
-            Spacer(),
-            Expanded(
-              flex: 3,
-              child: markdownViewer(),
+    return SliverLayoutBuilder(
+      builder: (context, constraints) {
+        isNarrow = constraints.crossAxisExtent < 700.0;
+
+        return SliverList(
+          delegate: SliverChildListDelegate([
+            Row(
+              children: [
+                if (!isNarrow)
+                  Spacer(),
+
+                Expanded(
+                  flex: 3,
+                  child: markdownViewer(),
+                ),
+
+                if (!isNarrow)
+                  Spacer(),
+              ],
             ),
-            Spacer(),
-          ],
-        ),
-      ]),
+          ]),
+        );
+      },
     );
   }
 
@@ -160,7 +172,12 @@ class _ProjectPageState extends State<ProjectPage> {
         bottom: 400.0
       ),
       child: Padding(
-        padding: const EdgeInsets.all(40.0),
+        padding: EdgeInsets.symmetric(
+          horizontal: isNarrow
+            ? 20.0
+            : 100.0,
+          vertical: 60.0,
+        ),
         child: Html(
           data: projectData,
           customRender: {
