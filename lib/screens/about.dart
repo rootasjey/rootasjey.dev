@@ -13,19 +13,23 @@ class About extends StatefulWidget {
 }
 
 class _AboutState extends State<About> {
-  final titleStyle = TextStyle(
-    fontSize: 30.0,
-    fontWeight: FontWeight.w200,
-  );
+  final captionOpacity      = 0.6;
+  final paragraphOpacity    = 0.6;
+  final titleOpacity        = 0.9;
+
+  final largeHorizPadding   = 90.0;
+  final narrowHorizPadding  = 20.0;
+  final narrowWidthLimit    = 800.0;
 
   final paragraphStyle = TextStyle(
     fontSize: 18.0,
     height: 1.5,
   );
 
-  final captionOpacity    = 0.6;
-  final paragraphOpacity  = 0.6;
-  final titleOpacity      = 0.9;
+  final titleStyle = TextStyle(
+    fontSize: 30.0,
+    fontWeight: FontWeight.w200,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -34,17 +38,39 @@ class _AboutState extends State<About> {
         slivers: [
           HomeAppBar(),
 
-          SliverList(
-            delegate: SliverChildListDelegate([
-              headerTitle(),
-            ]),
+          SliverLayoutBuilder(
+            builder: (_, constraints) {
+              final padding = constraints.crossAxisExtent < narrowWidthLimit
+                ? narrowHorizPadding
+                : largeHorizPadding;
+
+              return SliverList(
+                delegate: SliverChildListDelegate([
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: padding,
+                      vertical: 90.0,
+                    ),
+                    child: headerTitle(),
+                  ),
+                ]),
+              );
+            },
           ),
 
-          SliverPadding(
-            padding: const EdgeInsets.only(
-              left: 150.0,
-            ),
-            sliver: body(),
+          SliverLayoutBuilder(
+            builder: (_, constraints) {
+              final padding = constraints.crossAxisExtent < narrowWidthLimit
+                ? narrowHorizPadding
+                : largeHorizPadding;
+
+              return SliverPadding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: padding,
+                ),
+                sliver: body(),
+              );
+            },
           ),
 
           SliverPadding(
@@ -77,29 +103,24 @@ class _AboutState extends State<About> {
   }
 
   Widget headerTitle() {
-    return Padding(
-      padding: const EdgeInsets.all(
-        90.0,
-      ),
-      child: Row(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16.0),
-            child: IconButton(
-              onPressed: () => FluroRouter.router.pop(context),
-              icon: Icon(Icons.arrow_back),
-            ),
+    return Row(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(right: 16.0),
+          child: IconButton(
+            onPressed: () => FluroRouter.router.pop(context),
+            icon: Icon(Icons.arrow_back),
           ),
+        ),
 
-          Text(
-            'About',
-            style: TextStyle(
-              fontSize: 70.0,
-              fontWeight: FontWeight.bold,
-            ),
+        Text(
+          'About',
+          style: TextStyle(
+            fontSize: 70.0,
+            fontWeight: FontWeight.bold,
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
