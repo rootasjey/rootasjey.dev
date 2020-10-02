@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/types/project.dart';
 
 class ProjectCard extends StatefulWidget {
@@ -17,7 +18,8 @@ class ProjectCard extends StatefulWidget {
 }
 
 class _ProjectCardState extends State<ProjectCard> {
-  double elevation = 2.0;
+  double elevation = 4.0;
+  Color borderColor = Colors.transparent;
 
   @override
   Widget build(BuildContext context) {
@@ -27,8 +29,25 @@ class _ProjectCardState extends State<ProjectCard> {
       width: 300.0,
       height: 300.0,
       child: Card(
+        elevation: elevation,
+        shape: RoundedRectangleBorder(
+          side: BorderSide(
+            color: borderColor,
+          ),
+        ),
         child: InkWell(
           onTap: widget.onTap,
+          onHover: (isHover) {
+            setState(() {
+              elevation = isHover
+                ? 8.0
+                : 4.0;
+
+              borderColor = isHover
+                ? stateColors.primary
+                : Colors.transparent;
+            });
+          },
           child: Stack(
             children: [
               Padding(
