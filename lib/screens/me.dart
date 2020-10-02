@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rootasjey/components/better_avatar.dart';
 import 'package:rootasjey/components/footer.dart';
 import 'package:rootasjey/components/home_app_bar.dart';
 import 'package:rootasjey/router//router.dart';
@@ -54,21 +55,13 @@ class _MeState extends State<Me> {
   Widget artistAvatar({String imageUrl, String name, String url}) {
     return Column(
       children: [
-        Material(
-          shape: CircleBorder(),
-          clipBehavior: Clip.hardEdge,
-          child: Ink.image(
-            width: 130.0,
-            height: 130.0,
-            fit: BoxFit.cover,
-            image: NetworkImage(
-              imageUrl,
-            ),
-            child: InkWell(
-              onTap: () => launch(url),
-            ),
-          ),
+        BetterAvatar(
+          elevation: 0,
+          size: 130.0,
+          image: NetworkImage(imageUrl),
+          onTap: () => launch(url),
         ),
+
 
         Padding(
           padding: const EdgeInsets.only(top: 12.0),
@@ -623,16 +616,28 @@ class _MeState extends State<Me> {
       padding: padding,
       child: Hero(
         tag: 'pp',
-        child: Material(
-          shape: CircleBorder(),
-          child: Ink.image(
-            image: AssetImage('assets/images/jeje.jpg',),
-            width: 220.0,
-            height: 220.0,
-            child: InkWell(
-              onTap: () {},
-            ),
-          ),
+        child: BetterAvatar(
+          image: AssetImage('assets/images/jeje.jpg',),
+          onTap: () {
+            showDialog(
+              context: context,
+              builder: (context) {
+                return SimpleDialog(
+                  children: [
+                    InkWell(
+                      onTap: () => Navigator.of(context).pop(),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Image.asset(
+                          'assets/images/jeje.jpg',
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              },
+            );
+          },
         ),
       ),
     );

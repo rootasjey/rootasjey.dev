@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
+import 'package:rootasjey/components/better_avatar.dart';
 import 'package:rootasjey/screens/me.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -120,24 +121,18 @@ class _HomePresentationState extends State<HomePresentation> {
   Widget profilePicture() {
     return Hero(
       tag: 'pp',
-      child: Material(
-        shape: CircleBorder(),
-        child: Ink.image(
-          image: AssetImage('assets/images/jeje.jpg',),
-          width: 120.0,
-          height: 120.0,
-          child: InkWell(
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) {
-                    return Me();
-                  },
-                ),
-              );
-            },
-          ),
-        ),
+      child: BetterAvatar(
+        size: 120.0,
+        image: AssetImage('assets/images/jeje.jpg',),
+        onTap: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) {
+                return Me();
+              },
+            ),
+          );
+        },
       ),
     );
   }
