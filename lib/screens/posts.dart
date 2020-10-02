@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:rootasjey/components/post_card.dart';
 import 'package:rootasjey/components/sliver_empty_view.dart';
 import 'package:rootasjey/components/home_app_bar.dart';
-import 'package:rootasjey/router//route_names.dart';
 import 'package:rootasjey/router//router.dart';
+import 'package:rootasjey/screens/post_page.dart';
 import 'package:rootasjey/types/post.dart';
 
 class Posts extends StatefulWidget {
@@ -119,11 +119,17 @@ class _PostsState extends State<Posts> {
           final post = postsList.elementAt(index);
 
           return PostCard(
-            onTap: () =>
-              FluroRouter.router.navigateTo(
-                context,
-                PostRoute.replaceFirst(':postId', post.id),
-              ),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) {
+                    return PostPage(
+                      postId: post.id,
+                    );
+                  },
+                ),
+              );
+            },
             post: post,
           );
         },
