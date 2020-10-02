@@ -12,10 +12,12 @@ class Pricing extends StatefulWidget {
 }
 
 class _PricingState extends State<Pricing> {
-  bool isLoading = false;
   final orangeColor = Color(0xFFF39C12);
-  int projectIndex = 0;
+  final largeHorizPadding   = 90.0;
+  final narrowHorizPadding  = 20.0;
+  final narrowWidthLimit    = 800.0;
 
+  int projectIndex = 0;
   int expandedIndex = -1;
 
   @override
@@ -39,17 +41,39 @@ class _PricingState extends State<Pricing> {
         slivers: [
           HomeAppBar(),
 
-          SliverList(
-            delegate: SliverChildListDelegate([
-              headerTitle(),
-            ]),
+          SliverLayoutBuilder(
+            builder: (_, constraints) {
+              final padding = constraints.crossAxisExtent < narrowWidthLimit
+                ? narrowHorizPadding
+                : largeHorizPadding;
+
+              return SliverList(
+                delegate: SliverChildListDelegate([
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: padding,
+                      vertical: 90.0,
+                    ),
+                    child: headerTitle(),
+                  ),
+                ]),
+              );
+            },
           ),
 
-          SliverPadding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 90.0,
-            ),
-            sliver: body(),
+          SliverLayoutBuilder(
+            builder: (_, constraints) {
+              final padding = constraints.crossAxisExtent < narrowWidthLimit
+                ? narrowHorizPadding
+                : largeHorizPadding;
+
+              return SliverPadding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: padding,
+                ),
+                sliver: body(),
+              );
+            },
           ),
 
           SliverList(
@@ -67,7 +91,6 @@ class _PricingState extends State<Pricing> {
       delegate: SliverChildListDelegate([
         Padding(
           padding: const EdgeInsets.only(
-            left: 90.0,
             bottom: 300.0,
           ),
           child: Column(
@@ -307,49 +330,44 @@ class _PricingState extends State<Pricing> {
   }
 
   Widget headerTitle() {
-    return Padding(
-      padding: const EdgeInsets.all(
-        90.0,
-      ),
-      child: Row(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16.0),
-            child: IconButton(
-              onPressed: () => FluroRouter.router.pop(context),
-              icon: Icon(Icons.arrow_back),
-            ),
+    return Row(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(right: 16.0),
+          child: IconButton(
+            onPressed: () => FluroRouter.router.pop(context),
+            icon: Icon(Icons.arrow_back),
           ),
+        ),
 
-          Column(
-            children: [
-              Text(
-                'Pricing',
-                style: TextStyle(
-                  fontSize: 70.0,
-                  fontWeight: FontWeight.bold,
-                ),
+        Column(
+          children: [
+            Text(
+              'Pricing',
+              style: TextStyle(
+                fontSize: 70.0,
+                fontWeight: FontWeight.bold,
               ),
+            ),
 
-              Padding(
-                padding: const EdgeInsets.only(
-                  left: 25.0,
-                  top: 10.0,
-                ),
-                child: Opacity(
-                  opacity: 0.6,
-                  child: Text(
-                    'Do you have a project in mind?',
-                    style: TextStyle(
-                      fontSize: 18.0,
-                    ),
+            Padding(
+              padding: const EdgeInsets.only(
+                left: 25.0,
+                top: 10.0,
+              ),
+              child: Opacity(
+                opacity: 0.6,
+                child: Text(
+                  'Do you have a project in mind?',
+                  style: TextStyle(
+                    fontSize: 18.0,
                   ),
                 ),
-              )
-            ],
-          ),
-        ],
-      ),
+              ),
+            )
+          ],
+        ),
+      ],
     );
   }
 
