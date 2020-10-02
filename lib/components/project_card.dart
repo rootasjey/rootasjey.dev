@@ -59,6 +59,8 @@ class _ProjectCardState extends State<ProjectCard> {
                       opacity: 0.8,
                       child: Text(
                         project.title,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                           fontSize: 32.0,
                           fontWeight: FontWeight.w700,
@@ -72,6 +74,8 @@ class _ProjectCardState extends State<ProjectCard> {
                         opacity: 0.6,
                         child: Text(
                           project.summary,
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             fontSize: 18.0,
                           ),

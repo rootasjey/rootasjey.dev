@@ -14,8 +14,12 @@ class Projects extends StatefulWidget {
 
 class _ProjectsState extends State<Projects> {
   final projectsList = List<Project>();
-  final limit = 10;
 
+  final largeHorizPadding   = 90.0;
+  final narrowHorizPadding  = 20.0;
+  final narrowWidthLimit    = 800.0;
+
+  final limit = 10;
   bool hasNext = true;
   bool isLoading = false;
   var lastDoc;
@@ -33,17 +37,40 @@ class _ProjectsState extends State<Projects> {
         slivers: [
           HomeAppBar(),
 
-          SliverList(
-            delegate: SliverChildListDelegate([
-              headerTitle(),
-            ]),
+          SliverLayoutBuilder(
+            builder: (_, constraints) {
+              final padding = constraints.crossAxisExtent < narrowWidthLimit
+                ? narrowHorizPadding
+                : largeHorizPadding;
+
+              return SliverPadding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: padding,
+                  vertical: 90.0,
+                ),
+                sliver: SliverList(
+                  delegate: SliverChildListDelegate([
+                    headerTitle(),
+                  ]),
+                ),
+              );
+            },
           ),
 
-          SliverPadding(
-            padding: const EdgeInsets.only(
-              left: 90.0,
-            ),
-            sliver: body(),
+          SliverLayoutBuilder(
+            builder: (_, constraints) {
+              final padding = constraints.crossAxisExtent < narrowWidthLimit
+                ? narrowHorizPadding
+                : largeHorizPadding;
+
+              return SliverPadding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: padding,
+                  vertical: 90.0,
+                ),
+                sliver: body(),
+              );
+            },
           ),
         ],
       ),
@@ -59,35 +86,30 @@ class _ProjectsState extends State<Projects> {
   }
 
   Widget headerTitle() {
-    return Padding(
-      padding: const EdgeInsets.all(
-        90.0,
-      ),
-      child: Row(
-        children: [
+    return Row(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(right: 16.0),
+          child: IconButton(
+            onPressed: () => FluroRouter.router.pop(context),
+            icon: Icon(Icons.arrow_back),
+          ),
+        ),
+
+        Text(
+          'Projects',
+          style: TextStyle(
+            fontSize: 70.0,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+
+        if (isLoading)
           Padding(
-            padding: const EdgeInsets.only(right: 16.0),
-            child: IconButton(
-              onPressed: () => FluroRouter.router.pop(context),
-              icon: Icon(Icons.arrow_back),
-            ),
+            padding: const EdgeInsets.only(top: 12.0, left: 22.0),
+            child: CircularProgressIndicator(),
           ),
-
-          Text(
-            'Projects',
-            style: TextStyle(
-              fontSize: 70.0,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-
-          if (isLoading)
-            Padding(
-              padding: const EdgeInsets.only(top: 12.0, left: 22.0),
-              child: CircularProgressIndicator(),
-            ),
-        ],
-      ),
+      ],
     );
   }
 
