@@ -14,28 +14,32 @@ class Contact extends StatefulWidget {
 }
 
 class _ContactState extends State<Contact> {
-  String email = '';
-  String messageBody = '';
-  String messageTitle = '';
-  String subject = 'Website';
-  String subjectHintPrefix = '';
+  final largeHorizPadding   = 90.0;
+  final narrowHorizPadding  = 20.0;
+  final narrowWidthLimit    = 800.0;
 
-  bool isLoading = false;
-  bool isMessageSent = false;
+  String email              = '';
+  String messageBody        = '';
+  String messageTitle       = '';
+  String subject            = 'Website';
+  String subjectHintPrefix  = '';
 
-  bool emailNeverEdited = true;
-  bool titleNeverEdited = true;
-  bool bodyNeverEdited = true;
+  bool isLoading            = false;
+  bool isMessageSent        = false;
+
+  bool emailNeverEdited     = true;
+  bool titleNeverEdited     = true;
+  bool bodyNeverEdited      = true;
 
   final formKey = GlobalKey<FormState>();
 
   final Map<String, String> errorMessages = {
-    'emptyEmail': 'The email field is empty. Please enter a valid email address.',
-    'invalidEmail': 'The value entered is not a valid email address. Please enter a valid one.',
-    'emptyTitle': 'Title cannot be empty. Enter a title with more than 3 characters.',
-    'tooShortTitle': 'Please enter a title with more than 3 characters.',
-    'emptyBody': 'Body cannot be empty. Enter a body with more than 3 characters.',
-    'tooShortBody': 'Please enter a body with more than 3 characters.',
+    'emptyEmail'    : 'The email field is empty. Please enter a valid email address.',
+    'invalidEmail'  : 'The value entered is not a valid email address. Please enter a valid one.',
+    'emptyTitle'    : 'Title cannot be empty. Enter a title with more than 3 characters.',
+    'tooShortTitle' : 'Please enter a title with more than 3 characters.',
+    'emptyBody'     : 'Body cannot be empty. Enter a body with more than 3 characters.',
+    'tooShortBody'  : 'Please enter a body with more than 3 characters.',
   };
 
   @override
@@ -54,17 +58,39 @@ class _ContactState extends State<Contact> {
         slivers: [
           HomeAppBar(),
 
-          SliverList(
-            delegate: SliverChildListDelegate([
-              headerTitle(),
-            ]),
+          SliverLayoutBuilder(
+            builder: (_, constraints) {
+              final padding = constraints.crossAxisExtent < narrowWidthLimit
+                ? narrowHorizPadding
+                : largeHorizPadding;
+
+              return SliverList(
+                delegate: SliverChildListDelegate([
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: padding,
+                      vertical: 90.0,
+                    ),
+                    child: headerTitle(),
+                  ),
+                ]),
+              );
+            },
           ),
 
-          SliverPadding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 160.0,
-            ),
-            sliver: body(),
+          SliverLayoutBuilder(
+            builder: (_, constraints) {
+              final padding = constraints.crossAxisExtent < narrowWidthLimit
+                ? narrowHorizPadding
+                : largeHorizPadding;
+
+              return SliverPadding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: padding,
+                ),
+                sliver: body(),
+              );
+            },
           ),
 
           SliverPadding(
@@ -224,29 +250,24 @@ class _ContactState extends State<Contact> {
   }
 
   Widget headerTitle() {
-    return Padding(
-      padding: const EdgeInsets.all(
-        90.0,
-      ),
-      child: Row(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16.0),
-            child: IconButton(
-              onPressed: () => FluroRouter.router.pop(context),
-              icon: Icon(Icons.arrow_back),
-            ),
+    return Row(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(right: 16.0),
+          child: IconButton(
+            onPressed: () => FluroRouter.router.pop(context),
+            icon: Icon(Icons.arrow_back),
           ),
+        ),
 
-          Text(
-            'Contact me',
-            style: TextStyle(
-              fontSize: 70.0,
-              fontWeight: FontWeight.bold,
-            ),
+        Text(
+          'Contact me',
+          style: TextStyle(
+            fontSize: 70.0,
+            fontWeight: FontWeight.bold,
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -257,33 +278,33 @@ class _ContactState extends State<Contact> {
         bottom: 40.0,
       ),
       child: TextFormField(
-                        decoration: InputDecoration(
-                          labelText: 'Message',
-                          icon: Icon(Icons.edit),
-                          border: OutlineInputBorder(),
-                          errorText: getBodyErrorText(),
-                        ),
-                        maxLines: null,
-                        minLines: 5,
-                        validator: (value) {
-                          if (value.isEmpty) {
-                            return errorMessages['emptyBoy'];
-                          }
+        decoration: InputDecoration(
+          labelText: 'Message',
+          icon: Icon(Icons.edit),
+          border: OutlineInputBorder(),
+          errorText: getBodyErrorText(),
+        ),
+        maxLines: null,
+        minLines: 5,
+        validator: (value) {
+          if (value.isEmpty) {
+            return errorMessages['emptyBoy'];
+          }
 
-                          if (value.length < 3) {
-                            return errorMessages['tooShortBody'];
-                          }
+          if (value.length < 3) {
+            return errorMessages['tooShortBody'];
+          }
 
-                          return null;
-                        },
-                        onChanged: (value) {
-                          bodyNeverEdited = false;
+          return null;
+        },
+        onChanged: (value) {
+          bodyNeverEdited = false;
 
-                          setState(() {
-                            messageBody = value;
-                          });
-                        },
-                      ),
+          setState(() {
+            messageBody = value;
+          });
+        },
+      ),
     );
   }
 
