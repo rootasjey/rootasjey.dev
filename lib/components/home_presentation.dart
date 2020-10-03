@@ -126,10 +126,16 @@ class _HomePresentationState extends State<HomePresentation> {
         image: AssetImage('assets/images/jeje.jpg',),
         onTap: () {
           Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) {
+            PageRouteBuilder(
+              pageBuilder: (context, _, __) {
                 return Me();
               },
+              transitionsBuilder: (_, animation, __, child) {
+                return FadeTransition(
+                  opacity: animation,
+                  child: child,
+                );
+              }
             ),
           );
         },
