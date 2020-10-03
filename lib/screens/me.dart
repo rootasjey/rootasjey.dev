@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:rootasjey/components/better_avatar.dart';
 import 'package:rootasjey/components/footer.dart';
 import 'package:rootasjey/components/home_app_bar.dart';
-import 'package:rootasjey/router//router.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/types/post.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -228,7 +227,7 @@ class _MeState extends State<Me> {
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
             child: IconButton(
-              onPressed: () => FluroRouter.router.pop(context),
+              onPressed: () => Navigator.of(context).pop(),
               icon: Icon(Icons.arrow_back),
             ),
           ),

@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:rootasjey/components/features/web.dart';
 import 'package:rootasjey/components/footer.dart';
 import 'package:rootasjey/components/home_app_bar.dart';
-import 'package:rootasjey/router//route_names.dart';
-import 'package:rootasjey/router//router.dart';
+import 'package:rootasjey/screens/enroll.dart';
 import 'package:rootasjey/state/colors.dart';
 
 class Pricing extends StatefulWidget {
@@ -29,7 +28,15 @@ class _PricingState extends State<Pricing> {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => FluroRouter.router.navigateTo(context, EnrollRoute),
+        onPressed: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (_) {
+                return Enroll();
+              },
+            ),
+          );
+        },
         backgroundColor: stateColors.primary,
         foregroundColor: Colors.white,
         icon: Icon(Icons.payment),
@@ -335,7 +342,7 @@ class _PricingState extends State<Pricing> {
         Padding(
           padding: const EdgeInsets.only(right: 16.0),
           child: IconButton(
-            onPressed: () => FluroRouter.router.pop(context),
+            onPressed: () => Navigator.of(context).pop(),
             icon: Icon(Icons.arrow_back),
           ),
         ),

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/home_app_bar.dart';
-import 'package:rootasjey/router//router.dart';
 import 'package:rootasjey/screens/draft_projects.dart';
 import 'package:rootasjey/screens/published_projects.dart';
 import 'package:rootasjey/state/colors.dart';
@@ -65,7 +64,7 @@ class _MyProjectsState extends State<MyProjects> {
           Padding(
             padding: const EdgeInsets.only(right: 0.0),
             child: IconButton(
-              onPressed: () => FluroRouter.router.pop(context),
+              onPressed: () => Navigator.of(context).pop(),
               icon: Icon(Icons.arrow_back),
             ),
           ),

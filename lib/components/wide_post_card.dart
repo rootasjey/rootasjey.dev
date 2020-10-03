@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:rootasjey/router//route_names.dart';
-import 'package:rootasjey/router//router.dart';
+import 'package:rootasjey/screens/post_page.dart';
 import 'package:rootasjey/state/colors.dart';
 
 class WidePostCard extends StatefulWidget {
@@ -153,9 +152,14 @@ class _WidePostCardState extends State<WidePostCard> {
   }
 
   void navigateToPost() {
-    FluroRouter.router.navigateTo(
-      context,
-      PostRoute.replaceFirst(':id', widget.id),
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) {
+          return PostPage(
+            postId: widget.id,
+          );
+        },
+      ),
     );
   }
 }

@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:rootasjey/actions/users.dart';
 import 'package:rootasjey/components/full_page_loading.dart';
 import 'package:rootasjey/main_web.dart';
-import 'package:rootasjey/router//router.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/state/user_state.dart';
 import 'package:rootasjey/utils/app_local_storage.dart';
@@ -19,11 +18,6 @@ class App extends StatefulWidget {
 
 class AppState extends State<App> {
   bool isReady = false;
-
-  AppState() {
-    if (kIsWeb) { FluroRouter.setupWebRouter(); }
-    else { FluroRouter.setupMobileRouter(); }
-  }
 
   @override
   void initState() {

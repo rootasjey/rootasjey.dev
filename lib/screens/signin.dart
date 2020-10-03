@@ -2,11 +2,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/actions/users.dart';
 import 'package:rootasjey/components/home_app_bar.dart';
-import 'package:rootasjey/router//route_names.dart';
-import 'package:rootasjey/router//router.dart';
+import 'package:rootasjey/screens/home.dart';
+import 'package:rootasjey/screens/me.dart';
+import 'package:rootasjey/screens/signup.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/state/user_state.dart';
 import 'package:rootasjey/utils/app_local_storage.dart';
+import 'package:rootasjey/utils/auth_guards.dart';
 import 'package:rootasjey/utils/snack.dart';
 
 class Signin extends StatefulWidget {
@@ -27,7 +29,7 @@ class _SigninState extends State<Signin> {
   @override
   void initState() {
     super.initState();
-    checkAuth();
+    canNavigate(context: context);
   }
 
   @override
@@ -105,9 +107,12 @@ class _SigninState extends State<Signin> {
           padding: const EdgeInsets.only(top: 20.0,),
           child: OutlineButton(
             onPressed: () {
-              FluroRouter.router.navigateTo(
-                context,
-                RootRoute,
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) {
+                    return Home();
+                  },
+                ),
               );
             },
             child: Opacity(
@@ -170,7 +175,13 @@ class _SigninState extends State<Signin> {
   Widget forgotPassword() {
     return FlatButton(
       onPressed: () {
-        FluroRouter.router.navigateTo(context, MeRoute);
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) {
+              return Me();
+            },
+          ),
+        );
       },
       child: Opacity(
         opacity: .6,
@@ -196,7 +207,7 @@ class _SigninState extends State<Signin> {
           padding: const EdgeInsets.only(right: 20.0,),
           child: IconButton(
             onPressed: () {
-              FluroRouter.router.pop(context);
+              Navigator.of(context).pop();
             },
             icon: Icon(Icons.arrow_back),
           ),
@@ -254,16 +265,21 @@ class _SigninState extends State<Signin> {
   Widget noAccountButton() {
     return FlatButton(
       onPressed: () async {
-        await FluroRouter.router.navigateTo(
-          context,
-          SignupRoute,
+        await Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) {
+              return Signup();
+            },
+          ),
         );
 
         if (userState.isUserConnected) {
-          await FluroRouter.router.navigateTo(
-            context,
-            RootRoute,
-            replace: true,
+          await Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (_) {
+                return Home();
+              },
+            ),
           );
         }
       },
@@ -347,30 +363,6 @@ class _SigninState extends State<Signin> {
     );
   }
 
-  void checkAuth() async {
-    setState(() {
-      isCheckingAuth = true;
-    });
-
-    try {
-      final userAuth = await userState.userAuth;
-
-      setState(() {
-        isCheckingAuth = false;
-      });
-
-      if (userAuth != null) {
-        userState.setUserConnected();
-        FluroRouter.router.navigateTo(context, RootRoute);
-      }
-
-    } catch (error) {
-      setState(() {
-        isCheckingAuth = false;
-      });
-    }
-  }
-
   bool inputValuesOk() {
     if (!checkEmailFormat(email)) {
       showSnack(
@@ -430,10 +422,12 @@ class _SigninState extends State<Signin> {
 
       await userGetAndSetAvatarUrl(authResult);
 
-      FluroRouter.router.navigateTo(
-        context,
-        RootRoute,
-        replace: true,
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (_) {
+            return Home();
+          },
+        ),
       );
 
     } catch (error) {

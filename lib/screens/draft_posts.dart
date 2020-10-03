@@ -1,12 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/post_card.dart';
 import 'package:rootasjey/components/sliver_empty_view.dart';
-import 'package:rootasjey/router//route_names.dart';
-import 'package:rootasjey/router//router.dart';
+import 'package:rootasjey/screens/edit_post.dart';
 import 'package:rootasjey/state/user_state.dart';
 import 'package:rootasjey/types/post.dart';
+import 'package:rootasjey/utils/auth_guards.dart';
 
 class DraftPosts extends StatefulWidget {
   @override
@@ -28,7 +27,7 @@ class _DraftPostsState extends State<DraftPosts> {
   }
 
   void initAndCheck() async {
-    final result = await checkAuth();
+    final result = await canNavigate(context: context);
     if (!result) { return; }
 
     fetch();
@@ -55,9 +54,14 @@ class _DraftPostsState extends State<DraftPosts> {
 
           return PostCard(
             onTap: () async {
-              await FluroRouter.router.navigateTo(
-                context,
-                EditPostRoute.replaceFirst(':postId', post.id),
+              await Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) {
+                    return EditPost(
+                      postId: post.id,
+                    );
+                  },
+                ),
               );
 
               fetch();
@@ -106,23 +110,6 @@ class _DraftPostsState extends State<DraftPosts> {
         childCount: postsList.length,
       ),
     );
-  }
-
-  Future<bool> checkAuth() async {
-    try {
-      // ?NOTE: setState() (called during build) issue
-      // ?if usinguser_state.
-      final userAuth = FirebaseAuth.instance.currentUser;
-      if (userAuth != null) { return true; }
-
-      FluroRouter.router.navigateTo(context, SigninRoute);
-      return false;
-
-    } catch (error) {
-      debugPrint(error.toString());
-      FluroRouter.router.navigateTo(context, SigninRoute);
-      return false;
-    }
   }
 
   void fetch() async {

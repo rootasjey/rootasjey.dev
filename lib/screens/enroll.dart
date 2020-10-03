@@ -10,7 +10,6 @@ import 'package:rootasjey/components/features/web.dart';
 import 'package:rootasjey/components/footer.dart';
 import 'package:rootasjey/components/home_app_bar.dart';
 import 'package:rootasjey/components/outline_toggle_button.dart';
-import 'package:rootasjey/router//router.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/types/enums.dart';
 import 'package:rootasjey/utils/snack.dart';
@@ -1606,7 +1605,7 @@ class _EnrollState extends State<Enroll> {
             top: 20.0,
           ),
           child: IconButton(
-            onPressed: () => FluroRouter.router.pop(context),
+            onPressed: () => Navigator.of(context).pop(),
             icon: Icon(Icons.arrow_back),
           ),
         ),

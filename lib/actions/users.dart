@@ -4,8 +4,7 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:rootasjey/router/route_names.dart';
-import 'package:rootasjey/router/router.dart';
+import 'package:rootasjey/screens/home.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/state/user_state.dart';
 import 'package:rootasjey/utils/app_local_storage.dart';
@@ -66,7 +65,13 @@ void userSignOut({BuildContext context, bool autoNavigateAfter = true,}) async {
   userState.signOut();
 
   if (autoNavigateAfter) {
-    FluroRouter.router.navigateTo(context, RootRoute);
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) {
+          return Home();
+        },
+      ),
+    );
   }
 }
 

@@ -5,11 +5,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/actions/users.dart';
 import 'package:rootasjey/components/home_app_bar.dart';
-import 'package:rootasjey/router//route_names.dart';
-import 'package:rootasjey/router//router.dart';
+import 'package:rootasjey/screens/home.dart';
+import 'package:rootasjey/screens/signin.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/state/user_state.dart';
 import 'package:rootasjey/utils/app_local_storage.dart';
+import 'package:rootasjey/utils/auth_guards.dart';
 import 'package:rootasjey/utils/snack.dart';
 import 'package:supercharged/supercharged.dart';
 
@@ -47,7 +48,23 @@ class _SignupState extends State<Signup> {
   @override
   initState() {
     super.initState();
-    checkAuth();
+    checkAuthGuard();
+  }
+
+  void checkAuthGuard() async {
+    final result = await canNavigate(context: context);
+
+    if (result) {
+      userState.setUserConnected();
+
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (_) {
+            return Home();
+          },
+        ),
+      );
+    }
   }
 
   @override
@@ -126,15 +143,18 @@ class _SignupState extends State<Signup> {
           padding: const EdgeInsets.only(top: 20.0,),
           child: OutlineButton(
             onPressed: () {
-              FluroRouter.router.navigateTo(
-                context,
-                DashboardRoute,
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) {
+                    return Home();
+                  },
+                ),
               );
             },
             child: Opacity(
               opacity: .6,
               child: Text(
-                'Dashboard',
+                'Home',
               ),
             ),
           ),
@@ -236,7 +256,7 @@ class _SignupState extends State<Signup> {
           padding: const EdgeInsets.only(right: 20.0,),
           child: IconButton(
             onPressed: () {
-              FluroRouter.router.pop(context);
+              Navigator.of(context).pop();
             },
             icon: Icon(Icons.arrow_back),
           ),
@@ -520,9 +540,12 @@ class _SignupState extends State<Signup> {
     return Center(
       child: FlatButton(
         onPressed: () {
-          FluroRouter.router.navigateTo(
-            context,
-            SigninRoute,
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (_) {
+                return Signin();
+              },
+            ),
           );
         },
         child: Opacity(
@@ -536,29 +559,6 @@ class _SignupState extends State<Signup> {
         )
       ),
     );
-  }
-
-  void checkAuth() async {
-    setState(() {
-      isCheckingAuth = true;
-    });
-
-    try {
-      final userAuth = await userState.userAuth;
-
-      setState(() {
-        isCheckingAuth = false;
-      });
-
-      if (userAuth != null) {
-        FluroRouter.router.navigateTo(context, DashboardRoute);
-      }
-
-    } catch (error) {
-      setState(() {
-        isCheckingAuth = false;
-      });
-    }
   }
 
   void createAccount() async {
@@ -632,7 +632,13 @@ class _SignupState extends State<Signup> {
         isCompleted = true;
       });
 
-      FluroRouter.router.navigateTo(context, RootRoute);
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (_) {
+            return Home();
+          },
+        ),
+      );
 
     } catch (error) {
       debugPrint(error.toString());

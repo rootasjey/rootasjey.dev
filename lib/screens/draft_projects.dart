@@ -1,15 +1,12 @@
-import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/project_card.dart';
 import 'package:rootasjey/components/sliver_empty_view.dart';
-import 'package:rootasjey/router//route_names.dart';
-import 'package:rootasjey/router//router.dart';
+import 'package:rootasjey/screens/edit_project.dart';
 import 'package:rootasjey/state/user_state.dart';
 import 'package:rootasjey/types/project.dart';
-import 'package:supercharged/supercharged.dart';
+import 'package:rootasjey/utils/auth_guards.dart';
 
 class DraftProjects extends StatefulWidget {
   @override
@@ -34,7 +31,7 @@ class _DraftProjectsState extends State<DraftProjects> {
   }
 
   void initAndCheck() async {
-    final result = await checkAuth();
+    final result = await canNavigate(context: context);
     if (!result) { return; }
 
     fetch();
@@ -64,9 +61,14 @@ class _DraftProjectsState extends State<DraftProjects> {
 
           return ProjectCard(
             onTap: () async {
-              await FluroRouter.router.navigateTo(
-                context,
-                EditProjectRoute.replaceFirst(':projectId', project.id),
+              await Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) {
+                    return EditProject(
+                      projectId: project.id,
+                    );
+                  },
+                ),
               );
 
               fetch();
@@ -113,43 +115,6 @@ class _DraftProjectsState extends State<DraftProjects> {
         childCount: projectsList.length,
       ),
     );
-  }
-
-  Future<bool> checkAuth() async {
-    try {
-      final userAuth = FirebaseAuth.instance.currentUser;
-      if (userAuth != null) { return true; }
-
-      delayedNavigation(SigninRoute);
-      return false;
-
-    } catch (error) {
-      debugPrint(error.toString());
-      delayedNavigation(SigninRoute);
-      return false;
-    }
-  }
-
-  void delayedNavigation(String route) {
-    if (navigationAttempts >= maxNavigationAttempts) {
-      return;
-    }
-
-    navigationAttempts++;
-
-    if (!FluroRouter.isReady) {
-      Timer(
-        2.seconds, () {
-          delayedNavigation(route);
-        });
-
-      return;
-    }
-
-    Timer(
-      1.seconds, () {
-        FluroRouter.router.navigateTo(context, route);
-      });
   }
 
   void fetch() async {

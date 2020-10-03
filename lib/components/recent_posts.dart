@@ -2,8 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/pub_post_card.dart';
 import 'package:rootasjey/components/pub_post_line_card.dart';
-import 'package:rootasjey/router//route_names.dart';
-import 'package:rootasjey/router//router.dart';
+import 'package:rootasjey/screens/posts.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/types/post_headline.dart';
 
@@ -102,8 +101,15 @@ class _RecentPostsState extends State<RecentPosts> {
     return Row(
       children: [
         TextButton.icon(
-          onPressed: () =>
-            FluroRouter.router.navigateTo(context, PostsRoute),
+          onPressed: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) {
+                  return Posts();
+                },
+              ),
+            );
+          },
           icon: Icon(
             Icons.list,
             color: stateColors.foreground,

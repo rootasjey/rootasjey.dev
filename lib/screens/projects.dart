@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:rootasjey/components/project_card.dart';
 import 'package:rootasjey/components/sliver_empty_view.dart';
 import 'package:rootasjey/components/home_app_bar.dart';
-import 'package:rootasjey/router//router.dart';
 import 'package:rootasjey/screens/project_page.dart';
 import 'package:rootasjey/types/project.dart';
 
@@ -91,7 +90,7 @@ class _ProjectsState extends State<Projects> {
         Padding(
           padding: const EdgeInsets.only(right: 16.0),
           child: IconButton(
-            onPressed: () => FluroRouter.router.pop(context),
+            onPressed: () => Navigator.of(context).pop(),
             icon: Icon(Icons.arrow_back),
           ),
         ),

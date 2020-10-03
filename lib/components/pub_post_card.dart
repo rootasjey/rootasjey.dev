@@ -2,8 +2,7 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
-import 'package:rootasjey/router/route_names.dart';
-import 'package:rootasjey/router/router.dart';
+import 'package:rootasjey/screens/post_page.dart';
 import 'package:rootasjey/types/post_headline.dart';
 
 class PubPostCard extends StatefulWidget {
@@ -154,9 +153,14 @@ class _PubPostCardState extends State<PubPostCard> {
   }
 
   void navigateToPost() {
-    FluroRouter.router.navigateTo(
-      context,
-      PostRoute.replaceFirst(':postId', widget.postHeadline.id),
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) {
+          return PostPage(
+            postId: widget.postHeadline.id,
+          );
+        },
+      ),
     );
   }
 

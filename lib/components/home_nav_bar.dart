@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:rootasjey/router/route_names.dart';
-import 'package:rootasjey/router/router.dart';
+import 'package:rootasjey/screens/about.dart';
+import 'package:rootasjey/screens/contact.dart';
+import 'package:rootasjey/screens/enroll.dart';
+import 'package:rootasjey/screens/posts.dart';
+import 'package:rootasjey/screens/pricing.dart';
+import 'package:rootasjey/screens/projects.dart';
 import 'package:rootasjey/state/colors.dart';
 
 class HomeNavBar extends StatelessWidget {
@@ -21,10 +25,18 @@ class HomeNavBar extends StatelessWidget {
     @required BuildContext context,
     @required IconData icon,
     @required String titleText,
-    @required String route,
+    @required Widget widgetRoute,
   }) {
     return FlatButton.icon(
-      onPressed: () => FluroRouter.router.navigateTo(context, route),
+      onPressed: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) {
+              return widgetRoute;
+            },
+          ),
+        );
+      },
       icon: Icon(icon),
       label: Text(
         titleText,
@@ -36,7 +48,7 @@ class HomeNavBar extends StatelessWidget {
     @required BuildContext context,
     @required IconData icon,
     @required String titleText,
-    @required String route,
+    @required Widget widgetRoute,
   }) {
     return SizedBox(
       width: 120.0,
@@ -44,7 +56,15 @@ class HomeNavBar extends StatelessWidget {
       child: Card(
         elevation: 4.0,
         child: InkWell(
-          onTap: () => FluroRouter.router.navigateTo(context, route),
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) {
+                  return widgetRoute;
+                },
+              ),
+            );
+          },
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -75,42 +95,42 @@ class HomeNavBar extends StatelessWidget {
             context: context,
             icon: Icons.work,
             titleText: 'Enroll',
-            route: EnrollRoute,
+            widgetRoute: Enroll(),
           ),
 
           cardLink(
             context: context,
             icon: Icons.apps,
             titleText: 'Projects',
-            route: ProjectsRoute,
+            widgetRoute: Projects(),
           ),
 
           cardLink(
             context: context,
             icon: Icons.edit,
             titleText: 'Posts',
-            route: PostsRoute,
+            widgetRoute: Posts(),
           ),
 
           cardLink(
             context: context,
             icon: Icons.attach_money,
             titleText: 'Pricing',
-            route: PricingRoute,
+            widgetRoute: Pricing(),
           ),
 
           cardLink(
             context: context,
             icon: Icons.email_outlined,
             titleText: 'Contact me',
-            route: ContactRoute,
+            widgetRoute: Contact(),
           ),
 
           cardLink(
             context: context,
             icon: Icons.help_center,
             titleText: 'About',
-            route: AboutRoute,
+            widgetRoute: About(),
           ),
         ],
       ),
@@ -129,7 +149,13 @@ class HomeNavBar extends StatelessWidget {
         children: [
           RaisedButton.icon(
             onPressed: () {
-              FluroRouter.router.navigateTo(context, EnrollRoute);
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) {
+                    return Enroll();
+                  },
+                ),
+              );
             },
             color: stateColors.primary,
             textColor: Colors.white,
@@ -143,35 +169,35 @@ class HomeNavBar extends StatelessWidget {
             context: context,
             icon: Icons.apps,
             titleText: 'Projects',
-            route: ProjectsRoute,
+            widgetRoute: Projects(),
           ),
 
           buttonLink(
             context: context,
             icon: Icons.edit,
             titleText: 'Posts',
-            route: PostsRoute,
+            widgetRoute: Posts(),
           ),
 
           buttonLink(
             context: context,
             icon: Icons.attach_money,
             titleText: 'Pricing',
-            route: PricingRoute,
+            widgetRoute: Pricing(),
           ),
 
           buttonLink(
             context: context,
             icon: Icons.email_outlined,
             titleText: 'Contact me',
-            route: ContactRoute,
+            widgetRoute: Contact(),
           ),
 
           buttonLink(
             context: context,
             icon: Icons.help_center,
             titleText: 'About',
-            route: AboutRoute,
+            widgetRoute: About(),
           ),
         ],
       ),

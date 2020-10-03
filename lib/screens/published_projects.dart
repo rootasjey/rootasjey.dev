@@ -2,10 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/project_card.dart';
 import 'package:rootasjey/components/sliver_empty_view.dart';
-import 'package:rootasjey/router//route_names.dart';
-import 'package:rootasjey/router//router.dart';
-import 'package:rootasjey/state/user_state.dart';
+import 'package:rootasjey/screens/edit_project.dart';
+import 'package:rootasjey/screens/project_page.dart';
 import 'package:rootasjey/types/project.dart';
+import 'package:rootasjey/utils/auth_guards.dart';
 
 class PublishedProjects extends StatefulWidget {
   @override
@@ -27,7 +27,7 @@ class _PublishedProjectsState extends State<PublishedProjects> {
   }
 
   void initAndCheck() async {
-    final result = await checkAuth();
+    final result = await canNavigate(context: context);
     if (!result) { return; }
 
     fetch();
@@ -57,9 +57,12 @@ class _PublishedProjectsState extends State<PublishedProjects> {
 
           return ProjectCard(
             onTap: () async {
-              FluroRouter.router.navigateTo(
-                context,
-                ProjectRoute.replaceFirst(':projectId', project.id),
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) {
+                    return ProjectPage(projectId: project.id);
+                  },
+                ),
               );
             },
             popupMenuButton: PopupMenuButton<String>(
@@ -135,7 +138,7 @@ class _PublishedProjectsState extends State<PublishedProjects> {
           ),
           actions: [
             TextButton(
-              onPressed: () => FluroRouter.router.pop(context),
+              onPressed: () => Navigator.of(context).pop(),
               child: Text(
                 'CANCEL',
                 textAlign: TextAlign.end,
@@ -144,7 +147,7 @@ class _PublishedProjectsState extends State<PublishedProjects> {
 
             TextButton(
               onPressed: () {
-                FluroRouter.router.pop(context);
+                Navigator.of(context).pop();
                 delete(index);
               },
               child: Text(
@@ -159,21 +162,6 @@ class _PublishedProjectsState extends State<PublishedProjects> {
         );
       }
     );
-  }
-
-  Future<bool> checkAuth() async {
-    try {
-      final userAuth = await userState.userAuth;
-      if (userAuth != null) { return true; }
-
-      FluroRouter.router.navigateTo(context, SigninRoute);
-      return false;
-
-    } catch (error) {
-      debugPrint(error.toString());
-      FluroRouter.router.navigateTo(context, SigninRoute);
-      return false;
-    }
   }
 
   void fetch() async {
@@ -264,9 +252,14 @@ class _PublishedProjectsState extends State<PublishedProjects> {
   }
 
   void goToEditPage(Project project) async {
-    await FluroRouter.router.navigateTo(
-      context,
-      EditProjectRoute.replaceFirst(':projectId', project.id),
+    await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) {
+          return EditProject(
+            projectId: project.id,
+          );
+        },
+      ),
     );
 
     fetch();

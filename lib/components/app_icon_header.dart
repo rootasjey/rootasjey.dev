@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobx/mobx.dart';
 import 'package:rootasjey/components/footer.dart';
-import 'package:rootasjey/router/route_names.dart';
-import 'package:rootasjey/router/router.dart';
+import 'package:rootasjey/screens/home.dart';
 import 'package:rootasjey/state/colors.dart';
 
 class AppIconHeader extends StatefulWidget {
@@ -52,7 +51,13 @@ class _AppIconHeaderState extends State<AppIconHeader> {
         color: Colors.transparent,
         child: InkWell(
           onTap: widget.onTap
-            ?? () => FluroRouter.router.navigateTo(context, RootRoute),
+            ?? () => Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) {
+                  return Home();
+                },
+              ),
+            ),
           onLongPress: () => showFooter(),
           onHover: (isHover) {
             isHover

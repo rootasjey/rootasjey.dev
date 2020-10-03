@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:rootasjey/router/router.dart';
+import 'package:rootasjey/screens/home.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/utils/app_local_storage.dart';
 import 'package:rootasjey/utils/brightness.dart';
@@ -23,8 +23,7 @@ class _MainWebState extends State<MainWeb> {
       title: 'rootasjey',
       theme: stateColors.themeData,
       debugShowCheckedModeBanner: false,
-      initialRoute: '/',
-      onGenerateRoute: FluroRouter.router.generator,
+      home: Home(),
     );
   }
 
@@ -37,12 +36,15 @@ class _MainWebState extends State<MainWeb> {
       setBrightness(
         brightness: brightness,
         context: context,
-        duration: 1.seconds,
+        duration: 500.milliseconds,
       );
 
       return;
     }
 
-    setAutoBrightness(context: context, duration: 2.seconds);
+    setAutoBrightness(
+      context: context,
+      duration: 500.milliseconds,
+    );
   }
 }

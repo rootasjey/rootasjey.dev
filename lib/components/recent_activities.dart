@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:github/github.dart';
 import 'package:rootasjey/components/activity_row.dart';
-import 'package:rootasjey/router/route_names.dart';
-import 'package:rootasjey/router/router.dart';
+import 'package:rootasjey/screens/activities.dart';
 import 'package:rootasjey/state/colors.dart';
 
 class RecentActivities extends StatefulWidget {
@@ -86,8 +85,15 @@ class _RecentActivitiesState extends State<RecentActivities> {
           Opacity(
             opacity: 0.6,
             child: TextButton.icon(
-              onPressed: () =>
-                FluroRouter.router.navigateTo(context, ActivitiesRoute),
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) {
+                      return Activities();
+                    },
+                  ),
+                );
+              },
               icon: Icon(
                 Icons.watch_later,
                 color: stateColors.foreground,

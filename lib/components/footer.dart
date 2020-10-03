@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:rootasjey/router/route_names.dart';
-import 'package:rootasjey/router/router.dart';
+import 'package:rootasjey/screens/about.dart';
+import 'package:rootasjey/screens/contact.dart';
+import 'package:rootasjey/screens/home.dart';
+import 'package:rootasjey/screens/me.dart';
 import 'package:rootasjey/state/user_state.dart';
 import 'package:rootasjey/utils/snack.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -181,7 +183,13 @@ class _FooterState extends State<Footer> {
         FlatButton(
           onPressed: () {
             onBeforeNav();
-            FluroRouter.router.navigateTo(context, AboutRoute);
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) {
+                  return About();
+                },
+              ),
+            );
           },
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -200,7 +208,13 @@ class _FooterState extends State<Footer> {
         FlatButton(
           onPressed: () {
             onBeforeNav();
-            FluroRouter.router.navigateTo(context, ContactRoute);
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) {
+                  return Contact();
+                },
+              ),
+            );
           },
           child: Opacity(
             opacity: .5,
@@ -214,7 +228,13 @@ class _FooterState extends State<Footer> {
         FlatButton(
           onPressed: () {
             onBeforeNav();
-            FluroRouter.router.navigateTo(context, MeRoute);
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) {
+                  return Me();
+                },
+              ),
+            );
           },
           child: Opacity(
             opacity: .5,
@@ -236,7 +256,13 @@ class _FooterState extends State<Footer> {
         curve: Curves.easeOut,
       );
     } else if (widget.autoNavToHome) {
-      FluroRouter.router.navigateTo(context, RootRoute);
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (_) {
+            return Home();
+          }
+        )
+      );
     }
 
     showSnack(

@@ -3,8 +3,8 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/footer.dart';
 import 'package:rootasjey/components/home_app_bar.dart';
-import 'package:rootasjey/router//route_names.dart';
-import 'package:rootasjey/router//router.dart';
+import 'package:rootasjey/screens/pricing.dart';
+import 'package:rootasjey/screens/projects.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class About extends StatefulWidget {
@@ -108,7 +108,7 @@ class _AboutState extends State<About> {
         Padding(
           padding: const EdgeInsets.only(right: 16.0),
           child: IconButton(
-            onPressed: () => FluroRouter.router.pop(context),
+            onPressed: () => Navigator.of(context).pop(),
             icon: Icon(Icons.arrow_back),
           ),
         ),
@@ -256,7 +256,13 @@ class _AboutState extends State<About> {
               runSpacing: 10.0,
               children: [
                 FlatButton.icon(
-                  onPressed: () => FluroRouter.router.navigateTo(context, ProjectsRoute),
+                  onPressed: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) {
+                          return Projects();
+                        },
+                      ),
+                    ),
                   icon: Icon(Icons.apps),
                   label: Text(
                     'Projects',
@@ -264,7 +270,13 @@ class _AboutState extends State<About> {
                 ),
 
                 FlatButton.icon(
-                  onPressed: () => FluroRouter.router.navigateTo(context, PricingRoute),
+                  onPressed: () => Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) {
+                        return Pricing();
+                      },
+                    ),
+                  ),
                   icon: Icon(Icons.work),
                   label: Text(
                     'Work with me',

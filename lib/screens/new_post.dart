@@ -6,10 +6,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/home_app_bar.dart';
-import 'package:rootasjey/router//route_names.dart';
-import 'package:rootasjey/router//router.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/state/user_state.dart';
+import 'package:rootasjey/utils/auth_guards.dart';
 import 'package:rootasjey/utils/snack.dart';
 import 'package:supercharged/supercharged.dart';
 
@@ -111,7 +110,7 @@ class _NewPostState extends State<NewPost> {
           Padding(
             padding: const EdgeInsets.only(right: 15.0),
             child: IconButton(
-              onPressed: () => FluroRouter.router.pop(context),
+              onPressed: () => Navigator.of(context).pop(),
               icon: Icon(Icons.arrow_back),
             ),
           ),
@@ -265,21 +264,6 @@ class _NewPostState extends State<NewPost> {
     );
   }
 
-  Future<bool> checkAuth() async {
-    try {
-      final userAuth = await userState.userAuth;
-      if (userAuth != null) { return true; }
-
-      FluroRouter.router.navigateTo(context, SigninRoute);
-      return false;
-
-    } catch (error) {
-      debugPrint(error.toString());
-      FluroRouter.router.navigateTo(context, SigninRoute);
-      return false;
-    }
-  }
-
   void createPost() async {
     setState(() => isSaving = true);
 
@@ -327,7 +311,7 @@ class _NewPostState extends State<NewPost> {
   }
 
   void initAndCheck() async {
-    final result = await checkAuth();
+    final result = await canNavigate(context: context);
     if (!result) { return; }
 
     createPost();

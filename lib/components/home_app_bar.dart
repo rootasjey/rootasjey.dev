@@ -4,7 +4,13 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:rootasjey/actions/users.dart';
 import 'package:rootasjey/components/app_icon_header.dart';
 import 'package:rootasjey/router/route_names.dart';
-import 'package:rootasjey/router/router.dart';
+import 'package:rootasjey/screens/my_posts.dart';
+import 'package:rootasjey/screens/my_projects.dart';
+import 'package:rootasjey/screens/new_post.dart';
+import 'package:rootasjey/screens/new_project.dart';
+import 'package:rootasjey/screens/search.dart';
+import 'package:rootasjey/screens/signin.dart';
+import 'package:rootasjey/screens/signup.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/state/user_state.dart';
 import 'package:rootasjey/utils/app_local_storage.dart';
@@ -58,7 +64,9 @@ class _HomeAppBarState extends State<HomeAppBar> {
                         padding: const EdgeInsets.only(right: 16.0),
                         child: IconButton(
                           color: stateColors.foreground,
-                          onPressed: () => FluroRouter.router.pop(context),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
                           icon: Icon(Icons.arrow_back),
                         ),
                       ),
@@ -91,7 +99,15 @@ class _HomeAppBarState extends State<HomeAppBar> {
 
   Widget addNewPostButton() {
     return RaisedButton(
-      onPressed: () => FluroRouter.router.navigateTo(context, NewPostRoute),
+      onPressed: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) {
+              return NewPost();
+            }
+          )
+        );
+      },
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.all(
           Radius.circular(30.0),
@@ -120,9 +136,12 @@ class _HomeAppBarState extends State<HomeAppBar> {
   Widget searchButton() {
     return IconButton(
       onPressed: () {
-        FluroRouter.router.navigateTo(
-          context,
-          SearchRoute,
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) {
+              return Search();
+            },
+          ),
         );
       },
       color: stateColors.foreground,
@@ -223,9 +242,33 @@ class _HomeAppBarState extends State<HomeAppBar> {
             return;
           }
 
-          FluroRouter.router.navigateTo(
-            context,
-            value,
+          Widget child;
+
+          switch (value) {
+            case NewPostRoute:
+              child = NewPost();
+              break;
+            case SearchRoute:
+              child = Search();
+              break;
+            case NewProjectRoute:
+              child = NewProject();
+              break;
+            case MyPostsRoute:
+              child = MyPosts();
+              break;
+            case MyProjectsRoute:
+              child = MyProjects();
+              break;
+            default:
+          }
+
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (_) {
+                return child;
+              }
+            )
           );
         },
         itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
@@ -289,19 +332,6 @@ class _HomeAppBarState extends State<HomeAppBar> {
               leading: Icon(Icons.apps_outlined),
               title: Text(
                 'My Projects',
-                style: TextStyle(
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
-            ),
-          ),
-
-          const PopupMenuItem(
-            value: AccountRoute,
-            child: ListTile(
-              leading: Icon(Icons.settings),
-              title: Text(
-                'Settings',
                 style: TextStyle(
                   fontWeight: FontWeight.w400,
                 ),
@@ -379,10 +409,10 @@ class _HomeAppBarState extends State<HomeAppBar> {
   Widget userSigninMenu({bool showSearch = false}) {
     return PopupMenuButton(
       icon: Icon(Icons.more_vert, color: stateColors.foreground),
-      itemBuilder: (context) => <PopupMenuEntry<String>>[
+      itemBuilder: (context) => <PopupMenuEntry<Widget>>[
         if (showSearch)
           PopupMenuItem(
-            value: SearchRoute,
+            value: Search(),
             child: ListTile(
               leading: Icon(Icons.search),
               title: Text('Search'),
@@ -390,7 +420,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
           ),
 
         PopupMenuItem(
-          value: SigninRoute,
+          value: Signin(),
           child: ListTile(
             leading: Icon(Icons.perm_identity),
             title: Text('Sign in'),
@@ -398,17 +428,20 @@ class _HomeAppBarState extends State<HomeAppBar> {
         ),
 
         PopupMenuItem(
-          value: SignupRoute,
+          value: Signup(),
           child: ListTile(
             leading: Icon(Icons.open_in_browser),
             title: Text('Sign up'),
           ),
         ),
       ],
-      onSelected: (value) {
-        FluroRouter.router.navigateTo(
-          context,
-          value,
+      onSelected: (Widget child) {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) {
+              return child;
+            },
+          ),
         );
       },
     );

@@ -6,10 +6,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/home_app_bar.dart';
-import 'package:rootasjey/router//route_names.dart';
-import 'package:rootasjey/router//router.dart';
+import 'package:rootasjey/screens/home.dart';
 import 'package:rootasjey/state/colors.dart';
-import 'package:rootasjey/state/user_state.dart';
+import 'package:rootasjey/utils/auth_guards.dart';
 import 'package:rootasjey/utils/snack.dart';
 import 'package:rootasjey/utils/texts.dart';
 import 'package:supercharged/supercharged.dart';
@@ -205,7 +204,7 @@ class _EditProjectState extends State<EditProject> {
               ),
 
               OutlineButton.icon(
-                onPressed: () => FluroRouter.router.pop(context),
+                onPressed: () => Navigator.of(context).pop(),
                 icon: Icon(Icons.arrow_back, color: Colors.pink),
                 label: Opacity(
                   opacity: 0.6,
@@ -311,7 +310,7 @@ class _EditProjectState extends State<EditProject> {
           Padding(
             padding: const EdgeInsets.only(right: 15.0),
             child: IconButton(
-              onPressed: () => FluroRouter.router.pop(context),
+              onPressed: () => Navigator.of(context).pop(),
               icon: Icon(Icons.arrow_back),
             ),
           ),
@@ -950,21 +949,6 @@ class _EditProjectState extends State<EditProject> {
     );
   }
 
-  Future<bool> checkAuth() async {
-    try {
-      final userAuth = await userState.userAuth;
-      if (userAuth != null) { return true; }
-
-      FluroRouter.router.navigateTo(context, SigninRoute);
-      return false;
-
-    } catch (error) {
-      debugPrint(error.toString());
-      FluroRouter.router.navigateTo(context, SigninRoute);
-      return false;
-    }
-  }
-
   Future fetchMeta() async {
     try {
       projectSnapshot = await FirebaseFirestore.instance
@@ -1062,11 +1046,17 @@ class _EditProjectState extends State<EditProject> {
 
   void initAndCheck() async {
     if (widget.projectId.isEmpty) {
-      FluroRouter.router.navigateTo(context, RootRoute);
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (_) {
+            return Home();
+          },
+        ),
+      );
       return;
     }
 
-    final result = await checkAuth();
+    final result = await canNavigate(context: context);
     if (!result) { return; }
 
     setState(() => isLoading = true);
@@ -1268,7 +1258,7 @@ class _EditProjectState extends State<EditProject> {
                         ),
                         child: TextButton.icon(
                           onPressed: () {
-                            FluroRouter.router.pop(context);
+                            Navigator.of(context).pop();
                             urls[urlName] = urlValue;
                             saveUrls();
                           },
@@ -1305,7 +1295,7 @@ class _EditProjectState extends State<EditProject> {
           ),
           actions: [
             TextButton(
-              onPressed: () => FluroRouter.router.pop(context),
+              onPressed: () => Navigator.of(context).pop(),
               child: Text('CLOSE'),
             ),
           ],
