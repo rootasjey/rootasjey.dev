@@ -28,15 +28,15 @@ class Urls {
   });
 
   bool areLinksEmpty() {
-    return behance.isEmpty &&
-      dribbble.isEmpty &&
-      facebook.isEmpty &&
-      github.isEmpty &&
-      gitlab.isEmpty &&
-      instagram.isEmpty &&
-      twitter.isEmpty &&
-      website.isEmpty &&
-      wikipedia.isEmpty &&
+    return behance.isEmpty  &&
+      dribbble.isEmpty      &&
+      facebook.isEmpty      &&
+      github.isEmpty        &&
+      gitlab.isEmpty        &&
+      instagram.isEmpty     &&
+      twitter.isEmpty       &&
+      website.isEmpty       &&
+      wikipedia.isEmpty     &&
       youtube.isEmpty;
   }
 
@@ -44,11 +44,11 @@ class Urls {
     return Urls(
       behance     : json['behance']     ?? '',
       dribbble    : json['dribbble']    ?? '',
-      facebook    : json['facebook']      ?? '',
-      github      : json['github']   ?? '',
+      facebook    : json['facebook']    ?? '',
+      github      : json['github']      ?? '',
       gitlab      : json['gitlab']      ?? '',
       image       : json['image']       ?? '',
-      instagram   : json['instagram']  ?? '',
+      instagram   : json['instagram']   ?? '',
       twitter     : json['twitter']     ?? '',
       website     : json['website']     ?? '',
       wikipedia   : json['wikipedia']   ?? '',
