@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -22,17 +24,16 @@ class ProjectPage extends StatefulWidget {
 }
 
 class _ProjectPageState extends State<ProjectPage> {
-  String projectData = '';
-
   bool isFabVisible = false;
   bool isLoading = false;
   bool isNarrow = false;
 
   final scrollController = ScrollController();
+  final textWidth = 800.0;
 
   Project project;
-
-  final textWidth = 800.0;
+  String projectData = '';
+  Timer timer;
 
   @override
   initState() {
@@ -96,6 +97,27 @@ class _ProjectPageState extends State<ProjectPage> {
                   ),
             ),
             body(),
+
+            SliverLayoutBuilder(
+              builder: (_, constraints) {
+                final isNowNarrow = constraints.crossAxisExtent < 700.0;
+
+                if (timer != null && timer.isActive) {
+                  timer.cancel();
+                }
+
+                if (isNarrow != isNowNarrow) {
+                  timer = Timer(
+                    1.seconds,
+                    () {
+                      setState(() => isNarrow = isNowNarrow);
+                    },
+                  );
+                }
+
+                return SliverPadding(padding: EdgeInsets.zero);
+              },
+            ),
           ],
         ),
       ),
@@ -107,29 +129,23 @@ class _ProjectPageState extends State<ProjectPage> {
       return loadingView();
     }
 
-    return SliverLayoutBuilder(
-      builder: (context, constraints) {
-        isNarrow = constraints.crossAxisExtent < 700.0;
+    return SliverList(
+      delegate: SliverChildListDelegate([
+        Row(
+          children: [
+            if (!isNarrow)
+              Spacer(),
 
-        return SliverList(
-          delegate: SliverChildListDelegate([
-            Row(
-              children: [
-                if (!isNarrow)
-                  Spacer(),
-
-                Expanded(
-                  flex: 3,
-                  child: markdownViewer(),
-                ),
-
-                if (!isNarrow)
-                  Spacer(),
-              ],
+            Expanded(
+              flex: 3,
+              child: markdownViewer(),
             ),
-          ]),
-        );
-      },
+
+            if (!isNarrow)
+              Spacer(),
+          ],
+        ),
+      ]),
     );
   }
 
