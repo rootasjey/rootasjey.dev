@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -33,6 +35,8 @@ class _PostPageState extends State<PostPage> {
   final textWidth = 750.0;
 
   Post post;
+
+  Timer timer;
 
   @override
   initState() {
@@ -98,7 +102,30 @@ class _PostPageState extends State<PostPage> {
                 () => isTOCVisible = !isTOCVisible
               ),
             ),
+
             body(),
+
+            // Watch page's size.
+            // Can host share button.
+            SliverLayoutBuilder(
+              builder: (_, constraints) {
+                final isNowNarrow = constraints.crossAxisExtent < 700.0;
+
+                if (timer != null && timer.isActive) {
+                  timer.cancel();
+                }
+
+                if (isNarrow != isNowNarrow) {
+                  timer = Timer(
+                    1.seconds,
+                    () {
+                      setState(() => isNarrow = isNowNarrow);
+                    },
+                  );
+                }
+                return SliverPadding(padding: EdgeInsets.zero);
+              },
+            ),
           ],
         ),
       ),
@@ -110,29 +137,23 @@ class _PostPageState extends State<PostPage> {
       return loadingView();
     }
 
-    return SliverLayoutBuilder(
-      builder: (context, constraints) {
-        isNarrow = constraints.crossAxisExtent < 700.0;
+    return SliverList(
+      delegate: SliverChildListDelegate([
+        Row(
+          children: [
+            if (!isNarrow)
+              Spacer(),
 
-        return SliverList(
-          delegate: SliverChildListDelegate([
-            Row(
-              children: [
-                if (!isNarrow)
-                  Spacer(),
-
-                Expanded(
-                  flex: 3,
-                  child: markdownViewer(),
-                ),
-
-                if (!isNarrow)
-                  Spacer(),
-              ],
+            Expanded(
+              flex: 3,
+              child: markdownViewer(),
             ),
-          ]),
-        );
-      },
+
+            if (!isNarrow)
+              Spacer(),
+          ],
+        ),
+      ])
     );
   }
 
