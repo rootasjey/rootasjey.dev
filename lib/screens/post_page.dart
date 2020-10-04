@@ -24,8 +24,6 @@ class PostPage extends StatefulWidget {
 }
 
 class _PostPageState extends State<PostPage> {
-  String postData = '';
-
   bool isLoading = false;
   bool isTOCVisible = false;
   bool isFabVisible = false;
@@ -35,7 +33,7 @@ class _PostPageState extends State<PostPage> {
   final textWidth = 750.0;
 
   Post post;
-
+  String postData = '';
   Timer timer;
 
   @override
@@ -123,6 +121,7 @@ class _PostPageState extends State<PostPage> {
                     },
                   );
                 }
+
                 return SliverPadding(padding: EdgeInsets.zero);
               },
             ),
