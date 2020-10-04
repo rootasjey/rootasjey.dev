@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html/style.dart';
 import 'package:markdown/markdown.dart' as markdown;
@@ -36,96 +37,205 @@ class _PostPageState extends State<PostPage> {
   String postData = '';
   Timer timer;
 
+  FocusNode focusNode = FocusNode();
+  final keyForMarkdown = GlobalKey();
+  double pageHeight = 0;
+  final incrOffset = 80.0;
+
   @override
   initState() {
     super.initState();
+
     fetchMeta();
     fetchContent();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      floatingActionButton: isFabVisible
-        ? FloatingActionButton(
-          backgroundColor: stateColors.primary,
-          foregroundColor: Colors.white,
-          onPressed: () => scrollController.animateTo(
+    return RawKeyboardListener(
+      autofocus: true,
+      focusNode: focusNode,
+      onKey: (keyEvent) {
+        // ?NOTE: Keys combinations must stay on top
+        // or other matching key events will override it.
+        // HOME
+        if (keyEvent.isMetaPressed && keyEvent.isKeyPressed(LogicalKeyboardKey.arrowUp)) {
+          scrollController.animateTo(
             0,
-            duration: 250.milliseconds,
-            curve: Curves.bounceOut,
-          ),
-          child: Icon(Icons.arrow_upward),
-        )
-        : Padding(padding: EdgeInsets.zero),
-      body: NotificationListener<ScrollNotification>(
-        onNotification: (ScrollNotification scrollNotif) {
-          // FAB visibility
-          if (scrollNotif.metrics.pixels < 50 && isFabVisible) {
-            setState(() => isFabVisible = false);
+            duration: 100.milliseconds,
+            curve: Curves.ease,
+          );
 
-          } else if (scrollNotif.metrics.pixels > 50 && !isFabVisible) {
-            setState(() => isFabVisible = true);
-          }
+          return;
+        }
 
-          return false;
-        },
-        child: CustomScrollView(
-          controller: scrollController,
-          slivers: [
-            HomeAppBar(
-              automaticallyImplyLeading: true,
-              title: post == null
-                ? Opacity(
-                    opacity: 0.6,
-                    child: Text(
-                      'Post',
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: stateColors.foreground,
+        // END
+        if (keyEvent.isMetaPressed && keyEvent.isKeyPressed(LogicalKeyboardKey.arrowDown)) {
+          scrollController.animateTo(
+            pageHeight,
+            duration: 100.milliseconds,
+            curve: Curves.ease,
+          );
+
+          return;
+        }
+
+        // UP + ALT
+        if (keyEvent.isAltPressed && keyEvent.isKeyPressed(LogicalKeyboardKey.arrowUp)) {
+          scrollController.animateTo(
+            getOffsetUp(altPressed: true),
+            duration: 100.milliseconds,
+            curve: Curves.ease,
+          );
+
+          return;
+        }
+
+        // DOWN + ALT
+        if (keyEvent.isAltPressed && keyEvent.isKeyPressed(LogicalKeyboardKey.arrowDown)) {
+          scrollController.animateTo(
+            getOffsetDown(altPressed: true),
+            duration: 100.milliseconds,
+            curve: Curves.ease,
+          );
+
+          return;
+        }
+
+        // UP
+        if (keyEvent.isKeyPressed(LogicalKeyboardKey.arrowUp)) {
+          scrollController.animateTo(
+            getOffsetUp(),
+            duration: 100.milliseconds,
+            curve: Curves.ease,
+          );
+
+          return;
+        }
+
+        // DOWN
+        if (keyEvent.isKeyPressed(LogicalKeyboardKey.arrowDown)) {
+          scrollController.animateTo(
+            getOffsetDown(),
+            duration: 100.milliseconds,
+            curve: Curves.ease,
+          );
+
+          return;
+        }
+
+        // LEFT
+        if (keyEvent.isKeyPressed(LogicalKeyboardKey.backspace)
+          || keyEvent.isKeyPressed(LogicalKeyboardKey.arrowLeft)) {
+
+          Navigator.of(context).pop();
+          return;
+        }
+
+        // HOME
+        if (keyEvent.isKeyPressed(LogicalKeyboardKey.home)) {
+          scrollController.animateTo(
+            0,
+            duration: 100.milliseconds,
+            curve: Curves.ease,
+          );
+
+          return;
+        }
+
+        // END
+        if (keyEvent.isKeyPressed(LogicalKeyboardKey.end)) {
+          scrollController.animateTo(
+            pageHeight,
+            duration: 100.milliseconds,
+            curve: Curves.ease,
+          );
+
+          return;
+        }
+      },
+      child: Scaffold(
+        floatingActionButton: isFabVisible
+          ? FloatingActionButton(
+            backgroundColor: stateColors.primary,
+            foregroundColor: Colors.white,
+            onPressed: () => scrollController.animateTo(
+              0,
+              duration: 250.milliseconds,
+              curve: Curves.bounceOut,
+            ),
+            child: Icon(Icons.arrow_upward),
+          )
+          : Padding(padding: EdgeInsets.zero),
+        body: NotificationListener<ScrollNotification>(
+          onNotification: (ScrollNotification scrollNotif) {
+            // FAB visibility
+            if (scrollNotif.metrics.pixels < 50 && isFabVisible) {
+              setState(() => isFabVisible = false);
+
+            } else if (scrollNotif.metrics.pixels > 50 && !isFabVisible) {
+              setState(() => isFabVisible = true);
+            }
+
+            return false;
+          },
+          child: CustomScrollView(
+            controller: scrollController,
+            slivers: [
+              HomeAppBar(
+                automaticallyImplyLeading: true,
+                title: post == null
+                  ? Opacity(
+                      opacity: 0.6,
+                      child: Text(
+                        'Post',
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: stateColors.foreground,
+                        ),
+                      ),
+                    )
+                  : Opacity(
+                      opacity: 0.6,
+                      child: Text(
+                        post.title,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: stateColors.foreground,
+                        ),
                       ),
                     ),
-                  )
-                : Opacity(
-                    opacity: 0.6,
-                    child: Text(
-                      post.title,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: stateColors.foreground,
-                      ),
-                    ),
-                  ),
-              onPressedRightButton: () => setState(
-                () => isTOCVisible = !isTOCVisible
+                onPressedRightButton: () => setState(
+                  () => isTOCVisible = !isTOCVisible
+                ),
               ),
-            ),
 
-            body(),
+              body(),
 
-            // Watch page's size.
-            // Can host share button.
-            SliverLayoutBuilder(
-              builder: (_, constraints) {
-                final isNowNarrow = constraints.crossAxisExtent < 700.0;
+              // Watch page's size.
+              // Can host share button.
+              SliverLayoutBuilder(
+                builder: (_, constraints) {
+                  final isNowNarrow = constraints.crossAxisExtent < 700.0;
 
-                if (timer != null && timer.isActive) {
-                  timer.cancel();
-                }
+                  if (timer != null && timer.isActive) {
+                    timer.cancel();
+                  }
 
-                if (isNarrow != isNowNarrow) {
-                  timer = Timer(
-                    1.seconds,
-                    () {
-                      setState(() => isNarrow = isNowNarrow);
-                    },
-                  );
-                }
+                  if (isNarrow != isNowNarrow) {
+                    timer = Timer(
+                      1.seconds,
+                      () {
+                        setState(() => isNarrow = isNowNarrow);
+                      },
+                    );
+                  }
 
-                return SliverPadding(padding: EdgeInsets.zero);
-              },
-            ),
-          ],
+                  return SliverPadding(padding: EdgeInsets.zero);
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -196,6 +306,7 @@ class _PostPageState extends State<PostPage> {
         right: 20.0,
       ),
       child: Html(
+        key: keyForMarkdown,
         data: postData,
         customRender: {
           'a': (context, child, attributes, element) {
@@ -390,5 +501,37 @@ class _PostPageState extends State<PostPage> {
         type: SnackType.error,
       );
     }
+  }
+
+  double getOffsetDown({bool altPressed = false}) {
+    if (keyForMarkdown.currentContext != null) {
+      final height = keyForMarkdown.currentContext.size.height;
+
+      if (pageHeight != height) {
+        pageHeight = height;
+      }
+    }
+
+    double factor = altPressed
+      ? 3
+      : 1;
+
+    final offset = scrollController.offset + incrOffset < pageHeight
+      ? scrollController.offset + (incrOffset * factor)
+      : pageHeight;
+
+    return offset;
+  }
+
+  double getOffsetUp({bool altPressed = false}) {
+    double factor = altPressed
+      ? 3
+      : 1;
+
+    final offset = scrollController.offset - incrOffset > 90
+      ? scrollController.offset - (incrOffset * factor)
+      : 0;
+
+    return offset;
   }
 }
