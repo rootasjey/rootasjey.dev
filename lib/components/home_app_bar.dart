@@ -41,9 +41,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
         return SliverLayoutBuilder(
           builder: (context, constrains) {
             final isNarrow = constrains.crossAxisExtent < 700.0;
-            final leftPadding = isNarrow
-              ? 0.0
-              : 80.0;
+            final leftPadding = isNarrow ? 0.0 : 80.0;
 
             return SliverAppBar(
               floating: true,
@@ -70,14 +68,12 @@ class _HomeAppBarState extends State<HomeAppBar> {
                           icon: Icon(Icons.arrow_back),
                         ),
                       ),
-
                     AppIconHeader(
                       padding: const EdgeInsets.only(
                         bottom: 8.0,
                       ),
                       onTap: widget.onTapIconHeader,
                     ),
-
                     if (widget.title != null)
                       Expanded(
                         child: Padding(
@@ -85,7 +81,6 @@ class _HomeAppBarState extends State<HomeAppBar> {
                           child: widget.title,
                         ),
                       ),
-
                     userSection(isNarrow),
                   ],
                 ),
@@ -98,22 +93,20 @@ class _HomeAppBarState extends State<HomeAppBar> {
   }
 
   Widget addNewPostButton() {
-    return RaisedButton(
+    return ElevatedButton(
       onPressed: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (_) {
-              return NewPost();
-            }
-          )
-        );
+        Navigator.of(context).push(MaterialPageRoute(builder: (_) {
+          return NewPost();
+        }));
       },
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(
-          Radius.circular(30.0),
+      style: ElevatedButton.styleFrom(
+        primary: stateColors.primary,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(
+            Radius.circular(30.0),
+          ),
         ),
       ),
-      color: stateColors.primary,
       child: Wrap(
         crossAxisAlignment: WrapCrossAlignment.center,
         children: <Widget>[
@@ -121,7 +114,6 @@ class _HomeAppBarState extends State<HomeAppBar> {
             padding: const EdgeInsets.only(right: 8.0),
             child: Icon(Icons.add, color: Colors.white),
           ),
-
           Text(
             'New Post',
             style: TextStyle(
@@ -158,12 +150,15 @@ class _HomeAppBarState extends State<HomeAppBar> {
       final currentBrightness = appLocalStorage.getBrightness();
 
       iconBrightness = currentBrightness == Brightness.dark
-        ? Icons.brightness_2
-        : Icons.brightness_low;
+          ? Icons.brightness_2
+          : Icons.brightness_low;
     }
 
     return PopupMenuButton<String>(
-      icon: Icon(iconBrightness, color: stateColors.foreground,),
+      icon: Icon(
+        iconBrightness,
+        color: stateColors.foreground,
+      ),
       tooltip: 'Brightness',
       onSelected: (value) {
         if (value == 'auto') {
@@ -171,9 +166,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
           return;
         }
 
-        final brightness = value == 'dark'
-          ? Brightness.dark
-          : Brightness.light;
+        final brightness = value == 'dark' ? Brightness.dark : Brightness.light;
 
         setBrightness(brightness: brightness, context: context);
         DynamicTheme.of(context).setBrightness(brightness);
@@ -186,7 +179,6 @@ class _HomeAppBarState extends State<HomeAppBar> {
             title: Text('Auto'),
           ),
         ),
-
         const PopupMenuItem(
           value: 'dark',
           child: ListTile(
@@ -194,7 +186,6 @@ class _HomeAppBarState extends State<HomeAppBar> {
             title: Text('Dark'),
           ),
         ),
-
         const PopupMenuItem(
           value: 'light',
           child: ListTile(
@@ -212,8 +203,8 @@ class _HomeAppBarState extends State<HomeAppBar> {
 
     if (arrStr.length > 0) {
       initials = arrStr.length > 1
-        ? arrStr.reduce((value, element) => value + element.substring(1))
-        : arrStr.first;
+          ? arrStr.reduce((value, element) => value + element.substring(1))
+          : arrStr.first;
 
       if (initials != null && initials.isNotEmpty) {
         initials = initials.substring(0, 1);
@@ -263,56 +254,46 @@ class _HomeAppBarState extends State<HomeAppBar> {
             default:
           }
 
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (_) {
-                return child;
-              }
-            )
-          );
+          Navigator.of(context).push(MaterialPageRoute(builder: (_) {
+            return child;
+          }));
         },
         itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
           if (isNarrow)
             const PopupMenuItem(
-              value: NewPostRoute,
+                value: NewPostRoute,
+                child: ListTile(
+                  leading: Icon(Icons.add),
+                  title: Text(
+                    'New Post',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                )),
+          if (isNarrow)
+            const PopupMenuItem(
+                value: SearchRoute,
+                child: ListTile(
+                  leading: Icon(Icons.search),
+                  title: Text(
+                    'Search',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                )),
+          const PopupMenuItem(
+              value: NewProjectRoute,
               child: ListTile(
                 leading: Icon(Icons.add),
                 title: Text(
-                  'New Post',
+                  'New Project',
                   style: TextStyle(
                     fontWeight: FontWeight.w400,
                   ),
                 ),
-              )
-            ),
-
-          if (isNarrow)
-            const PopupMenuItem(
-              value: SearchRoute,
-              child: ListTile(
-                leading: Icon(Icons.search),
-                title: Text(
-                  'Search',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-              )
-            ),
-
-          const PopupMenuItem(
-            value: NewProjectRoute,
-            child: ListTile(
-              leading: Icon(Icons.add),
-              title: Text(
-                'New Project',
-                style: TextStyle(
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
-            )
-          ),
-
+              )),
           const PopupMenuItem(
             value: MyPostsRoute,
             child: ListTile(
@@ -325,7 +306,6 @@ class _HomeAppBarState extends State<HomeAppBar> {
               ),
             ),
           ),
-
           const PopupMenuItem(
             value: MyProjectsRoute,
             child: ListTile(
@@ -338,7 +318,6 @@ class _HomeAppBarState extends State<HomeAppBar> {
               ),
             ),
           ),
-
           const PopupMenuItem(
             value: 'signout',
             child: ListTile(
@@ -358,39 +337,37 @@ class _HomeAppBarState extends State<HomeAppBar> {
 
   Widget userSection(bool isNarrow) {
     return Observer(builder: (context) {
-      final children = List<Widget>();
+      final children = <Widget>[];
 
       if (userState.isUserConnected) {
         isNarrow
-          ? children.addAll([
-              userAvatar(isNarrow: isNarrow),
-              themeButton(),
-            ])
-          : children.addAll([
-              userAvatar(isNarrow: isNarrow),
-              addNewPostButton(),
-              searchButton(),
-              themeButton(),
-            ]);
-
+            ? children.addAll([
+                userAvatar(isNarrow: isNarrow),
+                themeButton(),
+              ])
+            : children.addAll([
+                userAvatar(isNarrow: isNarrow),
+                addNewPostButton(),
+                searchButton(),
+                themeButton(),
+              ]);
       } else {
         isNarrow
-          ? children.addAll([
-              userSigninMenu(showSearch: true),
-              themeButton(),
-            ])
-          : children.addAll([
-              if (widget.onPressedRightButton != null)
-                IconButton(
-                  color: stateColors.foreground,
-                  icon: Icon(Icons.menu),
-                  onPressed: widget.onPressedRightButton,
-                ),
-
-              userSigninMenu(),
-              searchButton(),
-              themeButton(),
-            ]);
+            ? children.addAll([
+                userSigninMenu(showSearch: true),
+                themeButton(),
+              ])
+            : children.addAll([
+                if (widget.onPressedRightButton != null)
+                  IconButton(
+                    color: stateColors.foreground,
+                    icon: Icon(Icons.menu),
+                    onPressed: widget.onPressedRightButton,
+                  ),
+                userSigninMenu(),
+                searchButton(),
+                themeButton(),
+              ]);
       }
 
       return Container(
@@ -418,7 +395,6 @@ class _HomeAppBarState extends State<HomeAppBar> {
               title: Text('Search'),
             ),
           ),
-
         PopupMenuItem(
           value: Signin(),
           child: ListTile(
@@ -426,7 +402,6 @@ class _HomeAppBarState extends State<HomeAppBar> {
             title: Text('Sign in'),
           ),
         ),
-
         PopupMenuItem(
           value: Signup(),
           child: ListTile(

@@ -28,28 +28,26 @@ class _WebAdditionalFeaturesState extends State<WebAdditionalFeatures> {
       'cost': 1500,
       'selected': false,
     },
-
     {
       'label': 'Members gestion',
-      'description': "Create a section members so your customers can sign up & login.",
+      'description':
+          "Create a section members so your customers can sign up & login.",
       'cost': 500,
       'selected': false,
     },
-
     {
       'label': 'Payments',
-      'description': 'Allow customers to purchase goods and subscribe to recurring payments.',
+      'description':
+          'Allow customers to purchase goods and subscribe to recurring payments.',
       'cost': 2000,
       'selected': false,
     },
-
     {
       'label': 'Language localization',
       'description': 'Make your website available in several languages.',
       'cost': 500,
       'selected': false,
     },
-
     {
       'label': 'Extra',
       'description': 'You need extra features no listed here.',
@@ -61,8 +59,7 @@ class _WebAdditionalFeaturesState extends State<WebAdditionalFeatures> {
   @override
   void initState() {
     super.initState();
-    maxCost = featuresDataList
-      .sumByDouble((feature) => feature['cost']);
+    maxCost = featuresDataList.sumByDouble((feature) => feature['cost']);
   }
 
   @override
@@ -77,55 +74,51 @@ class _WebAdditionalFeaturesState extends State<WebAdditionalFeatures> {
               bottom: 40.0,
             ),
             child: Wrap(
-              spacing: 20.0,
-              runSpacing: 10.0,
-              crossAxisAlignment: WrapCrossAlignment.end,
-              children: [
-                Text(
-                  '$countSelected',
-                  style: TextStyle(
-                    fontSize: 70.0,
-                    height: 1.0,
+                spacing: 20.0,
+                runSpacing: 10.0,
+                crossAxisAlignment: WrapCrossAlignment.end,
+                children: [
+                  Text(
+                    '$countSelected',
+                    style: TextStyle(
+                      fontSize: 70.0,
+                      height: 1.0,
+                    ),
                   ),
-                ),
-
-                Text(
-                  'additional ${countSelected > 1 ? 'features' : 'feature'} selected',
-                  style: TextStyle(
-                    fontSize: 30.0,
-                    fontWeight: FontWeight.w200,
+                  Text(
+                    'additional ${countSelected > 1 ? 'features' : 'feature'} selected',
+                    style: TextStyle(
+                      fontSize: 30.0,
+                      fontWeight: FontWeight.w200,
+                    ),
                   ),
-                ),
-              ]
-            ),
+                ]),
           ),
-
           if (countSelected > 0)
             SizedBox(
               width: 600.0,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                    FlatButton.icon(
-                      onPressed: () {
-                        featuresDataList.forEach((dataFeature) {
-                          dataFeature['selected'] = false;
-                        });
+                  TextButton.icon(
+                    onPressed: () {
+                      featuresDataList.forEach((dataFeature) {
+                        dataFeature['selected'] = false;
+                      });
 
-                        setState(() {
-                          countSelected = 0;
-                        });
-                      },
-                      icon: Icon(Icons.clear_all),
-                      label: Opacity(
-                        opacity: 0.6,
-                        child: Text('Clear'),
-                      ),
+                      setState(() {
+                        countSelected = 0;
+                      });
+                    },
+                    icon: Icon(Icons.clear_all),
+                    label: Opacity(
+                      opacity: 0.6,
+                      child: Text('Clear'),
                     ),
+                  ),
                 ],
               ),
             ),
-
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: featuresDataList.mapIndexed((data, index) {
@@ -150,7 +143,6 @@ class _WebAdditionalFeaturesState extends State<WebAdditionalFeatures> {
     double cost = 0,
     int index = 0,
   }) {
-
     return Observer(
       builder: (context) {
         return Padding(
@@ -158,31 +150,25 @@ class _WebAdditionalFeaturesState extends State<WebAdditionalFeatures> {
             bottom: 16.0,
           ),
           child: Card(
-            elevation: selected
-              ? 4.0
-              : 0.0,
+            elevation: selected ? 4.0 : 0.0,
             color: selected
-              ? stateColors.primary
-              : stateColors.themeData.cardColor,
+                ? stateColors.primary
+                : stateColors.themeData.cardColor,
             child: InkWell(
               onTap: () {
                 if (selected) {
-                  countSelected = countSelected == 0
-                    ? 0
-                    : countSelected - 1;
+                  countSelected = countSelected == 0 ? 0 : countSelected - 1;
 
-                  additionalCost = additionalCost > 0
-                    ? additionalCost - cost
-                    : 0;
-
+                  additionalCost =
+                      additionalCost > 0 ? additionalCost - cost : 0;
                 } else {
                   countSelected = countSelected == featuresDataList.length
-                    ? featuresDataList.length
-                    : countSelected + 1;
+                      ? featuresDataList.length
+                      : countSelected + 1;
 
                   additionalCost = additionalCost < maxCost
-                    ? additionalCost + cost
-                    : maxCost;
+                      ? additionalCost + cost
+                      : maxCost;
                 }
 
                 setState(() {
@@ -191,8 +177,8 @@ class _WebAdditionalFeaturesState extends State<WebAdditionalFeatures> {
 
                 if (widget.onSelectionChanged != null) {
                   final allSelected = featuresDataList
-                    .filter((feature) => feature['selected'])
-                    .toList();
+                      .filter((feature) => feature['selected'])
+                      .toList();
 
                   widget.onSelectionChanged(additionalCost, allSelected);
                 }
@@ -213,14 +199,13 @@ class _WebAdditionalFeaturesState extends State<WebAdditionalFeatures> {
                               label,
                               style: TextStyle(
                                 color: selected
-                                  ? Colors.white
-                                  : stateColors.foreground.withOpacity(0.6),
+                                    ? Colors.white
+                                    : stateColors.foreground.withOpacity(0.6),
                                 fontSize: 22.0,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
                           ),
-
                           Padding(
                             padding: const EdgeInsets.only(
                               top: 8.0,
@@ -231,8 +216,8 @@ class _WebAdditionalFeaturesState extends State<WebAdditionalFeatures> {
                                 description,
                                 style: TextStyle(
                                   color: selected
-                                    ? Colors.white
-                                    : stateColors.foreground,
+                                      ? Colors.white
+                                      : stateColors.foreground,
                                   fontSize: 16.0,
                                   fontWeight: FontWeight.w300,
                                 ),
@@ -242,7 +227,6 @@ class _WebAdditionalFeaturesState extends State<WebAdditionalFeatures> {
                         ],
                       ),
                     ),
-
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Opacity(
@@ -250,9 +234,8 @@ class _WebAdditionalFeaturesState extends State<WebAdditionalFeatures> {
                         child: Icon(
                           Icons.check_circle_outline,
                           size: 30.0,
-                          color: selected
-                            ? Colors.white
-                            : stateColors.foreground,
+                          color:
+                              selected ? Colors.white : stateColors.foreground,
                         ),
                       ),
                     ),

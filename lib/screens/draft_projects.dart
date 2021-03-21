@@ -1,4 +1,3 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/project_card.dart';
@@ -14,7 +13,7 @@ class DraftProjects extends StatefulWidget {
 }
 
 class _DraftProjectsState extends State<DraftProjects> {
-  final projectsList = List<Project>();
+  final projectsList = <Project>[];
   final limit = 10;
 
   bool hasNext = true;
@@ -32,7 +31,9 @@ class _DraftProjectsState extends State<DraftProjects> {
 
   void initAndCheck() async {
     final result = await canNavigate(context: context);
-    if (!result) { return; }
+    if (!result) {
+      return;
+    }
 
     fetch();
   }
@@ -96,7 +97,6 @@ class _DraftProjectsState extends State<DraftProjects> {
                     ),
                   ),
                 ),
-
                 const PopupMenuItem(
                   value: 'delete',
                   child: ListTile(
@@ -128,11 +128,11 @@ class _DraftProjectsState extends State<DraftProjects> {
       final uid = userAuth.uid;
 
       final snapshot = await FirebaseFirestore.instance
-        .collection('projects')
-        .where('published', isEqualTo: false)
-        .where('author', isEqualTo: uid)
-        .limit(limit)
-        .get();
+          .collection('projects')
+          .where('published', isEqualTo: false)
+          .where('author', isEqualTo: uid)
+          .limit(limit)
+          .get();
 
       if (snapshot.size == 0) {
         setState(() {
@@ -156,7 +156,6 @@ class _DraftProjectsState extends State<DraftProjects> {
         isLoading = false;
         hasNext = limit == snapshot.size;
       });
-
     } catch (error) {
       debugPrint(error.toString());
     }
@@ -169,12 +168,11 @@ class _DraftProjectsState extends State<DraftProjects> {
 
     try {
       await FirebaseFirestore.instance
-        .collection('projects')
-        .doc(removedProject.id)
-        .delete();
+          .collection('projects')
+          .doc(removedProject.id)
+          .delete();
 
       setState(() => isLoading = false);
-
     } catch (error) {
       debugPrint(error.toString());
 
@@ -191,14 +189,13 @@ class _DraftProjectsState extends State<DraftProjects> {
 
     try {
       await FirebaseFirestore.instance
-        .collection('projects')
-        .doc(removedProject.id)
-        .update({
-          'published': true,
-        });
+          .collection('projects')
+          .doc(removedProject.id)
+          .update({
+        'published': true,
+      });
 
       setState(() => isLoading = false);
-
     } catch (error) {
       debugPrint(error.toString());
 

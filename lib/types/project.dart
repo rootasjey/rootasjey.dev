@@ -23,7 +23,7 @@ class Project {
   });
 
   factory Project.fromJSON(Map<String, dynamic> data) {
-    final platformEntries = List<String>();
+    final platformEntries = <String>[];
 
     final dataPlatforms = data['platforms'] as Map<String, dynamic>;
 
@@ -34,14 +34,14 @@ class Project {
     });
 
     return Project(
-      author  : data['author'],
-      createdAt : (data['createdAt'] as Timestamp).toDate(),
-      id        : data['id'],
-      platforms : platformEntries,
-      summary   : data['summary'],
-      title     : data['title'],
-      updatedAt : (data['updatedAt'] as Timestamp).toDate(),
-      urls      : Urls.fromJSON(data['urls']),
+      author: data['author'],
+      createdAt: (data['createdAt'] as Timestamp).toDate(),
+      id: data['id'],
+      platforms: platformEntries,
+      summary: data['summary'],
+      title: data['title'],
+      updatedAt: (data['updatedAt'] as Timestamp).toDate(),
+      urls: Urls.fromJSON(data['urls']),
     );
   }
 }

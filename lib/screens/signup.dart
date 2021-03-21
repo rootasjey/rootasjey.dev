@@ -38,8 +38,8 @@ class _SignupState extends State<Signup> {
   Timer nameTimer;
 
   bool isCheckingAuth = false;
-  bool isCompleted    = false;
-  bool isLoading      = false;
+  bool isCompleted = false;
+  bool isLoading = false;
 
   final usernameNode = FocusNode();
   final passwordNode = FocusNode();
@@ -79,7 +79,6 @@ class _SignupState extends State<Signup> {
       body: CustomScrollView(
         slivers: [
           HomeAppBar(),
-
           SliverList(
             delegate: SliverChildListDelegate.fixed([
               Column(
@@ -126,7 +125,6 @@ class _SignupState extends State<Signup> {
             color: Colors.green,
           ),
         ),
-
         Padding(
           padding: const EdgeInsets.only(top: 30.0),
           child: Text(
@@ -138,10 +136,11 @@ class _SignupState extends State<Signup> {
             ),
           ),
         ),
-
         Padding(
-          padding: const EdgeInsets.only(top: 20.0,),
-          child: OutlineButton(
+          padding: const EdgeInsets.only(
+            top: 20.0,
+          ),
+          child: OutlinedButton(
             onPressed: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
@@ -197,24 +196,22 @@ class _SignupState extends State<Signup> {
             emailTimer = null;
           }
 
-          emailTimer = Timer(
-            1.seconds,
-            () async {
-              final isAvailable = await checkEmailAvailability(email);
-              if (!isAvailable) {
-                setState(() {
-                  isCheckingEmail = false;
-                  emailErrorMessage = 'This email address is not available';
-                });
-
-                return;
-              }
-
+          emailTimer = Timer(1.seconds, () async {
+            final isAvailable = await checkEmailAvailability(email);
+            if (!isAvailable) {
               setState(() {
                 isCheckingEmail = false;
-                emailErrorMessage = '';
+                emailErrorMessage = 'This email address is not available';
               });
+
+              return;
+            }
+
+            setState(() {
+              isCheckingEmail = false;
+              emailErrorMessage = '';
             });
+          });
         },
         validator: (value) {
           if (value.isEmpty) {
@@ -233,18 +230,18 @@ class _SignupState extends State<Signup> {
         top: 8.0,
         left: 40.0,
       ),
-      child: Text(
-        emailErrorMessage,
-        style: TextStyle(
-          color: Colors.red.shade300,
-        )
-      ),
+      child: Text(emailErrorMessage,
+          style: TextStyle(
+            color: Colors.red.shade300,
+          )),
     );
   }
 
   Widget emailProgress() {
     return Container(
-      padding: const EdgeInsets.only(left: 40.0,),
+      padding: const EdgeInsets.only(
+        left: 40.0,
+      ),
       child: LinearProgressIndicator(),
     );
   }
@@ -253,7 +250,9 @@ class _SignupState extends State<Signup> {
     return Row(
       children: <Widget>[
         Padding(
-          padding: const EdgeInsets.only(right: 20.0,),
+          padding: const EdgeInsets.only(
+            right: 20.0,
+          ),
           child: IconButton(
             onPressed: () {
               Navigator.of(context).pop();
@@ -261,7 +260,6 @@ class _SignupState extends State<Signup> {
             icon: Icon(Icons.arrow_back),
           ),
         ),
-
         Column(
           children: <Widget>[
             Padding(
@@ -275,12 +273,9 @@ class _SignupState extends State<Signup> {
                 ),
               ),
             ),
-
             Opacity(
               opacity: .6,
-              child: Text(
-                'Create a new account'
-              ),
+              child: Text('Create a new account'),
             ),
           ],
         ),
@@ -294,21 +289,11 @@ class _SignupState extends State<Signup> {
       children: <Widget>[
         header(),
         emailInput(),
-
-        if (isCheckingEmail)
-          emailProgress(),
-
-        if (emailErrorMessage.isNotEmpty)
-          emailInputError(),
-
+        if (isCheckingEmail) emailProgress(),
+        if (emailErrorMessage.isNotEmpty) emailInputError(),
         nameInput(),
-
-        if (isCheckingName)
-          nameProgress(),
-
-        if (nameErrorMessage.isNotEmpty)
-          nameInputError(),
-
+        if (isCheckingName) nameProgress(),
+        if (nameErrorMessage.isNotEmpty) nameInputError(),
         passwordInput(),
         confirmPasswordInput(),
         validationButton(),
@@ -320,23 +305,20 @@ class _SignupState extends State<Signup> {
   Widget loadingView() {
     return Padding(
       padding: const EdgeInsets.only(top: 150.0),
-      child: Column(
-        children: [
-          CircularProgressIndicator(),
-
-          Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Text(
-              'Creating your account...',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 25.0,
-                fontWeight: FontWeight.w300,
-              ),
+      child: Column(children: [
+        CircularProgressIndicator(),
+        Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Text(
+            'Creating your account...',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 25.0,
+              fontWeight: FontWeight.w300,
             ),
           ),
-        ]
-      ),
+        ),
+      ]),
     );
   }
 
@@ -349,7 +331,9 @@ class _SignupState extends State<Signup> {
           TextFormField(
             focusNode: usernameNode,
             decoration: InputDecoration(
-              icon: Icon(Icons.person_outline,),
+              icon: Icon(
+                Icons.person_outline,
+              ),
               labelText: 'Username',
             ),
             textInputAction: TextInputAction.next,
@@ -364,9 +348,9 @@ class _SignupState extends State<Signup> {
               if (!isWellFormatted) {
                 setState(() {
                   isCheckingName = false;
-                  nameErrorMessage = username.length < 3 ?
-                    'Please use at least 3 characters' :
-                    'Please use alpha-numerical (A-Z, 0-9) characters and underscore (_)';
+                  nameErrorMessage = username.length < 3
+                      ? 'Please use at least 3 characters'
+                      : 'Please use alpha-numerical (A-Z, 0-9) characters and underscore (_)';
                 });
 
                 return;
@@ -377,26 +361,23 @@ class _SignupState extends State<Signup> {
                 nameTimer = null;
               }
 
-              nameTimer = Timer(
-                1.seconds,
-                () async {
-                  final isAvailable = await checkNameAvailability(username);
+              nameTimer = Timer(1.seconds, () async {
+                final isAvailable = await checkNameAvailability(username);
 
-                  if (!isAvailable) {
-                    setState(() {
-                      isCheckingName = false;
-                      nameErrorMessage = 'This name is not available';
-                    });
-
-                    return;
-                  }
-
+                if (!isAvailable) {
                   setState(() {
                     isCheckingName = false;
-                    nameErrorMessage = '';
+                    nameErrorMessage = 'This name is not available';
                   });
+
+                  return;
                 }
-              );
+
+                setState(() {
+                  isCheckingName = false;
+                  nameErrorMessage = '';
+                });
+              });
             },
             onFieldSubmitted: (_) => passwordNode.nextFocus(),
             validator: (value) {
@@ -418,18 +399,18 @@ class _SignupState extends State<Signup> {
         top: 8.0,
         left: 40.0,
       ),
-      child: Text(
-        nameErrorMessage,
-        style: TextStyle(
-          color: Colors.red.shade300,
-        )
-      ),
+      child: Text(nameErrorMessage,
+          style: TextStyle(
+            color: Colors.red.shade300,
+          )),
     );
   }
 
   Widget nameProgress() {
     return Container(
-      padding: const EdgeInsets.only(left: 40.0,),
+      padding: const EdgeInsets.only(
+        left: 40.0,
+      ),
       child: LinearProgressIndicator(),
     );
   }
@@ -448,7 +429,9 @@ class _SignupState extends State<Signup> {
             ),
             obscureText: true,
             onChanged: (value) {
-              if (value.length == 0) { return; }
+              if (value.length == 0) {
+                return;
+              }
               password = value;
             },
             validator: (value) {
@@ -478,7 +461,9 @@ class _SignupState extends State<Signup> {
             ),
             obscureText: true,
             onChanged: (value) {
-              if (value.length == 0) { return; }
+              if (value.length == 0) {
+                return;
+              }
               confirmPassword = value;
             },
             validator: (value) {
@@ -502,12 +487,14 @@ class _SignupState extends State<Signup> {
     return Center(
       child: Padding(
         padding: const EdgeInsets.only(top: 60.0),
-        child: RaisedButton(
+        child: ElevatedButton(
           onPressed: () => createAccount(),
-          color: stateColors.primary,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(
-              Radius.circular(7.0),
+          style: ElevatedButton.styleFrom(
+            primary: stateColors.primary,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(
+                Radius.circular(7.0),
+              ),
             ),
           ),
           child: Container(
@@ -526,7 +513,10 @@ class _SignupState extends State<Signup> {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(left: 20.0),
-                  child: Icon(Icons.arrow_forward, color: Colors.white,),
+                  child: Icon(
+                    Icons.arrow_forward,
+                    color: Colors.white,
+                  ),
                 ),
               ],
             ),
@@ -538,31 +528,32 @@ class _SignupState extends State<Signup> {
 
   Widget alreadyHaveAccountButton() {
     return Center(
-      child: FlatButton(
-        onPressed: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (_) {
-                return Signin();
-              },
+      child: ElevatedButton(
+          onPressed: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) {
+                  return Signin();
+                },
+              ),
+            );
+          },
+          child: Opacity(
+            opacity: .6,
+            child: Text(
+              "I already have an account",
+              style: TextStyle(
+                decoration: TextDecoration.underline,
+              ),
             ),
-          );
-        },
-        child: Opacity(
-          opacity: .6,
-          child: Text(
-            "I already have an account",
-            style: TextStyle(
-              decoration: TextDecoration.underline,
-            ),
-          ),
-        )
-      ),
+          )),
     );
   }
 
   void createAccount() async {
-    if (!inputValuesOk()) { return; }
+    if (!inputValuesOk()) {
+      return;
+    }
 
     setState(() {
       isLoading = true;
@@ -584,11 +575,10 @@ class _SignupState extends State<Signup> {
 
     try {
       // ?NOTE: Triming because of TAB key on Desktop.
-      final result = await FirebaseAuth.instance
-        .createUserWithEmailAndPassword(
-          email: email.trim(),
-          password: password.trim(),
-        );
+      final result = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: email.trim(),
+        password: password.trim(),
+      );
 
       final user = result.user;
 
@@ -599,7 +589,8 @@ class _SignupState extends State<Signup> {
 
         showSnack(
           context: context,
-          message: 'An occurred while creating your account. Please try again or contact us if the problem persists.',
+          message:
+              'An occurred while creating your account. Please try again or contact us if the problem persists.',
           type: SnackType.error,
         );
 
@@ -607,18 +598,15 @@ class _SignupState extends State<Signup> {
       }
 
       final name = username.isNotEmpty
-        ? username
-        : email.substring(0, email.indexOf('@'));
+          ? username
+          : email.substring(0, email.indexOf('@'));
 
       await user.updateProfile(displayName: name);
 
-      await FirebaseFirestore.instance
-        .collection('users')
-        .doc(user.uid)
-        .set({
-          'email': user.email,
-          'name': name,
-        });
+      await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+        'email': user.email,
+        'name': name,
+      });
 
       appLocalStorage.setCredentials(
         email: email,
@@ -639,7 +627,6 @@ class _SignupState extends State<Signup> {
           },
         ),
       );
-
     } catch (error) {
       debugPrint(error.toString());
 
@@ -649,7 +636,8 @@ class _SignupState extends State<Signup> {
 
       showSnack(
         context: context,
-        message: 'An occurred while creating your account. Please try again or contact us if the problem persists.',
+        message:
+            'An occurred while creating your account. Please try again or contact us if the problem persists.',
         type: SnackType.error,
       );
     }
@@ -706,9 +694,9 @@ class _SignupState extends State<Signup> {
     if (!checkUsernameFormat(username)) {
       showSnack(
         context: context,
-        message: username.length < 3 ?
-          'Please use at least 3 characters' :
-          'Please use alpha-numerical (A-Z, 0-9) characters and underscore (_)',
+        message: username.length < 3
+            ? 'Please use at least 3 characters'
+            : 'Please use alpha-numerical (A-Z, 0-9) characters and underscore (_)',
         type: SnackType.error,
       );
 

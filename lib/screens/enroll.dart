@@ -23,79 +23,79 @@ class Enroll extends StatefulWidget {
 
 class _EnrollState extends State<Enroll> {
   bool isCheckingDomain = false;
-  bool isCompleted      = false;
-  bool isDomainFree     = false;
-  bool isLoading        = false;
-  bool meetInPerson     = false;
+  bool isCompleted = false;
+  bool isDomainFree = false;
+  bool isLoading = false;
+  bool meetInPerson = false;
 
   DateTime selectedStartDate;
   DateTime selectedEndDate;
 
-  double mainCost       = 0;
+  double mainCost = 0;
   double additionalCost = 0;
 
-  final largeHorizPadding   = 90.0;
-  final narrowHorizPadding  = 20.0;
-  final narrowWidthLimit    = 800.0;
+  final largeHorizPadding = 90.0;
+  final narrowHorizPadding = 20.0;
+  final narrowWidthLimit = 800.0;
 
-  int projectIndex      = 0;
-  int totalSteps        = 0;
-  int currentStep       = 0;
+  int projectIndex = 0;
+  int totalSteps = 0;
+  int currentStep = 0;
 
   List<Map<String, Object>> additionalSelectedFeatures = [];
 
-  static const DOMAIN_NEW          = 'newdomain';
-  static const DOMAIN_EXISTING     = 'existingdomain';
-  static const DOMAIN_LOST         = 'lost';
+  static const DOMAIN_NEW = 'newdomain';
+  static const DOMAIN_EXISTING = 'existingdomain';
+  static const DOMAIN_LOST = 'lost';
 
-  static const AFTER_PROJ_HANDLE   = 'handle';
-  static const AFTER_PROJ_TRANSF   = 'transfert';
+  static const AFTER_PROJ_HANDLE = 'handle';
+  static const AFTER_PROJ_TRANSF = 'transfert';
 
-  static const PLATFORM_WEB        = 'web';
-  static const PLATFORM_MOBILE     = 'mobile';
+  static const PLATFORM_WEB = 'web';
+  static const PLATFORM_MOBILE = 'mobile';
   // static const PLATFORM_WEB_MOBILE = 'webmobile';
 
-  static const AUDIENCE_SMALL      = 'small';
-  static const AUDIENCE_MEDIUM     = 'medium';
-  static const AUDIENCE_LARGE      = 'large';
-  static const AUDIENCE_UNKNOWN    = 'unknown';
+  static const AUDIENCE_SMALL = 'small';
+  static const AUDIENCE_MEDIUM = 'medium';
+  static const AUDIENCE_LARGE = 'large';
+  static const AUDIENCE_UNKNOWN = 'unknown';
 
-  static const PROJECT_PORTFOLIO    = 'portfolio';
-  static const PROJECT_BLOG         = 'blog';
-  static const PROJECT_SHOWCASE     = 'showcase';
-  static const PROJECT_ECOMMERCE    = 'ecommerce';
-  static const PROJECT_MULTIPLE    = 'multiple';
+  static const PROJECT_PORTFOLIO = 'portfolio';
+  static const PROJECT_BLOG = 'blog';
+  static const PROJECT_SHOWCASE = 'showcase';
+  static const PROJECT_ECOMMERCE = 'ecommerce';
+  static const PROJECT_MULTIPLE = 'multiple';
 
-  static const PAYMENT_ONETIME     = 'onetime';
-  static const PAYMENT_DELAYED     = 'delayed';
+  static const PAYMENT_ONETIME = 'onetime';
+  static const PAYMENT_DELAYED = 'delayed';
 
-  static const CONTACT_EMAIL       = 'email';
-  static const CONTACT_PHONE       = 'phone';
+  static const CONTACT_EMAIL = 'email';
+  static const CONTACT_PHONE = 'phone';
 
-  static const PLANNING_START      = 'start';
-  static const PLANNING_END        = 'end';
+  static const PLANNING_START = 'start';
+  static const PLANNING_END = 'end';
 
-  String afterProject     = AFTER_PROJ_HANDLE;
-  String platform         = PLATFORM_WEB;
-  String audienceSize     = AUDIENCE_SMALL;
-  String projectType      = PROJECT_PORTFOLIO;
-  String domainNameType   = DOMAIN_NEW;
-  String domainName       = '';
+  String afterProject = AFTER_PROJ_HANDLE;
+  String platform = PLATFORM_WEB;
+  String audienceSize = AUDIENCE_SMALL;
+  String projectType = PROJECT_PORTFOLIO;
+  String domainNameType = DOMAIN_NEW;
+  String domainName = '';
   String domainErrorText;
 
   String planningMode = PLANNING_START;
 
-  String callingCode      = '';
+  String callingCode = '';
   String callingCodeErrorMessage;
-  String country          = '';
-  String city             = '';
+  String country = '';
+  String city = '';
   String countryErrorMessage;
   String cityErrorMessage;
-  String paymentMethod    = PAYMENT_ONETIME;
-  String contactType      = CONTACT_EMAIL;
-  String email            = '';
+  String paymentMethod = PAYMENT_ONETIME;
+  String contactType = CONTACT_EMAIL;
+  String email = '';
   String emailErrorMessage;
-  String phone            = '';
+  String phone = '';
   String phoneErrorMessage;
 
   Timer domainCheckTimer;
@@ -105,23 +105,29 @@ class _EnrollState extends State<Enroll> {
   VerbalExpression regexCallingCode;
 
   final Map<String, String> projectHint = {
-    PROJECT_PORTFOLIO : "You want to display your work and projects. For example if you're an artist.",
-    PROJECT_BLOG      : 'You want to write posts and stories about your favourites subjects. Like an online journal.',
-    PROJECT_SHOWCASE  : 'You want an app with a few pages to showcase a business or something else, with a contact page. This can typically be a bakery website.',
-    PROJECT_ECOMMERCE : 'You want to sell or monetize content or goods. This includes taking customer payments, a contact page and an increased security.',
-    PROJECT_MULTIPLE  : 'Your app has multiple purposes.',
+    PROJECT_PORTFOLIO:
+        "You want to display your work and projects. For example if you're an artist.",
+    PROJECT_BLOG:
+        'You want to write posts and stories about your favourites subjects. Like an online journal.',
+    PROJECT_SHOWCASE:
+        'You want an app with a few pages to showcase a business or something else, with a contact page. This can typically be a bakery website.',
+    PROJECT_ECOMMERCE:
+        'You want to sell or monetize content or goods. This includes taking customer payments, a contact page and an increased security.',
+    PROJECT_MULTIPLE: 'Your app has multiple purposes.',
   };
 
   final Map<String, String> sizeHint = {
-    AUDIENCE_SMALL   : "Less than 10,000 visitors per month",
-    AUDIENCE_MEDIUM  : "Between 10,000 and 100,000 visitors per month",
-    AUDIENCE_LARGE   : "More than 100,000 visitors per month",
-    AUDIENCE_UNKNOWN : "Don't worry, we will determine this later together",
+    AUDIENCE_SMALL: "Less than 10,000 visitors per month",
+    AUDIENCE_MEDIUM: "Between 10,000 and 100,000 visitors per month",
+    AUDIENCE_LARGE: "More than 100,000 visitors per month",
+    AUDIENCE_UNKNOWN: "Don't worry, we will determine this later together",
   };
 
   final Map<String, String> afterProjectHint = {
-    AFTER_PROJ_HANDLE : "We will upgrade you app with the most recent technology and make security checks during the year.",
-    AFTER_PROJ_TRANSF : "We will tranfert the whole project to you. You will have to care of the hosting, domain name among other things.",
+    AFTER_PROJ_HANDLE:
+        "We will upgrade you app with the most recent technology and make security checks during the year.",
+    AFTER_PROJ_TRANSF:
+        "We will tranfert the whole project to you. You will have to care of the hosting, domain name among other things.",
   };
 
   @override
@@ -157,36 +163,35 @@ class _EnrollState extends State<Enroll> {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: isCompleted
-        ? Padding(padding: EdgeInsets.zero)
-        : FloatingActionButton.extended(
-          onPressed: () => sendProject(),
-          icon: Icon(Icons.send),
-          label: Text(
-            'Send application',
-          ),
-        ),
+          ? Padding(padding: EdgeInsets.zero)
+          : FloatingActionButton.extended(
+              onPressed: () => sendProject(),
+              icon: Icon(Icons.send),
+              label: Text(
+                'Send application',
+              ),
+            ),
       body: CustomScrollView(
         slivers: [
           HomeAppBar(
             title: isCompleted
-              ? null
-              : Opacity(
-                  opacity: 0.6,
-                  child: Text(
-                    'COST: ${mainCost + additionalCost} €',
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      color: stateColors.foreground,
+                ? null
+                : Opacity(
+                    opacity: 0.6,
+                    child: Text(
+                      'COST: ${mainCost + additionalCost} €',
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: stateColors.foreground,
+                      ),
                     ),
                   ),
-                ),
           ),
-
           SliverLayoutBuilder(
             builder: (_, constraints) {
               final padding = constraints.crossAxisExtent < narrowWidthLimit
-                ? narrowHorizPadding
-                : largeHorizPadding;
+                  ? narrowHorizPadding
+                  : largeHorizPadding;
 
               return SliverList(
                 delegate: SliverChildListDelegate([
@@ -201,12 +206,11 @@ class _EnrollState extends State<Enroll> {
               );
             },
           ),
-
           SliverLayoutBuilder(
             builder: (_, constraints) {
               final padding = constraints.crossAxisExtent < narrowWidthLimit
-                ? narrowHorizPadding
-                : largeHorizPadding * 2;
+                  ? narrowHorizPadding
+                  : largeHorizPadding * 2;
 
               return SliverPadding(
                 padding: EdgeInsets.only(
@@ -218,7 +222,6 @@ class _EnrollState extends State<Enroll> {
               );
             },
           ),
-
           SliverList(
             delegate: SliverChildListDelegate([
               Footer(),
@@ -252,69 +255,68 @@ class _EnrollState extends State<Enroll> {
 
   Widget completedView() {
     return SliverList(
-      delegate: SliverChildListDelegate([
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(
-                top: 40.0,
-                bottom: 20.0,
-              ),
-              child: Icon(Icons.done_outline, size: 80,),
+        delegate: SliverChildListDelegate([
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(
+              top: 40.0,
+              bottom: 20.0,
             ),
-
-            Opacity(
-              opacity: 0.6,
-              child: Text(
-                "Your project has been successfully sent.\nWe'll review it and contact you in 48h.",
-                style: TextStyle(
-                  fontSize: 30.0,
-                ),
+            child: Icon(
+              Icons.done_outline,
+              size: 80,
+            ),
+          ),
+          Opacity(
+            opacity: 0.6,
+            child: Text(
+              "Your project has been successfully sent.\nWe'll review it and contact you in 48h.",
+              style: TextStyle(
+                fontSize: 30.0,
               ),
-            )
-          ],
-        ),
-      ])
-    );
+            ),
+          )
+        ],
+      ),
+    ]));
   }
 
   Widget loadingView() {
     return SliverList(
-      delegate: SliverChildListDelegate([
-        Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(
-                top: 40.0,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 20.0),
-                    child: Opacity(
-                      opacity: 0.6,
-                      child: Icon(Icons.send, size: 80.0),
-                    ),
-                  ),
-
-                  Opacity(
+        delegate: SliverChildListDelegate([
+      Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(
+              top: 40.0,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 20.0),
+                  child: Opacity(
                     opacity: 0.6,
-                    child: Text(
-                      "Please wait while we're pack your project information into a condensed data and send it over the wire...",
-                      style: TextStyle(
-                        fontSize: 30.0,
-                      ),
+                    child: Icon(Icons.send, size: 80.0),
+                  ),
+                ),
+                Opacity(
+                  opacity: 0.6,
+                  child: Text(
+                    "Please wait while we're pack your project information into a condensed data and send it over the wire...",
+                    style: TextStyle(
+                      fontSize: 30.0,
                     ),
                   ),
-                ],
-              ),
-            )
-          ],
-        ),
-      ])
-    );
+                ),
+              ],
+            ),
+          )
+        ],
+      ),
+    ]));
   }
 
   StepState computeStepState({
@@ -349,7 +351,6 @@ class _EnrollState extends State<Enroll> {
             stepIndex: 0,
           ),
         ),
-
         Step(
           isActive: currentStep == 1,
           title: Text('Platform'),
@@ -359,7 +360,6 @@ class _EnrollState extends State<Enroll> {
             stepIndex: 1,
           ),
         ),
-
         Step(
           isActive: currentStep == 2,
           title: Text('Size'),
@@ -369,7 +369,6 @@ class _EnrollState extends State<Enroll> {
             stepIndex: 2,
           ),
         ),
-
         Step(
           isActive: currentStep == 3,
           title: Text('Domain name'),
@@ -379,7 +378,6 @@ class _EnrollState extends State<Enroll> {
             stepIndex: 3,
           ),
         ),
-
         Step(
           isActive: currentStep == 4,
           title: Text('After project'),
@@ -389,7 +387,6 @@ class _EnrollState extends State<Enroll> {
             stepIndex: 4,
           ),
         ),
-
         Step(
           isActive: currentStep == 5,
           title: Text('Features'),
@@ -399,7 +396,6 @@ class _EnrollState extends State<Enroll> {
             stepIndex: 5,
           ),
         ),
-
         Step(
           isActive: currentStep == 6,
           title: Text('Additional features'),
@@ -409,7 +405,6 @@ class _EnrollState extends State<Enroll> {
             stepIndex: 6,
           ),
         ),
-
         Step(
           isActive: currentStep == 7,
           title: Text('Planning'),
@@ -419,7 +414,6 @@ class _EnrollState extends State<Enroll> {
             stepIndex: 7,
           ),
         ),
-
         Step(
           isActive: currentStep == 8,
           title: Text('Payment method'),
@@ -429,7 +423,6 @@ class _EnrollState extends State<Enroll> {
             stepIndex: 8,
           ),
         ),
-
         Step(
           isActive: currentStep == 9,
           title: Text('Contact'),
@@ -504,25 +497,24 @@ class _EnrollState extends State<Enroll> {
                 ),
               ),
             ),
-
             Wrap(
               spacing: 20.0,
               runSpacing: 20.0,
               children: [
                 OutlineToggleButton(
                   child: Text('YES, HANDLE THIS FOR ME'),
-                  onPressed: () => setState(() => afterProject = AFTER_PROJ_HANDLE),
+                  onPressed: () =>
+                      setState(() => afterProject = AFTER_PROJ_HANDLE),
                   selected: afterProject == AFTER_PROJ_HANDLE,
                 ),
-
                 OutlineToggleButton(
                   child: Text("NO, I WANT THE PROJECT TRANSFERED TO ME"),
-                  onPressed: () => setState(() => afterProject = AFTER_PROJ_TRANSF),
+                  onPressed: () =>
+                      setState(() => afterProject = AFTER_PROJ_TRANSF),
                   selected: afterProject == AFTER_PROJ_TRANSF,
                 ),
               ],
             ),
-
             Padding(
               padding: const EdgeInsets.only(
                 top: 40.0,
@@ -562,7 +554,6 @@ class _EnrollState extends State<Enroll> {
               ),
             ),
           ),
-
           WebFeatures(
             layout: FeaturesLayout.wrap,
             padding: const EdgeInsets.only(
@@ -594,9 +585,9 @@ class _EnrollState extends State<Enroll> {
               ),
             ),
           ),
-
           WebAdditionalFeatures(
-            onSelectionChanged: (double cost, List<Map<String, Object>> allSelected) {
+            onSelectionChanged:
+                (double cost, List<Map<String, Object>> allSelected) {
               additionalSelectedFeatures = allSelected;
               setState(() => additionalCost = cost);
             },
@@ -625,7 +616,6 @@ class _EnrollState extends State<Enroll> {
               ),
             ),
           ),
-
           Wrap(
             spacing: 20.0,
             runSpacing: 20.0,
@@ -635,7 +625,6 @@ class _EnrollState extends State<Enroll> {
                 selected: contactType == CONTACT_EMAIL,
                 onPressed: () => setState(() => contactType = CONTACT_EMAIL),
               ),
-
               OutlineToggleButton(
                 child: Text("Phone"),
                 selected: contactType == CONTACT_PHONE,
@@ -643,9 +632,7 @@ class _EnrollState extends State<Enroll> {
               ),
             ],
           ),
-
           contactTypeBody(),
-
           Container(
             padding: const EdgeInsets.only(top: 40.0),
             width: 400.0,
@@ -656,11 +643,11 @@ class _EnrollState extends State<Enroll> {
               subtitle: Text("We can organize a meeting in a café"),
             ),
           ),
-
           contactLocation(),
-
           Padding(
-            padding: const EdgeInsets.only(bottom: 40.0,),
+            padding: const EdgeInsets.only(
+              bottom: 40.0,
+            ),
           ),
         ],
       ),
@@ -687,9 +674,8 @@ class _EnrollState extends State<Enroll> {
             final isOk = checkEmailFormat(value);
 
             setState(() {
-              emailErrorMessage = isOk
-                ? null
-                : "The value entered is not a valid email";
+              emailErrorMessage =
+                  isOk ? null : "The value entered is not a valid email";
             });
           },
         ),
@@ -720,13 +706,12 @@ class _EnrollState extends State<Enroll> {
 
                 setState(() {
                   callingCodeErrorMessage = isOk
-                    ? null
-                    : "The value entered is not a valid phone country indicator";
+                      ? null
+                      : "The value entered is not a valid phone country indicator";
                 });
               },
             ),
           ),
-
           SizedBox(
             width: 300.0,
             child: TextFormField(
@@ -741,9 +726,8 @@ class _EnrollState extends State<Enroll> {
                 final isOk = regexLocalPhone.hasMatch(value);
 
                 setState(() {
-                  phoneErrorMessage = isOk
-                    ? null
-                    : "The value entered is not a phone number";
+                  phoneErrorMessage =
+                      isOk ? null : "The value entered is not a phone number";
                 });
               },
             ),
@@ -778,14 +762,12 @@ class _EnrollState extends State<Enroll> {
                 country = value;
 
                 setState(() {
-                  countryErrorMessage = country.isEmpty
-                    ? "Please enter your country"
-                    : null;
+                  countryErrorMessage =
+                      country.isEmpty ? "Please enter your country" : null;
                 });
               },
             ),
           ),
-
           SizedBox(
             width: 200.0,
             child: TextFormField(
@@ -797,9 +779,8 @@ class _EnrollState extends State<Enroll> {
                 city = value;
 
                 setState(() {
-                  cityErrorMessage = city.isEmpty
-                    ? "Please enter your city"
-                    : null;
+                  cityErrorMessage =
+                      city.isEmpty ? "Please enter your city" : null;
                 });
               },
             ),
@@ -828,7 +809,6 @@ class _EnrollState extends State<Enroll> {
               ),
             ),
           ),
-
           Wrap(
             spacing: 20.0,
             runSpacing: 20.0,
@@ -836,17 +816,17 @@ class _EnrollState extends State<Enroll> {
               OutlineToggleButton(
                 child: Text("One time fee"),
                 selected: paymentMethod == PAYMENT_ONETIME,
-                onPressed: () => setState(() => paymentMethod = PAYMENT_ONETIME),
+                onPressed: () =>
+                    setState(() => paymentMethod = PAYMENT_ONETIME),
               ),
-
               OutlineToggleButton(
                 child: Text("Delayed"),
                 selected: paymentMethod == PAYMENT_DELAYED,
-                onPressed: () => setState(() => paymentMethod = PAYMENT_DELAYED),
+                onPressed: () =>
+                    setState(() => paymentMethod = PAYMENT_DELAYED),
               ),
             ],
           ),
-
           paymentMethodDescription(),
         ],
       ),
@@ -883,7 +863,6 @@ class _EnrollState extends State<Enroll> {
                     ),
                   ),
                 ),
-
                 Opacity(
                   opacity: 0.6,
                   child: Text(
@@ -895,7 +874,6 @@ class _EnrollState extends State<Enroll> {
                     ),
                   ),
                 ),
-
                 Opacity(
                   opacity: 0.6,
                   child: Text(
@@ -909,7 +887,6 @@ class _EnrollState extends State<Enroll> {
               ],
             ),
           ),
-
           Padding(
             padding: const EdgeInsets.only(
               top: 0.0,
@@ -936,7 +913,6 @@ class _EnrollState extends State<Enroll> {
                     ),
                   ),
                 ),
-
                 Opacity(
                   opacity: 0.6,
                   child: Text(
@@ -948,7 +924,6 @@ class _EnrollState extends State<Enroll> {
                     ),
                   ),
                 ),
-
                 Opacity(
                   opacity: 0.6,
                   child: Text(
@@ -962,7 +937,6 @@ class _EnrollState extends State<Enroll> {
               ],
             ),
           ),
-
           Padding(
             padding: const EdgeInsets.only(
               top: 40.0,
@@ -984,62 +958,60 @@ class _EnrollState extends State<Enroll> {
     }
 
     return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(
-              top: 80.0,
-            ),
-            child: Wrap(
-              spacing: 10.0,
-              runSpacing: 20.0,
-              alignment: WrapAlignment.start,
-              crossAxisAlignment: WrapCrossAlignment.end,
-              children: [
-                Opacity(
-                  opacity: 0.6,
-                  child: Text(
-                    '${(mainCost / 12).truncateToDouble()}',
-                    style: TextStyle(
-                      fontSize: 90.0,
-                      fontWeight: FontWeight.w400,
-                      height: 1.0,
-                    ),
-                  ),
-                ),
-
-                Opacity(
-                  opacity: 0.6,
-                  child: Text(
-                    '€ / month',
-                    style: TextStyle(
-                      fontSize: 40.0,
-                      fontWeight: FontWeight.w300,
-                    ),
-                  ),
-                ),
-              ],
-            ),
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(
+            top: 80.0,
           ),
-
-          Padding(
-            padding: const EdgeInsets.only(
-              top: 40.0,
-              bottom: 60.0,
-            ),
-            child: Opacity(
-              opacity: 0.6,
-              child: Text(
-                "You will pay the recurring fee during 1 year.",
-                style: TextStyle(
-                  fontSize: 24.0,
-                  fontWeight: FontWeight.w300,
+          child: Wrap(
+            spacing: 10.0,
+            runSpacing: 20.0,
+            alignment: WrapAlignment.start,
+            crossAxisAlignment: WrapCrossAlignment.end,
+            children: [
+              Opacity(
+                opacity: 0.6,
+                child: Text(
+                  '${(mainCost / 12).truncateToDouble()}',
+                  style: TextStyle(
+                    fontSize: 90.0,
+                    fontWeight: FontWeight.w400,
+                    height: 1.0,
+                  ),
                 ),
+              ),
+              Opacity(
+                opacity: 0.6,
+                child: Text(
+                  '€ / month',
+                  style: TextStyle(
+                    fontSize: 40.0,
+                    fontWeight: FontWeight.w300,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(
+            top: 40.0,
+            bottom: 60.0,
+          ),
+          child: Opacity(
+            opacity: 0.6,
+            child: Text(
+              "You will pay the recurring fee during 1 year.",
+              style: TextStyle(
+                fontSize: 24.0,
+                fontWeight: FontWeight.w300,
               ),
             ),
           ),
-        ],
-      );
+        ),
+      ],
+    );
   }
 
   Widget stepPlanning() {
@@ -1061,7 +1033,6 @@ class _EnrollState extends State<Enroll> {
               ),
             ),
           ),
-
           Wrap(
             spacing: 20.0,
             runSpacing: 20.0,
@@ -1071,7 +1042,6 @@ class _EnrollState extends State<Enroll> {
                 selected: planningMode == PLANNING_START,
                 onPressed: () => setState(() => planningMode = PLANNING_START),
               ),
-
               OutlineToggleButton(
                 child: Text("I'd like the result on..."),
                 selected: planningMode == PLANNING_END,
@@ -1079,7 +1049,6 @@ class _EnrollState extends State<Enroll> {
               ),
             ],
           ),
-
           dateButtonSelector(),
         ],
       ),
@@ -1090,27 +1059,19 @@ class _EnrollState extends State<Enroll> {
     String textDate = "SELECT A DATE";
 
     if (planningMode == PLANNING_START && selectedStartDate != null) {
-      textDate = selectedStartDate
-        .toLocal()
-        .toString()
-        .split(' ')[0];
+      textDate = selectedStartDate.toLocal().toString().split(' ')[0];
     }
 
     if (planningMode == PLANNING_END && selectedEndDate != null) {
-      textDate = selectedEndDate
-        .toLocal()
-        .toString()
-        .split(' ')[0];
+      textDate = selectedEndDate.toLocal().toString().split(' ')[0];
     }
 
     DateTime initialDate;
 
     if (planningMode == PLANNING_START) {
       initialDate = selectedStartDate ?? DateTime.now();
-
     } else if (planningMode == PLANNING_END) {
       initialDate = selectedEndDate ?? DateTime.now();
-
     } else {
       initialDate = DateTime.now();
     }
@@ -1120,7 +1081,7 @@ class _EnrollState extends State<Enroll> {
         top: 40.0,
         bottom: 40.0,
       ),
-      child: FlatButton.icon(
+      child: TextButton.icon(
         onPressed: () async {
           final picked = await showDatePicker(
             context: context,
@@ -1182,7 +1143,6 @@ class _EnrollState extends State<Enroll> {
                 ),
               ),
             ),
-
             Wrap(
               spacing: 20.0,
               runSpacing: 20.0,
@@ -1206,7 +1166,6 @@ class _EnrollState extends State<Enroll> {
                 // ),
               ],
             ),
-
             Padding(
               padding: const EdgeInsets.only(
                 top: 40.0,
@@ -1250,37 +1209,35 @@ class _EnrollState extends State<Enroll> {
                 ),
               ),
             ),
-
             Wrap(
               spacing: 20.0,
               runSpacing: 20.0,
               children: [
                 OutlineToggleButton(
                   child: Text('PORTFOLIO'),
-                  onPressed: () => setState(() => projectType = PROJECT_PORTFOLIO),
+                  onPressed: () =>
+                      setState(() => projectType = PROJECT_PORTFOLIO),
                   selected: projectType == PROJECT_PORTFOLIO,
                 ),
-
                 OutlineToggleButton(
                   child: Text("BLOG"),
                   onPressed: () => setState(() => projectType = PROJECT_BLOG),
                   selected: projectType == PROJECT_BLOG,
                 ),
-
                 OutlineToggleButton(
                   child: Text('SHOWCASE'),
-                  onPressed: () => setState(() => projectType = PROJECT_SHOWCASE),
+                  onPressed: () =>
+                      setState(() => projectType = PROJECT_SHOWCASE),
                   selected: projectType == PROJECT_SHOWCASE,
                 ),
-
                 OutlineToggleButton(
                   child: Text('E-COMMERCE'),
-                  onPressed: () => setState(() => projectType = PROJECT_ECOMMERCE),
+                  onPressed: () =>
+                      setState(() => projectType = PROJECT_ECOMMERCE),
                   selected: projectType == PROJECT_ECOMMERCE,
                 ),
               ],
             ),
-
             Padding(
               padding: const EdgeInsets.only(
                 top: 40.0,
@@ -1324,7 +1281,6 @@ class _EnrollState extends State<Enroll> {
                 ),
               ),
             ),
-
             Padding(
               padding: const EdgeInsets.only(
                 top: 20.0,
@@ -1341,7 +1297,6 @@ class _EnrollState extends State<Enroll> {
                 ),
               ),
             ),
-
             Wrap(
               spacing: 20.0,
               runSpacing: 20.0,
@@ -1351,13 +1306,12 @@ class _EnrollState extends State<Enroll> {
                   onPressed: () => setState(() => domainNameType = DOMAIN_NEW),
                   selected: domainNameType == DOMAIN_NEW,
                 ),
-
                 OutlineToggleButton(
                   child: Text('I ALREADY HAVE A DOMAIN NAME'),
-                  onPressed: () => setState(() => domainNameType = DOMAIN_EXISTING),
+                  onPressed: () =>
+                      setState(() => domainNameType = DOMAIN_EXISTING),
                   selected: domainNameType == DOMAIN_EXISTING,
                 ),
-
                 OutlineToggleButton.icon(
                   icon: Icon(Icons.directions_off),
                   label: Text("I'M LOST!"),
@@ -1366,7 +1320,6 @@ class _EnrollState extends State<Enroll> {
                 ),
               ],
             ),
-
             domainBody(),
           ],
         ),
@@ -1395,56 +1348,48 @@ class _EnrollState extends State<Enroll> {
             top: 40.0,
             bottom: 20,
           ),
-          child: LayoutBuilder(
-            builder: (_, constraints) {
-              final width = constraints.maxWidth < 600.0
-                ? 340.0
-                : 600.0;
+          child: LayoutBuilder(builder: (_, constraints) {
+            final width = constraints.maxWidth < 600.0 ? 340.0 : 600.0;
 
-              return Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Container(
-                    width: width,
-                    height: 50.0,
-                    padding: const EdgeInsets.only(right: 20.0),
-                    child: TextFormField(
-                      decoration: InputDecoration(
-                        labelText: 'ontheshells.xyz',
-                        errorText: domainErrorText,
-                        border: OutlineInputBorder(),
-                        icon: Icon(Icons.search),
-                        suffixIcon: isDomainFree
-                          ? Icon(Icons.check_circle)
-                          : null,
-                      ),
-                      onChanged: (value) {
-                        domainName = value;
-
-                        if (domainCheckTimer != null) {
-                          domainCheckTimer.cancel();
-                          domainCheckTimer = null;
-                        }
-
-                        domainCheckTimer = Timer(
-                          1.seconds,
-                          () => checkDomainName());
-                      },
+            return Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Container(
+                  width: width,
+                  height: 50.0,
+                  padding: const EdgeInsets.only(right: 20.0),
+                  child: TextFormField(
+                    decoration: InputDecoration(
+                      labelText: 'ontheshells.xyz',
+                      errorText: domainErrorText,
+                      border: OutlineInputBorder(),
+                      icon: Icon(Icons.search),
+                      suffixIcon:
+                          isDomainFree ? Icon(Icons.check_circle) : null,
                     ),
+                    onChanged: (value) {
+                      domainName = value;
+
+                      if (domainCheckTimer != null) {
+                        domainCheckTimer.cancel();
+                        domainCheckTimer = null;
+                      }
+
+                      domainCheckTimer =
+                          Timer(1.seconds, () => checkDomainName());
+                    },
                   ),
-
-                  if (isCheckingDomain)
-                    Container(
-                      height: 30.0,
-                      width: 30.0,
-                      child: CircularProgressIndicator(),
-                    ),
-                ],
-              );
-            }
-          ),
+                ),
+                if (isCheckingDomain)
+                  Container(
+                    height: 30.0,
+                    width: 30.0,
+                    child: CircularProgressIndicator(),
+                  ),
+              ],
+            );
+          }),
         ),
-
         Padding(
           padding: const EdgeInsets.only(left: 40.0),
           child: Opacity(
@@ -1456,11 +1401,9 @@ class _EnrollState extends State<Enroll> {
                   padding: const EdgeInsets.only(right: 12.0),
                   child: Icon(Icons.help),
                 ),
-
                 Expanded(
                   child: Text(
-                    'We may need additional verifications to ensure this domain is available.'
-                  ),
+                      'We may need additional verifications to ensure this domain is available.'),
                 ),
               ],
             ),
@@ -1528,37 +1471,36 @@ class _EnrollState extends State<Enroll> {
                 ),
               ),
             ),
-
             Wrap(
               spacing: 20.0,
               runSpacing: 20.0,
               children: [
                 OutlineToggleButton(
                   child: Text('SMALL'),
-                  onPressed: () => setState(() => audienceSize = AUDIENCE_SMALL),
+                  onPressed: () =>
+                      setState(() => audienceSize = AUDIENCE_SMALL),
                   selected: audienceSize == AUDIENCE_SMALL,
                 ),
-
                 OutlineToggleButton(
                   child: Text('MEDIUM'),
-                  onPressed: () => setState(() => audienceSize = AUDIENCE_MEDIUM),
+                  onPressed: () =>
+                      setState(() => audienceSize = AUDIENCE_MEDIUM),
                   selected: audienceSize == AUDIENCE_MEDIUM,
                 ),
-
                 OutlineToggleButton(
                   child: Text('LARGE'),
-                  onPressed: () => setState(() => audienceSize = AUDIENCE_LARGE),
+                  onPressed: () =>
+                      setState(() => audienceSize = AUDIENCE_LARGE),
                   selected: audienceSize == AUDIENCE_LARGE,
                 ),
-
                 OutlineToggleButton(
                   child: Text("I DON'T KNOW"),
-                  onPressed: () => setState(() => audienceSize = AUDIENCE_UNKNOWN),
+                  onPressed: () =>
+                      setState(() => audienceSize = AUDIENCE_UNKNOWN),
                   selected: audienceSize == AUDIENCE_UNKNOWN,
                 ),
               ],
             ),
-
             Padding(
               padding: const EdgeInsets.only(
                 top: 40.0,
@@ -1574,7 +1516,6 @@ class _EnrollState extends State<Enroll> {
                 ),
               ),
             ),
-
             Padding(
               padding: const EdgeInsets.only(
                 top: 10.0,
@@ -1609,7 +1550,6 @@ class _EnrollState extends State<Enroll> {
             icon: Icon(Icons.arrow_back),
           ),
         ),
-
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -1626,7 +1566,6 @@ class _EnrollState extends State<Enroll> {
                       ),
                     ),
                   ),
-
                   if (isLoading)
                     Padding(
                       padding: const EdgeInsets.only(left: 40.0),
@@ -1634,7 +1573,6 @@ class _EnrollState extends State<Enroll> {
                     ),
                 ],
               ),
-
               SizedBox(
                 width: 600.0,
                 child: Opacity(
@@ -1669,14 +1607,13 @@ class _EnrollState extends State<Enroll> {
   }
 
   void next() {
-    currentStep + 1 < totalSteps
-      ? goTo(currentStep + 1)
-      : sendProject();
+    currentStep + 1 < totalSteps ? goTo(currentStep + 1) : sendProject();
   }
 
   void checkDomainName() async {
     if (!regexDomain.hasMatch(domainName)) {
-      domainErrorText = 'The value entered is not in domain format. A valid value would be: supernova.com';
+      domainErrorText =
+          'The value entered is not in domain format. A valid value would be: supernova.com';
       setState(() {});
       return;
     }
@@ -1697,12 +1634,11 @@ class _EnrollState extends State<Enroll> {
         isDomainFree = resp.data['isFree'] as bool;
 
         domainErrorText = isDomainFree
-          ? null
-          : 'This domain is already taken. Please choose another one.';
+            ? null
+            : 'This domain is already taken. Please choose another one.';
       });
 
       setState(() => isCheckingDomain = false);
-
     } catch (error) {
       debugPrint(error.toString());
 
@@ -1727,17 +1663,20 @@ class _EnrollState extends State<Enroll> {
     if ((email == null || email.isEmpty) && (phone == null || phone.isEmpty)) {
       showSnack(
         context: context,
-        message: "Please fill a way to contact you. Either your email or your phone number.",
+        message:
+            "Please fill a way to contact you. Either your email or your phone number.",
         type: SnackType.error,
       );
 
       return false;
     }
 
-    if (meetInPerson && (country == null || country.isEmpty || city == null || city.isEmpty)) {
+    if (meetInPerson &&
+        (country == null || country.isEmpty || city == null || city.isEmpty)) {
       showSnack(
         context: context,
-        message: "Please fill your country and your city names if you want to meet us.",
+        message:
+            "Please fill your country and your city names if you want to meet us.",
         type: SnackType.error,
       );
 
@@ -1758,50 +1697,47 @@ class _EnrollState extends State<Enroll> {
     });
 
     try {
-      await FirebaseFirestore.instance
-        .collection('missions')
-        .add({
-          'additionalFeatures': additionalSelectedFeatures,
-          'contact': {
-            'type': contactType,
-            'email': email,
-            'phone': phone,
-            'country': country,
-            'city': city,
-          },
-          'cost': mainCost + additionalCost,
-          'createdAt': DateTime.now(),
-          'domain': {
-            'type': domainNameType,
-            'name': domainName,
-          },
-          'payment': {
-            'method': paymentMethod,
-          },
-          'planning': {
-            'mode': planningMode,
-            'start': selectedStartDate,
-            'end': selectedEndDate,
-          },
-          'project': {
-            'type': projectType,
-            'platform': platform,
-            'size': audienceSize,
-            'after': afterProject,
-          },
-          'review': {
-            'updatedAt': DateTime.now(),
-            'comment': '',
-            'accepted': false,
-          },
+      await FirebaseFirestore.instance.collection('missions').add({
+        'additionalFeatures': additionalSelectedFeatures,
+        'contact': {
+          'type': contactType,
+          'email': email,
+          'phone': phone,
+          'country': country,
+          'city': city,
+        },
+        'cost': mainCost + additionalCost,
+        'createdAt': DateTime.now(),
+        'domain': {
+          'type': domainNameType,
+          'name': domainName,
+        },
+        'payment': {
+          'method': paymentMethod,
+        },
+        'planning': {
+          'mode': planningMode,
+          'start': selectedStartDate,
+          'end': selectedEndDate,
+        },
+        'project': {
+          'type': projectType,
+          'platform': platform,
+          'size': audienceSize,
+          'after': afterProject,
+        },
+        'review': {
           'updatedAt': DateTime.now(),
-        });
+          'comment': '',
+          'accepted': false,
+        },
+        'updatedAt': DateTime.now(),
+      });
 
       setState(() {
         isCompleted = true;
         isLoading = false;
       });
-
     } catch (error) {
       debugPrint(error.toString());
 

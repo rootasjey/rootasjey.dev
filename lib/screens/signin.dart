@@ -21,8 +21,8 @@ class _SigninState extends State<Signin> {
   String password = '';
 
   bool isCheckingAuth = false;
-  bool isCompleted    = false;
-  bool isLoading      = false;
+  bool isCompleted = false;
+  bool isLoading = false;
 
   final passwordNode = FocusNode();
 
@@ -44,7 +44,6 @@ class _SigninState extends State<Signin> {
       body: CustomScrollView(
         slivers: <Widget>[
           HomeAppBar(),
-
           SliverList(
             delegate: SliverChildListDelegate.fixed([
               Column(
@@ -91,7 +90,6 @@ class _SigninState extends State<Signin> {
             color: Colors.green,
           ),
         ),
-
         Padding(
           padding: const EdgeInsets.only(top: 30.0),
           child: Text(
@@ -102,10 +100,11 @@ class _SigninState extends State<Signin> {
             ),
           ),
         ),
-
         Padding(
-          padding: const EdgeInsets.only(top: 20.0,),
-          child: OutlineButton(
+          padding: const EdgeInsets.only(
+            top: 20.0,
+          ),
+          child: OutlinedButton(
             onPressed: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
@@ -173,38 +172,39 @@ class _SigninState extends State<Signin> {
   }
 
   Widget forgotPassword() {
-    return FlatButton(
-      onPressed: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (_) {
-              return Me();
-            },
-          ),
-        );
-      },
-      child: Opacity(
-        opacity: .6,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: <Widget>[
-            Text(
-              "I forgot my password",
-              style: TextStyle(
-                decoration: TextDecoration.underline,
-              ),
+    return TextButton(
+        onPressed: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (_) {
+                return Me();
+              },
             ),
-          ],
-        ),
-      )
-    );
+          );
+        },
+        child: Opacity(
+          opacity: .6,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[
+              Text(
+                "I forgot my password",
+                style: TextStyle(
+                  decoration: TextDecoration.underline,
+                ),
+              ),
+            ],
+          ),
+        ));
   }
 
   Widget header() {
     return Row(
       children: <Widget>[
         Padding(
-          padding: const EdgeInsets.only(right: 20.0,),
+          padding: const EdgeInsets.only(
+            right: 20.0,
+          ),
           child: IconButton(
             onPressed: () {
               Navigator.of(context).pop();
@@ -212,7 +212,6 @@ class _SigninState extends State<Signin> {
             icon: Icon(Icons.arrow_back),
           ),
         ),
-
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
@@ -227,12 +226,9 @@ class _SigninState extends State<Signin> {
                 ),
               ),
             ),
-
             Opacity(
               opacity: .6,
-              child: Text(
-                'Connect to your existing account'
-              ),
+              child: Text('Connect to your existing account'),
             )
           ],
         ),
@@ -243,56 +239,53 @@ class _SigninState extends State<Signin> {
   Widget loadingView() {
     return Padding(
       padding: const EdgeInsets.only(top: 150.0),
-      child: Column(
-        children: [
-          CircularProgressIndicator(),
-
-          Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Text(
-              'Connecting to your account...',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 25.0,
-                fontWeight: FontWeight.w300,
-              ),
+      child: Column(children: [
+        CircularProgressIndicator(),
+        Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Text(
+            'Connecting to your account...',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 25.0,
+              fontWeight: FontWeight.w300,
             ),
           ),
-        ]
-      ),
+        ),
+      ]),
     );
   }
-  Widget noAccountButton() {
-    return FlatButton(
-      onPressed: () async {
-        await Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (_) {
-              return Signup();
-            },
-          ),
-        );
 
-        if (userState.isUserConnected) {
-          await Navigator.of(context).pushReplacement(
+  Widget noAccountButton() {
+    return TextButton(
+        onPressed: () async {
+          await Navigator.of(context).push(
             MaterialPageRoute(
               builder: (_) {
-                return Home();
+                return Signup();
               },
             ),
           );
-        }
-      },
-      child: Opacity(
-        opacity: .6,
-        child: Text(
-          "I don't have an account",
-          style: TextStyle(
-            decoration: TextDecoration.underline,
+
+          if (userState.isUserConnected) {
+            await Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                builder: (_) {
+                  return Home();
+                },
+              ),
+            );
+          }
+        },
+        child: Opacity(
+          opacity: .6,
+          child: Text(
+            "I don't have an account",
+            style: TextStyle(
+              decoration: TextDecoration.underline,
+            ),
           ),
-        ),
-      )
-    );
+        ));
   }
 
   Widget passwordInput() {
@@ -330,12 +323,14 @@ class _SigninState extends State<Signin> {
   Widget validationButton() {
     return Padding(
       padding: const EdgeInsets.only(top: 80.0),
-      child: RaisedButton(
+      child: ElevatedButton(
         onPressed: () => signIn(),
-        color: stateColors.primary,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(
-            Radius.circular(7.0),
+        style: ElevatedButton.styleFrom(
+          primary: stateColors.primary,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(
+              Radius.circular(7.0),
+            ),
           ),
         ),
         child: Container(
@@ -354,7 +349,10 @@ class _SigninState extends State<Signin> {
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 20.0),
-                child: Icon(Icons.arrow_forward, color: Colors.white,),
+                child: Icon(
+                  Icons.arrow_forward,
+                  color: Colors.white,
+                ),
               )
             ],
           ),
@@ -388,7 +386,9 @@ class _SigninState extends State<Signin> {
   }
 
   void signIn() async {
-    if (!inputValuesOk()) { return; }
+    if (!inputValuesOk()) {
+      return;
+    }
 
     setState(() {
       isLoading = true;
@@ -396,7 +396,7 @@ class _SigninState extends State<Signin> {
 
     try {
       final authResult = await FirebaseAuth.instance
-        .signInWithEmailAndPassword(email: email, password: password);
+          .signInWithEmailAndPassword(email: email, password: password);
 
       if (authResult.user == null) {
         showSnack(
@@ -429,7 +429,6 @@ class _SigninState extends State<Signin> {
           },
         ),
       );
-
     } catch (error) {
       debugPrint(error.toString());
 

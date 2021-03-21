@@ -13,7 +13,7 @@ class PublishedPosts extends StatefulWidget {
 }
 
 class _PublishedPostsState extends State<PublishedPosts> {
-  final postsList = List<Post>();
+  final postsList = <Post>[];
   final limit = 10;
 
   bool hasNext = true;
@@ -28,7 +28,9 @@ class _PublishedPostsState extends State<PublishedPosts> {
 
   void initAndCheck() async {
     final result = await canNavigate(context: context);
-    if (!result) { return; }
+    if (!result) {
+      return;
+    }
 
     fetch();
   }
@@ -57,7 +59,9 @@ class _PublishedPostsState extends State<PublishedPosts> {
               await Navigator.of(context).push(
                 MaterialPageRoute(
                   builder: (_) {
-                    return EditPost(postId: post.id,);
+                    return EditPost(
+                      postId: post.id,
+                    );
                   },
                 ),
               );
@@ -88,7 +92,6 @@ class _PublishedPostsState extends State<PublishedPosts> {
                     ),
                   ),
                 ),
-
                 const PopupMenuItem(
                   value: 'delete',
                   child: ListTile(
@@ -112,46 +115,42 @@ class _PublishedPostsState extends State<PublishedPosts> {
 
   void showDeleteDialog(int index) {
     showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text(
-            "Are you sure?"
-          ),
-          content: SingleChildScrollView(
-            child: Opacity(
-              opacity: 0.6,
-              child: Text(
-                "This action is irreversible.",
-              ),
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text(
-                'CANCEL',
-                textAlign: TextAlign.end,
-              ),
-            ),
-
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                delete(index);
-              },
-              child: Text(
-                'DELETE',
-                textAlign: TextAlign.end,
-                style: TextStyle(
-                  color: Colors.pink,
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text("Are you sure?"),
+            content: SingleChildScrollView(
+              child: Opacity(
+                opacity: 0.6,
+                child: Text(
+                  "This action is irreversible.",
                 ),
               ),
             ),
-          ],
-        );
-      }
-    );
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text(
+                  'CANCEL',
+                  textAlign: TextAlign.end,
+                ),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  delete(index);
+                },
+                child: Text(
+                  'DELETE',
+                  textAlign: TextAlign.end,
+                  style: TextStyle(
+                    color: Colors.pink,
+                  ),
+                ),
+              ),
+            ],
+          );
+        });
   }
 
   void fetch() async {
@@ -165,11 +164,11 @@ class _PublishedPostsState extends State<PublishedPosts> {
       final uid = userAuth.uid;
 
       final snapshot = await FirebaseFirestore.instance
-        .collection('posts')
-        .where('published', isEqualTo: true)
-        .where('author', isEqualTo: uid)
-        .limit(limit)
-        .get();
+          .collection('posts')
+          .where('published', isEqualTo: true)
+          .where('author', isEqualTo: uid)
+          .limit(limit)
+          .get();
 
       if (snapshot.size == 0) {
         setState(() {
@@ -193,7 +192,6 @@ class _PublishedPostsState extends State<PublishedPosts> {
         isLoading = false;
         hasNext = limit == snapshot.size;
       });
-
     } catch (error) {
       debugPrint(error.toString());
     }
@@ -206,12 +204,11 @@ class _PublishedPostsState extends State<PublishedPosts> {
 
     try {
       await FirebaseFirestore.instance
-        .collection('posts')
-        .doc(removedPost.id)
-        .delete();
+          .collection('posts')
+          .doc(removedPost.id)
+          .delete();
 
       setState(() => isLoading = false);
-
     } catch (error) {
       debugPrint(error.toString());
 
@@ -228,14 +225,13 @@ class _PublishedPostsState extends State<PublishedPosts> {
 
     try {
       await FirebaseFirestore.instance
-        .collection('posts')
-        .doc(removedPost.id)
-        .update({
-          'published': false,
-        });
+          .collection('posts')
+          .doc(removedPost.id)
+          .update({
+        'published': false,
+      });
 
       setState(() => isLoading = false);
-
     } catch (error) {
       debugPrint(error.toString());
 

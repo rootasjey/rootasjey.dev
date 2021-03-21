@@ -22,17 +22,17 @@ class _NewPostState extends State<NewPost> {
 
   DocumentReference postSnapshot;
 
-  final availableLang     = ['en', 'fr'];
-  final clearFocusNode    = FocusNode();
-  final contentFocusNode  = FocusNode();
+  final availableLang = ['en', 'fr'];
+  final clearFocusNode = FocusNode();
+  final contentFocusNode = FocusNode();
   final contentController = TextEditingController();
-  final titleFocusNode    = FocusNode();
-  final titleController   = TextEditingController();
+  final titleFocusNode = FocusNode();
+  final titleController = TextEditingController();
 
-  String postTitle        = '';
-  String postContent      = '';
-  String lang             = 'en';
-  String jwt              = '';
+  String postTitle = '';
+  String postContent = '';
+  String lang = 'en';
+  String jwt = '';
 
   Timer saveTitleTimer;
   Timer saveContentTimer;
@@ -55,15 +55,14 @@ class _NewPostState extends State<NewPost> {
                 if (isSaving)
                   Padding(
                     padding: const EdgeInsets.only(right: 16.0),
-                    child: CircularProgressIndicator(strokeWidth: 2.0,),
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2.0,
+                    ),
                   ),
-
                 Opacity(
                   opacity: 0.6,
                   child: Text(
-                    isSaving
-                      ? 'Saving...'
-                      : 'New Post',
+                    isSaving ? 'Saving...' : 'New Post',
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       color: stateColors.foreground,
@@ -114,7 +113,6 @@ class _NewPostState extends State<NewPost> {
               icon: Icon(Icons.arrow_back),
             ),
           ),
-
           Expanded(
             child: Container(
               width: 700.0,
@@ -132,19 +130,14 @@ class _NewPostState extends State<NewPost> {
                     saveTitleTimer.cancel();
                   }
 
-                  saveTitleTimer = Timer(
-                    1.seconds,
-                    () => saveTitle()
-                  );
+                  saveTitleTimer = Timer(1.seconds, () => saveTitle());
                 },
                 style: TextStyle(
                   fontSize: 42.0,
                 ),
                 decoration: InputDecoration(
                   hintText: 'Post Title...',
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide.none
-                  ),
+                  border: OutlineInputBorder(borderSide: BorderSide.none),
                 ),
               ),
             ),
@@ -174,10 +167,7 @@ class _NewPostState extends State<NewPost> {
             saveContentTimer.cancel();
           }
 
-          saveContentTimer = Timer(
-            1.seconds,
-            () => saveContent()
-          );
+          saveContentTimer = Timer(1.seconds, () => saveContent());
         },
         style: TextStyle(
           fontSize: 22.0,
@@ -186,9 +176,7 @@ class _NewPostState extends State<NewPost> {
         decoration: InputDecoration(
           icon: Icon(Icons.edit),
           hintText: "Once upon a time...",
-          border: OutlineInputBorder(
-            borderSide: BorderSide.none
-          ),
+          border: OutlineInputBorder(borderSide: BorderSide.none),
         ),
       ),
     );
@@ -200,41 +188,39 @@ class _NewPostState extends State<NewPost> {
       child: Row(
         children: <Widget>[
           langSelect(),
-
-          Padding(padding: const EdgeInsets.only(left: 20.0),),
-
-          FlatButton.icon(
-            focusNode: clearFocusNode,
-            onPressed: () {
-              postContent = '';
-              contentController.clear();
-              contentFocusNode.requestFocus();
-            },
-            icon: Opacity(opacity: 0.6, child: Icon(Icons.clear)),
-            label: Opacity(
-              opacity: 0.6,
-              child: Text(
-                'Clear content',
-              ),
-            )
+          Padding(
+            padding: const EdgeInsets.only(left: 20.0),
           ),
-
-          Padding(padding: const EdgeInsets.only(left: 20.0),),
-
-          FlatButton.icon(
-            focusNode: contentFocusNode,
-            onPressed: () {
-              saveTitle();
-              saveContent();
-            },
-            icon: Opacity(opacity: 0.6, child: Icon(Icons.save)),
-            label: Opacity(
-              opacity: 0.6,
-              child: Text(
-                'Save draft',
-              ),
-            )
+          TextButton.icon(
+              focusNode: clearFocusNode,
+              onPressed: () {
+                postContent = '';
+                contentController.clear();
+                contentFocusNode.requestFocus();
+              },
+              icon: Opacity(opacity: 0.6, child: Icon(Icons.clear)),
+              label: Opacity(
+                opacity: 0.6,
+                child: Text(
+                  'Clear content',
+                ),
+              )),
+          Padding(
+            padding: const EdgeInsets.only(left: 20.0),
           ),
+          TextButton.icon(
+              focusNode: contentFocusNode,
+              onPressed: () {
+                saveTitle();
+                saveContent();
+              },
+              icon: Opacity(opacity: 0.6, child: Icon(Icons.save)),
+              label: Opacity(
+                opacity: 0.6,
+                child: Text(
+                  'Save draft',
+                ),
+              )),
         ],
       ),
     );
@@ -254,13 +240,12 @@ class _NewPostState extends State<NewPost> {
           lang = newValue;
         });
       },
-      items: availableLang
-        .map<DropdownMenuItem<String>>((value) {
-          return DropdownMenuItem(
-            value: value,
-            child: Text(value.toUpperCase()),
-          );
-        }).toList(),
+      items: availableLang.map<DropdownMenuItem<String>>((value) {
+        return DropdownMenuItem(
+          value: value,
+          child: Text(value.toUpperCase()),
+        );
+      }).toList(),
     );
   }
 
@@ -270,35 +255,30 @@ class _NewPostState extends State<NewPost> {
     try {
       final userAuth = await userState.userAuth;
 
-      postSnapshot = await FirebaseFirestore.instance
-        .collection('posts')
-        .add({
-          'author': userAuth.uid,
-          'coauthors': [],
-          'createdAt': DateTime.now(),
-          'featured': false,
-          'published':false,
-          'referenced': true,
-          'restrictedTo': {
-            'premium': false,
-          },
-          'summary': '',
-          'tags': {},
-          'timeToRead': '',
-          'title': '',
-          'updatedAt': DateTime.now(),
-          'urls': {
-            'image': '',
-          },
-        });
+      postSnapshot = await FirebaseFirestore.instance.collection('posts').add({
+        'author': userAuth.uid,
+        'coauthors': [],
+        'createdAt': DateTime.now(),
+        'featured': false,
+        'published': false,
+        'referenced': true,
+        'restrictedTo': {
+          'premium': false,
+        },
+        'summary': '',
+        'tags': {},
+        'timeToRead': '',
+        'title': '',
+        'updatedAt': DateTime.now(),
+        'urls': {
+          'image': '',
+        },
+      });
 
-      jwt = await FirebaseAuth.instance
-        .currentUser
-        .getIdToken();
+      jwt = await FirebaseAuth.instance.currentUser.getIdToken();
 
       setState(() => isSaving = false);
-
-    } catch(error) {
+    } catch (error) {
       setState(() => isSaving = false);
       debugPrint(error.toSring());
 
@@ -312,7 +292,9 @@ class _NewPostState extends State<NewPost> {
 
   void initAndCheck() async {
     final result = await canNavigate(context: context);
-    if (!result) { return; }
+    if (!result) {
+      return;
+    }
 
     createPost();
   }
@@ -323,7 +305,6 @@ class _NewPostState extends State<NewPost> {
     try {
       await postSnapshot.update({'title': postTitle});
       setState(() => isSaving = false);
-
     } catch (error) {
       debugPrint(error.toString());
       setState(() => isSaving = false);
@@ -352,7 +333,6 @@ class _NewPostState extends State<NewPost> {
       }
 
       setState(() => isSaving = false);
-
     } catch (error) {
       debugPrint(error.toString());
       setState(() => isSaving = false);

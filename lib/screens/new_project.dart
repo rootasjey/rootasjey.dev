@@ -22,17 +22,17 @@ class _NewProjectState extends State<NewProject> {
 
   DocumentReference projectSnapshot;
 
-  final availableLang     = ['en', 'fr'];
-  final clearFocusNode    = FocusNode();
-  final contentFocusNode  = FocusNode();
+  final availableLang = ['en', 'fr'];
+  final clearFocusNode = FocusNode();
+  final contentFocusNode = FocusNode();
   final contentController = TextEditingController();
-  final titleFocusNode    = FocusNode();
-  final titleController   = TextEditingController();
+  final titleFocusNode = FocusNode();
+  final titleController = TextEditingController();
 
-  String projectTitle     = '';
-  String projectContent   = '';
-  String lang             = 'en';
-  String jwt              = '';
+  String projectTitle = '';
+  String projectContent = '';
+  String lang = 'en';
+  String jwt = '';
 
   Timer saveTitleTimer;
   Timer saveContentTimer;
@@ -55,15 +55,14 @@ class _NewProjectState extends State<NewProject> {
                 if (isSaving)
                   Padding(
                     padding: const EdgeInsets.only(right: 16.0),
-                    child: CircularProgressIndicator(strokeWidth: 2.0,),
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2.0,
+                    ),
                   ),
-
                 Opacity(
                   opacity: 0.6,
                   child: Text(
-                    isSaving
-                      ? 'Saving...'
-                      : 'New Project',
+                    isSaving ? 'Saving...' : 'New Project',
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       color: stateColors.foreground,
@@ -114,7 +113,6 @@ class _NewProjectState extends State<NewProject> {
               icon: Icon(Icons.arrow_back),
             ),
           ),
-
           Expanded(
             child: Container(
               width: 700.0,
@@ -132,19 +130,14 @@ class _NewProjectState extends State<NewProject> {
                     saveTitleTimer.cancel();
                   }
 
-                  saveTitleTimer = Timer(
-                    1.seconds,
-                    () => saveTitle()
-                  );
+                  saveTitleTimer = Timer(1.seconds, () => saveTitle());
                 },
                 style: TextStyle(
                   fontSize: 42.0,
                 ),
                 decoration: InputDecoration(
                   hintText: 'Project Title...',
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide.none
-                  ),
+                  border: OutlineInputBorder(borderSide: BorderSide.none),
                 ),
               ),
             ),
@@ -174,10 +167,7 @@ class _NewProjectState extends State<NewProject> {
             saveContentTimer.cancel();
           }
 
-          saveContentTimer = Timer(
-            1.seconds,
-            () => saveContent()
-          );
+          saveContentTimer = Timer(1.seconds, () => saveContent());
         },
         style: TextStyle(
           fontSize: 22.0,
@@ -186,9 +176,7 @@ class _NewProjectState extends State<NewProject> {
         decoration: InputDecoration(
           icon: Icon(Icons.edit),
           hintText: "Once upon a time...",
-          border: OutlineInputBorder(
-            borderSide: BorderSide.none
-          ),
+          border: OutlineInputBorder(borderSide: BorderSide.none),
         ),
       ),
     );
@@ -200,41 +188,39 @@ class _NewProjectState extends State<NewProject> {
       child: Row(
         children: <Widget>[
           langSelect(),
-
-          Padding(padding: const EdgeInsets.only(left: 20.0),),
-
-          FlatButton.icon(
-            focusNode: clearFocusNode,
-            onPressed: () {
-              projectContent = '';
-              contentController.clear();
-              contentFocusNode.requestFocus();
-            },
-            icon: Opacity(opacity: 0.6, child: Icon(Icons.clear)),
-            label: Opacity(
-              opacity: 0.6,
-              child: Text(
-                'Clear content',
-              ),
-            )
+          Padding(
+            padding: const EdgeInsets.only(left: 20.0),
           ),
-
-          Padding(padding: const EdgeInsets.only(left: 20.0),),
-
-          FlatButton.icon(
-            focusNode: contentFocusNode,
-            onPressed: () {
-              saveTitle();
-              saveContent();
-            },
-            icon: Opacity(opacity: 0.6, child: Icon(Icons.save)),
-            label: Opacity(
-              opacity: 0.6,
-              child: Text(
-                'Save draft',
-              ),
-            )
+          TextButton.icon(
+              focusNode: clearFocusNode,
+              onPressed: () {
+                projectContent = '';
+                contentController.clear();
+                contentFocusNode.requestFocus();
+              },
+              icon: Opacity(opacity: 0.6, child: Icon(Icons.clear)),
+              label: Opacity(
+                opacity: 0.6,
+                child: Text(
+                  'Clear content',
+                ),
+              )),
+          Padding(
+            padding: const EdgeInsets.only(left: 20.0),
           ),
+          TextButton.icon(
+              focusNode: contentFocusNode,
+              onPressed: () {
+                saveTitle();
+                saveContent();
+              },
+              icon: Opacity(opacity: 0.6, child: Icon(Icons.save)),
+              label: Opacity(
+                opacity: 0.6,
+                child: Text(
+                  'Save draft',
+                ),
+              )),
         ],
       ),
     );
@@ -254,13 +240,12 @@ class _NewProjectState extends State<NewProject> {
           lang = newValue;
         });
       },
-      items: availableLang
-        .map<DropdownMenuItem<String>>((value) {
-          return DropdownMenuItem(
-            value: value,
-            child: Text(value.toUpperCase()),
-          );
-        }).toList(),
+      items: availableLang.map<DropdownMenuItem<String>>((value) {
+        return DropdownMenuItem(
+          value: value,
+          child: Text(value.toUpperCase()),
+        );
+      }).toList(),
     );
   }
 
@@ -270,51 +255,47 @@ class _NewProjectState extends State<NewProject> {
     try {
       final userAuth = await userState.userAuth;
 
-      projectSnapshot = await FirebaseFirestore.instance
-        .collection('projects')
-        .add({
-          'author': userAuth.uid,
-          'coauthors': [],
-          'createdAt': DateTime.now(),
-          'featured': false,
-          'gallery': {},
-          'platforms': {},
-          'published':false,
-          'referenced': true,
-          'release': false,
-          'restrictedTo': {
-            'premium': false,
-          },
-          'summary': '',
-          'tags': {},
-          'timeToRead': '',
-          'title': '',
-          'updatedAt': DateTime.now(),
-          'urls': {
-            'artbooking': '',
-            'behance': '',
-            'bitbucket': '',
-            'dribbble': '',
-            'facebook': '',
-            'github': '',
-            'gitlab': '',
-            'image': '',
-            'instagram': '',
-            'linkedin': '',
-            'other': '',
-            'twitter': '',
-            'website': '',
-            'youtube': '',
-          },
-        });
+      projectSnapshot =
+          await FirebaseFirestore.instance.collection('projects').add({
+        'author': userAuth.uid,
+        'coauthors': [],
+        'createdAt': DateTime.now(),
+        'featured': false,
+        'gallery': {},
+        'platforms': {},
+        'published': false,
+        'referenced': true,
+        'release': false,
+        'restrictedTo': {
+          'premium': false,
+        },
+        'summary': '',
+        'tags': {},
+        'timeToRead': '',
+        'title': '',
+        'updatedAt': DateTime.now(),
+        'urls': {
+          'artbooking': '',
+          'behance': '',
+          'bitbucket': '',
+          'dribbble': '',
+          'facebook': '',
+          'github': '',
+          'gitlab': '',
+          'image': '',
+          'instagram': '',
+          'linkedin': '',
+          'other': '',
+          'twitter': '',
+          'website': '',
+          'youtube': '',
+        },
+      });
 
-      jwt = await FirebaseAuth.instance
-        .currentUser
-        .getIdToken();
+      jwt = await FirebaseAuth.instance.currentUser.getIdToken();
 
       setState(() => isSaving = false);
-
-    } catch(error) {
+    } catch (error) {
       setState(() => isSaving = false);
       debugPrint(error.toSring());
 
@@ -328,7 +309,9 @@ class _NewProjectState extends State<NewProject> {
 
   void initAndCheck() async {
     final result = await canNavigate(context: context);
-    if (!result) { return; }
+    if (!result) {
+      return;
+    }
 
     createProject();
   }
@@ -339,7 +322,6 @@ class _NewProjectState extends State<NewProject> {
     try {
       await projectSnapshot.update({'title': projectTitle});
       setState(() => isSaving = false);
-
     } catch (error) {
       debugPrint(error.toString());
       setState(() => isSaving = false);
@@ -368,7 +350,6 @@ class _NewProjectState extends State<NewProject> {
       }
 
       setState(() => isSaving = false);
-
     } catch (error) {
       debugPrint(error.toString());
       setState(() => isSaving = false);

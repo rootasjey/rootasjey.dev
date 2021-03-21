@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:rootasjey/state/colors.dart';
 
 class OutlineToggleButton extends StatelessWidget {
-  @required final Widget child;
-  @required final VoidCallback onPressed;
+  @required
+  final Widget child;
+  @required
+  final VoidCallback onPressed;
   final bool selected;
 
   OutlineToggleButton({
@@ -15,20 +17,21 @@ class OutlineToggleButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (selected) {
-      return RaisedButton(
-        onPressed: onPressed,
-        color: stateColors.primary,
-        textColor: Colors.white,
-        child: child
-      );
+      return ElevatedButton(
+          onPressed: onPressed,
+          style: ElevatedButton.styleFrom(
+            primary: stateColors.primary,
+            textStyle: TextStyle(
+              color: Colors.white,
+            ),
+          ),
+          child: child);
     }
 
-    return OutlineButton(
+    return OutlinedButton(
       onPressed: onPressed,
-      textColor: stateColors.primary,
-      borderSide: BorderSide(
-        color: stateColors.primary,
-        width: 2.0,
+      style: OutlinedButton.styleFrom(
+        primary: stateColors.primary,
       ),
       child: child,
     );
@@ -42,22 +45,23 @@ class OutlineToggleButton extends StatelessWidget {
   }) = _OutlineToogleButtonWithIcon;
 }
 
-class _OutlineToogleButtonWithIcon extends OutlineToggleButton with MaterialButtonWithIconMixin {
+class _OutlineToogleButtonWithIcon extends OutlineToggleButton
+    with MaterialButtonWithIconMixin {
   _OutlineToogleButtonWithIcon({
     @required Widget icon,
     @required Widget label,
     @required VoidCallback onPressed,
     bool selected,
   }) : super(
-    onPressed: onPressed,
-    selected: selected,
-    child: Row(
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        icon,
-        const SizedBox(width: 8.0),
-        label,
-      ],
-    ),
-  );
+          onPressed: onPressed,
+          selected: selected,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              icon,
+              const SizedBox(width: 8.0),
+              label,
+            ],
+          ),
+        );
 }

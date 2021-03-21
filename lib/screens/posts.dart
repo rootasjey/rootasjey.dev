@@ -12,11 +12,11 @@ class Posts extends StatefulWidget {
 }
 
 class _PostsState extends State<Posts> {
-  final postsList = List<Post>();
+  final postsList = <Post>[];
 
-  final largeHorizPadding   = 90.0;
-  final narrowHorizPadding  = 20.0;
-  final narrowWidthLimit    = 800.0;
+  final largeHorizPadding = 90.0;
+  final narrowHorizPadding = 20.0;
+  final narrowWidthLimit = 800.0;
 
   final limit = 10;
   bool hasNext = true;
@@ -35,12 +35,11 @@ class _PostsState extends State<Posts> {
       body: CustomScrollView(
         slivers: [
           HomeAppBar(),
-
           SliverLayoutBuilder(
             builder: (_, constraints) {
               final padding = constraints.crossAxisExtent < narrowWidthLimit
-                ? narrowHorizPadding
-                : largeHorizPadding;
+                  ? narrowHorizPadding
+                  : largeHorizPadding;
 
               return SliverList(
                 delegate: SliverChildListDelegate([
@@ -55,12 +54,11 @@ class _PostsState extends State<Posts> {
               );
             },
           ),
-
           SliverLayoutBuilder(
             builder: (_, constraints) {
               final padding = constraints.crossAxisExtent < narrowWidthLimit
-                ? narrowHorizPadding
-                : largeHorizPadding;
+                  ? narrowHorizPadding
+                  : largeHorizPadding;
 
               return SliverPadding(
                 padding: EdgeInsets.symmetric(
@@ -93,7 +91,6 @@ class _PostsState extends State<Posts> {
             icon: Icon(Icons.arrow_back),
           ),
         ),
-
         Text(
           'Posts',
           style: TextStyle(
@@ -101,7 +98,6 @@ class _PostsState extends State<Posts> {
             fontWeight: FontWeight.bold,
           ),
         ),
-
         if (isLoading)
           Padding(
             padding: const EdgeInsets.only(top: 12.0, left: 22.0),
@@ -145,10 +141,10 @@ class _PostsState extends State<Posts> {
 
     try {
       final snapshot = await FirebaseFirestore.instance
-        .collection('posts')
-        .where('published', isEqualTo: true)
-        .limit(limit)
-        .get();
+          .collection('posts')
+          .where('published', isEqualTo: true)
+          .limit(limit)
+          .get();
 
       if (snapshot.size == 0) {
         setState(() {
@@ -172,7 +168,6 @@ class _PostsState extends State<Posts> {
         isLoading = false;
         hasNext = limit == snapshot.size;
       });
-
     } catch (error) {
       debugPrint(error.toString());
     }

@@ -13,32 +13,36 @@ class Contact extends StatefulWidget {
 }
 
 class _ContactState extends State<Contact> {
-  final largeHorizPadding   = 90.0;
-  final narrowHorizPadding  = 20.0;
-  final narrowWidthLimit    = 800.0;
+  final largeHorizPadding = 90.0;
+  final narrowHorizPadding = 20.0;
+  final narrowWidthLimit = 800.0;
 
-  String email              = '';
-  String messageBody        = '';
-  String messageTitle       = '';
-  String subject            = 'Website';
-  String subjectHintPrefix  = '';
+  String email = '';
+  String messageBody = '';
+  String messageTitle = '';
+  String subject = 'Website';
+  String subjectHintPrefix = '';
 
-  bool isLoading            = false;
-  bool isMessageSent        = false;
+  bool isLoading = false;
+  bool isMessageSent = false;
 
-  bool emailNeverEdited     = true;
-  bool titleNeverEdited     = true;
-  bool bodyNeverEdited      = true;
+  bool emailNeverEdited = true;
+  bool titleNeverEdited = true;
+  bool bodyNeverEdited = true;
 
   final formKey = GlobalKey<FormState>();
 
   final Map<String, String> errorMessages = {
-    'emptyEmail'    : 'The email field is empty. Please enter a valid email address.',
-    'invalidEmail'  : 'The value entered is not a valid email address. Please enter a valid one.',
-    'emptyTitle'    : 'Title cannot be empty. Enter a title with more than 3 characters.',
-    'tooShortTitle' : 'Please enter a title with more than 3 characters.',
-    'emptyBody'     : 'Body cannot be empty. Enter a body with more than 3 characters.',
-    'tooShortBody'  : 'Please enter a body with more than 3 characters.',
+    'emptyEmail':
+        'The email field is empty. Please enter a valid email address.',
+    'invalidEmail':
+        'The value entered is not a valid email address. Please enter a valid one.',
+    'emptyTitle':
+        'Title cannot be empty. Enter a title with more than 3 characters.',
+    'tooShortTitle': 'Please enter a title with more than 3 characters.',
+    'emptyBody':
+        'Body cannot be empty. Enter a body with more than 3 characters.',
+    'tooShortBody': 'Please enter a body with more than 3 characters.',
   };
 
   @override
@@ -56,12 +60,11 @@ class _ContactState extends State<Contact> {
       body: CustomScrollView(
         slivers: [
           HomeAppBar(),
-
           SliverLayoutBuilder(
             builder: (_, constraints) {
               final padding = constraints.crossAxisExtent < narrowWidthLimit
-                ? narrowHorizPadding
-                : largeHorizPadding;
+                  ? narrowHorizPadding
+                  : largeHorizPadding;
 
               return SliverList(
                 delegate: SliverChildListDelegate([
@@ -76,12 +79,11 @@ class _ContactState extends State<Contact> {
               );
             },
           ),
-
           SliverLayoutBuilder(
             builder: (_, constraints) {
               final padding = constraints.crossAxisExtent < narrowWidthLimit
-                ? narrowHorizPadding
-                : largeHorizPadding;
+                  ? narrowHorizPadding
+                  : largeHorizPadding;
 
               return SliverPadding(
                 padding: EdgeInsets.symmetric(
@@ -91,13 +93,11 @@ class _ContactState extends State<Contact> {
               );
             },
           ),
-
           SliverPadding(
             padding: const EdgeInsets.only(
               bottom: 300.0,
             ),
           ),
-
           SliverList(
             delegate: SliverChildListDelegate([
               Footer(),
@@ -132,8 +132,7 @@ class _ContactState extends State<Contact> {
                       ),
                     ),
                   ),
-
-                  OutlineButton(
+                  OutlinedButton(
                     onPressed: () => launch('work@rootasjey.dev'),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -141,7 +140,6 @@ class _ContactState extends State<Contact> {
                         Text(
                           'work@rootasjey.dev',
                         ),
-
                         Padding(
                           padding: const EdgeInsets.only(left: 12.0),
                           child: Opacity(
@@ -152,10 +150,8 @@ class _ContactState extends State<Contact> {
                       ],
                     ),
                   ),
-
                 ],
               ),
-
               Padding(
                 padding: const EdgeInsets.only(
                   top: 60.0,
@@ -196,7 +192,6 @@ class _ContactState extends State<Contact> {
             ),
           ),
         ),
-
         Padding(
           padding: const EdgeInsets.only(
             top: 8.0,
@@ -212,7 +207,6 @@ class _ContactState extends State<Contact> {
             ),
           ),
         ),
-
         Container(
           width: 500.0,
           padding: const EdgeInsets.only(
@@ -258,7 +252,6 @@ class _ContactState extends State<Contact> {
             icon: Icon(Icons.arrow_back),
           ),
         ),
-
         Text(
           'Contact me',
           style: TextStyle(
@@ -330,7 +323,6 @@ class _ContactState extends State<Contact> {
               });
             },
           ),
-
           Padding(
             padding: const EdgeInsets.only(
               top: 8.0,
@@ -343,7 +335,6 @@ class _ContactState extends State<Contact> {
                     subjectHintPrefix,
                   ),
                 ),
-
                 Text(
                   subject.toLowerCase(),
                   style: TextStyle(
@@ -395,13 +386,11 @@ class _ContactState extends State<Contact> {
       ),
       child: Opacity(
         opacity: 0.6,
-        child: Text(
-          'Direct Message',
-          style: TextStyle(
-            fontSize: 20.0,
-            fontWeight: FontWeight.bold,
-          )
-        ),
+        child: Text('Direct Message',
+            style: TextStyle(
+              fontSize: 20.0,
+              fontWeight: FontWeight.bold,
+            )),
       ),
     );
   }
@@ -445,7 +434,6 @@ class _ContactState extends State<Contact> {
       child: Row(
         children: [
           CircularProgressIndicator(),
-
           Padding(
             padding: const EdgeInsets.only(
               left: 16.0,
@@ -472,7 +460,6 @@ class _ContactState extends State<Contact> {
           Icons.check,
           size: 40.0,
         ),
-
         Padding(
           padding: const EdgeInsets.only(
             top: 16.0,
@@ -487,7 +474,6 @@ class _ContactState extends State<Contact> {
             ),
           ),
         ),
-
         Padding(
           padding: const EdgeInsets.only(
             top: 8.0,
@@ -495,22 +481,19 @@ class _ContactState extends State<Contact> {
           child: Opacity(
             opacity: 0.6,
             child: Text(
-                'You will receive an email response shortly',
-                style: TextStyle(
-                  fontSize: 16.0,
-                  fontWeight: FontWeight.w300,
-                ),
+              'You will receive an email response shortly',
+              style: TextStyle(
+                fontSize: 16.0,
+                fontWeight: FontWeight.w300,
+              ),
             ),
           ),
         ),
-
         Padding(
           padding: const EdgeInsets.only(top: 16.0),
-          child: FlatButton(
+          child: TextButton(
             onPressed: () => setState(() => isMessageSent = false),
-            child: Text(
-              'Send another message?'
-            ),
+            child: Text('Send another message?'),
           ),
         ),
       ],
@@ -522,15 +505,18 @@ class _ContactState extends State<Contact> {
       padding: const EdgeInsets.only(
         left: 30.0,
       ),
-      child: RaisedButton(
+      child: ElevatedButton(
         onPressed: () {
           sendMessage();
         },
-        color: stateColors.primary,
-        textColor: Colors.white,
-        padding: const EdgeInsets.all(16.0),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(7.0)
+        style: ElevatedButton.styleFrom(
+          primary: stateColors.primary,
+          textStyle: TextStyle(
+            color: Colors.white,
+          ),
+          padding: const EdgeInsets.all(16.0),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(7.0)),
         ),
         child: ConstrainedBox(
           constraints: BoxConstraints(
@@ -540,21 +526,18 @@ class _ContactState extends State<Contact> {
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
-                'SEND',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 18.0,
-                )
-              ),
-
+              Text('SEND',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 18.0,
+                  )),
               Padding(
                 padding: const EdgeInsets.only(left: 16.0),
                 child: Icon(Icons.send, color: Colors.white),
               ),
             ],
           ),
-        )
+        ),
       ),
     );
   }
@@ -611,7 +594,8 @@ class _ContactState extends State<Contact> {
     if (!formKey.currentState.validate()) {
       showSnack(
         context: context,
-        message: 'There are invalid field in the form. Please check all field and click send again.',
+        message:
+            'There are invalid field in the form. Please check all field and click send again.',
         type: SnackType.error,
       );
 
@@ -621,29 +605,27 @@ class _ContactState extends State<Contact> {
     setState(() => isLoading = true);
 
     try {
-      await FirebaseFirestore.instance
-        .collection('messages')
-        .add({
-          'createdAt': Timestamp.now(),
-          'email': email,
-          'type': subject,
-          'body': messageBody,
-          'title': messageTitle,
-          'isRead': false,
-          'isAnwswered': false,
-        });
+      await FirebaseFirestore.instance.collection('messages').add({
+        'createdAt': Timestamp.now(),
+        'email': email,
+        'type': subject,
+        'body': messageBody,
+        'title': messageTitle,
+        'isRead': false,
+        'isAnwswered': false,
+      });
 
       setState(() {
         isLoading = false;
         isMessageSent = true;
       });
-
     } catch (error) {
       debugPrint(error.toString());
 
       showSnack(
         context: context,
-        message: "Couldn't send your message. Please check your connection and try again.",
+        message:
+            "Couldn't send your message. Please check your connection and try again.",
         type: SnackType.error,
       );
     }

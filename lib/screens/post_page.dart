@@ -16,7 +16,8 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:supercharged/supercharged.dart';
 
 class PostPage extends StatefulWidget {
-  @required final String postId;
+  @required
+  final String postId;
 
   PostPage({this.postId});
 
@@ -59,7 +60,8 @@ class _PostPageState extends State<PostPage> {
         // ?NOTE: Keys combinations must stay on top
         // or other matching key events will override it.
         // HOME
-        if (keyEvent.isMetaPressed && keyEvent.isKeyPressed(LogicalKeyboardKey.arrowUp)) {
+        if (keyEvent.isMetaPressed &&
+            keyEvent.isKeyPressed(LogicalKeyboardKey.arrowUp)) {
           scrollController.animateTo(
             0,
             duration: 100.milliseconds,
@@ -70,7 +72,8 @@ class _PostPageState extends State<PostPage> {
         }
 
         // END
-        if (keyEvent.isMetaPressed && keyEvent.isKeyPressed(LogicalKeyboardKey.arrowDown)) {
+        if (keyEvent.isMetaPressed &&
+            keyEvent.isKeyPressed(LogicalKeyboardKey.arrowDown)) {
           scrollController.animateTo(
             pageHeight,
             duration: 100.milliseconds,
@@ -81,7 +84,8 @@ class _PostPageState extends State<PostPage> {
         }
 
         // UP + ALT
-        if (keyEvent.isAltPressed && keyEvent.isKeyPressed(LogicalKeyboardKey.arrowUp)) {
+        if (keyEvent.isAltPressed &&
+            keyEvent.isKeyPressed(LogicalKeyboardKey.arrowUp)) {
           scrollController.animateTo(
             getOffsetUp(altPressed: true),
             duration: 100.milliseconds,
@@ -92,7 +96,8 @@ class _PostPageState extends State<PostPage> {
         }
 
         // DOWN + ALT
-        if (keyEvent.isAltPressed && keyEvent.isKeyPressed(LogicalKeyboardKey.arrowDown)) {
+        if (keyEvent.isAltPressed &&
+            keyEvent.isKeyPressed(LogicalKeyboardKey.arrowDown)) {
           scrollController.animateTo(
             getOffsetDown(altPressed: true),
             duration: 100.milliseconds,
@@ -125,9 +130,8 @@ class _PostPageState extends State<PostPage> {
         }
 
         // LEFT
-        if (keyEvent.isKeyPressed(LogicalKeyboardKey.backspace)
-          || keyEvent.isKeyPressed(LogicalKeyboardKey.arrowLeft)) {
-
+        if (keyEvent.isKeyPressed(LogicalKeyboardKey.backspace) ||
+            keyEvent.isKeyPressed(LogicalKeyboardKey.arrowLeft)) {
           Navigator.of(context).pop();
           return;
         }
@@ -156,23 +160,22 @@ class _PostPageState extends State<PostPage> {
       },
       child: Scaffold(
         floatingActionButton: isFabVisible
-          ? FloatingActionButton(
-            backgroundColor: stateColors.primary,
-            foregroundColor: Colors.white,
-            onPressed: () => scrollController.animateTo(
-              0,
-              duration: 250.milliseconds,
-              curve: Curves.bounceOut,
-            ),
-            child: Icon(Icons.arrow_upward),
-          )
-          : Padding(padding: EdgeInsets.zero),
+            ? FloatingActionButton(
+                backgroundColor: stateColors.primary,
+                foregroundColor: Colors.white,
+                onPressed: () => scrollController.animateTo(
+                  0,
+                  duration: 250.milliseconds,
+                  curve: Curves.bounceOut,
+                ),
+                child: Icon(Icons.arrow_upward),
+              )
+            : Padding(padding: EdgeInsets.zero),
         body: NotificationListener<ScrollNotification>(
           onNotification: (ScrollNotification scrollNotif) {
             // FAB visibility
             if (scrollNotif.metrics.pixels < 50 && isFabVisible) {
               setState(() => isFabVisible = false);
-
             } else if (scrollNotif.metrics.pixels > 50 && !isFabVisible) {
               setState(() => isFabVisible = true);
             }
@@ -185,29 +188,28 @@ class _PostPageState extends State<PostPage> {
               HomeAppBar(
                 automaticallyImplyLeading: true,
                 title: post == null
-                  ? Opacity(
-                      opacity: 0.6,
-                      child: Text(
-                        'Post',
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          color: stateColors.foreground,
+                    ? Opacity(
+                        opacity: 0.6,
+                        child: Text(
+                          'Post',
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: stateColors.foreground,
+                          ),
+                        ),
+                      )
+                    : Opacity(
+                        opacity: 0.6,
+                        child: Text(
+                          post.title,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: stateColors.foreground,
+                          ),
                         ),
                       ),
-                    )
-                  : Opacity(
-                      opacity: 0.6,
-                      child: Text(
-                        post.title,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          color: stateColors.foreground,
-                        ),
-                      ),
-                    ),
-                onPressedRightButton: () => setState(
-                  () => isTOCVisible = !isTOCVisible
-                ),
+                onPressedRightButton: () =>
+                    setState(() => isTOCVisible = !isTOCVisible),
               ),
 
               body(),
@@ -247,23 +249,18 @@ class _PostPageState extends State<PostPage> {
     }
 
     return SliverList(
-      delegate: SliverChildListDelegate([
-        Row(
-          children: [
-            if (!isNarrow)
-              Spacer(),
-
-            Expanded(
-              flex: 3,
-              child: markdownViewer(),
-            ),
-
-            if (!isNarrow)
-              Spacer(),
-          ],
-        ),
-      ])
-    );
+        delegate: SliverChildListDelegate([
+      Row(
+        children: [
+          if (!isNarrow) Spacer(),
+          Expanded(
+            flex: 3,
+            child: markdownViewer(),
+          ),
+          if (!isNarrow) Spacer(),
+        ],
+      ),
+    ]));
   }
 
   Widget loadingView() {
@@ -271,28 +268,24 @@ class _PostPageState extends State<PostPage> {
       delegate: SliverChildListDelegate.fixed([
         Padding(
           padding: const EdgeInsets.only(top: 200.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              CircularProgressIndicator(),
-
-              Opacity(
-                opacity: 0.6,
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                    top: 40.0,
-                  ),
-                  child: Text(
-                    'Loading...',
-                    style: TextStyle(
-                      fontSize: 40.0,
-                      fontWeight: FontWeight.w300,
-                    ),
+          child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+            CircularProgressIndicator(),
+            Opacity(
+              opacity: 0.6,
+              child: Padding(
+                padding: const EdgeInsets.only(
+                  top: 40.0,
+                ),
+                child: Text(
+                  'Loading...',
+                  style: TextStyle(
+                    fontSize: 40.0,
+                    fontWeight: FontWeight.w300,
                   ),
                 ),
               ),
-            ]
-          ),
+            ),
+          ]),
         ),
       ]),
     );
@@ -320,8 +313,8 @@ class _PostPageState extends State<PostPage> {
               context: context.buildContext,
               src: attributes['src'],
               alt: attributes['alt'],
-              width: double.parse(attributes['width'], (value) => 300.0),
-              height: double.parse(attributes['height'], (value) => 300.0),
+              width: double.tryParse(attributes['width']) ?? 300.0,
+              height: double.tryParse(attributes['height']) ?? 300.0,
             );
           }
         },
@@ -387,36 +380,33 @@ class _PostPageState extends State<PostPage> {
         Card(
           elevation: 4.0,
           child: SizedBox(
-            height: 300.0,
-            child: Ink.image(
-              image: NetworkImage(src),
-              width: width,
-              height: height,
-              fit: BoxFit.cover,
-              child: InkWell(
-                onTap: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      return SimpleDialog(
-                        children: [
-                          Image.network(src),
-                        ],
-                      );
-                    }
-                  );
-                },
-              ),
-            )
-          ),
+              height: 300.0,
+              child: Ink.image(
+                image: NetworkImage(src),
+                width: width,
+                height: height,
+                fit: BoxFit.cover,
+                child: InkWell(
+                  onTap: () {
+                    showDialog(
+                        context: context,
+                        builder: (context) {
+                          return SimpleDialog(
+                            children: [
+                              Image.network(src),
+                            ],
+                          );
+                        });
+                  },
+                ),
+              )),
         ),
-
         if (alt != null && alt.isNotEmpty)
           Padding(
             padding: const EdgeInsets.only(
               top: 8.0,
             ),
-            child: FlatButton(
+            child: TextButton(
               onPressed: () => launch(src),
               child: Opacity(
                 opacity: 0.6,
@@ -442,9 +432,7 @@ class _PostPageState extends State<PostPage> {
         bottom: 5.0,
       ),
       child: InkWell(
-        onTap: href != null && href.isNotEmpty
-          ? () => launch(href)
-          : null,
+        onTap: href != null && href.isNotEmpty ? () => launch(href) : null,
         child: child,
       ),
     );
@@ -453,9 +441,9 @@ class _PostPageState extends State<PostPage> {
   void fetchMeta() async {
     try {
       final doc = await FirebaseFirestore.instance
-        .collection('posts')
-        .doc(widget.postId)
-        .get();
+          .collection('posts')
+          .doc(widget.postId)
+          .get();
 
       if (!doc.exists) {
         return;
@@ -467,7 +455,6 @@ class _PostPageState extends State<PostPage> {
       setState(() {
         post = Post.fromJSON(data);
       });
-
     } catch (error) {
       debugPrint(error.toString());
     }
@@ -490,7 +477,6 @@ class _PostPageState extends State<PostPage> {
       postData = markdown.markdownToHtml(markdownData);
 
       setState(() => isLoading = false);
-
     } catch (error) {
       setState(() => isLoading = false);
       debugPrint(error.toString());
@@ -512,25 +498,21 @@ class _PostPageState extends State<PostPage> {
       }
     }
 
-    double factor = altPressed
-      ? 3
-      : 1;
+    double factor = altPressed ? 3 : 1;
 
     final offset = scrollController.offset + incrOffset < pageHeight
-      ? scrollController.offset + (incrOffset * factor)
-      : pageHeight;
+        ? scrollController.offset + (incrOffset * factor)
+        : pageHeight;
 
     return offset;
   }
 
   double getOffsetUp({bool altPressed = false}) {
-    double factor = altPressed
-      ? 3
-      : 1;
+    double factor = altPressed ? 3 : 1;
 
     final offset = scrollController.offset - incrOffset > 90
-      ? scrollController.offset - (incrOffset * factor)
-      : 0;
+        ? scrollController.offset - (incrOffset * factor)
+        : 0;
 
     return offset;
   }

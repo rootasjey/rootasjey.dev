@@ -46,23 +46,22 @@ class _ProjectPageState extends State<ProjectPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: isFabVisible
-        ? FloatingActionButton(
-          backgroundColor: stateColors.primary,
-          foregroundColor: Colors.white,
-          onPressed: () => scrollController.animateTo(
-            0,
-            duration: 250.milliseconds,
-            curve: Curves.bounceOut,
-          ),
-          child: Icon(Icons.arrow_upward),
-        )
-        : Padding(padding: EdgeInsets.zero),
+          ? FloatingActionButton(
+              backgroundColor: stateColors.primary,
+              foregroundColor: Colors.white,
+              onPressed: () => scrollController.animateTo(
+                0,
+                duration: 250.milliseconds,
+                curve: Curves.bounceOut,
+              ),
+              child: Icon(Icons.arrow_upward),
+            )
+          : Padding(padding: EdgeInsets.zero),
       body: NotificationListener<ScrollNotification>(
         onNotification: (ScrollNotification scrollNotif) {
           // FAB visibility
           if (scrollNotif.metrics.pixels < 50 && isFabVisible) {
             setState(() => isFabVisible = false);
-
           } else if (scrollNotif.metrics.pixels > 50 && !isFabVisible) {
             setState(() => isFabVisible = true);
           }
@@ -75,29 +74,28 @@ class _ProjectPageState extends State<ProjectPage> {
             HomeAppBar(
               automaticallyImplyLeading: true,
               title: project == null
-                ? Opacity(
-                    opacity: 0.6,
-                    child: Text(
-                      'Project',
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: stateColors.foreground,
+                  ? Opacity(
+                      opacity: 0.6,
+                      child: Text(
+                        'Project',
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: stateColors.foreground,
+                        ),
+                      ),
+                    )
+                  : Opacity(
+                      opacity: 0.6,
+                      child: Text(
+                        project.title,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: stateColors.foreground,
+                        ),
                       ),
                     ),
-                  )
-                : Opacity(
-                    opacity: 0.6,
-                    child: Text(
-                      project.title,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: stateColors.foreground,
-                      ),
-                    ),
-                  ),
             ),
             body(),
-
             SliverLayoutBuilder(
               builder: (_, constraints) {
                 final isNowNarrow = constraints.crossAxisExtent < 700.0;
@@ -133,16 +131,12 @@ class _ProjectPageState extends State<ProjectPage> {
       delegate: SliverChildListDelegate([
         Row(
           children: [
-            if (!isNarrow)
-              Spacer(),
-
+            if (!isNarrow) Spacer(),
             Expanded(
               flex: 3,
               child: markdownViewer(),
             ),
-
-            if (!isNarrow)
-              Spacer(),
+            if (!isNarrow) Spacer(),
           ],
         ),
       ]),
@@ -154,28 +148,24 @@ class _ProjectPageState extends State<ProjectPage> {
       delegate: SliverChildListDelegate.fixed([
         Padding(
           padding: const EdgeInsets.only(top: 200.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              CircularProgressIndicator(),
-
-              Opacity(
-                opacity: 0.6,
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                    top: 40.0,
-                  ),
-                  child: Text(
-                    'Loading...',
-                    style: TextStyle(
-                      fontSize: 40.0,
-                      fontWeight: FontWeight.w300,
-                    ),
+          child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+            CircularProgressIndicator(),
+            Opacity(
+              opacity: 0.6,
+              child: Padding(
+                padding: const EdgeInsets.only(
+                  top: 40.0,
+                ),
+                child: Text(
+                  'Loading...',
+                  style: TextStyle(
+                    fontSize: 40.0,
+                    fontWeight: FontWeight.w300,
                   ),
                 ),
               ),
-            ]
-          ),
+            ),
+          ]),
         ),
       ]),
     );
@@ -183,15 +173,10 @@ class _ProjectPageState extends State<ProjectPage> {
 
   Widget markdownViewer() {
     return Card(
-      margin: EdgeInsets.only(
-        top: 100.0,
-        bottom: 400.0
-      ),
+      margin: EdgeInsets.only(top: 100.0, bottom: 400.0),
       child: Padding(
         padding: EdgeInsets.symmetric(
-          horizontal: isNarrow
-            ? 20.0
-            : 100.0,
+          horizontal: isNarrow ? 20.0 : 100.0,
           vertical: 60.0,
         ),
         child: Html(
@@ -208,8 +193,8 @@ class _ProjectPageState extends State<ProjectPage> {
                 context: context.buildContext,
                 src: attributes['src'],
                 alt: attributes['alt'],
-                width: double.parse(attributes['width'], (value) => 300.0),
-                height: double.parse(attributes['height'], (value) => 300.0),
+                width: double.tryParse(attributes['width']) ?? 300.0,
+                height: double.tryParse(attributes['height']) ?? 300.0,
               );
             }
           },
@@ -277,36 +262,33 @@ class _ProjectPageState extends State<ProjectPage> {
         Card(
           elevation: 4.0,
           child: SizedBox(
-            height: 300.0,
-            child: Ink.image(
-              image: NetworkImage(src),
-              width: width,
-              height: height,
-              fit: BoxFit.cover,
-              child: InkWell(
-                onTap: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      return SimpleDialog(
-                        children: [
-                          Image.network(src),
-                        ],
-                      );
-                    }
-                  );
-                },
-              ),
-            )
-          ),
+              height: 300.0,
+              child: Ink.image(
+                image: NetworkImage(src),
+                width: width,
+                height: height,
+                fit: BoxFit.cover,
+                child: InkWell(
+                  onTap: () {
+                    showDialog(
+                        context: context,
+                        builder: (context) {
+                          return SimpleDialog(
+                            children: [
+                              Image.network(src),
+                            ],
+                          );
+                        });
+                  },
+                ),
+              )),
         ),
-
         if (alt != null && alt.isNotEmpty)
           Padding(
             padding: const EdgeInsets.only(
               top: 8.0,
             ),
-            child: FlatButton(
+            child: TextButton(
               onPressed: () => launch(src),
               child: Opacity(
                 opacity: 0.6,
@@ -332,9 +314,7 @@ class _ProjectPageState extends State<ProjectPage> {
         bottom: 5.0,
       ),
       child: InkWell(
-        onTap: href != null && href.isNotEmpty
-          ? () => launch(href)
-          : null,
+        onTap: href != null && href.isNotEmpty ? () => launch(href) : null,
         child: child,
       ),
     );
@@ -343,9 +323,9 @@ class _ProjectPageState extends State<ProjectPage> {
   void fetchMeta() async {
     try {
       final doc = await FirebaseFirestore.instance
-        .collection('projects')
-        .doc(widget.projectId)
-        .get();
+          .collection('projects')
+          .doc(widget.projectId)
+          .get();
 
       if (!doc.exists) {
         return;
@@ -357,7 +337,6 @@ class _ProjectPageState extends State<ProjectPage> {
       setState(() {
         project = Project.fromJSON(data);
       });
-
     } catch (error) {
       debugPrint(error.toString());
     }
@@ -380,7 +359,6 @@ class _ProjectPageState extends State<ProjectPage> {
       projectData = markdown.markdownToHtml(markdownData);
 
       setState(() => isLoading = false);
-
     } catch (error) {
       setState(() => isLoading = false);
       debugPrint(error.toString());

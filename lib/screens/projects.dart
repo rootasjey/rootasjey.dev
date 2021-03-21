@@ -12,11 +12,11 @@ class Projects extends StatefulWidget {
 }
 
 class _ProjectsState extends State<Projects> {
-  final projectsList = List<Project>();
+  final projectsList = <Project>[];
 
-  final largeHorizPadding   = 90.0;
-  final narrowHorizPadding  = 20.0;
-  final narrowWidthLimit    = 800.0;
+  final largeHorizPadding = 90.0;
+  final narrowHorizPadding = 20.0;
+  final narrowWidthLimit = 800.0;
 
   final limit = 10;
   bool hasNext = true;
@@ -35,12 +35,11 @@ class _ProjectsState extends State<Projects> {
       body: CustomScrollView(
         slivers: [
           HomeAppBar(),
-
           SliverLayoutBuilder(
             builder: (_, constraints) {
               final padding = constraints.crossAxisExtent < narrowWidthLimit
-                ? narrowHorizPadding
-                : largeHorizPadding;
+                  ? narrowHorizPadding
+                  : largeHorizPadding;
 
               return SliverPadding(
                 padding: EdgeInsets.symmetric(
@@ -55,12 +54,11 @@ class _ProjectsState extends State<Projects> {
               );
             },
           ),
-
           SliverLayoutBuilder(
             builder: (_, constraints) {
               final padding = constraints.crossAxisExtent < narrowWidthLimit
-                ? narrowHorizPadding
-                : largeHorizPadding;
+                  ? narrowHorizPadding
+                  : largeHorizPadding;
 
               return SliverPadding(
                 padding: EdgeInsets.symmetric(
@@ -94,7 +92,6 @@ class _ProjectsState extends State<Projects> {
             icon: Icon(Icons.arrow_back),
           ),
         ),
-
         Text(
           'Projects',
           style: TextStyle(
@@ -102,7 +99,6 @@ class _ProjectsState extends State<Projects> {
             fontWeight: FontWeight.bold,
           ),
         ),
-
         if (isLoading)
           Padding(
             padding: const EdgeInsets.only(top: 12.0, left: 22.0),
@@ -151,10 +147,10 @@ class _ProjectsState extends State<Projects> {
 
     try {
       final snapshot = await FirebaseFirestore.instance
-        .collection('projects')
-        .where('published', isEqualTo: true)
-        .limit(limit)
-        .get();
+          .collection('projects')
+          .where('published', isEqualTo: true)
+          .limit(limit)
+          .get();
 
       if (snapshot.size == 0) {
         setState(() {
@@ -178,7 +174,6 @@ class _ProjectsState extends State<Projects> {
         isLoading = false;
         hasNext = limit == snapshot.size;
       });
-
     } catch (error) {
       debugPrint(error.toString());
     }

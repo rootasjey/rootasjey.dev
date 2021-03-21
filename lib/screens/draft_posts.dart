@@ -13,7 +13,7 @@ class DraftPosts extends StatefulWidget {
 }
 
 class _DraftPostsState extends State<DraftPosts> {
-  final postsList = List<Post>();
+  final postsList = <Post>[];
   final limit = 10;
 
   bool hasNext = true;
@@ -28,7 +28,9 @@ class _DraftPostsState extends State<DraftPosts> {
 
   void initAndCheck() async {
     final result = await canNavigate(context: context);
-    if (!result) { return; }
+    if (!result) {
+      return;
+    }
 
     fetch();
   }
@@ -90,7 +92,6 @@ class _DraftPostsState extends State<DraftPosts> {
                     ),
                   ),
                 ),
-
                 const PopupMenuItem(
                   value: 'delete',
                   child: ListTile(
@@ -123,11 +124,11 @@ class _DraftPostsState extends State<DraftPosts> {
       final uid = userAuth.uid;
 
       final snapshot = await FirebaseFirestore.instance
-        .collection('posts')
-        .where('published', isEqualTo: false)
-        .where('author', isEqualTo: uid)
-        .limit(limit)
-        .get();
+          .collection('posts')
+          .where('published', isEqualTo: false)
+          .where('author', isEqualTo: uid)
+          .limit(limit)
+          .get();
 
       if (snapshot.size == 0) {
         setState(() {
@@ -151,7 +152,6 @@ class _DraftPostsState extends State<DraftPosts> {
         isLoading = false;
         hasNext = limit == snapshot.size;
       });
-
     } catch (error) {
       debugPrint(error.toString());
     }
@@ -164,12 +164,11 @@ class _DraftPostsState extends State<DraftPosts> {
 
     try {
       await FirebaseFirestore.instance
-        .collection('posts')
-        .doc(removedPost.id)
-        .delete();
+          .collection('posts')
+          .doc(removedPost.id)
+          .delete();
 
       setState(() => isLoading = false);
-
     } catch (error) {
       debugPrint(error.toString());
 
@@ -186,14 +185,13 @@ class _DraftPostsState extends State<DraftPosts> {
 
     try {
       await FirebaseFirestore.instance
-        .collection('posts')
-        .doc(removedPost.id)
-        .update({
-          'published': true,
-        });
+          .collection('posts')
+          .doc(removedPost.id)
+          .update({
+        'published': true,
+      });
 
       setState(() => isLoading = false);
-
     } catch (error) {
       debugPrint(error.toString());
 

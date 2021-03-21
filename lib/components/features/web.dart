@@ -18,70 +18,99 @@ class _WebFeaturesState extends State<WebFeatures> {
   final featuresDataList = [
     {
       'label': 'Domain name',
-      'description': 'Your website address (e.g. https://myawesomesite.com) will be bought for you, if available.',
-      'icon': Icon(Icons.domain_verification, color: Colors.grey,),
+      'description':
+          'Your website address (e.g. https://myawesomesite.com) will be bought for you, if available.',
+      'icon': Icon(
+        Icons.domain_verification,
+        color: Colors.grey,
+      ),
     },
-
     {
       'label': 'Website development',
-      'description': 'Your website will be handfully crafted to meet your requirements.',
-      'icon': Icon(Icons.developer_board, color: Colors.grey,),
+      'description':
+          'Your website will be handfully crafted to meet your requirements.',
+      'icon': Icon(
+        Icons.developer_board,
+        color: Colors.grey,
+      ),
     },
-
     {
       'label': 'Design integration',
-      'description': 'If you already have a design template or specifications, they will perfectly be integrated.',
-      'icon': Icon(Icons.design_services, color: Colors.grey,),
+      'description':
+          'If you already have a design template or specifications, they will perfectly be integrated.',
+      'icon': Icon(
+        Icons.design_services,
+        color: Colors.grey,
+      ),
     },
-
     {
       'label': 'Responsive layout',
-      'description': 'Your website will be beautiful on desktop, tablet and mobile. We will make sure the presentation is perfect.',
-      'icon': Icon(Icons.devices, color: Colors.grey,),
+      'description':
+          'Your website will be beautiful on desktop, tablet and mobile. We will make sure the presentation is perfect.',
+      'icon': Icon(
+        Icons.devices,
+        color: Colors.grey,
+      ),
     },
-
     {
       'label': 'Deployment',
-      'description': "Your site will be globally accessible through a robust & fast pipeline. Also upgrades will be done with no downtime and your website won't experience cold start.",
-      'icon': Icon(Icons.storage, color: Colors.grey,),
+      'description':
+          "Your site will be globally accessible through a robust & fast pipeline. Also upgrades will be done with no downtime and your website won't experience cold start.",
+      'icon': Icon(
+        Icons.storage,
+        color: Colors.grey,
+      ),
     },
-
     {
       'label': 'Security checks',
-      'description': 'Delivered with full HTTPS encryption & vulnerabilities checks.',
-      'icon': Icon(Icons.security, color: Colors.grey,),
+      'description':
+          'Delivered with full HTTPS encryption & vulnerabilities checks.',
+      'icon': Icon(
+        Icons.security,
+        color: Colors.grey,
+      ),
     },
-
     {
       'label': 'Scaling',
-      'description': "Your site is robust and doesn't crash when you've connection spike.",
-      'icon': Icon(Icons.trending_up, color: Colors.grey,),
+      'description':
+          "Your site is robust and doesn't crash when you've connection spike.",
+      'icon': Icon(
+        Icons.trending_up,
+        color: Colors.grey,
+      ),
     },
-
     {
       'label': 'Upgrade',
-      'description': "Whenever a bug is detected or a more recent dependency is available, we'll upgrade your website.",
-      'icon': Icon(Icons.upgrade, color: Colors.grey,),
+      'description':
+          "Whenever a bug is detected or a more recent dependency is available, we'll upgrade your website.",
+      'icon': Icon(
+        Icons.upgrade,
+        color: Colors.grey,
+      ),
     },
-
     {
       'label': 'Analytics',
-      'description': "You will have metrics on your website. How many users visit each day? How long they stay?",
-      'icon': Icon(Icons.analytics, color: Colors.grey,),
+      'description':
+          "You will have metrics on your website. How many users visit each day? How long they stay?",
+      'icon': Icon(
+        Icons.analytics,
+        color: Colors.grey,
+      ),
     },
-
     {
       'label': 'Personalized advices',
-      'description': "We're avaiable for any question or asistance. You can contact us by email, phone or direct message.",
-      'icon': Icon(Icons.speaker_notes, color: Colors.grey,),
+      'description':
+          "We're avaiable for any question or asistance. You can contact us by email, phone or direct message.",
+      'icon': Icon(
+        Icons.speaker_notes,
+        color: Colors.grey,
+      ),
     },
   ];
 
   @override
   Widget build(BuildContext context) {
-    return widget.layout == FeaturesLayout.table
-      ? tableLayout()
-      : wrapLayout();
+    return widget.layout == FeaturesLayout.table ? tableLayout() : wrapLayout();
   }
 
   Widget tableLayout() {
@@ -118,7 +147,7 @@ class _WebFeaturesState extends State<WebFeatures> {
           return featureButton(
             label: data['label'],
             description: data['description'],
-            icon: data.containsKey('icon') ? data['icon']: null,
+            icon: data.containsKey('icon') ? data['icon'] : null,
           );
         }).toList(),
       ),
@@ -133,48 +162,47 @@ class _WebFeaturesState extends State<WebFeatures> {
     return Tooltip(
       message: description,
       child: icon != null
-        ? OutlineButton.icon(
-          onPressed: () {
-            showDescriptionDialog(
-              label: label,
-              description: description,
-            );
-          },
-          icon: icon,
-          label: Opacity(
-            opacity: 0.6,
-            child: Text(
-              label,
-              style: TextStyle(
-                fontSize: 18.0,
+          ? OutlinedButton.icon(
+              onPressed: () {
+                showDescriptionDialog(
+                  label: label,
+                  description: description,
+                );
+              },
+              icon: icon,
+              label: Opacity(
+                opacity: 0.6,
+                child: Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 18.0,
+                  ),
+                ),
+              ),
+            )
+          : OutlinedButton(
+              onPressed: () {
+                showDescriptionDialog(
+                  label: label,
+                  description: description,
+                );
+              },
+              child: Opacity(
+                opacity: 0.6,
+                child: Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 18.0,
+                  ),
+                ),
               ),
             ),
-          ),
-        )
-        : OutlineButton(
-        onPressed: () {
-          showDescriptionDialog(
-            label: label,
-            description: description,
-          );
-        },
-        child: Opacity(
-          opacity: 0.6,
-          child: Text(
-            label,
-            style: TextStyle(
-              fontSize: 18.0,
-            ),
-          ),
-        ),
-      ),
     );
   }
 
   DataRow featureRow({String label, String description}) {
-    return DataRow(
-      cells: [
-        DataCell(
+    return DataRow(cells: [
+      DataCell(
           Tooltip(
             message: description,
             child: Row(
@@ -184,7 +212,6 @@ class _WebFeaturesState extends State<WebFeatures> {
                   padding: const EdgeInsets.only(right: 12.0),
                   child: Icon(Icons.check),
                 ),
-
                 Text(
                   label,
                   style: TextStyle(
@@ -194,16 +221,13 @@ class _WebFeaturesState extends State<WebFeatures> {
                 ),
               ],
             ),
-          ),
-          onTap: () {
-            showDescriptionDialog(
-              label: label,
-              description: description,
-            );
-          }
-        ),
-      ]
-    );
+          ), onTap: () {
+        showDescriptionDialog(
+          label: label,
+          description: description,
+        );
+      }),
+    ]);
   }
 
   void showDescriptionDialog({String label, String description}) {

@@ -16,14 +16,14 @@ class Search extends StatefulWidget {
 }
 
 class _SearchState extends State<Search> {
-  bool hasNext                = true;
-  bool hasErrors              = false;
-  bool isFabVisible           = false;
-  bool isLoading              = false;
-  bool isLoadingMore          = false;
-  bool isSearchingPosts     = false;
-  bool isSearchingQuotes      = false;
-  bool isSearchingReferences  = false;
+  bool hasNext = true;
+  bool hasErrors = false;
+  bool isFabVisible = false;
+  bool isLoading = false;
+  bool isLoadingMore = false;
+  bool isSearchingPosts = false;
+  bool isSearchingQuotes = false;
+  bool isSearchingReferences = false;
 
   int limit = 30;
 
@@ -57,87 +57,86 @@ class _SearchState extends State<Search> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: isFabVisible ?
-        FloatingActionButton(
-          onPressed: () {
-            scrollController.animateTo(
-              0.0,
-              duration: Duration(seconds: 1),
-              curve: Curves.easeOut,
-            );
-          },
-          backgroundColor: stateColors.primary,
-          foregroundColor: Colors.white,
-          child: Icon(Icons.arrow_upward),
-        ) : null,
+      floatingActionButton: isFabVisible
+          ? FloatingActionButton(
+              onPressed: () {
+                scrollController.animateTo(
+                  0.0,
+                  duration: Duration(seconds: 1),
+                  curve: Curves.easeOut,
+                );
+              },
+              backgroundColor: stateColors.primary,
+              foregroundColor: Colors.white,
+              child: Icon(Icons.arrow_upward),
+            )
+          : null,
       body: body(),
     );
   }
 
   Widget body() {
     return RefreshIndicator(
-      onRefresh: () async {
-        await search();
-        return null;
-      },
-      child: NotificationListener<ScrollNotification>(
-        onNotification: (ScrollNotification scrollNotif) {
-          // FAB visibility
-          if (scrollNotif.metrics.pixels < 50 && isFabVisible) {
-            setState(() {
-              isFabVisible = false;
-            });
-          } else if (scrollNotif.metrics.pixels > 50 && !isFabVisible) {
-            setState(() {
-              isFabVisible = true;
-            });
-          }
-
-          // Load more scenario
-          if (scrollNotif.metrics.pixels <
-              scrollNotif.metrics.maxScrollExtent) {
-            return false;
-          }
-
-          return false;
+        onRefresh: () async {
+          await search();
+          return null;
         },
-        child: CustomScrollView(
-          controller: scrollController,
-          slivers: <Widget>[
-            HomeAppBar(
-              title: Opacity(
-                opacity: 0.6,
-                child: Text(
-                  'Search',
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    color: stateColors.foreground,
+        child: NotificationListener<ScrollNotification>(
+          onNotification: (ScrollNotification scrollNotif) {
+            // FAB visibility
+            if (scrollNotif.metrics.pixels < 50 && isFabVisible) {
+              setState(() {
+                isFabVisible = false;
+              });
+            } else if (scrollNotif.metrics.pixels > 50 && !isFabVisible) {
+              setState(() {
+                isFabVisible = true;
+              });
+            }
+
+            // Load more scenario
+            if (scrollNotif.metrics.pixels <
+                scrollNotif.metrics.maxScrollExtent) {
+              return false;
+            }
+
+            return false;
+          },
+          child: CustomScrollView(
+            controller: scrollController,
+            slivers: <Widget>[
+              HomeAppBar(
+                title: Opacity(
+                  opacity: 0.6,
+                  child: Text(
+                    'Search',
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: stateColors.foreground,
+                    ),
                   ),
                 ),
+                automaticallyImplyLeading: true,
               ),
-              automaticallyImplyLeading: true,
-            ),
+              SliverPadding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 100.0,
+                ),
+                sliver: SliverList(
+                  delegate: SliverChildListDelegate([
+                    searchHeader(),
 
-            SliverPadding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 100.0,
+                    // quotesSection(),
+                    // authorsSection(),
+                    // referencesSection(),
+
+                    Padding(padding: const EdgeInsets.only(bottom: 300.0)),
+                  ]),
+                ),
               ),
-              sliver: SliverList(
-                delegate: SliverChildListDelegate([
-                  searchHeader(),
-
-                  // quotesSection(),
-                  // authorsSection(),
-                  // referencesSection(),
-
-                  Padding(padding: const EdgeInsets.only(bottom: 300.0)),
-                ]),
-              ),
-            ),
-          ],
-        ),
-      )
-    );
+            ],
+          ),
+        ));
   }
 
   Widget authorsSection() {
@@ -261,8 +260,7 @@ class _SearchState extends State<Search> {
             ),
           ),
         ),
-
-        OutlineButton.icon(
+        OutlinedButton.icon(
           onPressed: () {
             switch (subject) {
               case 'quotes':
@@ -285,11 +283,8 @@ class _SearchState extends State<Search> {
   }
 
   Widget searchActions() {
-    return Wrap(
-      spacing: 20.0,
-      runSpacing: 20.0,
-      children: [
-        RaisedButton.icon(
+    return Wrap(spacing: 20.0, runSpacing: 20.0, children: [
+      ElevatedButton.icon(
           onPressed: () {
             searchInputValue = '';
             searchInputController.clear();
@@ -303,10 +298,8 @@ class _SearchState extends State<Search> {
             child: Text(
               'Clear content',
             ),
-          )
-        ),
-      ]
-    );
+          )),
+    ]);
   }
 
   Widget searchHeader() {
@@ -342,7 +335,9 @@ class _SearchState extends State<Search> {
           searchInputValue = newValue;
 
           if (newValue.isEmpty) {
-            if (refresh) { setState(() {}); }
+            if (refresh) {
+              setState(() {});
+            }
             return;
           }
 
@@ -361,9 +356,7 @@ class _SearchState extends State<Search> {
         decoration: InputDecoration(
           icon: Icon(Icons.search),
           hintText: 'Search quote...',
-          border: OutlineInputBorder(
-            borderSide: BorderSide.none
-          ),
+          border: OutlineInputBorder(borderSide: BorderSide.none),
         ),
       ),
     );
@@ -387,10 +380,11 @@ class _SearchState extends State<Search> {
                 fontSize: 25.0,
               ),
             ),
-
             SizedBox(
               width: 200.0,
-              child: Divider(thickness: 1.0,),
+              child: Divider(
+                thickness: 1.0,
+              ),
             ),
           ],
         ),
@@ -411,10 +405,10 @@ class _SearchState extends State<Search> {
 
     try {
       final snapshot = await FirebaseFirestore.instance
-        .collection('authors')
-        .where('name', isGreaterThanOrEqualTo: searchInputValue)
-        .limit(10)
-        .get();
+          .collection('authors')
+          .where('name', isGreaterThanOrEqualTo: searchInputValue)
+          .limit(10)
+          .get();
 
       if (snapshot.docs.isEmpty) {
         return;
@@ -428,7 +422,6 @@ class _SearchState extends State<Search> {
       setState(() {
         isSearchingPosts = false;
       });
-
     } catch (error) {
       debugPrint(error.toString());
     }
@@ -441,10 +434,10 @@ class _SearchState extends State<Search> {
 
     try {
       final snapshot = await FirebaseFirestore.instance
-        .collection('quotes')
-        .where('name', isGreaterThanOrEqualTo: searchInputValue)
-        .limit(10)
-        .get();
+          .collection('quotes')
+          .where('name', isGreaterThanOrEqualTo: searchInputValue)
+          .limit(10)
+          .get();
 
       if (snapshot.docs.isEmpty) {
         return;
@@ -458,7 +451,6 @@ class _SearchState extends State<Search> {
       setState(() {
         isSearchingQuotes = false;
       });
-
     } catch (error) {
       debugPrint(error.toString());
     }
@@ -471,10 +463,10 @@ class _SearchState extends State<Search> {
 
     try {
       final snapshot = await FirebaseFirestore.instance
-        .collection('references')
-        .where('name', isGreaterThanOrEqualTo: searchInputValue)
-        .limit(10)
-        .get();
+          .collection('references')
+          .where('name', isGreaterThanOrEqualTo: searchInputValue)
+          .limit(10)
+          .get();
 
       if (snapshot.docs.isEmpty) {
         return;
@@ -488,7 +480,6 @@ class _SearchState extends State<Search> {
       setState(() {
         isSearchingReferences = false;
       });
-
     } catch (error) {
       debugPrint(error.toString());
     }

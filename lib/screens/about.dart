@@ -13,13 +13,13 @@ class About extends StatefulWidget {
 }
 
 class _AboutState extends State<About> {
-  final captionOpacity      = 0.6;
-  final paragraphOpacity    = 0.6;
-  final titleOpacity        = 0.9;
+  final captionOpacity = 0.6;
+  final paragraphOpacity = 0.6;
+  final titleOpacity = 0.9;
 
-  final largeHorizPadding   = 90.0;
-  final narrowHorizPadding  = 20.0;
-  final narrowWidthLimit    = 800.0;
+  final largeHorizPadding = 90.0;
+  final narrowHorizPadding = 20.0;
+  final narrowWidthLimit = 800.0;
 
   final paragraphStyle = TextStyle(
     fontSize: 18.0,
@@ -37,12 +37,11 @@ class _AboutState extends State<About> {
       body: CustomScrollView(
         slivers: [
           HomeAppBar(),
-
           SliverLayoutBuilder(
             builder: (_, constraints) {
               final padding = constraints.crossAxisExtent < narrowWidthLimit
-                ? narrowHorizPadding
-                : largeHorizPadding;
+                  ? narrowHorizPadding
+                  : largeHorizPadding;
 
               return SliverList(
                 delegate: SliverChildListDelegate([
@@ -57,12 +56,11 @@ class _AboutState extends State<About> {
               );
             },
           ),
-
           SliverLayoutBuilder(
             builder: (_, constraints) {
               final padding = constraints.crossAxisExtent < narrowWidthLimit
-                ? narrowHorizPadding
-                : largeHorizPadding;
+                  ? narrowHorizPadding
+                  : largeHorizPadding;
 
               return SliverPadding(
                 padding: EdgeInsets.symmetric(
@@ -72,7 +70,6 @@ class _AboutState extends State<About> {
               );
             },
           ),
-
           SliverPadding(
             padding: const EdgeInsets.only(top: 200.0),
             sliver: SliverList(
@@ -112,7 +109,6 @@ class _AboutState extends State<About> {
             icon: Icon(Icons.arrow_back),
           ),
         ),
-
         Text(
           'About',
           style: TextStyle(
@@ -143,7 +139,6 @@ class _AboutState extends State<About> {
               ),
             ),
           ),
-
           Opacity(
             opacity: paragraphOpacity,
             child: Padding(
@@ -178,8 +173,7 @@ class _AboutState extends State<About> {
               ),
             ),
           ),
-
-           Opacity(
+          Opacity(
             opacity: paragraphOpacity,
             child: Padding(
               padding: const EdgeInsets.only(top: 25.0),
@@ -189,7 +183,6 @@ class _AboutState extends State<About> {
               ),
             ),
           ),
-
           Opacity(
             opacity: paragraphOpacity,
             child: Padding(
@@ -200,13 +193,13 @@ class _AboutState extends State<About> {
               ),
             ),
           ),
-
           Padding(
             padding: const EdgeInsets.only(
               top: 10.0,
             ),
-            child: FlatButton.icon(
-              onPressed: () => launch('https://github.com/rootasjey/rootasjey.dev'),
+            child: TextButton.icon(
+              onPressed: () =>
+                  launch('https://github.com/rootasjey/rootasjey.dev'),
               icon: Icon(Icons.open_in_browser),
               label: Text(
                 'Github',
@@ -237,7 +230,6 @@ class _AboutState extends State<About> {
               ),
             ),
           ),
-
           Opacity(
             opacity: paragraphOpacity,
             child: Padding(
@@ -248,28 +240,26 @@ class _AboutState extends State<About> {
               ),
             ),
           ),
-
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 16.0),
             child: Wrap(
               spacing: 10.0,
               runSpacing: 10.0,
               children: [
-                FlatButton.icon(
+                TextButton.icon(
                   onPressed: () => Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) {
-                          return Projects();
-                        },
-                      ),
+                    MaterialPageRoute(
+                      builder: (_) {
+                        return Projects();
+                      },
                     ),
+                  ),
                   icon: Icon(Icons.apps),
                   label: Text(
                     'Projects',
                   ),
                 ),
-
-                FlatButton.icon(
+                TextButton.icon(
                   onPressed: () => Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (_) {
@@ -285,7 +275,6 @@ class _AboutState extends State<About> {
               ],
             ),
           ),
-
           Padding(
             padding: const EdgeInsets.only(top: 50.0),
             child: Opacity(
@@ -296,7 +285,6 @@ class _AboutState extends State<About> {
               ),
             ),
           ),
-
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 16.0),
             child: Wrap(
@@ -316,10 +304,10 @@ class _AboutState extends State<About> {
                     ),
                   ),
                 ),
-
                 InkWell(
                   onTap: () {
-                    launch('https://app.comet.co/freelancer/profile/5xe7Awyb7r?params=eyJhbm9ueW1pemUiOmZhbHNlLCJkZXNpZ25Nb2RlIjpmYWxzZSwicmVhZE9ubHkiOnRydWV9');
+                    launch(
+                        'https://app.comet.co/freelancer/profile/5xe7Awyb7r?params=eyJhbm9ueW1pemUiOmZhbHNlLCJkZXNpZ25Nb2RlIjpmYWxzZSwicmVhZE9ubHkiOnRydWV9');
                   },
                   child: Padding(
                     padding: const EdgeInsets.all(12.0),
@@ -356,7 +344,6 @@ class _AboutState extends State<About> {
               ),
             ),
           ),
-
           Opacity(
             opacity: paragraphOpacity,
             child: Padding(

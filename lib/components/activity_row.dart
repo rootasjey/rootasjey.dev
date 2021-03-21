@@ -20,7 +20,7 @@ class _ActivityRowState extends State<ActivityRow> {
   Widget build(BuildContext context) {
     final activity = widget.activity;
 
-    return FlatButton.icon(
+    return TextButton.icon(
       onPressed: () {
         launch('https://github.com/${activity.repo.name}');
       },
@@ -36,7 +36,6 @@ class _ActivityRowState extends State<ActivityRow> {
               fontWeight: FontWeight.w700,
             ),
           ),
-
           Padding(
             padding: const EdgeInsets.only(
               right: 16.0,
@@ -46,12 +45,11 @@ class _ActivityRowState extends State<ActivityRow> {
               child: Text(
                 '${activity.repo.name}',
                 style: TextStyle(
-                fontWeight: FontWeight.w500,
-              ),
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ),
           ),
-
           Text(
             Jiffy(activity.createdAt).fromNow(),
             style: TextStyle(

@@ -31,15 +31,15 @@ class _EditPostState extends State<EditPost> {
   DocumentSnapshot postSnapshot;
 
   final availableLang = ['en', 'fr'];
-  final clearFocusNode  = FocusNode();
-  final postFocusNode   = FocusNode();
-  final contentController  = TextEditingController();
-  final titleFocusNode  = FocusNode();
+  final clearFocusNode = FocusNode();
+  final postFocusNode = FocusNode();
+  final contentController = TextEditingController();
+  final titleFocusNode = FocusNode();
   final titleController = TextEditingController();
 
-  String postTitle    = '';
-  String postContent  = '';
-  String lang         = 'en';
+  String postTitle = '';
+  String postContent = '';
+  String lang = 'en';
   String jwt = '';
 
   Timer saveTitleTimer;
@@ -58,66 +58,66 @@ class _EditPostState extends State<EditPost> {
         slivers: [
           HomeAppBar(
             title: isSaving
-              ? Wrap(
-                crossAxisAlignment: WrapCrossAlignment.center,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(right: 16.0),
-                    child: CircularProgressIndicator(strokeWidth: 2.0,),
-                  ),
-
-                  Opacity(
-                    opacity: 0.6,
-                    child: Text(
-                      'Saving...',
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: stateColors.foreground,
+                ? Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(right: 16.0),
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2.0,
+                        ),
                       ),
-                    ),
+                      Opacity(
+                        opacity: 0.6,
+                        child: Text(
+                          'Saving...',
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: stateColors.foreground,
+                          ),
+                        ),
+                      )
+                    ],
                   )
-                ],
-              )
-              : Opacity(
-                  opacity: 0.6,
-                  child: TextButton(
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                            contentPadding: const EdgeInsets.only(
-                              top: 40.0,
-                              left: 30.0,
-                              right: 30.0,
-                            ),
-                            content: SizedBox(
-                              width: 400.0,
-                              child: Text(
-                                postTitle,
-                              ),
-                            ),
-                            actions: [
-                              TextButton(
-                                onPressed: () => Navigator.of(context).pop(),
-                                child: Text('CLOSE'),
-                              ),
-                            ],
-                          );
-                        }
-                      );
-                    },
-                    child: Text(
-                      (postTitle.isEmpty ? 'Edit Post' : postTitle),
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: stateColors.foreground,
+                : Opacity(
+                    opacity: 0.6,
+                    child: TextButton(
+                      onPressed: () {
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                contentPadding: const EdgeInsets.only(
+                                  top: 40.0,
+                                  left: 30.0,
+                                  right: 30.0,
+                                ),
+                                content: SizedBox(
+                                  width: 400.0,
+                                  child: Text(
+                                    postTitle,
+                                  ),
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () =>
+                                        Navigator.of(context).pop(),
+                                    child: Text('CLOSE'),
+                                  ),
+                                ],
+                              );
+                            });
+                      },
+                      child: Text(
+                        (postTitle.isEmpty ? 'Edit Post' : postTitle),
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: stateColors.foreground,
+                        ),
                       ),
                     ),
                   ),
-                ),
           ),
-
           body(),
         ],
       ),
@@ -174,7 +174,6 @@ class _EditPostState extends State<EditPost> {
                   ),
                 ),
               ),
-
               Container(
                 width: 600.0,
                 padding: const EdgeInsets.only(
@@ -190,20 +189,18 @@ class _EditPostState extends State<EditPost> {
                   ),
                 ),
               ),
-
-              OutlineButton.icon(
-                onPressed: () => Navigator.of(context).pop(),
-                icon: Icon(Icons.arrow_back, color: Colors.pink),
-                label: Opacity(
-                  opacity: 0.6,
-                  child: Text(
-                    'Navigate back',
-                    style: TextStyle(
+              OutlinedButton.icon(
+                  onPressed: () => Navigator.of(context).pop(),
+                  icon: Icon(Icons.arrow_back, color: Colors.pink),
+                  label: Opacity(
+                    opacity: 0.6,
+                    child: Text(
+                      'Navigate back',
+                      style: TextStyle(
                         fontSize: 16.0,
                       ),
-                  ),
-                )
-              ),
+                    ),
+                  )),
             ],
           ),
         ),
@@ -228,7 +225,6 @@ class _EditPostState extends State<EditPost> {
                 ),
                 child: CircularProgressIndicator(),
               ),
-
               Text(
                 'Loading...',
                 style: TextStyle(
@@ -257,7 +253,6 @@ class _EditPostState extends State<EditPost> {
               icon: Icon(Icons.arrow_back),
             ),
           ),
-
           Expanded(
             child: Container(
               width: 700.0,
@@ -275,19 +270,14 @@ class _EditPostState extends State<EditPost> {
                     saveTitleTimer.cancel();
                   }
 
-                  saveTitleTimer = Timer(
-                    1.seconds,
-                    () => saveTitle()
-                  );
+                  saveTitleTimer = Timer(1.seconds, () => saveTitle());
                 },
                 style: TextStyle(
                   fontSize: 42.0,
                 ),
                 decoration: InputDecoration(
                   hintText: 'Post Title...',
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide.none
-                  ),
+                  border: OutlineInputBorder(borderSide: BorderSide.none),
                 ),
               ),
             ),
@@ -317,10 +307,7 @@ class _EditPostState extends State<EditPost> {
             saveContentTimer.cancel();
           }
 
-          saveContentTimer = Timer(
-            1.seconds,
-            () => saveContent()
-          );
+          saveContentTimer = Timer(1.seconds, () => saveContent());
         },
         style: TextStyle(
           fontSize: 22.0,
@@ -329,9 +316,7 @@ class _EditPostState extends State<EditPost> {
         decoration: InputDecoration(
           icon: Icon(Icons.edit),
           hintText: "Once upon a time...",
-          border: OutlineInputBorder(
-            borderSide: BorderSide.none
-          ),
+          border: OutlineInputBorder(borderSide: BorderSide.none),
         ),
       ),
     );
@@ -343,41 +328,39 @@ class _EditPostState extends State<EditPost> {
       child: Row(
         children: <Widget>[
           langSelect(),
-
-          Padding(padding: const EdgeInsets.only(left: 20.0),),
-
-          FlatButton.icon(
-            focusNode: clearFocusNode,
-            onPressed: () {
-              postContent = '';
-              contentController.clear();
-              postFocusNode.requestFocus();
-            },
-            icon: Opacity(opacity: 0.6, child: Icon(Icons.clear)),
-            label: Opacity(
-              opacity: 0.6,
-              child: Text(
-                'Clear content',
-              ),
-            )
+          Padding(
+            padding: const EdgeInsets.only(left: 20.0),
           ),
-
-          Padding(padding: const EdgeInsets.only(left: 20.0),),
-
-          FlatButton.icon(
-            focusNode: postFocusNode,
-            onPressed: () {
-              saveTitle();
-              saveContent();
-            },
-            icon: Opacity(opacity: 0.6, child: Icon(Icons.save)),
-            label: Opacity(
-              opacity: 0.6,
-              child: Text(
-                'Save draft',
-              ),
-            )
+          TextButton.icon(
+              focusNode: clearFocusNode,
+              onPressed: () {
+                postContent = '';
+                contentController.clear();
+                postFocusNode.requestFocus();
+              },
+              icon: Opacity(opacity: 0.6, child: Icon(Icons.clear)),
+              label: Opacity(
+                opacity: 0.6,
+                child: Text(
+                  'Clear content',
+                ),
+              )),
+          Padding(
+            padding: const EdgeInsets.only(left: 20.0),
           ),
+          TextButton.icon(
+              focusNode: postFocusNode,
+              onPressed: () {
+                saveTitle();
+                saveContent();
+              },
+              icon: Opacity(opacity: 0.6, child: Icon(Icons.save)),
+              label: Opacity(
+                opacity: 0.6,
+                child: Text(
+                  'Save draft',
+                ),
+              )),
         ],
       ),
     );
@@ -397,33 +380,29 @@ class _EditPostState extends State<EditPost> {
           lang = newValue;
         });
       },
-      items: availableLang
-        .map<DropdownMenuItem<String>>((value) {
-          return DropdownMenuItem(
-            value: value,
-            child: Text(value.toUpperCase()),
-          );
-        }).toList(),
+      items: availableLang.map<DropdownMenuItem<String>>((value) {
+        return DropdownMenuItem(
+          value: value,
+          child: Text(value.toUpperCase()),
+        );
+      }).toList(),
     );
   }
 
   Future fetchMeta() async {
     try {
       postSnapshot = await FirebaseFirestore.instance
-        .collection('posts')
-        .doc(widget.postId)
-        .get();
+          .collection('posts')
+          .doc(widget.postId)
+          .get();
 
-      jwt = await FirebaseAuth.instance
-        .currentUser
-        .getIdToken();
+      jwt = await FirebaseAuth.instance.currentUser.getIdToken();
 
       setState(() {
         postTitle = postSnapshot.data()['title'];
         titleController.text = postTitle;
       });
-
-    } catch(error) {
+    } catch (error) {
       setState(() {
         isLoading = false;
         hasError = true;
@@ -457,8 +436,7 @@ class _EditPostState extends State<EditPost> {
         postContent = response.data['post'];
         contentController.text = postContent;
       });
-
-    } catch(error) {
+    } catch (error) {
       setState(() {
         isLoading = false;
         hasError = true;
@@ -467,7 +445,8 @@ class _EditPostState extends State<EditPost> {
 
       showSnack(
         context: context,
-        message: "There was an error while fetching the post.\n${error.toString()}",
+        message:
+            "There was an error while fetching the post.\n${error.toString()}",
         type: SnackType.error,
       );
     }
@@ -487,7 +466,9 @@ class _EditPostState extends State<EditPost> {
     }
 
     final result = await canNavigate(context: context);
-    if (!result) { return; }
+    if (!result) {
+      return;
+    }
 
     setState(() => isLoading = true);
 
@@ -499,12 +480,9 @@ class _EditPostState extends State<EditPost> {
 
   void saveTitle() async {
     try {
-      await postSnapshot
-        .reference
-        .update({'title': postTitle});
+      await postSnapshot.reference.update({'title': postTitle});
 
       setState(() => isSaving = false);
-
     } catch (error) {
       debugPrint(error.toString());
       setState(() => isSaving = false);
@@ -521,9 +499,9 @@ class _EditPostState extends State<EditPost> {
       ).getHttpsCallable(functionName: 'posts-save ');
 
       final resp = await callable.call({
-        'postId'  : postSnapshot.id,
-        'jwt'     : jwt,
-        'content' : postContent,
+        'postId': postSnapshot.id,
+        'jwt': jwt,
+        'content': postContent,
       });
 
       bool success = resp.data['success'];
@@ -533,7 +511,6 @@ class _EditPostState extends State<EditPost> {
       }
 
       setState(() => isSaving = false);
-
     } catch (error) {
       debugPrint(error.toString());
       setState(() => isSaving = false);

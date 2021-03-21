@@ -50,13 +50,9 @@ class _NewsletterState extends State<Newsletter> {
   Widget idleView() {
     return LayoutBuilder(
       builder: (context, boxContraints) {
-        final titleFontSize = boxContraints.maxWidth < 700.0
-          ? 24.0
-          : 40.0;
+        final titleFontSize = boxContraints.maxWidth < 700.0 ? 24.0 : 40.0;
 
-        final subtitleFontSize = boxContraints.maxWidth < 700.0
-          ? 20.0
-          : 16.0;
+        final subtitleFontSize = boxContraints.maxWidth < 700.0 ? 20.0 : 16.0;
 
         return Column(
           children: [
@@ -64,7 +60,6 @@ class _NewsletterState extends State<Newsletter> {
               Icons.email_outlined,
               size: 80.0,
             ),
-
             Padding(
               padding: const EdgeInsets.only(
                 top: 20.0,
@@ -82,7 +77,6 @@ class _NewsletterState extends State<Newsletter> {
                 ),
               ),
             ),
-
             Opacity(
               opacity: 0.6,
               child: Text(
@@ -93,7 +87,6 @@ class _NewsletterState extends State<Newsletter> {
                 ),
               ),
             ),
-
             Container(
               width: 500.0,
               padding: const EdgeInsets.only(
@@ -113,8 +106,8 @@ class _NewsletterState extends State<Newsletter> {
 
                   final isWellFormatted = checkEmailFormat(email);
                   errorText = isWellFormatted
-                    ? null
-                    : 'The value entered is not a valid email address';
+                      ? null
+                      : 'The value entered is not a valid email address';
 
                   setState(() {});
                 },
@@ -124,19 +117,24 @@ class _NewsletterState extends State<Newsletter> {
                   }
 
                   final isWellFormatted = checkEmailFormat(email);
-                  if (!isWellFormatted) { return 'The value entered is not a valid email address'; }
+                  if (!isWellFormatted) {
+                    return 'The value entered is not a valid email address';
+                  }
 
                   return null;
                 },
               ),
             ),
-
-            RaisedButton(
+            ElevatedButton(
               onPressed: subscribe,
-              color: stateColors.primary,
-              padding: const EdgeInsets.symmetric(
-                horizontal: 20.0,
-                vertical: 16.0,
+              style: ElevatedButton.styleFrom(
+                textStyle: TextStyle(
+                  color: stateColors.primary,
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20.0,
+                  vertical: 16.0,
+                ),
               ),
               child: SizedBox(
                 width: 200.0,
@@ -150,7 +148,6 @@ class _NewsletterState extends State<Newsletter> {
                         color: Colors.white,
                       ),
                     ),
-
                     Padding(
                       padding: const EdgeInsets.only(left: 20.0),
                       child: Icon(Icons.arrow_forward, color: Colors.white),
@@ -173,7 +170,6 @@ class _NewsletterState extends State<Newsletter> {
           color: Colors.pink,
           size: 80.0,
         ),
-
         Padding(
           padding: const EdgeInsets.only(
             top: 20.0,
@@ -186,7 +182,6 @@ class _NewsletterState extends State<Newsletter> {
             ),
           ),
         ),
-
         Opacity(
           opacity: 0.6,
           child: Text(
@@ -196,7 +191,6 @@ class _NewsletterState extends State<Newsletter> {
             ),
           ),
         ),
-
         Padding(
           padding: const EdgeInsets.only(top: 8.0),
           child: TextButton(
@@ -224,23 +218,19 @@ class _NewsletterState extends State<Newsletter> {
     setState(() => isLoading = true);
 
     try {
-      await FirebaseFirestore.instance
-        .collection('newsreaders')
-        .doc()
-        .set({
-          'email': email,
-          'categories': {
-            'all': true,
-          },
-          'rng': Random().nextInt(100000),
-          'seed': Random().nextInt(100000),
-        });
+      await FirebaseFirestore.instance.collection('newsreaders').doc().set({
+        'email': email,
+        'categories': {
+          'all': true,
+        },
+        'rng': Random().nextInt(100000),
+        'seed': Random().nextInt(100000),
+      });
 
       setState(() {
         isLoading = false;
         _isSubscribed = true;
       });
-
     } catch (error) {
       debugPrint(error.toString());
       setState(() => isLoading = false);

@@ -10,15 +10,13 @@ import 'package:rootasjey/state/colors.dart';
 class HomeNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, boxConstraints) {
-        if (boxConstraints.maxWidth < 600.0) {
-          return narrowView(context);
-        }
-
-        return largeView(context);
+    return LayoutBuilder(builder: (context, boxConstraints) {
+      if (boxConstraints.maxWidth < 600.0) {
+        return narrowView(context);
       }
-    );
+
+      return largeView(context);
+    });
   }
 
   Widget buttonLink({
@@ -27,7 +25,7 @@ class HomeNavBar extends StatelessWidget {
     @required String titleText,
     @required Widget widgetRoute,
   }) {
-    return FlatButton.icon(
+    return TextButton.icon(
       onPressed: () {
         Navigator.of(context).push(
           MaterialPageRoute(
@@ -97,35 +95,30 @@ class HomeNavBar extends StatelessWidget {
             titleText: 'Enroll',
             widgetRoute: Enroll(),
           ),
-
           cardLink(
             context: context,
             icon: Icons.apps,
             titleText: 'Projects',
             widgetRoute: Projects(),
           ),
-
           cardLink(
             context: context,
             icon: Icons.edit,
             titleText: 'Posts',
             widgetRoute: Posts(),
           ),
-
           cardLink(
             context: context,
             icon: Icons.attach_money,
             titleText: 'Pricing',
             widgetRoute: Pricing(),
           ),
-
           cardLink(
             context: context,
             icon: Icons.email_outlined,
             titleText: 'Contact me',
             widgetRoute: Contact(),
           ),
-
           cardLink(
             context: context,
             icon: Icons.help_center,
@@ -147,7 +140,7 @@ class HomeNavBar extends StatelessWidget {
         spacing: 40.0,
         runSpacing: 20.0,
         children: [
-          RaisedButton.icon(
+          ElevatedButton.icon(
             onPressed: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
@@ -157,42 +150,41 @@ class HomeNavBar extends StatelessWidget {
                 ),
               );
             },
-            color: stateColors.primary,
-            textColor: Colors.white,
+            style: ElevatedButton.styleFrom(
+              primary: stateColors.primary,
+              textStyle: TextStyle(
+                color: Colors.white,
+              ),
+            ),
             icon: Icon(Icons.work),
             label: Text(
               'Enroll',
             ),
           ),
-
           buttonLink(
             context: context,
             icon: Icons.apps,
             titleText: 'Projects',
             widgetRoute: Projects(),
           ),
-
           buttonLink(
             context: context,
             icon: Icons.edit,
             titleText: 'Posts',
             widgetRoute: Posts(),
           ),
-
           buttonLink(
             context: context,
             icon: Icons.attach_money,
             titleText: 'Pricing',
             widgetRoute: Pricing(),
           ),
-
           buttonLink(
             context: context,
             icon: Icons.email_outlined,
             titleText: 'Contact me',
             widgetRoute: Contact(),
           ),
-
           buttonLink(
             context: context,
             icon: Icons.help_center,
@@ -203,5 +195,4 @@ class HomeNavBar extends StatelessWidget {
       ),
     );
   }
-
 }

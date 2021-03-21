@@ -25,22 +25,22 @@ class EditProject extends StatefulWidget {
 }
 
 class _EditProjectState extends State<EditProject> {
-  bool isLoading      = false;
-  bool isSaving       = false;
-  bool hasError       = false;
-  bool isMetaVisible  = false;
+  bool isLoading = false;
+  bool isSaving = false;
+  bool hasError = false;
+  bool isMetaVisible = false;
 
   DocumentSnapshot projectSnapshot;
 
-  final availableLang     = ['en', 'fr'];
-  final clearFocusNode    = FocusNode();
-  final projectFocusNode  = FocusNode();
+  final availableLang = ['en', 'fr'];
+  final clearFocusNode = FocusNode();
+  final projectFocusNode = FocusNode();
   final contentController = TextEditingController();
 
-  final titleFocusNode    = FocusNode();
-  final titleController   = TextEditingController();
+  final titleFocusNode = FocusNode();
+  final titleController = TextEditingController();
 
-  final summaryFocusNode  = FocusNode();
+  final summaryFocusNode = FocusNode();
   final summaryController = TextEditingController();
 
   final platformController = TextEditingController();
@@ -48,14 +48,14 @@ class _EditProjectState extends State<EditProject> {
   final pLangController = TextEditingController();
 
   final platforms = {
-    'android'   : false,
-    'androidtv' : false,
-    'ios'       : false,
-    'ipados'    : false,
-    'linux'     : false,
-    'macos'     : false,
-    'web'       : false,
-    'windows'   : false,
+    'android': false,
+    'androidtv': false,
+    'ios': false,
+    'ipados': false,
+    'linux': false,
+    'macos': false,
+    'web': false,
+    'windows': false,
   };
 
   final programmingLanguages = Map<String, bool>();
@@ -67,16 +67,16 @@ class _EditProjectState extends State<EditProject> {
 
   String publicationStatus = DRAFT;
 
-  String title              = '';
-  String content            = '';
-  String summary            = '';
+  String title = '';
+  String content = '';
+  String summary = '';
   String platformInputValue = '';
-  String pLangInputValue    = '';
-  String tagInputValue      = '';
-  String lang               = 'en';
-  String jwt                = '';
-  String urlName            = '';
-  String urlValue           = '';
+  String pLangInputValue = '';
+  String tagInputValue = '';
+  String lang = 'en';
+  String jwt = '';
+  String urlName = '';
+  String urlValue = '';
 
   Timer saveTitleTimer;
   Timer saveSummaryTimer;
@@ -123,7 +123,6 @@ class _EditProjectState extends State<EditProject> {
               summaryInput(),
               contentInput(),
               buttonToggleMetaView(),
-
               if (isMetaVisible)
                 Column(
                   children: [
@@ -148,15 +147,13 @@ class _EditProjectState extends State<EditProject> {
       ),
       child: Row(
         children: [
-          RaisedButton.icon(
+          ElevatedButton.icon(
             onPressed: () => setState(() => isMetaVisible = !isMetaVisible),
             icon: isMetaVisible
-              ? Icon(Icons.visibility_off)
-              : Icon(Icons.visibility),
+                ? Icon(Icons.visibility_off)
+                : Icon(Icons.visibility),
             label: Text(
-              isMetaVisible
-               ? 'Hide meta data'
-               : 'Show meta data',
+              isMetaVisible ? 'Hide meta data' : 'Show meta data',
             ),
           ),
         ],
@@ -186,7 +183,6 @@ class _EditProjectState extends State<EditProject> {
                   ),
                 ),
               ),
-
               Container(
                 width: 600.0,
                 padding: const EdgeInsets.only(
@@ -202,20 +198,18 @@ class _EditProjectState extends State<EditProject> {
                   ),
                 ),
               ),
-
-              OutlineButton.icon(
-                onPressed: () => Navigator.of(context).pop(),
-                icon: Icon(Icons.arrow_back, color: Colors.pink),
-                label: Opacity(
-                  opacity: 0.6,
-                  child: Text(
-                    'Navigate back',
-                    style: TextStyle(
+              OutlinedButton.icon(
+                  onPressed: () => Navigator.of(context).pop(),
+                  icon: Icon(Icons.arrow_back, color: Colors.pink),
+                  label: Opacity(
+                    opacity: 0.6,
+                    child: Text(
+                      'Navigate back',
+                      style: TextStyle(
                         fontSize: 16.0,
                       ),
-                  ),
-                )
-              ),
+                    ),
+                  )),
             ],
           ),
         ),
@@ -231,9 +225,10 @@ class _EditProjectState extends State<EditProject> {
           children: [
             Padding(
               padding: const EdgeInsets.only(right: 16.0),
-              child: CircularProgressIndicator(strokeWidth: 2.0,),
+              child: CircularProgressIndicator(
+                strokeWidth: 2.0,
+              ),
             ),
-
             Opacity(
               opacity: 0.6,
               child: Text(
@@ -255,9 +250,7 @@ class _EditProjectState extends State<EditProject> {
         child: TextButton(
           onPressed: showAppBarDialog,
           child: Text(
-            title.isEmpty
-              ? 'Edit Project'
-              : title,
+            title.isEmpty ? 'Edit Project' : title,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
               color: stateColors.foreground,
@@ -285,7 +278,6 @@ class _EditProjectState extends State<EditProject> {
                 ),
                 child: CircularProgressIndicator(),
               ),
-
               Text(
                 'Loading...',
                 style: TextStyle(
@@ -314,7 +306,6 @@ class _EditProjectState extends State<EditProject> {
               icon: Icon(Icons.arrow_back),
             ),
           ),
-
           Expanded(
             child: Container(
               width: 670.0,
@@ -332,10 +323,7 @@ class _EditProjectState extends State<EditProject> {
                     saveTitleTimer.cancel();
                   }
 
-                  saveTitleTimer = Timer(
-                    1.seconds,
-                    () => saveTitle()
-                  );
+                  saveTitleTimer = Timer(1.seconds, () => saveTitle());
                 },
                 style: TextStyle(
                   fontSize: 42.0,
@@ -343,9 +331,7 @@ class _EditProjectState extends State<EditProject> {
                 ),
                 decoration: InputDecoration(
                   hintText: 'Project Title...',
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide.none
-                  ),
+                  border: OutlineInputBorder(borderSide: BorderSide.none),
                 ),
               ),
             ),
@@ -371,9 +357,7 @@ class _EditProjectState extends State<EditProject> {
         decoration: InputDecoration(
           hintText: 'Project Summary...',
           icon: Icon(Icons.short_text),
-          border: OutlineInputBorder(
-            borderSide: BorderSide.none
-          ),
+          border: OutlineInputBorder(borderSide: BorderSide.none),
         ),
         style: TextStyle(
           fontSize: 20.0,
@@ -386,10 +370,7 @@ class _EditProjectState extends State<EditProject> {
             saveSummaryTimer.cancel();
           }
 
-          saveSummaryTimer = Timer(
-            1.seconds,
-            () => saveSummary()
-          );
+          saveSummaryTimer = Timer(1.seconds, () => saveSummary());
         },
       ),
     );
@@ -415,10 +396,7 @@ class _EditProjectState extends State<EditProject> {
             saveContentTimer.cancel();
           }
 
-          saveContentTimer = Timer(
-            1.seconds,
-            () => saveContent()
-          );
+          saveContentTimer = Timer(1.seconds, () => saveContent());
         },
         style: TextStyle(
           fontSize: 22.0,
@@ -427,9 +405,7 @@ class _EditProjectState extends State<EditProject> {
         decoration: InputDecoration(
           icon: Icon(Icons.edit),
           hintText: "Project's story...",
-          border: OutlineInputBorder(
-            borderSide: BorderSide.none
-          ),
+          border: OutlineInputBorder(borderSide: BorderSide.none),
         ),
       ),
     );
@@ -444,44 +420,36 @@ class _EditProjectState extends State<EditProject> {
           scrollDirection: Axis.horizontal,
           children: <Widget>[
             langSelect(),
-
             Padding(padding: const EdgeInsets.only(right: 20.0)),
-
-            FlatButton.icon(
-              focusNode: clearFocusNode,
-              onPressed: () {
-                content = '';
-                contentController.clear();
-                projectFocusNode.requestFocus();
-              },
-              icon: Opacity(opacity: 0.6, child: Icon(Icons.clear)),
-              label: Opacity(
-                opacity: 0.6,
-                child: Text(
-                  'Clear content',
-                ),
-              )
-            ),
-
+            TextButton.icon(
+                focusNode: clearFocusNode,
+                onPressed: () {
+                  content = '';
+                  contentController.clear();
+                  projectFocusNode.requestFocus();
+                },
+                icon: Opacity(opacity: 0.6, child: Icon(Icons.clear)),
+                label: Opacity(
+                  opacity: 0.6,
+                  child: Text(
+                    'Clear content',
+                  ),
+                )),
             Padding(padding: const EdgeInsets.only(right: 20.0)),
-
-            FlatButton.icon(
-              focusNode: projectFocusNode,
-              onPressed: () {
-                saveTitle();
-                saveContent();
-              },
-              icon: Opacity(opacity: 0.6, child: Icon(Icons.save)),
-              label: Opacity(
-                opacity: 0.6,
-                child: Text(
-                  'Save draft',
-                ),
-              )
-            ),
-
+            TextButton.icon(
+                focusNode: projectFocusNode,
+                onPressed: () {
+                  saveTitle();
+                  saveContent();
+                },
+                icon: Opacity(opacity: 0.6, child: Icon(Icons.save)),
+                label: Opacity(
+                  opacity: 0.6,
+                  child: Text(
+                    'Save draft',
+                  ),
+                )),
             Padding(padding: const EdgeInsets.only(right: 20.0)),
-
             publishedDropDown(),
           ],
         ),
@@ -503,13 +471,12 @@ class _EditProjectState extends State<EditProject> {
           lang = newValue;
         });
       },
-      items: availableLang
-        .map<DropdownMenuItem<String>>((value) {
-          return DropdownMenuItem(
-            value: value,
-            child: Text(value.toUpperCase()),
-          );
-        }).toList(),
+      items: availableLang.map<DropdownMenuItem<String>>((value) {
+        return DropdownMenuItem(
+          value: value,
+          child: Text(value.toUpperCase()),
+        );
+      }).toList(),
     );
   }
 
@@ -520,11 +487,10 @@ class _EditProjectState extends State<EditProject> {
       onChanged: (value) => updatePubStatus(value),
       items: [DRAFT, PUBLISHED].map((value) {
         return DropdownMenuItem(
-          value: value,
-          child: Text(
-            value.toUpperCase(),
-          )
-        );
+            value: value,
+            child: Text(
+              value.toUpperCase(),
+            ));
       }).toList(),
     );
   }
@@ -560,7 +526,6 @@ class _EditProjectState extends State<EditProject> {
               padding: const EdgeInsets.only(right: 16.0),
               child: Icon(Icons.device_unknown),
             ),
-
             Text(
               'PLATFORMS',
               style: TextStyle(
@@ -576,35 +541,31 @@ class _EditProjectState extends State<EditProject> {
 
   Widget platformsSelectionContent() {
     return Wrap(
-      spacing: 10.0,
-      runSpacing: 10.0,
-      children: platforms.entries.map((entry) {
-        return InputChip(
-          label: Text(
-            getPlatformName(entry.key),
-          ),
-          labelStyle: TextStyle(
-            color: entry.value
-              ? Colors.white
-              : stateColors.foreground,
-          ),
-          selectedColor: stateColors.primary,
-          selected: entry.value,
-          checkmarkColor: Colors.white,
-          deleteIconColor: entry.value
-            ? Colors.white
-            : stateColors.foreground,
-          onDeleted: () {
-            platforms.remove(entry.key);
-            savePlatforms();
-          },
-          onSelected: (isSelected) {
-            platforms[entry.key] = isSelected;
-            savePlatforms();
-          },
-        );
-      }).toList()
-    );
+        spacing: 10.0,
+        runSpacing: 10.0,
+        children: platforms.entries.map((entry) {
+          return InputChip(
+            label: Text(
+              getPlatformName(entry.key),
+            ),
+            labelStyle: TextStyle(
+              color: entry.value ? Colors.white : stateColors.foreground,
+            ),
+            selectedColor: stateColors.primary,
+            selected: entry.value,
+            checkmarkColor: Colors.white,
+            deleteIconColor:
+                entry.value ? Colors.white : stateColors.foreground,
+            onDeleted: () {
+              platforms.remove(entry.key);
+              savePlatforms();
+            },
+            onSelected: (isSelected) {
+              platforms[entry.key] = isSelected;
+              savePlatforms();
+            },
+          );
+        }).toList());
   }
 
   Widget platformsSelectionInput() {
@@ -629,10 +590,9 @@ class _EditProjectState extends State<EditProject> {
               },
             ),
           ),
-
           Padding(
             padding: const EdgeInsets.only(left: 8.0),
-            child: FlatButton.icon(
+            child: TextButton.icon(
               onPressed: () {
                 platforms[platformInputValue] = true;
                 platformController.clear();
@@ -678,7 +638,6 @@ class _EditProjectState extends State<EditProject> {
               padding: const EdgeInsets.only(right: 16.0),
               child: Icon(Icons.code),
             ),
-
             Text(
               'PROGRAMMING LANGUAGES',
               style: TextStyle(
@@ -694,20 +653,19 @@ class _EditProjectState extends State<EditProject> {
 
   Widget pLangsSelectionContent() {
     return Wrap(
-      spacing: 10.0,
-      runSpacing: 10.0,
-      children: programmingLanguages.entries.map((entry) {
-        return InputChip(
-          label: Text(
-            entry.key,
-          ),
-          onDeleted: () {
-            programmingLanguages.remove(entry.key);
-            savePLanguages();
-          },
-        );
-      }).toList()
-    );
+        spacing: 10.0,
+        runSpacing: 10.0,
+        children: programmingLanguages.entries.map((entry) {
+          return InputChip(
+            label: Text(
+              entry.key,
+            ),
+            onDeleted: () {
+              programmingLanguages.remove(entry.key);
+              savePLanguages();
+            },
+          );
+        }).toList());
   }
 
   Widget pLangsSelectionInput() {
@@ -732,10 +690,9 @@ class _EditProjectState extends State<EditProject> {
               },
             ),
           ),
-
           Padding(
             padding: const EdgeInsets.only(left: 8.0),
-            child: FlatButton.icon(
+            child: TextButton.icon(
               onPressed: () {
                 programmingLanguages[pLangInputValue] = true;
                 pLangController.clear();
@@ -781,7 +738,6 @@ class _EditProjectState extends State<EditProject> {
               padding: const EdgeInsets.only(right: 16.0),
               child: Icon(Icons.tag),
             ),
-
             Text(
               'TAGS',
               style: TextStyle(
@@ -797,35 +753,31 @@ class _EditProjectState extends State<EditProject> {
 
   Widget tagsSelectionContent() {
     return Wrap(
-      spacing: 10.0,
-      runSpacing: 10.0,
-      children: tags.entries.map((entry) {
-        return InputChip(
-          label: Text(
-            '${entry.key.substring(0, 1).toUpperCase()}${entry.key.substring(1)}',
-            style: TextStyle(
-              color: entry.value
-                ? Colors.white
-                : stateColors.foreground,
+        spacing: 10.0,
+        runSpacing: 10.0,
+        children: tags.entries.map((entry) {
+          return InputChip(
+            label: Text(
+              '${entry.key.substring(0, 1).toUpperCase()}${entry.key.substring(1)}',
+              style: TextStyle(
+                color: entry.value ? Colors.white : stateColors.foreground,
+              ),
             ),
-          ),
-          selectedColor: stateColors.primary,
-          selected: entry.value,
-          checkmarkColor: Colors.white,
-          deleteIconColor: entry.value
-            ? Colors.white
-            : stateColors.foreground,
-          onDeleted: () {
-            tags.remove(entry.key);
-            saveTags();
-          },
-          onSelected: (isSelected) {
-            tags[entry.key] = isSelected;
-            saveTags();
-          },
-        );
-      }).toList()
-    );
+            selectedColor: stateColors.primary,
+            selected: entry.value,
+            checkmarkColor: Colors.white,
+            deleteIconColor:
+                entry.value ? Colors.white : stateColors.foreground,
+            onDeleted: () {
+              tags.remove(entry.key);
+              saveTags();
+            },
+            onSelected: (isSelected) {
+              tags[entry.key] = isSelected;
+              saveTags();
+            },
+          );
+        }).toList());
   }
 
   Widget tagsSelectionInput() {
@@ -850,10 +802,9 @@ class _EditProjectState extends State<EditProject> {
               },
             ),
           ),
-
           Padding(
             padding: const EdgeInsets.only(left: 8.0),
-            child: FlatButton.icon(
+            child: TextButton.icon(
               onPressed: () {
                 tags[tagInputValue] = true;
                 tagController.clear();
@@ -874,102 +825,93 @@ class _EditProjectState extends State<EditProject> {
       padding: const EdgeInsets.only(
         top: 100.0,
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(
-              bottom: 20.0,
-            ),
-            child: Opacity(
-              opacity: 0.6,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(right: 16.0),
-                    child: Icon(Icons.link),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Padding(
+          padding: const EdgeInsets.only(
+            bottom: 20.0,
+          ),
+          child: Opacity(
+            opacity: 0.6,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 16.0),
+                  child: Icon(Icons.link),
+                ),
+                Text(
+                  'EXTERNAL URLS',
+                  style: TextStyle(
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.w600,
                   ),
-
-                  Text(
-                    'EXTERNAL URLS',
-                    style: TextStyle(
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
-
-          Wrap(
-            spacing: 10.0,
-            runSpacing: 10.0,
-            children: urls.entries.map((entry) {
-              return InputChip(
-                label: Text(entry.key),
-                labelStyle: TextStyle(
-                  color: entry.value != null && entry.value.isNotEmpty
+        ),
+        Wrap(
+          spacing: 10.0,
+          runSpacing: 10.0,
+          children: urls.entries.map((entry) {
+            return InputChip(
+              label: Text(entry.key),
+              labelStyle: TextStyle(
+                color: entry.value != null && entry.value.isNotEmpty
                     ? Colors.white
                     : stateColors.foreground,
-                ),
-                selectedColor: stateColors.primary,
-                selected: entry.value?.isNotEmpty,
-                checkmarkColor: Colors.white,
-                deleteIconColor: entry.value.isNotEmpty
+              ),
+              selectedColor: stateColors.primary,
+              selected: entry.value?.isNotEmpty,
+              checkmarkColor: Colors.white,
+              deleteIconColor: entry.value.isNotEmpty
                   ? Colors.white
                   : stateColors.foreground,
-                onDeleted: () {
-                  urls.remove(entry.key);
-                  saveUrls();
-                },
-                onPressed: () {
-                  urlName = entry.key;
-                  urlValue = entry.value;
+              onDeleted: () {
+                urls.remove(entry.key);
+                saveUrls();
+              },
+              onPressed: () {
+                urlName = entry.key;
+                urlValue = entry.value;
 
-                  showAddUrlSheet();
-                },
-              );
-            }).toList(),
-          ),
+                showAddUrlSheet();
+              },
+            );
+          }).toList(),
+        ),
+        TextButton.icon(
+          onPressed: () {
+            urlName = '';
+            urlValue = '';
 
-          FlatButton.icon(
-            onPressed: () {
-              urlName = '';
-              urlValue = '';
-
-              showAddUrlSheet();
-            },
-            icon: Icon(Icons.add),
-            label: Text('Add URL'),
-          ),
-        ]
-      ),
+            showAddUrlSheet();
+          },
+          icon: Icon(Icons.add),
+          label: Text('Add URL'),
+        ),
+      ]),
     );
   }
 
   Future fetchMeta() async {
     try {
       projectSnapshot = await FirebaseFirestore.instance
-        .collection('projects')
-        .doc(widget.projectId)
-        .get();
+          .collection('projects')
+          .doc(widget.projectId)
+          .get();
 
-      jwt = await FirebaseAuth.instance
-        .currentUser
-        .getIdToken();
+      jwt = await FirebaseAuth.instance.currentUser.getIdToken();
 
-      final data          = projectSnapshot.data();
+      final data = projectSnapshot.data();
       final dataPlatforms = data['platforms'] as Map<String, dynamic>;
-      final dataTags      = data['tags'] as Map<String, dynamic>;
-      final dataUrls      = data['urls'] as Map<String, dynamic>;
-      final dataLanguages = data['programmingLanguages'] as Map<String, dynamic>;
+      final dataTags = data['tags'] as Map<String, dynamic>;
+      final dataUrls = data['urls'] as Map<String, dynamic>;
+      final dataLanguages =
+          data['programmingLanguages'] as Map<String, dynamic>;
 
       setState(() {
-        publicationStatus = data['published']
-          ? PUBLISHED
-          : DRAFT;
+        publicationStatus = data['published'] ? PUBLISHED : DRAFT;
 
         title = data['title'];
         summary = data['summary'];
@@ -993,8 +935,7 @@ class _EditProjectState extends State<EditProject> {
         titleController.text = title;
         summaryController.text = summary;
       });
-
-    } catch(error) {
+    } catch (error) {
       setState(() {
         isLoading = false;
         hasError = true;
@@ -1028,8 +969,7 @@ class _EditProjectState extends State<EditProject> {
         content = response.data['project'];
         contentController.text = content;
       });
-
-    } catch(error) {
+    } catch (error) {
       setState(() {
         isLoading = false;
         hasError = true;
@@ -1038,7 +978,8 @@ class _EditProjectState extends State<EditProject> {
 
       showSnack(
         context: context,
-        message: "There was an error while fetching the project.\n${error.toString()}",
+        message:
+            "There was an error while fetching the project.\n${error.toString()}",
         type: SnackType.error,
       );
     }
@@ -1057,7 +998,9 @@ class _EditProjectState extends State<EditProject> {
     }
 
     final result = await canNavigate(context: context);
-    if (!result) { return; }
+    if (!result) {
+      return;
+    }
 
     setState(() => isLoading = true);
 
@@ -1077,9 +1020,9 @@ class _EditProjectState extends State<EditProject> {
       ).getHttpsCallable(functionName: 'projects-save ');
 
       final resp = await callable.call({
-        'projectId' : projectSnapshot.id,
-        'jwt'       : jwt,
-        'content'   : content,
+        'projectId': projectSnapshot.id,
+        'jwt': jwt,
+        'content': content,
       });
 
       bool success = resp.data['success'];
@@ -1089,7 +1032,6 @@ class _EditProjectState extends State<EditProject> {
       }
 
       setState(() => isSaving = false);
-
     } catch (error) {
       debugPrint(error.toString());
       setState(() => isSaving = false);
@@ -1100,12 +1042,10 @@ class _EditProjectState extends State<EditProject> {
     setState(() => isSaving = true);
 
     try {
-      await projectSnapshot
-        .reference
-        .update({'programmingLanguages': programmingLanguages});
+      await projectSnapshot.reference
+          .update({'programmingLanguages': programmingLanguages});
 
       setState(() => isSaving = false);
-
     } catch (error) {
       debugPrint(error.toString());
       setState(() => isSaving = false);
@@ -1116,12 +1056,9 @@ class _EditProjectState extends State<EditProject> {
     setState(() => isSaving = true);
 
     try {
-      await projectSnapshot
-        .reference
-        .update({'platforms': platforms});
+      await projectSnapshot.reference.update({'platforms': platforms});
 
       setState(() => isSaving = false);
-
     } catch (error) {
       debugPrint(error.toString());
       setState(() => isSaving = false);
@@ -1132,12 +1069,9 @@ class _EditProjectState extends State<EditProject> {
     setState(() => isSaving = true);
 
     try {
-      await projectSnapshot
-        .reference
-        .update({'summary': summary});
+      await projectSnapshot.reference.update({'summary': summary});
 
       setState(() => isSaving = false);
-
     } catch (error) {
       debugPrint(error.toString());
       setState(() => isSaving = false);
@@ -1148,12 +1082,9 @@ class _EditProjectState extends State<EditProject> {
     setState(() => isSaving = true);
 
     try {
-      await projectSnapshot
-        .reference
-        .update({'tags': tags});
+      await projectSnapshot.reference.update({'tags': tags});
 
       setState(() => isSaving = false);
-
     } catch (error) {
       debugPrint(error.toString());
       setState(() => isSaving = false);
@@ -1164,12 +1095,9 @@ class _EditProjectState extends State<EditProject> {
     setState(() => isSaving = true);
 
     try {
-      await projectSnapshot
-        .reference
-        .update({'title': title});
+      await projectSnapshot.reference.update({'title': title});
 
       setState(() => isSaving = false);
-
     } catch (error) {
       debugPrint(error.toString());
       setState(() => isSaving = false);
@@ -1180,12 +1108,9 @@ class _EditProjectState extends State<EditProject> {
     setState(() => isSaving = true);
 
     try {
-      await projectSnapshot
-        .reference
-        .update({'urls': urls});
+      await projectSnapshot.reference.update({'urls': urls});
 
       setState(() => isSaving = false);
-
     } catch (error) {
       debugPrint(error.toString());
       setState(() => isSaving = false);
@@ -1218,7 +1143,6 @@ class _EditProjectState extends State<EditProject> {
                       ),
                     ),
                   ),
-
                   Wrap(
                     spacing: 40.0,
                     runSpacing: 20.0,
@@ -1237,7 +1161,6 @@ class _EditProjectState extends State<EditProject> {
                           },
                         ),
                       ),
-
                       SizedBox(
                         width: 320.0,
                         child: TextFormField(
@@ -1251,7 +1174,6 @@ class _EditProjectState extends State<EditProject> {
                           },
                         ),
                       ),
-
                       Padding(
                         padding: const EdgeInsets.only(
                           left: 16.0,
@@ -1279,29 +1201,28 @@ class _EditProjectState extends State<EditProject> {
 
   void showAppBarDialog() {
     showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          contentPadding: const EdgeInsets.only(
-            top: 40.0,
-            left: 30.0,
-            right: 30.0,
-          ),
-          content: SizedBox(
-            width: 400.0,
-            child: Text(
-              title,
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            contentPadding: const EdgeInsets.only(
+              top: 40.0,
+              left: 30.0,
+              right: 30.0,
             ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text('CLOSE'),
+            content: SizedBox(
+              width: 400.0,
+              child: Text(
+                title,
+              ),
             ),
-          ],
-        );
-      }
-    );
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text('CLOSE'),
+              ),
+            ],
+          );
+        });
   }
 
   void updatePubStatus(String status) async {
@@ -1313,12 +1234,10 @@ class _EditProjectState extends State<EditProject> {
     });
 
     try {
-      await projectSnapshot
-        .reference
-        .update({'published': status == PUBLISHED});
+      await projectSnapshot.reference
+          .update({'published': status == PUBLISHED});
 
       setState(() => isSaving = false);
-
     } catch (error) {
       debugPrint(error.toString());
       setState(() {
