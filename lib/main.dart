@@ -1,4 +1,5 @@
 import 'package:adaptive_theme/adaptive_theme.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -25,6 +26,7 @@ void main() async {
   await Firebase.initializeApp();
   await appStorage.initialize();
   await Future.wait([_autoLogin(), _initLang()]);
+  await EasyLocalization.ensureInitialized();
 
   final brightness = BrightnessUtils.getCurrent();
 
@@ -34,9 +36,14 @@ void main() async {
 
   setPathUrlStrategy();
 
-  return runApp(App(
-    savedThemeMode: savedThemeMode,
-    brightness: brightness,
+  return runApp(EasyLocalization(
+    path: 'assets/translations',
+    supportedLocales: [Locale('en'), Locale('fr')],
+    fallbackLocale: Locale('en'),
+    child: App(
+      savedThemeMode: savedThemeMode,
+      brightness: brightness,
+    ),
   ));
 }
 
@@ -130,6 +137,9 @@ class _AppWithThemeState extends State<AppWithTheme> {
       theme: widget.theme,
       darkTheme: widget.darkTheme,
       debugShowCheckedModeBanner: false,
+      locale: context.locale,
+      supportedLocales: context.supportedLocales,
+      localizationsDelegates: context.localizationDelegates,
       routerDelegate: appRouter.delegate(),
       routeInformationParser: appRouter.defaultRouteParser(),
     );

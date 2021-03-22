@@ -96,6 +96,7 @@ flutter:
     - assets/images/jeje.jpg
     - assets/images/malt-logo-white.png
     - assets/images/comet-logo-wide.jpg
+    - assets/translations/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

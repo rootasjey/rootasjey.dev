@@ -13,9 +13,8 @@ import 'package:rootasjey/screens/signup.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/state/user.dart';
 import 'package:rootasjey/utils/app_storage.dart';
+import 'package:rootasjey/utils/brightness.dart';
 import 'package:unicons/unicons.dart';
-
-import '../utils/brightness.dart';
 
 class HomeAppBar extends StatefulWidget {
   final bool automaticallyImplyLeading;
