@@ -1,7 +1,6 @@
-import 'package:dynamic_theme/dynamic_theme.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:rootasjey/actions/users.dart';
 import 'package:rootasjey/components/app_icon_header.dart';
 import 'package:rootasjey/router/route_names.dart';
 import 'package:rootasjey/screens/my_posts.dart';
@@ -12,9 +11,11 @@ import 'package:rootasjey/screens/search.dart';
 import 'package:rootasjey/screens/signin.dart';
 import 'package:rootasjey/screens/signup.dart';
 import 'package:rootasjey/state/colors.dart';
-import 'package:rootasjey/state/user_state.dart';
-import 'package:rootasjey/utils/app_local_storage.dart';
-import 'package:rootasjey/utils/brightness.dart';
+import 'package:rootasjey/state/user.dart';
+import 'package:rootasjey/utils/app_storage.dart';
+import 'package:unicons/unicons.dart';
+
+import '../utils/brightness.dart';
 
 class HomeAppBar extends StatefulWidget {
   final bool automaticallyImplyLeading;
@@ -142,63 +143,109 @@ class _HomeAppBarState extends State<HomeAppBar> {
   }
 
   /// Switch from dark to light and vice-versa.
-  Widget themeButton() {
+
+  /// Switch from dark to light and vice-versa.
+  Widget brightnessButton() {
     IconData iconBrightness = Icons.brightness_auto;
-    final autoBrightness = appLocalStorage.getAutoBrightness();
+    final autoBrightness = appStorage.getAutoBrightness();
 
     if (!autoBrightness) {
-      final currentBrightness = appLocalStorage.getBrightness();
+      final currentBrightness = appStorage.getBrightness();
 
       iconBrightness = currentBrightness == Brightness.dark
           ? Icons.brightness_2
           : Icons.brightness_low;
     }
 
-    return PopupMenuButton<String>(
-      icon: Icon(
-        iconBrightness,
-        color: stateColors.foreground,
+    return Padding(
+      padding: const EdgeInsets.only(right: 20.0),
+      child: PopupMenuButton<String>(
+        icon: Icon(
+          iconBrightness,
+          color: stateColors.foreground.withOpacity(0.6),
+        ),
+        tooltip: "brightness".tr(),
+        onSelected: (value) {
+          if (value == 'auto') {
+            BrightnessUtils.setAutoBrightness(context);
+            return;
+          }
+
+          final brightness =
+              value == 'dark' ? Brightness.dark : Brightness.light;
+
+          BrightnessUtils.setBrightness(context, brightness);
+        },
+        itemBuilder: (context) {
+          final autoBrightness = appStorage.getAutoBrightness();
+          final brightness = autoBrightness ? null : appStorage.getBrightness();
+
+          final primary = stateColors.primary;
+          final basic = stateColors.foreground;
+
+          return [
+            PopupMenuItem(
+              value: 'auto',
+              child: ListTile(
+                leading: Icon(Icons.brightness_auto),
+                title: Text(
+                  "auto".tr(),
+                  style: TextStyle(
+                    color: autoBrightness ? primary : basic,
+                  ),
+                ),
+                trailing: autoBrightness
+                    ? Icon(
+                        UniconsLine.check,
+                        color: primary,
+                      )
+                    : null,
+              ),
+            ),
+            PopupMenuItem(
+              value: 'dark',
+              child: ListTile(
+                leading: Icon(Icons.brightness_2),
+                title: Text(
+                  "dark".tr(),
+                  style: TextStyle(
+                    color: brightness == Brightness.dark ? primary : basic,
+                  ),
+                ),
+                trailing: brightness == Brightness.dark
+                    ? Icon(
+                        UniconsLine.check,
+                        color: primary,
+                      )
+                    : null,
+              ),
+            ),
+            PopupMenuItem(
+              value: 'light',
+              child: ListTile(
+                leading: Icon(Icons.brightness_5),
+                title: Text(
+                  "light".tr(),
+                  style: TextStyle(
+                    color: brightness == Brightness.light ? primary : basic,
+                  ),
+                ),
+                trailing: brightness == Brightness.light
+                    ? Icon(
+                        UniconsLine.check,
+                        color: primary,
+                      )
+                    : null,
+              ),
+            ),
+          ];
+        },
       ),
-      tooltip: 'Brightness',
-      onSelected: (value) {
-        if (value == 'auto') {
-          setAutoBrightness(context: context);
-          return;
-        }
-
-        final brightness = value == 'dark' ? Brightness.dark : Brightness.light;
-
-        setBrightness(brightness: brightness, context: context);
-        DynamicTheme.of(context).setBrightness(brightness);
-      },
-      itemBuilder: (context) => [
-        const PopupMenuItem(
-          value: 'auto',
-          child: ListTile(
-            leading: Icon(Icons.brightness_auto),
-            title: Text('Auto'),
-          ),
-        ),
-        const PopupMenuItem(
-          value: 'dark',
-          child: ListTile(
-            leading: Icon(Icons.brightness_2),
-            title: Text('Dark'),
-          ),
-        ),
-        const PopupMenuItem(
-          value: 'light',
-          child: ListTile(
-            leading: Icon(Icons.brightness_5),
-            title: Text('Light'),
-          ),
-        ),
-      ],
     );
   }
 
   Widget userAvatar({bool isNarrow = true}) {
-    final arrStr = userState.username.split(' ');
+    final arrStr = stateUser.username.split(' ');
     String initials = '';
 
     if (arrStr.length > 0) {
@@ -229,7 +276,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
         ),
         onSelected: (value) {
           if (value == 'signout') {
-            userSignOut(context: context);
+            stateUser.signOut(context: context);
             return;
           }
 
@@ -339,23 +386,23 @@ class _HomeAppBarState extends State<HomeAppBar> {
     return Observer(builder: (context) {
       final children = <Widget>[];
 
-      if (userState.isUserConnected) {
+      if (stateUser.isUserConnected) {
         isNarrow
             ? children.addAll([
                 userAvatar(isNarrow: isNarrow),
-                themeButton(),
+                brightnessButton(),
               ])
             : children.addAll([
                 userAvatar(isNarrow: isNarrow),
                 addNewPostButton(),
                 searchButton(),
-                themeButton(),
+                brightnessButton(),
               ]);
       } else {
         isNarrow
             ? children.addAll([
                 userSigninMenu(showSearch: true),
-                themeButton(),
+                brightnessButton(),
               ])
             : children.addAll([
                 if (widget.onPressedRightButton != null)
@@ -366,7 +413,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
                   ),
                 userSigninMenu(),
                 searchButton(),
-                themeButton(),
+                brightnessButton(),
               ]);
       }
 
@@ -376,7 +423,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
           right: 10.0,
         ),
         child: Row(
-          textDirection: TextDirection.rtl,
+          mainAxisAlignment: MainAxisAlignment.end,
           children: children,
         ),
       );

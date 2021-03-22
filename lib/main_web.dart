@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:rootasjey/screens/home.dart';
 import 'package:rootasjey/state/colors.dart';
-import 'package:rootasjey/utils/app_local_storage.dart';
+import 'package:rootasjey/utils/app_storage.dart';
 import 'package:rootasjey/utils/brightness.dart';
-import 'package:supercharged/supercharged.dart';
 
 class MainWeb extends StatefulWidget {
   @override
@@ -28,23 +27,19 @@ class _MainWebState extends State<MainWeb> {
   }
 
   void loadBrightness() {
-    final autoBrightness = appLocalStorage.getAutoBrightness();
+    final autoBrightness = appStorage.getAutoBrightness();
 
     if (!autoBrightness) {
-      final brightness = appLocalStorage.getBrightness();
+      final brightness = appStorage.getBrightness();
 
-      setBrightness(
-        brightness: brightness,
-        context: context,
-        duration: 500.milliseconds,
+      BrightnessUtils.setBrightness(
+        context,
+        brightness,
       );
 
       return;
     }
 
-    setAutoBrightness(
-      context: context,
-      duration: 500.milliseconds,
-    );
+    BrightnessUtils.setAutoBrightness(context);
   }
 }

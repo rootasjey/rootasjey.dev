@@ -1,20 +1,23 @@
 import 'dart:async';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/actions/users.dart';
+import 'package:rootasjey/components/fade_in_x.dart';
+import 'package:rootasjey/components/fade_in_y.dart';
 import 'package:rootasjey/components/home_app_bar.dart';
-import 'package:rootasjey/screens/home.dart';
-import 'package:rootasjey/screens/signin.dart';
+import 'package:rootasjey/components/loading_animation.dart';
 import 'package:rootasjey/state/colors.dart';
-import 'package:rootasjey/state/user_state.dart';
-import 'package:rootasjey/utils/app_local_storage.dart';
-import 'package:rootasjey/utils/auth_guards.dart';
+import 'package:rootasjey/state/user.dart';
 import 'package:rootasjey/utils/snack.dart';
 import 'package:supercharged/supercharged.dart';
 
 class Signup extends StatefulWidget {
+  final void Function(bool isAuthenticated) onSignupResult;
+
+  const Signup({Key key, this.onSignupResult}) : super(key: key);
+
   @override
   _SignupState createState() => _SignupState();
 }
@@ -39,38 +42,18 @@ class _SignupState extends State<Signup> {
 
   bool isCheckingAuth = false;
   bool isCompleted = false;
-  bool isLoading = false;
+  bool isSigningUp = false;
 
   final usernameNode = FocusNode();
   final passwordNode = FocusNode();
   final confirmPasswordNode = FocusNode();
 
   @override
-  initState() {
-    super.initState();
-    checkAuthGuard();
-  }
-
-  void checkAuthGuard() async {
-    final result = await canNavigate(context: context);
-
-    if (result) {
-      userState.setUserConnected();
-
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (_) {
-            return Home();
-          },
-        ),
-      );
-    }
-  }
-
-  @override
   void dispose() {
     super.dispose();
+    usernameNode.dispose();
     passwordNode.dispose();
+    confirmPasswordNode.dispose();
   }
 
   @override
@@ -78,24 +61,26 @@ class _SignupState extends State<Signup> {
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          HomeAppBar(),
-          SliverList(
-            delegate: SliverChildListDelegate.fixed([
-              Column(
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      top: 60.0,
-                      bottom: 300.0,
-                    ),
-                    child: SizedBox(
+          HomeAppBar(
+            automaticallyImplyLeading: true,
+          ),
+          SliverPadding(
+            padding: const EdgeInsets.only(
+              top: 100.0,
+              bottom: 300.0,
+            ),
+            sliver: SliverList(
+              delegate: SliverChildListDelegate.fixed([
+                Column(
+                  children: <Widget>[
+                    SizedBox(
                       width: 300.0,
                       child: body(),
                     ),
-                  ),
-                ],
-              ),
-            ]),
+                  ],
+                ),
+              ]),
+            ),
           ),
         ],
       ),
@@ -103,123 +88,82 @@ class _SignupState extends State<Signup> {
   }
 
   Widget body() {
-    if (isCompleted) {
-      return completedView();
+    if (isSigningUp) {
+      return Padding(
+        padding: const EdgeInsets.only(top: 80.0),
+        child: LoadingAnimation(
+          textTitle: 'Signing up...',
+        ),
+      );
     }
 
-    if (isLoading) {
-      return loadingView();
-    }
-
-    return idleView();
-  }
-
-  Widget completedView() {
-    return Column(
-      children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.only(top: 100.0),
-          child: Icon(
-            Icons.check,
-            size: 100.0,
-            color: Colors.green,
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(top: 30.0),
-          child: Text(
-            'Your account has been successfully created!',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 30.0,
-              fontWeight: FontWeight.w300,
-            ),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(
-            top: 20.0,
-          ),
-          child: OutlinedButton(
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) {
-                    return Home();
-                  },
-                ),
-              );
-            },
-            child: Opacity(
-              opacity: .6,
-              child: Text(
-                'Home',
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
+    return idleContainer();
   }
 
   Widget emailInput() {
-    return Padding(
-      padding: EdgeInsets.only(top: 60.0),
-      child: TextFormField(
-        autofocus: true,
-        onFieldSubmitted: (_) => usernameNode.nextFocus(),
-        decoration: InputDecoration(
-          icon: Icon(Icons.email),
-          labelText: 'Email',
-        ),
-        keyboardType: TextInputType.emailAddress,
-        onChanged: (value) async {
-          email = value;
+    return FadeInY(
+      delay: 0.milliseconds,
+      beginY: 50.0,
+      child: Padding(
+        padding: EdgeInsets.only(top: 60.0),
+        child: TextFormField(
+          autofocus: true,
+          textInputAction: TextInputAction.next,
+          decoration: InputDecoration(
+            icon: Icon(Icons.email),
+            labelText: 'Email',
+          ),
+          keyboardType: TextInputType.emailAddress,
+          onChanged: (value) async {
+            email = value;
 
-          setState(() {
-            isCheckingEmail = true;
-          });
-
-          final isWellFormatted = checkEmailFormat(email);
-
-          if (!isWellFormatted) {
             setState(() {
-              isCheckingEmail = false;
-              emailErrorMessage = 'The value is not a valid email address';
+              isCheckingEmail = true;
             });
 
-            return;
-          }
+            final isWellFormatted = UsersActions.checkEmailFormat(email);
 
-          if (emailTimer != null) {
-            emailTimer.cancel();
-            emailTimer = null;
-          }
-
-          emailTimer = Timer(1.seconds, () async {
-            final isAvailable = await checkEmailAvailability(email);
-            if (!isAvailable) {
+            if (!isWellFormatted) {
               setState(() {
                 isCheckingEmail = false;
-                emailErrorMessage = 'This email address is not available';
+                emailErrorMessage = 'The value is not a valid email address';
               });
 
               return;
             }
 
-            setState(() {
-              isCheckingEmail = false;
-              emailErrorMessage = '';
-            });
-          });
-        },
-        validator: (value) {
-          if (value.isEmpty) {
-            return 'Email cannot be empty';
-          }
+            if (emailTimer != null) {
+              emailTimer.cancel();
+              emailTimer = null;
+            }
 
-          return null;
-        },
+            emailTimer = Timer(1.seconds, () async {
+              final isAvailable =
+                  await UsersActions.checkEmailAvailability(email);
+              if (!isAvailable) {
+                setState(() {
+                  isCheckingEmail = false;
+                  emailErrorMessage = 'This email address is not available';
+                });
+
+                return;
+              }
+
+              setState(() {
+                isCheckingEmail = false;
+                emailErrorMessage = '';
+              });
+            });
+          },
+          onFieldSubmitted: (_) => usernameNode.requestFocus(),
+          validator: (value) {
+            if (value.isEmpty) {
+              return 'Email cannot be empty';
+            }
+
+            return null;
+          },
+        ),
       ),
     );
   }
@@ -237,55 +181,59 @@ class _SignupState extends State<Signup> {
     );
   }
 
-  Widget emailProgress() {
-    return Container(
-      padding: const EdgeInsets.only(
-        left: 40.0,
-      ),
-      child: LinearProgressIndicator(),
-    );
-  }
-
   Widget header() {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.only(
-            right: 20.0,
-          ),
-          child: IconButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            icon: Icon(Icons.arrow_back),
-          ),
-        ),
-        Column(
-          children: <Widget>[
-            Padding(
-              padding: EdgeInsets.only(bottom: 10.0),
-              child: Text(
-                'Sign Up',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 40.0,
-                  fontWeight: FontWeight.w500,
-                ),
+        if (context.router.stack.length > 1)
+          FadeInX(
+            beginX: 10.0,
+            delay: 100.milliseconds,
+            child: Padding(
+              padding: const EdgeInsets.only(
+                right: 20.0,
+              ),
+              child: IconButton(
+                onPressed: () => context.router.pop(),
+                icon: Icon(Icons.arrow_back),
               ),
             ),
-            Opacity(
-              opacity: .6,
-              child: Text('Create a new account'),
-            ),
-          ],
+          ),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              FadeInY(
+                beginY: 50.0,
+                child: Padding(
+                  padding: EdgeInsets.only(bottom: 10.0),
+                  child: Text(
+                    'Sign Up',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 25.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+              FadeInY(
+                delay: 200.milliseconds,
+                beginY: 50.0,
+                child: Opacity(
+                  opacity: 0.6,
+                  child: Text('Create a new account'),
+                ),
+              ),
+            ],
+          ),
         ),
       ],
     );
   }
 
-  Widget idleView() {
+  Widget idleContainer() {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         header(),
         emailInput(),
@@ -302,93 +250,88 @@ class _SignupState extends State<Signup> {
     );
   }
 
-  Widget loadingView() {
-    return Padding(
-      padding: const EdgeInsets.only(top: 150.0),
-      child: Column(children: [
-        CircularProgressIndicator(),
-        Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Text(
-            'Creating your account...',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 25.0,
-              fontWeight: FontWeight.w300,
-            ),
-          ),
-        ),
-      ]),
+  Widget emailProgress() {
+    return Container(
+      padding: const EdgeInsets.only(
+        left: 40.0,
+      ),
+      child: LinearProgressIndicator(),
     );
   }
 
   Widget nameInput() {
-    return Padding(
-      padding: EdgeInsets.only(top: 30.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          TextFormField(
-            focusNode: usernameNode,
-            decoration: InputDecoration(
-              icon: Icon(
-                Icons.person_outline,
+    return FadeInY(
+      delay: 100.milliseconds,
+      beginY: 50.0,
+      child: Padding(
+        padding: EdgeInsets.only(top: 30.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            TextFormField(
+              focusNode: usernameNode,
+              decoration: InputDecoration(
+                icon: Icon(
+                  Icons.person_outline,
+                ),
+                labelText: 'Username',
               ),
-              labelText: 'Username',
-            ),
-            textInputAction: TextInputAction.next,
-            onChanged: (value) async {
-              setState(() {
-                username = value;
-                isCheckingName = true;
-              });
-
-              final isWellFormatted = checkUsernameFormat(username);
-
-              if (!isWellFormatted) {
+              textInputAction: TextInputAction.next,
+              onChanged: (value) async {
                 setState(() {
-                  isCheckingName = false;
-                  nameErrorMessage = username.length < 3
-                      ? 'Please use at least 3 characters'
-                      : 'Please use alpha-numerical (A-Z, 0-9) characters and underscore (_)';
+                  username = value;
+                  isCheckingName = true;
                 });
 
-                return;
-              }
+                final isWellFormatted =
+                    UsersActions.checkUsernameFormat(username);
 
-              if (nameTimer != null) {
-                nameTimer.cancel();
-                nameTimer = null;
-              }
-
-              nameTimer = Timer(1.seconds, () async {
-                final isAvailable = await checkNameAvailability(username);
-
-                if (!isAvailable) {
+                if (!isWellFormatted) {
                   setState(() {
                     isCheckingName = false;
-                    nameErrorMessage = 'This name is not available';
+                    nameErrorMessage = username.length < 3
+                        ? 'Please use at least 3 characters'
+                        : 'Please use alpha-numerical (A-Z, 0-9) characters and underscore (_)';
                   });
 
                   return;
                 }
 
-                setState(() {
-                  isCheckingName = false;
-                  nameErrorMessage = '';
-                });
-              });
-            },
-            onFieldSubmitted: (_) => passwordNode.nextFocus(),
-            validator: (value) {
-              if (value.isEmpty) {
-                return 'name cannot be empty';
-              }
+                if (nameTimer != null) {
+                  nameTimer.cancel();
+                  nameTimer = null;
+                }
 
-              return null;
-            },
-          ),
-        ],
+                nameTimer = Timer(1.seconds, () async {
+                  final isAvailable =
+                      await UsersActions.checkUsernameAvailability(username);
+
+                  if (!isAvailable) {
+                    setState(() {
+                      isCheckingName = false;
+                      nameErrorMessage = 'This name is not available';
+                    });
+
+                    return;
+                  }
+
+                  setState(() {
+                    isCheckingName = false;
+                    nameErrorMessage = '';
+                  });
+                });
+              },
+              onFieldSubmitted: (_) => passwordNode.requestFocus(),
+              validator: (value) {
+                if (value.isEmpty) {
+                  return 'name cannot be empty';
+                }
+
+                return null;
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -416,109 +359,124 @@ class _SignupState extends State<Signup> {
   }
 
   Widget passwordInput() {
-    return Padding(
-      padding: EdgeInsets.only(top: 30.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          TextFormField(
-            focusNode: passwordNode,
-            decoration: InputDecoration(
-              icon: Icon(Icons.lock_outline),
-              labelText: 'Password',
-            ),
-            obscureText: true,
-            onChanged: (value) {
-              if (value.length == 0) {
-                return;
-              }
-              password = value;
-            },
-            validator: (value) {
-              if (value.isEmpty) {
-                return 'Password cannot be empty';
-              }
+    return FadeInY(
+      delay: 200.milliseconds,
+      beginY: 50.0,
+      child: Padding(
+        padding: EdgeInsets.only(top: 30.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            TextFormField(
+              focusNode: passwordNode,
+              textInputAction: TextInputAction.next,
+              decoration: InputDecoration(
+                icon: Icon(Icons.lock_outline),
+                labelText: 'Password',
+              ),
+              obscureText: true,
+              onChanged: (value) {
+                if (value.length == 0) {
+                  return;
+                }
+                password = value;
+              },
+              onFieldSubmitted: (_) => confirmPasswordNode.requestFocus(),
+              validator: (value) {
+                if (value.isEmpty) {
+                  return 'Password cannot be empty';
+                }
 
-              return null;
-            },
-          ),
-        ],
+                return null;
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Widget confirmPasswordInput() {
-    return Padding(
-      padding: EdgeInsets.only(top: 30.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          TextFormField(
-            focusNode: confirmPasswordNode,
-            decoration: InputDecoration(
-              icon: Icon(Icons.lock_outline),
-              labelText: 'Confirm password',
+    return FadeInY(
+      delay: 400.milliseconds,
+      beginY: 50.0,
+      child: Padding(
+        padding: EdgeInsets.only(top: 30.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            TextFormField(
+              focusNode: confirmPasswordNode,
+              decoration: InputDecoration(
+                icon: Icon(Icons.lock_outline),
+                labelText: 'Confirm password',
+              ),
+              obscureText: true,
+              onChanged: (value) {
+                if (value.length == 0) {
+                  return;
+                }
+                confirmPassword = value;
+              },
+              onFieldSubmitted: (value) => signUpProcess(),
+              validator: (value) {
+                if (value.isEmpty) {
+                  return 'Confirm password cannot be empty';
+                }
+
+                if (confirmPassword != password) {
+                  return "Passwords don't match";
+                }
+
+                return null;
+              },
             ),
-            obscureText: true,
-            onChanged: (value) {
-              if (value.length == 0) {
-                return;
-              }
-              confirmPassword = value;
-            },
-            validator: (value) {
-              if (value.isEmpty) {
-                return 'Confirm password cannot be empty';
-              }
-
-              if (confirmPassword != password) {
-                return "Passwords don't match";
-              }
-
-              return null;
-            },
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
   Widget validationButton() {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.only(top: 60.0),
-        child: ElevatedButton(
-          onPressed: () => createAccount(),
-          style: ElevatedButton.styleFrom(
-            primary: stateColors.primary,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(
-                Radius.circular(7.0),
+    return FadeInY(
+      delay: 500.milliseconds,
+      beginY: 50.0,
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.only(top: 60.0),
+          child: ElevatedButton(
+            onPressed: () => signUpProcess(),
+            style: ElevatedButton.styleFrom(
+              primary: stateColors.accent,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(7.0),
+                ),
               ),
             ),
-          ),
-          child: Container(
-            width: 250.0,
-            padding: const EdgeInsets.all(15.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text(
-                  'SIGN UP',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18.0,
-                    fontWeight: FontWeight.w300,
+            child: Container(
+              width: 250.0,
+              padding: const EdgeInsets.all(15.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text(
+                    'SIGN UP',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 15.0,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 20.0),
-                  child: Icon(
-                    Icons.arrow_forward,
-                    color: Colors.white,
+                  Padding(
+                    padding: const EdgeInsets.only(left: 20.0),
+                    child: Icon(
+                      Icons.arrow_forward,
+                      color: Colors.white,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
@@ -527,177 +485,160 @@ class _SignupState extends State<Signup> {
   }
 
   Widget alreadyHaveAccountButton() {
-    return Center(
-      child: ElevatedButton(
-          onPressed: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (_) {
-                  return Signin();
-                },
-              ),
-            );
-          },
+    return FadeInY(
+      delay: 700.milliseconds,
+      beginY: 50.0,
+      child: Padding(
+        padding: const EdgeInsets.only(top: 8.0),
+        child: ElevatedButton(
+          onPressed: () => context.router.navigate(SigninRoute()),
           child: Opacity(
-            opacity: .6,
+            opacity: 0.6,
             child: Text(
               "I already have an account",
               style: TextStyle(
                 decoration: TextDecoration.underline,
               ),
             ),
-          )),
+          ),
+        ),
+      ),
     );
   }
 
-  void createAccount() async {
+  void signUpProcess() async {
     if (!inputValuesOk()) {
       return;
     }
 
-    setState(() {
-      isLoading = true;
-    });
+    setState(() => isSigningUp = true);
 
     if (!await valuesAvailabilityCheck()) {
       setState(() {
-        isLoading = false;
+        isSigningUp = false;
       });
 
-      showSnack(
+      Snack.e(
         context: context,
         message: 'The email or name entered is not available.',
-        type: SnackType.error,
       );
 
       return;
     }
 
+    // ?NOTE: Triming because of TAB key on Desktop insert blank spaces.
+    email = email.trim();
+    password = password.trim();
+
     try {
-      // ?NOTE: Triming because of TAB key on Desktop.
-      final result = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: email.trim(),
-        password: password.trim(),
+      final respCreateAcc = await UsersActions.createAccount(
+        email: email,
+        username: username,
+        password: password,
       );
 
-      final user = result.user;
+      if (!respCreateAcc.success) {
+        final exception = respCreateAcc.error;
 
-      if (user == null) {
-        setState(() {
-          isLoading = false;
-        });
+        setState(() => isSigningUp = false);
 
-        showSnack(
+        Snack.e(
           context: context,
-          message:
-              'An occurred while creating your account. Please try again or contact us if the problem persists.',
-          type: SnackType.error,
+          message: "[code: ${exception.code}] - ${exception.message}",
         );
 
         return;
       }
 
-      final name = username.isNotEmpty
-          ? username
-          : email.substring(0, email.indexOf('@'));
-
-      await user.updateProfile(displayName: name);
-
-      await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
-        'email': user.email,
-        'name': name,
-      });
-
-      appLocalStorage.setCredentials(
+      final userCred = await stateUser.signin(
         email: email,
         password: password,
       );
 
-      userState.setUserConnected();
-
       setState(() {
-        isLoading = false;
+        isSigningUp = false;
         isCompleted = true;
       });
 
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (_) {
-            return Home();
-          },
-        ),
-      );
+      if (userCred == null) {
+        Snack.e(
+          context: context,
+          message: "There was an issue while connecting to your new account.",
+        );
+
+        return;
+      }
+
+      // PushNotifications.linkAuthUser(respCreateAcc.user.id);
+
+      if (widget.onSignupResult != null) {
+        widget.onSignupResult(true);
+        return;
+      }
+
+      context.router.navigate(HomeRoute());
     } catch (error) {
       debugPrint(error.toString());
 
-      setState(() {
-        isLoading = false;
-      });
+      setState(() => isSigningUp = false);
 
-      showSnack(
+      Snack.e(
         context: context,
-        message:
-            'An occurred while creating your account. Please try again or contact us if the problem persists.',
-        type: SnackType.error,
+        message: "An occurred while creating your account. "
+            "Please try again or contact us if the problem persists.",
       );
     }
   }
 
   Future<bool> valuesAvailabilityCheck() async {
-    final isEmailOk = await checkEmailAvailability(email);
-    final isNameOk = await checkNameAvailability(username);
-
+    final isEmailOk = await UsersActions.checkEmailAvailability(email);
+    final isNameOk = await UsersActions.checkUsernameAvailability(username);
     return isEmailOk && isNameOk;
   }
 
   bool inputValuesOk() {
     if (password.isEmpty || confirmPassword.isEmpty) {
-      showSnack(
+      Snack.e(
         context: context,
         message: "Password cannot be empty",
-        type: SnackType.error,
       );
 
       return false;
     }
 
     if (confirmPassword != password) {
-      showSnack(
+      Snack.e(
         context: context,
         message: "Password & confirm passwords don't match",
-        type: SnackType.error,
       );
 
       return false;
     }
 
     if (username.isEmpty) {
-      showSnack(
+      Snack.e(
         context: context,
         message: "Name cannot be empty",
-        type: SnackType.error,
       );
 
       return false;
     }
 
-    if (!checkEmailFormat(email)) {
-      showSnack(
+    if (!UsersActions.checkEmailFormat(email)) {
+      Snack.e(
         context: context,
         message: "The value specified is not a valid email",
-        type: SnackType.error,
       );
 
       return false;
     }
 
-    if (!checkUsernameFormat(username)) {
-      showSnack(
+    if (!UsersActions.checkUsernameFormat(username)) {
+      Snack.e(
         context: context,
         message: username.length < 3
             ? 'Please use at least 3 characters'
             : 'Please use alpha-numerical (A-Z, 0-9) characters and underscore (_)',
-        type: SnackType.error,
       );
 
       return false;

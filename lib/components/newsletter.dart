@@ -104,7 +104,7 @@ class _NewsletterState extends State<Newsletter> {
                 onChanged: (value) {
                   email = value;
 
-                  final isWellFormatted = checkEmailFormat(email);
+                  final isWellFormatted = UsersActions.checkEmailFormat(email);
                   errorText = isWellFormatted
                       ? null
                       : 'The value entered is not a valid email address';
@@ -116,7 +116,7 @@ class _NewsletterState extends State<Newsletter> {
                     return 'Email cannot be empty';
                   }
 
-                  final isWellFormatted = checkEmailFormat(email);
+                  final isWellFormatted = UsersActions.checkEmailFormat(email);
                   if (!isWellFormatted) {
                     return 'The value entered is not a valid email address';
                   }
@@ -203,13 +203,12 @@ class _NewsletterState extends State<Newsletter> {
   }
 
   void subscribe() async {
-    final isWellFormatted = checkEmailFormat(email);
+    final isWellFormatted = UsersActions.checkEmailFormat(email);
 
     if (!isWellFormatted) {
-      showSnack(
+      Snack.e(
         context: context,
         message: 'The value entered is not a valid email address',
-        type: SnackType.error,
       );
 
       return;

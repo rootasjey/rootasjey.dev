@@ -1,43 +1,95 @@
-import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
-import 'package:rootasjey/state/colors.dart';
-import 'package:supercharged/supercharged.dart';
+import 'package:rootasjey/utils/flash_helper.dart';
+import 'package:unicons/unicons.dart';
 
-enum SnackType { error, info, success }
+/// Snack bar class.
+/// Helper to quickly dispay different snacks types.
+class Snack {
+  /// Show a snack with an error message.
+  static Future e({
+    @required BuildContext context,
+    Duration duration = const Duration(seconds: 5),
+    Widget icon,
+    @required String message,
+    Widget primaryAction,
+    String title = '',
+  }) {
+    Widget _icon;
 
-Future showSnack({
-  BuildContext context,
-  Function onTap,
-  String message,
-  String title,
-  SnackType type,
-}) {
-  Color color;
-  if (type == SnackType.error) { color = Colors.red; }
-  else if (type == SnackType.success) { color =  Colors.green; }
-  else { color = stateColors.softBackground; }
+    if (icon != null) {
+      _icon = icon;
+    } else {
+      _icon = Icon(
+        UniconsLine.times,
+        color: Colors.pink,
+      );
+    }
 
-  IconData iconData;
-  if (type == SnackType.error) { iconData = Icons.error; }
-  else if (type == SnackType.success) { iconData = Icons.check_circle; }
-  else { iconData = Icons.info; }
+    return FlashHelper.groundedBottom(
+      context,
+      title: title,
+      message: message,
+      icon: _icon,
+      primaryAction: primaryAction,
+    );
+  }
 
-  return Flushbar(
-    backgroundColor: color,
-    duration: 5.seconds,
-    icon: Icon(
-      iconData,
-      color: Colors.white,
-    ),
-    title: title,
-    messageText: Text(
-      message,
-      overflow: TextOverflow.ellipsis,
-      maxLines: 5,
-      style: TextStyle(
-        color: Colors.white,
-      ),
-    ),
-    onTap: onTap,
-  ).show(context);
+  /// Show a snack with an informative message.
+  static Future i({
+    @required BuildContext context,
+    Duration duration = const Duration(seconds: 5),
+    Widget icon,
+    @required String message,
+    Widget primaryAction,
+    String title = '',
+  }) {
+    Widget _icon;
+
+    if (icon != null) {
+      _icon = icon;
+    } else {
+      _icon = Icon(
+        UniconsLine.info,
+        color: Colors.blue,
+      );
+    }
+
+    return FlashHelper.groundedBottom(
+      context,
+      title: title,
+      message: message,
+      icon: _icon,
+      primaryAction: primaryAction,
+    );
+  }
+
+  /// Show a snack with a success message.
+  static Future s({
+    @required BuildContext context,
+    Duration duration = const Duration(seconds: 5),
+    Widget icon,
+    @required String message,
+    Widget primaryAction,
+    String title = '',
+  }) {
+    Widget _icon;
+
+    if (icon != null) {
+      _icon = icon;
+    } else {
+      _icon = Icon(
+        UniconsLine.check,
+        color: Colors.green,
+      );
+    }
+
+    return FlashHelper.groundedBottom(
+      context,
+      title: title,
+      message: message,
+      icon: _icon,
+      duration: duration,
+      primaryAction: primaryAction,
+    );
+  }
 }

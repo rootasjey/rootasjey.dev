@@ -1,14 +1,13 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/home_app_bar.dart';
 import 'package:rootasjey/screens/home.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/utils/auth_guards.dart';
+import 'package:rootasjey/utils/cloud.dart';
 import 'package:rootasjey/utils/snack.dart';
 import 'package:rootasjey/utils/texts.dart';
 import 'package:supercharged/supercharged.dart';
@@ -943,24 +942,16 @@ class _EditProjectState extends State<EditProject> {
 
       debugPrint(error.toSring());
 
-      showSnack(
+      Snack.e(
         context: context,
         message: "There was an error while saving.\n${error.toString()}",
-        type: SnackType.error,
       );
     }
   }
 
   Future fetchContent() async {
     try {
-      final callable = CloudFunctions(
-        app: Firebase.app(),
-        region: 'europe-west3',
-      ).getHttpsCallable(
-        functionName: 'projects-fetch',
-      );
-
-      final response = await callable.call({
+      final response = await Cloud.fun('projects-fetch').call({
         'projectId': widget.projectId,
         'jwt': jwt,
       });
@@ -976,11 +967,10 @@ class _EditProjectState extends State<EditProject> {
       });
       debugPrint(error.toSring());
 
-      showSnack(
+      Snack.e(
         context: context,
         message:
             "There was an error while fetching the project.\n${error.toString()}",
-        type: SnackType.error,
       );
     }
   }
@@ -1014,12 +1004,7 @@ class _EditProjectState extends State<EditProject> {
     setState(() => isSaving = true);
 
     try {
-      final callable = CloudFunctions(
-        app: Firebase.app(),
-        region: 'europe-west3',
-      ).getHttpsCallable(functionName: 'projects-save ');
-
-      final resp = await callable.call({
+      final resp = await Cloud.fun('projects-save').call({
         'projectId': projectSnapshot.id,
         'jwt': jwt,
         'content': content,

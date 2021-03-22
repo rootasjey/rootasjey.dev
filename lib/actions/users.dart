@@ -1,91 +1,88 @@
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:rootasjey/screens/home.dart';
-import 'package:rootasjey/state/colors.dart';
-import 'package:rootasjey/state/user_state.dart';
-import 'package:rootasjey/utils/app_local_storage.dart';
+import 'package:rootasjey/types/cloud_func_error.dart';
+import 'package:rootasjey/types/create_account_resp.dart';
+import 'package:rootasjey/utils/cloud.dart';
 
-Future<bool> checkEmailAvailability(String email) async {
-  try {
-    final callable = CloudFunctions(
-      app: Firebase.app(),
-      region: 'europe-west3',
-    ).getHttpsCallable(
-      functionName: 'users-checkEmailAvailability',
-    );
+/// Network interface for user's actions.
+class UsersActions {
+  /// Check email availability accross the app.
+  static Future<bool> checkEmailAvailability(String email) async {
+    try {
+      final resp = await Cloud.fun('users-checkEmailAvailability')
+          .call({'email': email});
 
-    final resp = await callable.call({'email': email});
-    final isOk = resp.data['isAvailable'] as bool;
-    return isOk;
-
-  } catch (error) {
-    debugPrint(error.toString());
-    return false;
+      return resp.data['isAvailable'] as bool;
+    } on FirebaseFunctionsException catch (exception) {
+      debugPrint("[code: ${exception.code}] - ${exception.message}");
+      return false;
+    } catch (error) {
+      debugPrint(error.toString());
+      return false;
+    }
   }
-}
 
-/// Return true if the value is a valid email.
-bool checkEmailFormat(String email) {
-  return RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]{2,}")
-    .hasMatch(email);
-}
+  /// Create a new account.
+  static Future<CreateAccountResp> createAccount({
+    @required String email,
+    @required String username,
+    @required String password,
+  }) async {
+    try {
+      final response = await Cloud.fun('users-createAccount').call({
+        'username': username,
+        'password': password,
+        'email': email,
+      });
 
-Future<bool> checkNameAvailability(String username) async {
-  try {
-    final callable = CloudFunctions(
-      app: Firebase.app(),
-      region: 'europe-west3',
-    ).getHttpsCallable(
-      functionName: 'users-checkNameAvailability',
-    );
-
-    final resp = await callable.call({'name': username});
-    final isOk = resp.data['isAvailable'] as bool;
-    return isOk;
-
-  } catch (error) {
-    debugPrint(error.toString());
-    return false;
+      return CreateAccountResp.fromJSON(response.data);
+    } on FirebaseFunctionsException catch (exception) {
+      debugPrint("[code: ${exception.code}] - ${exception.message}");
+      return CreateAccountResp(
+        success: false,
+        error: CloudFuncError(
+          code: exception.code,
+          message: exception.message,
+        ),
+      );
+    } catch (error) {
+      return CreateAccountResp(
+        success: false,
+        error: CloudFuncError(
+          code: '',
+          message: error.toString(),
+        ),
+      );
+    }
   }
-}
 
-bool checkUsernameFormat(String username) {
-  final str = RegExp("[a-zA-Z0-9_]{3,}").stringMatch(username);
-  return username == str;
-}
-
-void userSignOut({BuildContext context, bool autoNavigateAfter = true,}) async {
-  await appLocalStorage.clearUserAuthData();
-  await FirebaseAuth.instance.signOut();
-  userState.setUserDisconnected();
-  userState.signOut();
-
-  if (autoNavigateAfter) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) {
-          return Home();
-        },
-      ),
-    );
+  /// Check email format.
+  static bool checkEmailFormat(String email) {
+    return RegExp(
+            r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]{2,}")
+        .hasMatch(email);
   }
-}
 
-Future userGetAndSetAvatarUrl(UserCredential userCredential) async {
-  final user = await FirebaseFirestore.instance
-    .collection('users')
-    .doc(userCredential.user.uid)
-    .get();
+  /// Check username availability.
+  static Future<bool> checkUsernameAvailability(String username) async {
+    try {
+      final resp = await Cloud.fun('users-checkUsernameAvailability')
+          .call({'name': username});
+      return resp.data['isAvailable'] as bool;
+    } on FirebaseFunctionsException catch (exception) {
+      debugPrint("[code: ${exception.code}] - ${exception.message}");
+      return false;
+    } catch (error) {
+      debugPrint(error.toString());
+      return false;
+    }
+  }
 
-  final data = user.data();
-  final avatarUrl = data['urls']['image'];
-
-  String imageName = avatarUrl.replaceFirst('local:', '');
-  String path = 'assets/images/$imageName-${stateColors.iconExt}.png';
-
-  userState.setAvatarUrl(path);
+  /// Check username format.
+  /// Must contains 3 or more alpha-numerical characters.
+  static bool checkUsernameFormat(String username) {
+    final str = RegExp("[a-zA-Z0-9_]{3,}").stringMatch(username);
+    return username == str;
+  }
 }

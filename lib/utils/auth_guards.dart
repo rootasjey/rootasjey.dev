@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:rootasjey/screens/signin.dart';
-import 'package:rootasjey/state/user_state.dart';
+import 'package:rootasjey/state/user.dart';
 
 Future<bool> canNavigate({
   @required BuildContext context,
 }) async {
   try {
-    final userAuth = await userState.userAuth;
-    if (userAuth != null) { return true; }
+    final userAuth = stateUser.userAuth;
+    if (userAuth != null) {
+      return true;
+    }
 
     Navigator.of(context).push(
       MaterialPageRoute(
@@ -18,7 +20,6 @@ Future<bool> canNavigate({
     );
 
     return false;
-
   } catch (error) {
     debugPrint(error.toString());
     Navigator.of(context).push(

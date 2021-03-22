@@ -1,8 +1,6 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cloud_functions/cloud_functions.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -11,6 +9,7 @@ import 'package:markdown/markdown.dart' as markdown;
 import 'package:rootasjey/components/home_app_bar.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/types/post.dart';
+import 'package:rootasjey/utils/cloud.dart';
 import 'package:rootasjey/utils/snack.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:supercharged/supercharged.dart';
@@ -323,7 +322,7 @@ class _PostPageState extends State<PostPage> {
             width: textWidth,
             fontSize: FontSize(24.0),
             fontWeight: FontWeight.w200,
-            lineHeight: 1.5,
+            lineHeight: LineHeight.number(1.5),
             margin: EdgeInsets.only(
               top: 40.0,
               bottom: 20.0,
@@ -332,7 +331,7 @@ class _PostPageState extends State<PostPage> {
           'ul': Style(
             fontSize: FontSize(22.0),
             fontWeight: FontWeight.w300,
-            lineHeight: 1.6,
+            lineHeight: LineHeight.number(1.6),
           ),
           'img': Style(
             alignment: Alignment.center,
@@ -464,14 +463,8 @@ class _PostPageState extends State<PostPage> {
     setState(() => isLoading = true);
 
     try {
-      final callable = CloudFunctions(
-        app: Firebase.app(),
-        region: 'europe-west3',
-      ).getHttpsCallable(
-        functionName: 'posts-fetch',
-      );
-
-      final response = await callable.call({'postId': widget.postId});
+      final response =
+          await Cloud.fun('posts-fetch').call({'postId': widget.postId});
       final markdownData = response.data['post'];
 
       postData = markdown.markdownToHtml(markdownData);
@@ -481,10 +474,9 @@ class _PostPageState extends State<PostPage> {
       setState(() => isLoading = false);
       debugPrint(error.toString());
 
-      showSnack(
+      Snack.e(
         context: context,
         message: "Couldn't get post's content. Try again or contact us.",
-        type: SnackType.error,
       );
     }
   }

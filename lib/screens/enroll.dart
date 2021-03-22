@@ -1,8 +1,6 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cloud_functions/cloud_functions.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/actions/users.dart';
 import 'package:rootasjey/components/features/additional_web.dart';
@@ -12,6 +10,7 @@ import 'package:rootasjey/components/home_app_bar.dart';
 import 'package:rootasjey/components/outline_toggle_button.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/types/enums.dart';
+import 'package:rootasjey/utils/cloud.dart';
 import 'package:rootasjey/utils/snack.dart';
 import 'package:verbal_expressions/verbal_expressions.dart';
 import 'package:supercharged/supercharged.dart';
@@ -671,7 +670,7 @@ class _EnrollState extends State<Enroll> {
           onChanged: (value) {
             email = value;
 
-            final isOk = checkEmailFormat(value);
+            final isOk = UsersActions.checkEmailFormat(value);
 
             setState(() {
               emailErrorMessage =
@@ -1621,14 +1620,8 @@ class _EnrollState extends State<Enroll> {
     setState(() => isCheckingDomain = true);
 
     try {
-      final callable = CloudFunctions(
-        app: Firebase.app(),
-        region: 'europe-west3',
-      ).getHttpsCallable(
-        functionName: 'enroll-domainCheck',
-      );
-
-      final resp = await callable.call({'domain': domainName});
+      final resp =
+          await Cloud.fun('enroll-domainCheck').call({'domain': domainName});
 
       setState(() {
         isDomainFree = resp.data['isFree'] as bool;
@@ -1651,21 +1644,19 @@ class _EnrollState extends State<Enroll> {
 
   bool areRequiredFieldsFilled() {
     if (selectedStartDate == null && selectedEndDate == null) {
-      showSnack(
+      Snack.e(
         context: context,
         message: "Please select a start or an end date for your project.",
-        type: SnackType.error,
       );
 
       return false;
     }
 
     if ((email == null || email.isEmpty) && (phone == null || phone.isEmpty)) {
-      showSnack(
+      Snack.e(
         context: context,
         message:
             "Please fill a way to contact you. Either your email or your phone number.",
-        type: SnackType.error,
       );
 
       return false;
@@ -1673,11 +1664,10 @@ class _EnrollState extends State<Enroll> {
 
     if (meetInPerson &&
         (country == null || country.isEmpty || city == null || city.isEmpty)) {
-      showSnack(
+      Snack.e(
         context: context,
         message:
             "Please fill your country and your city names if you want to meet us.",
-        type: SnackType.error,
       );
 
       return false;

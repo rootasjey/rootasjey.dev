@@ -1,14 +1,13 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/home_app_bar.dart';
 import 'package:rootasjey/screens/home.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/utils/auth_guards.dart';
+import 'package:rootasjey/utils/cloud.dart';
 import 'package:rootasjey/utils/snack.dart';
 import 'package:supercharged/supercharged.dart';
 
@@ -410,24 +409,16 @@ class _EditPostState extends State<EditPost> {
 
       debugPrint(error.toSring());
 
-      showSnack(
+      Snack.e(
         context: context,
         message: "There was an error while saving.\n${error.toString()}",
-        type: SnackType.error,
       );
     }
   }
 
   Future fetchContent() async {
     try {
-      final callable = CloudFunctions(
-        app: Firebase.app(),
-        region: 'europe-west3',
-      ).getHttpsCallable(
-        functionName: 'posts-fetch',
-      );
-
-      final response = await callable.call({
+      final response = await Cloud.fun('posts-fetch').call({
         'postId': widget.postId,
         'jwt': jwt,
       });
@@ -443,11 +434,10 @@ class _EditPostState extends State<EditPost> {
       });
       debugPrint(error.toSring());
 
-      showSnack(
+      Snack.e(
         context: context,
-        message:
-            "There was an error while fetching the post.\n${error.toString()}",
-        type: SnackType.error,
+        message: "There was an error while fetching the post.\n"
+            "${error.toString()}",
       );
     }
   }
@@ -493,12 +483,7 @@ class _EditPostState extends State<EditPost> {
     setState(() => isSaving = true);
 
     try {
-      final callable = CloudFunctions(
-        app: Firebase.app(),
-        region: 'europe-west3',
-      ).getHttpsCallable(functionName: 'posts-save ');
-
-      final resp = await callable.call({
+      final resp = await Cloud.fun('posts-save').call({
         'postId': postSnapshot.id,
         'jwt': jwt,
         'content': postContent,

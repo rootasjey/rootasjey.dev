@@ -1,12 +1,12 @@
-import 'package:cloud_functions/cloud_functions.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:rootasjey/screens/post_page.dart';
 import 'package:rootasjey/types/post_headline.dart';
+import 'package:rootasjey/utils/cloud.dart';
 
 class PubPostCard extends StatefulWidget {
-  @required final PostHeadline postHeadline;
+  @required
+  final PostHeadline postHeadline;
   final double size;
 
   PubPostCard({
@@ -56,17 +56,13 @@ class _PubPostCardState extends State<PubPostCard> {
               onTap: navigateToPost,
               onHover: (isHover) {
                 setState(() {
-                  elevation = isHover
-                    ? 4.0
-                    : 8.0;
+                  elevation = isHover ? 4.0 : 8.0;
                 });
               },
-              child: Stack(
-                children: [
-                  // background(postHeadline),
-                  texts(postHeadline),
-                ]
-              ),
+              child: Stack(children: [
+                // background(postHeadline),
+                texts(postHeadline),
+              ]),
             ),
           ),
         ),
@@ -76,7 +72,9 @@ class _PubPostCardState extends State<PubPostCard> {
 
   Widget background(PostHeadline postHeadline) {
     if (postHeadline.urls.image.isEmpty) {
-      return Padding(padding: EdgeInsets.zero,);
+      return Padding(
+        padding: EdgeInsets.zero,
+      );
     }
 
     return Image.network(
@@ -109,7 +107,6 @@ class _PubPostCardState extends State<PubPostCard> {
               ),
             ),
           ),
-
           Padding(
             padding: const EdgeInsets.only(
               top: 10.0,
@@ -126,7 +123,6 @@ class _PubPostCardState extends State<PubPostCard> {
               ),
             ),
           ),
-
           Padding(
             padding: const EdgeInsets.only(
               top: 20.0,
@@ -166,15 +162,8 @@ class _PubPostCardState extends State<PubPostCard> {
 
   void fetchAuthorName() async {
     try {
-      final callable = CloudFunctions(
-        app: Firebase.app(),
-        region: 'europe-west3',
-      ).getHttpsCallable(
-        functionName: 'posts-fetchAuthorName',
-      );
-
-      final resp = await callable
-        .call({ 'authorId': widget.postHeadline.author });
+      final resp = await Cloud.fun('posts-fetchAuthorName')
+          .call({'authorId': widget.postHeadline.author});
 
       // ?NOTE: Prevent setState if not mounted.
       // This is due to each card having its own fetch & state,
@@ -182,12 +171,13 @@ class _PubPostCardState extends State<PubPostCard> {
       // So, lifecycle states are called in this order:
       // iniState --> dispose --> (fetch) setState
       // which is wrong cause the widget is no longer in the tree.
-      if (!mounted) { return; }
+      if (!mounted) {
+        return;
+      }
 
       setState(() {
         authorName = resp.data['authorName'];
       });
-
     } catch (error) {
       debugPrint(error.toString());
     }

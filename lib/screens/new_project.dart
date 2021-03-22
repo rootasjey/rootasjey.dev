@@ -1,14 +1,13 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/home_app_bar.dart';
 import 'package:rootasjey/state/colors.dart';
-import 'package:rootasjey/state/user_state.dart';
+import 'package:rootasjey/state/user.dart';
 import 'package:rootasjey/utils/auth_guards.dart';
+import 'package:rootasjey/utils/cloud.dart';
 import 'package:rootasjey/utils/snack.dart';
 import 'package:supercharged/supercharged.dart';
 
@@ -253,7 +252,7 @@ class _NewProjectState extends State<NewProject> {
     setState(() => isSaving = true);
 
     try {
-      final userAuth = await userState.userAuth;
+      final userAuth = stateUser.userAuth;
 
       projectSnapshot =
           await FirebaseFirestore.instance.collection('projects').add({
@@ -299,10 +298,9 @@ class _NewProjectState extends State<NewProject> {
       setState(() => isSaving = false);
       debugPrint(error.toSring());
 
-      showSnack(
+      Snack.e(
         context: context,
         message: "There was an error while saving.\n${error.toString()}",
-        type: SnackType.error,
       );
     }
   }
@@ -332,12 +330,7 @@ class _NewProjectState extends State<NewProject> {
     setState(() => isSaving = true);
 
     try {
-      final callable = CloudFunctions(
-        app: Firebase.app(),
-        region: 'europe-west3',
-      ).getHttpsCallable(functionName: 'projects-save');
-
-      final resp = await callable.call({
+      final resp = await Cloud.fun('projects-save').call({
         'projectId': projectSnapshot.id,
         'jwt': jwt,
         'content': projectContent,

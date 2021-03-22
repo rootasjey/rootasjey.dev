@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:rootasjey/state/colors.dart';
@@ -121,7 +122,7 @@ class _WebAdditionalFeaturesState extends State<WebAdditionalFeatures> {
             ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: featuresDataList.mapIndexed((data, index) {
+            children: featuresDataList.mapIndexed((index, data) {
               return featureCard(
                 index: index,
                 label: data['label'],

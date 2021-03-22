@@ -13,46 +13,67 @@ class Urls {
   String youtube;
 
   Urls({
-    this.behance    = '',
-    this.bitbucket  = '',
-    this.dribbble   = '',
-    this.facebook   = '',
-    this.github     = '',
-    this.gitlab     = '',
-    this.image      = '',
-    this.instagram  = '',
-    this.twitter    = '',
-    this.website    = '',
-    this.wikipedia  = '',
-    this.youtube    = '',
+    this.behance = '',
+    this.bitbucket = '',
+    this.dribbble = '',
+    this.facebook = '',
+    this.github = '',
+    this.gitlab = '',
+    this.image = '',
+    this.instagram = '',
+    this.twitter = '',
+    this.website = '',
+    this.wikipedia = '',
+    this.youtube = '',
   });
 
   bool areLinksEmpty() {
-    return behance.isEmpty  &&
-      dribbble.isEmpty      &&
-      facebook.isEmpty      &&
-      github.isEmpty        &&
-      gitlab.isEmpty        &&
-      instagram.isEmpty     &&
-      twitter.isEmpty       &&
-      website.isEmpty       &&
-      wikipedia.isEmpty     &&
-      youtube.isEmpty;
+    return behance.isEmpty &&
+        dribbble.isEmpty &&
+        facebook.isEmpty &&
+        github.isEmpty &&
+        gitlab.isEmpty &&
+        instagram.isEmpty &&
+        twitter.isEmpty &&
+        website.isEmpty &&
+        wikipedia.isEmpty &&
+        youtube.isEmpty;
   }
 
-  factory Urls.fromJSON(Map<String, dynamic> json) {
+  factory Urls.empty() {
     return Urls(
-      behance     : json['behance']     ?? '',
-      dribbble    : json['dribbble']    ?? '',
-      facebook    : json['facebook']    ?? '',
-      github      : json['github']      ?? '',
-      gitlab      : json['gitlab']      ?? '',
-      image       : json['image']       ?? '',
-      instagram   : json['instagram']   ?? '',
-      twitter     : json['twitter']     ?? '',
-      website     : json['website']     ?? '',
-      wikipedia   : json['wikipedia']   ?? '',
-      youtube     : json['youtube']     ?? '',
+      behance: '',
+      bitbucket: '',
+      dribbble: '',
+      facebook: '',
+      github: '',
+      gitlab: '',
+      image: '',
+      instagram: '',
+      twitter: '',
+      website: '',
+      wikipedia: '',
+      youtube: '',
+    );
+  }
+
+  factory Urls.fromJSON(Map<String, dynamic> data) {
+    if (data == null) {
+      return Urls.empty();
+    }
+
+    return Urls(
+      behance: data['behance'] ?? '',
+      dribbble: data['dribbble'] ?? '',
+      facebook: data['facebook'] ?? '',
+      github: data['github'] ?? '',
+      gitlab: data['gitlab'] ?? '',
+      image: data['image'] ?? '',
+      instagram: data['instagram'] ?? '',
+      twitter: data['twitter'] ?? '',
+      website: data['website'] ?? '',
+      wikipedia: data['wikipedia'] ?? '',
+      youtube: data['youtube'] ?? '',
     );
   }
 }

@@ -1,17 +1,24 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/actions/users.dart';
-import 'package:rootasjey/components/home_app_bar.dart';
-import 'package:rootasjey/screens/home.dart';
-import 'package:rootasjey/screens/me.dart';
-import 'package:rootasjey/screens/signup.dart';
+import 'package:rootasjey/components/fade_in_x.dart';
+import 'package:rootasjey/components/fade_in_y.dart';
+import 'package:rootasjey/components/loading_animation.dart';
+import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/state/colors.dart';
-import 'package:rootasjey/state/user_state.dart';
-import 'package:rootasjey/utils/app_local_storage.dart';
-import 'package:rootasjey/utils/auth_guards.dart';
+import 'package:rootasjey/state/user.dart';
+import 'package:rootasjey/utils/app_logger.dart';
+import 'package:rootasjey/utils/app_storage.dart';
 import 'package:rootasjey/utils/snack.dart';
+import 'package:supercharged/supercharged.dart';
+
+import '../components/home_app_bar.dart';
 
 class Signin extends StatefulWidget {
+  final void Function(bool isAuthenticated) onSigninResult;
+
+  const Signin({Key key, this.onSigninResult}) : super(key: key);
+
   @override
   _SigninState createState() => _SigninState();
 }
@@ -22,20 +29,18 @@ class _SigninState extends State<Signin> {
 
   bool isCheckingAuth = false;
   bool isCompleted = false;
-  bool isLoading = false;
+  bool isConnecting = false;
 
   final passwordNode = FocusNode();
-
-  @override
-  void initState() {
-    super.initState();
-    canNavigate(context: context);
-  }
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
 
   @override
   void dispose() {
-    super.dispose();
+    passwordController.dispose();
+    emailController.dispose();
     passwordNode.dispose();
+    super.dispose();
   }
 
   @override
@@ -43,24 +48,26 @@ class _SigninState extends State<Signin> {
     return Scaffold(
       body: CustomScrollView(
         slivers: <Widget>[
-          HomeAppBar(),
-          SliverList(
-            delegate: SliverChildListDelegate.fixed([
-              Column(
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      top: 100.0,
-                      bottom: 300.0,
-                    ),
-                    child: SizedBox(
+          HomeAppBar(
+            automaticallyImplyLeading: true,
+          ),
+          SliverPadding(
+            padding: const EdgeInsets.only(
+              top: 100.0,
+              bottom: 300.0,
+            ),
+            sliver: SliverList(
+              delegate: SliverChildListDelegate.fixed([
+                Column(
+                  children: <Widget>[
+                    SizedBox(
                       width: 320.0,
                       child: body(),
                     ),
-                  ),
-                ],
-              ),
-            ]),
+                  ],
+                ),
+              ]),
+            ),
           ),
         ],
       ),
@@ -68,65 +75,16 @@ class _SigninState extends State<Signin> {
   }
 
   Widget body() {
-    if (isCompleted) {
-      return completedView();
+    if (isConnecting) {
+      return LoadingAnimation(
+        textTitle: 'Signing in...',
+      );
     }
 
-    if (isLoading) {
-      return loadingView();
-    }
-
-    return idleView();
+    return idleContainer();
   }
 
-  Widget completedView() {
-    return Column(
-      children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.only(top: 100.0),
-          child: Icon(
-            Icons.check,
-            size: 100.0,
-            color: Colors.green,
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(top: 30.0),
-          child: Text(
-            'You are now logged in!',
-            style: TextStyle(
-              fontSize: 30.0,
-              fontWeight: FontWeight.w300,
-            ),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(
-            top: 20.0,
-          ),
-          child: OutlinedButton(
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) {
-                    return Home();
-                  },
-                ),
-              );
-            },
-            child: Opacity(
-              opacity: .6,
-              child: Text(
-                'Home',
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget idleView() {
+  Widget idleContainer() {
     return Column(
       children: <Widget>[
         header(),
@@ -140,50 +98,52 @@ class _SigninState extends State<Signin> {
   }
 
   Widget emailInput() {
-    return Padding(
-      padding: EdgeInsets.only(
-        top: 80.0,
-        left: 15.0,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          TextFormField(
-            autofocus: true,
-            decoration: InputDecoration(
-              icon: Icon(Icons.email),
-              labelText: 'Email',
-            ),
-            keyboardType: TextInputType.emailAddress,
-            onChanged: (value) {
-              email = value;
-            },
-            validator: (value) {
-              if (value.isEmpty) {
-                return 'Email login cannot be empty';
-              }
+    return FadeInY(
+      delay: 100.milliseconds,
+      beginY: 50.0,
+      child: Padding(
+        padding: EdgeInsets.only(
+          top: 80.0,
+          left: 15.0,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            TextFormField(
+              autofocus: true,
+              controller: emailController,
+              textInputAction: TextInputAction.next,
+              decoration: InputDecoration(
+                icon: Icon(Icons.email),
+                labelText: 'Email',
+              ),
+              keyboardType: TextInputType.emailAddress,
+              onChanged: (value) {
+                email = value;
+              },
+              onFieldSubmitted: (value) => passwordNode.requestFocus(),
+              validator: (value) {
+                if (value.isEmpty) {
+                  return 'Email login cannot be empty';
+                }
 
-              return null;
-            },
-          ),
-        ],
+                return null;
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Widget forgotPassword() {
-    return TextButton(
-        onPressed: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (_) {
-                return Me();
-              },
-            ),
-          );
-        },
+    return FadeInY(
+      delay: 100.milliseconds,
+      beginY: 50.0,
+      child: TextButton(
+        onPressed: () => context.router.push(ForgotPasswordRoute()),
         child: Opacity(
-          opacity: .6,
+          opacity: 0.6,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
@@ -195,40 +155,56 @@ class _SigninState extends State<Signin> {
               ),
             ],
           ),
-        ));
+        ),
+      ),
+    );
   }
 
   Widget header() {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.only(
-            right: 20.0,
+        if (context.router.stack.length > 1)
+          FadeInX(
+            beginX: 10.0,
+            delay: 200.milliseconds,
+            child: Padding(
+              padding: const EdgeInsets.only(
+                right: 20.0,
+              ),
+              child: IconButton(
+                onPressed: () => context.router.pop(),
+                icon: Icon(Icons.arrow_back),
+              ),
+            ),
           ),
-          child: IconButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            icon: Icon(Icons.arrow_back),
-          ),
-        ),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Padding(
-              padding: EdgeInsets.only(bottom: 10.0),
-              child: Text(
-                'Sign In',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 40.0,
-                  fontWeight: FontWeight.w500,
+            FadeInY(
+              beginY: 50.0,
+              child: Padding(
+                padding: EdgeInsets.only(bottom: 10.0),
+                child: Text(
+                  'Sign In',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 25.0,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),
-            Opacity(
-              opacity: .6,
-              child: Text('Connect to your existing account'),
+            FadeInY(
+              delay: 300.milliseconds,
+              beginY: 50.0,
+              child: Opacity(
+                opacity: 0.6,
+                child: Text(
+                  'Connect to your existing account',
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
             )
           ],
         ),
@@ -236,125 +212,108 @@ class _SigninState extends State<Signin> {
     );
   }
 
-  Widget loadingView() {
-    return Padding(
-      padding: const EdgeInsets.only(top: 150.0),
-      child: Column(children: [
-        CircularProgressIndicator(),
-        Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Text(
-            'Connecting to your account...',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 25.0,
-              fontWeight: FontWeight.w300,
-            ),
-          ),
-        ),
-      ]),
+  Widget noAccountButton() {
+    return FadeInY(
+      delay: 400.milliseconds,
+      beginY: 50.0,
+      child: Padding(
+        padding: const EdgeInsets.only(top: 8.0),
+        child: TextButton(
+            onPressed: () {
+              context.router.navigate(
+                SignupRoute(onSignupResult: widget.onSigninResult),
+              );
+            },
+            child: Opacity(
+              opacity: 0.6,
+              child: Text(
+                "I don't have an account",
+                style: TextStyle(
+                  decoration: TextDecoration.underline,
+                ),
+              ),
+            )),
+      ),
     );
   }
 
-  Widget noAccountButton() {
-    return TextButton(
-        onPressed: () async {
-          await Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (_) {
-                return Signup();
+  Widget passwordInput() {
+    return FadeInY(
+      delay: 100.milliseconds,
+      beginY: 50.0,
+      child: Padding(
+        padding: EdgeInsets.only(
+          top: 30.0,
+          left: 15.0,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            TextFormField(
+              focusNode: passwordNode,
+              controller: passwordController,
+              decoration: InputDecoration(
+                icon: Icon(Icons.lock_outline),
+                labelText: 'Password',
+              ),
+              obscureText: true,
+              onChanged: (value) {
+                password = value;
+              },
+              onFieldSubmitted: (value) => signInProcess(),
+              validator: (value) {
+                if (value.isEmpty) {
+                  return 'Password login cannot be empty';
+                }
+
+                return null;
               },
             ),
-          );
-
-          if (userState.isUserConnected) {
-            await Navigator.of(context).pushReplacement(
-              MaterialPageRoute(
-                builder: (_) {
-                  return Home();
-                },
-              ),
-            );
-          }
-        },
-        child: Opacity(
-          opacity: .6,
-          child: Text(
-            "I don't have an account",
-            style: TextStyle(
-              decoration: TextDecoration.underline,
-            ),
-          ),
-        ));
-  }
-
-  Widget passwordInput() {
-    return Padding(
-      padding: EdgeInsets.only(
-        top: 30.0,
-        left: 15.0,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          TextFormField(
-            focusNode: passwordNode,
-            decoration: InputDecoration(
-              icon: Icon(Icons.lock_outline),
-              labelText: 'Password',
-            ),
-            obscureText: true,
-            onChanged: (value) {
-              password = value;
-            },
-            validator: (value) {
-              if (value.isEmpty) {
-                return 'Password login cannot be empty';
-              }
-
-              return null;
-            },
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
   Widget validationButton() {
-    return Padding(
-      padding: const EdgeInsets.only(top: 80.0),
-      child: ElevatedButton(
-        onPressed: () => signIn(),
-        style: ElevatedButton.styleFrom(
-          primary: stateColors.primary,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(
-              Radius.circular(7.0),
+    return FadeInY(
+      delay: 200.milliseconds,
+      beginY: 50.0,
+      child: Padding(
+        padding: const EdgeInsets.only(top: 80.0),
+        child: ElevatedButton(
+          onPressed: () => signInProcess(),
+          style: ElevatedButton.styleFrom(
+            primary: stateColors.accent,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(
+                Radius.circular(7.0),
+              ),
             ),
           ),
-        ),
-        child: Container(
-          width: 250.0,
-          padding: const EdgeInsets.all(15.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text(
-                'SIGN IN',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18.0,
-                  fontWeight: FontWeight.w300,
+          child: Container(
+            width: 250.0,
+            padding: const EdgeInsets.all(15.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  'SIGN IN',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 15.0,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 20.0),
-                child: Icon(
-                  Icons.arrow_forward,
-                  color: Colors.white,
-                ),
-              )
-            ],
+                Padding(
+                  padding: const EdgeInsets.only(left: 20.0),
+                  child: Icon(
+                    Icons.arrow_forward,
+                    color: Colors.white,
+                  ),
+                )
+              ],
+            ),
           ),
         ),
       ),
@@ -362,21 +321,19 @@ class _SigninState extends State<Signin> {
   }
 
   bool inputValuesOk() {
-    if (!checkEmailFormat(email)) {
-      showSnack(
+    if (!UsersActions.checkEmailFormat(email)) {
+      Snack.e(
         context: context,
         message: "The value specified is not a valid email",
-        type: SnackType.error,
       );
 
       return false;
     }
 
     if (password.isEmpty) {
-      showSnack(
+      Snack.e(
         context: context,
         message: "Password cannot be empty",
-        type: SnackType.error,
       );
 
       return false;
@@ -385,61 +342,61 @@ class _SigninState extends State<Signin> {
     return true;
   }
 
-  void signIn() async {
+  void signInProcess() async {
     if (!inputValuesOk()) {
       return;
     }
 
     setState(() {
-      isLoading = true;
+      isConnecting = true;
     });
 
     try {
-      final authResult = await FirebaseAuth.instance
-          .signInWithEmailAndPassword(email: email, password: password);
+      final userCred = await stateUser.signin(
+        email: email,
+        password: password,
+      );
 
-      if (authResult.user == null) {
-        showSnack(
+      if (userCred == null) {
+        appLogger.d("empty user");
+        setState(() {
+          isConnecting = false;
+        });
+
+        Snack.e(
           context: context,
-          type: SnackType.error,
           message: 'The password is incorrect or the user does not exists.',
         );
 
         return;
       }
 
-      appLocalStorage.setCredentials(
+      appStorage.setCredentials(
         email: email,
         password: password,
       );
 
-      userState.setUserConnected();
+      isConnecting = false;
+      isCompleted = true;
 
-      setState(() {
-        isLoading = false;
-        isCompleted = true;
-      });
+      // If this callback is defined,
+      // this page is call from AuthGuard.
+      if (widget.onSigninResult != null) {
+        widget.onSigninResult(true);
+        return;
+      }
 
-      await userGetAndSetAvatarUrl(authResult);
-
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (_) {
-            return Home();
-          },
-        ),
-      );
+      context.router.navigate(HomeRoute());
     } catch (error) {
-      debugPrint(error.toString());
+      appLogger.d(error);
 
-      showSnack(
+      Snack.e(
         context: context,
-        type: SnackType.error,
         message: 'The password is incorrect or the user does not exists.',
       );
 
       setState(() {
-        isLoading = false;
+        isConnecting = false;
       });
     }
   }

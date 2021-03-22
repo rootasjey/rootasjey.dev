@@ -363,7 +363,7 @@ class _ContactState extends State<Contact> {
           return errorMessages['emptyEmail'];
         }
 
-        if (!checkEmailFormat(email)) {
+        if (!UsersActions.checkEmailFormat(email)) {
           return errorMessages['invalidEmail'];
         }
 
@@ -551,7 +551,7 @@ class _ContactState extends State<Contact> {
       return errorMessages['emptyEmail'];
     }
 
-    if (!checkEmailFormat(email)) {
+    if (!UsersActions.checkEmailFormat(email)) {
       return errorMessages['invalidEmail'];
     }
 
@@ -592,11 +592,10 @@ class _ContactState extends State<Contact> {
 
   void sendMessage() async {
     if (!formKey.currentState.validate()) {
-      showSnack(
+      Snack.e(
         context: context,
-        message:
-            'There are invalid field in the form. Please check all field and click send again.',
-        type: SnackType.error,
+        message: "There are invalid field in the form. "
+            "Please check all field and click send again.",
       );
 
       return;
@@ -622,11 +621,10 @@ class _ContactState extends State<Contact> {
     } catch (error) {
       debugPrint(error.toString());
 
-      showSnack(
+      Snack.e(
         context: context,
-        message:
-            "Couldn't send your message. Please check your connection and try again.",
-        type: SnackType.error,
+        message: "Couldn't send your message. "
+            "Please check your connection and try again.",
       );
     }
   }

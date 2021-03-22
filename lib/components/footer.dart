@@ -5,7 +5,7 @@ import 'package:rootasjey/screens/about.dart';
 import 'package:rootasjey/screens/contact.dart';
 import 'package:rootasjey/screens/home.dart';
 import 'package:rootasjey/screens/me.dart';
-import 'package:rootasjey/state/user_state.dart';
+import 'package:rootasjey/state/user.dart';
 import 'package:rootasjey/utils/snack.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -238,10 +238,9 @@ class _FooterState extends State<Footer> {
       }));
     }
 
-    showSnack(
+    Snack.s(
       context: context,
       message: 'Your language has been successfully updated.',
-      type: SnackType.success,
     );
   }
 
@@ -264,17 +263,16 @@ class _FooterState extends State<Footer> {
           .collection('users')
           .doc(userAuth.uid)
           .update({
-        'lang': userState.lang,
+        'lang': stateUser.lang,
       });
 
       notifyLangSuccess();
     } catch (error) {
       debugPrint(error.toString());
 
-      showSnack(
+      Snack.e(
         context: context,
         message: 'Sorry, there was an error while updating your language.',
-        type: SnackType.error,
       );
     }
   }

@@ -1,52 +1,56 @@
-import 'package:dynamic_theme/dynamic_theme.dart';
+import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/state/colors.dart';
-import 'package:rootasjey/utils/app_local_storage.dart';
+import 'package:rootasjey/utils/app_storage.dart';
 
-/// Refresh current theme with auto brightness.
-void setAutoBrightness({
-  @required BuildContext context,
-  Duration duration = const Duration(seconds: 0),
-}) {
-  final now = DateTime.now();
+class BrightnessUtils {
+  /// Refresh current theme with auto brightness.
+  static void setAutoBrightness(BuildContext context) {
+    final now = DateTime.now();
 
-  Brightness brightness = Brightness.light;
+    Brightness brightness = Brightness.light;
 
-  if (now.hour < 6 || now.hour > 17) {
-    brightness = Brightness.dark;
+    if (now.hour < 6 || now.hour > 17) {
+      brightness = Brightness.dark;
+    }
+
+    if (brightness == Brightness.dark) {
+      AdaptiveTheme.of(context).setDark();
+    } else {
+      AdaptiveTheme.of(context).setLight();
+    }
+
+    stateColors.refreshTheme(brightness);
+    appStorage.setAutoBrightness(true);
   }
 
-  Future.delayed(
-    duration,
-    () {
-      try {
-        DynamicTheme.of(context).setBrightness(brightness);
-        stateColors.refreshTheme(brightness: brightness);
-        appLocalStorage.setAutoBrightness(true);
-
-      } catch (error) {
-        debugPrint(error.toString());
-      }
+  /// Refresh current theme with a specific brightness.
+  static void setBrightness(BuildContext context, Brightness brightness) {
+    if (brightness == Brightness.dark) {
+      AdaptiveTheme.of(context).setDark();
+    } else {
+      AdaptiveTheme.of(context).setLight();
     }
-  );
-}
 
-/// Refresh current theme with auto brightness.
-void setBrightness({
-  @required BuildContext context,
-  @required Brightness brightness,
-  Duration duration = const Duration(seconds: 0),
-}) {
+    stateColors.refreshTheme(brightness);
+    appStorage.setAutoBrightness(false);
+    appStorage.setBrightness(brightness);
+  }
 
-  stateColors.refreshTheme(brightness: brightness);
+  static Brightness getCurrent() {
+    final autoBrightness = appStorage.getAutoBrightness();
 
-  Future.delayed(
-    duration,
-    () {
-      DynamicTheme.of(context).setBrightness(brightness);
-
-      appLocalStorage.setAutoBrightness(false);
-      appLocalStorage.setBrightness(brightness);
+    if (!autoBrightness) {
+      return appStorage.getBrightness();
     }
-  );
+
+    Brightness brightness = Brightness.light;
+    final now = DateTime.now();
+
+    if (now.hour < 6 || now.hour > 17) {
+      brightness = Brightness.dark;
+    }
+
+    return brightness;
+  }
 }

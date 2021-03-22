@@ -9,6 +9,21 @@ part of 'colors.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$StateColors on StateColorsBase, Store {
+  final _$accentAtom = Atom(name: 'StateColorsBase.accent');
+
+  @override
+  Color get accent {
+    _$accentAtom.reportRead();
+    return super.accent;
+  }
+
+  @override
+  set accent(Color value) {
+    _$accentAtom.reportWrite(value, super.accent, () {
+      super.accent = value;
+    });
+  }
+
   final _$appBackgroundAtom = Atom(name: 'StateColorsBase.appBackground');
 
   @override
@@ -54,6 +69,21 @@ mixin _$StateColors on StateColorsBase, Store {
     });
   }
 
+  final _$tileBackgroundAtom = Atom(name: 'StateColorsBase.tileBackground');
+
+  @override
+  Color get tileBackground {
+    _$tileBackgroundAtom.reportRead();
+    return super.tileBackground;
+  }
+
+  @override
+  set tileBackground(Color value) {
+    _$tileBackgroundAtom.reportWrite(value, super.tileBackground, () {
+      super.tileBackground = value;
+    });
+  }
+
   final _$iconExtAtom = Atom(name: 'StateColorsBase.iconExt');
 
   @override
@@ -88,11 +118,22 @@ mixin _$StateColors on StateColorsBase, Store {
       ActionController(name: 'StateColorsBase');
 
   @override
-  void refreshTheme({@required Brightness brightness}) {
+  void setAccentColor(Color color) {
+    final _$actionInfo = _$StateColorsBaseActionController.startAction(
+        name: 'StateColorsBase.setAccentColor');
+    try {
+      return super.setAccentColor(color);
+    } finally {
+      _$StateColorsBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void refreshTheme(Brightness brightness) {
     final _$actionInfo = _$StateColorsBaseActionController.startAction(
         name: 'StateColorsBase.refreshTheme');
     try {
-      return super.refreshTheme(brightness: brightness);
+      return super.refreshTheme(brightness);
     } finally {
       _$StateColorsBaseActionController.endAction(_$actionInfo);
     }
@@ -101,9 +142,11 @@ mixin _$StateColors on StateColorsBase, Store {
   @override
   String toString() {
     return '''
+accent: ${accent},
 appBackground: ${appBackground},
 background: ${background},
 foreground: ${foreground},
+tileBackground: ${tileBackground},
 iconExt: ${iconExt},
 softBackground: ${softBackground}
     ''';

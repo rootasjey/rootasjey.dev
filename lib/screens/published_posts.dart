@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:rootasjey/components/post_card.dart';
 import 'package:rootasjey/components/sliver_empty_view.dart';
 import 'package:rootasjey/screens/edit_post.dart';
-import 'package:rootasjey/state/user_state.dart';
+import 'package:rootasjey/state/user.dart';
 import 'package:rootasjey/types/post.dart';
 import 'package:rootasjey/utils/auth_guards.dart';
 
@@ -160,7 +160,7 @@ class _PublishedPostsState extends State<PublishedPosts> {
     });
 
     try {
-      final userAuth = await userState.userAuth;
+      final userAuth = stateUser.userAuth;
       final uid = userAuth.uid;
 
       final snapshot = await FirebaseFirestore.instance
