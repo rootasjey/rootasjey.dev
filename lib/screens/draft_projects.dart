@@ -1,11 +1,11 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/project_card.dart';
 import 'package:rootasjey/components/sliver_empty_view.dart';
-import 'package:rootasjey/screens/edit_project.dart';
+import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/state/user.dart';
 import 'package:rootasjey/types/project.dart';
-import 'package:rootasjey/utils/auth_guards.dart';
 
 class DraftProjects extends StatefulWidget {
   @override
@@ -26,15 +26,6 @@ class _DraftProjectsState extends State<DraftProjects> {
   @override
   void initState() {
     super.initState();
-    initAndCheck();
-  }
-
-  void initAndCheck() async {
-    final result = await canNavigate(context: context);
-    if (!result) {
-      return;
-    }
-
     fetch();
   }
 
@@ -62,14 +53,8 @@ class _DraftProjectsState extends State<DraftProjects> {
 
           return ProjectCard(
             onTap: () async {
-              await Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) {
-                    return EditProject(
-                      projectId: project.id,
-                    );
-                  },
-                ),
+              await context.router.push(
+                EditProjectRoute(projectId: project.id),
               );
 
               fetch();

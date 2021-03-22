@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:rootasjey/components/home_app_bar.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/state/user.dart';
-import 'package:rootasjey/utils/auth_guards.dart';
 import 'package:rootasjey/utils/cloud.dart';
 import 'package:rootasjey/utils/snack.dart';
 import 'package:supercharged/supercharged.dart';
@@ -39,7 +38,7 @@ class _NewPostState extends State<NewPost> {
   @override
   void initState() {
     super.initState();
-    initAndCheck();
+    createPost();
   }
 
   @override
@@ -286,15 +285,6 @@ class _NewPostState extends State<NewPost> {
         message: "There was an error while saving.\n${error.toString()}",
       );
     }
-  }
-
-  void initAndCheck() async {
-    final result = await canNavigate(context: context);
-    if (!result) {
-      return;
-    }
-
-    createPost();
   }
 
   void saveTitle() async {

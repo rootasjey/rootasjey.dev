@@ -1,11 +1,11 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/post_card.dart';
 import 'package:rootasjey/components/sliver_empty_view.dart';
-import 'package:rootasjey/screens/edit_post.dart';
+import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/state/user.dart';
 import 'package:rootasjey/types/post.dart';
-import 'package:rootasjey/utils/auth_guards.dart';
 
 class DraftPosts extends StatefulWidget {
   @override
@@ -23,15 +23,6 @@ class _DraftPostsState extends State<DraftPosts> {
   @override
   void initState() {
     super.initState();
-    initAndCheck();
-  }
-
-  void initAndCheck() async {
-    final result = await canNavigate(context: context);
-    if (!result) {
-      return;
-    }
-
     fetch();
   }
 
@@ -56,14 +47,8 @@ class _DraftPostsState extends State<DraftPosts> {
 
           return PostCard(
             onTap: () async {
-              await Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) {
-                    return EditPost(
-                      postId: post.id,
-                    );
-                  },
-                ),
+              await context.router.push(
+                EditPostRoute(postId: post.id),
               );
 
               fetch();

@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/actions/users.dart';
 import 'package:rootasjey/components/footer.dart';
 import 'package:rootasjey/components/home_app_bar.dart';
+import 'package:rootasjey/components/page_title.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/utils/snack.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -73,7 +75,7 @@ class _ContactState extends State<Contact> {
                       horizontal: padding,
                       vertical: 90.0,
                     ),
-                    child: headerTitle(),
+                    child: PageTitle(textTitle: "contact_me".tr()),
                   ),
                 ]),
               );
@@ -236,27 +238,6 @@ class _ContactState extends State<Contact> {
                 ),
               ),
             ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget headerTitle() {
-    return Row(
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(right: 16.0),
-          child: IconButton(
-            onPressed: () => Navigator.of(context).pop(),
-            icon: Icon(Icons.arrow_back),
-          ),
-        ),
-        Text(
-          'Contact me',
-          style: TextStyle(
-            fontSize: 70.0,
-            fontWeight: FontWeight.bold,
           ),
         ),
       ],

@@ -1,12 +1,12 @@
 import 'dart:async';
 
+import 'package:auto_route/annotations.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/home_app_bar.dart';
-import 'package:rootasjey/screens/home.dart';
 import 'package:rootasjey/state/colors.dart';
-import 'package:rootasjey/utils/auth_guards.dart';
 import 'package:rootasjey/utils/cloud.dart';
 import 'package:rootasjey/utils/snack.dart';
 import 'package:supercharged/supercharged.dart';
@@ -14,9 +14,7 @@ import 'package:supercharged/supercharged.dart';
 class EditPost extends StatefulWidget {
   final String postId;
 
-  EditPost({
-    this.postId = '',
-  });
+  EditPost({@required @PathParam() this.postId});
 
   @override
   _EditPostState createState() => _EditPostState();
@@ -47,7 +45,7 @@ class _EditPostState extends State<EditPost> {
   @override
   void initState() {
     super.initState();
-    initAndCheck();
+    fechtData();
   }
 
   @override
@@ -388,34 +386,6 @@ class _EditPostState extends State<EditPost> {
     );
   }
 
-  Future fetchMeta() async {
-    try {
-      postSnapshot = await FirebaseFirestore.instance
-          .collection('posts')
-          .doc(widget.postId)
-          .get();
-
-      jwt = await FirebaseAuth.instance.currentUser.getIdToken();
-
-      setState(() {
-        postTitle = postSnapshot.data()['title'];
-        titleController.text = postTitle;
-      });
-    } catch (error) {
-      setState(() {
-        isLoading = false;
-        hasError = true;
-      });
-
-      debugPrint(error.toSring());
-
-      Snack.e(
-        context: context,
-        message: "There was an error while saving.\n${error.toString()}",
-      );
-    }
-  }
-
   Future fetchContent() async {
     try {
       final response = await Cloud.fun('posts-fetch').call({
@@ -442,30 +412,41 @@ class _EditPostState extends State<EditPost> {
     }
   }
 
-  void initAndCheck() async {
-    if (widget.postId.isEmpty) {
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (_) {
-            return Home();
-          },
-        ),
-      );
-
-      return;
-    }
-
-    final result = await canNavigate(context: context);
-    if (!result) {
-      return;
-    }
-
+  void fechtData() async {
     setState(() => isLoading = true);
 
     await fetchMeta();
     await fetchContent();
 
     setState(() => isLoading = false);
+  }
+
+  Future fetchMeta() async {
+    try {
+      postSnapshot = await FirebaseFirestore.instance
+          .collection('posts')
+          .doc(widget.postId)
+          .get();
+
+      jwt = await FirebaseAuth.instance.currentUser.getIdToken();
+
+      setState(() {
+        postTitle = postSnapshot.data()['title'];
+        titleController.text = postTitle;
+      });
+    } catch (error) {
+      setState(() {
+        isLoading = false;
+        hasError = true;
+      });
+
+      debugPrint(error.toSring());
+
+      Snack.e(
+        context: context,
+        message: "There was an error while saving.\n${error.toString()}",
+      );
+    }
   }
 
   void saveTitle() async {

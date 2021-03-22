@@ -1,8 +1,10 @@
 import 'dart:ui';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/footer.dart';
 import 'package:rootasjey/components/home_app_bar.dart';
+import 'package:rootasjey/components/page_title.dart';
 import 'package:rootasjey/screens/pricing.dart';
 import 'package:rootasjey/screens/projects.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -50,7 +52,7 @@ class _AboutState extends State<About> {
                       horizontal: padding,
                       vertical: 90.0,
                     ),
-                    child: headerTitle(),
+                    child: PageTitle(textTitle: "about".tr()),
                   ),
                 ]),
               );
@@ -99,27 +101,6 @@ class _AboutState extends State<About> {
     );
   }
 
-  Widget headerTitle() {
-    return Row(
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(right: 16.0),
-          child: IconButton(
-            onPressed: () => Navigator.of(context).pop(),
-            icon: Icon(Icons.arrow_back),
-          ),
-        ),
-        Text(
-          'About',
-          style: TextStyle(
-            fontSize: 70.0,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ],
-    );
-  }
-
   Widget thePurpose() {
     return Container(
       width: 600.0,
@@ -144,7 +125,9 @@ class _AboutState extends State<About> {
             child: Padding(
               padding: const EdgeInsets.only(top: 25.0),
               child: Text(
-                "This is my personal website where you'll find projects that I'm working on, some hobbies I want to share and how to contact me.",
+                "This is my personal website where you'll find projects that "
+                "I'm working on, some hobbies I want to share and how "
+                "to contact me.",
                 style: paragraphStyle,
               ),
             ),

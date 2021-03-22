@@ -1,11 +1,10 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/project_card.dart';
 import 'package:rootasjey/components/sliver_empty_view.dart';
-import 'package:rootasjey/screens/edit_project.dart';
-import 'package:rootasjey/screens/project_page.dart';
+import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/types/project.dart';
-import 'package:rootasjey/utils/auth_guards.dart';
 
 class PublishedProjects extends StatefulWidget {
   @override
@@ -23,15 +22,6 @@ class _PublishedProjectsState extends State<PublishedProjects> {
   @override
   void initState() {
     super.initState();
-    initAndCheck();
-  }
-
-  void initAndCheck() async {
-    final result = await canNavigate(context: context);
-    if (!result) {
-      return;
-    }
-
     fetch();
   }
 
@@ -58,14 +48,10 @@ class _PublishedProjectsState extends State<PublishedProjects> {
           final project = projectsList.elementAt(index);
 
           return ProjectCard(
-            onTap: () async {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) {
-                    return ProjectPage(projectId: project.id);
-                  },
-                ),
-              );
+            onTap: () {
+              context.router.push(ProjectsDeepRoute(
+                children: [ProjectPageRoute(projectId: project.id)],
+              ));
             },
             popupMenuButton: PopupMenuButton<String>(
               onSelected: (value) {
@@ -245,13 +231,9 @@ class _PublishedProjectsState extends State<PublishedProjects> {
   }
 
   void goToEditPage(Project project) async {
-    await Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) {
-          return EditProject(
-            projectId: project.id,
-          );
-        },
+    await context.router.push(
+      DashboardPageRoute(
+        children: [EditProjectRoute(projectId: project.id)],
       ),
     );
 

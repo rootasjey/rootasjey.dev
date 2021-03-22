@@ -4,15 +4,29 @@ import 'package:rootasjey/router/auth_guard.dart';
 import 'package:rootasjey/router/no_auth_guard.dart';
 
 import 'package:rootasjey/screens/about.dart';
+import 'package:rootasjey/screens/activities.dart';
 import 'package:rootasjey/screens/contact.dart';
 import 'package:rootasjey/screens/dashboard_page.dart';
 import 'package:rootasjey/screens/delete_account.dart';
+import 'package:rootasjey/screens/edit_post.dart';
+import 'package:rootasjey/screens/edit_project.dart';
+import 'package:rootasjey/screens/enroll.dart';
 import 'package:rootasjey/screens/forgot_password.dart';
 import 'package:rootasjey/screens/home.dart';
+import 'package:rootasjey/screens/about_me.dart';
+import 'package:rootasjey/screens/my_posts.dart';
+import 'package:rootasjey/screens/my_projects.dart';
+import 'package:rootasjey/screens/new_post.dart';
+import 'package:rootasjey/screens/new_project.dart';
+import 'package:rootasjey/screens/post_page.dart';
+import 'package:rootasjey/screens/posts.dart';
+import 'package:rootasjey/screens/pricing.dart';
+import 'package:rootasjey/screens/project_page.dart';
+import 'package:rootasjey/screens/projects.dart';
+import 'package:rootasjey/screens/search.dart';
 import 'package:rootasjey/screens/settings.dart';
 import 'package:rootasjey/screens/tos.dart';
 import 'package:rootasjey/screens/undefined_page.dart';
-
 import 'package:rootasjey/screens/signin.dart';
 import 'package:rootasjey/screens/signup.dart';
 import 'package:rootasjey/screens/update_email.dart';
@@ -23,6 +37,7 @@ import 'package:rootasjey/screens/update_username.dart';
   routes: [
     AutoRoute(path: '/', page: Home),
     MaterialRoute(path: '/about', page: About),
+    MaterialRoute(path: '/activities', page: Activities),
     MaterialRoute(path: '/contact', page: Contact),
     AutoRoute(
       path: '/dashboard',
@@ -30,6 +45,28 @@ import 'package:rootasjey/screens/update_username.dart';
       guards: [AuthGuard],
       children: [
         RedirectRoute(path: '', redirectTo: 'settings'),
+        AutoRoute(
+          path: 'new',
+          page: EmptyRouterPage,
+          name: 'DeepNewPage',
+          children: [
+            RedirectRoute(path: '', redirectTo: 'post'),
+            MaterialRoute(path: 'post', page: NewPost),
+            MaterialRoute(path: 'project', page: NewProject),
+          ],
+        ),
+        AutoRoute(
+          path: 'edit',
+          page: EmptyRouterPage,
+          name: 'DeepEditPage',
+          children: [
+            RedirectRoute(path: '', redirectTo: 'post'),
+            MaterialRoute(path: 'post/:postId', page: EditPost),
+            MaterialRoute(path: 'project/:projectId', page: EditProject),
+          ],
+        ),
+        MaterialRoute(path: 'posts', page: MyPosts),
+        MaterialRoute(path: 'projects', page: MyProjects),
         AutoRoute(
           path: 'settings',
           page: EmptyRouterPage,
@@ -55,9 +92,34 @@ import 'package:rootasjey/screens/update_username.dart';
         ),
       ],
     ),
+    MaterialRoute(path: '/enroll', page: Enroll),
     MaterialRoute(path: '/forgotpassword', page: ForgotPassword),
+    CustomRoute(
+      path: '/me',
+      page: AboutMe,
+      transitionsBuilder: TransitionsBuilders.fadeIn,
+    ),
+    MaterialRoute(
+      path: '/posts',
+      page: EmptyRouterPage,
+      name: 'PostsDeepRoute',
+      children: [
+        MaterialRoute(path: '', page: Posts),
+        MaterialRoute(path: ':postId', page: PostPage),
+      ],
+    ),
+    MaterialRoute(
+      path: '/projects',
+      page: EmptyRouterPage,
+      name: 'ProjectsDeepRoute',
+      children: [
+        MaterialRoute(path: '', page: Projects),
+        MaterialRoute(path: ':projectId', page: ProjectPage),
+      ],
+    ),
+    MaterialRoute(path: '/pricing', page: Pricing),
+    MaterialRoute(path: '/search', page: Search),
     MaterialRoute(path: '/settings', page: Settings),
-    // MaterialRoute(path: '/search', page: Search),
     MaterialRoute(path: '/signin', page: Signin, guards: [NoAuthGuard]),
     MaterialRoute(path: '/signup', page: Signup, guards: [NoAuthGuard]),
     MaterialRoute(

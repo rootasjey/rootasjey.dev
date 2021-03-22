@@ -1,11 +1,10 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/app_icon_header.dart';
-import 'package:rootasjey/screens/home.dart';
+import 'package:rootasjey/router/app_router.gr.dart';
 
 class UndefinedPage extends StatefulWidget {
-  final String name;
-
-  UndefinedPage({this.name});
+  UndefinedPage();
 
   @override
   _UndefinedPageState createState() => _UndefinedPageState();
@@ -25,7 +24,8 @@ class _UndefinedPageState extends State<UndefinedPage> {
         ),
         Opacity(
           opacity: .6,
-          child: Text('Route for "${widget.name}" is not defined.'),
+          child: Text(
+              'Route for "${context.router.current.name}" is not defined.'),
         ),
         Padding(
           padding: const EdgeInsets.only(top: 50.0),
@@ -75,13 +75,7 @@ class _UndefinedPageState extends State<UndefinedPage> {
           padding: const EdgeInsets.only(top: 100.0),
           child: TextButton(
             onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) {
-                    return Home();
-                  },
-                ),
-              );
+              context.router.navigate(HomeRoute());
             },
             child: Padding(
               padding: const EdgeInsets.all(8.0),

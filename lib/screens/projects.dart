@@ -1,9 +1,12 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:rootasjey/components/page_title.dart';
 import 'package:rootasjey/components/project_card.dart';
 import 'package:rootasjey/components/sliver_empty_view.dart';
 import 'package:rootasjey/components/home_app_bar.dart';
-import 'package:rootasjey/screens/project_page.dart';
+import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/types/project.dart';
 
 class Projects extends StatefulWidget {
@@ -48,7 +51,10 @@ class _ProjectsState extends State<Projects> {
                 ),
                 sliver: SliverList(
                   delegate: SliverChildListDelegate([
-                    headerTitle(),
+                    PageTitle(
+                      textTitle: "projects".tr(),
+                      isLoading: isLoading,
+                    ),
                   ]),
                 ),
               );
@@ -82,32 +88,6 @@ class _ProjectsState extends State<Projects> {
     return projectsGrid();
   }
 
-  Widget headerTitle() {
-    return Row(
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(right: 16.0),
-          child: IconButton(
-            onPressed: () => Navigator.of(context).pop(),
-            icon: Icon(Icons.arrow_back),
-          ),
-        ),
-        Text(
-          'Projects',
-          style: TextStyle(
-            fontSize: 70.0,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        if (isLoading)
-          Padding(
-            padding: const EdgeInsets.only(top: 12.0, left: 22.0),
-            child: CircularProgressIndicator(),
-          ),
-      ],
-    );
-  }
-
   Widget projectsGrid() {
     return SliverGrid(
       gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
@@ -122,14 +102,8 @@ class _ProjectsState extends State<Projects> {
           return ProjectCard(
             project: project,
             onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) {
-                    return ProjectPage(
-                      projectId: project.id,
-                    );
-                  },
-                ),
+              context.router.push(
+                ProjectPageRoute(projectId: project.id),
               );
             },
           );

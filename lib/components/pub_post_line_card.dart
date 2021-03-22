@@ -1,7 +1,9 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
-import 'package:rootasjey/screens/post_page.dart';
+import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/types/post_headline.dart';
+import 'package:rootasjey/utils/app_logger.dart';
 import 'package:rootasjey/utils/cloud.dart';
 
 class PubPostLineCard extends StatefulWidget {
@@ -139,13 +141,11 @@ class _PubPostLineCardState extends State<PubPostLineCard> {
   }
 
   void navigateToPost() {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) {
-          return PostPage(
-            postId: widget.postHeadline.id,
-          );
-        },
+    context.router.push(
+      PostsDeepRoute(
+        children: [
+          PostPageRoute(postId: widget.postHeadline.id),
+        ],
       ),
     );
   }
@@ -169,7 +169,7 @@ class _PubPostLineCardState extends State<PubPostLineCard> {
         authorName = resp.data['authorName'];
       });
     } catch (error) {
-      debugPrint(error.toString());
+      appLogger.e(error);
     }
   }
 }

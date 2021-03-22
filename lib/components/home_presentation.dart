@@ -1,7 +1,8 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:rootasjey/components/better_avatar.dart';
-import 'package:rootasjey/screens/me.dart';
+import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HomePresentation extends StatefulWidget {
@@ -15,24 +16,19 @@ class _HomePresentationState extends State<HomePresentation> {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, boxConstraints) {
-        isNarrow = boxConstraints.maxWidth < 600.0;
+    return LayoutBuilder(builder: (context, boxConstraints) {
+      isNarrow = boxConstraints.maxWidth < 600.0;
 
-        return Padding(
-          padding: EdgeInsets.all(
-            isNarrow
-              ? 50.0
-              : 100.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              body(),
-            ],
-          ),
-        );
-      }
-    );
+      return Padding(
+        padding: EdgeInsets.all(isNarrow ? 50.0 : 100.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            body(),
+          ],
+        ),
+      );
+    });
   }
 
   Widget body() {
@@ -57,7 +53,6 @@ class _HomePresentationState extends State<HomePresentation> {
             ),
             child: titleIntro(),
           ),
-
           Row(
             children: [
               Padding(
@@ -66,7 +61,6 @@ class _HomePresentationState extends State<HomePresentation> {
                 ),
                 child: profilePicture(),
               ),
-
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -75,7 +69,6 @@ class _HomePresentationState extends State<HomePresentation> {
                       padding: const EdgeInsets.only(left: 14.0),
                       child: profileSummary(),
                     ),
-
                     socialNetworks(),
                   ],
                 ),
@@ -97,17 +90,11 @@ class _HomePresentationState extends State<HomePresentation> {
           ),
           child: profilePicture(),
         ),
-
         titleIntro(),
-
         Padding(
-          padding: const EdgeInsets.only(
-            top: 20.0,
-            bottom: 20
-          ),
+          padding: const EdgeInsets.only(top: 20.0, bottom: 20),
           child: profileSummary(),
         ),
-
         Padding(
           padding: const EdgeInsets.only(
             top: 28.0,
@@ -123,21 +110,11 @@ class _HomePresentationState extends State<HomePresentation> {
       tag: 'pp',
       child: BetterAvatar(
         size: 120.0,
-        image: AssetImage('assets/images/jeje.jpg',),
+        image: AssetImage(
+          'assets/images/jeje.jpg',
+        ),
         onTap: () {
-          Navigator.of(context).push(
-            PageRouteBuilder(
-              pageBuilder: (context, _, __) {
-                return Me();
-              },
-              transitionsBuilder: (_, animation, __, child) {
-                return FadeTransition(
-                  opacity: animation,
-                  child: child,
-                );
-              }
-            ),
-          );
+          context.router.push(AboutMeRoute());
         },
       ),
     );
@@ -183,7 +160,8 @@ class _HomePresentationState extends State<HomePresentation> {
   }
 
   Widget titleIntro() {
-    final text = 'Welcome to rootasjey website. A virtual space about art & development.';
+    final text =
+        'Welcome to rootasjey website. A virtual space about art & development.';
 
     if (isNarrow) {
       return SizedBox(

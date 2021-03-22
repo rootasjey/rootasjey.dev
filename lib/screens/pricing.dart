@@ -1,3 +1,4 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/features/web.dart';
 import 'package:rootasjey/components/footer.dart';
@@ -348,7 +349,7 @@ class _PricingState extends State<Pricing> {
         Padding(
           padding: const EdgeInsets.only(right: 16.0),
           child: IconButton(
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: context.router.pop,
             icon: Icon(Icons.arrow_back),
           ),
         ),

@@ -1,28 +1,27 @@
+import 'package:auto_route/auto_route.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/better_avatar.dart';
 import 'package:rootasjey/components/footer.dart';
 import 'package:rootasjey/components/home_app_bar.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/types/post.dart';
+import 'package:unicons/unicons.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class Me extends StatefulWidget {
+class AboutMe extends StatefulWidget {
   @override
-  _MeState createState() => _MeState();
+  _AboutMeState createState() => _AboutMeState();
 }
 
-class _MeState extends State<Me> {
+class _AboutMeState extends State<AboutMe> {
   final postsList = <Post>[];
   final limit = 10;
 
   bool hasNext = true;
   bool isLoading = false;
-  var lastDoc;
 
-  @override
-  void initState() {
-    super.initState();
-  }
+  DocumentSnapshot doc;
 
   @override
   Widget build(BuildContext context) {
@@ -219,8 +218,8 @@ class _MeState extends State<Me> {
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
             child: IconButton(
-              onPressed: () => Navigator.of(context).pop(),
-              icon: Icon(Icons.arrow_back),
+              onPressed: context.router.pop,
+              icon: Icon(UniconsLine.arrow_left),
             ),
           ),
           Column(
@@ -593,7 +592,7 @@ class _MeState extends State<Me> {
                 return SimpleDialog(
                   children: [
                     InkWell(
-                      onTap: () => Navigator.of(context).pop(),
+                      onTap: context.router.pop,
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Image.asset(

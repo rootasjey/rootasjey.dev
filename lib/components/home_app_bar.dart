@@ -1,14 +1,8 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/app_icon_header.dart';
-import 'package:rootasjey/router/route_names.dart';
-import 'package:rootasjey/screens/my_posts.dart';
-import 'package:rootasjey/screens/my_projects.dart';
-import 'package:rootasjey/screens/new_post.dart';
-import 'package:rootasjey/screens/new_project.dart';
-import 'package:rootasjey/screens/search.dart';
-import 'package:rootasjey/screens/signin.dart';
-import 'package:rootasjey/screens/signup.dart';
+import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/state/user.dart';
 import 'package:rootasjey/utils/app_storage.dart';
@@ -59,10 +53,8 @@ class _HomeAppBarState extends State<HomeAppBar> {
                     padding: const EdgeInsets.only(right: 16.0),
                     child: IconButton(
                       color: stateColors.foreground,
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      icon: Icon(Icons.arrow_back),
+                      onPressed: context.router.pop,
+                      icon: Icon(UniconsLine.arrow_left),
                     ),
                   ),
                 AppIconHeader(
@@ -90,9 +82,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
   Widget addNewPostButton() {
     return ElevatedButton(
       onPressed: () {
-        Navigator.of(context).push(MaterialPageRoute(builder: (_) {
-          return NewPost();
-        }));
+        context.router.push(DashboardPageRoute(children: [NewPostRoute()]));
       },
       style: ElevatedButton.styleFrom(
         primary: stateColors.primary,
@@ -123,13 +113,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
   Widget searchButton() {
     return IconButton(
       onPressed: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (_) {
-              return Search();
-            },
-          ),
-        );
+        context.router.push(SearchRoute());
       },
       color: stateColors.foreground,
       icon: Icon(Icons.search),
@@ -257,7 +241,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
         left: 20.0,
         right: 20.0,
       ),
-      child: PopupMenuButton<String>(
+      child: PopupMenuButton<PageRouteInfo>(
         icon: CircleAvatar(
           backgroundColor: stateColors.primary,
           radius: 20.0,
@@ -268,41 +252,18 @@ class _HomeAppBarState extends State<HomeAppBar> {
             ),
           ),
         ),
-        onSelected: (value) {
-          if (value == 'signout') {
+        onSelected: (route) {
+          if (route.routeName == SignOutRoute.name) {
             stateUser.signOut(context: context);
             return;
           }
 
-          Widget child;
-
-          switch (value) {
-            case NewPostRoute:
-              child = NewPost();
-              break;
-            case SearchRoute:
-              child = Search();
-              break;
-            case NewProjectRoute:
-              child = NewProject();
-              break;
-            case MyPostsRoute:
-              child = MyPosts();
-              break;
-            case MyProjectsRoute:
-              child = MyProjects();
-              break;
-            default:
-          }
-
-          Navigator.of(context).push(MaterialPageRoute(builder: (_) {
-            return child;
-          }));
+          context.router.push(route);
         },
-        itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+        itemBuilder: (BuildContext context) => <PopupMenuEntry<PageRouteInfo>>[
           if (isNarrow)
             const PopupMenuItem(
-                value: NewPostRoute,
+                value: DashboardPageRoute(children: [NewPostRoute()]),
                 child: ListTile(
                   leading: Icon(Icons.add),
                   title: Text(
@@ -314,7 +275,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
                 )),
           if (isNarrow)
             const PopupMenuItem(
-                value: SearchRoute,
+                value: SearchRoute(),
                 child: ListTile(
                   leading: Icon(Icons.search),
                   title: Text(
@@ -325,7 +286,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
                   ),
                 )),
           const PopupMenuItem(
-              value: NewProjectRoute,
+              value: DashboardPageRoute(children: [NewProjectRoute()]),
               child: ListTile(
                 leading: Icon(Icons.add),
                 title: Text(
@@ -336,7 +297,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
                 ),
               )),
           const PopupMenuItem(
-            value: MyPostsRoute,
+            value: DashboardPageRoute(children: [MyPostsRoute()]),
             child: ListTile(
               leading: Icon(Icons.article),
               title: Text(
@@ -348,7 +309,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
             ),
           ),
           const PopupMenuItem(
-            value: MyProjectsRoute,
+            value: DashboardPageRoute(children: [MyProjectsRoute()]),
             child: ListTile(
               leading: Icon(Icons.apps_outlined),
               title: Text(
@@ -359,8 +320,8 @@ class _HomeAppBarState extends State<HomeAppBar> {
               ),
             ),
           ),
-          const PopupMenuItem(
-            value: 'signout',
+          PopupMenuItem(
+            value: SignOutRoute(),
             child: ListTile(
               leading: Icon(Icons.exit_to_app),
               title: Text(
@@ -425,38 +386,32 @@ class _HomeAppBarState extends State<HomeAppBar> {
   Widget userSigninMenu({bool showSearch = false}) {
     return PopupMenuButton(
       icon: Icon(Icons.more_vert, color: stateColors.foreground),
-      itemBuilder: (context) => <PopupMenuEntry<Widget>>[
+      itemBuilder: (context) => <PopupMenuEntry<PageRouteInfo>>[
         if (showSearch)
           PopupMenuItem(
-            value: Search(),
+            value: SearchRoute(),
             child: ListTile(
               leading: Icon(Icons.search),
               title: Text('Search'),
             ),
           ),
         PopupMenuItem(
-          value: Signin(),
+          value: SigninRoute(),
           child: ListTile(
             leading: Icon(Icons.perm_identity),
             title: Text('Sign in'),
           ),
         ),
         PopupMenuItem(
-          value: Signup(),
+          value: SignupRoute(),
           child: ListTile(
             leading: Icon(Icons.open_in_browser),
             title: Text('Sign up'),
           ),
         ),
       ],
-      onSelected: (Widget child) {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (_) {
-              return child;
-            },
-          ),
-        );
+      onSelected: (routeInfo) {
+        context.router.push(routeInfo);
       },
     );
   }

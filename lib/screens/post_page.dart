@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:auto_route/annotations.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -18,7 +19,7 @@ class PostPage extends StatefulWidget {
   @required
   final String postId;
 
-  PostPage({this.postId});
+  PostPage({@PathParam() this.postId});
 
   @override
   _PostPageState createState() => _PostPageState();

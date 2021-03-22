@@ -1,12 +1,12 @@
 import 'dart:async';
 
+import 'package:auto_route/annotations.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/home_app_bar.dart';
-import 'package:rootasjey/screens/home.dart';
 import 'package:rootasjey/state/colors.dart';
-import 'package:rootasjey/utils/auth_guards.dart';
 import 'package:rootasjey/utils/cloud.dart';
 import 'package:rootasjey/utils/snack.dart';
 import 'package:rootasjey/utils/texts.dart';
@@ -15,9 +15,7 @@ import 'package:supercharged/supercharged.dart';
 class EditProject extends StatefulWidget {
   final String projectId;
 
-  EditProject({
-    this.projectId = '',
-  });
+  EditProject({@required @PathParam() this.projectId});
 
   @override
   _EditProjectState createState() => _EditProjectState();
@@ -84,7 +82,7 @@ class _EditProjectState extends State<EditProject> {
   @override
   void initState() {
     super.initState();
-    initAndCheck();
+    fetchData();
   }
 
   @override
@@ -198,7 +196,7 @@ class _EditProjectState extends State<EditProject> {
                 ),
               ),
               OutlinedButton.icon(
-                  onPressed: () => Navigator.of(context).pop(),
+                  onPressed: context.router.pop,
                   icon: Icon(Icons.arrow_back, color: Colors.pink),
                   label: Opacity(
                     opacity: 0.6,
@@ -301,7 +299,7 @@ class _EditProjectState extends State<EditProject> {
           Padding(
             padding: const EdgeInsets.only(right: 15.0),
             child: IconButton(
-              onPressed: () => Navigator.of(context).pop(),
+              onPressed: context.router.pop,
               icon: Icon(Icons.arrow_back),
             ),
           ),
@@ -975,23 +973,7 @@ class _EditProjectState extends State<EditProject> {
     }
   }
 
-  void initAndCheck() async {
-    if (widget.projectId.isEmpty) {
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (_) {
-            return Home();
-          },
-        ),
-      );
-      return;
-    }
-
-    final result = await canNavigate(context: context);
-    if (!result) {
-      return;
-    }
-
+  void fetchData() async {
     setState(() => isLoading = true);
 
     await fetchMeta();
@@ -1165,9 +1147,9 @@ class _EditProjectState extends State<EditProject> {
                         ),
                         child: TextButton.icon(
                           onPressed: () {
-                            Navigator.of(context).pop();
                             urls[urlName] = urlValue;
                             saveUrls();
+                            context.router.pop();
                           },
                           icon: Icon(Icons.check),
                           label: Text('Add URL'),
@@ -1202,7 +1184,7 @@ class _EditProjectState extends State<EditProject> {
             ),
             actions: [
               TextButton(
-                onPressed: () => Navigator.of(context).pop(),
+                onPressed: context.router.pop,
                 child: Text('CLOSE'),
               ),
             ],

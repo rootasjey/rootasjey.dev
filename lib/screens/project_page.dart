@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:auto_route/annotations.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -16,7 +17,7 @@ import 'package:supercharged/supercharged.dart';
 class ProjectPage extends StatefulWidget {
   final String projectId;
 
-  ProjectPage({@required this.projectId});
+  ProjectPage({@required @PathParam() this.projectId});
 
   @override
   _ProjectPageState createState() => _ProjectPageState();
@@ -106,9 +107,7 @@ class _ProjectPageState extends State<ProjectPage> {
                 if (isNarrow != isNowNarrow) {
                   timer = Timer(
                     1.seconds,
-                    () {
-                      setState(() => isNarrow = isNowNarrow);
-                    },
+                    () => setState(() => isNarrow = isNowNarrow),
                   );
                 }
 

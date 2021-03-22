@@ -1,9 +1,12 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:rootasjey/components/page_title.dart';
 import 'package:rootasjey/components/post_card.dart';
 import 'package:rootasjey/components/sliver_empty_view.dart';
 import 'package:rootasjey/components/home_app_bar.dart';
-import 'package:rootasjey/screens/post_page.dart';
+import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/types/post.dart';
 
 class Posts extends StatefulWidget {
@@ -48,7 +51,10 @@ class _PostsState extends State<Posts> {
                       horizontal: padding,
                       vertical: 90.0,
                     ),
-                    child: headerTitle(),
+                    child: PageTitle(
+                      textTitle: "posts".tr(),
+                      isLoading: isLoading,
+                    ),
                   ),
                 ]),
               );
@@ -81,32 +87,6 @@ class _PostsState extends State<Posts> {
     return postsListView();
   }
 
-  Widget headerTitle() {
-    return Row(
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(right: 16.0),
-          child: IconButton(
-            onPressed: () => Navigator.of(context).pop(),
-            icon: Icon(Icons.arrow_back),
-          ),
-        ),
-        Text(
-          'Posts',
-          style: TextStyle(
-            fontSize: 70.0,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        if (isLoading)
-          Padding(
-            padding: const EdgeInsets.only(top: 12.0, left: 22.0),
-            child: CircularProgressIndicator(),
-          ),
-      ],
-    );
-  }
-
   Widget postsListView() {
     return SliverList(
       delegate: SliverChildBuilderDelegate(
@@ -115,15 +95,7 @@ class _PostsState extends State<Posts> {
 
           return PostCard(
             onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) {
-                    return PostPage(
-                      postId: post.id,
-                    );
-                  },
-                ),
-              );
+              context.router.push(PostPageRoute(postId: post.id));
             },
             post: post,
           );

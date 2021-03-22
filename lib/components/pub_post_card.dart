@@ -1,6 +1,7 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
-import 'package:rootasjey/screens/post_page.dart';
+import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/types/post_headline.dart';
 import 'package:rootasjey/utils/cloud.dart';
 
@@ -149,13 +150,11 @@ class _PubPostCardState extends State<PubPostCard> {
   }
 
   void navigateToPost() {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) {
-          return PostPage(
-            postId: widget.postHeadline.id,
-          );
-        },
+    context.router.push(
+      PostsDeepRoute(
+        children: [
+          PostPageRoute(postId: widget.postHeadline.id),
+        ],
       ),
     );
   }

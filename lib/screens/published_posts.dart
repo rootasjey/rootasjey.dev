@@ -1,11 +1,11 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/post_card.dart';
 import 'package:rootasjey/components/sliver_empty_view.dart';
-import 'package:rootasjey/screens/edit_post.dart';
+import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/state/user.dart';
 import 'package:rootasjey/types/post.dart';
-import 'package:rootasjey/utils/auth_guards.dart';
 
 class PublishedPosts extends StatefulWidget {
   @override
@@ -23,15 +23,6 @@ class _PublishedPostsState extends State<PublishedPosts> {
   @override
   void initState() {
     super.initState();
-    initAndCheck();
-  }
-
-  void initAndCheck() async {
-    final result = await canNavigate(context: context);
-    if (!result) {
-      return;
-    }
-
     fetch();
   }
 
@@ -56,16 +47,7 @@ class _PublishedPostsState extends State<PublishedPosts> {
 
           return PostCard(
             onTap: () async {
-              await Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) {
-                    return EditPost(
-                      postId: post.id,
-                    );
-                  },
-                ),
-              );
-
+              await context.router.push(EditPostRoute(postId: post.id));
               fetch();
             },
             popupMenuButton: PopupMenuButton<String>(
@@ -129,7 +111,7 @@ class _PublishedPostsState extends State<PublishedPosts> {
             ),
             actions: [
               TextButton(
-                onPressed: () => Navigator.of(context).pop(),
+                onPressed: context.router.pop,
                 child: Text(
                   'CANCEL',
                   textAlign: TextAlign.end,
@@ -137,7 +119,7 @@ class _PublishedPostsState extends State<PublishedPosts> {
               ),
               TextButton(
                 onPressed: () {
-                  Navigator.of(context).pop();
+                  context.router.pop();
                   delete(index);
                 },
                 child: Text(

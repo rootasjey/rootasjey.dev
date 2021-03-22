@@ -1,10 +1,8 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:rootasjey/screens/about.dart';
-import 'package:rootasjey/screens/contact.dart';
-import 'package:rootasjey/screens/home.dart';
-import 'package:rootasjey/screens/me.dart';
+import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/state/user.dart';
 import 'package:rootasjey/utils/snack.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -165,13 +163,7 @@ class _FooterState extends State<Footer> {
         TextButton(
             onPressed: () {
               onBeforeNav();
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) {
-                    return About();
-                  },
-                ),
-              );
+              context.router.push(AboutRoute());
             },
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -188,13 +180,7 @@ class _FooterState extends State<Footer> {
         TextButton(
             onPressed: () {
               onBeforeNav();
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) {
-                    return Contact();
-                  },
-                ),
-              );
+              context.router.push(ContactRoute());
             },
             child: Opacity(
               opacity: .5,
@@ -206,13 +192,7 @@ class _FooterState extends State<Footer> {
         TextButton(
             onPressed: () {
               onBeforeNav();
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) {
-                    return Me();
-                  },
-                ),
-              );
+              context.router.push(AboutMeRoute());
             },
             child: Opacity(
               opacity: .5,
@@ -233,9 +213,7 @@ class _FooterState extends State<Footer> {
         curve: Curves.easeOut,
       );
     } else if (widget.autoNavToHome) {
-      Navigator.of(context).push(MaterialPageRoute(builder: (_) {
-        return Home();
-      }));
+      context.router.push(HomeRoute());
     }
 
     Snack.s(
@@ -246,7 +224,7 @@ class _FooterState extends State<Footer> {
 
   void onBeforeNav() {
     if (widget.closeModalOnNav) {
-      Navigator.pop(context);
+      context.router.pop();
     }
   }
 

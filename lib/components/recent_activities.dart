@@ -1,8 +1,10 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:github/github.dart';
 import 'package:rootasjey/components/activity_row.dart';
-import 'package:rootasjey/screens/activities.dart';
+import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/state/colors.dart';
+import 'package:rootasjey/utils/app_logger.dart';
 
 class RecentActivities extends StatefulWidget {
   @override
@@ -41,7 +43,6 @@ class _RecentActivitiesState extends State<RecentActivities> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           titleSection(),
-
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: userActivities.map((activity) {
@@ -63,7 +64,6 @@ class _RecentActivitiesState extends State<RecentActivities> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           titleSection(),
-
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: userActivities.map((activity) {
@@ -86,13 +86,7 @@ class _RecentActivitiesState extends State<RecentActivities> {
             opacity: 0.6,
             child: TextButton.icon(
               onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) {
-                      return Activities();
-                    },
-                  ),
-                );
+                context.router.push(ActivitiesRoute());
               },
               icon: Icon(
                 Icons.watch_later,
@@ -116,17 +110,17 @@ class _RecentActivitiesState extends State<RecentActivities> {
     try {
       final github = GitHub();
 
-      github.activity.listPublicEventsPerformedByUser('rootasjey')
-        .take(3)
-        .toList()
-        .then((activities) {
-          setState(() {
-            userActivities = activities;
-          });
+      github.activity
+          .listPublicEventsPerformedByUser('rootasjey')
+          .take(3)
+          .toList()
+          .then((activities) {
+        setState(() {
+          userActivities = activities;
         });
-
+      });
     } catch (error) {
-      debugPrint(error.toString());
+      appLogger.e(error);
     }
   }
 }
