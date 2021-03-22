@@ -1,6 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:rootasjey/components/app_icon_header.dart';
 import 'package:rootasjey/router/route_names.dart';
 import 'package:rootasjey/screens/my_posts.dart';
@@ -36,57 +35,53 @@ class HomeAppBar extends StatefulWidget {
 class _HomeAppBarState extends State<HomeAppBar> {
   @override
   Widget build(BuildContext context) {
-    return Observer(
-      builder: (context) {
-        return SliverLayoutBuilder(
-          builder: (context, constrains) {
-            final isNarrow = constrains.crossAxisExtent < 700.0;
-            final leftPadding = isNarrow ? 0.0 : 80.0;
+    return SliverLayoutBuilder(
+      builder: (context, constrains) {
+        final isNarrow = constrains.crossAxisExtent < 700.0;
+        final leftPadding = isNarrow ? 0.0 : 80.0;
 
-            return SliverAppBar(
-              floating: true,
-              snap: true,
-              pinned: true,
-              backgroundColor: stateColors.appBackground.withOpacity(1.0),
-              automaticallyImplyLeading: false,
-              title: Padding(
-                padding: EdgeInsets.only(
-                  left: leftPadding,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  mainAxisSize: MainAxisSize.max,
-                  children: <Widget>[
-                    if (widget.automaticallyImplyLeading)
-                      Padding(
-                        padding: const EdgeInsets.only(right: 16.0),
-                        child: IconButton(
-                          color: stateColors.foreground,
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          icon: Icon(Icons.arrow_back),
-                        ),
-                      ),
-                    AppIconHeader(
-                      padding: const EdgeInsets.only(
-                        bottom: 8.0,
-                      ),
-                      onTap: widget.onTapIconHeader,
+        return SliverAppBar(
+          floating: true,
+          snap: true,
+          pinned: true,
+          backgroundColor: stateColors.appBackground.withOpacity(1.0),
+          automaticallyImplyLeading: false,
+          title: Padding(
+            padding: EdgeInsets.only(
+              left: leftPadding,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisSize: MainAxisSize.max,
+              children: <Widget>[
+                if (widget.automaticallyImplyLeading)
+                  Padding(
+                    padding: const EdgeInsets.only(right: 16.0),
+                    child: IconButton(
+                      color: stateColors.foreground,
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      icon: Icon(Icons.arrow_back),
                     ),
-                    if (widget.title != null)
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 40.0),
-                          child: widget.title,
-                        ),
-                      ),
-                    userSection(isNarrow),
-                  ],
+                  ),
+                AppIconHeader(
+                  padding: const EdgeInsets.only(
+                    bottom: 8.0,
+                  ),
+                  onTap: widget.onTapIconHeader,
                 ),
-              ),
-            );
-          },
+                if (widget.title != null)
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 40.0),
+                      child: widget.title,
+                    ),
+                  ),
+                userSection(isNarrow),
+              ],
+            ),
+          ),
         );
       },
     );
@@ -382,51 +377,49 @@ class _HomeAppBarState extends State<HomeAppBar> {
   }
 
   Widget userSection(bool isNarrow) {
-    return Observer(builder: (context) {
-      final children = <Widget>[];
+    final children = <Widget>[];
 
-      if (stateUser.isUserConnected) {
-        isNarrow
-            ? children.addAll([
-                userAvatar(isNarrow: isNarrow),
-                brightnessButton(),
-              ])
-            : children.addAll([
-                userAvatar(isNarrow: isNarrow),
-                addNewPostButton(),
-                searchButton(),
-                brightnessButton(),
-              ]);
-      } else {
-        isNarrow
-            ? children.addAll([
-                userSigninMenu(showSearch: true),
-                brightnessButton(),
-              ])
-            : children.addAll([
-                if (widget.onPressedRightButton != null)
-                  IconButton(
-                    color: stateColors.foreground,
-                    icon: Icon(Icons.menu),
-                    onPressed: widget.onPressedRightButton,
-                  ),
-                userSigninMenu(),
-                searchButton(),
-                brightnessButton(),
-              ]);
-      }
+    if (stateUser.isUserConnected) {
+      isNarrow
+          ? children.addAll([
+              userAvatar(isNarrow: isNarrow),
+              brightnessButton(),
+            ])
+          : children.addAll([
+              userAvatar(isNarrow: isNarrow),
+              addNewPostButton(),
+              searchButton(),
+              brightnessButton(),
+            ]);
+    } else {
+      isNarrow
+          ? children.addAll([
+              userSigninMenu(showSearch: true),
+              brightnessButton(),
+            ])
+          : children.addAll([
+              if (widget.onPressedRightButton != null)
+                IconButton(
+                  color: stateColors.foreground,
+                  icon: Icon(Icons.menu),
+                  onPressed: widget.onPressedRightButton,
+                ),
+              userSigninMenu(),
+              searchButton(),
+              brightnessButton(),
+            ]);
+    }
 
-      return Container(
-        padding: const EdgeInsets.only(
-          top: 5.0,
-          right: 10.0,
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: children,
-        ),
-      );
-    });
+    return Container(
+      padding: const EdgeInsets.only(
+        top: 5.0,
+        right: 10.0,
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: children,
+      ),
+    );
   }
 
   Widget userSigninMenu({bool showSearch = false}) {
