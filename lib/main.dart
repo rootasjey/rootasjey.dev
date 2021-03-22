@@ -133,7 +133,7 @@ class _AppWithThemeState extends State<AppWithTheme> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      title: 'ArtBooking',
+      title: 'rootasjey',
       theme: widget.theme,
       darkTheme: widget.darkTheme,
       debugShowCheckedModeBanner: false,
