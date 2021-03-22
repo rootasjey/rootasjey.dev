@@ -18,13 +18,29 @@ class BetterAvatar extends StatefulWidget {
   _BetterAvatarState createState() => _BetterAvatarState();
 }
 
-class _BetterAvatarState extends State<BetterAvatar> {
+class _BetterAvatarState extends State<BetterAvatar>
+    with TickerProviderStateMixin {
+  Animation<double> scaleAnimation;
+  AnimationController scaleAnimationController;
+
   double elevation;
   double size;
 
   @override
   void initState() {
     super.initState();
+
+    scaleAnimationController = AnimationController(
+      lowerBound: 0.8,
+      upperBound: 1.0,
+      duration: 500.milliseconds,
+      vsync: this,
+    );
+
+    scaleAnimation = CurvedAnimation(
+      parent: scaleAnimationController,
+      curve: Curves.fastOutSlowIn,
+    );
 
     setState(() {
       size = widget.size;
@@ -33,32 +49,42 @@ class _BetterAvatarState extends State<BetterAvatar> {
   }
 
   @override
+  dispose() {
+    scaleAnimationController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Material(
-      elevation: elevation,
-      shape: CircleBorder(),
-      child: AnimatedContainer(
-        duration: 250.milliseconds,
-        width: size,
-        height: size,
-        child: Ink.image(
-          image: widget.image,
+    return ScaleTransition(
+      scale: scaleAnimation,
+      child: Material(
+        elevation: elevation,
+        clipBehavior: Clip.hardEdge,
+        shape: CircleBorder(),
+        child: Container(
           width: size,
           height: size,
-          fit: BoxFit.cover,
-          child: InkWell(
-            onTap: widget.onTap,
-            onHover: (isHover) {
-              setState(() {
-                elevation = isHover
-                  ? widget.elevation * 2
-                  : widget.elevation;
+          child: Ink.image(
+            image: widget.image,
+            width: size,
+            height: size,
+            fit: BoxFit.cover,
+            child: InkWell(
+              onTap: widget.onTap,
+              onHover: (isHover) {
+                if (isHover) {
+                  elevation = widget.elevation * 2;
+                  scaleAnimationController.forward();
+                  setState(() {});
+                  return;
+                }
 
-                size = isHover
-                  ? widget.size + 5.0
-                  : widget.size;
-              });
-            },
+                elevation = widget.elevation;
+                scaleAnimationController.reverse();
+                setState(() {});
+              },
+            ),
           ),
         ),
       ),
