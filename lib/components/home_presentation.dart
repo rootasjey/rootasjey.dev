@@ -1,8 +1,10 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:rootasjey/components/better_avatar.dart';
 import 'package:rootasjey/router/app_router.gr.dart';
+import 'package:rootasjey/utils/fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HomePresentation extends StatefulWidget {
@@ -124,7 +126,7 @@ class _HomePresentationState extends State<HomePresentation> {
     return Opacity(
       opacity: 0.7,
       child: Text(
-        "I'm a french developer working on my personal projects and as a freelancer. I also like drawings and learning things.",
+        "short_bio".tr(),
         style: TextStyle(
           fontSize: 17.0,
         ),
@@ -160,31 +162,16 @@ class _HomePresentationState extends State<HomePresentation> {
   }
 
   Widget titleIntro() {
-    final text =
-        'Welcome to rootasjey website. A virtual space about art & development.';
-
-    if (isNarrow) {
-      return SizedBox(
-        width: width,
-        child: Opacity(
-          opacity: 0.8,
-          child: Text(
-            text,
-            style: TextStyle(
-              fontSize: 40.0,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ),
-      );
-    }
-
     return SizedBox(
       width: width,
-      child: Text(
-        text,
-        style: TextStyle(
-          fontSize: 50.0,
+      child: Opacity(
+        opacity: isNarrow ? 0.8 : 1.0,
+        child: Text(
+          "welcome_text".tr(),
+          style: FontsUtils.mainStyle(
+            fontSize: isNarrow ? 40.0 : 50.0,
+            fontWeight: FontWeight.w500,
+          ),
         ),
       ),
     );

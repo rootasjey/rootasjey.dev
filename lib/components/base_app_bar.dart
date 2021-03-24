@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -89,7 +90,7 @@ class _BasePageAppBarState extends State<BasePageAppBar> {
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  tooltip: 'Back',
+                  tooltip: "back".tr(),
                   icon: Icon(Icons.arrow_back),
                 ),
                 Padding(padding: const EdgeInsets.only(right: 45.0)),

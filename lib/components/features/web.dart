@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/types/enums.dart';
 
@@ -17,90 +18,80 @@ class WebFeatures extends StatefulWidget {
 class _WebFeaturesState extends State<WebFeatures> {
   final featuresDataList = [
     {
-      'label': 'Domain name',
-      'description':
-          'Your website address (e.g. https://myawesomesite.com) will be bought for you, if available.',
+      'label': "domain_name".tr(),
+      'description': "domain_name_description".tr(),
       'icon': Icon(
         Icons.domain_verification,
         color: Colors.grey,
       ),
     },
     {
-      'label': 'Website development',
-      'description':
-          'Your website will be handfully crafted to meet your requirements.',
+      'label': "website_dev".tr(),
+      'description': "website_dev_description".tr(),
       'icon': Icon(
         Icons.developer_board,
         color: Colors.grey,
       ),
     },
     {
-      'label': 'Design integration',
-      'description':
-          'If you already have a design template or specifications, they will perfectly be integrated.',
+      'label': "design_integration".tr(),
+      'description': "design_integration_description".tr(),
       'icon': Icon(
         Icons.design_services,
         color: Colors.grey,
       ),
     },
     {
-      'label': 'Responsive layout',
-      'description':
-          'Your website will be beautiful on desktop, tablet and mobile. We will make sure the presentation is perfect.',
+      'label': "responsive_layout".tr(),
+      'description': "responsive_layout_description".tr(),
       'icon': Icon(
         Icons.devices,
         color: Colors.grey,
       ),
     },
     {
-      'label': 'Deployment',
-      'description':
-          "Your site will be globally accessible through a robust & fast pipeline. Also upgrades will be done with no downtime and your website won't experience cold start.",
+      'label': "deployment".tr(),
+      'description': "deployment_description".tr(),
       'icon': Icon(
         Icons.storage,
         color: Colors.grey,
       ),
     },
     {
-      'label': 'Security checks',
-      'description':
-          'Delivered with full HTTPS encryption & vulnerabilities checks.',
+      'label': "security_checks".tr(),
+      'description': "security_checks_description".tr(),
       'icon': Icon(
         Icons.security,
         color: Colors.grey,
       ),
     },
     {
-      'label': 'Scaling',
-      'description':
-          "Your site is robust and doesn't crash when you've connection spike.",
+      'label': "scaling".tr(),
+      'description': "scaling_description".tr(),
       'icon': Icon(
         Icons.trending_up,
         color: Colors.grey,
       ),
     },
     {
-      'label': 'Upgrade',
-      'description':
-          "Whenever a bug is detected or a more recent dependency is available, we'll upgrade your website.",
+      'label': "upgrade".tr(),
+      'description': "upgrade_description".tr(),
       'icon': Icon(
         Icons.upgrade,
         color: Colors.grey,
       ),
     },
     {
-      'label': 'Analytics',
-      'description':
-          "You will have metrics on your website. How many users visit each day? How long they stay?",
+      'label': "analytics".tr(),
+      'description': "analytics_description".tr(),
       'icon': Icon(
         Icons.analytics,
         color: Colors.grey,
       ),
     },
     {
-      'label': 'Personalized advices',
-      'description':
-          "We're avaiable for any question or asistance. You can contact us by email, phone or direct message.",
+      'label': "advices_personalized".tr(),
+      'description': "advices_personalized_description".tr(),
       'icon': Icon(
         Icons.speaker_notes,
         color: Colors.grey,
@@ -117,10 +108,10 @@ class _WebFeaturesState extends State<WebFeatures> {
     return Padding(
       padding: widget.padding,
       child: DataTable(
-        columns: const [
+        columns: [
           DataColumn(
             label: Text(
-              'Features',
+              "features".tr(),
               style: TextStyle(
                 fontSize: 30.0,
               ),

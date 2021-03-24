@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/router/app_router.gr.dart';
@@ -70,9 +71,9 @@ class _FooterState extends State<Footer> {
         Padding(
           padding: const EdgeInsets.only(bottom: 30.0, left: 15.0),
           child: Opacity(
-            opacity: .5,
+            opacity: 0.5,
             child: Text(
-              'DEVELOPERS',
+              "developers".tr().toUpperCase(),
               style: titleStyle,
             ),
           ),
@@ -80,9 +81,9 @@ class _FooterState extends State<Footer> {
         TextButton(
             onPressed: null,
             child: Opacity(
-              opacity: .5,
+              opacity: 0.5,
               child: Text(
-                'Documentation',
+                "documentation".tr(),
                 style: linkStyle,
               ),
             )),
@@ -92,9 +93,9 @@ class _FooterState extends State<Footer> {
               await launch('https://github.com/rootasjey/rootasjey.dev');
             },
             child: Opacity(
-              opacity: .5,
+              opacity: 0.5,
               child: Text(
-                'GitHub',
+                "GitHub",
                 style: linkStyle,
               ),
             )),
@@ -109,9 +110,9 @@ class _FooterState extends State<Footer> {
         Padding(
           padding: const EdgeInsets.only(bottom: 30.0, left: 15.0),
           child: Opacity(
-            opacity: .5,
+            opacity: 0.5,
             child: Text(
-              'LANGUAGE',
+              "language".tr().toUpperCase(),
               style: titleStyle,
             ),
           ),
@@ -119,11 +120,10 @@ class _FooterState extends State<Footer> {
         TextButton(
             onPressed: () async {
               onBeforeNav();
-              // Language.setLang(Language.en);
               updateUserAccountLang();
             },
             child: Opacity(
-              opacity: .5,
+              opacity: 0.5,
               child: Text(
                 'English',
                 style: linkStyle,
@@ -132,11 +132,10 @@ class _FooterState extends State<Footer> {
         TextButton(
             onPressed: () {
               onBeforeNav();
-              // Language.setLang(Language.fr);
               updateUserAccountLang();
             },
             child: Opacity(
-              opacity: .5,
+              opacity: 0.5,
               child: Text(
                 'Français',
                 style: linkStyle,
@@ -153,9 +152,9 @@ class _FooterState extends State<Footer> {
         Padding(
           padding: const EdgeInsets.only(bottom: 30.0, left: 15.0),
           child: Opacity(
-            opacity: .5,
+            opacity: 0.5,
             child: Text(
-              'RESOURCES',
+              "resources".tr().toUpperCase(),
               style: titleStyle,
             ),
           ),
@@ -169,9 +168,9 @@ class _FooterState extends State<Footer> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Opacity(
-                  opacity: .5,
+                  opacity: 0.5,
                   child: Text(
-                    'About',
+                    "about".tr(),
                     style: linkStyle,
                   ),
                 ),
@@ -183,9 +182,9 @@ class _FooterState extends State<Footer> {
               context.router.push(ContactRoute());
             },
             child: Opacity(
-              opacity: .5,
+              opacity: 0.5,
               child: Text(
-                'Contact',
+                "contact".tr(),
                 style: linkStyle,
               ),
             )),
@@ -195,9 +194,9 @@ class _FooterState extends State<Footer> {
               context.router.push(AboutMeRoute());
             },
             child: Opacity(
-              opacity: .5,
+              opacity: 0.5,
               child: Text(
-                'Who am I?',
+                "who_am_i".tr(),
                 style: linkStyle,
               ),
             )),
@@ -218,7 +217,7 @@ class _FooterState extends State<Footer> {
 
     Snack.s(
       context: context,
-      message: 'Your language has been successfully updated.',
+      message: "language_update_success".tr(),
     );
   }
 
@@ -250,7 +249,7 @@ class _FooterState extends State<Footer> {
 
       Snack.e(
         context: context,
-        message: 'Sorry, there was an error while updating your language.',
+        message: "language_update_error".tr(),
       );
     }
   }

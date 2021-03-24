@@ -1,9 +1,11 @@
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/actions/users.dart';
 import 'package:rootasjey/state/colors.dart';
+import 'package:rootasjey/utils/app_logger.dart';
 import 'package:rootasjey/utils/snack.dart';
 
 class Newsletter extends StatefulWidget {
@@ -68,7 +70,7 @@ class _NewsletterState extends State<Newsletter> {
               child: Opacity(
                 opacity: 0.8,
                 child: Text(
-                  'Subscribe to my newsletter',
+                  "newsletter_title".tr(),
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: titleFontSize,
@@ -80,7 +82,7 @@ class _NewsletterState extends State<Newsletter> {
             Opacity(
               opacity: 0.6,
               child: Text(
-                'Get the latest posts in your inbox (~once per month).',
+                "newsletter_rate".tr(),
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: subtitleFontSize,
@@ -96,7 +98,7 @@ class _NewsletterState extends State<Newsletter> {
               child: TextFormField(
                 controller: newsreaderController,
                 decoration: InputDecoration(
-                  labelText: 'Your email address',
+                  labelText: "your_email".tr(),
                   border: OutlineInputBorder(),
                   errorText: errorText,
                 ),
@@ -105,20 +107,18 @@ class _NewsletterState extends State<Newsletter> {
                   email = value;
 
                   final isWellFormatted = UsersActions.checkEmailFormat(email);
-                  errorText = isWellFormatted
-                      ? null
-                      : 'The value entered is not a valid email address';
+                  errorText = isWellFormatted ? null : "email_not_valid".tr();
 
                   setState(() {});
                 },
                 validator: (value) {
                   if (value.isEmpty) {
-                    return 'Email cannot be empty';
+                    return "email_empty_forbidden".tr();
                   }
 
                   final isWellFormatted = UsersActions.checkEmailFormat(email);
                   if (!isWellFormatted) {
-                    return 'The value entered is not a valid email address';
+                    return "email_not_valid".tr();
                   }
 
                   return null;
@@ -142,7 +142,7 @@ class _NewsletterState extends State<Newsletter> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'SUBSCRIBE',
+                      "subscribe".tr(),
                       style: TextStyle(
                         fontSize: 18.0,
                         color: Colors.white,
@@ -176,7 +176,7 @@ class _NewsletterState extends State<Newsletter> {
             bottom: 8.0,
           ),
           child: Text(
-            'Thank you!',
+            "thank_you_exclamation".tr(),
             style: TextStyle(
               fontSize: 40.0,
             ),
@@ -185,7 +185,7 @@ class _NewsletterState extends State<Newsletter> {
         Opacity(
           opacity: 0.6,
           child: Text(
-            'Thank you for subscribing to the newsletter. See you soon 👋',
+            "thank_you_newsletter".tr(),
             style: TextStyle(
               fontSize: 20.0,
             ),
@@ -195,7 +195,7 @@ class _NewsletterState extends State<Newsletter> {
           padding: const EdgeInsets.only(top: 8.0),
           child: TextButton(
             onPressed: () => setState(() => _isSubscribed = false),
-            child: Text('Use another email'),
+            child: Text("email_use_other".tr()),
           ),
         ),
       ],
@@ -208,7 +208,7 @@ class _NewsletterState extends State<Newsletter> {
     if (!isWellFormatted) {
       Snack.e(
         context: context,
-        message: 'The value entered is not a valid email address',
+        message: "email_not_valid".tr(),
       );
 
       return;
@@ -231,7 +231,7 @@ class _NewsletterState extends State<Newsletter> {
         _isSubscribed = true;
       });
     } catch (error) {
-      debugPrint(error.toString());
+      appLogger.e(error);
       setState(() => isLoading = false);
     }
   }

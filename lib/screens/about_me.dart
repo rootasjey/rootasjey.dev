@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/better_avatar.dart';
 import 'package:rootasjey/components/footer.dart';
@@ -156,7 +157,7 @@ class _AboutMeState extends State<AboutMe> {
                   ),
                 ),
                 Text(
-                  'FORMATION',
+                  "formation".tr().toUpperCase(),
                   style: TextStyle(
                     fontSize: 40.0,
                     fontWeight: FontWeight.w300,
@@ -167,16 +168,10 @@ class _AboutMeState extends State<AboutMe> {
             ),
           ),
           textBlock(
-            text:
-                "I've a master degree in Computer Science from Versailles University, where I've done my whole studies. There, I learned design pattern, J2EE, Algorithm, Security & Cryptography, Data mining & data integration.",
+            text: "formation_degree".tr(),
           ),
           textBlock(
-            text:
-                "Though the experience was not perfect, I really liked my school time because most of the classes were interesting.",
-          ),
-          textBlock(
-            text:
-                "The first complain was all the different classes we had to take which didn't have a direct relationship with our specility. For example, I had a chemistry classes and that didn't serve me up for my programming classes. But even this, I learned to enjoy. One day, after class, I watched a full documentary about the infinitely small and it gave me context and purpose for my lesson. I was able to better understand and memorize.",
+            text: "formation_benefits".tr(),
           ),
         ],
       ),
@@ -284,10 +279,10 @@ class _AboutMeState extends State<AboutMe> {
       children: [
         header(
           icon: Icon(Icons.sports_baseball, size: 40.0),
-          title: 'HOBBIES',
+          title: "hobbies".tr(),
         ),
         textBlock(
-          text: "What I like to do on my free time:",
+          text: "hobbies_description".tr(),
         ),
         Container(
           width: 600.0,
@@ -298,16 +293,14 @@ class _AboutMeState extends State<AboutMe> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               subHeader(
-                title: 'VIDEO GAMES',
+                title: "hobbies_games".tr().toUpperCase(),
                 icon: Icon(Icons.gamepad, size: 30.0),
               ),
               textBlock(
-                text:
-                    "One of my best experiences. Video games are so rich, diversified and move me with various emotions that I have barely the words to describe my feelings. They are multi-purpose and you can enjoy a game with your friend or explore a new world alone.",
+                text: "hobbies_games_1".tr(),
               ),
               textBlock(
-                text:
-                    "And as there are more diversity nowdays, there're games talking about less common subjects like mourning or schizophrenia.",
+                text: "hobbies_games_2".tr(),
               ),
               Wrap(
                 spacing: 10.0,
@@ -335,12 +328,11 @@ class _AboutMeState extends State<AboutMe> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             subHeader(
-              title: 'MUSIC',
+              title: "music".tr().toUpperCase(),
               icon: Icon(Icons.music_note, size: 30.0),
             ),
             textBlock(
-              text:
-                  "Music keeps me company while coding, drawing, reading and driving.",
+              text: "music_description".tr(),
             ),
             Wrap(
               spacing: 10.0,
@@ -378,7 +370,7 @@ class _AboutMeState extends State<AboutMe> {
                 top: 60.0,
               ),
               child: textBlock(
-                text: "Artists I love:",
+                text: "music_artists_love".tr(),
               ),
             ),
             artistsList(),
@@ -392,12 +384,11 @@ class _AboutMeState extends State<AboutMe> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               subHeader(
-                title: 'BOOKS',
+                title: "books".tr().toUpperCase(),
                 icon: Icon(Icons.library_books, size: 30.0),
               ),
               textBlock(
-                text:
-                    "Reading moments are peaceful, calm and often thrilling. A short list of my most liked books of all times:",
+                text: "books_description".tr(),
               ),
               Wrap(
                 spacing: 10.0,
@@ -405,8 +396,7 @@ class _AboutMeState extends State<AboutMe> {
                 crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
                   musicGenderButton(
-                    // name: "La Vérité sur l'Affaire Harry Quebert",
-                    name: "The Truth About the Harry Quebert Affair",
+                    name: "book_quebert".tr(),
                     url:
                         'https://books.google.fr/books/about/The_Truth_about_the_Harry_Quebert_Affair.html?id=IS9hBQAAQBAJ&printsec=frontcover&source=kp_read_button&redir_esc=y#v=onepage&q&f=false',
                   ),
@@ -457,7 +447,7 @@ class _AboutMeState extends State<AboutMe> {
                   child: Icon(Icons.work_outline, size: 40.0),
                 ),
                 Text(
-                  'PROFESSIONAL EXP.',
+                  "pro_exp".tr().toUpperCase(),
                   style: TextStyle(
                     fontSize: 40.0,
                     fontWeight: FontWeight.w300,
@@ -467,22 +457,10 @@ class _AboutMeState extends State<AboutMe> {
               ],
             ),
           ),
-          textBlock(
-            text:
-                "I was a web developer at Dassault Systèmes during 4 years. I started my end of study intership then stayed as a full time employee.",
-          ),
-          textBlock(
-            text:
-                "During those years, I learned how to work on a project with a lot of people. From your colleague next to you to the Quality Assessment (QA) in another country. I also learned to deal with heavy processes when you have to add a new feature.",
-          ),
-          textBlock(
-            text:
-                "After my 4 years, I was hired by Fabernovel Technologies, a smaller company. This was the perfect plan to improve my coding skills, discover a new environment, a new way of working and get a better salary.",
-          ),
-          textBlock(
-            text:
-                "But it turned out differently than I expected.\nAfter a month, I was tired of my commute (~4h a day) and I wanted to do remote work. Well, the company had other plans. And that's how I quit so quickly this second job (which I liked a lot even for this short time).",
-          ),
+          textBlock(text: "pro_exp_1".tr()),
+          textBlock(text: "pro_exp_2".tr()),
+          textBlock(text: "pro_exp_3".tr()),
+          textBlock(text: "pro_exp_4".tr()),
         ],
       ),
     );
@@ -614,7 +592,7 @@ class _AboutMeState extends State<AboutMe> {
     return Opacity(
       opacity: 0.6,
       child: Text(
-        "Yep, that's me. I'm a french developer on the freelance journey. My skillset is mostly focused on coding and art but my insatiable curiosity makes me learn various subjects in other subjects like social and science.",
+        "profile_summary".tr(),
         style: TextStyle(
           fontSize: 26.0,
           fontWeight: FontWeight.w300,

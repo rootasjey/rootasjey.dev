@@ -262,58 +262,58 @@ class _HomeAppBarState extends State<HomeAppBar> {
         },
         itemBuilder: (BuildContext context) => <PopupMenuEntry<PageRouteInfo>>[
           if (isNarrow)
-            const PopupMenuItem(
+            PopupMenuItem(
                 value: DashboardPageRoute(children: [NewPostRoute()]),
                 child: ListTile(
-                  leading: Icon(Icons.add),
+                  leading: Icon(UniconsLine.plus),
                   title: Text(
-                    'New Post',
+                    "post_new".tr(),
                     style: TextStyle(
                       fontWeight: FontWeight.w400,
                     ),
                   ),
                 )),
           if (isNarrow)
-            const PopupMenuItem(
+            PopupMenuItem(
                 value: SearchRoute(),
                 child: ListTile(
                   leading: Icon(Icons.search),
                   title: Text(
-                    'Search',
+                    "search".tr(),
                     style: TextStyle(
                       fontWeight: FontWeight.w400,
                     ),
                   ),
                 )),
-          const PopupMenuItem(
+          PopupMenuItem(
               value: DashboardPageRoute(children: [NewProjectRoute()]),
               child: ListTile(
-                leading: Icon(Icons.add),
+                leading: Icon(UniconsLine.plus),
                 title: Text(
-                  'New Project',
+                  "project_new".tr(),
                   style: TextStyle(
                     fontWeight: FontWeight.w400,
                   ),
                 ),
               )),
-          const PopupMenuItem(
+          PopupMenuItem(
             value: DashboardPageRoute(children: [MyPostsRoute()]),
             child: ListTile(
               leading: Icon(Icons.article),
               title: Text(
-                'My Posts',
+                "posts_my".tr(),
                 style: TextStyle(
                   fontWeight: FontWeight.w400,
                 ),
               ),
             ),
           ),
-          const PopupMenuItem(
+          PopupMenuItem(
             value: DashboardPageRoute(children: [MyProjectsRoute()]),
             child: ListTile(
               leading: Icon(Icons.apps_outlined),
               title: Text(
-                'My Projects',
+                "projects_my".tr(),
                 style: TextStyle(
                   fontWeight: FontWeight.w400,
                 ),
@@ -325,7 +325,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
             child: ListTile(
               leading: Icon(Icons.exit_to_app),
               title: Text(
-                'Sign out',
+                "signout".tr(),
                 style: TextStyle(
                   fontWeight: FontWeight.w400,
                 ),
@@ -392,21 +392,21 @@ class _HomeAppBarState extends State<HomeAppBar> {
             value: SearchRoute(),
             child: ListTile(
               leading: Icon(Icons.search),
-              title: Text('Search'),
+              title: Text("search".tr()),
             ),
           ),
         PopupMenuItem(
           value: SigninRoute(),
           child: ListTile(
             leading: Icon(Icons.perm_identity),
-            title: Text('Sign in'),
+            title: Text("signin".tr()),
           ),
         ),
         PopupMenuItem(
           value: SignupRoute(),
           child: ListTile(
             leading: Icon(Icons.open_in_browser),
-            title: Text('Sign up'),
+            title: Text("signup".tr()),
           ),
         ),
       ],

@@ -1,4 +1,5 @@
 import 'package:collection/collection.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:rootasjey/state/colors.dart';
@@ -24,34 +25,32 @@ class _WebAdditionalFeaturesState extends State<WebAdditionalFeatures> {
 
   final featuresDataList = [
     {
-      'label': 'Design creation',
-      'description': "We will craft a personalized design for you.",
+      'label': "design_creation".tr(),
+      'description': "design_creation_description".tr(),
       'cost': 1500,
       'selected': false,
     },
     {
-      'label': 'Members gestion',
-      'description':
-          "Create a section members so your customers can sign up & login.",
+      'label': "member_gestion".tr(),
+      'description': "member_gestion_description".tr(),
       'cost': 500,
       'selected': false,
     },
     {
-      'label': 'Payments',
-      'description':
-          'Allow customers to purchase goods and subscribe to recurring payments.',
+      'label': "payments".tr(),
+      'description': "payments_description".tr(),
       'cost': 2000,
       'selected': false,
     },
     {
-      'label': 'Language localization',
-      'description': 'Make your website available in several languages.',
+      'label': "language_localization".tr(),
+      'description': "language_localization_description".tr(),
       'cost': 500,
       'selected': false,
     },
     {
-      'label': 'Extra',
-      'description': 'You need extra features no listed here.',
+      'label': "extra".tr(),
+      'description': "extra_description".tr(),
       'cost': 0,
       'selected': false,
     },
@@ -87,7 +86,7 @@ class _WebAdditionalFeaturesState extends State<WebAdditionalFeatures> {
                     ),
                   ),
                   Text(
-                    'additional ${countSelected > 1 ? 'features' : 'feature'} selected',
+                    "additional_features_selected".plural(countSelected),
                     style: TextStyle(
                       fontSize: 30.0,
                       fontWeight: FontWeight.w200,
@@ -114,7 +113,7 @@ class _WebAdditionalFeaturesState extends State<WebAdditionalFeatures> {
                     icon: Icon(Icons.clear_all),
                     label: Opacity(
                       opacity: 0.6,
-                      child: Text('Clear'),
+                      child: Text("clear".tr()),
                     ),
                   ),
                 ],

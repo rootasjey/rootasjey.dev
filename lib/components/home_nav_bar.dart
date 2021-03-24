@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/state/colors.dart';
@@ -72,37 +73,37 @@ class HomeNavBar extends StatelessWidget {
           cardLink(
             context: context,
             icon: Icons.work,
-            titleText: 'Enroll',
+            titleText: "enroll".tr(),
             routeInfo: EnrollRoute(),
           ),
           cardLink(
             context: context,
             icon: Icons.apps,
-            titleText: 'Projects',
+            titleText: "projects".tr(),
             routeInfo: ProjectsRoute(),
           ),
           cardLink(
             context: context,
             icon: Icons.edit,
-            titleText: 'Posts',
+            titleText: "posts",
             routeInfo: PostsRoute(),
           ),
           cardLink(
             context: context,
             icon: Icons.attach_money,
-            titleText: 'Pricing',
+            titleText: "pricing".tr(),
             routeInfo: PricingRoute(),
           ),
           cardLink(
             context: context,
             icon: Icons.email_outlined,
-            titleText: 'Contact me',
+            titleText: "contact_me".tr(),
             routeInfo: ContactRoute(),
           ),
           cardLink(
             context: context,
             icon: Icons.help_center,
-            titleText: 'About',
+            titleText: "about".tr(),
             routeInfo: AboutRoute(),
           ),
         ],
@@ -138,31 +139,31 @@ class HomeNavBar extends StatelessWidget {
           buttonLink(
             context: context,
             icon: Icons.apps,
-            titleText: 'Projects',
+            titleText: "projects".tr(),
             routeInfo: ProjectsDeepRoute(children: [ProjectsRoute()]),
           ),
           buttonLink(
             context: context,
             icon: Icons.edit,
-            titleText: 'Posts',
+            titleText: "posts".tr(),
             routeInfo: PostsDeepRoute(children: [PostsRoute()]),
           ),
           buttonLink(
             context: context,
             icon: Icons.attach_money,
-            titleText: 'Pricing',
+            titleText: "pricing".tr(),
             routeInfo: PricingRoute(),
           ),
           buttonLink(
             context: context,
             icon: Icons.email_outlined,
-            titleText: 'Contact me',
+            titleText: "contact_me".tr(),
             routeInfo: ContactRoute(),
           ),
           buttonLink(
             context: context,
             icon: Icons.help_center,
-            titleText: 'About',
+            titleText: "about".tr(),
             routeInfo: AboutRoute(),
           ),
         ],
