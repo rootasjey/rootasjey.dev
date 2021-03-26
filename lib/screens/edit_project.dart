@@ -3,14 +3,18 @@ import 'dart:async';
 import 'package:auto_route/annotations.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/home_app_bar.dart';
 import 'package:rootasjey/state/colors.dart';
+import 'package:rootasjey/utils/app_logger.dart';
 import 'package:rootasjey/utils/cloud.dart';
+import 'package:rootasjey/utils/fonts.dart';
 import 'package:rootasjey/utils/snack.dart';
 import 'package:rootasjey/utils/texts.dart';
 import 'package:supercharged/supercharged.dart';
+import 'package:unicons/unicons.dart';
 
 class EditProject extends StatefulWidget {
   final String projectId;
@@ -150,7 +154,7 @@ class _EditProjectState extends State<EditProject> {
                 ? Icon(Icons.visibility_off)
                 : Icon(Icons.visibility),
             label: Text(
-              isMetaVisible ? 'Hide meta data' : 'Show meta data',
+              isMetaVisible ? "hide_meta_data".tr() : "meta_data_show".tr(),
             ),
           ),
         ],
@@ -188,7 +192,7 @@ class _EditProjectState extends State<EditProject> {
                 child: Opacity(
                   opacity: 0.7,
                   child: Text(
-                    "An error occurred. Maybe the project doesn't exist anymore or there's a network issue.",
+                    "project_fetch_error".tr(),
                     style: TextStyle(
                       fontSize: 30.0,
                     ),
@@ -197,11 +201,11 @@ class _EditProjectState extends State<EditProject> {
               ),
               OutlinedButton.icon(
                   onPressed: context.router.pop,
-                  icon: Icon(Icons.arrow_back, color: Colors.pink),
+                  icon: Icon(UniconsLine.arrow_left, color: Colors.pink),
                   label: Opacity(
                     opacity: 0.6,
                     child: Text(
-                      'Navigate back',
+                      "back".tr(),
                       style: TextStyle(
                         fontSize: 16.0,
                       ),
@@ -229,7 +233,7 @@ class _EditProjectState extends State<EditProject> {
             Opacity(
               opacity: 0.6,
               child: Text(
-                'Saving...',
+                "saving".tr(),
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   color: stateColors.foreground,
@@ -247,7 +251,7 @@ class _EditProjectState extends State<EditProject> {
         child: TextButton(
           onPressed: showAppBarDialog,
           child: Text(
-            title.isEmpty ? 'Edit Project' : title,
+            title.isEmpty ? "project_edit".tr() : title,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
               color: stateColors.foreground,
@@ -276,7 +280,7 @@ class _EditProjectState extends State<EditProject> {
                 child: CircularProgressIndicator(),
               ),
               Text(
-                'Loading...',
+                "loading".tr(),
                 style: TextStyle(
                   fontSize: 30.0,
                 ),
@@ -327,7 +331,7 @@ class _EditProjectState extends State<EditProject> {
                   fontWeight: FontWeight.w500,
                 ),
                 decoration: InputDecoration(
-                  hintText: 'Project Title...',
+                  hintText: "project_title_dot".tr(),
                   border: OutlineInputBorder(borderSide: BorderSide.none),
                 ),
               ),
@@ -352,7 +356,7 @@ class _EditProjectState extends State<EditProject> {
         keyboardType: TextInputType.multiline,
         textCapitalization: TextCapitalization.sentences,
         decoration: InputDecoration(
-          hintText: 'Project Summary...',
+          hintText: "project_summary_dot".tr(),
           icon: Icon(Icons.short_text),
           border: OutlineInputBorder(borderSide: BorderSide.none),
         ),
@@ -401,7 +405,7 @@ class _EditProjectState extends State<EditProject> {
         ),
         decoration: InputDecoration(
           icon: Icon(Icons.edit),
-          hintText: "Project's story...",
+          hintText: "project_story_dot".tr(),
           border: OutlineInputBorder(borderSide: BorderSide.none),
         ),
       ),
@@ -429,7 +433,7 @@ class _EditProjectState extends State<EditProject> {
                 label: Opacity(
                   opacity: 0.6,
                   child: Text(
-                    'Clear content',
+                    "clear_content".tr(),
                   ),
                 )),
             Padding(padding: const EdgeInsets.only(right: 20.0)),
@@ -440,12 +444,7 @@ class _EditProjectState extends State<EditProject> {
                   saveContent();
                 },
                 icon: Opacity(opacity: 0.6, child: Icon(Icons.save)),
-                label: Opacity(
-                  opacity: 0.6,
-                  child: Text(
-                    'Save draft',
-                  ),
-                )),
+                label: Opacity(opacity: 0.6, child: Text("save_draft".tr()))),
             Padding(padding: const EdgeInsets.only(right: 20.0)),
             publishedDropDown(),
           ],
@@ -484,10 +483,11 @@ class _EditProjectState extends State<EditProject> {
       onChanged: (value) => updatePubStatus(value),
       items: [DRAFT, PUBLISHED].map((value) {
         return DropdownMenuItem(
-            value: value,
-            child: Text(
-              value.toUpperCase(),
-            ));
+          value: value,
+          child: Text(
+            value.toUpperCase(),
+          ),
+        );
       }).toList(),
     );
   }
@@ -524,7 +524,7 @@ class _EditProjectState extends State<EditProject> {
               child: Icon(Icons.device_unknown),
             ),
             Text(
-              'PLATFORMS',
+              "platforms".tr().toUpperCase(),
               style: TextStyle(
                 fontSize: 20.0,
                 fontWeight: FontWeight.w600,
@@ -579,7 +579,7 @@ class _EditProjectState extends State<EditProject> {
             child: TextFormField(
               controller: platformController,
               decoration: InputDecoration(
-                labelText: 'New platform...',
+                labelText: "platform_new".tr(),
                 border: OutlineInputBorder(),
               ),
               onChanged: (value) {
@@ -596,7 +596,7 @@ class _EditProjectState extends State<EditProject> {
                 savePlatforms();
               },
               icon: Icon(Icons.add),
-              label: Text('Add platform'),
+              label: Text("platform_add".tr()),
             ),
           ),
         ],
@@ -636,8 +636,8 @@ class _EditProjectState extends State<EditProject> {
               child: Icon(Icons.code),
             ),
             Text(
-              'PROGRAMMING LANGUAGES',
-              style: TextStyle(
+              "programming_languages".tr().toUpperCase(),
+              style: FontsUtils.mainStyle(
                 fontSize: 20.0,
                 fontWeight: FontWeight.w600,
               ),
@@ -679,7 +679,7 @@ class _EditProjectState extends State<EditProject> {
             child: TextFormField(
               controller: pLangController,
               decoration: InputDecoration(
-                labelText: 'New programmin language...',
+                labelText: "programming_language_new_dot".tr(),
                 border: OutlineInputBorder(),
               ),
               onChanged: (value) {
@@ -696,7 +696,7 @@ class _EditProjectState extends State<EditProject> {
                 savePLanguages();
               },
               icon: Icon(Icons.add),
-              label: Text('Add'),
+              label: Text("add".tr()),
             ),
           ),
         ],
@@ -736,8 +736,8 @@ class _EditProjectState extends State<EditProject> {
               child: Icon(Icons.tag),
             ),
             Text(
-              'TAGS',
-              style: TextStyle(
+              "tags".tr().toUpperCase(),
+              style: FontsUtils.mainStyle(
                 fontSize: 20.0,
                 fontWeight: FontWeight.w600,
               ),
@@ -791,7 +791,7 @@ class _EditProjectState extends State<EditProject> {
             child: TextFormField(
               controller: tagController,
               decoration: InputDecoration(
-                labelText: 'New tag...',
+                labelText: "tag_new_dot".tr(),
                 border: OutlineInputBorder(),
               ),
               onChanged: (value) {
@@ -808,7 +808,7 @@ class _EditProjectState extends State<EditProject> {
                 saveTags();
               },
               icon: Icon(Icons.add),
-              label: Text('Add tag'),
+              label: Text("tag_add".tr()),
             ),
           ),
         ],
@@ -837,8 +837,8 @@ class _EditProjectState extends State<EditProject> {
                   child: Icon(Icons.link),
                 ),
                 Text(
-                  'EXTERNAL URLS',
-                  style: TextStyle(
+                  "urls_ext".tr(),
+                  style: FontsUtils.mainStyle(
                     fontSize: 20.0,
                     fontWeight: FontWeight.w600,
                   ),
@@ -885,7 +885,7 @@ class _EditProjectState extends State<EditProject> {
             showAddUrlSheet();
           },
           icon: Icon(Icons.add),
-          label: Text('Add URL'),
+          label: Text("url_add".tr()),
         ),
       ]),
     );
@@ -938,11 +938,11 @@ class _EditProjectState extends State<EditProject> {
         hasError = true;
       });
 
-      debugPrint(error.toSring());
+      appLogger.e(error);
 
       Snack.e(
         context: context,
-        message: "There was an error while saving.\n${error.toString()}",
+        message: "saving_error".tr(),
       );
     }
   }
@@ -963,12 +963,12 @@ class _EditProjectState extends State<EditProject> {
         isLoading = false;
         hasError = true;
       });
-      debugPrint(error.toSring());
+
+      appLogger.e(error);
 
       Snack.e(
         context: context,
-        message:
-            "There was an error while fetching the project.\n${error.toString()}",
+        message: "project_fetch_error".tr(),
       );
     }
   }
@@ -1000,7 +1000,7 @@ class _EditProjectState extends State<EditProject> {
 
       setState(() => isSaving = false);
     } catch (error) {
-      debugPrint(error.toString());
+      appLogger.e(error);
       setState(() => isSaving = false);
     }
   }
@@ -1014,7 +1014,7 @@ class _EditProjectState extends State<EditProject> {
 
       setState(() => isSaving = false);
     } catch (error) {
-      debugPrint(error.toString());
+      appLogger.e(error);
       setState(() => isSaving = false);
     }
   }
@@ -1027,7 +1027,7 @@ class _EditProjectState extends State<EditProject> {
 
       setState(() => isSaving = false);
     } catch (error) {
-      debugPrint(error.toString());
+      appLogger.e(error);
       setState(() => isSaving = false);
     }
   }
@@ -1040,7 +1040,7 @@ class _EditProjectState extends State<EditProject> {
 
       setState(() => isSaving = false);
     } catch (error) {
-      debugPrint(error.toString());
+      appLogger.e(error);
       setState(() => isSaving = false);
     }
   }
@@ -1053,7 +1053,7 @@ class _EditProjectState extends State<EditProject> {
 
       setState(() => isSaving = false);
     } catch (error) {
-      debugPrint(error.toString());
+      appLogger.e(error);
       setState(() => isSaving = false);
     }
   }
@@ -1066,7 +1066,7 @@ class _EditProjectState extends State<EditProject> {
 
       setState(() => isSaving = false);
     } catch (error) {
-      debugPrint(error.toString());
+      appLogger.e(error);
       setState(() => isSaving = false);
     }
   }
@@ -1079,7 +1079,7 @@ class _EditProjectState extends State<EditProject> {
 
       setState(() => isSaving = false);
     } catch (error) {
-      debugPrint(error.toString());
+      appLogger.e(error);
       setState(() => isSaving = false);
     }
   }
@@ -1104,7 +1104,7 @@ class _EditProjectState extends State<EditProject> {
                       bottom: 20.0,
                     ),
                     child: Text(
-                      'ADD URL',
+                      "url_add".tr().toUpperCase(),
                       style: TextStyle(
                         fontSize: 18.0,
                       ),
@@ -1152,7 +1152,7 @@ class _EditProjectState extends State<EditProject> {
                             context.router.pop();
                           },
                           icon: Icon(Icons.check),
-                          label: Text('Add URL'),
+                          label: Text("url_add".tr()),
                         ),
                       ),
                     ],
@@ -1168,28 +1168,29 @@ class _EditProjectState extends State<EditProject> {
 
   void showAppBarDialog() {
     showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            contentPadding: const EdgeInsets.only(
-              top: 40.0,
-              left: 30.0,
-              right: 30.0,
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          contentPadding: const EdgeInsets.only(
+            top: 40.0,
+            left: 30.0,
+            right: 30.0,
+          ),
+          content: SizedBox(
+            width: 400.0,
+            child: Text(
+              title,
             ),
-            content: SizedBox(
-              width: 400.0,
-              child: Text(
-                title,
-              ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: context.router.pop,
+              child: Text("close".tr().toUpperCase()),
             ),
-            actions: [
-              TextButton(
-                onPressed: context.router.pop,
-                child: Text('CLOSE'),
-              ),
-            ],
-          );
-        });
+          ],
+        );
+      },
+    );
   }
 
   void updatePubStatus(String status) async {
@@ -1206,7 +1207,8 @@ class _EditProjectState extends State<EditProject> {
 
       setState(() => isSaving = false);
     } catch (error) {
-      debugPrint(error.toString());
+      appLogger.e(error);
+
       setState(() {
         publicationStatus = prevValue;
         isSaving = false;

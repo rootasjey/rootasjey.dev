@@ -3,13 +3,16 @@ import 'dart:async';
 import 'package:auto_route/annotations.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/home_app_bar.dart';
 import 'package:rootasjey/state/colors.dart';
+import 'package:rootasjey/utils/app_logger.dart';
 import 'package:rootasjey/utils/cloud.dart';
 import 'package:rootasjey/utils/snack.dart';
 import 'package:supercharged/supercharged.dart';
+import 'package:unicons/unicons.dart';
 
 class EditPost extends StatefulWidget {
   final String postId;
@@ -53,71 +56,80 @@ class _EditPostState extends State<EditPost> {
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          HomeAppBar(
-            title: isSaving
-                ? Wrap(
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(right: 16.0),
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2.0,
-                        ),
-                      ),
-                      Opacity(
-                        opacity: 0.6,
-                        child: Text(
-                          'Saving...',
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            color: stateColors.foreground,
-                          ),
-                        ),
-                      )
-                    ],
-                  )
-                : Opacity(
-                    opacity: 0.6,
-                    child: TextButton(
-                      onPressed: () {
-                        showDialog(
-                            context: context,
-                            builder: (context) {
-                              return AlertDialog(
-                                contentPadding: const EdgeInsets.only(
-                                  top: 40.0,
-                                  left: 30.0,
-                                  right: 30.0,
-                                ),
-                                content: SizedBox(
-                                  width: 400.0,
-                                  child: Text(
-                                    postTitle,
-                                  ),
-                                ),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () =>
-                                        Navigator.of(context).pop(),
-                                    child: Text('CLOSE'),
-                                  ),
-                                ],
-                              );
-                            });
-                      },
-                      child: Text(
-                        (postTitle.isEmpty ? 'Edit Post' : postTitle),
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          color: stateColors.foreground,
-                        ),
-                      ),
-                    ),
-                  ),
-          ),
+          appBar(),
           body(),
         ],
       ),
+    );
+  }
+
+  Widget appBar() {
+    Widget title;
+
+    if (isSaving) {
+      title = Wrap(
+        crossAxisAlignment: WrapCrossAlignment.center,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(right: 16.0),
+            child: CircularProgressIndicator(
+              strokeWidth: 2.0,
+            ),
+          ),
+          Opacity(
+            opacity: 0.6,
+            child: Text(
+              "saving_dot".tr(),
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                color: stateColors.foreground,
+              ),
+            ),
+          )
+        ],
+      );
+    } else {
+      title = Opacity(
+        opacity: 0.6,
+        child: TextButton(
+          onPressed: () {
+            showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    contentPadding: const EdgeInsets.only(
+                      top: 40.0,
+                      left: 30.0,
+                      right: 30.0,
+                    ),
+                    content: SizedBox(
+                      width: 400.0,
+                      child: Text(
+                        postTitle,
+                      ),
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: context.router.pop,
+                        child: Text("close".tr().toUpperCase()),
+                      ),
+                    ],
+                  );
+                });
+          },
+          child: Text(
+            (postTitle.isEmpty ? "post_edit".tr() : postTitle),
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              color: stateColors.foreground,
+            ),
+          ),
+        ),
+      );
+    }
+
+    return HomeAppBar(
+      title: title,
     );
   }
 
@@ -179,7 +191,7 @@ class _EditPostState extends State<EditPost> {
                 child: Opacity(
                   opacity: 0.7,
                   child: Text(
-                    "An error occurred. Maybe the post doesn't exist anymore or there's a network issue.",
+                    "post_loading_error".tr(),
                     style: TextStyle(
                       fontSize: 30.0,
                     ),
@@ -187,17 +199,18 @@ class _EditPostState extends State<EditPost> {
                 ),
               ),
               OutlinedButton.icon(
-                  onPressed: () => Navigator.of(context).pop(),
-                  icon: Icon(Icons.arrow_back, color: Colors.pink),
-                  label: Opacity(
-                    opacity: 0.6,
-                    child: Text(
-                      'Navigate back',
-                      style: TextStyle(
-                        fontSize: 16.0,
-                      ),
+                onPressed: context.router.pop,
+                icon: Icon(UniconsLine.arrow_left, color: Colors.pink),
+                label: Opacity(
+                  opacity: 0.6,
+                  child: Text(
+                    "back".tr(),
+                    style: TextStyle(
+                      fontSize: 16.0,
                     ),
-                  )),
+                  ),
+                ),
+              ),
             ],
           ),
         ),
@@ -223,7 +236,7 @@ class _EditPostState extends State<EditPost> {
                 child: CircularProgressIndicator(),
               ),
               Text(
-                'Loading...',
+                "loading".tr(),
                 style: TextStyle(
                   fontSize: 30.0,
                 ),
@@ -246,8 +259,8 @@ class _EditPostState extends State<EditPost> {
           Padding(
             padding: const EdgeInsets.only(right: 15.0),
             child: IconButton(
-              onPressed: () => Navigator.of(context).pop(),
-              icon: Icon(Icons.arrow_back),
+              onPressed: context.router.pop,
+              icon: Icon(UniconsLine.arrow_left),
             ),
           ),
           Expanded(
@@ -273,7 +286,7 @@ class _EditPostState extends State<EditPost> {
                   fontSize: 42.0,
                 ),
                 decoration: InputDecoration(
-                  hintText: 'Post Title...',
+                  hintText: "post_title_dot".tr(),
                   border: OutlineInputBorder(borderSide: BorderSide.none),
                 ),
               ),
@@ -312,7 +325,7 @@ class _EditPostState extends State<EditPost> {
         ),
         decoration: InputDecoration(
           icon: Icon(Icons.edit),
-          hintText: "Once upon a time...",
+          hintText: "once_upon_a_time".tr(),
           border: OutlineInputBorder(borderSide: BorderSide.none),
         ),
       ),
@@ -338,26 +351,28 @@ class _EditPostState extends State<EditPost> {
               icon: Opacity(opacity: 0.6, child: Icon(Icons.clear)),
               label: Opacity(
                 opacity: 0.6,
-                child: Text(
-                  'Clear content',
-                ),
+                child: Text("clear_content".tr()),
               )),
           Padding(
             padding: const EdgeInsets.only(left: 20.0),
           ),
           TextButton.icon(
-              focusNode: postFocusNode,
-              onPressed: () {
-                saveTitle();
-                saveContent();
-              },
-              icon: Opacity(opacity: 0.6, child: Icon(Icons.save)),
-              label: Opacity(
-                opacity: 0.6,
-                child: Text(
-                  'Save draft',
-                ),
-              )),
+            focusNode: postFocusNode,
+            onPressed: () {
+              saveTitle();
+              saveContent();
+            },
+            icon: Opacity(
+              opacity: 0.6,
+              child: Icon(
+                UniconsLine.save,
+              ),
+            ),
+            label: Opacity(
+              opacity: 0.6,
+              child: Text("save_draft".tr()),
+            ),
+          ),
         ],
       ),
     );
@@ -402,12 +417,11 @@ class _EditPostState extends State<EditPost> {
         isLoading = false;
         hasError = true;
       });
-      debugPrint(error.toSring());
+      appLogger.e(error);
 
       Snack.e(
         context: context,
-        message: "There was an error while fetching the post.\n"
-            "${error.toString()}",
+        message: "post_fetch_error".tr(),
       );
     }
   }
@@ -440,11 +454,11 @@ class _EditPostState extends State<EditPost> {
         hasError = true;
       });
 
-      debugPrint(error.toSring());
+      appLogger.e(error);
 
       Snack.e(
         context: context,
-        message: "There was an error while saving.\n${error.toString()}",
+        message: "post_save_error".tr(),
       );
     }
   }
@@ -455,7 +469,7 @@ class _EditPostState extends State<EditPost> {
 
       setState(() => isSaving = false);
     } catch (error) {
-      debugPrint(error.toString());
+      appLogger.e(error);
       setState(() => isSaving = false);
     }
   }
@@ -478,7 +492,7 @@ class _EditPostState extends State<EditPost> {
 
       setState(() => isSaving = false);
     } catch (error) {
-      debugPrint(error.toString());
+      appLogger.e(error);
       setState(() => isSaving = false);
     }
   }

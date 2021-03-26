@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:rootasjey/components/animated_app_icon.dart';
 import 'package:rootasjey/components/app_icon.dart';
 import 'package:rootasjey/components/base_app_bar.dart';
@@ -8,6 +9,7 @@ import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/state/user.dart';
 import 'package:rootasjey/utils/app_storage.dart';
 import 'package:rootasjey/utils/constants.dart';
+import 'package:rootasjey/utils/fonts.dart';
 import 'package:rootasjey/utils/snack.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -338,15 +340,13 @@ class DeleteAccountState extends State<DeleteAccount> {
                   children: <Widget>[
                     Opacity(
                       opacity: .8,
-                      child: Text(
-                        'Are you sure?',
-                      ),
+                      child: Text("are_you_sure".tr()),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 8.0),
                       child: Text(
-                        'This action is irreversible',
-                        style: TextStyle(
+                        "action_irreversible".tr(),
+                        style: FontsUtils.mainStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 14.0,
                         ),
@@ -359,46 +359,38 @@ class DeleteAccountState extends State<DeleteAccount> {
           ),
           onTap: () {
             showDialog(
-                context: context,
-                builder: (context) {
-                  return SimpleDialog(
-                    title: Text(
-                      'What happens after?',
-                      style: TextStyle(
-                        fontSize: 15.0,
-                        fontWeight: FontWeight.bold,
+              context: context,
+              builder: (context) {
+                return SimpleDialog(
+                  title: Text(
+                    "account_deletion_after".tr(),
+                    style: FontsUtils.mainStyle(
+                      fontSize: 15.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  children: <Widget>[
+                    Divider(
+                      color: stateColors.secondary,
+                      thickness: 1.0,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(25.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text("account_deletion_point_1".tr()),
+                          Padding(padding: const EdgeInsets.only(top: 15.0)),
+                          Text("account_deletion_point_2".tr()),
+                          Padding(padding: const EdgeInsets.only(top: 15.0)),
+                          Text("account_deletion_point_3".tr()),
+                        ],
                       ),
                     ),
-                    children: <Widget>[
-                      Divider(
-                        color: stateColors.secondary,
-                        thickness: 1.0,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(25.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text(
-                              "Your personal data will be deleted",
-                              style: TextStyle(),
-                            ),
-                            Padding(padding: const EdgeInsets.only(top: 15.0)),
-                            Text(
-                              "Your published quotes will stay on the platform",
-                              style: TextStyle(),
-                            ),
-                            Padding(padding: const EdgeInsets.only(top: 15.0)),
-                            Text(
-                              "Your username will (slowly) be dissaciated with the published quotes",
-                              style: TextStyle(),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  );
-                });
+                  ],
+                );
+              },
+            );
           },
         ),
       ),
@@ -474,7 +466,7 @@ class DeleteAccountState extends State<DeleteAccount> {
     if (password.isEmpty) {
       Snack.e(
         context: context,
-        message: "Password cannot be empty.",
+        message: "password_empty_forbidden".tr(),
       );
 
       return false;

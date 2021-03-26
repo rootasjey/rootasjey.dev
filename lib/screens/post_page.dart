@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:auto_route/annotations.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -11,6 +12,7 @@ import 'package:rootasjey/components/home_app_bar.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/types/post.dart';
 import 'package:rootasjey/utils/cloud.dart';
+import 'package:rootasjey/utils/fonts.dart';
 import 'package:rootasjey/utils/snack.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:supercharged/supercharged.dart';
@@ -191,7 +193,7 @@ class _PostPageState extends State<PostPage> {
                     ? Opacity(
                         opacity: 0.6,
                         child: Text(
-                          'Post',
+                          "post".tr(),
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             color: stateColors.foreground,
@@ -227,9 +229,7 @@ class _PostPageState extends State<PostPage> {
                   if (isNarrow != isNowNarrow) {
                     timer = Timer(
                       1.seconds,
-                      () {
-                        setState(() => isNarrow = isNowNarrow);
-                      },
+                      () => setState(() => isNarrow = isNowNarrow),
                     );
                   }
 
@@ -277,8 +277,8 @@ class _PostPageState extends State<PostPage> {
                   top: 40.0,
                 ),
                 child: Text(
-                  'Loading...',
-                  style: TextStyle(
+                  "loading".tr(),
+                  style: FontsUtils.mainStyle(
                     fontSize: 40.0,
                     fontWeight: FontWeight.w300,
                   ),
@@ -477,7 +477,7 @@ class _PostPageState extends State<PostPage> {
 
       Snack.e(
         context: context,
-        message: "Couldn't get post's content. Try again or contact us.",
+        message: "post_fetch_error".tr(),
       );
     }
   }

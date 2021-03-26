@@ -10,12 +10,14 @@ class FontsUtils {
   static TextStyle mainStyle({
     FontWeight fontWeight = FontWeight.w400,
     double fontSize = 16.0,
+    double height,
     Color color,
   }) {
     if (color == null) {
       return GoogleFonts.raleway(
         fontSize: fontSize,
         fontWeight: fontWeight,
+        height: height,
       );
     }
 
@@ -23,6 +25,7 @@ class FontsUtils {
       color: color,
       fontSize: fontSize,
       fontWeight: fontWeight,
+      height: height,
     );
   }
 

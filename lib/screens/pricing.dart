@@ -1,10 +1,12 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/features/web.dart';
 import 'package:rootasjey/components/footer.dart';
 import 'package:rootasjey/components/home_app_bar.dart';
 import 'package:rootasjey/screens/enroll.dart';
 import 'package:rootasjey/state/colors.dart';
+import 'package:unicons/unicons.dart';
 
 class Pricing extends StatefulWidget {
   @override
@@ -350,13 +352,13 @@ class _PricingState extends State<Pricing> {
           padding: const EdgeInsets.only(right: 16.0),
           child: IconButton(
             onPressed: context.router.pop,
-            icon: Icon(Icons.arrow_back),
+            icon: Icon(UniconsLine.arrow_left),
           ),
         ),
         Column(
           children: [
             Text(
-              'Pricing',
+              "pricing".tr(),
               style: TextStyle(
                 fontSize: 70.0,
                 fontWeight: FontWeight.bold,

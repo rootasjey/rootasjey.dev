@@ -1,12 +1,13 @@
 import 'dart:ui';
 
+import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/footer.dart';
 import 'package:rootasjey/components/home_app_bar.dart';
 import 'package:rootasjey/components/page_title.dart';
-import 'package:rootasjey/screens/pricing.dart';
-import 'package:rootasjey/screens/projects.dart';
+import 'package:rootasjey/router/app_router.gr.dart';
+import 'package:rootasjey/utils/constants.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class About extends StatefulWidget {
@@ -115,7 +116,7 @@ class _AboutState extends State<About> {
             child: Opacity(
               opacity: titleOpacity,
               child: Text(
-                'THE PURPOSE',
+                "the_purpose".tr(),
                 style: titleStyle,
               ),
             ),
@@ -125,9 +126,7 @@ class _AboutState extends State<About> {
             child: Padding(
               padding: const EdgeInsets.only(top: 25.0),
               child: Text(
-                "This is my personal website where you'll find projects that "
-                "I'm working on, some hobbies I want to share and how "
-                "to contact me.",
+                "the_purpose_description".tr(),
                 style: paragraphStyle,
               ),
             ),
@@ -151,7 +150,7 @@ class _AboutState extends State<About> {
             child: Opacity(
               opacity: titleOpacity,
               child: Text(
-                'DEV STACK',
+                "dev_stack".tr().toUpperCase(),
                 style: titleStyle,
               ),
             ),
@@ -161,7 +160,7 @@ class _AboutState extends State<About> {
             child: Padding(
               padding: const EdgeInsets.only(top: 25.0),
               child: Text(
-                "This website has been crafted by hand with Flutter & Firebase.\nAfter testing multiple solutions, I ended up here because it seems the cheapest and most flexble way for my usage.",
+                "dev_stack_1".tr(),
                 style: paragraphStyle,
               ),
             ),
@@ -171,7 +170,7 @@ class _AboutState extends State<About> {
             child: Padding(
               padding: const EdgeInsets.only(top: 25.0),
               child: Text(
-                "If you want to learn how the technology behind this website, visit the GitHub repository. or stay tuned for future blog posts explanations.",
+                "dev_stack_2".tr(),
                 style: paragraphStyle,
               ),
             ),
@@ -181,11 +180,10 @@ class _AboutState extends State<About> {
               top: 10.0,
             ),
             child: TextButton.icon(
-              onPressed: () =>
-                  launch('https://github.com/rootasjey/rootasjey.dev'),
+              onPressed: () => launch(Constants.appGithubUrl),
               icon: Icon(Icons.open_in_browser),
               label: Text(
-                'Github',
+                "Github",
               ),
             ),
           ),
@@ -208,7 +206,7 @@ class _AboutState extends State<About> {
             child: Opacity(
               opacity: titleOpacity,
               child: Text(
-                'MY WORK',
+                "work_my".tr().toUpperCase(),
                 style: titleStyle,
               ),
             ),
@@ -218,7 +216,7 @@ class _AboutState extends State<About> {
             child: Padding(
               padding: const EdgeInsets.only(top: 25.0),
               child: Text(
-                "I work as a freelancer in web and mobile development but I'm currently coding my own applications. You can see them in the projects section. If you want to start a collaboration, go to the work with me page.",
+                "work_my_description".tr(),
                 style: paragraphStyle,
               ),
             ),
@@ -230,29 +228,22 @@ class _AboutState extends State<About> {
               runSpacing: 10.0,
               children: [
                 TextButton.icon(
-                  onPressed: () => Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) {
-                        return Projects();
-                      },
-                    ),
-                  ),
+                  onPressed: () {
+                    context.router
+                        .push(ProjectsDeepRoute(children: [ProjectsRoute()]));
+                  },
                   icon: Icon(Icons.apps),
                   label: Text(
                     'Projects',
                   ),
                 ),
                 TextButton.icon(
-                  onPressed: () => Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) {
-                        return Pricing();
-                      },
-                    ),
-                  ),
+                  onPressed: () {
+                    context.router.push(PricingRoute());
+                  },
                   icon: Icon(Icons.work),
                   label: Text(
-                    'Work with me',
+                    "hire_me".tr(),
                   ),
                 ),
               ],
@@ -263,7 +254,7 @@ class _AboutState extends State<About> {
             child: Opacity(
               opacity: paragraphOpacity,
               child: Text(
-                "Below are my freelancer profiles",
+                "freelancer_profiles".tr(),
                 style: paragraphStyle,
               ),
             ),
@@ -276,7 +267,7 @@ class _AboutState extends State<About> {
               children: [
                 InkWell(
                   onTap: () {
-                    launch('https://www.malt.fr/profile/jeremiecorpinot');
+                    launch(Constants.maltProfileUrl);
                   },
                   child: Padding(
                     padding: const EdgeInsets.all(12.0),
@@ -289,8 +280,7 @@ class _AboutState extends State<About> {
                 ),
                 InkWell(
                   onTap: () {
-                    launch(
-                        'https://app.comet.co/freelancer/profile/5xe7Awyb7r?params=eyJhbm9ueW1pemUiOmZhbHNlLCJkZXNpZ25Nb2RlIjpmYWxzZSwicmVhZE9ubHkiOnRydWV9');
+                    launch(Constants.cometProfileUrl);
                   },
                   child: Padding(
                     padding: const EdgeInsets.all(12.0),
@@ -322,7 +312,7 @@ class _AboutState extends State<About> {
             child: Opacity(
               opacity: titleOpacity,
               child: Text(
-                'MY HOBBIES',
+                "hobbies_my".tr(),
                 style: titleStyle,
               ),
             ),
@@ -332,7 +322,7 @@ class _AboutState extends State<About> {
             child: Padding(
               padding: const EdgeInsets.only(top: 25.0),
               child: Text(
-                "I like to draw, play video games, watch movies & TV series, and read.",
+                "hobbies_my_description".tr(),
                 style: paragraphStyle,
               ),
             ),

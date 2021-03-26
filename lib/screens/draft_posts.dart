@@ -1,11 +1,13 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/post_card.dart';
 import 'package:rootasjey/components/sliver_empty_view.dart';
 import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/state/user.dart';
 import 'package:rootasjey/types/post.dart';
+import 'package:rootasjey/utils/app_logger.dart';
 
 class DraftPosts extends StatefulWidget {
   @override
@@ -67,24 +69,18 @@ class _DraftPostsState extends State<DraftPosts> {
                 }
               },
               itemBuilder: (context) => [
-                const PopupMenuItem(
+                PopupMenuItem(
                   value: 'publish',
                   child: ListTile(
                     leading: Icon(Icons.publish_outlined),
-                    title: Text(
-                      'Publish',
-                      style: TextStyle(),
-                    ),
+                    title: Text("publish".tr()),
                   ),
                 ),
-                const PopupMenuItem(
+                PopupMenuItem(
                   value: 'delete',
                   child: ListTile(
                     leading: Icon(Icons.delete),
-                    title: Text(
-                      'Delete',
-                      style: TextStyle(),
-                    ),
+                    title: Text("delete".tr()),
                   ),
                 ),
               ],
@@ -138,7 +134,7 @@ class _DraftPostsState extends State<DraftPosts> {
         hasNext = limit == snapshot.size;
       });
     } catch (error) {
-      debugPrint(error.toString());
+      appLogger.e(error);
     }
   }
 
@@ -155,7 +151,7 @@ class _DraftPostsState extends State<DraftPosts> {
 
       setState(() => isLoading = false);
     } catch (error) {
-      debugPrint(error.toString());
+      appLogger.e(error);
 
       setState(() {
         postsList.insert(index, removedPost);
@@ -178,7 +174,7 @@ class _DraftPostsState extends State<DraftPosts> {
 
       setState(() => isLoading = false);
     } catch (error) {
-      debugPrint(error.toString());
+      appLogger.e(error);
 
       setState(() {
         postsList.insert(index, removedPost);

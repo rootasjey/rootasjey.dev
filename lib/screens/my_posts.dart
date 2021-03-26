@@ -1,8 +1,11 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:rootasjey/components/home_app_bar.dart';
 import 'package:rootasjey/screens/draft_posts.dart';
 import 'package:rootasjey/screens/published_posts.dart';
 import 'package:rootasjey/state/colors.dart';
+import 'package:unicons/unicons.dart';
 
 class MyPosts extends StatefulWidget {
   @override
@@ -26,7 +29,7 @@ class _MyPostsState extends State<MyPosts> {
             title: Opacity(
               opacity: 0.6,
               child: Text(
-                'Posts',
+                "posts".tr(),
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   color: stateColors.foreground,
@@ -34,13 +37,11 @@ class _MyPostsState extends State<MyPosts> {
               ),
             ),
           ),
-
           SliverList(
             delegate: SliverChildListDelegate([
               header(),
             ]),
           ),
-
           SliverPadding(
             padding: const EdgeInsets.only(
               left: 90.0,
@@ -64,18 +65,16 @@ class _MyPostsState extends State<MyPosts> {
           Padding(
             padding: const EdgeInsets.only(right: 0.0),
             child: IconButton(
-              onPressed: () => Navigator.of(context).pop(),
-              icon: Icon(Icons.arrow_back),
+              onPressed: context.router.pop,
+              icon: Icon(UniconsLine.arrow_left),
             ),
           ),
-
           headerSection(
-            textTitle: 'Drafts',
+            textTitle: "drafts".tr(),
             index: 0,
           ),
-
           headerSection(
-            textTitle: 'Published',
+            textTitle: "published".tr(),
             index: 1,
           ),
         ],
@@ -87,7 +86,6 @@ class _MyPostsState extends State<MyPosts> {
     @required String textTitle,
     @required int index,
   }) {
-
     final isSelected = index == bodyIndex;
 
     return InkWell(
@@ -97,16 +95,12 @@ class _MyPostsState extends State<MyPosts> {
           horizontal: 8.0,
         ),
         child: Opacity(
-          opacity: isSelected
-            ? 1.0
-            : 0.5,
+          opacity: isSelected ? 1.0 : 0.5,
           child: Text(
             textTitle,
             style: TextStyle(
               fontSize: 70.0,
-              fontWeight: isSelected
-                ? FontWeight.bold
-                : FontWeight.w300,
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.w300,
             ),
           ),
         ),

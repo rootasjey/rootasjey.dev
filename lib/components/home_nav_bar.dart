@@ -73,7 +73,7 @@ class HomeNavBar extends StatelessWidget {
           cardLink(
             context: context,
             icon: Icons.work,
-            titleText: "enroll".tr(),
+            titleText: "hire_me".tr(),
             routeInfo: EnrollRoute(),
           ),
           cardLink(
@@ -133,7 +133,7 @@ class HomeNavBar extends StatelessWidget {
             ),
             icon: Icon(Icons.work),
             label: Text(
-              'Enroll',
+              "hire_me".tr(),
             ),
           ),
           buttonLink(

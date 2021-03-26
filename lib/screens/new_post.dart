@@ -1,14 +1,18 @@
 import 'dart:async';
 
+import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/home_app_bar.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/state/user.dart';
+import 'package:rootasjey/utils/app_logger.dart';
 import 'package:rootasjey/utils/cloud.dart';
 import 'package:rootasjey/utils/snack.dart';
 import 'package:supercharged/supercharged.dart';
+import 'package:unicons/unicons.dart';
 
 class NewPost extends StatefulWidget {
   @override
@@ -60,7 +64,7 @@ class _NewPostState extends State<NewPost> {
                 Opacity(
                   opacity: 0.6,
                   child: Text(
-                    isSaving ? 'Saving...' : 'New Post',
+                    isSaving ? "saving_dot".tr() : "post_new".tr(),
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       color: stateColors.foreground,
@@ -107,8 +111,8 @@ class _NewPostState extends State<NewPost> {
           Padding(
             padding: const EdgeInsets.only(right: 15.0),
             child: IconButton(
-              onPressed: () => Navigator.of(context).pop(),
-              icon: Icon(Icons.arrow_back),
+              onPressed: context.router.pop,
+              icon: Icon(UniconsLine.arrow_left),
             ),
           ),
           Expanded(
@@ -134,7 +138,7 @@ class _NewPostState extends State<NewPost> {
                   fontSize: 42.0,
                 ),
                 decoration: InputDecoration(
-                  hintText: 'Post Title...',
+                  hintText: "post_title_dot".tr(),
                   border: OutlineInputBorder(borderSide: BorderSide.none),
                 ),
               ),
@@ -173,7 +177,7 @@ class _NewPostState extends State<NewPost> {
         ),
         decoration: InputDecoration(
           icon: Icon(Icons.edit),
-          hintText: "Once upon a time...",
+          hintText: "onec_upon_a_time".tr(),
           border: OutlineInputBorder(borderSide: BorderSide.none),
         ),
       ),
@@ -190,19 +194,15 @@ class _NewPostState extends State<NewPost> {
             padding: const EdgeInsets.only(left: 20.0),
           ),
           TextButton.icon(
-              focusNode: clearFocusNode,
-              onPressed: () {
-                postContent = '';
-                contentController.clear();
-                contentFocusNode.requestFocus();
-              },
-              icon: Opacity(opacity: 0.6, child: Icon(Icons.clear)),
-              label: Opacity(
-                opacity: 0.6,
-                child: Text(
-                  'Clear content',
-                ),
-              )),
+            focusNode: clearFocusNode,
+            onPressed: () {
+              postContent = '';
+              contentController.clear();
+              contentFocusNode.requestFocus();
+            },
+            icon: Opacity(opacity: 0.6, child: Icon(Icons.clear)),
+            label: Opacity(opacity: 0.6, child: Text("clear_content".tr())),
+          ),
           Padding(
             padding: const EdgeInsets.only(left: 20.0),
           ),
@@ -215,9 +215,7 @@ class _NewPostState extends State<NewPost> {
               icon: Opacity(opacity: 0.6, child: Icon(Icons.save)),
               label: Opacity(
                 opacity: 0.6,
-                child: Text(
-                  'Save draft',
-                ),
+                child: Text("save_draft".tr()),
               )),
         ],
       ),
@@ -278,11 +276,11 @@ class _NewPostState extends State<NewPost> {
       setState(() => isSaving = false);
     } catch (error) {
       setState(() => isSaving = false);
-      debugPrint(error.toSring());
+      appLogger.e(error);
 
       Snack.e(
         context: context,
-        message: "There was an error while saving.\n${error.toString()}",
+        message: "saving_error".tr(),
       );
     }
   }
@@ -294,7 +292,7 @@ class _NewPostState extends State<NewPost> {
       await postSnapshot.update({'title': postTitle});
       setState(() => isSaving = false);
     } catch (error) {
-      debugPrint(error.toString());
+      appLogger.e(error);
       setState(() => isSaving = false);
     }
   }
@@ -317,7 +315,7 @@ class _NewPostState extends State<NewPost> {
 
       setState(() => isSaving = false);
     } catch (error) {
-      debugPrint(error.toString());
+      appLogger.e(error);
       setState(() => isSaving = false);
     }
   }

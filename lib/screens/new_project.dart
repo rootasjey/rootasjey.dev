@@ -1,14 +1,18 @@
 import 'dart:async';
 
+import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/home_app_bar.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/state/user.dart';
+import 'package:rootasjey/utils/app_logger.dart';
 import 'package:rootasjey/utils/cloud.dart';
 import 'package:rootasjey/utils/snack.dart';
 import 'package:supercharged/supercharged.dart';
+import 'package:unicons/unicons.dart';
 
 class NewProject extends StatefulWidget {
   @override
@@ -60,7 +64,7 @@ class _NewProjectState extends State<NewProject> {
                 Opacity(
                   opacity: 0.6,
                   child: Text(
-                    isSaving ? 'Saving...' : 'New Project',
+                    isSaving ? "saving_dot".tr() : "project_new".tr(),
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       color: stateColors.foreground,
@@ -107,8 +111,8 @@ class _NewProjectState extends State<NewProject> {
           Padding(
             padding: const EdgeInsets.only(right: 15.0),
             child: IconButton(
-              onPressed: () => Navigator.of(context).pop(),
-              icon: Icon(Icons.arrow_back),
+              onPressed: context.router.pop,
+              icon: Icon(UniconsLine.arrow_left),
             ),
           ),
           Expanded(
@@ -134,7 +138,7 @@ class _NewProjectState extends State<NewProject> {
                   fontSize: 42.0,
                 ),
                 decoration: InputDecoration(
-                  hintText: 'Project Title...',
+                  hintText: "project_title_dot".tr(),
                   border: OutlineInputBorder(borderSide: BorderSide.none),
                 ),
               ),
@@ -173,7 +177,7 @@ class _NewProjectState extends State<NewProject> {
         ),
         decoration: InputDecoration(
           icon: Icon(Icons.edit),
-          hintText: "Once upon a time...",
+          hintText: "once_upon_a_time".tr(),
           border: OutlineInputBorder(borderSide: BorderSide.none),
         ),
       ),
@@ -196,12 +200,10 @@ class _NewProjectState extends State<NewProject> {
                 contentController.clear();
                 contentFocusNode.requestFocus();
               },
-              icon: Opacity(opacity: 0.6, child: Icon(Icons.clear)),
+              icon: Opacity(opacity: 0.6, child: Icon(UniconsLine.times)),
               label: Opacity(
                 opacity: 0.6,
-                child: Text(
-                  'Clear content',
-                ),
+                child: Text("clear_content".tr()),
               )),
           Padding(
             padding: const EdgeInsets.only(left: 20.0),
@@ -212,12 +214,10 @@ class _NewProjectState extends State<NewProject> {
                 saveTitle();
                 saveContent();
               },
-              icon: Opacity(opacity: 0.6, child: Icon(Icons.save)),
+              icon: Opacity(opacity: 0.6, child: Icon(UniconsLine.save)),
               label: Opacity(
                 opacity: 0.6,
-                child: Text(
-                  'Save draft',
-                ),
+                child: Text("save_draft".tr()),
               )),
         ],
       ),
@@ -295,11 +295,11 @@ class _NewProjectState extends State<NewProject> {
       setState(() => isSaving = false);
     } catch (error) {
       setState(() => isSaving = false);
-      debugPrint(error.toSring());
+      appLogger.e(error);
 
       Snack.e(
         context: context,
-        message: "There was an error while saving.\n${error.toString()}",
+        message: "saving_error".tr(),
       );
     }
   }
@@ -311,7 +311,7 @@ class _NewProjectState extends State<NewProject> {
       await projectSnapshot.update({'title': projectTitle});
       setState(() => isSaving = false);
     } catch (error) {
-      debugPrint(error.toString());
+      appLogger.e(error);
       setState(() => isSaving = false);
     }
   }
@@ -334,7 +334,7 @@ class _NewProjectState extends State<NewProject> {
 
       setState(() => isSaving = false);
     } catch (error) {
-      debugPrint(error.toString());
+      appLogger.e(error);
       setState(() => isSaving = false);
     }
   }

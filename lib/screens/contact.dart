@@ -6,6 +6,8 @@ import 'package:rootasjey/components/footer.dart';
 import 'package:rootasjey/components/home_app_bar.dart';
 import 'package:rootasjey/components/page_title.dart';
 import 'package:rootasjey/state/colors.dart';
+import 'package:rootasjey/utils/app_logger.dart';
+import 'package:rootasjey/utils/fonts.dart';
 import 'package:rootasjey/utils/snack.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -22,7 +24,7 @@ class _ContactState extends State<Contact> {
   String email = '';
   String messageBody = '';
   String messageTitle = '';
-  String subject = 'Website';
+  String subject = "website".tr();
   String subjectHintPrefix = '';
 
   bool isLoading = false;
@@ -35,24 +37,22 @@ class _ContactState extends State<Contact> {
   final formKey = GlobalKey<FormState>();
 
   final Map<String, String> errorMessages = {
-    'emptyEmail':
-        'The email field is empty. Please enter a valid email address.',
-    'invalidEmail':
-        'The value entered is not a valid email address. Please enter a valid one.',
-    'emptyTitle':
-        'Title cannot be empty. Enter a title with more than 3 characters.',
-    'tooShortTitle': 'Please enter a title with more than 3 characters.',
-    'emptyBody':
-        'Body cannot be empty. Enter a body with more than 3 characters.',
-    'tooShortBody': 'Please enter a body with more than 3 characters.',
+    'emptyEmail': "email_empty_forbidden".tr(),
+    'invalidEmail': "email_not_valid".tr(),
+    'emptyTitle': '"title_empty_forbidden_restrictions'.tr(),
+    'tooShortTitle': "title_restrictions".tr(),
+    'emptyBody': "body_empty_forbidden_restrictions".tr(),
+    'tooShortBody': "body_restrictions".tr(),
   };
+
+  var projectTypes = ["website".tr(), "mobile_app".tr(), "other".tr()];
 
   @override
   initState() {
     super.initState();
 
     setState(() {
-      subjectHintPrefix = 'Your message is about your ';
+      subjectHintPrefix = "message_about".tr();
     });
   }
 
@@ -127,7 +127,7 @@ class _ContactState extends State<Contact> {
                     child: Opacity(
                       opacity: 0.6,
                       child: Text(
-                        'Send me an email',
+                        "email_send_me".tr(),
                         style: TextStyle(
                           fontSize: 20.0,
                         ),
@@ -186,8 +186,8 @@ class _ContactState extends State<Contact> {
         Opacity(
           opacity: 0.8,
           child: Text(
-            'OR use the form below 👇 ',
-            style: TextStyle(
+            "form_below".tr(),
+            style: FontsUtils.mainStyle(
               fontSize: 20.0,
               color: stateColors.primary,
               fontWeight: FontWeight.w600,
@@ -201,8 +201,8 @@ class _ContactState extends State<Contact> {
           child: Opacity(
             opacity: 0.5,
             child: Text(
-              'No, your email will NOT be used to send you spam or shared',
-              style: TextStyle(
+              "email_user_use".tr(),
+              style: FontsUtils.mainStyle(
                 fontSize: 16.0,
                 fontWeight: FontWeight.normal,
               ),
@@ -252,7 +252,7 @@ class _ContactState extends State<Contact> {
       ),
       child: TextFormField(
         decoration: InputDecoration(
-          labelText: 'Message',
+          labelText: "message".tr(),
           icon: Icon(Icons.edit),
           border: OutlineInputBorder(),
           errorText: getBodyErrorText(),
@@ -291,7 +291,7 @@ class _ContactState extends State<Contact> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           DropdownButtonFormField<String>(
-            items: ['Website', 'Mobile app', 'Other thing'].map((value) {
+            items: projectTypes.map((value) {
               return DropdownMenuItem(
                 value: value,
                 child: Text(value),
@@ -334,7 +334,7 @@ class _ContactState extends State<Contact> {
     return TextFormField(
       autofocus: true,
       decoration: InputDecoration(
-        labelText: 'Your email address',
+        labelText: "email_address_yours".tr(),
         icon: Icon(Icons.alternate_email),
         errorText: getEmailErrorText(),
       ),
@@ -367,7 +367,7 @@ class _ContactState extends State<Contact> {
       ),
       child: Opacity(
         opacity: 0.6,
-        child: Text('Direct Message',
+        child: Text("direct_message".tr(),
             style: TextStyle(
               fontSize: 20.0,
               fontWeight: FontWeight.bold,
@@ -383,7 +383,7 @@ class _ContactState extends State<Contact> {
       ),
       child: TextFormField(
         decoration: InputDecoration(
-          labelText: 'Title',
+          labelText: "title".tr(),
           icon: Icon(Icons.topic),
           errorText: getTitleErrorText(),
         ),
@@ -416,16 +416,12 @@ class _ContactState extends State<Contact> {
         children: [
           CircularProgressIndicator(),
           Padding(
-            padding: const EdgeInsets.only(
-              left: 16.0,
-            ),
+            padding: const EdgeInsets.only(left: 16.0),
             child: Opacity(
               opacity: 0.6,
               child: Text(
-                'Sending your message...',
-                style: TextStyle(
-                  fontSize: 25.0,
-                ),
+                "sending_message".tr(),
+                style: TextStyle(fontSize: 25.0),
               ),
             ),
           ),
@@ -448,7 +444,7 @@ class _ContactState extends State<Contact> {
           child: Opacity(
             opacity: 0.8,
             child: Text(
-              'Your message has successfully been sent',
+              "message_send_success".tr(),
               style: TextStyle(
                 fontSize: 20.0,
               ),
@@ -462,7 +458,7 @@ class _ContactState extends State<Contact> {
           child: Opacity(
             opacity: 0.6,
             child: Text(
-              'You will receive an email response shortly',
+              "email_response_soon".tr(),
               style: TextStyle(
                 fontSize: 16.0,
                 fontWeight: FontWeight.w300,
@@ -474,7 +470,7 @@ class _ContactState extends State<Contact> {
           padding: const EdgeInsets.only(top: 16.0),
           child: TextButton(
             onPressed: () => setState(() => isMessageSent = false),
-            child: Text('Send another message?'),
+            child: Text("message_send_other".tr()),
           ),
         ),
       ],
@@ -496,8 +492,9 @@ class _ContactState extends State<Contact> {
             color: Colors.white,
           ),
           padding: const EdgeInsets.all(16.0),
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(7.0)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(7.0),
+          ),
         ),
         child: ConstrainedBox(
           constraints: BoxConstraints(
@@ -507,11 +504,13 @@ class _ContactState extends State<Contact> {
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text('SEND',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 18.0,
-                  )),
+              Text(
+                "send".tr().toUpperCase(),
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 18.0,
+                ),
+              ),
               Padding(
                 padding: const EdgeInsets.only(left: 16.0),
                 child: Icon(Icons.send, color: Colors.white),
@@ -575,8 +574,7 @@ class _ContactState extends State<Contact> {
     if (!formKey.currentState.validate()) {
       Snack.e(
         context: context,
-        message: "There are invalid field in the form. "
-            "Please check all field and click send again.",
+        message: "form_invalid".tr(),
       );
 
       return;
@@ -600,12 +598,11 @@ class _ContactState extends State<Contact> {
         isMessageSent = true;
       });
     } catch (error) {
-      debugPrint(error.toString());
+      appLogger.e(error);
 
       Snack.e(
         context: context,
-        message: "Couldn't send your message. "
-            "Please check your connection and try again.",
+        message: "message_send_error".tr(),
       );
     }
   }

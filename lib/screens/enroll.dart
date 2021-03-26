@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/actions/users.dart';
 import 'package:rootasjey/components/features/additional_web.dart';
@@ -10,7 +11,9 @@ import 'package:rootasjey/components/home_app_bar.dart';
 import 'package:rootasjey/components/outline_toggle_button.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/types/enums.dart';
+import 'package:rootasjey/utils/app_logger.dart';
 import 'package:rootasjey/utils/cloud.dart';
+import 'package:rootasjey/utils/fonts.dart';
 import 'package:rootasjey/utils/snack.dart';
 import 'package:verbal_expressions/verbal_expressions.dart';
 import 'package:supercharged/supercharged.dart';
@@ -104,29 +107,23 @@ class _EnrollState extends State<Enroll> {
   VerbalExpression regexCallingCode;
 
   final Map<String, String> projectHint = {
-    PROJECT_PORTFOLIO:
-        "You want to display your work and projects. For example if you're an artist.",
-    PROJECT_BLOG:
-        'You want to write posts and stories about your favourites subjects. Like an online journal.',
-    PROJECT_SHOWCASE:
-        'You want an app with a few pages to showcase a business or something else, with a contact page. This can typically be a bakery website.',
-    PROJECT_ECOMMERCE:
-        'You want to sell or monetize content or goods. This includes taking customer payments, a contact page and an increased security.',
-    PROJECT_MULTIPLE: 'Your app has multiple purposes.',
+    PROJECT_PORTFOLIO: "hint_portfolio".tr(),
+    PROJECT_BLOG: "hint_blog".tr(),
+    PROJECT_SHOWCASE: "hint_showcase".tr(),
+    PROJECT_ECOMMERCE: "hint_ecommerce".tr(),
+    PROJECT_MULTIPLE: "hint_multiple".tr(),
   };
 
   final Map<String, String> sizeHint = {
-    AUDIENCE_SMALL: "Less than 10,000 visitors per month",
-    AUDIENCE_MEDIUM: "Between 10,000 and 100,000 visitors per month",
-    AUDIENCE_LARGE: "More than 100,000 visitors per month",
-    AUDIENCE_UNKNOWN: "Don't worry, we will determine this later together",
+    AUDIENCE_SMALL: "audience.small".tr(),
+    AUDIENCE_MEDIUM: "audience.medium".tr(),
+    AUDIENCE_LARGE: "audience.large".tr(),
+    AUDIENCE_UNKNOWN: "audience.unknown".tr(),
   };
 
   final Map<String, String> afterProjectHint = {
-    AFTER_PROJ_HANDLE:
-        "We will upgrade you app with the most recent technology and make security checks during the year.",
-    AFTER_PROJ_TRANSF:
-        "We will tranfert the whole project to you. You will have to care of the hosting, domain name among other things.",
+    AFTER_PROJ_HANDLE: "hint_project_handle".tr(),
+    AFTER_PROJ_TRANSF: "hint_project_transfert".tr(),
   };
 
   @override
@@ -166,9 +163,7 @@ class _EnrollState extends State<Enroll> {
           : FloatingActionButton.extended(
               onPressed: () => sendProject(),
               icon: Icon(Icons.send),
-              label: Text(
-                'Send application',
-              ),
+              label: Text("send_app".tr()),
             ),
       body: CustomScrollView(
         slivers: [
@@ -178,7 +173,9 @@ class _EnrollState extends State<Enroll> {
                 : Opacity(
                     opacity: 0.6,
                     child: Text(
-                      'COST: ${mainCost + additionalCost} €',
+                      "cost_args".tr(args: [
+                        (mainCost + additionalCost).toString()
+                      ]).toUpperCase(),
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         color: stateColors.foreground,
@@ -271,7 +268,7 @@ class _EnrollState extends State<Enroll> {
           Opacity(
             opacity: 0.6,
             child: Text(
-              "Your project has been successfully sent.\nWe'll review it and contact you in 48h.",
+              "project_send_success".tr(),
               style: TextStyle(
                 fontSize: 30.0,
               ),
@@ -304,7 +301,7 @@ class _EnrollState extends State<Enroll> {
                 Opacity(
                   opacity: 0.6,
                   child: Text(
-                    "Please wait while we're pack your project information into a condensed data and send it over the wire...",
+                    "project_send_wait".tr(),
                     style: TextStyle(
                       fontSize: 30.0,
                     ),
@@ -343,8 +340,8 @@ class _EnrollState extends State<Enroll> {
       steps: [
         Step(
           isActive: currentStep == 0,
-          title: Text('Project'),
-          subtitle: Text('Required'),
+          title: Text("projects".tr()),
+          subtitle: Text("required".tr()),
           content: dynamicStepContent(num: 0),
           state: computeStepState(
             stepIndex: 0,
@@ -352,8 +349,8 @@ class _EnrollState extends State<Enroll> {
         ),
         Step(
           isActive: currentStep == 1,
-          title: Text('Platform'),
-          subtitle: Text('Required'),
+          title: Text("platform".tr()),
+          subtitle: Text("required".tr()),
           content: dynamicStepContent(num: 1),
           state: computeStepState(
             stepIndex: 1,
@@ -361,8 +358,8 @@ class _EnrollState extends State<Enroll> {
         ),
         Step(
           isActive: currentStep == 2,
-          title: Text('Size'),
-          subtitle: Text('Required'),
+          title: Text("size".tr()),
+          subtitle: Text("required".tr()),
           content: dynamicStepContent(num: 2),
           state: computeStepState(
             stepIndex: 2,
@@ -370,8 +367,8 @@ class _EnrollState extends State<Enroll> {
         ),
         Step(
           isActive: currentStep == 3,
-          title: Text('Domain name'),
-          subtitle: Text('Required'),
+          title: Text("domain_name".tr()),
+          subtitle: Text("required".tr()),
           content: dynamicStepContent(num: 3),
           state: computeStepState(
             stepIndex: 3,
@@ -379,8 +376,8 @@ class _EnrollState extends State<Enroll> {
         ),
         Step(
           isActive: currentStep == 4,
-          title: Text('After project'),
-          subtitle: Text('Required'),
+          title: Text("project_after".tr()),
+          subtitle: Text("required".tr()),
           content: dynamicStepContent(num: 4),
           state: computeStepState(
             stepIndex: 4,
@@ -388,8 +385,8 @@ class _EnrollState extends State<Enroll> {
         ),
         Step(
           isActive: currentStep == 5,
-          title: Text('Features'),
-          subtitle: Text('Optional'),
+          title: Text("features".tr()),
+          subtitle: Text("optional".tr()),
           content: dynamicStepContent(num: 5),
           state: computeStepState(
             stepIndex: 5,
@@ -397,8 +394,8 @@ class _EnrollState extends State<Enroll> {
         ),
         Step(
           isActive: currentStep == 6,
-          title: Text('Additional features'),
-          subtitle: Text('Optional'),
+          title: Text("additional_features".tr()),
+          subtitle: Text("optional".tr()),
           content: dynamicStepContent(num: 6),
           state: computeStepState(
             stepIndex: 6,
@@ -406,8 +403,8 @@ class _EnrollState extends State<Enroll> {
         ),
         Step(
           isActive: currentStep == 7,
-          title: Text('Planning'),
-          subtitle: Text('Required'),
+          title: Text("planning".tr()),
+          subtitle: Text("required".tr()),
           content: dynamicStepContent(num: 7),
           state: computeStepState(
             stepIndex: 7,
@@ -415,8 +412,8 @@ class _EnrollState extends State<Enroll> {
         ),
         Step(
           isActive: currentStep == 8,
-          title: Text('Payment method'),
-          subtitle: Text('Required'),
+          title: Text("payment_method".tr()),
+          subtitle: Text("required".tr()),
           content: dynamicStepContent(num: 8),
           state: computeStepState(
             stepIndex: 8,
@@ -424,8 +421,8 @@ class _EnrollState extends State<Enroll> {
         ),
         Step(
           isActive: currentStep == 9,
-          title: Text('Contact'),
-          subtitle: Text('Required'),
+          title: Text("contact".tr()),
+          subtitle: Text("required".tr()),
           content: dynamicStepContent(num: 9),
           state: computeStepState(
             stepIndex: 9,
@@ -489,8 +486,8 @@ class _EnrollState extends State<Enroll> {
                 bottom: 20.0,
               ),
               child: Text(
-                'Do you want us to handle the maintenance?',
-                style: TextStyle(
+                "maintenance_ask".tr(),
+                style: FontsUtils.mainStyle(
                   fontSize: 20.0,
                   fontWeight: FontWeight.w200,
                 ),
@@ -501,13 +498,13 @@ class _EnrollState extends State<Enroll> {
               runSpacing: 20.0,
               children: [
                 OutlineToggleButton(
-                  child: Text('YES, HANDLE THIS FOR ME'),
+                  child: Text("maintenance_answer_yes".tr().toUpperCase()),
                   onPressed: () =>
                       setState(() => afterProject = AFTER_PROJ_HANDLE),
                   selected: afterProject == AFTER_PROJ_HANDLE,
                 ),
                 OutlineToggleButton(
-                  child: Text("NO, I WANT THE PROJECT TRANSFERED TO ME"),
+                  child: Text("maintenance_answer_no".tr()),
                   onPressed: () =>
                       setState(() => afterProject = AFTER_PROJ_TRANSF),
                   selected: afterProject == AFTER_PROJ_TRANSF,
@@ -522,7 +519,7 @@ class _EnrollState extends State<Enroll> {
                 opacity: 0.6,
                 child: Text(
                   afterProjectHint[afterProject],
-                  style: TextStyle(
+                  style: FontsUtils.mainStyle(
                     fontSize: 20.0,
                     fontWeight: FontWeight.w300,
                   ),
@@ -546,8 +543,8 @@ class _EnrollState extends State<Enroll> {
               bottom: 20.0,
             ),
             child: Text(
-              'The following features are already included in your project:',
-              style: TextStyle(
+              "features_included".tr(),
+              style: FontsUtils.mainStyle(
                 fontSize: 20.0,
                 fontWeight: FontWeight.w200,
               ),
@@ -577,8 +574,8 @@ class _EnrollState extends State<Enroll> {
               bottom: 20.0,
             ),
             child: Text(
-              'Choose additional features for your project:',
-              style: TextStyle(
+              "additional_features_chooser".tr(),
+              style: FontsUtils.mainStyle(
                 fontSize: 20.0,
                 fontWeight: FontWeight.w200,
               ),
@@ -608,8 +605,8 @@ class _EnrollState extends State<Enroll> {
               bottom: 20.0,
             ),
             child: Text(
-              'How can we contact you?',
-              style: TextStyle(
+              "contact_how".tr(),
+              style: FontsUtils.mainStyle(
                 fontSize: 20.0,
                 fontWeight: FontWeight.w200,
               ),
@@ -620,12 +617,12 @@ class _EnrollState extends State<Enroll> {
             runSpacing: 20.0,
             children: [
               OutlineToggleButton(
-                child: Text("Email"),
+                child: Text("email".tr()),
                 selected: contactType == CONTACT_EMAIL,
                 onPressed: () => setState(() => contactType = CONTACT_EMAIL),
               ),
               OutlineToggleButton(
-                child: Text("Phone"),
+                child: Text("phone".tr()),
                 selected: contactType == CONTACT_PHONE,
                 onPressed: () => setState(() => contactType = CONTACT_PHONE),
               ),
@@ -638,8 +635,8 @@ class _EnrollState extends State<Enroll> {
             child: CheckboxListTile(
               value: meetInPerson,
               onChanged: (value) => setState(() => meetInPerson = value),
-              title: Opacity(opacity: 0.8, child: Text('Meet in person')),
-              subtitle: Text("We can organize a meeting in a café"),
+              title: Opacity(opacity: 0.8, child: Text("meet_person".tr())),
+              subtitle: Text("meet_personne_description".tr()),
             ),
           ),
           contactLocation(),
@@ -663,7 +660,7 @@ class _EnrollState extends State<Enroll> {
         ),
         child: TextFormField(
           decoration: InputDecoration(
-            labelText: 'Email',
+            labelText: "email".tr(),
             errorText: emailErrorMessage,
           ),
           keyboardType: TextInputType.emailAddress,
@@ -673,8 +670,7 @@ class _EnrollState extends State<Enroll> {
             final isOk = UsersActions.checkEmailFormat(value);
 
             setState(() {
-              emailErrorMessage =
-                  isOk ? null : "The value entered is not a valid email";
+              emailErrorMessage = isOk ? null : "email_not_valid".tr();
             });
           },
         ),
@@ -694,7 +690,7 @@ class _EnrollState extends State<Enroll> {
             width: 150.0,
             child: TextFormField(
               decoration: InputDecoration(
-                labelText: 'Country Indicator',
+                labelText: "country_indic".tr(),
                 errorText: emailErrorMessage,
               ),
               keyboardType: TextInputType.phone,
@@ -704,9 +700,8 @@ class _EnrollState extends State<Enroll> {
                 final isOk = regexCallingCode.hasMatch(value);
 
                 setState(() {
-                  callingCodeErrorMessage = isOk
-                      ? null
-                      : "The value entered is not a valid phone country indicator";
+                  callingCodeErrorMessage =
+                      isOk ? null : "country_indic_not_valid".tr();
                 });
               },
             ),
@@ -715,7 +710,7 @@ class _EnrollState extends State<Enroll> {
             width: 300.0,
             child: TextFormField(
               decoration: InputDecoration(
-                labelText: 'Phone',
+                labelText: "phone".tr(),
                 errorText: emailErrorMessage,
               ),
               keyboardType: TextInputType.phone,
@@ -726,7 +721,7 @@ class _EnrollState extends State<Enroll> {
 
                 setState(() {
                   phoneErrorMessage =
-                      isOk ? null : "The value entered is not a phone number";
+                      isOk ? null : "phone_number_not_valid".tr();
                 });
               },
             ),
@@ -754,7 +749,7 @@ class _EnrollState extends State<Enroll> {
             width: 200.0,
             child: TextFormField(
               decoration: InputDecoration(
-                labelText: 'Country',
+                labelText: "country".tr(),
                 errorText: countryErrorMessage,
               ),
               onChanged: (value) {
@@ -762,7 +757,7 @@ class _EnrollState extends State<Enroll> {
 
                 setState(() {
                   countryErrorMessage =
-                      country.isEmpty ? "Please enter your country" : null;
+                      country.isEmpty ? "country_empty_forbidden".tr() : null;
                 });
               },
             ),
@@ -771,7 +766,7 @@ class _EnrollState extends State<Enroll> {
             width: 200.0,
             child: TextFormField(
               decoration: InputDecoration(
-                labelText: 'City',
+                labelText: "city".tr(),
                 errorText: cityErrorMessage,
               ),
               onChanged: (value) {
@@ -779,7 +774,7 @@ class _EnrollState extends State<Enroll> {
 
                 setState(() {
                   cityErrorMessage =
-                      city.isEmpty ? "Please enter your city" : null;
+                      city.isEmpty ? "city_empty_forbidden".tr() : null;
                 });
               },
             ),
@@ -801,7 +796,7 @@ class _EnrollState extends State<Enroll> {
               bottom: 20.0,
             ),
             child: Text(
-              'How do you want to pay?',
+              "payment_how".tr(),
               style: TextStyle(
                 fontSize: 20.0,
                 fontWeight: FontWeight.w200,
@@ -813,13 +808,13 @@ class _EnrollState extends State<Enroll> {
             runSpacing: 20.0,
             children: [
               OutlineToggleButton(
-                child: Text("One time fee"),
+                child: Text("payment_one_time".tr()),
                 selected: paymentMethod == PAYMENT_ONETIME,
                 onPressed: () =>
                     setState(() => paymentMethod = PAYMENT_ONETIME),
               ),
               OutlineToggleButton(
-                child: Text("Delayed"),
+                child: Text("payment_delayed".tr()),
                 selected: paymentMethod == PAYMENT_DELAYED,
                 onPressed: () =>
                     setState(() => paymentMethod = PAYMENT_DELAYED),
@@ -854,8 +849,8 @@ class _EnrollState extends State<Enroll> {
                   child: Opacity(
                     opacity: 0.4,
                     child: Text(
-                      'STARTING',
-                      style: TextStyle(
+                      "starting".tr(),
+                      style: FontsUtils.mainStyle(
                         fontSize: 80.0,
                         fontWeight: FontWeight.w200,
                       ),
@@ -866,7 +861,7 @@ class _EnrollState extends State<Enroll> {
                   opacity: 0.6,
                   child: Text(
                     '${mainCost / 2}',
-                    style: TextStyle(
+                    style: FontsUtils.mainStyle(
                       fontSize: 90.0,
                       fontWeight: FontWeight.w400,
                       height: 1.0,
@@ -877,7 +872,7 @@ class _EnrollState extends State<Enroll> {
                   opacity: 0.6,
                   child: Text(
                     '€',
-                    style: TextStyle(
+                    style: FontsUtils.mainStyle(
                       fontSize: 40.0,
                       fontWeight: FontWeight.w400,
                     ),
@@ -904,8 +899,8 @@ class _EnrollState extends State<Enroll> {
                   child: Opacity(
                     opacity: 0.4,
                     child: Text(
-                      'ENDING',
-                      style: TextStyle(
+                      "ending".tr(),
+                      style: FontsUtils.mainStyle(
                         fontSize: 25.0,
                         fontWeight: FontWeight.w200,
                       ),
@@ -916,7 +911,7 @@ class _EnrollState extends State<Enroll> {
                   opacity: 0.6,
                   child: Text(
                     '${mainCost / 2}',
-                    style: TextStyle(
+                    style: FontsUtils.mainStyle(
                       fontSize: 25.0,
                       fontWeight: FontWeight.w400,
                       // height: 1.0,
@@ -927,7 +922,7 @@ class _EnrollState extends State<Enroll> {
                   opacity: 0.6,
                   child: Text(
                     '€',
-                    style: TextStyle(
+                    style: FontsUtils.mainStyle(
                       fontSize: 20.0,
                       fontWeight: FontWeight.w400,
                     ),
@@ -944,8 +939,8 @@ class _EnrollState extends State<Enroll> {
             child: Opacity(
               opacity: 0.6,
               child: Text(
-                "You will pay the 1st half when it'll be validated by our team.\nAnd the 2nd half when it'll be finished.",
-                style: TextStyle(
+                "payment_in_half".tr(),
+                style: FontsUtils.mainStyle(
                   fontSize: 24.0,
                   fontWeight: FontWeight.w300,
                 ),
@@ -983,7 +978,7 @@ class _EnrollState extends State<Enroll> {
               Opacity(
                 opacity: 0.6,
                 child: Text(
-                  '€ / month',
+                  "cost_per_month_slash".tr(),
                   style: TextStyle(
                     fontSize: 40.0,
                     fontWeight: FontWeight.w300,
@@ -1001,7 +996,7 @@ class _EnrollState extends State<Enroll> {
           child: Opacity(
             opacity: 0.6,
             child: Text(
-              "You will pay the recurring fee during 1 year.",
+              "cost_one_year_description".tr(),
               style: TextStyle(
                 fontSize: 24.0,
                 fontWeight: FontWeight.w300,
@@ -1025,7 +1020,7 @@ class _EnrollState extends State<Enroll> {
               bottom: 20.0,
             ),
             child: Text(
-              'What is your time frame?',
+              "planning_time_frame".tr(),
               style: TextStyle(
                 fontSize: 20.0,
                 fontWeight: FontWeight.w200,
@@ -1037,12 +1032,12 @@ class _EnrollState extends State<Enroll> {
             runSpacing: 20.0,
             children: [
               OutlineToggleButton(
-                child: Text("I'd like to start on..."),
+                child: Text("planning_start_on".tr()),
                 selected: planningMode == PLANNING_START,
                 onPressed: () => setState(() => planningMode = PLANNING_START),
               ),
               OutlineToggleButton(
-                child: Text("I'd like the result on..."),
+                child: Text("planning_end_on".tr()),
                 selected: planningMode == PLANNING_END,
                 onPressed: () => setState(() => planningMode = PLANNING_END),
               ),
@@ -1055,7 +1050,7 @@ class _EnrollState extends State<Enroll> {
   }
 
   Widget dateButtonSelector() {
-    String textDate = "SELECT A DATE";
+    String textDate = "date_select".tr().toUpperCase();
 
     if (planningMode == PLANNING_START && selectedStartDate != null) {
       textDate = selectedStartDate.toLocal().toString().split(' ')[0];
@@ -1110,7 +1105,7 @@ class _EnrollState extends State<Enroll> {
           opacity: 1.0,
           child: Text(
             textDate,
-            style: TextStyle(
+            style: FontsUtils.mainStyle(
               fontSize: 40.0,
               fontWeight: FontWeight.w200,
             ),
@@ -1135,7 +1130,7 @@ class _EnrollState extends State<Enroll> {
                 bottom: 20.0,
               ),
               child: Text(
-                'On which platform you want to build your app?',
+                "platform_which".tr(),
                 style: TextStyle(
                   fontSize: 20.0,
                   fontWeight: FontWeight.w200,
@@ -1147,13 +1142,13 @@ class _EnrollState extends State<Enroll> {
               runSpacing: 20.0,
               children: [
                 OutlineToggleButton(
-                  child: Text('WEB'),
+                  child: Text("web".tr().toUpperCase()),
                   onPressed: () => setState(() => platform = PLATFORM_WEB),
                   selected: platform == PLATFORM_WEB,
                 ),
 
                 OutlineToggleButton(
-                  child: Text('OTHER PLATFORMS AVAILABLE SOON'),
+                  child: Text("platforms_soon_availale".tr().toUpperCase()),
                   // onTap: () => setState(() => projectType = 'WEB'),
                   selected: platform == PLATFORM_MOBILE,
                 ),
@@ -1172,8 +1167,8 @@ class _EnrollState extends State<Enroll> {
               child: Opacity(
                 opacity: 0.6,
                 child: Text(
-                  'We will create a website globally available for you.',
-                  style: TextStyle(
+                  "website_globally_available".tr(),
+                  style: FontsUtils.mainStyle(
                     fontSize: 20.0,
                     fontWeight: FontWeight.w300,
                   ),
@@ -1201,7 +1196,7 @@ class _EnrollState extends State<Enroll> {
                 bottom: 20.0,
               ),
               child: Text(
-                'What type of app do you want?',
+                "app_type_question".tr(),
                 style: TextStyle(
                   fontSize: 20.0,
                   fontWeight: FontWeight.w200,
@@ -1213,24 +1208,24 @@ class _EnrollState extends State<Enroll> {
               runSpacing: 20.0,
               children: [
                 OutlineToggleButton(
-                  child: Text('PORTFOLIO'),
+                  child: Text("portfolio".tr().toUpperCase()),
                   onPressed: () =>
                       setState(() => projectType = PROJECT_PORTFOLIO),
                   selected: projectType == PROJECT_PORTFOLIO,
                 ),
                 OutlineToggleButton(
-                  child: Text("BLOG"),
+                  child: Text("blog".tr().toUpperCase()),
                   onPressed: () => setState(() => projectType = PROJECT_BLOG),
                   selected: projectType == PROJECT_BLOG,
                 ),
                 OutlineToggleButton(
-                  child: Text('SHOWCASE'),
+                  child: Text("showcase".tr().toUpperCase()),
                   onPressed: () =>
                       setState(() => projectType = PROJECT_SHOWCASE),
                   selected: projectType == PROJECT_SHOWCASE,
                 ),
                 OutlineToggleButton(
-                  child: Text('E-COMMERCE'),
+                  child: Text("ecommerce".tr().toUpperCase()),
                   onPressed: () =>
                       setState(() => projectType = PROJECT_ECOMMERCE),
                   selected: projectType == PROJECT_ECOMMERCE,
@@ -1273,7 +1268,7 @@ class _EnrollState extends State<Enroll> {
                 bottom: 10.0,
               ),
               child: Text(
-                'Which domain name would you like to use?',
+                "domain_name_chooser".tr(),
                 style: TextStyle(
                   fontSize: 20.0,
                   fontWeight: FontWeight.w200,
@@ -1288,7 +1283,7 @@ class _EnrollState extends State<Enroll> {
               child: Opacity(
                 opacity: 0.8,
                 child: Text(
-                  "The domain name represents your website address. Make sure the address you want is available with the input below 👇",
+                  "domain_name_chooser_description".tr(),
                   style: TextStyle(
                     fontSize: 18.0,
                     height: 1.3,
@@ -1301,19 +1296,19 @@ class _EnrollState extends State<Enroll> {
               runSpacing: 20.0,
               children: [
                 OutlineToggleButton(
-                  child: Text('FIND A NEW DOMAIN NAME'),
+                  child: Text("domain_name_find_new".tr().toUpperCase()),
                   onPressed: () => setState(() => domainNameType = DOMAIN_NEW),
                   selected: domainNameType == DOMAIN_NEW,
                 ),
                 OutlineToggleButton(
-                  child: Text('I ALREADY HAVE A DOMAIN NAME'),
+                  child: Text("domain_name_already_own".tr()),
                   onPressed: () =>
                       setState(() => domainNameType = DOMAIN_EXISTING),
                   selected: domainNameType == DOMAIN_EXISTING,
                 ),
                 OutlineToggleButton.icon(
                   icon: Icon(Icons.directions_off),
-                  label: Text("I'M LOST!"),
+                  label: Text("domain_name_i_lost".tr().toUpperCase()),
                   onPressed: () => setState(() => domainNameType = DOMAIN_LOST),
                   selected: domainNameType == DOMAIN_LOST,
                 ),
@@ -1401,8 +1396,7 @@ class _EnrollState extends State<Enroll> {
                   child: Icon(Icons.help),
                 ),
                 Expanded(
-                  child: Text(
-                      'We may need additional verifications to ensure this domain is available.'),
+                  child: Text("domain_name_additional_checks".tr()),
                 ),
               ],
             ),
@@ -1420,7 +1414,7 @@ class _EnrollState extends State<Enroll> {
       child: Opacity(
         opacity: 0.6,
         child: Text(
-          "Great! We will set your domain with you later. After the project is started.",
+          "domain_name_later".tr(),
           style: TextStyle(
             fontSize: 20.0,
             fontWeight: FontWeight.w300,
@@ -1438,7 +1432,7 @@ class _EnrollState extends State<Enroll> {
       child: Opacity(
         opacity: 0.6,
         child: Text(
-          "Dont worry. We'll handle this part with no additional cost. And explain everything to you later.",
+          "domain_name_i_lost_description".tr(),
           style: TextStyle(
             fontSize: 20.0,
             fontWeight: FontWeight.w300,
@@ -1463,7 +1457,7 @@ class _EnrollState extends State<Enroll> {
                 bottom: 20.0,
               ),
               child: Text(
-                'What size of audience do you aim for?',
+                "audience_size_question".tr(),
                 style: TextStyle(
                   fontSize: 20.0,
                   fontWeight: FontWeight.w200,
@@ -1475,25 +1469,25 @@ class _EnrollState extends State<Enroll> {
               runSpacing: 20.0,
               children: [
                 OutlineToggleButton(
-                  child: Text('SMALL'),
+                  child: Text("small".tr().toUpperCase()),
                   onPressed: () =>
                       setState(() => audienceSize = AUDIENCE_SMALL),
                   selected: audienceSize == AUDIENCE_SMALL,
                 ),
                 OutlineToggleButton(
-                  child: Text('MEDIUM'),
+                  child: Text("medium".tr().toUpperCase()),
                   onPressed: () =>
                       setState(() => audienceSize = AUDIENCE_MEDIUM),
                   selected: audienceSize == AUDIENCE_MEDIUM,
                 ),
                 OutlineToggleButton(
-                  child: Text('LARGE'),
+                  child: Text("large".tr().toUpperCase()),
                   onPressed: () =>
                       setState(() => audienceSize = AUDIENCE_LARGE),
                   selected: audienceSize == AUDIENCE_LARGE,
                 ),
                 OutlineToggleButton(
-                  child: Text("I DON'T KNOW"),
+                  child: Text("i_dont_know".tr().toUpperCase()),
                   onPressed: () =>
                       setState(() => audienceSize = AUDIENCE_UNKNOWN),
                   selected: audienceSize == AUDIENCE_UNKNOWN,
@@ -1522,7 +1516,7 @@ class _EnrollState extends State<Enroll> {
               child: Opacity(
                 opacity: 0.6,
                 child: Text(
-                  'This will determine how the additional fees for data usage.',
+                  "audience_additional_cost".tr(),
                   style: TextStyle(
                     fontSize: 16.0,
                   ),
@@ -1558,7 +1552,7 @@ class _EnrollState extends State<Enroll> {
                 children: [
                   Expanded(
                     child: Text(
-                      'Enroll',
+                      "enroll".tr(),
                       style: TextStyle(
                         fontSize: 70.0,
                         fontWeight: FontWeight.bold,
@@ -1577,7 +1571,7 @@ class _EnrollState extends State<Enroll> {
                 child: Opacity(
                   opacity: 0.6,
                   child: Text(
-                    "This is the start process.\nYou won't be charged until we validate your project.",
+                    "enroll_description".tr(),
                     style: TextStyle(
                       fontSize: 28.0,
                       fontWeight: FontWeight.w200,
@@ -1611,8 +1605,7 @@ class _EnrollState extends State<Enroll> {
 
   void checkDomainName() async {
     if (!regexDomain.hasMatch(domainName)) {
-      domainErrorText =
-          'The value entered is not in domain format. A valid value would be: supernova.com';
+      domainErrorText = "domain_name_format_invalid".tr();
       setState(() {});
       return;
     }
@@ -1626,9 +1619,7 @@ class _EnrollState extends State<Enroll> {
       setState(() {
         isDomainFree = resp.data['isFree'] as bool;
 
-        domainErrorText = isDomainFree
-            ? null
-            : 'This domain is already taken. Please choose another one.';
+        domainErrorText = isDomainFree ? null : "domain_name_taken".tr();
       });
 
       setState(() => isCheckingDomain = false);
@@ -1646,7 +1637,7 @@ class _EnrollState extends State<Enroll> {
     if (selectedStartDate == null && selectedEndDate == null) {
       Snack.e(
         context: context,
-        message: "Please select a start or an end date for your project.",
+        message: "planning_select_date".tr(),
       );
 
       return false;
@@ -1655,8 +1646,7 @@ class _EnrollState extends State<Enroll> {
     if ((email == null || email.isEmpty) && (phone == null || phone.isEmpty)) {
       Snack.e(
         context: context,
-        message:
-            "Please fill a way to contact you. Either your email or your phone number.",
+        message: "contact_please_fill".tr(),
       );
 
       return false;
@@ -1666,8 +1656,7 @@ class _EnrollState extends State<Enroll> {
         (country == null || country.isEmpty || city == null || city.isEmpty)) {
       Snack.e(
         context: context,
-        message:
-            "Please fill your country and your city names if you want to meet us.",
+        message: "contry_please_fill".tr(),
       );
 
       return false;
@@ -1729,7 +1718,7 @@ class _EnrollState extends State<Enroll> {
         isLoading = false;
       });
     } catch (error) {
-      debugPrint(error.toString());
+      appLogger.d(error);
 
       setState(() {
         isCompleted = false;
