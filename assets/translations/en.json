@@ -9,6 +9,7 @@
   "account_deletion_point_1": "Your personal data will be deleted",
   "account_deletion_point_2": "Your published quotes will stay on the platform",
   "account_deletion_point_3": "Your username will (slowly) be dissaciated with the published quotes",
+  "account_recover": "Recover account",
   "action_irreversible": "This action is irreversible",
   "activities": "Activities",
   "activity_none": "There's no activity for this user right now.",
@@ -23,15 +24,18 @@
   },
   "advices_personalized": "Personalized advices",
   "advices_personalized_description": "We're avaiable for any question or asistance. You can contact us by email, phone or direct message.",
-  "are_you_sure": "Are you sure?",
-  "avertising": "Advertising",
-  "avertising_content": "The web & mobile apps may contain advertising to generate revenues. Advertisers may collect additional data on your navigation and preferences. We don't own, control or manage this part of your personal data.",
   "all_settings": "All settings",
   "analytics": "analytics",
   "analytics_content": "The web & mobile apps collect usage data to improve the apps & services. However, personal data is never purposely shared or sell to third parties.",
   "analytics_description": "You will have metrics on your website. How many users visit each day? How long they stay?",
+  "app_annual_fee": "For your website. Then 45€/year *",
+  "app_annual_fee_reasons": "We'll charge you the domain name, the maintenance and additional data cost.",
+  "app_annual_fee_why": "Why I have to pay a 45€ annual fee?",
   "app_type_question": "What type of app do you want?",
   "apps": "Apps",
+  "are_you_sure": "Are you sure?",
+  "avertising": "Advertising",
+  "avertising_content": "The web & mobile apps may contain advertising to generate revenues. Advertisers may collect additional data on your navigation and preferences. We don't own, control or manage this part of your personal data.",
   "audience": {
     "small": "Less than 10,000 visitors per month",
     "medium": "Between 10,000 and 100,000 visitors per month",
@@ -87,6 +91,7 @@
   "dev_stack_2": "If you want to learn more about the lines of code behind this website, visit the GitHub repository. Or stay tuned for future blog posts explanations.",
   "developers": "Developers",
   "direct_message": "Direct Message",
+  "discount_first_customers": "For the first 4 customers.",
   "documentation": "Documentation",
   "domain_name": "Domain name",
   "domain_name_additional_checks": "We may need additional verifications to ensure this domain is available.",
@@ -102,11 +107,15 @@
   "domain_name_taken": "This domain is already taken. Please choose another one.",
   "ecommerce": "E-Commerce",
   "email_address_yours": "Your email address",
+  "email_check_spam": "Please check your spam folder too",
+  "email_doesnt_exist": "Sorry, this email doesn't exist.",
   "email_empty_forbidden": "Email cannot be empty",
   "email_not_valid": "The value entered is not a valid email address",
-  "email_empty_no_valiv": "The email field is empty. Please enter a valid email address.",
+  "email_empty_no_valid": "The email field is empty. Please enter a valid email address.",
+  "email_password_reset_link": "A password reset link has been sent to your mail box",
   "email_response_soon": "You will receive an email response shortly",
   "email_send_me": "Send me an email",
+  "email_sending": "Sending email...",
   "email_use_other": "Use another email",
   "email_user_use": "No, your email will NOT be used to send you spam or shared with thrid-parties",
   "ending": "Ending",
@@ -114,6 +123,61 @@
   "enroll_description": "This is the start process. You won't be charged until we validate your project.",
   "extra": "Extra",
   "extra_description": "You need extra features no listed here.",
+  "faq": {
+    "title": "Faq",
+    "price": {
+      "question": "Why is the price so high?",
+      "answer": "We craft the exact website you need which takes a lot of effort."
+    },
+    "service": {
+      "question": "I can get more from X or Y service...",
+      "answer": "Yes but with these platforms have a higher monthly fee. If you want a website for a short period of time, these platforms are okay. But if you plan to keep your website for a long time (> 6 months), you'll pay less using our service."
+    },
+    "annual_fee": {
+      "question": "Why do I have to pay annual fees?",
+      "answer": "Becuse we pay for the domain name, do annual security checks, & upgrades. Also, you'll get 30% cut off for additional features."
+    },
+    "data_plan": {
+      "question": "How do you charge for data plan?",
+      "answer": "We only charge for what you use. You have a free plan with 10Go of storage, 360MB of bandwidth data."
+    },
+    "data_plan_unlimited": {
+      "question": "Is my data plan unlimited?",
+      "answer": "No, it's not unlimited but you've got a fairly good data plan for a small to medium website. We will contact and may charge you if you exceed your data plan. Unless you've more than 10k customers, you should be fine."
+    },
+    "one_time_fee": {
+      "question": "I don't want to pay annual fees. Just the one time fee please.",
+      "answer": "You don't need to. We can transfert the website to you, so you pay no additional fee. Keep in mind that you'll have to take care of the deployment, storage, & maintenance."
+    },
+    "modifications": {
+      "question": "Can I ask for modifications during the development?",
+      "answer": "Yes, you can. At the start, we agree of all the features you need. If you need more features, we may charge you additional cost."
+    },
+    "refund": {
+      "question": "Can I have a refund?",
+      "answer": "When we take a mission, we charge 50% upfront. Then you'll have 5 days to cancel the project but we'll retain 25% fees. After those 5 days, you cannot retrieve the 50% fees. However, you can decide to stop the project and not pay the last 50%."
+    },
+    "payment_types": {
+      "question": "Which payment do you take?",
+      "answer": "We accept credit card, Visa, Mastercard or Paypal."
+    },
+    "discount": {
+      "question": "Do you do a discount for schools, students or non-profit?",
+      "answer": "Yes. We do up to 50% discount. Contact us for more information."
+    },
+    "pay_fee_once": {
+      "question": "What if I can't pay the whole fee at once?",
+      "answer": "We can exceptionally allow you to pay each month. Contact us for more information."
+    },
+    "bug": {
+      "question": "What if there's a bug?",
+      "answer": "We will fix any bug in your website for free."
+    },
+    "design": {
+      "question": "What if I don't have a design yet?",
+      "answer": "We'll charge 1000€ for the design if we've to create it ourserlves. To avoid additional fees, you can choose a design beforehand. You don't have to buy a Wordpress theme or from another provider, but you should at least have sketches showing your layout, colors, and content."
+    }
+  },
   "features": "Features",
   "features_included": "The following features are already included in your project:",
   "form_below": "OR use the form below 👇 ",
@@ -148,6 +212,7 @@
   "large": "Large",
   "learn_more": "Learn more",
   "light": "Light",
+  "link_send": "Send link",
   "loading": "Loading...",
   "maintenance_answer_no": "No, I want to project transfered to me",
   "maintenance_answer_yes": "Yes, handle this for me",
@@ -175,6 +240,8 @@
   "optional": "Optional",
   "other": "Other",
   "password_empty_forbidden": "Password cannot be empty.",
+  "password_forgot": "Forgot Password",
+  "password_forgot_reset_process": "We will send a reset link to your mail box.",
   "payment_delayed": "Delayed",
   "payment_how": "How do you want to pay?",
   "payment_one_time": "One time fee",
@@ -217,6 +284,7 @@
   "project_after": "After project",
   "project_edit": "Edit project",
   "project_fetch_error": "An error occurred. Maybe the project doesn't exist anymore or there's a network issue.",
+  "project_in_mind_question": "Do you have a project in mind?",
   "project_new": "New project",
   "project_my": "My projects",
   "project_send_success": "Your project has been successfully sent. We'll review it and contact you soon.",
@@ -224,6 +292,7 @@
   "project_story_dot": "Project's story...",
   "project_summary_dot": "Project summary...",
   "project_title_dot": "Project title...",
+  "project_transfert_asterisk": "* or we transfert the project to you",
   "projects": "Projects",
   "publish": "Publish",
   "publihsed": "Published",
@@ -289,6 +358,7 @@
   "website_globally_available": "We will create a website globally available for you.",
   "welcome_text": "Welcome to rootasjey website. A virtual space about art & development.",
   "who_am_i": "Who am I?",
+  "why": "Why?",
   "work_my": "My work",
   "work_my_description": "I work as a freelancer in web and mobile development, while I develop my own projects. You can have a glimpse of them in the \"Projects\" section. If you want to start a collaboration on your new project, let's meet in the \"Hire me\" section.",
   "your_email": "Your email address",

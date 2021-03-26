@@ -4,8 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:rootasjey/components/features/web.dart';
 import 'package:rootasjey/components/footer.dart';
 import 'package:rootasjey/components/home_app_bar.dart';
-import 'package:rootasjey/screens/enroll.dart';
+import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/state/colors.dart';
+import 'package:rootasjey/utils/fonts.dart';
 import 'package:unicons/unicons.dart';
 
 class Pricing extends StatefulWidget {
@@ -32,20 +33,12 @@ class _PricingState extends State<Pricing> {
     return Scaffold(
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (_) {
-                return Enroll();
-              },
-            ),
-          );
+          context.router.push(EnrollRoute());
         },
         backgroundColor: stateColors.primary,
         foregroundColor: Colors.white,
         icon: Icon(Icons.payment),
-        label: Text(
-          'Enroll',
-        ),
+        label: Text("enroll".tr()),
       ),
       body: CustomScrollView(
         slivers: [
@@ -128,8 +121,8 @@ class _PricingState extends State<Pricing> {
               bottom: 20.0,
             ),
             child: Text(
-              'FAQ',
-              style: TextStyle(
+              "faq.title".tr().toUpperCase(),
+              style: FontsUtils.mainStyle(
                 fontSize: 30.0,
                 fontWeight: FontWeight.w500,
               ),
@@ -144,82 +137,68 @@ class _PricingState extends State<Pricing> {
             children: [
               faqExpPanel(
                 index: 0,
-                title: 'Why is the price so high?',
-                description:
-                    "This is a personalized service where we'll craft the exact website you need. Also making an efficient website takes time and can be painful.",
+                title: "faq.price.question".tr(),
+                description: "faq.price.answer".tr(),
               ),
               faqExpPanel(
                 index: 1,
-                title: 'I can get more from Wix or X service...',
-                description:
-                    "Yes but with these platforms you'll pay a higher price per month. So, if you want a website for a short period of time, these platforms are okay. But if you plan to keep your website for a long time (>6 months), you'll pay less using our service.",
+                title: "faq.service.question".tr(),
+                description: "faq.service.answer".tr(),
               ),
               faqExpPanel(
                 index: 2,
-                title: 'Why do I have to pay annual fees?',
-                description:
-                    "We'll charge you 45€ for the domain name which is usually between 10 ~ 50€. We'll proceed to annual security checks and patch vunerabilities. Your website will be upgraded to the latest technologies. And you'll get one 30% cut for an additional annual feature.",
+                title: "faq.annual_fee.question".tr(),
+                description: "faq.annual_fee.answer".tr(),
               ),
               faqExpPanel(
                 index: 3,
-                title: 'How do you charge for data plan?',
-                description:
-                    "We only charge for what you use, and it depends of the services you choose, but you'll get a generous free plan. We use Firebase to host your website and your data which offers granular data plans. A detailed table will be available soon. In the meantime, you can contact us for more information.",
+                title: "faq.data_plan.question".tr(),
+                description: "faq.data_plan.answer".tr(),
               ),
               faqExpPanel(
                 index: 4,
-                title: 'Is my data plan unlimited?',
-                description:
-                    "No, it's not unlimited but you've got a fairly good data plan for a small to medium website. We will contact and may charge you if you exceed your data plan by more than 20€. Unless you've millions of customers, you should be fine.",
+                title: "faq.data_plan_unlimited.question".tr(),
+                description: "faq.data_plan_unlimited.answer".tr(),
               ),
               faqExpPanel(
                 index: 5,
-                title:
-                    "I don't want to pay annual fees. Just the one time fee please.",
-                description:
-                    "You don't need to. We can transfert the website to you, so you pay no additional fee. Keep in mind that you'll have to pay for your domain name (e.g. GoDaddy). Plus you may pay for Firebase usage if your website attract a lot of customers.",
+                title: "faq.one_time_fee.question".tr(),
+                description: "faq.one_time_fee.answer".tr(),
               ),
               faqExpPanel(
                 index: 6,
-                title: "Can I ask for modifications during the development?",
-                description:
-                    "Yes, you can. At the start, we agree of all the features you need. If you need more features, we may charge you additional cost.",
+                title: "faq.modifications.question",
+                description: "faq.modifications.answer".tr(),
               ),
               faqExpPanel(
                 index: 7,
-                title: "Can I have a refund?",
-                description:
-                    "When we take a mission, we charge 50% upfront. Then you'll have 5 days to cancel the project but we'll retain 25% fees. After those 5 days, you cannot retrieve the 50% fees. However, you can decide to stop the project and not pay the last 50%.",
+                title: "faq.refund.question".tr(),
+                description: "faq.refund.answer".tr(),
               ),
               faqExpPanel(
                 index: 8,
-                title: "Which payment do you take?",
-                description:
-                    "You can use your credit card, Visa, Mastercard or Paypal.",
+                title: "faq.payment_types.question".tr(),
+                description: "faq.payment_types.answer".tr(),
               ),
               faqExpPanel(
                 index: 9,
-                title:
-                    "Do you do a discount for schools, students or non-profit?",
-                description:
-                    "Yes. We do up to 50% discount. Contact us for more information.",
+                title: "faq.discount.question".tr(),
+                description: "faq.discount.answer".tr(),
               ),
               faqExpPanel(
                 index: 10,
-                title: "What if I can't pay the whole fee at once?",
-                description:
-                    "We can exceptionally allow you to pay each month. Contact us for more information.",
+                title: "faq.pay_fee_once.question".tr(),
+                description: "faq.pay_fee_once.answer".tr(),
               ),
               faqExpPanel(
                 index: 11,
-                title: "What if there's a bug?",
-                description: "We will fix any bug in your website for free.",
+                title: "faq.bug.question".tr(),
+                description: "faq.bug.answer".tr(),
               ),
               faqExpPanel(
                 index: 12,
-                title: "What if I don't have a design yet?",
-                description:
-                    "We'll charge 1000€ for the design if we've to create it ourserlves. To avoid additional fees, you can choose a design beforehand. You don't have to buy a Wordpress theme or from another provider, but you should at least have sketches showing your layout, colors, and content.",
+                title: "faq.design.question".tr(),
+                description: "faq.design.answer".tr(),
               ),
             ],
           ),
@@ -235,7 +214,7 @@ class _PricingState extends State<Pricing> {
       headerBuilder: (context, isExpanded) {
         return ListTile(
           title: Text(title),
-          leading: Icon(Icons.help_outline),
+          leading: Icon(UniconsLine.question),
           // onTap: () {
           //   setState(() {
           //     expandedIndex = expandedIndex != index
@@ -258,7 +237,7 @@ class _PricingState extends State<Pricing> {
                 opacity: 0.6,
                 child: Text(
                   description,
-                  style: TextStyle(
+                  style: FontsUtils.mainStyle(
                     fontSize: 20.0,
                     fontWeight: FontWeight.w300,
                     height: 1.4,
@@ -287,13 +266,13 @@ class _PricingState extends State<Pricing> {
       runSpacing: 10.0,
       children: [
         headerButton(
-          label: 'WEB',
+          label: "web".tr(),
           onTap: () => setState(() => projectIndex = 0),
           selected: projectIndex == 0,
         ),
 
         headerButton(
-          label: 'OTHER PLATFORMS AVAILABLE SOON',
+          label: "platforms_soon_availale".tr().toUpperCase(),
           // onTap: () => setState(() => projectIndex = 1),
           selected: projectIndex == 1,
         ),
@@ -307,7 +286,11 @@ class _PricingState extends State<Pricing> {
     );
   }
 
-  Widget headerButton({String label, Function onTap, bool selected = false}) {
+  Widget headerButton({
+    String label,
+    Function onTap,
+    bool selected = false,
+  }) {
     if (selected) {
       return ElevatedButton(
         onPressed: onTap,
@@ -317,9 +300,7 @@ class _PricingState extends State<Pricing> {
             color: Colors.white,
           ),
         ),
-        child: Text(
-          label,
-        ),
+        child: Text(label),
       );
     }
 
@@ -336,12 +317,7 @@ class _PricingState extends State<Pricing> {
           ),
         ),
       ),
-      child: Text(
-        label,
-        style: TextStyle(
-            // color: orangeColor,
-            ),
-      ),
+      child: Text(label),
     );
   }
 
@@ -359,7 +335,7 @@ class _PricingState extends State<Pricing> {
           children: [
             Text(
               "pricing".tr(),
-              style: TextStyle(
+              style: FontsUtils.mainStyle(
                 fontSize: 70.0,
                 fontWeight: FontWeight.bold,
               ),
@@ -372,7 +348,7 @@ class _PricingState extends State<Pricing> {
               child: Opacity(
                 opacity: 0.6,
                 child: Text(
-                  'Do you have a project in mind?',
+                  "project_in_mind_question".tr(),
                   style: TextStyle(
                     fontSize: 18.0,
                   ),
@@ -397,8 +373,8 @@ class _PricingState extends State<Pricing> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                'For your website. Then 45€/year *',
-                style: TextStyle(
+                "app_annual_fee".tr(),
+                style: FontsUtils.mainStyle(
                   fontSize: 20.0,
                   fontWeight: FontWeight.w200,
                 ),
@@ -406,49 +382,43 @@ class _PricingState extends State<Pricing> {
               TextButton(
                 onPressed: () {
                   showDialog(
-                      context: context,
-                      builder: (context) {
-                        return SimpleDialog(
-                          title: Opacity(
-                            opacity: 0.8,
-                            child: Text(
-                              'Why I have to pay a 45€ annual fee?',
-                              style: TextStyle(
-                                  // fontSize: 15.0,
-                                  ),
+                    context: context,
+                    builder: (context) {
+                      return SimpleDialog(
+                        title: Opacity(
+                          opacity: 0.8,
+                          child: Text("app_annual_fee_why".tr()),
+                        ),
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              left: 25.0,
+                              right: 25.0,
+                            ),
+                            child: Opacity(
+                              opacity: 0.6,
+                              child: Text("app_annual_fee_reasons".tr()),
                             ),
                           ),
-                          children: <Widget>[
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                left: 25.0,
-                                right: 25.0,
-                              ),
-                              child: Opacity(
-                                opacity: 0.6,
-                                child: Text(
-                                  "We'll charge you the domain name, the maintenance and additional data cost.",
-                                ),
-                              ),
-                            ),
-                          ],
-                        );
-                      });
+                        ],
+                      );
+                    },
+                  );
                 },
                 style: TextButton.styleFrom(
                   textStyle: TextStyle(
                     color: orangeColor,
                   ),
                 ),
-                child: Text('Why?'),
+                child: Text("why".tr()),
               ),
             ],
           ),
           Opacity(
             opacity: 0.6,
             child: Text(
-              '* or we transfert the project to you',
-              style: TextStyle(
+              "project_transfert_asterisk".tr(),
+              style: FontsUtils.mainStyle(
                 fontSize: 18.0,
                 fontWeight: FontWeight.w200,
               ),
@@ -473,7 +443,7 @@ class _PricingState extends State<Pricing> {
                 opacity: 0.6,
                 child: Text(
                   '1200€',
-                  style: TextStyle(
+                  style: FontsUtils.mainStyle(
                     fontSize: 30.0,
                     fontWeight: FontWeight.w400,
                     decoration: TextDecoration.lineThrough,
@@ -487,8 +457,8 @@ class _PricingState extends State<Pricing> {
                 child: Opacity(
                   opacity: 0.6,
                   child: Text(
-                    'For the first 4 customers.',
-                    style: TextStyle(
+                    "discount_first_customers".tr(),
+                    style: FontsUtils.mainStyle(
                       fontSize: 18.0,
                       fontWeight: FontWeight.w400,
                     ),
@@ -499,7 +469,7 @@ class _PricingState extends State<Pricing> {
           ),
           Text(
             '500€',
-            style: TextStyle(
+            style: FontsUtils.mainStyle(
               fontSize: 120.0,
               fontWeight: FontWeight.w600,
               color: stateColors.primary,

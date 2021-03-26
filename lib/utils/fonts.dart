@@ -12,12 +12,14 @@ class FontsUtils {
     double fontSize = 16.0,
     double height,
     Color color,
+    TextDecoration decoration,
   }) {
     if (color == null) {
       return GoogleFonts.raleway(
         fontSize: fontSize,
         fontWeight: fontWeight,
         height: height,
+        decoration: decoration,
       );
     }
 
@@ -26,6 +28,7 @@ class FontsUtils {
       fontSize: fontSize,
       fontWeight: fontWeight,
       height: height,
+      decoration: decoration,
     );
   }
 
