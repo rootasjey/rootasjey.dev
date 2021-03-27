@@ -1,4 +1,4 @@
-package com.example.rootasjey
+package dev.android.rootasjey
 
 import io.flutter.embedding.android.FlutterActivity
 
