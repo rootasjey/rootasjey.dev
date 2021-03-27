@@ -8,6 +8,7 @@ import 'package:rootasjey/components/sliver_empty_view.dart';
 import 'package:rootasjey/components/home_app_bar.dart';
 import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/types/project.dart';
+import 'package:rootasjey/utils/app_logger.dart';
 
 class Projects extends StatefulWidget {
   @override
@@ -149,7 +150,7 @@ class _ProjectsState extends State<Projects> {
         hasNext = limit == snapshot.size;
       });
     } catch (error) {
-      debugPrint(error.toString());
+      appLogger.e(error);
     }
   }
 }

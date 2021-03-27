@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/animated_app_icon.dart';
@@ -9,8 +10,10 @@ import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/state/user.dart';
 import 'package:rootasjey/utils/app_storage.dart';
 import 'package:rootasjey/utils/constants.dart';
+import 'package:rootasjey/utils/fonts.dart';
 import 'package:rootasjey/utils/snack.dart';
 import 'package:supercharged/supercharged.dart';
+import 'package:unicons/unicons.dart';
 
 class UpdatePassword extends StatefulWidget {
   @override
@@ -55,8 +58,8 @@ class _UpdatePasswordState extends State<UpdatePassword> {
     }
 
     return PageAppBar(
-      textTitle: 'Update password',
-      textSubTitle: 'If your password is old or compromised',
+      textTitle: "password_update".tr(),
+      textSubTitle: "password_update_description".tr(),
       titlePadding: EdgeInsets.only(
         left: titleLeftPadding,
       ),
@@ -88,7 +91,7 @@ class _UpdatePasswordState extends State<UpdatePassword> {
               Padding(
                 padding: const EdgeInsets.only(top: 80.0),
                 child: Icon(
-                  Icons.check,
+                  UniconsLine.check,
                   color: stateColors.validation,
                   size: 80.0,
                 ),
@@ -96,7 +99,7 @@ class _UpdatePasswordState extends State<UpdatePassword> {
               Padding(
                 padding: const EdgeInsets.only(top: 30.0, bottom: 0.0),
                 child: Text(
-                  'Your password has been successfuly updated.',
+                  "password_update_success".tr(),
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 20.0,
@@ -122,7 +125,7 @@ class _UpdatePasswordState extends State<UpdatePassword> {
             textInputAction: TextInputAction.next,
             decoration: InputDecoration(
               icon: Icon(Icons.lock_open),
-              labelText: 'Current password',
+              labelText: "password_current".tr(),
             ),
             onChanged: (value) {
               password = value;
@@ -131,7 +134,7 @@ class _UpdatePasswordState extends State<UpdatePassword> {
             obscureText: true,
             validator: (value) {
               if (value.isEmpty) {
-                return 'Current password cannot be empty';
+                return "password_empty_forbidden".tr();
               }
 
               return null;
@@ -161,13 +164,13 @@ class _UpdatePasswordState extends State<UpdatePassword> {
           title: Opacity(
             opacity: .6,
             child: Text(
-              'Choosing a good password',
+              "password_choosing_good".tr(),
             ),
           ),
           subtitle: Padding(
             padding: const EdgeInsets.only(top: 8.0),
             child: Text(
-              "Resist against brute-force attacks",
+              "password_choosing_good_desc".tr(),
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 14.0,
@@ -180,7 +183,7 @@ class _UpdatePasswordState extends State<UpdatePassword> {
                 builder: (context) {
                   return SimpleDialog(
                     title: Text(
-                      'Recommandations',
+                      "password_tips".tr(),
                       style: TextStyle(
                         fontSize: 15.0,
                         fontWeight: FontWeight.bold,
@@ -196,20 +199,11 @@ class _UpdatePasswordState extends State<UpdatePassword> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            Text(
-                              "Choose at least a 6-characters password length",
-                              style: TextStyle(),
-                            ),
+                            Text("password_tips_1".tr()),
                             Padding(padding: const EdgeInsets.only(top: 15.0)),
-                            Text(
-                              "Choose a pass-phrase",
-                              style: TextStyle(),
-                            ),
+                            Text("password_tips_2".tr()),
                             Padding(padding: const EdgeInsets.only(top: 15.0)),
-                            Text(
-                              "Use special characters (e.g. *!#?)",
-                              style: TextStyle(),
-                            ),
+                            Text("password_tips_3".tr()),
                           ],
                         ),
                       ),
@@ -272,7 +266,7 @@ class _UpdatePasswordState extends State<UpdatePassword> {
             focusNode: newPasswordNode,
             decoration: InputDecoration(
               icon: Icon(Icons.lock_outline),
-              labelText: 'New password',
+              labelText: "password_new".tr(),
             ),
             obscureText: true,
             onChanged: (value) {
@@ -281,7 +275,7 @@ class _UpdatePasswordState extends State<UpdatePassword> {
             onFieldSubmitted: (value) => updatePassword(),
             validator: (value) {
               if (value.isEmpty) {
-                return 'New password cannot be empty';
+                return "password_empty_forbidden".tr();
               }
 
               return null;
@@ -294,7 +288,7 @@ class _UpdatePasswordState extends State<UpdatePassword> {
 
   Widget textTitle() {
     return Text(
-      'Update password',
+      "password_update".tr(),
       style: TextStyle(
         fontSize: 35.0,
       ),
@@ -312,7 +306,7 @@ class _UpdatePasswordState extends State<UpdatePassword> {
             Padding(
               padding: const EdgeInsets.only(top: 40.0),
               child: Text(
-                'Updating your password...',
+                "password_updating".tr(),
                 style: TextStyle(
                   fontSize: 20.0,
                 ),
@@ -339,8 +333,8 @@ class _UpdatePasswordState extends State<UpdatePassword> {
             Padding(
               padding: const EdgeInsets.all(18.0),
               child: Text(
-                'UPDATE PASSWORD',
-                style: TextStyle(
+                "password_update".tr().toUpperCase(),
+                style: FontsUtils.mainStyle(
                   fontSize: 15.0,
                   fontWeight: FontWeight.bold,
                 ),
@@ -390,8 +384,7 @@ class _UpdatePasswordState extends State<UpdatePassword> {
 
       Snack.e(
         context: context,
-        message: "Error while updating your password. "
-            "Please try again or contact us.",
+        message: "password_update_error".tr(),
       );
     }
   }
@@ -400,7 +393,7 @@ class _UpdatePasswordState extends State<UpdatePassword> {
     if (password.isEmpty) {
       Snack.e(
         context: context,
-        message: "Password cannot be empty.",
+        message: "password_empty_forbidden".tr(),
       );
 
       return false;
@@ -409,7 +402,7 @@ class _UpdatePasswordState extends State<UpdatePassword> {
     if (newPassword.isEmpty) {
       Snack.e(
         context: context,
-        message: "New password cannot be empty.",
+        message: "password_empty_forbidden".tr(),
       );
 
       return false;

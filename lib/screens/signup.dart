@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/actions/users.dart';
@@ -10,8 +11,11 @@ import 'package:rootasjey/components/home_app_bar.dart';
 import 'package:rootasjey/components/loading_animation.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/state/user.dart';
+import 'package:rootasjey/utils/app_logger.dart';
+import 'package:rootasjey/utils/fonts.dart';
 import 'package:rootasjey/utils/snack.dart';
 import 'package:supercharged/supercharged.dart';
+import 'package:unicons/unicons.dart';
 
 class Signup extends StatefulWidget {
   final void Function(bool isAuthenticated) onSignupResult;
@@ -92,7 +96,7 @@ class _SignupState extends State<Signup> {
       return Padding(
         padding: const EdgeInsets.only(top: 80.0),
         child: LoadingAnimation(
-          textTitle: 'Signing up...',
+          textTitle: "signup_dot".tr(),
         ),
       );
     }
@@ -111,7 +115,7 @@ class _SignupState extends State<Signup> {
           textInputAction: TextInputAction.next,
           decoration: InputDecoration(
             icon: Icon(Icons.email),
-            labelText: 'Email',
+            labelText: "email".tr(),
           ),
           keyboardType: TextInputType.emailAddress,
           onChanged: (value) async {
@@ -126,7 +130,7 @@ class _SignupState extends State<Signup> {
             if (!isWellFormatted) {
               setState(() {
                 isCheckingEmail = false;
-                emailErrorMessage = 'The value is not a valid email address';
+                emailErrorMessage = "email_not_valid".tr();
               });
 
               return;
@@ -143,7 +147,7 @@ class _SignupState extends State<Signup> {
               if (!isAvailable) {
                 setState(() {
                   isCheckingEmail = false;
-                  emailErrorMessage = 'This email address is not available';
+                  emailErrorMessage = "email_not_available".tr();
                 });
 
                 return;
@@ -158,7 +162,7 @@ class _SignupState extends State<Signup> {
           onFieldSubmitted: (_) => usernameNode.requestFocus(),
           validator: (value) {
             if (value.isEmpty) {
-              return 'Email cannot be empty';
+              return "email_empty_forbidden".tr();
             }
 
             return null;
@@ -174,10 +178,12 @@ class _SignupState extends State<Signup> {
         top: 8.0,
         left: 40.0,
       ),
-      child: Text(emailErrorMessage,
-          style: TextStyle(
-            color: Colors.red.shade300,
-          )),
+      child: Text(
+        emailErrorMessage,
+        style: TextStyle(
+          color: Colors.red.shade300,
+        ),
+      ),
     );
   }
 
@@ -194,8 +200,8 @@ class _SignupState extends State<Signup> {
                 right: 20.0,
               ),
               child: IconButton(
-                onPressed: () => context.router.pop(),
-                icon: Icon(Icons.arrow_back),
+                onPressed: context.router.pop,
+                icon: Icon(UniconsLine.arrow_left),
               ),
             ),
           ),
@@ -208,9 +214,9 @@ class _SignupState extends State<Signup> {
                 child: Padding(
                   padding: EdgeInsets.only(bottom: 10.0),
                   child: Text(
-                    'Sign Up',
+                    "signup".tr(),
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: FontsUtils.mainStyle(
                       fontSize: 25.0,
                       fontWeight: FontWeight.bold,
                     ),
@@ -222,7 +228,7 @@ class _SignupState extends State<Signup> {
                 beginY: 50.0,
                 child: Opacity(
                   opacity: 0.6,
-                  child: Text('Create a new account'),
+                  child: Text("account_create_new".tr()),
                 ),
               ),
             ],
@@ -274,7 +280,7 @@ class _SignupState extends State<Signup> {
                 icon: Icon(
                   Icons.person_outline,
                 ),
-                labelText: 'Username',
+                labelText: "username".tr(),
               ),
               textInputAction: TextInputAction.next,
               onChanged: (value) async {
@@ -290,8 +296,8 @@ class _SignupState extends State<Signup> {
                   setState(() {
                     isCheckingName = false;
                     nameErrorMessage = username.length < 3
-                        ? 'Please use at least 3 characters'
-                        : 'Please use alpha-numerical (A-Z, 0-9) characters and underscore (_)';
+                        ? "input_minimum_char".tr()
+                        : "input_valid_format".tr();
                   });
 
                   return;
@@ -309,7 +315,7 @@ class _SignupState extends State<Signup> {
                   if (!isAvailable) {
                     setState(() {
                       isCheckingName = false;
-                      nameErrorMessage = 'This name is not available';
+                      nameErrorMessage = "name_unavailable".tr();
                     });
 
                     return;
@@ -324,7 +330,7 @@ class _SignupState extends State<Signup> {
               onFieldSubmitted: (_) => passwordNode.requestFocus(),
               validator: (value) {
                 if (value.isEmpty) {
-                  return 'name cannot be empty';
+                  return "name_empty_forbidden".tr();
                 }
 
                 return null;
@@ -372,7 +378,7 @@ class _SignupState extends State<Signup> {
               textInputAction: TextInputAction.next,
               decoration: InputDecoration(
                 icon: Icon(Icons.lock_outline),
-                labelText: 'Password',
+                labelText: "password".tr(),
               ),
               obscureText: true,
               onChanged: (value) {
@@ -384,7 +390,7 @@ class _SignupState extends State<Signup> {
               onFieldSubmitted: (_) => confirmPasswordNode.requestFocus(),
               validator: (value) {
                 if (value.isEmpty) {
-                  return 'Password cannot be empty';
+                  return "password_empty_forbidden".tr();
                 }
 
                 return null;
@@ -409,7 +415,7 @@ class _SignupState extends State<Signup> {
               focusNode: confirmPasswordNode,
               decoration: InputDecoration(
                 icon: Icon(Icons.lock_outline),
-                labelText: 'Confirm password',
+                labelText: "password_confirm".tr(),
               ),
               obscureText: true,
               onChanged: (value) {
@@ -421,11 +427,11 @@ class _SignupState extends State<Signup> {
               onFieldSubmitted: (value) => signUpProcess(),
               validator: (value) {
                 if (value.isEmpty) {
-                  return 'Confirm password cannot be empty';
+                  return "password_confirm_empty_forbidden".tr();
                 }
 
                 if (confirmPassword != password) {
-                  return "Passwords don't match";
+                  return "passwords_dont_match".tr();
                 }
 
                 return null;
@@ -461,7 +467,7 @@ class _SignupState extends State<Signup> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Text(
-                    'SIGN UP',
+                    "signup".tr(),
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 15.0,
@@ -495,7 +501,7 @@ class _SignupState extends State<Signup> {
           child: Opacity(
             opacity: 0.6,
             child: Text(
-              "I already have an account",
+              "account_already_own".tr(),
               style: TextStyle(
                 decoration: TextDecoration.underline,
               ),
@@ -520,7 +526,7 @@ class _SignupState extends State<Signup> {
 
       Snack.e(
         context: context,
-        message: 'The email or name entered is not available.',
+        message: "email_not_available".tr(),
       );
 
       return;
@@ -563,7 +569,7 @@ class _SignupState extends State<Signup> {
       if (userCred == null) {
         Snack.e(
           context: context,
-          message: "There was an issue while connecting to your new account.",
+          message: "account_create_error".tr(),
         );
 
         return;
@@ -578,14 +584,13 @@ class _SignupState extends State<Signup> {
 
       context.router.navigate(HomeRoute());
     } catch (error) {
-      debugPrint(error.toString());
+      appLogger.e(error);
 
       setState(() => isSigningUp = false);
 
       Snack.e(
         context: context,
-        message: "An occurred while creating your account. "
-            "Please try again or contact us if the problem persists.",
+        message: "account_create_error".tr(),
       );
     }
   }
@@ -600,7 +605,7 @@ class _SignupState extends State<Signup> {
     if (password.isEmpty || confirmPassword.isEmpty) {
       Snack.e(
         context: context,
-        message: "Password cannot be empty",
+        message: "password_empty_forbidden".tr(),
       );
 
       return false;
@@ -609,7 +614,7 @@ class _SignupState extends State<Signup> {
     if (confirmPassword != password) {
       Snack.e(
         context: context,
-        message: "Password & confirm passwords don't match",
+        message: "passwords_dont_match".tr(),
       );
 
       return false;
@@ -618,7 +623,7 @@ class _SignupState extends State<Signup> {
     if (username.isEmpty) {
       Snack.e(
         context: context,
-        message: "Name cannot be empty",
+        message: "name_empty_forbidden".tr(),
       );
 
       return false;
@@ -627,7 +632,7 @@ class _SignupState extends State<Signup> {
     if (!UsersActions.checkEmailFormat(email)) {
       Snack.e(
         context: context,
-        message: "The value specified is not a valid email",
+        message: "email_not_valid".tr(),
       );
 
       return false;
@@ -637,8 +642,8 @@ class _SignupState extends State<Signup> {
       Snack.e(
         context: context,
         message: username.length < 3
-            ? 'Please use at least 3 characters'
-            : 'Please use alpha-numerical (A-Z, 0-9) characters and underscore (_)',
+            ? "input_minimum_char".tr()
+            : "input_valid_format".tr(),
       );
 
       return false;

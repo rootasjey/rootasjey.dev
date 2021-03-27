@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:auto_route/annotations.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html/style.dart';
@@ -9,7 +10,9 @@ import 'package:markdown/markdown.dart' as markdown;
 import 'package:rootasjey/components/home_app_bar.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/types/project.dart';
+import 'package:rootasjey/utils/app_logger.dart';
 import 'package:rootasjey/utils/cloud.dart';
+import 'package:rootasjey/utils/fonts.dart';
 import 'package:rootasjey/utils/snack.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:supercharged/supercharged.dart';
@@ -77,7 +80,7 @@ class _ProjectPageState extends State<ProjectPage> {
                   ? Opacity(
                       opacity: 0.6,
                       child: Text(
-                        'Project',
+                        "project".tr(),
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                           color: stateColors.foreground,
@@ -155,8 +158,8 @@ class _ProjectPageState extends State<ProjectPage> {
                   top: 40.0,
                 ),
                 child: Text(
-                  'Loading...',
-                  style: TextStyle(
+                  "loading".tr(),
+                  style: FontsUtils.mainStyle(
                     fontSize: 40.0,
                     fontWeight: FontWeight.w300,
                   ),
@@ -269,14 +272,15 @@ class _ProjectPageState extends State<ProjectPage> {
                 child: InkWell(
                   onTap: () {
                     showDialog(
-                        context: context,
-                        builder: (context) {
-                          return SimpleDialog(
-                            children: [
-                              Image.network(src),
-                            ],
-                          );
-                        });
+                      context: context,
+                      builder: (context) {
+                        return SimpleDialog(
+                          children: [
+                            Image.network(src),
+                          ],
+                        );
+                      },
+                    );
                   },
                 ),
               )),
@@ -336,7 +340,7 @@ class _ProjectPageState extends State<ProjectPage> {
         project = Project.fromJSON(data);
       });
     } catch (error) {
-      debugPrint(error.toString());
+      appLogger.e(error);
     }
   }
 
@@ -346,6 +350,7 @@ class _ProjectPageState extends State<ProjectPage> {
     try {
       final response = await Cloud.fun('projects-fetch')
           .call({'projectId': widget.projectId});
+
       final markdownData = response.data['project'];
 
       projectData = markdown.markdownToHtml(markdownData);
@@ -353,11 +358,11 @@ class _ProjectPageState extends State<ProjectPage> {
       setState(() => isLoading = false);
     } catch (error) {
       setState(() => isLoading = false);
-      debugPrint(error.toString());
+      appLogger.e(error);
 
       Snack.e(
         context: context,
-        message: "Couldn't get project's content. Try again or contact us.",
+        message: "project_fetch_error".tr(),
       );
     }
   }

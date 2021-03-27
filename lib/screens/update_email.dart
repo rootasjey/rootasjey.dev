@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/actions/users.dart';
@@ -11,7 +12,9 @@ import 'package:rootasjey/components/sliver_edge_padding.dart';
 import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/state/user.dart';
+import 'package:rootasjey/utils/app_logger.dart';
 import 'package:rootasjey/utils/constants.dart';
+import 'package:rootasjey/utils/fonts.dart';
 import 'package:rootasjey/utils/snack.dart';
 import 'package:supercharged/supercharged.dart';
 
@@ -69,8 +72,8 @@ class _UpdateEmailState extends State<UpdateEmail> {
     }
 
     return PageAppBar(
-      textTitle: 'Update email',
-      textSubTitle: 'If your email is outdated',
+      textTitle: "email_update".tr(),
+      textSubTitle: "email_update_example".tr(),
       titlePadding: EdgeInsets.only(
         left: titleLeftPadding,
       ),
@@ -149,7 +152,7 @@ class _UpdateEmailState extends State<UpdateEmail> {
               Padding(
                 padding: const EdgeInsets.only(top: 30.0, bottom: 40.0),
                 child: Text(
-                  'Your email has been successfuly updated',
+                  "email_update_successful".tr(),
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 20.0,
@@ -157,8 +160,8 @@ class _UpdateEmailState extends State<UpdateEmail> {
                 ),
               ),
               OutlinedButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: Text("Go back"),
+                onPressed: context.router.pop,
+                child: Text("back".tr()),
               ),
             ],
           ),
@@ -194,7 +197,7 @@ class _UpdateEmailState extends State<UpdateEmail> {
                     Opacity(
                       opacity: 0.6,
                       child: Text(
-                        'Current email',
+                        "emai_current".tr(),
                       ),
                     ),
                   ],
@@ -205,7 +208,7 @@ class _UpdateEmailState extends State<UpdateEmail> {
                       padding: const EdgeInsets.only(left: 35.0),
                       child: Text(
                         currentEmail,
-                        style: TextStyle(
+                        style: FontsUtils.mainStyle(
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -221,7 +224,7 @@ class _UpdateEmailState extends State<UpdateEmail> {
               builder: (context) {
                 return SimpleDialog(
                   title: Text(
-                    'This is your current email',
+                    "email_current".tr(),
                     style: TextStyle(
                       fontSize: 15.0,
                     ),
@@ -239,7 +242,7 @@ class _UpdateEmailState extends State<UpdateEmail> {
                         opacity: 0.6,
                         child: Text(
                           currentEmail,
-                          style: TextStyle(
+                          style: FontsUtils.mainStyle(
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -269,7 +272,7 @@ class _UpdateEmailState extends State<UpdateEmail> {
             onFieldSubmitted: (_) => passwordNode.requestFocus(),
             decoration: InputDecoration(
               icon: Icon(Icons.email),
-              labelText: 'New email',
+              labelText: "email_new".tr(),
             ),
             keyboardType: TextInputType.emailAddress,
             onChanged: (value) async {
@@ -284,7 +287,7 @@ class _UpdateEmailState extends State<UpdateEmail> {
               if (!isWellFormatted) {
                 setState(() {
                   isCheckingEmail = false;
-                  emailErrorMessage = 'The value is not a valid email address';
+                  emailErrorMessage = "email_not_valid".tr();
                 });
 
                 return;
@@ -302,7 +305,7 @@ class _UpdateEmailState extends State<UpdateEmail> {
                 if (!isAvailable) {
                   setState(() {
                     isCheckingEmail = false;
-                    emailErrorMessage = 'This email address is not available';
+                    emailErrorMessage = "email_not_available".tr();
                   });
 
                   return;
@@ -316,7 +319,7 @@ class _UpdateEmailState extends State<UpdateEmail> {
             },
             validator: (value) {
               if (value.isEmpty) {
-                return 'Email cannot be empty';
+                return "email_empty_forbidden".tr();
               }
 
               return null;
@@ -368,7 +371,7 @@ class _UpdateEmailState extends State<UpdateEmail> {
             controller: passwordController,
             decoration: InputDecoration(
               icon: Icon(Icons.lock_outline),
-              labelText: 'Password',
+              labelText: "password".tr(),
             ),
             obscureText: true,
             onChanged: (value) {
@@ -377,7 +380,7 @@ class _UpdateEmailState extends State<UpdateEmail> {
             onFieldSubmitted: (value) => updateEmailProcess(),
             validator: (value) {
               if (value.isEmpty) {
-                return 'Password login cannot be empty';
+                return "password_empty_forbidden".tr();
               }
 
               return null;
@@ -399,7 +402,7 @@ class _UpdateEmailState extends State<UpdateEmail> {
               Padding(
                 padding: const EdgeInsets.only(top: 40.0),
                 child: Text(
-                  'Updating your email...',
+                  "email_updating".tr(),
                   style: TextStyle(
                     fontSize: 20.0,
                   ),
@@ -427,8 +430,8 @@ class _UpdateEmailState extends State<UpdateEmail> {
             Padding(
               padding: const EdgeInsets.all(18.0),
               child: Text(
-                'UPDATE EMAIL',
-                style: TextStyle(
+                "email_update".tr().toUpperCase(),
+                style: FontsUtils.mainStyle(
                   fontSize: 15.0,
                   fontWeight: FontWeight.bold,
                 ),
@@ -455,7 +458,7 @@ class _UpdateEmailState extends State<UpdateEmail> {
 
         Snack.e(
           context: context,
-          message: 'The email entered is not available.',
+          message: "email_not_available".tr(),
         );
 
         return;
@@ -501,7 +504,7 @@ class _UpdateEmailState extends State<UpdateEmail> {
         isCompleted = true;
       });
     } catch (error) {
-      debugPrint(error.toString());
+      appLogger.e(error);
 
       setState(() {
         isUpdating = false;
@@ -509,8 +512,7 @@ class _UpdateEmailState extends State<UpdateEmail> {
 
       Snack.e(
         context: context,
-        message:
-            "Error while updating your email. Please try again later or contact us.",
+        message: "email_update_error".tr(),
       );
     }
   }
@@ -523,7 +525,7 @@ class _UpdateEmailState extends State<UpdateEmail> {
     if (email.isEmpty) {
       Snack.e(
         context: context,
-        message: "Email cannot be empty.",
+        message: "email_empty_forbidden".tr(),
       );
 
       return false;
@@ -532,7 +534,7 @@ class _UpdateEmailState extends State<UpdateEmail> {
     if (password.isEmpty) {
       Snack.e(
         context: context,
-        message: "Password cannot be empty.",
+        message: "password_empty_forbidden".tr(),
       );
 
       return false;
@@ -541,7 +543,7 @@ class _UpdateEmailState extends State<UpdateEmail> {
     if (!UsersActions.checkEmailFormat(email)) {
       Snack.e(
         context: context,
-        message: "The value specified is not a valid email.",
+        message: "email_not_validd".tr(),
       );
 
       return false;

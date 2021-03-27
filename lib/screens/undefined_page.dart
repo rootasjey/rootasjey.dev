@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/app_icon_header.dart';
 import 'package:rootasjey/router/app_router.gr.dart';
@@ -24,8 +25,8 @@ class _UndefinedPageState extends State<UndefinedPage> {
         ),
         Opacity(
           opacity: .6,
-          child: Text(
-              'Route for "${context.router.current.name}" is not defined.'),
+          child:
+              Text("route_undefined".tr(args: [context.router.current.name])),
         ),
         Padding(
           padding: const EdgeInsets.only(top: 50.0),
@@ -48,8 +49,7 @@ class _UndefinedPageState extends State<UndefinedPage> {
                       Opacity(
                         opacity: .8,
                         child: Text(
-                          // 'It is by getting lost that we learn.',
-                          'When we are lost, what matters is to find our way back.',
+                          "route_undefined_quote".tr(),
                           style: TextStyle(
                             fontSize: 30.0,
                           ),
@@ -64,7 +64,7 @@ class _UndefinedPageState extends State<UndefinedPage> {
                       ),
                       Opacity(
                         opacity: .6,
-                        child: Text('Outofcontext'),
+                        child: Text('fig.style'),
                       ),
                     ],
                   ),
@@ -79,7 +79,7 @@ class _UndefinedPageState extends State<UndefinedPage> {
             },
             child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Text('Go home'),
+              child: Text("back_home".tr()),
             ),
           ),
         ),

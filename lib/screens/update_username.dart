@@ -1,15 +1,17 @@
 import 'dart:async';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:rootasjey/actions/users.dart';
 import 'package:rootasjey/components/animated_app_icon.dart';
 import 'package:rootasjey/components/fade_in_y.dart';
 import 'package:rootasjey/components/page_app_bar.dart';
 import 'package:rootasjey/components/sliver_edge_padding.dart';
 import 'package:rootasjey/router/app_router.gr.dart';
-import 'package:rootasjey/screens/signin.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/state/user.dart';
+import 'package:rootasjey/utils/app_logger.dart';
 import 'package:rootasjey/utils/constants.dart';
+import 'package:rootasjey/utils/fonts.dart';
 import 'package:rootasjey/utils/snack.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -35,7 +37,7 @@ class _UpdateUsernameState extends State<UpdateUsername> {
 
   String currentUsername = '';
   String nameErrorMessage = '';
-  String newUserName = '';
+  String newUsername = '';
 
   Timer nameTimer;
 
@@ -75,8 +77,8 @@ class _UpdateUsernameState extends State<UpdateUsername> {
     }
 
     return PageAppBar(
-      textTitle: 'Update username',
-      textSubTitle: 'Want a more personalized name?',
+      textTitle: "username_update".tr(),
+      textSubTitle: "username_update_description".tr(),
       titlePadding: EdgeInsets.only(
         left: titleLeftPadding,
       ),
@@ -140,7 +142,7 @@ class _UpdateUsernameState extends State<UpdateUsername> {
               Padding(
                 padding: const EdgeInsets.only(top: 30.0, bottom: 40.0),
                 child: Text(
-                  'Your username has been successfuly updated',
+                  "username_update_success".tr(),
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 20.0,
@@ -148,8 +150,8 @@ class _UpdateUsernameState extends State<UpdateUsername> {
                 ),
               ),
               OutlinedButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: Text("Go back"),
+                onPressed: context.router.pop,
+                child: Text("back".tr()),
               ),
             ],
           ),
@@ -185,9 +187,7 @@ class _UpdateUsernameState extends State<UpdateUsername> {
                     ),
                     Opacity(
                       opacity: 0.6,
-                      child: Text(
-                        'Current username',
-                      ),
+                      child: Text("username_current".tr()),
                     ),
                   ],
                 ),
@@ -197,7 +197,7 @@ class _UpdateUsernameState extends State<UpdateUsername> {
                       padding: const EdgeInsets.only(left: 35.0),
                       child: Text(
                         currentUsername,
-                        style: TextStyle(
+                        style: FontsUtils.mainStyle(
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -213,7 +213,7 @@ class _UpdateUsernameState extends State<UpdateUsername> {
               builder: (context) {
                 return SimpleDialog(
                   title: Text(
-                    'This is your current username',
+                    "username_current".tr(),
                     style: TextStyle(
                       fontSize: 15.0,
                     ),
@@ -231,7 +231,7 @@ class _UpdateUsernameState extends State<UpdateUsername> {
                         opacity: 0.6,
                         child: Text(
                           currentUsername,
-                          style: TextStyle(
+                          style: FontsUtils.mainStyle(
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -244,8 +244,8 @@ class _UpdateUsernameState extends State<UpdateUsername> {
                       child: Opacity(
                         opacity: 0.6,
                         child: Text(
-                          "You can choose a new one as long as it's uniq.",
-                          style: TextStyle(
+                          "username_choose_description".tr(),
+                          style: FontsUtils.mainStyle(
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -272,7 +272,7 @@ class _UpdateUsernameState extends State<UpdateUsername> {
               Padding(
                 padding: const EdgeInsets.only(top: 40.0),
                 child: Text(
-                  'Updating your email...',
+                  "username_updating".tr(),
                   style: TextStyle(
                     fontSize: 20.0,
                   ),
@@ -300,24 +300,24 @@ class _UpdateUsernameState extends State<UpdateUsername> {
             controller: usernameController,
             decoration: InputDecoration(
               icon: Icon(Icons.person_outline),
-              labelText: "New username",
+              labelText: "username_new".tr(),
             ),
             keyboardType: TextInputType.text,
             onChanged: (value) async {
               setState(() {
-                newUserName = value;
+                newUsername = value;
                 isCheckingName = true;
               });
 
               final isWellFormatted =
-                  UsersActions.checkUsernameFormat(newUserName);
+                  UsersActions.checkUsernameFormat(newUsername);
 
               if (!isWellFormatted) {
                 setState(() {
                   isCheckingName = false;
-                  nameErrorMessage = newUserName.length < 3
-                      ? 'Please use at least 3 characters'
-                      : 'Please use alpha-numerical (A-Z, 0-9) characters and underscore (_)';
+                  nameErrorMessage = newUsername.length < 3
+                      ? "input_minimum_char".tr()
+                      : "input_valid_format".tr();
                 });
 
                 return;
@@ -330,12 +330,12 @@ class _UpdateUsernameState extends State<UpdateUsername> {
 
               nameTimer = Timer(1.seconds, () async {
                 isNameAvailable =
-                    await UsersActions.checkUsernameAvailability(newUserName);
+                    await UsersActions.checkUsernameAvailability(newUsername);
 
                 if (!isNameAvailable) {
                   setState(() {
                     isCheckingName = false;
-                    nameErrorMessage = 'This name is not available';
+                    nameErrorMessage = "username_not_available".tr();
                   });
 
                   return;
@@ -385,8 +385,8 @@ class _UpdateUsernameState extends State<UpdateUsername> {
             Padding(
               padding: const EdgeInsets.all(18.0),
               child: Text(
-                'UPDATE USERNAME',
-                style: TextStyle(
+                "username_update",
+                style: FontsUtils.mainStyle(
                   fontSize: 15.0,
                   fontWeight: FontWeight.bold,
                 ),
@@ -411,11 +411,7 @@ class _UpdateUsernameState extends State<UpdateUsername> {
       });
 
       if (userAuth == null) {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (_) => Signin(),
-          ),
-        );
+        return;
       }
 
       final user = await FirebaseFirestore.instance
@@ -429,19 +425,19 @@ class _UpdateUsernameState extends State<UpdateUsername> {
         currentUsername = data['name'] ?? '';
       });
     } catch (error) {
-      Navigator.of(context).push(MaterialPageRoute(builder: (_) => Signin()));
+      appLogger.e(error);
     }
   }
 
   bool inputValuesOk() {
-    final isWellFormatted = UsersActions.checkUsernameFormat(newUserName);
+    final isWellFormatted = UsersActions.checkUsernameFormat(newUsername);
 
     if (!isWellFormatted) {
       setState(() {
         isCheckingName = false;
-        nameErrorMessage = newUserName.length < 3
-            ? 'Please use at least 3 characters'
-            : 'Please use alpha-numerical (A-Z, 0-9) characters and underscore (_)';
+        nameErrorMessage = newUsername.length < 3
+            ? "input_minimum_char".tr()
+            : "input_valid_format".tr();
       });
 
       return false;
@@ -461,7 +457,7 @@ class _UpdateUsernameState extends State<UpdateUsername> {
 
     try {
       isNameAvailable =
-          await UsersActions.checkUsernameAvailability(newUserName);
+          await UsersActions.checkUsernameAvailability(newUsername);
 
       if (!isNameAvailable) {
         setState(() {
@@ -471,7 +467,7 @@ class _UpdateUsernameState extends State<UpdateUsername> {
 
         Snack.e(
           context: context,
-          message: "The name $newUserName is not available",
+          message: "username_not_available_args".tr(args: [newUsername]),
         );
 
         return;
@@ -489,7 +485,7 @@ class _UpdateUsernameState extends State<UpdateUsername> {
         return;
       }
 
-      final usernameUpdateResp = await stateUser.updateUsername(newUserName);
+      final usernameUpdateResp = await stateUser.updateUsername(newUsername);
 
       if (!usernameUpdateResp.success) {
         final exception = usernameUpdateResp.error;
@@ -510,15 +506,15 @@ class _UpdateUsernameState extends State<UpdateUsername> {
       setState(() {
         isCompleted = true;
         isUpdating = false;
-        currentUsername = newUserName;
-        newUserName = '';
+        currentUsername = newUsername;
+        newUsername = '';
       });
 
       stateUser.setUsername(currentUsername);
 
       Snack.s(
         context: context,
-        message: 'Your username has been successfully updated.',
+        message: "username_update_success".tr(),
       );
 
       // Navigator.of(context).pop();
@@ -532,8 +528,7 @@ class _UpdateUsernameState extends State<UpdateUsername> {
 
       Snack.e(
         context: context,
-        message: 'Sorry, there was an error. '
-            'Can you try again later or contact us if the issue persists?',
+        message: "username_update_error".tr(),
       );
     }
   }

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/home_app_bar.dart';
@@ -109,7 +110,7 @@ class _SearchState extends State<Search> {
                 title: Opacity(
                   opacity: 0.6,
                   child: Text(
-                    'Search',
+                    "search".tr(),
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       color: stateColors.foreground,
@@ -295,9 +296,7 @@ class _SearchState extends State<Search> {
           icon: Opacity(opacity: 0.6, child: Icon(Icons.clear)),
           label: Opacity(
             opacity: 0.6,
-            child: Text(
-              'Clear content',
-            ),
+            child: Text("clear_content".tr()),
           )),
     ]);
   }

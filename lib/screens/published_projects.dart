@@ -1,10 +1,12 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/project_card.dart';
 import 'package:rootasjey/components/sliver_empty_view.dart';
 import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/types/project.dart';
+import 'package:rootasjey/utils/app_logger.dart';
 
 class PublishedProjects extends StatefulWidget {
   @override
@@ -69,31 +71,27 @@ class _PublishedProjectsState extends State<PublishedProjects> {
                 }
               },
               itemBuilder: (context) => [
-                const PopupMenuItem(
+                PopupMenuItem(
                   value: 'edit',
                   child: ListTile(
                     leading: Icon(Icons.edit),
-                    title: Text(
-                      'Edit',
-                    ),
+                    title: Text("edit".tr()),
                   ),
                 ),
-                const PopupMenuItem(
+                PopupMenuItem(
                   value: 'unpublish',
                   child: ListTile(
                     leading: Icon(Icons.public_off_sharp),
                     title: Text(
-                      'Unpublish',
+                      "unpublish".tr(),
                     ),
                   ),
                 ),
-                const PopupMenuItem(
+                PopupMenuItem(
                   value: 'delete',
                   child: ListTile(
                     leading: Icon(Icons.delete),
-                    title: Text(
-                      'Delete',
-                    ),
+                    title: Text("delete".tr()),
                   ),
                 ),
               ],
@@ -111,20 +109,20 @@ class _PublishedProjectsState extends State<PublishedProjects> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: Text("Are you sure?"),
+            title: Text("are_you_sure".tr()),
             content: SingleChildScrollView(
               child: Opacity(
                 opacity: 0.6,
                 child: Text(
-                  "This action is irreversible.",
+                  "action_irreversible".tr(),
                 ),
               ),
             ),
             actions: [
               TextButton(
-                onPressed: () => Navigator.of(context).pop(),
+                onPressed: context.router.pop,
                 child: Text(
-                  'CANCEL',
+                  "cancel".tr().toUpperCase(),
                   textAlign: TextAlign.end,
                 ),
               ),
@@ -134,7 +132,7 @@ class _PublishedProjectsState extends State<PublishedProjects> {
                   delete(index);
                 },
                 child: Text(
-                  'DELETE',
+                  "delete".tr().toUpperCase(),
                   textAlign: TextAlign.end,
                   style: TextStyle(
                     color: Colors.pink,
@@ -182,7 +180,7 @@ class _PublishedProjectsState extends State<PublishedProjects> {
         hasNext = limit == snapshot.size;
       });
     } catch (error) {
-      debugPrint(error.toString());
+      appLogger.e(error);
     }
   }
 
@@ -199,7 +197,7 @@ class _PublishedProjectsState extends State<PublishedProjects> {
 
       setState(() => isLoading = false);
     } catch (error) {
-      debugPrint(error.toString());
+      appLogger.e(error);
 
       setState(() {
         projectsList.insert(index, removedPost);
@@ -222,7 +220,7 @@ class _PublishedProjectsState extends State<PublishedProjects> {
 
       setState(() => isLoading = false);
     } catch (error) {
-      debugPrint(error.toString());
+      appLogger.e(error);
 
       setState(() {
         projectsList.insert(index, removedPost);

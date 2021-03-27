@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:rootasjey/utils/app_logger.dart';
 import 'package:rootasjey/utils/snack.dart';
 import 'package:auto_route/annotations.dart';
 import 'package:auto_route/auto_route.dart';
@@ -10,6 +11,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rootasjey/components/fade_in_x.dart';
 import 'package:rootasjey/components/fade_in_y.dart';
+import 'package:rootasjey/components/home_app_bar.dart';
 import 'package:rootasjey/components/page_app_bar.dart';
 import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/state/colors.dart';
@@ -21,8 +23,6 @@ import 'package:rootasjey/utils/fonts.dart';
 import 'package:rootasjey/utils/language.dart';
 import 'package:supercharged/supercharged.dart';
 import 'package:unicons/unicons.dart';
-
-import '../components/home_app_bar.dart';
 
 class Settings extends StatefulWidget {
   final bool showAppBar;
@@ -271,8 +271,8 @@ class _SettingsState extends State<Settings> {
         Opacity(
           opacity: .8,
           child: Text(
-            'Delete account',
-            style: TextStyle(
+            "account_delete".tr(),
+            style: FontsUtils.mainStyle(
               fontWeight: FontWeight.w700,
             ),
           ),
@@ -296,7 +296,7 @@ class _SettingsState extends State<Settings> {
               ),
             ),
           Text(
-            'Settings',
+            "settings".tr(),
             style: FontsUtils.boldTitleStyle(),
           ),
         ],
@@ -319,7 +319,7 @@ class _SettingsState extends State<Settings> {
             builder: (context) {
               return SimpleDialog(
                 title: Text(
-                  'Email',
+                  "email".tr(),
                   style: TextStyle(
                     fontSize: 15.0,
                   ),
@@ -431,9 +431,7 @@ class _SettingsState extends State<Settings> {
                 ),
                 Opacity(
                   opacity: .7,
-                  child: Text(
-                    'Username',
-                  ),
+                  child: Text("username".tr()),
                 ),
               ],
             ),
@@ -461,7 +459,7 @@ class _SettingsState extends State<Settings> {
       padding: const EdgeInsets.only(left: 16.0),
       child: ListTile(
         leading: Icon(Icons.language),
-        subtitle: Text("This will select the app's language"),
+        subtitle: Text("language_app_select".tr()),
         title: DropdownButton<String>(
           elevation: 3,
           value: selectedLang,
@@ -509,8 +507,8 @@ class _SettingsState extends State<Settings> {
               child: Row(
                 children: <Widget>[
                   Text(
-                    'Theme',
-                    style: TextStyle(
+                    "theme".tr(),
+                    style: FontsUtils.mainStyle(
                       fontSize: 20.0,
                       fontWeight: FontWeight.bold,
                       color: stateColors.primary,
@@ -540,7 +538,7 @@ class _SettingsState extends State<Settings> {
             delay: 200.milliseconds,
             beginY: 10.0,
             child: SwitchListTile(
-              title: Text('Automatic theme'),
+              title: Text("theme_automatic".tr()),
               secondary: const Icon(Icons.autorenew),
               value: isThemeAuto,
               onChanged: (newValue) {
@@ -561,7 +559,7 @@ class _SettingsState extends State<Settings> {
               delay: 0.milliseconds,
               beginY: 10.0,
               child: SwitchListTile(
-                title: Text('Lights'),
+                title: Text("light".tr()),
                 secondary: const Icon(Icons.lightbulb_outline),
                 value: currentBrightness == Brightness.light,
                 onChanged: (newValue) {
@@ -597,9 +595,7 @@ class _SettingsState extends State<Settings> {
               },
               child: Padding(
                 padding: const EdgeInsets.all(15.0),
-                child: Icon(
-                  Icons.lock,
-                ),
+                child: Icon(Icons.lock),
               ),
             ),
           ),
@@ -607,7 +603,7 @@ class _SettingsState extends State<Settings> {
         Opacity(
           opacity: 0.8,
           child: Text(
-            'Update password',
+            "password_update".tr(),
             style: TextStyle(
               fontWeight: FontWeight.w700,
             ),
@@ -629,7 +625,7 @@ class _SettingsState extends State<Settings> {
           child: Padding(
             padding: const EdgeInsets.all(15.0),
             child: Text(
-              'CANCEL',
+              "cancel".tr().toUpperCase(),
               style: TextStyle(
                 color: Colors.red,
               ),
@@ -638,7 +634,7 @@ class _SettingsState extends State<Settings> {
         ),
       ],
       title: Text(
-        'Choose a profile picture',
+        "profile_picture_choose".tr(),
         style: TextStyle(
           fontSize: 15.0,
           fontWeight: FontWeight.bold,
@@ -714,8 +710,8 @@ class _SettingsState extends State<Settings> {
 
   String themeDescription() {
     return isThemeAuto
-        ? 'It will be chosen accordingly to the time of the day'
-        : 'Choose your theme manually';
+        ? "theme_auto_description".tr()
+        : "theme_manual_description".tr();
   }
 
   void updateImageUrl({String imageName}) async {
@@ -738,16 +734,16 @@ class _SettingsState extends State<Settings> {
 
       Snack.s(
         context: context,
-        message: 'Your image has been successfully updated.',
+        message: "profile_update_success".tr(),
       );
     } catch (error) {
-      debugPrint(error.toString());
+      appLogger.e(error);
 
       setState(() => isLoadingAvatarUrl = false);
 
       Snack.e(
         context: context,
-        message: 'Oops, there was an error: ${error.toString()}',
+        message: "profile_update_error".tr(),
       );
     }
   }

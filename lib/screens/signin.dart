@@ -1,18 +1,20 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:rootasjey/actions/users.dart';
 import 'package:rootasjey/components/fade_in_x.dart';
 import 'package:rootasjey/components/fade_in_y.dart';
+import 'package:rootasjey/components/home_app_bar.dart';
 import 'package:rootasjey/components/loading_animation.dart';
 import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/state/user.dart';
 import 'package:rootasjey/utils/app_logger.dart';
 import 'package:rootasjey/utils/app_storage.dart';
+import 'package:rootasjey/utils/fonts.dart';
 import 'package:rootasjey/utils/snack.dart';
 import 'package:supercharged/supercharged.dart';
-
-import '../components/home_app_bar.dart';
+import 'package:unicons/unicons.dart';
 
 class Signin extends StatefulWidget {
   final void Function(bool isAuthenticated) onSigninResult;
@@ -77,7 +79,7 @@ class _SigninState extends State<Signin> {
   Widget body() {
     if (isConnecting) {
       return LoadingAnimation(
-        textTitle: 'Signing in...',
+        textTitle: "signin_dot".tr(),
       );
     }
 
@@ -115,7 +117,7 @@ class _SigninState extends State<Signin> {
               textInputAction: TextInputAction.next,
               decoration: InputDecoration(
                 icon: Icon(Icons.email),
-                labelText: 'Email',
+                labelText: "email".tr(),
               ),
               keyboardType: TextInputType.emailAddress,
               onChanged: (value) {
@@ -124,7 +126,7 @@ class _SigninState extends State<Signin> {
               onFieldSubmitted: (value) => passwordNode.requestFocus(),
               validator: (value) {
                 if (value.isEmpty) {
-                  return 'Email login cannot be empty';
+                  return "email_empty_forbidden".tr();
                 }
 
                 return null;
@@ -148,7 +150,7 @@ class _SigninState extends State<Signin> {
             mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
               Text(
-                "I forgot my password",
+                "password_forgot".tr(),
                 style: TextStyle(
                   decoration: TextDecoration.underline,
                 ),
@@ -186,9 +188,9 @@ class _SigninState extends State<Signin> {
               child: Padding(
                 padding: EdgeInsets.only(bottom: 10.0),
                 child: Text(
-                  'Sign In',
+                  "signin".tr(),
                   textAlign: TextAlign.center,
-                  style: TextStyle(
+                  style: FontsUtils.mainStyle(
                     fontSize: 25.0,
                     fontWeight: FontWeight.bold,
                   ),
@@ -201,7 +203,7 @@ class _SigninState extends State<Signin> {
               child: Opacity(
                 opacity: 0.6,
                 child: Text(
-                  'Connect to your existing account',
+                  "signin_existing_account".tr(),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
@@ -227,7 +229,7 @@ class _SigninState extends State<Signin> {
             child: Opacity(
               opacity: 0.6,
               child: Text(
-                "I don't have an account",
+                "dont_own_account".tr(),
                 style: TextStyle(
                   decoration: TextDecoration.underline,
                 ),
@@ -263,7 +265,7 @@ class _SigninState extends State<Signin> {
               onFieldSubmitted: (value) => signInProcess(),
               validator: (value) {
                 if (value.isEmpty) {
-                  return 'Password login cannot be empty';
+                  return "password_empty_forbidden".tr();
                 }
 
                 return null;
@@ -298,7 +300,7 @@ class _SigninState extends State<Signin> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Text(
-                  'SIGN IN',
+                  "signin".tr().toUpperCase(),
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 15.0,
@@ -308,7 +310,7 @@ class _SigninState extends State<Signin> {
                 Padding(
                   padding: const EdgeInsets.only(left: 20.0),
                   child: Icon(
-                    Icons.arrow_forward,
+                    UniconsLine.arrow_right,
                     color: Colors.white,
                   ),
                 )
@@ -324,7 +326,7 @@ class _SigninState extends State<Signin> {
     if (!UsersActions.checkEmailFormat(email)) {
       Snack.e(
         context: context,
-        message: "The value specified is not a valid email",
+        message: "email_not_valid".tr(),
       );
 
       return false;
@@ -333,7 +335,7 @@ class _SigninState extends State<Signin> {
     if (password.isEmpty) {
       Snack.e(
         context: context,
-        message: "Password cannot be empty",
+        message: "password_empty_forbidden".tr(),
       );
 
       return false;
@@ -365,7 +367,7 @@ class _SigninState extends State<Signin> {
 
         Snack.e(
           context: context,
-          message: 'The password is incorrect or the user does not exists.',
+          message: "account_doesnt_exist".tr(),
         );
 
         return;
@@ -392,7 +394,7 @@ class _SigninState extends State<Signin> {
 
       Snack.e(
         context: context,
-        message: 'The password is incorrect or the user does not exists.',
+        message: "password_incorrect".tr(),
       );
 
       setState(() {

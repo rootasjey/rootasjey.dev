@@ -1,11 +1,13 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/post_card.dart';
 import 'package:rootasjey/components/sliver_empty_view.dart';
 import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/state/user.dart';
 import 'package:rootasjey/types/post.dart';
+import 'package:rootasjey/utils/app_logger.dart';
 
 class PublishedPosts extends StatefulWidget {
   @override
@@ -64,24 +66,18 @@ class _PublishedPostsState extends State<PublishedPosts> {
                 }
               },
               itemBuilder: (context) => [
-                const PopupMenuItem(
+                PopupMenuItem(
                   value: 'unpublish',
                   child: ListTile(
                     leading: Icon(Icons.public_off_sharp),
-                    title: Text(
-                      'Unpublish',
-                      style: TextStyle(),
-                    ),
+                    title: Text("unpublished".tr()),
                   ),
                 ),
-                const PopupMenuItem(
+                PopupMenuItem(
                   value: 'delete',
                   child: ListTile(
                     leading: Icon(Icons.delete),
-                    title: Text(
-                      'Delete',
-                      style: TextStyle(),
-                    ),
+                    title: Text("delete".tr()),
                   ),
                 ),
               ],
@@ -100,20 +96,18 @@ class _PublishedPostsState extends State<PublishedPosts> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: Text("Are you sure?"),
+            title: Text("are_you_sure".tr()),
             content: SingleChildScrollView(
               child: Opacity(
                 opacity: 0.6,
-                child: Text(
-                  "This action is irreversible.",
-                ),
+                child: Text("action_irreversible".tr()),
               ),
             ),
             actions: [
               TextButton(
                 onPressed: context.router.pop,
                 child: Text(
-                  'CANCEL',
+                  "canel".tr().toUpperCase(),
                   textAlign: TextAlign.end,
                 ),
               ),
@@ -123,7 +117,7 @@ class _PublishedPostsState extends State<PublishedPosts> {
                   delete(index);
                 },
                 child: Text(
-                  'DELETE',
+                  "delete".tr().toUpperCase(),
                   textAlign: TextAlign.end,
                   style: TextStyle(
                     color: Colors.pink,
@@ -175,7 +169,7 @@ class _PublishedPostsState extends State<PublishedPosts> {
         hasNext = limit == snapshot.size;
       });
     } catch (error) {
-      debugPrint(error.toString());
+      appLogger.e(error);
     }
   }
 
@@ -192,7 +186,7 @@ class _PublishedPostsState extends State<PublishedPosts> {
 
       setState(() => isLoading = false);
     } catch (error) {
-      debugPrint(error.toString());
+      appLogger.e(error);
 
       setState(() {
         postsList.insert(index, removedPost);
@@ -215,7 +209,7 @@ class _PublishedPostsState extends State<PublishedPosts> {
 
       setState(() => isLoading = false);
     } catch (error) {
-      debugPrint(error.toString());
+      appLogger.e(error);
 
       setState(() {
         postsList.insert(index, removedPost);
