@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/app_icon_header.dart';
+import 'package:rootasjey/components/lang_popup_menu_button.dart';
 import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/state/user.dart';
@@ -110,18 +111,6 @@ class _HomeAppBarState extends State<HomeAppBar> {
     );
   }
 
-  Widget searchButton() {
-    return IconButton(
-      onPressed: () {
-        context.router.push(SearchRoute());
-      },
-      color: stateColors.foreground,
-      icon: Icon(Icons.search),
-    );
-  }
-
-  /// Switch from dark to light and vice-versa.
-
   /// Switch from dark to light and vice-versa.
   Widget brightnessButton() {
     IconData iconBrightness = Icons.brightness_auto;
@@ -219,6 +208,29 @@ class _HomeAppBarState extends State<HomeAppBar> {
           ];
         },
       ),
+    );
+  }
+
+  Widget langButton() {
+    return LangPopupMenuButton(
+      onLangChanged: (newLang) async {
+        await context.setLocale(Locale(newLang));
+
+        setState(() {
+          stateUser.setLang(newLang);
+        });
+      },
+      lang: stateUser.lang,
+    );
+  }
+
+  Widget searchButton() {
+    return IconButton(
+      onPressed: () {
+        context.router.push(SearchRoute());
+      },
+      color: stateColors.foreground,
+      icon: Icon(Icons.search),
     );
   }
 
@@ -349,8 +361,9 @@ class _HomeAppBarState extends State<HomeAppBar> {
           : children.addAll([
               userAvatar(isNarrow: isNarrow),
               addNewPostButton(),
-              searchButton(),
+              // searchButton(),
               brightnessButton(),
+              langButton(),
             ]);
     } else {
       isNarrow
@@ -366,8 +379,9 @@ class _HomeAppBarState extends State<HomeAppBar> {
                   onPressed: widget.onPressedRightButton,
                 ),
               userSigninMenu(),
-              searchButton(),
+              // searchButton(),
               brightnessButton(),
+              langButton(),
             ]);
     }
 
