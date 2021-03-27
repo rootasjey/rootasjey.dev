@@ -138,22 +138,27 @@ class _HomePresentationState extends State<HomePresentation> {
     return Wrap(
       children: [
         IconButton(
+          tooltip: "GitHub",
           icon: Icon(LineAwesomeIcons.github),
           onPressed: () => launch('https://github.com/rootasjey'),
         ),
         IconButton(
+          tooltip: "Twitter",
           icon: Icon(LineAwesomeIcons.twitter),
           onPressed: () => launch('https://twitter.com/rootasjey'),
         ),
         IconButton(
+          tooltip: "Instagram",
           icon: Icon(LineAwesomeIcons.instagram),
           onPressed: () => launch('https://instagram.com/rootasjey'),
         ),
         IconButton(
+          tooltip: "Medium",
           icon: Icon(LineAwesomeIcons.medium),
           onPressed: () => launch('https://medium.com/@rootasjey'),
         ),
         IconButton(
+          tooltip: "Hashnode",
           icon: Icon(LineAwesomeIcons.hashtag),
           onPressed: () => launch('https://hashnode.com/@rootasjey'),
         ),
