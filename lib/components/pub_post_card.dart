@@ -126,7 +126,7 @@ class _PubPostCardState extends State<PubPostCard> {
           ),
           Padding(
             padding: const EdgeInsets.only(
-              top: 20.0,
+              top: 8.0,
             ),
             child: Wrap(
               spacing: 10.0,
