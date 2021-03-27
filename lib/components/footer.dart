@@ -4,7 +4,9 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/router/app_router.gr.dart';
+import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/state/user.dart';
+import 'package:rootasjey/utils/fonts.dart';
 import 'package:rootasjey/utils/snack.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -24,15 +26,17 @@ class Footer extends StatefulWidget {
 }
 
 class _FooterState extends State<Footer> {
-  final titleStyle = TextStyle(
+  final titleStyle = FontsUtils.mainStyle(
     fontSize: 20.0,
     fontWeight: FontWeight.w400,
   );
 
-  final linkStyle = TextStyle(
+  final linkStyle = FontsUtils.mainStyle(
     fontSize: 17.0,
     fontWeight: FontWeight.w300,
   );
+
+  final titlePadding = const EdgeInsets.only(bottom: 30.0);
 
   @override
   Widget build(BuildContext context) {
@@ -69,7 +73,7 @@ class _FooterState extends State<Footer> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Padding(
-          padding: const EdgeInsets.only(bottom: 30.0, left: 15.0),
+          padding: titlePadding,
           child: Opacity(
             opacity: 0.5,
             child: Text(
@@ -78,27 +82,14 @@ class _FooterState extends State<Footer> {
             ),
           ),
         ),
-        TextButton(
-            onPressed: null,
-            child: Opacity(
-              opacity: 0.5,
-              child: Text(
-                "documentation".tr(),
-                style: linkStyle,
-              ),
-            )),
-        TextButton(
-            onPressed: () async {
-              onBeforeNav();
-              await launch('https://github.com/rootasjey/rootasjey.dev');
-            },
-            child: Opacity(
-              opacity: 0.5,
-              child: Text(
-                "GitHub",
-                style: linkStyle,
-              ),
-            )),
+        textLink(label: "documentation".tr()),
+        textLink(
+          label: "github".tr(),
+          onPressed: () async {
+            onBeforeNav();
+            await launch('https://github.com/rootasjey/rootasjey.dev');
+          },
+        ),
       ],
     );
   }
@@ -108,7 +99,7 @@ class _FooterState extends State<Footer> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Padding(
-          padding: const EdgeInsets.only(bottom: 30.0, left: 15.0),
+          padding: titlePadding,
           child: Opacity(
             opacity: 0.5,
             child: Text(
@@ -117,30 +108,20 @@ class _FooterState extends State<Footer> {
             ),
           ),
         ),
-        TextButton(
-            onPressed: () async {
-              onBeforeNav();
-              updateUserAccountLang();
-            },
-            child: Opacity(
-              opacity: 0.5,
-              child: Text(
-                'English',
-                style: linkStyle,
-              ),
-            )),
-        TextButton(
-            onPressed: () {
-              onBeforeNav();
-              updateUserAccountLang();
-            },
-            child: Opacity(
-              opacity: 0.5,
-              child: Text(
-                'Français',
-                style: linkStyle,
-              ),
-            )),
+        textLink(
+          label: 'English',
+          onPressed: () async {
+            onBeforeNav();
+            updateUserAccountLang();
+          },
+        ),
+        textLink(
+          label: 'Français',
+          onPressed: () async {
+            onBeforeNav();
+            updateUserAccountLang();
+          },
+        ),
       ],
     );
   }
@@ -150,7 +131,7 @@ class _FooterState extends State<Footer> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Padding(
-          padding: const EdgeInsets.only(bottom: 30.0, left: 15.0),
+          padding: titlePadding,
           child: Opacity(
             opacity: 0.5,
             child: Text(
@@ -159,48 +140,50 @@ class _FooterState extends State<Footer> {
             ),
           ),
         ),
-        TextButton(
-            onPressed: () {
-              onBeforeNav();
-              context.router.push(AboutRoute());
-            },
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Opacity(
-                  opacity: 0.5,
-                  child: Text(
-                    "about".tr(),
-                    style: linkStyle,
-                  ),
-                ),
-              ],
-            )),
-        TextButton(
-            onPressed: () {
-              onBeforeNav();
-              context.router.push(ContactRoute());
-            },
-            child: Opacity(
-              opacity: 0.5,
-              child: Text(
-                "contact".tr(),
-                style: linkStyle,
-              ),
-            )),
-        TextButton(
-            onPressed: () {
-              onBeforeNav();
-              context.router.push(AboutMeRoute());
-            },
-            child: Opacity(
-              opacity: 0.5,
-              child: Text(
-                "who_am_i".tr(),
-                style: linkStyle,
-              ),
-            )),
+        textLink(
+          label: "about".tr(),
+          onPressed: () {
+            onBeforeNav();
+            context.router.push(AboutRoute());
+          },
+        ),
+        textLink(
+          label: "contact".tr(),
+          onPressed: () {
+            onBeforeNav();
+            context.router.push(ContactRoute());
+          },
+        ),
+        textLink(
+          label: "who_am_i".tr(),
+          onPressed: () {
+            onBeforeNav();
+            context.router.push(AboutMeRoute());
+          },
+        ),
       ],
+    );
+  }
+
+  Widget textLink({
+    VoidCallback onPressed,
+    @required String label,
+  }) {
+    return TextButton(
+      onPressed: onPressed,
+      child: Opacity(
+        opacity: 0.5,
+        child: Text(
+          label,
+          style: FontsUtils.mainStyle(
+            fontSize: 16.0,
+            fontWeight: FontWeight.w400,
+          ),
+        ),
+      ),
+      style: TextButton.styleFrom(
+        primary: stateColors.foreground,
+      ),
     );
   }
 

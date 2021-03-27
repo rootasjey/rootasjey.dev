@@ -138,21 +138,24 @@ class _NewsletterState extends State<Newsletter> {
               ),
               child: SizedBox(
                 width: 200.0,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      "subscribe".tr(),
-                      style: TextStyle(
-                        fontSize: 18.0,
-                        color: Colors.white,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 12.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "subscribe".tr(),
+                        style: TextStyle(
+                          fontSize: 18.0,
+                          color: Colors.white,
+                        ),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 20.0),
-                      child: Icon(Icons.arrow_forward, color: Colors.white),
-                    ),
-                  ],
+                      Padding(
+                        padding: const EdgeInsets.only(left: 20.0),
+                        child: Icon(Icons.arrow_forward, color: Colors.white),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

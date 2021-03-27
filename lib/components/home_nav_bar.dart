@@ -27,7 +27,13 @@ class HomeNavBar extends StatelessWidget {
         context.router.push(routeInfo);
       },
       icon: Icon(icon),
-      label: Text(titleText),
+      label: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 8.0,
+          vertical: 12.0,
+        ),
+        child: Text(titleText),
+      ),
     );
   }
 
@@ -42,16 +48,19 @@ class HomeNavBar extends StatelessWidget {
       height: 120.0,
       child: Card(
         elevation: 4.0,
-        child: InkWell(
-          onTap: () {
-            context.router.push(routeInfo);
-          },
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(icon),
-              Text(titleText),
-            ],
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: InkWell(
+            onTap: () {
+              context.router.push(routeInfo);
+            },
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(icon),
+                Text(titleText),
+              ],
+            ),
           ),
         ),
       ),
@@ -132,8 +141,12 @@ class HomeNavBar extends StatelessWidget {
               ),
             ),
             icon: Icon(Icons.work),
-            label: Text(
-              "hire_me".tr(),
+            label: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 8.0,
+                vertical: 12.0,
+              ),
+              child: Text("hire_me".tr()),
             ),
           ),
           buttonLink(
