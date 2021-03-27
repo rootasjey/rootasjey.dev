@@ -6,7 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:rootasjey/actions/users.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/utils/app_logger.dart';
+import 'package:rootasjey/utils/fonts.dart';
 import 'package:rootasjey/utils/snack.dart';
+import 'package:unicons/unicons.dart';
 
 class Newsletter extends StatefulWidget {
   @override
@@ -58,10 +60,7 @@ class _NewsletterState extends State<Newsletter> {
 
         return Column(
           children: [
-            Icon(
-              Icons.email_outlined,
-              size: 80.0,
-            ),
+            Icon(UniconsLine.envelope, size: 80.0),
             Padding(
               padding: const EdgeInsets.only(
                 top: 20.0,
@@ -72,7 +71,7 @@ class _NewsletterState extends State<Newsletter> {
                 child: Text(
                   "newsletter_title".tr(),
                   textAlign: TextAlign.center,
-                  style: TextStyle(
+                  style: FontsUtils.mainStyle(
                     fontSize: titleFontSize,
                     fontWeight: FontWeight.w500,
                   ),
@@ -84,7 +83,7 @@ class _NewsletterState extends State<Newsletter> {
               child: Text(
                 "newsletter_rate".tr(),
                 textAlign: TextAlign.center,
-                style: TextStyle(
+                style: FontsUtils.mainStyle(
                   fontSize: subtitleFontSize,
                 ),
               ),
@@ -128,7 +127,7 @@ class _NewsletterState extends State<Newsletter> {
             ElevatedButton(
               onPressed: subscribe,
               style: ElevatedButton.styleFrom(
-                textStyle: TextStyle(
+                textStyle: FontsUtils.mainStyle(
                   color: stateColors.primary,
                 ),
                 padding: const EdgeInsets.symmetric(
@@ -144,15 +143,16 @@ class _NewsletterState extends State<Newsletter> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        "subscribe".tr(),
-                        style: TextStyle(
-                          fontSize: 18.0,
+                        "subscribe".tr().toUpperCase(),
+                        style: FontsUtils.mainStyle(
+                          fontSize: 20.0,
                           color: Colors.white,
                         ),
                       ),
                       Padding(
                         padding: const EdgeInsets.only(left: 20.0),
-                        child: Icon(Icons.arrow_forward, color: Colors.white),
+                        child:
+                            Icon(UniconsLine.arrow_right, color: Colors.white),
                       ),
                     ],
                   ),
@@ -180,7 +180,7 @@ class _NewsletterState extends State<Newsletter> {
           ),
           child: Text(
             "thank_you_exclamation".tr(),
-            style: TextStyle(
+            style: FontsUtils.mainStyle(
               fontSize: 40.0,
             ),
           ),
@@ -189,7 +189,7 @@ class _NewsletterState extends State<Newsletter> {
           opacity: 0.6,
           child: Text(
             "thank_you_newsletter".tr(),
-            style: TextStyle(
+            style: FontsUtils.mainStyle(
               fontSize: 20.0,
             ),
           ),

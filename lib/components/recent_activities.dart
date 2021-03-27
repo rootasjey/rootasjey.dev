@@ -7,6 +7,7 @@ import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/utils/app_logger.dart';
 import 'package:rootasjey/utils/fonts.dart';
+import 'package:unicons/unicons.dart';
 
 class RecentActivities extends StatefulWidget {
   @override
@@ -94,7 +95,7 @@ class _RecentActivitiesState extends State<RecentActivities> {
                 context.router.push(ActivitiesRoute());
               },
               icon: Icon(
-                Icons.watch_later,
+                UniconsLine.clock,
                 color: stateColors.foreground,
               ),
               label: Text(

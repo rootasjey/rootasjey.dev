@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/pub_post_card.dart';
 import 'package:rootasjey/components/pub_post_line_card.dart';
@@ -7,6 +8,8 @@ import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/types/post_headline.dart';
 import 'package:rootasjey/utils/app_logger.dart';
+import 'package:rootasjey/utils/fonts.dart';
+import 'package:unicons/unicons.dart';
 
 class RecentPosts extends StatefulWidget {
   @override
@@ -103,14 +106,14 @@ class _RecentPostsState extends State<RecentPosts> {
             context.router.push(PostsDeepRoute(children: [PostsRoute()]));
           },
           icon: Icon(
-            Icons.list,
+            UniconsLine.newspaper,
             color: stateColors.foreground,
           ),
           label: Opacity(
             opacity: 0.6,
             child: Text(
-              'RECENT POSTS',
-              style: TextStyle(
+              "posts_recent".tr().toUpperCase(),
+              style: FontsUtils.mainStyle(
                 fontSize: 20.0,
                 color: stateColors.foreground,
               ),

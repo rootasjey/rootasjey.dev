@@ -3,6 +3,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/state/colors.dart';
+import 'package:rootasjey/utils/fonts.dart';
+import 'package:unicons/unicons.dart';
 
 class HomeNavBar extends StatelessWidget {
   @override
@@ -26,14 +28,12 @@ class HomeNavBar extends StatelessWidget {
       onPressed: () {
         context.router.push(routeInfo);
       },
-      icon: Icon(icon),
-      label: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 8.0,
-          vertical: 12.0,
-        ),
-        child: Text(titleText),
+      style: TextButton.styleFrom(
+        primary: stateColors.foreground,
+        padding: const EdgeInsets.all(16.0),
       ),
+      icon: Icon(icon),
+      label: Text(titleText),
     );
   }
 
@@ -81,37 +81,37 @@ class HomeNavBar extends StatelessWidget {
         children: [
           cardLink(
             context: context,
-            icon: Icons.work,
+            icon: UniconsLine.bag,
             titleText: "hire_me".tr(),
             routeInfo: EnrollRoute(),
           ),
           cardLink(
             context: context,
-            icon: Icons.apps,
+            icon: UniconsLine.apps,
             titleText: "projects".tr(),
             routeInfo: ProjectsRoute(),
           ),
           cardLink(
             context: context,
-            icon: Icons.edit,
+            icon: UniconsLine.newspaper,
             titleText: "posts",
             routeInfo: PostsRoute(),
           ),
           cardLink(
             context: context,
-            icon: Icons.attach_money,
+            icon: UniconsLine.bill,
             titleText: "pricing".tr(),
             routeInfo: PricingRoute(),
           ),
           cardLink(
             context: context,
-            icon: Icons.email_outlined,
+            icon: UniconsLine.envelope,
             titleText: "contact_me".tr(),
             routeInfo: ContactRoute(),
           ),
           cardLink(
             context: context,
-            icon: Icons.help_center,
+            icon: UniconsLine.question,
             titleText: "about".tr(),
             routeInfo: AboutRoute(),
           ),
@@ -129,6 +129,7 @@ class HomeNavBar extends StatelessWidget {
       child: Wrap(
         spacing: 40.0,
         runSpacing: 20.0,
+        crossAxisAlignment: WrapCrossAlignment.center,
         children: [
           ElevatedButton.icon(
             onPressed: () {
@@ -136,11 +137,11 @@ class HomeNavBar extends StatelessWidget {
             },
             style: ElevatedButton.styleFrom(
               primary: stateColors.primary,
-              textStyle: TextStyle(
+              textStyle: FontsUtils.mainStyle(
                 color: Colors.white,
               ),
             ),
-            icon: Icon(Icons.work),
+            icon: Icon(UniconsLine.bag),
             label: Padding(
               padding: const EdgeInsets.symmetric(
                 horizontal: 8.0,
@@ -151,31 +152,31 @@ class HomeNavBar extends StatelessWidget {
           ),
           buttonLink(
             context: context,
-            icon: Icons.apps,
+            icon: UniconsLine.apps,
             titleText: "projects".tr(),
             routeInfo: ProjectsDeepRoute(children: [ProjectsRoute()]),
           ),
           buttonLink(
             context: context,
-            icon: Icons.edit,
+            icon: UniconsLine.newspaper,
             titleText: "posts".tr(),
             routeInfo: PostsDeepRoute(children: [PostsRoute()]),
           ),
           buttonLink(
             context: context,
-            icon: Icons.attach_money,
+            icon: UniconsLine.bill,
             titleText: "pricing".tr(),
             routeInfo: PricingRoute(),
           ),
           buttonLink(
             context: context,
-            icon: Icons.email_outlined,
+            icon: UniconsLine.envelope,
             titleText: "contact_me".tr(),
             routeInfo: ContactRoute(),
           ),
           buttonLink(
             context: context,
-            icon: Icons.help_center,
+            icon: UniconsLine.question,
             titleText: "about".tr(),
             routeInfo: AboutRoute(),
           ),

@@ -98,7 +98,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
         children: <Widget>[
           Padding(
             padding: const EdgeInsets.only(right: 8.0),
-            child: Icon(Icons.add, color: Colors.white),
+            child: Icon(UniconsLine.plus, color: Colors.white),
           ),
           Text(
             'New Post',
@@ -113,15 +113,15 @@ class _HomeAppBarState extends State<HomeAppBar> {
 
   /// Switch from dark to light and vice-versa.
   Widget brightnessButton() {
-    IconData iconBrightness = Icons.brightness_auto;
+    IconData iconBrightness = UniconsLine.brightness;
     final autoBrightness = appStorage.getAutoBrightness();
 
     if (!autoBrightness) {
       final currentBrightness = appStorage.getBrightness();
 
       iconBrightness = currentBrightness == Brightness.dark
-          ? Icons.brightness_2
-          : Icons.brightness_low;
+          ? UniconsLine.adjust_half
+          : UniconsLine.bright;
     }
 
     return Padding(
@@ -154,9 +154,9 @@ class _HomeAppBarState extends State<HomeAppBar> {
             PopupMenuItem(
               value: 'auto',
               child: ListTile(
-                leading: Icon(Icons.brightness_auto),
+                leading: Icon(UniconsLine.brightness),
                 title: Text(
-                  "auto".tr(),
+                  "brightness_auto".tr(),
                   style: TextStyle(
                     color: autoBrightness ? primary : basic,
                   ),
@@ -172,7 +172,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
             PopupMenuItem(
               value: 'dark',
               child: ListTile(
-                leading: Icon(Icons.brightness_2),
+                leading: Icon(UniconsLine.adjust_half),
                 title: Text(
                   "dark".tr(),
                   style: TextStyle(
@@ -190,7 +190,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
             PopupMenuItem(
               value: 'light',
               child: ListTile(
-                leading: Icon(Icons.brightness_5),
+                leading: Icon(UniconsLine.bright),
                 title: Text(
                   "light".tr(),
                   style: TextStyle(
@@ -230,7 +230,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
         context.router.push(SearchRoute());
       },
       color: stateColors.foreground,
-      icon: Icon(Icons.search),
+      icon: Icon(UniconsLine.search),
     );
   }
 
@@ -289,7 +289,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
             PopupMenuItem(
                 value: SearchRoute(),
                 child: ListTile(
-                  leading: Icon(Icons.search),
+                  leading: Icon(UniconsLine.search),
                   title: Text(
                     "search".tr(),
                     style: TextStyle(
@@ -311,7 +311,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
           PopupMenuItem(
             value: DashboardPageRoute(children: [MyPostsRoute()]),
             child: ListTile(
-              leading: Icon(Icons.article),
+              leading: Icon(UniconsLine.newspaper),
               title: Text(
                 "posts_my".tr(),
                 style: TextStyle(
@@ -323,7 +323,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
           PopupMenuItem(
             value: DashboardPageRoute(children: [MyProjectsRoute()]),
             child: ListTile(
-              leading: Icon(Icons.apps_outlined),
+              leading: Icon(UniconsLine.apps),
               title: Text(
                 "projects_my".tr(),
                 style: TextStyle(
@@ -335,7 +335,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
           PopupMenuItem(
             value: SignOutRoute(),
             child: ListTile(
-              leading: Icon(Icons.exit_to_app),
+              leading: Icon(UniconsLine.sign_left),
               title: Text(
                 "signout".tr(),
                 style: TextStyle(
@@ -375,7 +375,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
               if (widget.onPressedRightButton != null)
                 IconButton(
                   color: stateColors.foreground,
-                  icon: Icon(Icons.menu),
+                  icon: Icon(UniconsLine.bars),
                   onPressed: widget.onPressedRightButton,
                 ),
               userSigninMenu(),
@@ -399,27 +399,27 @@ class _HomeAppBarState extends State<HomeAppBar> {
 
   Widget userSigninMenu({bool showSearch = false}) {
     return PopupMenuButton(
-      icon: Icon(Icons.more_vert, color: stateColors.foreground),
+      icon: Icon(UniconsLine.ellipsis_v, color: stateColors.foreground),
       itemBuilder: (context) => <PopupMenuEntry<PageRouteInfo>>[
         if (showSearch)
           PopupMenuItem(
             value: SearchRoute(),
             child: ListTile(
-              leading: Icon(Icons.search),
+              leading: Icon(UniconsLine.search),
               title: Text("search".tr()),
             ),
           ),
         PopupMenuItem(
           value: SigninRoute(),
           child: ListTile(
-            leading: Icon(Icons.perm_identity),
+            leading: Icon(UniconsLine.signout),
             title: Text("signin".tr()),
           ),
         ),
         PopupMenuItem(
           value: SignupRoute(),
           child: ListTile(
-            leading: Icon(Icons.open_in_browser),
+            leading: Icon(UniconsLine.user_plus),
             title: Text("signup".tr()),
           ),
         ),
