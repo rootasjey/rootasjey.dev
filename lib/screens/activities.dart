@@ -102,8 +102,8 @@ class _ActivitiesState extends State<Activities> {
                                     skipResults += skipIncr;
                                     fetch(skip: skipResults);
                                   },
-                                  icon: Icon(Icons.arrow_downward),
-                                  label: Text("learn_more".tr()),
+                                  icon: Icon(UniconsLine.truck_loading),
+                                  label: Text("load_more".tr()),
                                 ),
                               ],
                             ),

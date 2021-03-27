@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:github/github.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:rootasjey/state/colors.dart';
+import 'package:rootasjey/utils/fonts.dart';
+import 'package:unicons/unicons.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ActivityRow extends StatefulWidget {
@@ -24,6 +26,9 @@ class _ActivityRowState extends State<ActivityRow> {
       onPressed: () {
         launch('https://github.com/${activity.repo.name}');
       },
+      style: TextButton.styleFrom(
+        primary: stateColors.foreground,
+      ),
       icon: Icon(
         getEventIcon(activity.type),
         color: stateColors.primary,
@@ -32,8 +37,9 @@ class _ActivityRowState extends State<ActivityRow> {
         children: [
           Text(
             '${getEventType(activity.type, activity.payload)}: ',
-            style: TextStyle(
+            style: FontsUtils.mainStyle(
               fontWeight: FontWeight.w700,
+              fontSize: 14.0,
             ),
           ),
           Padding(
@@ -44,15 +50,16 @@ class _ActivityRowState extends State<ActivityRow> {
               opacity: 0.8,
               child: Text(
                 '${activity.repo.name}',
-                style: TextStyle(
+                style: FontsUtils.mainStyle(
                   fontWeight: FontWeight.w500,
+                  fontSize: 14.0,
                 ),
               ),
             ),
           ),
           Text(
             Jiffy(activity.createdAt).fromNow(),
-            style: TextStyle(
+            style: FontsUtils.mainStyle(
               color: stateColors.primary,
             ),
           ),
@@ -122,15 +129,15 @@ class _ActivityRowState extends State<ActivityRow> {
   IconData getEventIcon(String type) {
     switch (type) {
       case 'PushEvent':
-        return Icons.publish;
+        return UniconsLine.upload;
       case 'WatchEvent':
-        return Icons.remove_red_eye;
+        return UniconsLine.eye;
       case 'PullRequestEvent':
-        return Icons.merge_type;
+        return UniconsLine.arrows_merge;
       case 'DeleteEvent':
-        return Icons.delete;
+        return UniconsLine.trash;
       default:
-        return Icons.code;
+        return UniconsLine.brackets_curly;
     }
   }
 }

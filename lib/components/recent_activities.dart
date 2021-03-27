@@ -1,10 +1,12 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:github/github.dart';
 import 'package:rootasjey/components/activity_row.dart';
 import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/utils/app_logger.dart';
+import 'package:rootasjey/utils/fonts.dart';
 
 class RecentActivities extends StatefulWidget {
   @override
@@ -46,7 +48,10 @@ class _RecentActivitiesState extends State<RecentActivities> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: userActivities.map((activity) {
-              return ActivityRow(activity: activity);
+              return Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: ActivityRow(activity: activity),
+              );
             }).toList(),
           ),
         ],
@@ -93,8 +98,8 @@ class _RecentActivitiesState extends State<RecentActivities> {
                 color: stateColors.foreground,
               ),
               label: Text(
-                'RECENT ACTIVITY',
-                style: TextStyle(
+                "activity_recent".tr().toUpperCase(),
+                style: FontsUtils.mainStyle(
                   fontSize: 20.0,
                   color: stateColors.foreground,
                 ),
