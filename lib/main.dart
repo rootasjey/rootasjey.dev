@@ -4,7 +4,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/router/auth_guard.dart';
 import 'package:rootasjey/router/no_auth_guard.dart';
@@ -13,6 +12,7 @@ import 'package:rootasjey/state/user.dart';
 import 'package:rootasjey/utils/app_logger.dart';
 import 'package:rootasjey/utils/app_storage.dart';
 import 'package:rootasjey/utils/brightness.dart';
+import 'package:rootasjey/utils/fonts.dart';
 import 'package:supercharged/supercharged.dart';
 import 'package:url_strategy/url_strategy.dart';
 
@@ -71,11 +71,11 @@ class AppState extends State<App> {
     return AdaptiveTheme(
       light: ThemeData(
         brightness: Brightness.light,
-        fontFamily: GoogleFonts.raleway().fontFamily,
+        fontFamily: FontsUtils.fontFamily,
       ),
       dark: ThemeData(
         brightness: Brightness.dark,
-        fontFamily: GoogleFonts.raleway().fontFamily,
+        fontFamily: FontsUtils.fontFamily,
       ),
       initial: widget.brightness == Brightness.light
           ? AdaptiveThemeMode.light
