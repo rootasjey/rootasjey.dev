@@ -5,6 +5,7 @@ import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:rootasjey/components/better_avatar.dart';
 import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/utils/fonts.dart';
+import 'package:unicons/unicons.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HomePresentation extends StatefulWidget {
@@ -161,6 +162,11 @@ class _HomePresentationState extends State<HomePresentation> {
           tooltip: "Hashnode",
           icon: Icon(LineAwesomeIcons.hashtag),
           onPressed: () => launch('https://hashnode.com/@rootasjey'),
+        ),
+        IconButton(
+          tooltip: "CV",
+          icon: Icon(UniconsLine.file_exclamation),
+          onPressed: () => context.router.push(CVPageRoute()),
         ),
       ],
     );

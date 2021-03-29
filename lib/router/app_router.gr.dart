@@ -6,37 +6,38 @@
 
 import 'package:auto_route/auto_route.dart' as _i1;
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart' as _i33;
+import 'package:flutter/material.dart' as _i34;
 
 import '../screens/about.dart' as _i5;
-import '../screens/about_me.dart' as _i11;
+import '../screens/about_me.dart' as _i12;
 import '../screens/activities.dart' as _i6;
 import '../screens/contact.dart' as _i7;
-import '../screens/dashboard_page.dart' as _i8;
-import '../screens/delete_account.dart' as _i25;
-import '../screens/edit_post.dart' as _i23;
-import '../screens/edit_project.dart' as _i24;
-import '../screens/enroll.dart' as _i9;
-import '../screens/forgot_password.dart' as _i10;
+import '../screens/cv_page.dart' as _i8;
+import '../screens/dashboard_page.dart' as _i9;
+import '../screens/delete_account.dart' as _i26;
+import '../screens/edit_post.dart' as _i24;
+import '../screens/edit_project.dart' as _i25;
+import '../screens/enroll.dart' as _i10;
+import '../screens/forgot_password.dart' as _i11;
 import '../screens/home.dart' as _i4;
-import '../screens/my_posts.dart' as _i19;
-import '../screens/my_projects.dart' as _i20;
-import '../screens/new_post.dart' as _i21;
-import '../screens/new_project.dart' as _i22;
-import '../screens/post_page.dart' as _i30;
-import '../screens/posts.dart' as _i29;
-import '../screens/pricing.dart' as _i12;
-import '../screens/project_page.dart' as _i32;
-import '../screens/projects.dart' as _i31;
-import '../screens/search.dart' as _i13;
-import '../screens/settings.dart' as _i14;
-import '../screens/signin.dart' as _i15;
-import '../screens/signup.dart' as _i16;
-import '../screens/tos.dart' as _i17;
-import '../screens/undefined_page.dart' as _i18;
-import '../screens/update_email.dart' as _i26;
-import '../screens/update_password.dart' as _i27;
-import '../screens/update_username.dart' as _i28;
+import '../screens/my_posts.dart' as _i20;
+import '../screens/my_projects.dart' as _i21;
+import '../screens/new_post.dart' as _i22;
+import '../screens/new_project.dart' as _i23;
+import '../screens/post_page.dart' as _i31;
+import '../screens/posts.dart' as _i30;
+import '../screens/pricing.dart' as _i13;
+import '../screens/project_page.dart' as _i33;
+import '../screens/projects.dart' as _i32;
+import '../screens/search.dart' as _i14;
+import '../screens/settings.dart' as _i15;
+import '../screens/signin.dart' as _i16;
+import '../screens/signup.dart' as _i17;
+import '../screens/tos.dart' as _i18;
+import '../screens/undefined_page.dart' as _i19;
+import '../screens/update_email.dart' as _i27;
+import '../screens/update_password.dart' as _i28;
+import '../screens/update_username.dart' as _i29;
 import 'auth_guard.dart' as _i2;
 import 'no_auth_guard.dart' as _i3;
 
@@ -61,19 +62,22 @@ class AppRouter extends _i1.RootStackRouter {
     ContactRoute.name: (entry) {
       return _i1.MaterialPageX(entry: entry, child: _i7.Contact());
     },
+    CVPageRoute.name: (entry) {
+      return _i1.MaterialPageX(entry: entry, child: _i8.CVPage());
+    },
     DashboardPageRoute.name: (entry) {
-      return _i1.MaterialPageX(entry: entry, child: _i8.DashboardPage());
+      return _i1.MaterialPageX(entry: entry, child: _i9.DashboardPage());
     },
     EnrollRoute.name: (entry) {
-      return _i1.MaterialPageX(entry: entry, child: _i9.Enroll());
+      return _i1.MaterialPageX(entry: entry, child: _i10.Enroll());
     },
     ForgotPasswordRoute.name: (entry) {
-      return _i1.MaterialPageX(entry: entry, child: _i10.ForgotPassword());
+      return _i1.MaterialPageX(entry: entry, child: _i11.ForgotPassword());
     },
     AboutMeRoute.name: (entry) {
       return _i1.CustomPage(
           entry: entry,
-          child: _i11.AboutMe(),
+          child: _i12.AboutMe(),
           transitionsBuilder: _i1.TransitionsBuilders.fadeIn,
           opaque: true,
           barrierDismissible: false);
@@ -87,10 +91,10 @@ class AppRouter extends _i1.RootStackRouter {
           entry: entry, child: const _i1.EmptyRouterPage());
     },
     PricingRoute.name: (entry) {
-      return _i1.MaterialPageX(entry: entry, child: _i12.Pricing());
+      return _i1.MaterialPageX(entry: entry, child: _i13.Pricing());
     },
     SearchRoute.name: (entry) {
-      return _i1.MaterialPageX(entry: entry, child: _i13.Search());
+      return _i1.MaterialPageX(entry: entry, child: _i14.Search());
     },
     SettingsRoute.name: (entry) {
       var pathParams = entry.routeData.pathParams;
@@ -99,7 +103,7 @@ class AppRouter extends _i1.RootStackRouter {
               showAppBar: pathParams.getBool('showAppBar', true)));
       return _i1.MaterialPageX(
           entry: entry,
-          child: _i14.Settings(key: args.key, showAppBar: args.showAppBar));
+          child: _i15.Settings(key: args.key, showAppBar: args.showAppBar));
     },
     SigninRoute.name: (entry) {
       var args = entry.routeData
@@ -107,7 +111,7 @@ class AppRouter extends _i1.RootStackRouter {
       return _i1.MaterialPageX(
           entry: entry,
           child:
-              _i15.Signin(key: args.key, onSigninResult: args.onSigninResult));
+              _i16.Signin(key: args.key, onSigninResult: args.onSigninResult));
     },
     SignupRoute.name: (entry) {
       var args = entry.routeData
@@ -115,7 +119,7 @@ class AppRouter extends _i1.RootStackRouter {
       return _i1.MaterialPageX(
           entry: entry,
           child:
-              _i16.Signup(key: args.key, onSignupResult: args.onSignupResult));
+              _i17.Signup(key: args.key, onSignupResult: args.onSignupResult));
     },
     SignOutRoute.name: (entry) {
       return _i1.MaterialPageX(
@@ -126,10 +130,10 @@ class AppRouter extends _i1.RootStackRouter {
           entry: entry, child: const _i1.EmptyRouterPage());
     },
     TosRoute.name: (entry) {
-      return _i1.MaterialPageX(entry: entry, child: _i17.Tos());
+      return _i1.MaterialPageX(entry: entry, child: _i18.Tos());
     },
     UndefinedPageRoute.name: (entry) {
-      return _i1.MaterialPageX(entry: entry, child: _i18.UndefinedPage());
+      return _i1.MaterialPageX(entry: entry, child: _i19.UndefinedPage());
     },
     DeepNewPage.name: (entry) {
       return _i1.MaterialPageX(
@@ -140,20 +144,20 @@ class AppRouter extends _i1.RootStackRouter {
           entry: entry, child: const _i1.EmptyRouterPage());
     },
     MyPostsRoute.name: (entry) {
-      return _i1.MaterialPageX(entry: entry, child: _i19.MyPosts());
+      return _i1.MaterialPageX(entry: entry, child: _i20.MyPosts());
     },
     MyProjectsRoute.name: (entry) {
-      return _i1.MaterialPageX(entry: entry, child: _i20.MyProjects());
+      return _i1.MaterialPageX(entry: entry, child: _i21.MyProjects());
     },
     DashboardSettingsDeepRoute.name: (entry) {
       return _i1.MaterialPageX(
           entry: entry, child: const _i1.EmptyRouterPage());
     },
     NewPostRoute.name: (entry) {
-      return _i1.MaterialPageX(entry: entry, child: _i21.NewPost());
+      return _i1.MaterialPageX(entry: entry, child: _i22.NewPost());
     },
     NewProjectRoute.name: (entry) {
-      return _i1.MaterialPageX(entry: entry, child: _i22.NewProject());
+      return _i1.MaterialPageX(entry: entry, child: _i23.NewProject());
     },
     EditPostRoute.name: (entry) {
       var pathParams = entry.routeData.pathParams;
@@ -161,7 +165,7 @@ class AppRouter extends _i1.RootStackRouter {
           orElse: () =>
               EditPostRouteArgs(postId: pathParams.getString('postId')));
       return _i1.MaterialPageX(
-          entry: entry, child: _i23.EditPost(postId: args.postId));
+          entry: entry, child: _i24.EditPost(postId: args.postId));
     },
     EditProjectRoute.name: (entry) {
       var pathParams = entry.routeData.pathParams;
@@ -169,7 +173,7 @@ class AppRouter extends _i1.RootStackRouter {
           orElse: () => EditProjectRouteArgs(
               projectId: pathParams.getString('projectId')));
       return _i1.MaterialPageX(
-          entry: entry, child: _i24.EditProject(projectId: args.projectId));
+          entry: entry, child: _i25.EditProject(projectId: args.projectId));
     },
     DashboardSettingsRoute.name: (entry) {
       var pathParams = entry.routeData.pathParams;
@@ -178,26 +182,26 @@ class AppRouter extends _i1.RootStackRouter {
               showAppBar: pathParams.getBool('showAppBar', true)));
       return _i1.MaterialPageX(
           entry: entry,
-          child: _i14.Settings(key: args.key, showAppBar: args.showAppBar));
+          child: _i15.Settings(key: args.key, showAppBar: args.showAppBar));
     },
     DeleteAccountRoute.name: (entry) {
-      return _i1.MaterialPageX(entry: entry, child: _i25.DeleteAccount());
+      return _i1.MaterialPageX(entry: entry, child: _i26.DeleteAccount());
     },
     AccountUpdateDeepRoute.name: (entry) {
       return _i1.MaterialPageX(
           entry: entry, child: const _i1.EmptyRouterPage());
     },
     UpdateEmailRoute.name: (entry) {
-      return _i1.MaterialPageX(entry: entry, child: _i26.UpdateEmail());
+      return _i1.MaterialPageX(entry: entry, child: _i27.UpdateEmail());
     },
     UpdatePasswordRoute.name: (entry) {
-      return _i1.MaterialPageX(entry: entry, child: _i27.UpdatePassword());
+      return _i1.MaterialPageX(entry: entry, child: _i28.UpdatePassword());
     },
     UpdateUsernameRoute.name: (entry) {
-      return _i1.MaterialPageX(entry: entry, child: _i28.UpdateUsername());
+      return _i1.MaterialPageX(entry: entry, child: _i29.UpdateUsername());
     },
     PostsRoute.name: (entry) {
-      return _i1.MaterialPageX(entry: entry, child: _i29.Posts());
+      return _i1.MaterialPageX(entry: entry, child: _i30.Posts());
     },
     PostPageRoute.name: (entry) {
       var pathParams = entry.routeData.pathParams;
@@ -205,10 +209,10 @@ class AppRouter extends _i1.RootStackRouter {
           orElse: () =>
               PostPageRouteArgs(postId: pathParams.getString('postId')));
       return _i1.MaterialPageX(
-          entry: entry, child: _i30.PostPage(postId: args.postId));
+          entry: entry, child: _i31.PostPage(postId: args.postId));
     },
     ProjectsRoute.name: (entry) {
-      return _i1.MaterialPageX(entry: entry, child: _i31.Projects());
+      return _i1.MaterialPageX(entry: entry, child: _i32.Projects());
     },
     ProjectPageRoute.name: (entry) {
       var pathParams = entry.routeData.pathParams;
@@ -216,7 +220,7 @@ class AppRouter extends _i1.RootStackRouter {
           orElse: () => ProjectPageRouteArgs(
               projectId: pathParams.getString('projectId')));
       return _i1.MaterialPageX(
-          entry: entry, child: _i32.ProjectPage(projectId: args.projectId));
+          entry: entry, child: _i33.ProjectPage(projectId: args.projectId));
     },
     GitHubRoute.name: (entry) {
       return _i1.MaterialPageX(
@@ -230,6 +234,7 @@ class AppRouter extends _i1.RootStackRouter {
         _i1.RouteConfig(AboutRoute.name, path: '/about'),
         _i1.RouteConfig(ActivitiesRoute.name, path: '/activities'),
         _i1.RouteConfig(ContactRoute.name, path: '/contact'),
+        _i1.RouteConfig(CVPageRoute.name, path: '/cv'),
         _i1.RouteConfig(DashboardPageRoute.name, path: '/dashboard', guards: [
           authGuard
         ], children: [
@@ -317,6 +322,12 @@ class ContactRoute extends _i1.PageRouteInfo {
   static const String name = 'ContactRoute';
 }
 
+class CVPageRoute extends _i1.PageRouteInfo {
+  const CVPageRoute() : super(name, path: '/cv');
+
+  static const String name = 'CVPageRoute';
+}
+
 class DashboardPageRoute extends _i1.PageRouteInfo {
   const DashboardPageRoute({List<_i1.PageRouteInfo> children})
       : super(name, path: '/dashboard', initialChildren: children);
@@ -369,7 +380,7 @@ class SearchRoute extends _i1.PageRouteInfo {
 }
 
 class SettingsRoute extends _i1.PageRouteInfo<SettingsRouteArgs> {
-  SettingsRoute({_i33.Key key, bool showAppBar = true})
+  SettingsRoute({_i34.Key key, bool showAppBar = true})
       : super(name,
             path: '/settings',
             args: SettingsRouteArgs(key: key, showAppBar: showAppBar),
@@ -381,13 +392,13 @@ class SettingsRoute extends _i1.PageRouteInfo<SettingsRouteArgs> {
 class SettingsRouteArgs {
   const SettingsRouteArgs({this.key, this.showAppBar = true});
 
-  final _i33.Key key;
+  final _i34.Key key;
 
   final bool showAppBar;
 }
 
 class SigninRoute extends _i1.PageRouteInfo<SigninRouteArgs> {
-  SigninRoute({_i33.Key key, void Function(bool) onSigninResult})
+  SigninRoute({_i34.Key key, void Function(bool) onSigninResult})
       : super(name,
             path: '/signin',
             args: SigninRouteArgs(key: key, onSigninResult: onSigninResult));
@@ -398,13 +409,13 @@ class SigninRoute extends _i1.PageRouteInfo<SigninRouteArgs> {
 class SigninRouteArgs {
   const SigninRouteArgs({this.key, this.onSigninResult});
 
-  final _i33.Key key;
+  final _i34.Key key;
 
   final void Function(bool) onSigninResult;
 }
 
 class SignupRoute extends _i1.PageRouteInfo<SignupRouteArgs> {
-  SignupRoute({_i33.Key key, void Function(bool) onSignupResult})
+  SignupRoute({_i34.Key key, void Function(bool) onSignupResult})
       : super(name,
             path: '/signup',
             args: SignupRouteArgs(key: key, onSignupResult: onSignupResult));
@@ -415,7 +426,7 @@ class SignupRoute extends _i1.PageRouteInfo<SignupRouteArgs> {
 class SignupRouteArgs {
   const SignupRouteArgs({this.key, this.onSignupResult});
 
-  final _i33.Key key;
+  final _i34.Key key;
 
   final void Function(bool) onSignupResult;
 }
@@ -524,7 +535,7 @@ class EditProjectRouteArgs {
 
 class DashboardSettingsRoute
     extends _i1.PageRouteInfo<DashboardSettingsRouteArgs> {
-  DashboardSettingsRoute({_i33.Key key, bool showAppBar = true})
+  DashboardSettingsRoute({_i34.Key key, bool showAppBar = true})
       : super(name,
             path: '',
             args: DashboardSettingsRouteArgs(key: key, showAppBar: showAppBar),
@@ -536,7 +547,7 @@ class DashboardSettingsRoute
 class DashboardSettingsRouteArgs {
   const DashboardSettingsRouteArgs({this.key, this.showAppBar = true});
 
-  final _i33.Key key;
+  final _i34.Key key;
 
   final bool showAppBar;
 }

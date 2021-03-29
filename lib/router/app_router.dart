@@ -2,10 +2,10 @@ import 'package:auto_route/annotations.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:rootasjey/router/auth_guard.dart';
 import 'package:rootasjey/router/no_auth_guard.dart';
-
 import 'package:rootasjey/screens/about.dart';
 import 'package:rootasjey/screens/activities.dart';
 import 'package:rootasjey/screens/contact.dart';
+import 'package:rootasjey/screens/cv_page.dart';
 import 'package:rootasjey/screens/dashboard_page.dart';
 import 'package:rootasjey/screens/delete_account.dart';
 import 'package:rootasjey/screens/edit_post.dart';
@@ -39,6 +39,7 @@ import 'package:rootasjey/screens/update_username.dart';
     MaterialRoute(path: '/about', page: About),
     MaterialRoute(path: '/activities', page: Activities),
     MaterialRoute(path: '/contact', page: Contact),
+    MaterialRoute(path: '/cv', page: CVPage),
     AutoRoute(
       path: '/dashboard',
       page: DashboardPage,

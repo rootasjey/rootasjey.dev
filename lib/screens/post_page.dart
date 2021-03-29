@@ -14,6 +14,7 @@ import 'package:rootasjey/types/post.dart';
 import 'package:rootasjey/utils/cloud.dart';
 import 'package:rootasjey/utils/fonts.dart';
 import 'package:rootasjey/utils/snack.dart';
+import 'package:unicons/unicons.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:supercharged/supercharged.dart';
 
@@ -210,8 +211,14 @@ class _PostPageState extends State<PostPage> {
                           ),
                         ),
                       ),
-                onPressedRightButton: () =>
-                    setState(() => isTOCVisible = !isTOCVisible),
+                trailing: [
+                  IconButton(
+                    color: stateColors.foreground,
+                    icon: Icon(UniconsLine.bars),
+                    onPressed: () =>
+                        setState(() => isTOCVisible = !isTOCVisible),
+                  ),
+                ],
               ),
 
               body(),
