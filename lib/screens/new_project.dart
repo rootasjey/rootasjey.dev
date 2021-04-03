@@ -209,7 +209,6 @@ class _NewProjectState extends State<NewProject> {
             padding: const EdgeInsets.only(left: 20.0),
           ),
           TextButton.icon(
-              focusNode: contentFocusNode,
               onPressed: () {
                 saveTitle();
                 saveContent();
