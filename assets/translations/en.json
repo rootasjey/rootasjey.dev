@@ -331,7 +331,7 @@
   "project_edit": "Edit project",
   "project_fetch_error": "An error occurred. Maybe the project doesn't exist anymore or there's a network issue.",
   "project_in_mind_question": "Do you have a project in mind?",
-  "project_my": "My projects",
+  "projects_my": "My projects",
   "project_new": "New project",
   "project_send_success": "Your project has been successfully sent. We'll review it and contact you soon.",
   "project_send_wait": "Please wait while we're pack your project information into a condensed data and send it over the wire...",
