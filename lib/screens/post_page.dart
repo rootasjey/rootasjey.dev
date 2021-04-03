@@ -432,12 +432,8 @@ class _PostPageState extends State<PostPage> {
   }
 
   Widget textLink({@required String href, @required Widget child}) {
-    return Padding(
-      padding: const EdgeInsets.only(
-        left: 2.0,
-        right: 2.0,
-        bottom: 5.0,
-      ),
+    return SizedBox(
+      height: 40.0,
       child: InkWell(
         onTap: href != null && href.isNotEmpty ? () => launch(href) : null,
         child: child,
