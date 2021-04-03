@@ -73,10 +73,6 @@ abstract class StateUserBase with Store {
       }
 
       userFirestore = UserFirestore.fromJSON(userData);
-
-      final Map<String, dynamic> rights = userData['rights'];
-
-      canManageData = rights['user:managedata'];
       setUsername(userData['name']);
     } on FirebaseFunctionsException catch (exception) {
       appLogger.e("[code: ${exception.code}] - ${exception.message}");
