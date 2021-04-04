@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:auto_route/annotations.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +13,7 @@ import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/types/post.dart';
 import 'package:rootasjey/utils/cloud.dart';
 import 'package:rootasjey/utils/fonts.dart';
+import 'package:rootasjey/utils/mesure_size.dart';
 import 'package:rootasjey/utils/snack.dart';
 import 'package:unicons/unicons.dart';
 import 'package:supercharged/supercharged.dart';
@@ -32,13 +34,11 @@ class _PostPageState extends State<PostPage> {
   bool isFabVisible = false;
   bool isNarrow = false;
 
-  double pageHeight = 0;
+  double pageHeight = 100.0;
 
   final incrOffset = 80.0;
   final scrollController = ScrollController();
   final textWidth = 750.0;
-
-  // static final markdownViewerKey = GlobalKey();
 
   FocusNode focusNode = FocusNode();
 
@@ -58,125 +58,24 @@ class _PostPageState extends State<PostPage> {
 
   @override
   Widget build(BuildContext context) {
-    return RawKeyboardListener(
-      autofocus: true,
-      focusNode: focusNode,
-      onKey: (keyEvent) {
-        // ?NOTE: Keys combinations must stay on top
-        // or other matching key events will override it.
-        // HOME
-        if (keyEvent.isMetaPressed &&
-            keyEvent.isKeyPressed(LogicalKeyboardKey.arrowUp)) {
-          scrollController.animateTo(
-            0,
-            duration: 100.milliseconds,
-            curve: Curves.ease,
-          );
-
-          return;
-        }
-
-        // END
-        if (keyEvent.isMetaPressed &&
-            keyEvent.isKeyPressed(LogicalKeyboardKey.arrowDown)) {
-          scrollController.animateTo(
-            pageHeight,
-            duration: 100.milliseconds,
-            curve: Curves.ease,
-          );
-
-          return;
-        }
-
-        // // UP + ALT
-        // if (keyEvent.isAltPressed &&
-        //     keyEvent.isKeyPressed(LogicalKeyboardKey.arrowUp)) {
-        //   scrollController.animateTo(
-        //     getOffsetUp(altPressed: true),
-        //     duration: 100.milliseconds,
-        //     curve: Curves.ease,
-        //   );
-
-        //   return;
-        // }
-
-        // // DOWN + ALT
-        // if (keyEvent.isAltPressed &&
-        //     keyEvent.isKeyPressed(LogicalKeyboardKey.arrowDown)) {
-        //   scrollController.animateTo(
-        //     getOffsetDown(altPressed: true),
-        //     duration: 100.milliseconds,
-        //     curve: Curves.ease,
-        //   );
-
-        //   return;
-        // }
-
-        // // UP
-        // if (keyEvent.isKeyPressed(LogicalKeyboardKey.arrowUp)) {
-        //   scrollController.animateTo(
-        //     getOffsetUp(),
-        //     duration: 100.milliseconds,
-        //     curve: Curves.ease,
-        //   );
-
-        //   return;
-        // }
-
-        // // DOWN
-        // if (keyEvent.isKeyPressed(LogicalKeyboardKey.arrowDown)) {
-        //   scrollController.animateTo(
-        //     getOffsetDown(),
-        //     duration: 100.milliseconds,
-        //     curve: Curves.ease,
-        //   );
-
-        //   return;
-        // }
-
-        // LEFT
-        if (keyEvent.isKeyPressed(LogicalKeyboardKey.backspace) ||
-            keyEvent.isKeyPressed(LogicalKeyboardKey.arrowLeft)) {
-          Navigator.of(context).pop();
-          return;
-        }
-
-        // HOME
-        if (keyEvent.isKeyPressed(LogicalKeyboardKey.home)) {
-          scrollController.animateTo(
-            0,
-            duration: 100.milliseconds,
-            curve: Curves.ease,
-          );
-
-          return;
-        }
-
-        // END
-        if (keyEvent.isKeyPressed(LogicalKeyboardKey.end)) {
-          scrollController.animateTo(
-            pageHeight,
-            duration: 100.milliseconds,
-            curve: Curves.ease,
-          );
-
-          return;
-        }
-      },
-      child: Scaffold(
-        floatingActionButton: isFabVisible
-            ? FloatingActionButton(
-                backgroundColor: stateColors.primary,
-                foregroundColor: Colors.white,
-                onPressed: () => scrollController.animateTo(
-                  0,
-                  duration: 250.milliseconds,
-                  curve: Curves.bounceOut,
-                ),
-                child: Icon(Icons.arrow_upward),
-              )
-            : Padding(padding: EdgeInsets.zero),
-        body: NotificationListener<ScrollNotification>(
+    return Scaffold(
+      floatingActionButton: isFabVisible
+          ? FloatingActionButton(
+              backgroundColor: stateColors.primary,
+              foregroundColor: Colors.white,
+              onPressed: () => scrollController.animateTo(
+                0,
+                duration: 250.milliseconds,
+                curve: Curves.bounceOut,
+              ),
+              child: Icon(Icons.arrow_upward),
+            )
+          : Container(),
+      body: RawKeyboardListener(
+        autofocus: true,
+        focusNode: focusNode,
+        onKey: onKey,
+        child: NotificationListener<ScrollNotification>(
           onNotification: (ScrollNotification scrollNotif) {
             // FAB visibility
             if (scrollNotif.metrics.pixels < 50 && isFabVisible) {
@@ -189,65 +88,68 @@ class _PostPageState extends State<PostPage> {
           },
           child: Scrollbar(
             controller: scrollController,
-            child: CustomScrollView(
-              controller: scrollController,
-              slivers: [
-                HomeAppBar(
-                  automaticallyImplyLeading: true,
-                  title: post == null
-                      ? Opacity(
-                          opacity: 0.6,
-                          child: Text(
-                            "post".tr(),
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              color: stateColors.foreground,
+            child: Focus(
+              descendantsAreFocusable: false,
+              child: CustomScrollView(
+                controller: scrollController,
+                slivers: [
+                  HomeAppBar(
+                    automaticallyImplyLeading: true,
+                    title: post == null
+                        ? Opacity(
+                            opacity: 0.6,
+                            child: Text(
+                              "post".tr(),
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color: stateColors.foreground,
+                              ),
+                            ),
+                          )
+                        : Opacity(
+                            opacity: 0.6,
+                            child: Text(
+                              post.title,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color: stateColors.foreground,
+                              ),
                             ),
                           ),
-                        )
-                      : Opacity(
-                          opacity: 0.6,
-                          child: Text(
-                            post.title,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              color: stateColors.foreground,
-                            ),
-                          ),
-                        ),
-                  trailing: [
-                    IconButton(
-                      color: stateColors.foreground,
-                      icon: Icon(UniconsLine.bars),
-                      onPressed: () =>
-                          setState(() => isTOCVisible = !isTOCVisible),
-                    ),
-                  ],
-                ),
+                    trailing: [
+                      IconButton(
+                        color: stateColors.foreground,
+                        icon: Icon(UniconsLine.bars),
+                        onPressed: () =>
+                            setState(() => isTOCVisible = !isTOCVisible),
+                      ),
+                    ],
+                  ),
 
-                body(),
+                  body(),
 
-                // Watch page's size.
-                // Can host share button.
-                SliverLayoutBuilder(
-                  builder: (_, constraints) {
-                    final isNowNarrow = constraints.crossAxisExtent < 700.0;
+                  // Watch page's size.
+                  // Can host share button.
+                  SliverLayoutBuilder(
+                    builder: (_, constraints) {
+                      final isNowNarrow = constraints.crossAxisExtent < 700.0;
 
-                    if (timer != null && timer.isActive) {
-                      timer.cancel();
-                    }
+                      if (timer != null && timer.isActive) {
+                        timer.cancel();
+                      }
 
-                    if (isNarrow != isNowNarrow) {
-                      timer = Timer(
-                        1.seconds,
-                        () => setState(() => isNarrow = isNowNarrow),
-                      );
-                    }
+                      if (isNarrow != isNowNarrow) {
+                        timer = Timer(
+                          1.seconds,
+                          () => setState(() => isNarrow = isNowNarrow),
+                        );
+                      }
 
-                    return SliverPadding(padding: EdgeInsets.zero);
-                  },
-                ),
-              ],
+                      return SliverPadding(padding: EdgeInsets.zero);
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -273,10 +175,14 @@ class _PostPageState extends State<PostPage> {
                 left: 20.0,
                 right: 20.0,
               ),
-              child: MarkdownViewer(
-                // key: markdownViewerKey,
-                data: postData,
-                width: textWidth,
+              child: MeasureSize(
+                onChange: (size) {
+                  pageHeight = size.height;
+                },
+                child: MarkdownViewer(
+                  data: postData,
+                  width: textWidth,
+                ),
               ),
             ),
           ),
@@ -358,31 +264,137 @@ class _PostPageState extends State<PostPage> {
     }
   }
 
-  // double getOffsetDown({bool altPressed = false}) {
-  //   if (markdownViewerKey.currentContext != null) {
-  //     final height = markdownViewerKey.currentContext.size.height;
+  double getOffsetDown({bool altPressed = false}) {
+    double factor = altPressed ? 3 : 1;
 
-  //     if (pageHeight != height) {
-  //       pageHeight = height;
-  //     }
-  //   }
+    final offset = scrollController.offset + incrOffset < pageHeight
+        ? scrollController.offset + (incrOffset * factor)
+        : pageHeight;
 
-  //   double factor = altPressed ? 3 : 1;
+    return offset;
+  }
 
-  //   final offset = scrollController.offset + incrOffset < pageHeight
-  //       ? scrollController.offset + (incrOffset * factor)
-  //       : pageHeight;
+  double getOffsetUp({bool altPressed = false}) {
+    double factor = altPressed ? 3 : 1;
 
-  //   return offset;
-  // }
+    final offset = scrollController.offset - incrOffset > 90.0
+        ? scrollController.offset - (incrOffset * factor)
+        : 0.0;
 
-  // double getOffsetUp({bool altPressed = false}) {
-  //   double factor = altPressed ? 3 : 1;
+    return offset;
+  }
 
-  //   final offset = scrollController.offset - incrOffset > 90
-  //       ? scrollController.offset - (incrOffset * factor)
-  //       : 0;
+  void onKey(keyEvent) {
+    // ?NOTE: Keys combinations must stay on top
+    // or other matching key events will override it.
 
-  //   return offset;
-  // }
+    // HOME
+    if (keyEvent.isMetaPressed &&
+        keyEvent.isKeyPressed(LogicalKeyboardKey.arrowUp)) {
+      scrollController.animateTo(
+        0,
+        duration: 100.milliseconds,
+        curve: Curves.ease,
+      );
+
+      return;
+    }
+
+    // END
+    if (keyEvent.isMetaPressed &&
+        keyEvent.isKeyPressed(LogicalKeyboardKey.arrowDown)) {
+      scrollController.animateTo(
+        pageHeight,
+        duration: 100.milliseconds,
+        curve: Curves.ease,
+      );
+
+      return;
+    }
+
+    // UP + ALT
+    if (keyEvent.isAltPressed &&
+        keyEvent.isKeyPressed(LogicalKeyboardKey.arrowUp)) {
+      scrollController.animateTo(
+        getOffsetUp(altPressed: true),
+        duration: 100.milliseconds,
+        curve: Curves.ease,
+      );
+
+      return;
+    }
+
+    // DOWN + ALT
+    if (keyEvent.isAltPressed &&
+        keyEvent.isKeyPressed(LogicalKeyboardKey.arrowDown)) {
+      scrollController.animateTo(
+        getOffsetDown(altPressed: true),
+        duration: 100.milliseconds,
+        curve: Curves.ease,
+      );
+
+      return;
+    }
+
+    // UP
+    if (keyEvent.isKeyPressed(LogicalKeyboardKey.arrowUp)) {
+      scrollController.animateTo(
+        getOffsetUp(),
+        duration: 100.milliseconds,
+        curve: Curves.ease,
+      );
+
+      return;
+    }
+
+    // DOWN
+    if (keyEvent.isKeyPressed(LogicalKeyboardKey.arrowDown)) {
+      scrollController.animateTo(
+        getOffsetDown(),
+        duration: 100.milliseconds,
+        curve: Curves.ease,
+      );
+
+      return;
+    }
+
+    // SPACE
+    if (keyEvent.isKeyPressed(LogicalKeyboardKey.space)) {
+      scrollController.animateTo(
+        getOffsetDown(altPressed: true),
+        duration: 100.milliseconds,
+        curve: Curves.ease,
+      );
+
+      return;
+    }
+
+    // LEFT
+    if (keyEvent.isKeyPressed(LogicalKeyboardKey.backspace)) {
+      context.router.pop();
+      return;
+    }
+
+    // HOME
+    if (keyEvent.isKeyPressed(LogicalKeyboardKey.home)) {
+      scrollController.animateTo(
+        0,
+        duration: 100.milliseconds,
+        curve: Curves.ease,
+      );
+
+      return;
+    }
+
+    // END
+    if (keyEvent.isKeyPressed(LogicalKeyboardKey.end)) {
+      scrollController.animateTo(
+        pageHeight,
+        duration: 100.milliseconds,
+        curve: Curves.ease,
+      );
+
+      return;
+    }
+  }
 }
