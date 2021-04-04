@@ -88,7 +88,15 @@ class _HomeAppBarState extends State<HomeAppBar> {
   Widget addNewPostButton() {
     return ElevatedButton(
       onPressed: () {
-        context.router.push(DashboardPageRoute(children: [NewPostRoute()]));
+        context.router.root.push(
+          DashboardPageRoute(
+            children: [
+              DeepNewPage(children: [
+                NewPostRoute(),
+              ]),
+            ],
+          ),
+        );
       },
       style: ElevatedButton.styleFrom(
         primary: stateColors.primary,
@@ -313,7 +321,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
             return;
           }
 
-          context.router.push(route);
+          context.router.root.push(route);
         },
         itemBuilder: (BuildContext context) => <PopupMenuEntry<PageRouteInfo>>[
           if (isNarrow)
@@ -341,7 +349,11 @@ class _HomeAppBarState extends State<HomeAppBar> {
                   ),
                 )),
           PopupMenuItem(
-              value: DashboardPageRoute(children: [NewProjectRoute()]),
+              value: DashboardPageRoute(children: [
+                DeepNewPage(children: [
+                  NewProjectRoute(),
+                ])
+              ]),
               child: ListTile(
                 leading: Icon(UniconsLine.plus),
                 title: Text(
