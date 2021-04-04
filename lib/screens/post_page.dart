@@ -288,7 +288,7 @@ class _PostPageState extends State<PostPage> {
     // ?NOTE: Keys combinations must stay on top
     // or other matching key events will override it.
 
-    // HOME
+    // home
     if (keyEvent.isMetaPressed &&
         keyEvent.isKeyPressed(LogicalKeyboardKey.arrowUp)) {
       scrollController.animateTo(
@@ -300,7 +300,7 @@ class _PostPageState extends State<PostPage> {
       return;
     }
 
-    // END
+    // end
     if (keyEvent.isMetaPressed &&
         keyEvent.isKeyPressed(LogicalKeyboardKey.arrowDown)) {
       scrollController.animateTo(
@@ -312,7 +312,7 @@ class _PostPageState extends State<PostPage> {
       return;
     }
 
-    // UP + ALT
+    // up + alt
     if (keyEvent.isAltPressed &&
         keyEvent.isKeyPressed(LogicalKeyboardKey.arrowUp)) {
       scrollController.animateTo(
@@ -324,7 +324,7 @@ class _PostPageState extends State<PostPage> {
       return;
     }
 
-    // DOWN + ALT
+    // down + alt
     if (keyEvent.isAltPressed &&
         keyEvent.isKeyPressed(LogicalKeyboardKey.arrowDown)) {
       scrollController.animateTo(
@@ -336,7 +336,7 @@ class _PostPageState extends State<PostPage> {
       return;
     }
 
-    // UP
+    // up
     if (keyEvent.isKeyPressed(LogicalKeyboardKey.arrowUp)) {
       scrollController.animateTo(
         getOffsetUp(),
@@ -347,7 +347,7 @@ class _PostPageState extends State<PostPage> {
       return;
     }
 
-    // DOWN
+    // down
     if (keyEvent.isKeyPressed(LogicalKeyboardKey.arrowDown)) {
       scrollController.animateTo(
         getOffsetDown(),
@@ -358,7 +358,7 @@ class _PostPageState extends State<PostPage> {
       return;
     }
 
-    // SPACE
+    // space
     if (keyEvent.isKeyPressed(LogicalKeyboardKey.space)) {
       scrollController.animateTo(
         getOffsetDown(altPressed: true),
@@ -369,13 +369,17 @@ class _PostPageState extends State<PostPage> {
       return;
     }
 
-    // LEFT
+    // backspace
     if (keyEvent.isKeyPressed(LogicalKeyboardKey.backspace)) {
+      if (context.router.root.stack.length < 2) {
+        return;
+      }
+
       context.router.pop();
       return;
     }
 
-    // HOME
+    // home
     if (keyEvent.isKeyPressed(LogicalKeyboardKey.home)) {
       scrollController.animateTo(
         0,
@@ -386,7 +390,7 @@ class _PostPageState extends State<PostPage> {
       return;
     }
 
-    // END
+    // end
     if (keyEvent.isKeyPressed(LogicalKeyboardKey.end)) {
       scrollController.animateTo(
         pageHeight,
