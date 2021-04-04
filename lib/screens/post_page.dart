@@ -5,17 +5,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_html/flutter_html.dart';
-import 'package:flutter_html/style.dart';
 import 'package:markdown/markdown.dart' as markdown;
 import 'package:rootasjey/components/home_app_bar.dart';
+import 'package:rootasjey/components/markdown_viewer.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/types/post.dart';
 import 'package:rootasjey/utils/cloud.dart';
 import 'package:rootasjey/utils/fonts.dart';
 import 'package:rootasjey/utils/snack.dart';
 import 'package:unicons/unicons.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:supercharged/supercharged.dart';
 
 class PostPage extends StatefulWidget {
@@ -34,17 +32,21 @@ class _PostPageState extends State<PostPage> {
   bool isFabVisible = false;
   bool isNarrow = false;
 
+  double pageHeight = 0;
+
+  final incrOffset = 80.0;
   final scrollController = ScrollController();
   final textWidth = 750.0;
 
-  Post post;
-  String postData = '';
-  Timer timer;
+  // static final markdownViewerKey = GlobalKey();
 
   FocusNode focusNode = FocusNode();
-  final keyForMarkdown = GlobalKey();
-  double pageHeight = 0;
-  final incrOffset = 80.0;
+
+  Post post;
+
+  String postData = '';
+
+  Timer timer;
 
   @override
   initState() {
@@ -86,51 +88,51 @@ class _PostPageState extends State<PostPage> {
           return;
         }
 
-        // UP + ALT
-        if (keyEvent.isAltPressed &&
-            keyEvent.isKeyPressed(LogicalKeyboardKey.arrowUp)) {
-          scrollController.animateTo(
-            getOffsetUp(altPressed: true),
-            duration: 100.milliseconds,
-            curve: Curves.ease,
-          );
+        // // UP + ALT
+        // if (keyEvent.isAltPressed &&
+        //     keyEvent.isKeyPressed(LogicalKeyboardKey.arrowUp)) {
+        //   scrollController.animateTo(
+        //     getOffsetUp(altPressed: true),
+        //     duration: 100.milliseconds,
+        //     curve: Curves.ease,
+        //   );
 
-          return;
-        }
+        //   return;
+        // }
 
-        // DOWN + ALT
-        if (keyEvent.isAltPressed &&
-            keyEvent.isKeyPressed(LogicalKeyboardKey.arrowDown)) {
-          scrollController.animateTo(
-            getOffsetDown(altPressed: true),
-            duration: 100.milliseconds,
-            curve: Curves.ease,
-          );
+        // // DOWN + ALT
+        // if (keyEvent.isAltPressed &&
+        //     keyEvent.isKeyPressed(LogicalKeyboardKey.arrowDown)) {
+        //   scrollController.animateTo(
+        //     getOffsetDown(altPressed: true),
+        //     duration: 100.milliseconds,
+        //     curve: Curves.ease,
+        //   );
 
-          return;
-        }
+        //   return;
+        // }
 
-        // UP
-        if (keyEvent.isKeyPressed(LogicalKeyboardKey.arrowUp)) {
-          scrollController.animateTo(
-            getOffsetUp(),
-            duration: 100.milliseconds,
-            curve: Curves.ease,
-          );
+        // // UP
+        // if (keyEvent.isKeyPressed(LogicalKeyboardKey.arrowUp)) {
+        //   scrollController.animateTo(
+        //     getOffsetUp(),
+        //     duration: 100.milliseconds,
+        //     curve: Curves.ease,
+        //   );
 
-          return;
-        }
+        //   return;
+        // }
 
-        // DOWN
-        if (keyEvent.isKeyPressed(LogicalKeyboardKey.arrowDown)) {
-          scrollController.animateTo(
-            getOffsetDown(),
-            duration: 100.milliseconds,
-            curve: Curves.ease,
-          );
+        // // DOWN
+        // if (keyEvent.isKeyPressed(LogicalKeyboardKey.arrowDown)) {
+        //   scrollController.animateTo(
+        //     getOffsetDown(),
+        //     duration: 100.milliseconds,
+        //     curve: Curves.ease,
+        //   );
 
-          return;
-        }
+        //   return;
+        // }
 
         // LEFT
         if (keyEvent.isKeyPressed(LogicalKeyboardKey.backspace) ||
@@ -185,65 +187,68 @@ class _PostPageState extends State<PostPage> {
 
             return false;
           },
-          child: CustomScrollView(
+          child: Scrollbar(
             controller: scrollController,
-            slivers: [
-              HomeAppBar(
-                automaticallyImplyLeading: true,
-                title: post == null
-                    ? Opacity(
-                        opacity: 0.6,
-                        child: Text(
-                          "post".tr(),
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            color: stateColors.foreground,
+            child: CustomScrollView(
+              controller: scrollController,
+              slivers: [
+                HomeAppBar(
+                  automaticallyImplyLeading: true,
+                  title: post == null
+                      ? Opacity(
+                          opacity: 0.6,
+                          child: Text(
+                            "post".tr(),
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: stateColors.foreground,
+                            ),
+                          ),
+                        )
+                      : Opacity(
+                          opacity: 0.6,
+                          child: Text(
+                            post.title,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: stateColors.foreground,
+                            ),
                           ),
                         ),
-                      )
-                    : Opacity(
-                        opacity: 0.6,
-                        child: Text(
-                          post.title,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            color: stateColors.foreground,
-                          ),
-                        ),
-                      ),
-                trailing: [
-                  IconButton(
-                    color: stateColors.foreground,
-                    icon: Icon(UniconsLine.bars),
-                    onPressed: () =>
-                        setState(() => isTOCVisible = !isTOCVisible),
-                  ),
-                ],
-              ),
+                  trailing: [
+                    IconButton(
+                      color: stateColors.foreground,
+                      icon: Icon(UniconsLine.bars),
+                      onPressed: () =>
+                          setState(() => isTOCVisible = !isTOCVisible),
+                    ),
+                  ],
+                ),
 
-              body(),
+                body(),
 
-              // Watch page's size.
-              // Can host share button.
-              SliverLayoutBuilder(
-                builder: (_, constraints) {
-                  final isNowNarrow = constraints.crossAxisExtent < 700.0;
+                // Watch page's size.
+                // Can host share button.
+                SliverLayoutBuilder(
+                  builder: (_, constraints) {
+                    final isNowNarrow = constraints.crossAxisExtent < 700.0;
 
-                  if (timer != null && timer.isActive) {
-                    timer.cancel();
-                  }
+                    if (timer != null && timer.isActive) {
+                      timer.cancel();
+                    }
 
-                  if (isNarrow != isNowNarrow) {
-                    timer = Timer(
-                      1.seconds,
-                      () => setState(() => isNarrow = isNowNarrow),
-                    );
-                  }
+                    if (isNarrow != isNowNarrow) {
+                      timer = Timer(
+                        1.seconds,
+                        () => setState(() => isNarrow = isNowNarrow),
+                      );
+                    }
 
-                  return SliverPadding(padding: EdgeInsets.zero);
-                },
-              ),
-            ],
+                    return SliverPadding(padding: EdgeInsets.zero);
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -262,7 +267,18 @@ class _PostPageState extends State<PostPage> {
           if (!isNarrow) Spacer(),
           Expanded(
             flex: 3,
-            child: markdownViewer(),
+            child: Padding(
+              padding: const EdgeInsets.only(
+                bottom: 400.0,
+                left: 20.0,
+                right: 20.0,
+              ),
+              child: MarkdownViewer(
+                // key: markdownViewerKey,
+                data: postData,
+                width: textWidth,
+              ),
+            ),
           ),
           if (!isNarrow) Spacer(),
         ],
@@ -295,149 +311,6 @@ class _PostPageState extends State<PostPage> {
           ]),
         ),
       ]),
-    );
-  }
-
-  Widget markdownViewer() {
-    return Padding(
-      padding: const EdgeInsets.only(
-        bottom: 400.0,
-        left: 20.0,
-        right: 20.0,
-      ),
-      child: Html(
-        key: keyForMarkdown,
-        data: postData,
-        customRender: {
-          'a': (context, child, attributes, element) {
-            return textLink(
-              href: attributes['href'],
-              child: child,
-            );
-          },
-          'img': (context, child, attributes, element) {
-            return imageViewer(
-              context: context.buildContext,
-              src: attributes['src'],
-              alt: attributes['alt'],
-              width: double.tryParse(attributes['width']) ?? 300.0,
-              height: double.tryParse(attributes['height']) ?? 300.0,
-            );
-          }
-        },
-        style: {
-          'p': Style(
-            width: textWidth,
-            fontSize: FontSize(24.0),
-            fontWeight: FontWeight.w200,
-            lineHeight: LineHeight.number(1.5),
-            margin: EdgeInsets.only(
-              top: 40.0,
-              bottom: 20.0,
-            ),
-          ),
-          'ul': Style(
-            fontSize: FontSize(22.0),
-            fontWeight: FontWeight.w300,
-            lineHeight: LineHeight.number(1.6),
-          ),
-          'img': Style(
-            alignment: Alignment.center,
-            padding: EdgeInsets.only(
-              top: 40.0,
-              bottom: 20.0,
-            ),
-          ),
-          'h1': Style(
-            width: textWidth,
-            fontSize: FontSize(60.0),
-            fontWeight: FontWeight.w600,
-            margin: EdgeInsets.only(
-              top: 100.0,
-              bottom: 60.0,
-            ),
-          ),
-          'h2': Style(
-            width: textWidth,
-            fontSize: FontSize(40.0),
-            fontWeight: FontWeight.w600,
-            margin: EdgeInsets.only(
-              top: 80.0,
-              bottom: 40.0,
-            ),
-          ),
-          'h3': Style(
-            fontSize: FontSize(30.0),
-            fontWeight: FontWeight.w400,
-          ),
-        },
-      ),
-    );
-  }
-
-  Widget imageViewer({
-    @required BuildContext context,
-    @required String src,
-    @required String alt,
-    @required double width,
-    @required double height,
-  }) {
-    return Column(
-      children: [
-        Card(
-          elevation: 4.0,
-          child: SizedBox(
-              height: 300.0,
-              child: Ink.image(
-                image: NetworkImage(src),
-                width: width,
-                height: height,
-                fit: BoxFit.cover,
-                child: InkWell(
-                  onTap: () {
-                    showDialog(
-                        context: context,
-                        builder: (context) {
-                          return SimpleDialog(
-                            children: [
-                              Image.network(src),
-                            ],
-                          );
-                        });
-                  },
-                ),
-              )),
-        ),
-        if (alt != null && alt.isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.only(
-              top: 8.0,
-            ),
-            child: TextButton(
-              onPressed: () => launch(src),
-              child: Opacity(
-                opacity: 0.6,
-                child: Text(
-                  alt,
-                  style: TextStyle(
-                    fontSize: 16.0,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-              ),
-            ),
-          ),
-      ],
-    );
-  }
-
-  Widget textLink({@required String href, @required Widget child}) {
-    return SizedBox(
-      height: 40.0,
-      child: InkWell(
-        onTap: href != null && href.isNotEmpty ? () => launch(href) : null,
-        child: child,
-      ),
     );
   }
 
@@ -485,31 +358,31 @@ class _PostPageState extends State<PostPage> {
     }
   }
 
-  double getOffsetDown({bool altPressed = false}) {
-    if (keyForMarkdown.currentContext != null) {
-      final height = keyForMarkdown.currentContext.size.height;
+  // double getOffsetDown({bool altPressed = false}) {
+  //   if (markdownViewerKey.currentContext != null) {
+  //     final height = markdownViewerKey.currentContext.size.height;
 
-      if (pageHeight != height) {
-        pageHeight = height;
-      }
-    }
+  //     if (pageHeight != height) {
+  //       pageHeight = height;
+  //     }
+  //   }
 
-    double factor = altPressed ? 3 : 1;
+  //   double factor = altPressed ? 3 : 1;
 
-    final offset = scrollController.offset + incrOffset < pageHeight
-        ? scrollController.offset + (incrOffset * factor)
-        : pageHeight;
+  //   final offset = scrollController.offset + incrOffset < pageHeight
+  //       ? scrollController.offset + (incrOffset * factor)
+  //       : pageHeight;
 
-    return offset;
-  }
+  //   return offset;
+  // }
 
-  double getOffsetUp({bool altPressed = false}) {
-    double factor = altPressed ? 3 : 1;
+  // double getOffsetUp({bool altPressed = false}) {
+  //   double factor = altPressed ? 3 : 1;
 
-    final offset = scrollController.offset - incrOffset > 90
-        ? scrollController.offset - (incrOffset * factor)
-        : 0;
+  //   final offset = scrollController.offset - incrOffset > 90
+  //       ? scrollController.offset - (incrOffset * factor)
+  //       : 0;
 
-    return offset;
-  }
+  //   return offset;
+  // }
 }

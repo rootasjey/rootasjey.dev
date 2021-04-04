@@ -4,17 +4,15 @@ import 'package:auto_route/annotations.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
-import 'package:flutter_html/style.dart';
 import 'package:markdown/markdown.dart' as markdown;
 import 'package:rootasjey/components/home_app_bar.dart';
+import 'package:rootasjey/components/markdown_viewer.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/types/project.dart';
 import 'package:rootasjey/utils/app_logger.dart';
 import 'package:rootasjey/utils/cloud.dart';
 import 'package:rootasjey/utils/fonts.dart';
 import 'package:rootasjey/utils/snack.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:supercharged/supercharged.dart';
 
 class ProjectPage extends StatefulWidget {
@@ -135,7 +133,9 @@ class _ProjectPageState extends State<ProjectPage> {
             if (!isNarrow) Spacer(),
             Expanded(
               flex: 3,
-              child: markdownViewer(),
+              child: MarkdownViewer(
+                data: projectData,
+              ),
             ),
             if (!isNarrow) Spacer(),
           ],
@@ -169,156 +169,6 @@ class _ProjectPageState extends State<ProjectPage> {
           ]),
         ),
       ]),
-    );
-  }
-
-  Widget markdownViewer() {
-    return Card(
-      margin: EdgeInsets.only(top: 100.0, bottom: 400.0),
-      child: Padding(
-        padding: EdgeInsets.symmetric(
-          horizontal: isNarrow ? 20.0 : 100.0,
-          vertical: 60.0,
-        ),
-        child: Html(
-          data: projectData,
-          customRender: {
-            'a': (context, child, attributes, element) {
-              return textLink(
-                href: attributes['href'],
-                child: child,
-              );
-            },
-            'img': (context, child, attributes, element) {
-              return imageViewer(
-                context: context.buildContext,
-                src: attributes['src'],
-                alt: attributes['alt'],
-                width: double.tryParse(attributes['width']) ?? 300.0,
-                height: double.tryParse(attributes['height']) ?? 300.0,
-              );
-            }
-          },
-          style: {
-            'p': Style(
-              width: textWidth,
-              fontSize: FontSize(24.0),
-              fontWeight: FontWeight.w200,
-              lineHeight: LineHeight.number(1.5),
-              margin: EdgeInsets.only(
-                top: 40.0,
-                bottom: 20.0,
-              ),
-            ),
-            'ul': Style(
-              fontSize: FontSize(22.0),
-              fontWeight: FontWeight.w300,
-              lineHeight: LineHeight.number(1.6),
-            ),
-            'img': Style(
-              alignment: Alignment.center,
-              padding: EdgeInsets.only(
-                top: 40.0,
-                bottom: 20.0,
-              ),
-            ),
-            'h1': Style(
-              width: textWidth,
-              fontSize: FontSize(60.0),
-              fontWeight: FontWeight.w600,
-              margin: EdgeInsets.only(
-                // top: 100.0,
-                top: 20.0,
-                bottom: 60.0,
-              ),
-            ),
-            'h2': Style(
-              width: textWidth,
-              fontSize: FontSize(50.0),
-              fontWeight: FontWeight.w500,
-              margin: EdgeInsets.only(
-                top: 80.0,
-                bottom: 40.0,
-              ),
-            ),
-            'h3': Style(
-              fontSize: FontSize(30.0),
-              fontWeight: FontWeight.w400,
-            ),
-          },
-        ),
-      ),
-    );
-  }
-
-  Widget imageViewer({
-    @required BuildContext context,
-    @required String src,
-    @required String alt,
-    @required double width,
-    @required double height,
-  }) {
-    return Column(
-      children: [
-        Card(
-          elevation: 4.0,
-          child: SizedBox(
-              height: 300.0,
-              child: Ink.image(
-                image: NetworkImage(src),
-                width: width,
-                height: height,
-                fit: BoxFit.cover,
-                child: InkWell(
-                  onTap: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) {
-                        return SimpleDialog(
-                          children: [
-                            Image.network(src),
-                          ],
-                        );
-                      },
-                    );
-                  },
-                ),
-              )),
-        ),
-        if (alt != null && alt.isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.only(
-              top: 8.0,
-            ),
-            child: TextButton(
-              onPressed: () => launch(src),
-              child: Opacity(
-                opacity: 0.6,
-                child: Text(
-                  alt,
-                  style: TextStyle(
-                    fontSize: 16.0,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-              ),
-            ),
-          ),
-      ],
-    );
-  }
-
-  Widget textLink({@required String href, @required Widget child}) {
-    return Padding(
-      padding: const EdgeInsets.only(
-        left: 2.0,
-        right: 2.0,
-        bottom: 5.0,
-      ),
-      child: InkWell(
-        onTap: href != null && href.isNotEmpty ? () => launch(href) : null,
-        child: child,
-      ),
     );
   }
 
