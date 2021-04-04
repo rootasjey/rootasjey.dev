@@ -327,6 +327,7 @@
   "profile_update_success": "Your profile has been successfully updated.",
   "programming_language_new_dot": "New programming language...",
   "programming_languages": "Programming languages",
+  "project": "Project",
   "project_after": "After project",
   "project_edit": "Edit project",
   "project_fetch_error": "An error occurred. Maybe the project doesn't exist anymore or there's a network issue.",
