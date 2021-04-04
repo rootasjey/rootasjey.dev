@@ -49,9 +49,13 @@ class MarkdownViewer extends StatelessWidget {
         'li': (context, child, attributes, element) {
           return Row(
             mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
-                padding: const EdgeInsets.only(right: 8.0),
+                padding: const EdgeInsets.only(
+                  top: 18.0,
+                  right: 8.0,
+                ),
                 child: ClipOval(
                   child: Container(
                     width: 10.0,
@@ -103,12 +107,14 @@ class MarkdownViewer extends StatelessWidget {
           fontWeight: FontWeight.w600,
           margin: EdgeInsets.only(
             top: 80.0,
-            bottom: 40.0,
           ),
         ),
         'h3': Style(
           fontSize: FontSize(30.0),
           fontWeight: FontWeight.w400,
+          margin: const EdgeInsets.only(
+            top: 80.0,
+          ),
         ),
       },
     );
