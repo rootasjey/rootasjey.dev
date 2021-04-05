@@ -5,6 +5,7 @@ import 'package:rootasjey/components/home_app_bar.dart';
 import 'package:rootasjey/screens/draft_projects.dart';
 import 'package:rootasjey/screens/published_projects.dart';
 import 'package:rootasjey/state/colors.dart';
+import 'package:rootasjey/utils/fonts.dart';
 import 'package:unicons/unicons.dart';
 
 class MyProjects extends StatefulWidget {
@@ -98,8 +99,8 @@ class _MyProjectsState extends State<MyProjects> {
           opacity: isSelected ? 1.0 : 0.5,
           child: Text(
             textTitle,
-            style: TextStyle(
-              fontSize: 70.0,
+            style: FontsUtils.mainStyle(
+              fontSize: 40.0,
               fontWeight: isSelected ? FontWeight.bold : FontWeight.w300,
             ),
           ),
