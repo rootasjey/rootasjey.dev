@@ -19,7 +19,7 @@ class _AnimatedAppIconState extends State<AnimatedAppIcon> {
     return Column(
       children: [
         Image.asset(
-          'assets/images/app_icon/64.png',
+          'assets/images/app_icon/animation.gif',
           height: widget.size,
           width: widget.size,
         ),

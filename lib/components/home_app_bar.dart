@@ -2,7 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:rootasjey/components/app_icon_header.dart';
+import 'package:rootasjey/components/app_icon.dart';
 import 'package:rootasjey/components/lang_popup_menu_button.dart';
 import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/state/colors.dart';
@@ -61,10 +61,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
                           icon: Icon(UniconsLine.arrow_left),
                         ),
                       ),
-                    AppIconHeader(
-                      padding: const EdgeInsets.only(
-                        bottom: 8.0,
-                      ),
+                    AppIcon(
                       onTap: widget.onTapIconHeader,
                     ),
                     if (widget.title != null)
