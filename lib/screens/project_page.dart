@@ -7,11 +7,11 @@ import 'package:flutter/material.dart';
 import 'package:markdown/markdown.dart' as markdown;
 import 'package:rootasjey/components/home_app_bar.dart';
 import 'package:rootasjey/components/markdown_viewer.dart';
+import 'package:rootasjey/components/sliver_loading_view.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/types/project.dart';
 import 'package:rootasjey/utils/app_logger.dart';
 import 'package:rootasjey/utils/cloud.dart';
-import 'package:rootasjey/utils/fonts.dart';
 import 'package:rootasjey/utils/snack.dart';
 import 'package:supercharged/supercharged.dart';
 
@@ -57,7 +57,7 @@ class _ProjectPageState extends State<ProjectPage> {
               ),
               child: Icon(Icons.arrow_upward),
             )
-          : Padding(padding: EdgeInsets.zero),
+          : Container(),
       body: NotificationListener<ScrollNotification>(
         onNotification: (ScrollNotification scrollNotif) {
           // FAB visibility
@@ -123,7 +123,9 @@ class _ProjectPageState extends State<ProjectPage> {
 
   Widget body() {
     if (isLoading) {
-      return loadingView();
+      return SliverLoadingView(
+        title: "loading_project".tr(),
+      );
     }
 
     return SliverList(
@@ -135,38 +137,11 @@ class _ProjectPageState extends State<ProjectPage> {
               flex: 3,
               child: MarkdownViewer(
                 data: projectData,
+                width: textWidth,
               ),
             ),
             if (!isNarrow) Spacer(),
           ],
-        ),
-      ]),
-    );
-  }
-
-  Widget loadingView() {
-    return SliverList(
-      delegate: SliverChildListDelegate.fixed([
-        Padding(
-          padding: const EdgeInsets.only(top: 200.0),
-          child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-            CircularProgressIndicator(),
-            Opacity(
-              opacity: 0.6,
-              child: Padding(
-                padding: const EdgeInsets.only(
-                  top: 40.0,
-                ),
-                child: Text(
-                  "loading".tr(),
-                  style: FontsUtils.mainStyle(
-                    fontSize: 40.0,
-                    fontWeight: FontWeight.w300,
-                  ),
-                ),
-              ),
-            ),
-          ]),
         ),
       ]),
     );

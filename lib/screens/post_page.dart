@@ -9,10 +9,10 @@ import 'package:flutter/services.dart';
 import 'package:markdown/markdown.dart' as markdown;
 import 'package:rootasjey/components/home_app_bar.dart';
 import 'package:rootasjey/components/markdown_viewer.dart';
+import 'package:rootasjey/components/sliver_loading_view.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/types/post.dart';
 import 'package:rootasjey/utils/cloud.dart';
-import 'package:rootasjey/utils/fonts.dart';
 import 'package:rootasjey/utils/mesure_size.dart';
 import 'package:rootasjey/utils/snack.dart';
 import 'package:unicons/unicons.dart';
@@ -159,7 +159,9 @@ class _PostPageState extends State<PostPage> {
 
   Widget body() {
     if (isLoading) {
-      return loadingView();
+      return SliverLoadingView(
+        title: "loading_post".tr(),
+      );
     }
 
     return SliverList(
@@ -190,34 +192,6 @@ class _PostPageState extends State<PostPage> {
         ],
       ),
     ]));
-  }
-
-  Widget loadingView() {
-    return SliverList(
-      delegate: SliverChildListDelegate.fixed([
-        Padding(
-          padding: const EdgeInsets.only(top: 200.0),
-          child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-            CircularProgressIndicator(),
-            Opacity(
-              opacity: 0.6,
-              child: Padding(
-                padding: const EdgeInsets.only(
-                  top: 40.0,
-                ),
-                child: Text(
-                  "loading".tr(),
-                  style: FontsUtils.mainStyle(
-                    fontSize: 40.0,
-                    fontWeight: FontWeight.w300,
-                  ),
-                ),
-              ),
-            ),
-          ]),
-        ),
-      ]),
-    );
   }
 
   void fetchMeta() async {
