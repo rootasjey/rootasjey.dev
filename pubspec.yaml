@@ -103,7 +103,11 @@ flutter:
   assets:
     - assets/images/app_icon/32.png
     - assets/images/app_icon/64.png
+    - assets/images/app_icon/128.png
+    - assets/images/app_icon/256.png
     - assets/images/app_icon/512.png
+    - assets/images/app_icon/1024.png
+    - assets/images/app_icon/animation.gif
     - assets/images/comet-logo-wide.jpg
     - assets/images/figstyle.png
     - assets/images/firebase.png
