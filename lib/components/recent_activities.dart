@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:github/github.dart';
 import 'package:rootasjey/components/activity_row.dart';
 import 'package:rootasjey/router/app_router.gr.dart';
@@ -25,15 +26,13 @@ class _RecentActivitiesState extends State<RecentActivities> {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, boxConstraints) {
-        if (boxConstraints.maxWidth < 700.0) {
-          return narrowView();
-        }
+    return Observer(builder: (context) {
+      if (MediaQuery.of(context).size.width < 600.0) {
+        return narrowView();
+      }
 
-        return largeView();
-      },
-    );
+      return largeView();
+    });
   }
 
   Widget largeView() {
@@ -63,7 +62,7 @@ class _RecentActivitiesState extends State<RecentActivities> {
   Widget narrowView() {
     return Container(
       padding: const EdgeInsets.symmetric(
-        horizontal: 10.0,
+        horizontal: 16.0,
         vertical: 20.0,
       ),
       child: Column(

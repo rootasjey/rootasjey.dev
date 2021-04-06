@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/utils/fonts.dart';
@@ -121,67 +122,69 @@ class HomeNavBar extends StatelessWidget {
   }
 
   Widget largeView(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(
-        bottom: 60.0,
-        left: 100.0,
-      ),
-      child: Wrap(
-        spacing: 40.0,
-        runSpacing: 20.0,
-        crossAxisAlignment: WrapCrossAlignment.center,
-        children: [
-          ElevatedButton.icon(
-            onPressed: () {
-              context.router.push(EnrollRoute());
-            },
-            style: ElevatedButton.styleFrom(
-              primary: stateColors.primary,
-              textStyle: FontsUtils.mainStyle(
-                color: Colors.white,
+    return Observer(builder: (context) {
+      return Padding(
+        padding: EdgeInsets.only(
+          bottom: 60.0,
+          left: 100.0,
+        ),
+        child: Wrap(
+          spacing: 40.0,
+          runSpacing: 20.0,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: [
+            ElevatedButton.icon(
+              onPressed: () {
+                context.router.push(EnrollRoute());
+              },
+              style: ElevatedButton.styleFrom(
+                primary: stateColors.primary,
+                textStyle: FontsUtils.mainStyle(
+                  color: Colors.white,
+                ),
+              ),
+              icon: Icon(UniconsLine.bag),
+              label: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 8.0,
+                  vertical: 12.0,
+                ),
+                child: Text("hire_me".tr()),
               ),
             ),
-            icon: Icon(UniconsLine.bag),
-            label: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 8.0,
-                vertical: 12.0,
-              ),
-              child: Text("hire_me".tr()),
+            buttonLink(
+              context: context,
+              icon: UniconsLine.apps,
+              titleText: "projects".tr(),
+              routeInfo: ProjectsDeepRoute(children: [ProjectsRoute()]),
             ),
-          ),
-          buttonLink(
-            context: context,
-            icon: UniconsLine.apps,
-            titleText: "projects".tr(),
-            routeInfo: ProjectsDeepRoute(children: [ProjectsRoute()]),
-          ),
-          buttonLink(
-            context: context,
-            icon: UniconsLine.newspaper,
-            titleText: "posts".tr(),
-            routeInfo: PostsDeepRoute(children: [PostsRoute()]),
-          ),
-          buttonLink(
-            context: context,
-            icon: UniconsLine.bill,
-            titleText: "pricing".tr(),
-            routeInfo: PricingRoute(),
-          ),
-          buttonLink(
-            context: context,
-            icon: UniconsLine.envelope,
-            titleText: "contact_me".tr(),
-            routeInfo: ContactRoute(),
-          ),
-          buttonLink(
-            context: context,
-            icon: UniconsLine.question,
-            titleText: "about".tr(),
-            routeInfo: AboutRoute(),
-          ),
-        ],
-      ),
-    );
+            buttonLink(
+              context: context,
+              icon: UniconsLine.newspaper,
+              titleText: "posts".tr(),
+              routeInfo: PostsDeepRoute(children: [PostsRoute()]),
+            ),
+            buttonLink(
+              context: context,
+              icon: UniconsLine.bill,
+              titleText: "pricing".tr(),
+              routeInfo: PricingRoute(),
+            ),
+            buttonLink(
+              context: context,
+              icon: UniconsLine.envelope,
+              titleText: "contact_me".tr(),
+              routeInfo: ContactRoute(),
+            ),
+            buttonLink(
+              context: context,
+              icon: UniconsLine.question,
+              titleText: "about".tr(),
+              routeInfo: AboutRoute(),
+            ),
+          ],
+        ),
+      );
+    });
   }
 }

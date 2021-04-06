@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/state/user.dart';
@@ -40,32 +41,30 @@ class _FooterState extends State<Footer> {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, boxConstraints) {
-        final alignment = boxConstraints.maxWidth < 700.0
-            ? WrapAlignment.spaceBetween
-            : WrapAlignment.spaceAround;
+    return Observer(builder: (context) {
+      final alignment = MediaQuery.of(context).size.width < 700.0
+          ? WrapAlignment.spaceBetween
+          : WrapAlignment.spaceAround;
 
-        return Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 60.0,
-            vertical: 90.0,
-          ),
-          foregroundDecoration: BoxDecoration(
-            color: Color.fromRGBO(0, 0, 0, 0.1),
-          ),
-          child: Wrap(
-            runSpacing: 80.0,
-            alignment: alignment,
-            children: <Widget>[
-              languages(),
-              developers(),
-              resourcesLinks(),
-            ],
-          ),
-        );
-      },
-    );
+      return Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 60.0,
+          vertical: 90.0,
+        ),
+        foregroundDecoration: BoxDecoration(
+          color: Color.fromRGBO(0, 0, 0, 0.1),
+        ),
+        child: Wrap(
+          runSpacing: 80.0,
+          alignment: alignment,
+          children: <Widget>[
+            languages(),
+            developers(),
+            resourcesLinks(),
+          ],
+        ),
+      );
+    });
   }
 
   Widget developers() {

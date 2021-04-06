@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:rootasjey/components/pub_post_card.dart';
 import 'package:rootasjey/components/pub_post_line_card.dart';
 import 'package:rootasjey/router/app_router.gr.dart';
@@ -28,17 +29,13 @@ class _RecentPostsState extends State<RecentPosts> {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, boxConstraints) {
-        maxWidth = boxConstraints.maxWidth;
+    return Observer(builder: (context) {
+      if (MediaQuery.of(context).size.width < 700.0) {
+        return narrowView();
+      }
 
-        if (maxWidth < 700.0) {
-          return narrowView();
-        }
-
-        return largeView();
-      },
-    );
+      return largeView();
+    });
   }
 
   Widget largeView() {
