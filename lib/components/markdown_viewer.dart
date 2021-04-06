@@ -27,8 +27,11 @@ class MarkdownViewer extends StatelessWidget {
           );
         },
         'img': (context, child, attributes, element) {
-          double width = double.tryParse(attributes['width']);
-          double height = double.tryParse(attributes['height']);
+          final String attrW = attributes['width'];
+          final String attrH = attributes['height'];
+
+          double width = attrW != null ? double.tryParse(attrW) : 300.0;
+          double height = attrH != null ? double.tryParse(attrH) : 300.0;
 
           if (width == null) {
             width = height ?? 300.0;
