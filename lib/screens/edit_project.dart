@@ -399,11 +399,11 @@ class _EditProjectState extends State<EditProject> {
                 entry.value ? Colors.white : stateColors.foreground,
             onDeleted: () {
               platforms.remove(entry.key);
-              savePlatforms();
+              updatePlatforms();
             },
             onSelected: (isSelected) {
               platforms[entry.key] = isSelected;
-              savePlatforms();
+              updatePlatforms();
             },
           );
         }).toList());
@@ -437,7 +437,7 @@ class _EditProjectState extends State<EditProject> {
               onPressed: () {
                 platforms[platformInputValue] = true;
                 platformController.clear();
-                savePlatforms();
+                updatePlatforms();
               },
               icon: Icon(Icons.add),
               label: Text("platform_add".tr()),
@@ -503,7 +503,7 @@ class _EditProjectState extends State<EditProject> {
             ),
             onDeleted: () {
               programmingLanguages.remove(entry.key);
-              savePLanguages();
+              updateProgLanguages();
             },
           );
         }).toList());
@@ -537,7 +537,7 @@ class _EditProjectState extends State<EditProject> {
               onPressed: () {
                 programmingLanguages[pLangInputValue] = true;
                 pLangController.clear();
-                savePLanguages();
+                updateProgLanguages();
               },
               icon: Icon(Icons.add),
               label: Text("add".tr()),
@@ -553,7 +553,7 @@ class _EditProjectState extends State<EditProject> {
       padding: const EdgeInsets.only(right: 20.0),
       child: OutlinedButton.icon(
         onPressed: () {
-          saveTitle();
+          updateTitle();
           saveContent();
         },
         icon: Opacity(opacity: 0.6, child: Icon(Icons.save)),
@@ -592,7 +592,7 @@ class _EditProjectState extends State<EditProject> {
             saveSummaryTimer.cancel();
           }
 
-          saveSummaryTimer = Timer(1.seconds, () => saveSummary());
+          saveSummaryTimer = Timer(1.seconds, () => updateSummary());
         },
       ),
     );
@@ -661,11 +661,11 @@ class _EditProjectState extends State<EditProject> {
                 entry.value ? Colors.white : stateColors.foreground,
             onDeleted: () {
               tags.remove(entry.key);
-              saveTags();
+              updateTags();
             },
             onSelected: (isSelected) {
               tags[entry.key] = isSelected;
-              saveTags();
+              updateTags();
             },
           );
         }).toList());
@@ -699,7 +699,7 @@ class _EditProjectState extends State<EditProject> {
               onPressed: () {
                 tags[tagInputValue] = true;
                 tagController.clear();
-                saveTags();
+                updateTags();
               },
               icon: Icon(Icons.add),
               label: Text("tag_add".tr()),
@@ -742,7 +742,7 @@ class _EditProjectState extends State<EditProject> {
                     saveTitleTimer.cancel();
                   }
 
-                  saveTitleTimer = Timer(1.seconds, () => saveTitle());
+                  saveTitleTimer = Timer(1.seconds, () => updateTitle());
                 },
                 style: TextStyle(
                   fontSize: 42.0,
@@ -810,7 +810,7 @@ class _EditProjectState extends State<EditProject> {
                   : stateColors.foreground,
               onDeleted: () {
                 urls.remove(entry.key);
-                saveUrls();
+                updateUrls();
               },
               onPressed: () {
                 urlName = entry.key;
@@ -986,85 +986,6 @@ class _EditProjectState extends State<EditProject> {
     }
   }
 
-  void savePLanguages() async {
-    setState(() => isSaving = true);
-
-    try {
-      await projectSnapshot.reference
-          .update({'programmingLanguages': programmingLanguages});
-
-      setState(() => isSaving = false);
-    } catch (error) {
-      appLogger.e(error);
-      setState(() => isSaving = false);
-    }
-  }
-
-  void savePlatforms() async {
-    setState(() => isSaving = true);
-
-    try {
-      await projectSnapshot.reference.update({'platforms': platforms});
-
-      setState(() => isSaving = false);
-    } catch (error) {
-      appLogger.e(error);
-      setState(() => isSaving = false);
-    }
-  }
-
-  void saveSummary() async {
-    setState(() => isSaving = true);
-
-    try {
-      await projectSnapshot.reference.update({'summary': summary});
-
-      setState(() => isSaving = false);
-    } catch (error) {
-      appLogger.e(error);
-      setState(() => isSaving = false);
-    }
-  }
-
-  void saveTags() async {
-    setState(() => isSaving = true);
-
-    try {
-      await projectSnapshot.reference.update({'tags': tags});
-
-      setState(() => isSaving = false);
-    } catch (error) {
-      appLogger.e(error);
-      setState(() => isSaving = false);
-    }
-  }
-
-  void saveTitle() async {
-    setState(() => isSaving = true);
-
-    try {
-      await projectSnapshot.reference.update({'title': title});
-
-      setState(() => isSaving = false);
-    } catch (error) {
-      appLogger.e(error);
-      setState(() => isSaving = false);
-    }
-  }
-
-  void saveUrls() async {
-    setState(() => isSaving = true);
-
-    try {
-      await projectSnapshot.reference.update({'urls': urls});
-
-      setState(() => isSaving = false);
-    } catch (error) {
-      appLogger.e(error);
-      setState(() => isSaving = false);
-    }
-  }
-
   void showAddUrlSheet() {
     showModalBottomSheet(
       context: context,
@@ -1129,7 +1050,7 @@ class _EditProjectState extends State<EditProject> {
                         child: TextButton.icon(
                           onPressed: () {
                             urls[urlName] = urlValue;
-                            saveUrls();
+                            updateUrls();
                             context.router.pop();
                           },
                           icon: Icon(Icons.check),
@@ -1172,6 +1093,85 @@ class _EditProjectState extends State<EditProject> {
         );
       },
     );
+  }
+
+  void updatePlatforms() async {
+    setState(() => isSaving = true);
+
+    try {
+      await projectSnapshot.reference.update({'platforms': platforms});
+
+      setState(() => isSaving = false);
+    } catch (error) {
+      appLogger.e(error);
+      setState(() => isSaving = false);
+    }
+  }
+
+  void updateSummary() async {
+    setState(() => isSaving = true);
+
+    try {
+      await projectSnapshot.reference.update({'summary': summary});
+
+      setState(() => isSaving = false);
+    } catch (error) {
+      appLogger.e(error);
+      setState(() => isSaving = false);
+    }
+  }
+
+  void updateProgLanguages() async {
+    setState(() => isSaving = true);
+
+    try {
+      await projectSnapshot.reference
+          .update({'programmingLanguages': programmingLanguages});
+
+      setState(() => isSaving = false);
+    } catch (error) {
+      appLogger.e(error);
+      setState(() => isSaving = false);
+    }
+  }
+
+  void updateTags() async {
+    setState(() => isSaving = true);
+
+    try {
+      await projectSnapshot.reference.update({'tags': tags});
+
+      setState(() => isSaving = false);
+    } catch (error) {
+      appLogger.e(error);
+      setState(() => isSaving = false);
+    }
+  }
+
+  void updateTitle() async {
+    setState(() => isSaving = true);
+
+    try {
+      await projectSnapshot.reference.update({'title': title});
+
+      setState(() => isSaving = false);
+    } catch (error) {
+      appLogger.e(error);
+      setState(() => isSaving = false);
+    }
+  }
+
+  void updateUrls() async {
+    setState(() => isSaving = true);
+
+    try {
+      await projectSnapshot.reference.update({'urls': urls});
+
+      setState(() => isSaving = false);
+    } catch (error) {
+      appLogger.e(error);
+      setState(() => isSaving = false);
+    }
   }
 
   void updatePubStatus(String status) async {
