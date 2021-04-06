@@ -6,7 +6,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:rootasjey/components/home_app_bar.dart';
+import 'package:rootasjey/components/lang_popup_menu_button.dart';
+import 'package:rootasjey/components/pub_popup_menu_button.dart';
 import 'package:rootasjey/components/sliver_loading_view.dart';
 import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/state/colors.dart';
@@ -96,8 +97,84 @@ class _EditProjectState extends State<EditProject> {
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          homeAppBar(),
+          appBar(),
           body(),
+        ],
+      ),
+    );
+  }
+
+  Widget appBar() {
+    return SliverAppBar(
+      floating: true,
+      snap: true,
+      pinned: true,
+      collapsedHeight: 80.0,
+      backgroundColor: stateColors.appBackground.withOpacity(1.0),
+      expandedHeight: 120.0,
+      automaticallyImplyLeading: false,
+      centerTitle: false,
+      title: appBarTitle(),
+      bottom: appBarBottom(),
+    );
+  }
+
+  Widget appBarBottom() {
+    return PreferredSize(
+      preferredSize: Size.fromHeight(20.0),
+      child: Padding(
+        padding: const EdgeInsets.only(left: 28.0),
+        child: Row(
+          children: [
+            LangPopupMenuButton(
+              lang: lang,
+              onLangChanged: (newLang) {
+                setState(() {
+                  lang = newLang;
+                });
+              },
+            ),
+            viewOnlineButton(),
+            saveButton(),
+            PubPopupMenuButton(
+              status: publicationStatus,
+              onStatusChanged: (newStatus) {
+                setState(() {
+                  publicationStatus = newStatus;
+                });
+
+                updatePubStatus(newStatus);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget appBarTitle() {
+    return Padding(
+      padding: const EdgeInsets.only(left: 0.0),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (context.router.root.stack.length > 1)
+            IconButton(
+              icon: Icon(UniconsLine.arrow_left),
+              onPressed: () {
+                context.router.pop();
+              },
+            ),
+          if (isSaving)
+            Padding(
+              padding: const EdgeInsets.only(right: 16.0),
+              child: CircularProgressIndicator(
+                strokeWidth: 2.0,
+              ),
+            ),
+          Text(
+            title.isEmpty ? "project_edit".tr() : title,
+          ),
         ],
       ),
     );
@@ -124,7 +201,6 @@ class _EditProjectState extends State<EditProject> {
           ),
           child: Column(
             children: [
-              actionsheader(),
               titleInput(),
               summaryInput(),
               contentInput(),
@@ -225,135 +301,6 @@ class _EditProjectState extends State<EditProject> {
     );
   }
 
-  Widget homeAppBar() {
-    if (isSaving) {
-      return HomeAppBar(
-        title: Wrap(
-          crossAxisAlignment: WrapCrossAlignment.center,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(right: 16.0),
-              child: CircularProgressIndicator(
-                strokeWidth: 2.0,
-              ),
-            ),
-            Opacity(
-              opacity: 0.6,
-              child: Text(
-                "saving_dot".tr(),
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  color: stateColors.foreground,
-                ),
-              ),
-            )
-          ],
-        ),
-      );
-    }
-
-    return HomeAppBar(
-      title: Opacity(
-        opacity: 0.6,
-        child: TextButton(
-          onPressed: showAppBarDialog,
-          child: Text(
-            title.isEmpty ? "project_edit".tr() : title,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              color: stateColors.foreground,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget titleInput() {
-    return Container(
-      width: 720.0,
-      padding: const EdgeInsets.only(
-        top: 60.0,
-      ),
-      child: Row(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(right: 15.0),
-            child: IconButton(
-              onPressed: context.router.pop,
-              icon: Icon(Icons.arrow_back),
-            ),
-          ),
-          Expanded(
-            child: Container(
-              width: 670.0,
-              child: TextField(
-                maxLines: 1,
-                autofocus: true,
-                focusNode: titleFocusNode,
-                controller: titleController,
-                keyboardType: TextInputType.multiline,
-                textCapitalization: TextCapitalization.sentences,
-                onChanged: (newValue) {
-                  title = newValue;
-
-                  if (saveTitleTimer != null) {
-                    saveTitleTimer.cancel();
-                  }
-
-                  saveTitleTimer = Timer(1.seconds, () => saveTitle());
-                },
-                style: TextStyle(
-                  fontSize: 42.0,
-                  fontWeight: FontWeight.w500,
-                ),
-                decoration: InputDecoration(
-                  hintText: "project_title_dot".tr(),
-                  border: OutlineInputBorder(borderSide: BorderSide.none),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget summaryInput() {
-    return Container(
-      width: 700.0,
-      padding: const EdgeInsets.only(
-        left: 0.0,
-        top: 10.0,
-      ),
-      child: TextField(
-        maxLines: 1,
-        focusNode: summaryFocusNode,
-        controller: summaryController,
-        keyboardType: TextInputType.multiline,
-        textCapitalization: TextCapitalization.sentences,
-        decoration: InputDecoration(
-          hintText: "project_summary_dot".tr(),
-          icon: Icon(Icons.short_text),
-          border: OutlineInputBorder(borderSide: BorderSide.none),
-        ),
-        style: TextStyle(
-          fontSize: 20.0,
-          color: stateColors.foreground.withOpacity(0.4),
-        ),
-        onChanged: (newValue) {
-          summary = newValue;
-
-          if (saveTitleTimer != null) {
-            saveSummaryTimer.cancel();
-          }
-
-          saveSummaryTimer = Timer(1.seconds, () => saveSummary());
-        },
-      ),
-    );
-  }
-
   Widget contentInput() {
     return Container(
       width: 700.0,
@@ -386,71 +333,6 @@ class _EditProjectState extends State<EditProject> {
           border: OutlineInputBorder(borderSide: BorderSide.none),
         ),
       ),
-    );
-  }
-
-  Widget actionsheader() {
-    return Center(
-      child: Container(
-        height: 40.0,
-        child: ListView(
-          shrinkWrap: true,
-          scrollDirection: Axis.horizontal,
-          children: <Widget>[
-            langSelect(),
-            Padding(padding: const EdgeInsets.only(right: 20.0)),
-            viewOnlineButton(),
-            TextButton.icon(
-                onPressed: () {
-                  saveTitle();
-                  saveContent();
-                },
-                icon: Opacity(opacity: 0.6, child: Icon(Icons.save)),
-                label: Opacity(opacity: 0.6, child: Text("save_draft".tr()))),
-            Padding(padding: const EdgeInsets.only(right: 20.0)),
-            publishedDropDown(),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget langSelect() {
-    return DropdownButton<String>(
-      value: lang,
-      style: TextStyle(
-        color: stateColors.primary,
-        fontSize: 20.0,
-      ),
-      icon: Icon(Icons.language),
-      iconEnabledColor: stateColors.primary,
-      onChanged: (newValue) {
-        setState(() {
-          lang = newValue;
-        });
-      },
-      items: availableLang.map<DropdownMenuItem<String>>((value) {
-        return DropdownMenuItem(
-          value: value,
-          child: Text(value.toUpperCase()),
-        );
-      }).toList(),
-    );
-  }
-
-  Widget publishedDropDown() {
-    return DropdownButton(
-      value: publicationStatus,
-      underline: Container(),
-      onChanged: (value) => updatePubStatus(value),
-      items: [DRAFT, PUBLISHED].map((value) {
-        return DropdownMenuItem(
-          value: value,
-          child: Text(
-            value.toUpperCase(),
-          ),
-        );
-      }).toList(),
     );
   }
 
@@ -666,6 +548,56 @@ class _EditProjectState extends State<EditProject> {
     );
   }
 
+  Widget saveButton() {
+    return Padding(
+      padding: const EdgeInsets.only(right: 20.0),
+      child: OutlinedButton.icon(
+        onPressed: () {
+          saveTitle();
+          saveContent();
+        },
+        icon: Opacity(opacity: 0.6, child: Icon(Icons.save)),
+        label: Opacity(opacity: 0.6, child: Text("save_draft".tr())),
+        style: OutlinedButton.styleFrom(primary: stateColors.foreground),
+      ),
+    );
+  }
+
+  Widget summaryInput() {
+    return Container(
+      width: 700.0,
+      padding: const EdgeInsets.only(
+        left: 0.0,
+        top: 10.0,
+      ),
+      child: TextField(
+        maxLines: 1,
+        focusNode: summaryFocusNode,
+        controller: summaryController,
+        keyboardType: TextInputType.multiline,
+        textCapitalization: TextCapitalization.sentences,
+        decoration: InputDecoration(
+          hintText: "project_summary_dot".tr(),
+          icon: Icon(Icons.short_text),
+          border: OutlineInputBorder(borderSide: BorderSide.none),
+        ),
+        style: TextStyle(
+          fontSize: 20.0,
+          color: stateColors.foreground.withOpacity(0.4),
+        ),
+        onChanged: (newValue) {
+          summary = newValue;
+
+          if (saveTitleTimer != null) {
+            saveSummaryTimer.cancel();
+          }
+
+          saveSummaryTimer = Timer(1.seconds, () => saveSummary());
+        },
+      ),
+    );
+  }
+
   Widget tagsSelection() {
     return Container(
       width: 600.0,
@@ -778,6 +710,56 @@ class _EditProjectState extends State<EditProject> {
     );
   }
 
+  Widget titleInput() {
+    return Container(
+      width: 720.0,
+      padding: const EdgeInsets.only(
+        top: 60.0,
+      ),
+      child: Row(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(right: 15.0),
+            child: IconButton(
+              onPressed: context.router.pop,
+              icon: Icon(Icons.arrow_back),
+            ),
+          ),
+          Expanded(
+            child: Container(
+              width: 670.0,
+              child: TextField(
+                maxLines: 1,
+                autofocus: true,
+                focusNode: titleFocusNode,
+                controller: titleController,
+                keyboardType: TextInputType.multiline,
+                textCapitalization: TextCapitalization.sentences,
+                onChanged: (newValue) {
+                  title = newValue;
+
+                  if (saveTitleTimer != null) {
+                    saveTitleTimer.cancel();
+                  }
+
+                  saveTitleTimer = Timer(1.seconds, () => saveTitle());
+                },
+                style: TextStyle(
+                  fontSize: 42.0,
+                  fontWeight: FontWeight.w500,
+                ),
+                decoration: InputDecoration(
+                  hintText: "project_title_dot".tr(),
+                  border: OutlineInputBorder(borderSide: BorderSide.none),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget urlsSections() {
     return Container(
       width: 600.0,
@@ -859,8 +841,11 @@ class _EditProjectState extends State<EditProject> {
     }
 
     return Padding(
-      padding: const EdgeInsets.only(right: 20.0),
+      padding: const EdgeInsets.symmetric(horizontal: 20.0),
       child: OutlinedButton.icon(
+        style: OutlinedButton.styleFrom(
+          primary: stateColors.foreground,
+        ),
         focusNode: clearFocusNode,
         onPressed: () {
           context.router.root.push(
