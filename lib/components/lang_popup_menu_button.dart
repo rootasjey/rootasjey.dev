@@ -32,10 +32,9 @@ class LangPopupMenuButton extends StatelessWidget {
           child: PopupMenuButton<String>(
             tooltip: "Change language",
             child: Padding(
-              // padding: const EdgeInsets.all(8.0),
               padding: padding,
               child: Text(
-                lang,
+                lang.toUpperCase(),
                 style: TextStyle(
                   color: stateColors.foreground,
                   fontSize: 16.0,
