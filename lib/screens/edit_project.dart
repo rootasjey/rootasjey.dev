@@ -7,6 +7,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/home_app_bar.dart';
+import 'package:rootasjey/components/sliver_loading_view.dart';
+import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/utils/app_logger.dart';
 import 'package:rootasjey/utils/cloud.dart';
@@ -103,7 +105,10 @@ class _EditProjectState extends State<EditProject> {
 
   Widget body() {
     if (isLoading) {
-      return loadingView();
+      return SliverLoadingView(
+        title: "loading_project".tr(),
+        padding: const EdgeInsets.only(top: 200.0),
+      );
     }
 
     if (hasError) {
@@ -141,23 +146,25 @@ class _EditProjectState extends State<EditProject> {
   }
 
   Widget buttonToggleMetaView() {
-    return Container(
-      width: 600.0,
-      padding: const EdgeInsets.only(
-        top: 80.0,
-      ),
-      child: Row(
-        children: [
-          ElevatedButton.icon(
-            onPressed: () => setState(() => isMetaVisible = !isMetaVisible),
-            icon: isMetaVisible
-                ? Icon(Icons.visibility_off)
-                : Icon(Icons.visibility),
-            label: Text(
-              isMetaVisible ? "hide_meta_data".tr() : "meta_data_show".tr(),
+    return Align(
+      alignment: Alignment.topLeft,
+      child: Padding(
+        padding: const EdgeInsets.only(
+          top: 80.0,
+          left: 120.0,
+        ),
+        child: ElevatedButton.icon(
+          onPressed: () => setState(() => isMetaVisible = !isMetaVisible),
+          icon: isMetaVisible
+              ? Icon(Icons.visibility_off)
+              : Icon(Icons.visibility),
+          label: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              isMetaVisible ? "meta_data_hide".tr() : "meta_data_show".tr(),
             ),
           ),
-        ],
+        ),
       ),
     );
   }
@@ -233,7 +240,7 @@ class _EditProjectState extends State<EditProject> {
             Opacity(
               opacity: 0.6,
               child: Text(
-                "saving".tr(),
+                "saving_dot".tr(),
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   color: stateColors.foreground,
@@ -259,36 +266,6 @@ class _EditProjectState extends State<EditProject> {
           ),
         ),
       ),
-    );
-  }
-
-  Widget loadingView() {
-    return SliverList(
-      delegate: SliverChildListDelegate.fixed([
-        Padding(
-          padding: const EdgeInsets.only(
-            top: 200.0,
-            left: 40.0,
-            right: 40.0,
-          ),
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(
-                  bottom: 40.0,
-                ),
-                child: CircularProgressIndicator(),
-              ),
-              Text(
-                "loading".tr(),
-                style: TextStyle(
-                  fontSize: 30.0,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ]),
     );
   }
 
@@ -422,23 +399,8 @@ class _EditProjectState extends State<EditProject> {
           children: <Widget>[
             langSelect(),
             Padding(padding: const EdgeInsets.only(right: 20.0)),
+            viewOnlineButton(),
             TextButton.icon(
-                focusNode: clearFocusNode,
-                onPressed: () {
-                  content = '';
-                  contentController.clear();
-                  projectFocusNode.requestFocus();
-                },
-                icon: Opacity(opacity: 0.6, child: Icon(Icons.clear)),
-                label: Opacity(
-                  opacity: 0.6,
-                  child: Text(
-                    "clear_content".tr(),
-                  ),
-                )),
-            Padding(padding: const EdgeInsets.only(right: 20.0)),
-            TextButton.icon(
-                focusNode: projectFocusNode,
                 onPressed: () {
                   saveTitle();
                   saveContent();
@@ -888,6 +850,40 @@ class _EditProjectState extends State<EditProject> {
           label: Text("url_add".tr()),
         ),
       ]),
+    );
+  }
+
+  Widget viewOnlineButton() {
+    if (publicationStatus != PUBLISHED) {
+      return Container();
+    }
+
+    return Padding(
+      padding: const EdgeInsets.only(right: 20.0),
+      child: OutlinedButton.icon(
+        focusNode: clearFocusNode,
+        onPressed: () {
+          context.router.root.push(
+            ProjectsDeepRoute(
+              children: [
+                ProjectPageRoute(projectId: widget.projectId),
+              ],
+            ),
+          );
+        },
+        icon: Opacity(
+          opacity: 0.6,
+          child: Icon(
+            UniconsLine.eye,
+          ),
+        ),
+        label: Opacity(
+          opacity: 0.6,
+          child: Text(
+            "view_online".tr(),
+          ),
+        ),
+      ),
     );
   }
 
