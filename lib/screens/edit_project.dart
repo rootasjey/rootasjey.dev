@@ -36,7 +36,6 @@ class _EditProjectState extends State<EditProject> {
 
   DocumentSnapshot projectSnapshot;
 
-  final availableLang = ['en', 'fr'];
   final clearFocusNode = FocusNode();
   final projectFocusNode = FocusNode();
   final contentController = TextEditingController();
@@ -208,7 +207,7 @@ class _EditProjectState extends State<EditProject> {
               if (isMetaVisible)
                 Column(
                   children: [
-                    pLangsSelection(),
+                    progLangsSelection(),
                     platformsSelection(),
                     tagsSelection(),
                     urlsSections(),
@@ -448,7 +447,7 @@ class _EditProjectState extends State<EditProject> {
     );
   }
 
-  Widget pLangsSelection() {
+  Widget progLangsSelection() {
     return Container(
       width: 600.0,
       padding: const EdgeInsets.only(
@@ -457,15 +456,15 @@ class _EditProjectState extends State<EditProject> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          pLangsSelectionHeader(),
-          pLangsSelectionContent(),
-          pLangsSelectionInput(),
+          progLangsSelectionHeader(),
+          progLangsSelectionContent(),
+          progLangsSelectionInput(),
         ],
       ),
     );
   }
 
-  Widget pLangsSelectionHeader() {
+  Widget progLangsSelectionHeader() {
     return Padding(
       padding: const EdgeInsets.only(
         bottom: 20.0,
@@ -492,7 +491,7 @@ class _EditProjectState extends State<EditProject> {
     );
   }
 
-  Widget pLangsSelectionContent() {
+  Widget progLangsSelectionContent() {
     return Wrap(
         spacing: 10.0,
         runSpacing: 10.0,
@@ -509,7 +508,7 @@ class _EditProjectState extends State<EditProject> {
         }).toList());
   }
 
-  Widget pLangsSelectionInput() {
+  Widget progLangsSelectionInput() {
     return Padding(
       padding: const EdgeInsets.only(
         top: 20.0,
