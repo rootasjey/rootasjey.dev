@@ -33,19 +33,16 @@ class _ProjectCardState extends State<ProjectCard> {
         shape: RoundedRectangleBorder(
           side: BorderSide(
             color: borderColor,
+            width: 2.0,
           ),
         ),
         child: InkWell(
           onTap: widget.onTap,
           onHover: (isHover) {
             setState(() {
-              elevation = isHover
-                ? 8.0
-                : 4.0;
+              elevation = isHover ? 8.0 : 4.0;
 
-              borderColor = isHover
-                ? stateColors.primary
-                : Colors.transparent;
+              borderColor = isHover ? stateColors.primary : Colors.transparent;
             });
           },
           child: Stack(
@@ -95,7 +92,6 @@ class _ProjectCardState extends State<ProjectCard> {
                   ],
                 ),
               ),
-
               if (widget.popupMenuButton != null)
                 Positioned(
                   right: 20.0,
