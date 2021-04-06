@@ -1,21 +1,26 @@
 
-# rootasjey
+<p align="center">
+  <img src="./assets/images/app_icon/256.png" alt="rootasjey's website app icon"/>
+</p>
 
-![app icon](./app-icon-64.png)
+<p align="center">
+My personal & professional website.
+</p>
 
-My personal website.
-
-![rootasjey website screenshot](./screenshot.png)
+<p align="center">
+  <img src="./screenshots/home.png" alt="rootasjey's wesite screenshot"/>
+</p>
 
 ## Table of Contents
 
-* [Presentation](#presentation)
-* [Blog](#blog)
-* [Projects](#projects)
-* [Artworks](#artworks)
-* [Contact](#contact)
-* [Development](#development)
-* [Hire me](#hire-me)
+- [Table of Contents](#table-of-contents)
+- [Presentation](#presentation)
+- [Blog](#blog)
+- [Projects](#projects)
+- [Artworks](#artworks)
+- [Contact](#contact)
+- [Development](#development)
+- [Hire me](#hire-me)
 
 ## Presentation
 
