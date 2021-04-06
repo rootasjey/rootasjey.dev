@@ -1,10 +1,11 @@
+import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
 import 'package:rootasjey/components/side_menu_item.dart';
 import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/utils/constants.dart';
 import 'package:rootasjey/utils/fonts.dart';
-import 'package:auto_route/auto_route.dart';
-import 'package:flutter/material.dart';
 import 'package:unicons/unicons.dart';
 
 import '../components/home_app_bar.dart';
@@ -16,42 +17,18 @@ class DashboardPage extends StatefulWidget {
 
 class _DashboardPageState extends State<DashboardPage> {
   final _sideMenuItems = <SideMenuItem>[
-    // SideMenuItem(
-    //   destination: MyActivityRoute(),
-    //   iconData: UniconsLine.chart_pie,
-    //   label: 'Activity',
-    //   hoverColor: Colors.red,
-    // ),
-    // SideMenuItem(
-    //   destination: MyIllustrationsRoute(),
-    //   iconData: UniconsLine.picture,
-    //   label: 'Illustrations',
-    //   hoverColor: Colors.red,
-    // ),
-    // SideMenuItem(
-    //   destination: MyBooksDeepRoute(),
-    //   iconData: UniconsLine.book_alt,
-    //   label: 'Books',
-    //   hoverColor: Colors.blue.shade700,
-    // ),
-    // SideMenuItem(
-    //   destination: MyGalleriesDeepRoute(),
-    //   iconData: UniconsLine.images,
-    //   label: 'Galleries',
-    //   hoverColor: Colors.pink.shade200,
-    // ),
-    // SideMenuItem(
-    //   destination: MyChallengesDeepRoute(),
-    //   iconData: UniconsLine.dumbbell,
-    //   label: 'Challenges',
-    //   hoverColor: Colors.green,
-    // ),
-    // SideMenuItem(
-    //   destination: MyContestsDeepRoute(),
-    //   iconData: UniconsLine.trophy,
-    //   label: 'Contests',
-    //   hoverColor: Colors.yellow.shade800,
-    // ),
+    SideMenuItem(
+      destination: MyPostsRoute(),
+      iconData: UniconsLine.newspaper,
+      label: "posts_my".tr(),
+      hoverColor: Colors.green,
+    ),
+    SideMenuItem(
+      destination: MyProjectsRoute(),
+      iconData: UniconsLine.apps,
+      label: "projects_my".tr(),
+      hoverColor: Colors.yellow.shade800,
+    ),
     SideMenuItem(
       destination: DashboardSettingsDeepRoute(
         children: [DashboardSettingsRoute()],
