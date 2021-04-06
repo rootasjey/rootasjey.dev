@@ -125,6 +125,7 @@ class _ProjectPageState extends State<ProjectPage> {
     if (isLoading) {
       return SliverLoadingView(
         title: "loading_project".tr(),
+        padding: const EdgeInsets.only(top: 200.0),
       );
     }
 
