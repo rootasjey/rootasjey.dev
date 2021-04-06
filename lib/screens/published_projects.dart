@@ -51,9 +51,15 @@ class _PublishedProjectsState extends State<PublishedProjects> {
 
           return ProjectCard(
             onTap: () {
-              context.router.push(ProjectsDeepRoute(
-                children: [ProjectPageRoute(projectId: project.id)],
-              ));
+              context.router.push(
+                DeepEditPage(
+                  children: [
+                    EditProjectRoute(
+                      projectId: project.id,
+                    )
+                  ],
+                ),
+              );
             },
             popupMenuButton: PopupMenuButton<String>(
               onSelected: (value) {
@@ -230,8 +236,12 @@ class _PublishedProjectsState extends State<PublishedProjects> {
 
   void goToEditPage(Project project) async {
     await context.router.push(
-      DashboardPageRoute(
-        children: [EditProjectRoute(projectId: project.id)],
+      DeepEditPage(
+        children: [
+          EditProjectRoute(
+            projectId: project.id,
+          )
+        ],
       ),
     );
 

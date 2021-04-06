@@ -56,7 +56,15 @@ class _DraftProjectsState extends State<DraftProjects> {
           return ProjectCard(
             onTap: () async {
               await context.router.push(
-                EditProjectRoute(projectId: project.id),
+                DashboardPageRoute(children: [
+                  DeepEditPage(
+                    children: [
+                      EditProjectRoute(
+                        projectId: project.id,
+                      )
+                    ],
+                  )
+                ]),
               );
 
               fetch();
