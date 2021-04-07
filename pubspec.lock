@@ -489,6 +489,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.21.0-nullsafety.0"
+  flutter_syntax_view:
+    dependency: "direct main"
+    description:
+      name: flutter_syntax_view
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "4.0.0"
   flutter_test:
     dependency: "direct dev"
     description: flutter
