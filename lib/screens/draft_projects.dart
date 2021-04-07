@@ -54,21 +54,7 @@ class _DraftProjectsState extends State<DraftProjects> {
           final project = projectsList.elementAt(index);
 
           return ProjectCard(
-            onTap: () async {
-              await context.router.push(
-                DashboardPageRoute(children: [
-                  DeepEditPage(
-                    children: [
-                      EditProjectRoute(
-                        projectId: project.id,
-                      )
-                    ],
-                  )
-                ]),
-              );
-
-              fetch();
-            },
+            onTap: () => goToEditPage(project),
             popupMenuButton: PopupMenuButton<String>(
               onSelected: (value) {
                 switch (value) {
@@ -192,5 +178,19 @@ class _DraftProjectsState extends State<DraftProjects> {
         projectsList.insert(index, removedProject);
       });
     }
+  }
+
+  Future goToEditPage(Project project) async {
+    await context.router.push(
+      DeepEditPage(
+        children: [
+          EditProjectRoute(
+            projectId: project.id,
+          )
+        ],
+      ),
+    );
+
+    fetch();
   }
 }
