@@ -1,4 +1,5 @@
 class Urls {
+  String artbooking;
   String behance;
   String bitbucket;
   String dribbble;
@@ -7,12 +8,17 @@ class Urls {
   String gitlab;
   String image;
   String instagram;
+  String linkedin;
+  String other;
   String twitter;
   String website;
   String wikipedia;
   String youtube;
 
+  Map<String, String> map = Map<String, String>();
+
   Urls({
+    this.artbooking = '',
     this.behance = '',
     this.bitbucket = '',
     this.dribbble = '',
@@ -21,19 +27,25 @@ class Urls {
     this.gitlab = '',
     this.image = '',
     this.instagram = '',
+    this.linkedin = '',
+    this.other = '',
     this.twitter = '',
     this.website = '',
     this.wikipedia = '',
     this.youtube = '',
+    this.map,
   });
 
   bool areLinksEmpty() {
-    return behance.isEmpty &&
+    return artbooking.isEmpty &&
+        behance.isEmpty &&
         dribbble.isEmpty &&
         facebook.isEmpty &&
         github.isEmpty &&
         gitlab.isEmpty &&
         instagram.isEmpty &&
+        linkedin.isEmpty &&
+        other.isEmpty &&
         twitter.isEmpty &&
         website.isEmpty &&
         wikipedia.isEmpty &&
@@ -42,6 +54,7 @@ class Urls {
 
   factory Urls.empty() {
     return Urls(
+      artbooking: '',
       behance: '',
       bitbucket: '',
       dribbble: '',
@@ -50,6 +63,8 @@ class Urls {
       gitlab: '',
       image: '',
       instagram: '',
+      linkedin: '',
+      other: '',
       twitter: '',
       website: '',
       wikipedia: '',
@@ -62,7 +77,15 @@ class Urls {
       return Urls.empty();
     }
 
+    final dataMap = Map<String, String>();
+    data.forEach((key, value) {
+      dataMap[key] = value;
+    });
+
     return Urls(
+      artbooking: data['artbooking'] ?? '',
+      linkedin: data['linkedin'] ?? '',
+      other: data['other'] ?? '',
       behance: data['behance'] ?? '',
       dribbble: data['dribbble'] ?? '',
       facebook: data['facebook'] ?? '',
@@ -70,6 +93,7 @@ class Urls {
       gitlab: data['gitlab'] ?? '',
       image: data['image'] ?? '',
       instagram: data['instagram'] ?? '',
+      map: dataMap,
       twitter: data['twitter'] ?? '',
       website: data['website'] ?? '',
       wikipedia: data['wikipedia'] ?? '',

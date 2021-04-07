@@ -11,6 +11,7 @@ import 'package:rootasjey/components/pub_popup_menu_button.dart';
 import 'package:rootasjey/components/sliver_loading_view.dart';
 import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/state/colors.dart';
+import 'package:rootasjey/types/project.dart';
 import 'package:rootasjey/utils/app_logger.dart';
 import 'package:rootasjey/utils/cloud.dart';
 import 'package:rootasjey/utils/fonts.dart';
@@ -880,33 +881,29 @@ class _EditProjectState extends State<EditProject> {
 
       jwt = await FirebaseAuth.instance.currentUser.getIdToken();
 
-      final data = projectSnapshot.data();
-      final dataPlatforms = data['platforms'] as Map<String, dynamic>;
-      final dataTags = data['tags'] as Map<String, dynamic>;
-      final dataUrls = data['urls'] as Map<String, dynamic>;
-      final dataLanguages =
-          data['programmingLanguages'] as Map<String, dynamic>;
+      final Map<String, dynamic> data = projectSnapshot.data();
+      final Project project = Project.fromJSON(data);
 
       setState(() {
-        publicationStatus = data['published'] ? PUBLISHED : DRAFT;
+        publicationStatus = project.published ? PUBLISHED : DRAFT;
 
-        title = data['title'];
-        summary = data['summary'];
+        title = project.title;
+        summary = project.summary;
 
-        dataPlatforms?.forEach((key, value) {
-          platforms[key] = value;
-        });
+        for (String platform in project.platforms) {
+          platforms[platform] = true;
+        }
 
-        dataTags?.forEach((key, value) {
-          tags[key] = value;
-        });
+        for (String tag in project.tags) {
+          platforms[tag] = true;
+        }
 
-        dataUrls?.forEach((key, value) {
+        for (String pLang in project.programmingLanguages) {
+          platforms[pLang] = true;
+        }
+
+        project.urls.map.forEach((key, value) {
           urls[key] = value;
-        });
-
-        dataLanguages?.forEach((key, value) {
-          programmingLanguages[key] = value;
         });
 
         titleController.text = title;
@@ -1060,33 +1057,6 @@ class _EditProjectState extends State<EditProject> {
                   ),
                 ],
               ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void showAppBarDialog() {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          contentPadding: const EdgeInsets.only(
-            top: 40.0,
-            left: 30.0,
-            right: 30.0,
-          ),
-          content: SizedBox(
-            width: 400.0,
-            child: Text(
-              title,
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: context.router.pop,
-              child: Text("close".tr().toUpperCase()),
             ),
           ],
         );
