@@ -32,7 +32,6 @@ class _PostPageState extends State<PostPage> {
   bool isLoading = false;
   bool isTOCVisible = false;
   bool isFabVisible = false;
-  bool isNarrow = false;
 
   double pageHeight = 100.0;
 
@@ -125,28 +124,9 @@ class _PostPageState extends State<PostPage> {
                       ),
                     ],
                   ),
-
                   body(),
-
-                  // Watch page's size.
-                  // Can host share button.
-                  SliverLayoutBuilder(
-                    builder: (_, constraints) {
-                      final isNowNarrow = constraints.crossAxisExtent < 700.0;
-
-                      if (timer != null && timer.isActive) {
-                        timer.cancel();
-                      }
-
-                      if (isNarrow != isNowNarrow) {
-                        timer = Timer(
-                          1.seconds,
-                          () => setState(() => isNarrow = isNowNarrow),
-                        );
-                      }
-
-                      return SliverPadding(padding: EdgeInsets.zero);
-                    },
+                  SliverPadding(
+                    padding: const EdgeInsets.only(bottom: 400.0),
                   ),
                 ],
               ),
@@ -164,6 +144,8 @@ class _PostPageState extends State<PostPage> {
       );
     }
 
+    final bool isNarrow = MediaQuery.of(context).size.width < 500.0;
+
     return SliverList(
         delegate: SliverChildListDelegate([
       Row(
@@ -172,10 +154,8 @@ class _PostPageState extends State<PostPage> {
           Expanded(
             flex: 3,
             child: Padding(
-              padding: const EdgeInsets.only(
-                bottom: 400.0,
-                left: 20.0,
-                right: 20.0,
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
               ),
               child: MeasureSize(
                 onChange: (size) {

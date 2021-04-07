@@ -27,7 +27,6 @@ class ProjectPage extends StatefulWidget {
 class _ProjectPageState extends State<ProjectPage> {
   bool isFabVisible = false;
   bool isLoading = false;
-  bool isNarrow = false;
 
   final scrollController = ScrollController();
   final textWidth = 800.0;
@@ -97,23 +96,8 @@ class _ProjectPageState extends State<ProjectPage> {
                     ),
             ),
             body(),
-            SliverLayoutBuilder(
-              builder: (_, constraints) {
-                final isNowNarrow = constraints.crossAxisExtent < 700.0;
-
-                if (timer != null && timer.isActive) {
-                  timer.cancel();
-                }
-
-                if (isNarrow != isNowNarrow) {
-                  timer = Timer(
-                    1.seconds,
-                    () => setState(() => isNarrow = isNowNarrow),
-                  );
-                }
-
-                return SliverPadding(padding: EdgeInsets.zero);
-              },
+            SliverPadding(
+              padding: const EdgeInsets.only(bottom: 400.0),
             ),
           ],
         ),
@@ -129,6 +113,8 @@ class _ProjectPageState extends State<ProjectPage> {
       );
     }
 
+    final bool isNarrow = MediaQuery.of(context).size.width < 500.0;
+
     return SliverList(
       delegate: SliverChildListDelegate([
         Row(
@@ -136,9 +122,14 @@ class _ProjectPageState extends State<ProjectPage> {
             if (!isNarrow) Spacer(),
             Expanded(
               flex: 3,
-              child: MarkdownViewer(
-                data: projectData,
-                width: textWidth,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16.0,
+                ),
+                child: MarkdownViewer(
+                  data: projectData,
+                  width: textWidth,
+                ),
               ),
             ),
             if (!isNarrow) Spacer(),
