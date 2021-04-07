@@ -8,6 +8,7 @@ import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/state/user.dart';
 import 'package:rootasjey/types/post.dart';
 import 'package:rootasjey/utils/app_logger.dart';
+import 'package:unicons/unicons.dart';
 
 class PublishedPosts extends StatefulWidget {
   @override
@@ -48,16 +49,16 @@ class _PublishedPostsState extends State<PublishedPosts> {
           final post = postsList.elementAt(index);
 
           return PostCard(
-            onTap: () async {
-              await context.router.push(EditPostRoute(postId: post.id));
-              fetch();
-            },
+            onTap: () => goToEditPostPage(post),
             popupMenuButton: PopupMenuButton<String>(
-              icon: Icon(Icons.more_vert),
+              icon: Icon(UniconsLine.ellipsis_v),
               onSelected: (value) {
                 switch (value) {
                   case 'delete':
                     showDeleteDialog(index);
+                    break;
+                  case 'edit':
+                    goToEditPostPage(post);
                     break;
                   case 'unpublish':
                     unpublish(index);
@@ -67,16 +68,23 @@ class _PublishedPostsState extends State<PublishedPosts> {
               },
               itemBuilder: (context) => [
                 PopupMenuItem(
+                  value: 'edit',
+                  child: ListTile(
+                    leading: Icon(UniconsLine.edit),
+                    title: Text("edit".tr()),
+                  ),
+                ),
+                PopupMenuItem(
                   value: 'unpublish',
                   child: ListTile(
-                    leading: Icon(Icons.public_off_sharp),
-                    title: Text("unpublished".tr()),
+                    leading: Icon(UniconsLine.cloud_times),
+                    title: Text("unpublish".tr()),
                   ),
                 ),
                 PopupMenuItem(
                   value: 'delete',
                   child: ListTile(
-                    leading: Icon(Icons.delete),
+                    leading: Icon(UniconsLine.trash),
                     title: Text("delete".tr()),
                   ),
                 ),
@@ -215,5 +223,17 @@ class _PublishedPostsState extends State<PublishedPosts> {
         postsList.insert(index, removedPost);
       });
     }
+  }
+
+  void goToEditPostPage(Post post) async {
+    await context.router.push(
+      DeepEditPage(
+        children: [
+          EditPostRoute(postId: post.id),
+        ],
+      ),
+    );
+
+    fetch();
   }
 }

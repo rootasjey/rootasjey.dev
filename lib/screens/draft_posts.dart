@@ -8,6 +8,7 @@ import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/state/user.dart';
 import 'package:rootasjey/types/post.dart';
 import 'package:rootasjey/utils/app_logger.dart';
+import 'package:unicons/unicons.dart';
 
 class DraftPosts extends StatefulWidget {
   @override
@@ -48,17 +49,14 @@ class _DraftPostsState extends State<DraftPosts> {
           final post = postsList.elementAt(index);
 
           return PostCard(
-            onTap: () async {
-              await context.router.push(
-                EditPostRoute(postId: post.id),
-              );
-
-              fetch();
-            },
+            onTap: () => goToEditPostPage(post),
             popupMenuButton: PopupMenuButton<String>(
               icon: Icon(Icons.more_vert),
               onSelected: (value) {
                 switch (value) {
+                  case 'edit':
+                    goToEditPostPage(post);
+                    break;
                   case 'delete':
                     delete(index);
                     break;
@@ -70,9 +68,16 @@ class _DraftPostsState extends State<DraftPosts> {
               },
               itemBuilder: (context) => [
                 PopupMenuItem(
+                  value: 'edit',
+                  child: ListTile(
+                    leading: Icon(UniconsLine.edit),
+                    title: Text("edit".tr()),
+                  ),
+                ),
+                PopupMenuItem(
                   value: 'publish',
                   child: ListTile(
-                    leading: Icon(Icons.publish_outlined),
+                    leading: Icon(UniconsLine.cloud_upload),
                     title: Text("publish".tr()),
                   ),
                 ),
@@ -157,6 +162,18 @@ class _DraftPostsState extends State<DraftPosts> {
         postsList.insert(index, removedPost);
       });
     }
+  }
+
+  void goToEditPostPage(Post post) async {
+    await context.router.push(
+      DeepEditPage(
+        children: [
+          EditPostRoute(postId: post.id),
+        ],
+      ),
+    );
+
+    fetch();
   }
 
   void publish(int index) async {
