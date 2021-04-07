@@ -1,10 +1,13 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html/style.dart';
+import 'package:flutter_syntax_view/flutter_syntax_view.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class MarkdownViewer extends StatelessWidget {
+class MarkdownViewer extends StatefulWidget {
   final String data;
   final double width;
 
@@ -15,15 +18,53 @@ class MarkdownViewer extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  _MarkdownViewerState createState() => _MarkdownViewerState();
+}
+
+class _MarkdownViewerState extends State<MarkdownViewer> {
+  // CodeController _codeController;
+
+  @override
   Widget build(BuildContext context) {
     return Html(
-      key: key,
-      data: data,
+      key: widget.key,
+      data: widget.data,
       customRender: {
         'a': (context, child, attributes, element) {
           return textLink(
             href: attributes['href'],
             child: child,
+          );
+        },
+        'code': (context, child, attributes, element) {
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextButton(
+                onPressed: () {
+                  Clipboard.setData(ClipboardData(text: element.innerHtml));
+                },
+                child: Text("copy".tr()),
+              ),
+              Material(
+                elevation: 4.0,
+                borderRadius: BorderRadius.circular(4.0),
+                clipBehavior: Clip.hardEdge,
+                child: Container(
+                  padding: const EdgeInsets.all(8.0),
+                  color: Colors.black38,
+                  child: SyntaxView(
+                    code: element.innerHtml,
+                    syntax: getSyntax(attributes['class']),
+                    syntaxTheme: SyntaxTheme.vscodeDark(),
+                    fontSize: 12.0,
+                    withZoom: false,
+                    withLinesCount: true,
+                  ),
+                ),
+              ),
+            ],
           );
         },
         'img': (context, child, attributes, element) {
@@ -74,7 +115,7 @@ class MarkdownViewer extends StatelessWidget {
       },
       style: {
         'p': Style(
-          width: width,
+          width: widget.width,
           fontSize: FontSize(24.0),
           fontWeight: FontWeight.w200,
           lineHeight: LineHeight.number(1.5),
@@ -96,7 +137,7 @@ class MarkdownViewer extends StatelessWidget {
           ),
         ),
         'h1': Style(
-          width: width,
+          width: widget.width,
           fontSize: FontSize(60.0),
           fontWeight: FontWeight.w600,
           margin: EdgeInsets.only(
@@ -105,7 +146,7 @@ class MarkdownViewer extends StatelessWidget {
           ),
         ),
         'h2': Style(
-          width: width,
+          width: widget.width,
           fontSize: FontSize(40.0),
           fontWeight: FontWeight.w600,
           margin: EdgeInsets.only(
@@ -121,6 +162,15 @@ class MarkdownViewer extends StatelessWidget {
         ),
       },
     );
+  }
+
+  Syntax getSyntax(String langClass) {
+    switch (langClass) {
+      case "language-csharp":
+        return Syntax.CPP;
+      default:
+        return Syntax.JAVASCRIPT;
+    }
   }
 
   Widget imageViewer({
