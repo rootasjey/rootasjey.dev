@@ -76,6 +76,7 @@
   "copy_link": "Copier le lien",
   "copy_link_success": "Le lien a été copié!",
   "cost_args": "Coût: {} €",
+  "copy_success": "Le text a été copié !",
   "cost_per_month_slash": "€ / mois",
   "cost_one_year_description": "Vous payerez cette somme chaque mois pendant 1 an.",
   "country": "Pays",

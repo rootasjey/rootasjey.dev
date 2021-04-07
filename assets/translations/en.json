@@ -75,6 +75,7 @@
   "copy": "Copy",
   "copy_link": "Copy link",
   "copy_link_success": "Link successfully copied!",
+  "copy_success": "Text successfully copied!",
   "cost_args": "Cost: {} €",
   "cost_per_month_slash": "€ / month",
   "cost_one_year_description": "You will pay the recurring fee during 1 year.",
