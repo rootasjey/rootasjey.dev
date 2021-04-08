@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:auto_route/annotations.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +13,8 @@ import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/types/project.dart';
 import 'package:rootasjey/utils/app_logger.dart';
 import 'package:rootasjey/utils/cloud.dart';
+import 'package:rootasjey/utils/keybindings.dart';
+import 'package:rootasjey/utils/mesure_size.dart';
 import 'package:rootasjey/utils/snack.dart';
 import 'package:supercharged/supercharged.dart';
 
@@ -28,8 +31,14 @@ class _ProjectPageState extends State<ProjectPage> {
   bool isFabVisible = false;
   bool isLoading = false;
 
+  double pageHeight = 100.0;
+
   final scrollController = ScrollController();
-  final textWidth = 800.0;
+  final double textWidth = 800.0;
+
+  final focusNode = FocusNode();
+
+  KeyBindings _keyBindings = KeyBindings();
 
   Project project;
   String projectData = '';
@@ -40,6 +49,21 @@ class _ProjectPageState extends State<ProjectPage> {
     super.initState();
     fetchMeta();
     fetchContent();
+
+    // Delay initialization.
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      _keyBindings.init(
+        scrollController: scrollController,
+        pageHeight: 100.0,
+        router: context.router,
+      );
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    focusNode.dispose();
   }
 
   @override
@@ -57,49 +81,60 @@ class _ProjectPageState extends State<ProjectPage> {
               child: Icon(Icons.arrow_upward),
             )
           : Container(),
-      body: NotificationListener<ScrollNotification>(
-        onNotification: (ScrollNotification scrollNotif) {
-          // FAB visibility
-          if (scrollNotif.metrics.pixels < 50 && isFabVisible) {
-            setState(() => isFabVisible = false);
-          } else if (scrollNotif.metrics.pixels > 50 && !isFabVisible) {
-            setState(() => isFabVisible = true);
-          }
+      body: RawKeyboardListener(
+        autofocus: true,
+        focusNode: focusNode,
+        onKey: _keyBindings.onKey,
+        child: NotificationListener<ScrollNotification>(
+          onNotification: (ScrollNotification scrollNotif) {
+            // FAB visibility
+            if (scrollNotif.metrics.pixels < 50 && isFabVisible) {
+              setState(() => isFabVisible = false);
+            } else if (scrollNotif.metrics.pixels > 50 && !isFabVisible) {
+              setState(() => isFabVisible = true);
+            }
 
-          return false;
-        },
-        child: CustomScrollView(
-          controller: scrollController,
-          slivers: [
-            HomeAppBar(
-              automaticallyImplyLeading: true,
-              title: project == null
-                  ? Opacity(
-                      opacity: 0.6,
-                      child: Text(
-                        "project".tr(),
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          color: stateColors.foreground,
-                        ),
-                      ),
-                    )
-                  : Opacity(
-                      opacity: 0.6,
-                      child: Text(
-                        project.title,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          color: stateColors.foreground,
-                        ),
-                      ),
-                    ),
+            return false;
+          },
+          child: Scrollbar(
+            controller: scrollController,
+            child: Focus(
+              descendantsAreFocusable: false,
+              child: CustomScrollView(
+                controller: scrollController,
+                slivers: [
+                  HomeAppBar(
+                    automaticallyImplyLeading: true,
+                    title: project == null
+                        ? Opacity(
+                            opacity: 0.6,
+                            child: Text(
+                              "project".tr(),
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color: stateColors.foreground,
+                              ),
+                            ),
+                          )
+                        : Opacity(
+                            opacity: 0.6,
+                            child: Text(
+                              project.title,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color: stateColors.foreground,
+                              ),
+                            ),
+                          ),
+                  ),
+                  body(),
+                  SliverPadding(
+                    padding: const EdgeInsets.only(bottom: 400.0),
+                  ),
+                ],
+              ),
             ),
-            body(),
-            SliverPadding(
-              padding: const EdgeInsets.only(bottom: 400.0),
-            ),
-          ],
+          ),
         ),
       ),
     );
@@ -126,9 +161,14 @@ class _ProjectPageState extends State<ProjectPage> {
                 padding: const EdgeInsets.symmetric(
                   horizontal: 16.0,
                 ),
-                child: MarkdownViewer(
-                  data: projectData,
-                  width: textWidth,
+                child: MeasureSize(
+                  onChange: (size) {
+                    pageHeight = size.height;
+                  },
+                  child: MarkdownViewer(
+                    data: projectData,
+                    width: textWidth,
+                  ),
                 ),
               ),
             ),
