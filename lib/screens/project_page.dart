@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:auto_route/annotations.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -28,21 +26,18 @@ class ProjectPage extends StatefulWidget {
 }
 
 class _ProjectPageState extends State<ProjectPage> {
-  bool isFabVisible = false;
-  bool isLoading = false;
+  bool _isFabVisible = false;
+  bool _isLoading = false;
 
-  double pageHeight = 100.0;
+  final _scrollController = ScrollController();
+  final double _textWidth = 800.0;
 
-  final scrollController = ScrollController();
-  final double textWidth = 800.0;
-
-  final focusNode = FocusNode();
+  final _focusNode = FocusNode();
 
   KeyBindings _keyBindings = KeyBindings();
 
-  Project project;
-  String projectData = '';
-  Timer timer;
+  Project _project;
+  String _projectData = '';
 
   @override
   initState() {
@@ -53,7 +48,7 @@ class _ProjectPageState extends State<ProjectPage> {
     // Delay initialization.
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       _keyBindings.init(
-        scrollController: scrollController,
+        scrollController: _scrollController,
         pageHeight: 100.0,
         router: context.router,
       );
@@ -63,73 +58,32 @@ class _ProjectPageState extends State<ProjectPage> {
   @override
   void dispose() {
     super.dispose();
-    focusNode.dispose();
+    _focusNode.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: isFabVisible
-          ? FloatingActionButton(
-              backgroundColor: stateColors.primary,
-              foregroundColor: Colors.white,
-              onPressed: () => scrollController.animateTo(
-                0,
-                duration: 250.milliseconds,
-                curve: Curves.bounceOut,
-              ),
-              child: Icon(Icons.arrow_upward),
-            )
-          : Container(),
+      floatingActionButton: fab(),
       body: RawKeyboardListener(
         autofocus: true,
-        focusNode: focusNode,
+        focusNode: _focusNode,
         onKey: _keyBindings.onKey,
         child: NotificationListener<ScrollNotification>(
-          onNotification: (ScrollNotification scrollNotif) {
-            // FAB visibility
-            if (scrollNotif.metrics.pixels < 50 && isFabVisible) {
-              setState(() => isFabVisible = false);
-            } else if (scrollNotif.metrics.pixels > 50 && !isFabVisible) {
-              setState(() => isFabVisible = true);
-            }
-
-            return false;
-          },
+          onNotification: onNotification,
           child: Scrollbar(
-            controller: scrollController,
+            controller: _scrollController,
             child: Focus(
               descendantsAreFocusable: false,
               child: CustomScrollView(
-                controller: scrollController,
+                controller: _scrollController,
                 slivers: [
-                  HomeAppBar(
-                    automaticallyImplyLeading: true,
-                    title: project == null
-                        ? Opacity(
-                            opacity: 0.6,
-                            child: Text(
-                              "project".tr(),
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                color: stateColors.foreground,
-                              ),
-                            ),
-                          )
-                        : Opacity(
-                            opacity: 0.6,
-                            child: Text(
-                              project.title,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                color: stateColors.foreground,
-                              ),
-                            ),
-                          ),
-                  ),
+                  appBar(),
                   body(),
                   SliverPadding(
-                    padding: const EdgeInsets.only(bottom: 400.0),
+                    padding: const EdgeInsets.only(
+                      bottom: 400.0,
+                    ),
                   ),
                 ],
               ),
@@ -140,8 +94,24 @@ class _ProjectPageState extends State<ProjectPage> {
     );
   }
 
+  Widget appBar() {
+    return HomeAppBar(
+      automaticallyImplyLeading: true,
+      title: Opacity(
+        opacity: 0.6,
+        child: Text(
+          _project != null ? _project.title : "project".tr(),
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+            color: stateColors.foreground,
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget body() {
-    if (isLoading) {
+    if (_isLoading) {
       return SliverLoadingView(
         title: "loading_project".tr(),
         padding: const EdgeInsets.only(top: 200.0),
@@ -163,11 +133,11 @@ class _ProjectPageState extends State<ProjectPage> {
                 ),
                 child: MeasureSize(
                   onChange: (size) {
-                    pageHeight = size.height;
+                    _keyBindings.updatePageHeight(size.height);
                   },
                   child: MarkdownViewer(
-                    data: projectData,
-                    width: textWidth,
+                    data: _projectData,
+                    width: _textWidth,
                   ),
                 ),
               ),
@@ -176,6 +146,23 @@ class _ProjectPageState extends State<ProjectPage> {
           ],
         ),
       ]),
+    );
+  }
+
+  Widget fab() {
+    if (!_isFabVisible) {
+      return Container();
+    }
+
+    return FloatingActionButton(
+      backgroundColor: stateColors.primary,
+      foregroundColor: Colors.white,
+      onPressed: () => _scrollController.animateTo(
+        0,
+        duration: 250.milliseconds,
+        curve: Curves.bounceOut,
+      ),
+      child: Icon(Icons.arrow_upward),
     );
   }
 
@@ -194,7 +181,7 @@ class _ProjectPageState extends State<ProjectPage> {
       data['id'] = doc.id;
 
       setState(() {
-        project = Project.fromJSON(data);
+        _project = Project.fromJSON(data);
       });
     } catch (error) {
       appLogger.e(error);
@@ -202,7 +189,7 @@ class _ProjectPageState extends State<ProjectPage> {
   }
 
   void fetchContent() async {
-    setState(() => isLoading = true);
+    setState(() => _isLoading = true);
 
     try {
       final response = await Cloud.fun('projects-fetch')
@@ -210,11 +197,11 @@ class _ProjectPageState extends State<ProjectPage> {
 
       final markdownData = response.data['project'];
 
-      projectData = markdown.markdownToHtml(markdownData);
+      _projectData = markdown.markdownToHtml(markdownData);
 
-      setState(() => isLoading = false);
+      setState(() => _isLoading = false);
     } catch (error) {
-      setState(() => isLoading = false);
+      setState(() => _isLoading = false);
       appLogger.e(error);
 
       Snack.e(
@@ -222,5 +209,16 @@ class _ProjectPageState extends State<ProjectPage> {
         message: "project_fetch_error".tr(),
       );
     }
+  }
+
+  bool onNotification(ScrollNotification notification) {
+    // FAB visibility
+    if (notification.metrics.pixels < 50 && _isFabVisible) {
+      setState(() => _isFabVisible = false);
+    } else if (notification.metrics.pixels > 50 && !_isFabVisible) {
+      setState(() => _isFabVisible = true);
+    }
+
+    return false;
   }
 }

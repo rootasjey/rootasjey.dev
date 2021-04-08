@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:auto_route/annotations.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -29,23 +27,20 @@ class PostPage extends StatefulWidget {
 }
 
 class _PostPageState extends State<PostPage> {
-  bool isLoading = false;
-  bool isTOCVisible = false;
-  bool isFabVisible = false;
+  bool _isLoading = false;
+  bool _isTOCVisible = false;
+  bool _isFabVisible = false;
 
-  final double incrOffset = 80.0;
-  final double textWidth = 750.0;
-  final scrollController = ScrollController();
+  final double _textWidth = 750.0;
+  final _scrollController = ScrollController();
 
-  FocusNode focusNode = FocusNode();
+  FocusNode _focusNode = FocusNode();
 
   KeyBindings _keyBindings = KeyBindings();
 
-  Post post;
+  Post _post;
 
-  String postData = '';
-
-  Timer timer;
+  String _postData = '';
 
   @override
   initState() {
@@ -57,7 +52,7 @@ class _PostPageState extends State<PostPage> {
     // Delay initialization.
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       _keyBindings.init(
-        scrollController: scrollController,
+        scrollController: _scrollController,
         pageHeight: 100.0,
         router: context.router,
       );
@@ -65,77 +60,35 @@ class _PostPageState extends State<PostPage> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+    _focusNode.dispose();
+    _scrollController.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: isFabVisible
-          ? FloatingActionButton(
-              backgroundColor: stateColors.primary,
-              foregroundColor: Colors.white,
-              onPressed: () => scrollController.animateTo(
-                0,
-                duration: 250.milliseconds,
-                curve: Curves.bounceOut,
-              ),
-              child: Icon(Icons.arrow_upward),
-            )
-          : Container(),
+      floatingActionButton: fab(),
       body: RawKeyboardListener(
         autofocus: true,
-        focusNode: focusNode,
+        focusNode: _focusNode,
         onKey: _keyBindings.onKey,
         child: NotificationListener<ScrollNotification>(
-          onNotification: (ScrollNotification scrollNotif) {
-            // FAB visibility
-            if (scrollNotif.metrics.pixels < 50 && isFabVisible) {
-              setState(() => isFabVisible = false);
-            } else if (scrollNotif.metrics.pixels > 50 && !isFabVisible) {
-              setState(() => isFabVisible = true);
-            }
-
-            return false;
-          },
+          onNotification: onNotification,
           child: Scrollbar(
-            controller: scrollController,
+            controller: _scrollController,
             child: Focus(
               descendantsAreFocusable: false,
               child: CustomScrollView(
-                controller: scrollController,
+                controller: _scrollController,
                 slivers: [
-                  HomeAppBar(
-                    automaticallyImplyLeading: true,
-                    title: post == null
-                        ? Opacity(
-                            opacity: 0.6,
-                            child: Text(
-                              "post".tr(),
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                color: stateColors.foreground,
-                              ),
-                            ),
-                          )
-                        : Opacity(
-                            opacity: 0.6,
-                            child: Text(
-                              post.title,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                color: stateColors.foreground,
-                              ),
-                            ),
-                          ),
-                    trailing: [
-                      IconButton(
-                        color: stateColors.foreground,
-                        icon: Icon(UniconsLine.bars),
-                        onPressed: () =>
-                            setState(() => isTOCVisible = !isTOCVisible),
-                      ),
-                    ],
-                  ),
+                  appBar(),
                   body(),
                   SliverPadding(
-                    padding: const EdgeInsets.only(bottom: 400.0),
+                    padding: const EdgeInsets.only(
+                      bottom: 400.0,
+                    ),
                   ),
                 ],
               ),
@@ -146,8 +99,33 @@ class _PostPageState extends State<PostPage> {
     );
   }
 
+  Widget appBar() {
+    return HomeAppBar(
+      automaticallyImplyLeading: true,
+      title: Opacity(
+        opacity: 0.6,
+        child: Text(
+          _post != null ? _post.title : "post".tr(),
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+            color: stateColors.foreground,
+          ),
+        ),
+      ),
+      trailing: [
+        IconButton(
+          color: stateColors.foreground,
+          icon: Icon(UniconsLine.bars),
+          onPressed: () {
+            setState(() => _isTOCVisible = !_isTOCVisible);
+          },
+        ),
+      ],
+    );
+  }
+
   Widget body() {
-    if (isLoading) {
+    if (_isLoading) {
       return SliverLoadingView(
         title: "loading_post".tr(),
       );
@@ -171,8 +149,8 @@ class _PostPageState extends State<PostPage> {
                     _keyBindings.updatePageHeight(size.height);
                   },
                   child: MarkdownViewer(
-                    data: postData,
-                    width: textWidth,
+                    data: _postData,
+                    width: _textWidth,
                   ),
                 ),
               ),
@@ -181,6 +159,23 @@ class _PostPageState extends State<PostPage> {
           ],
         ),
       ]),
+    );
+  }
+
+  Widget fab() {
+    if (!_isFabVisible) {
+      return Container();
+    }
+
+    return FloatingActionButton(
+      backgroundColor: stateColors.primary,
+      foregroundColor: Colors.white,
+      onPressed: () => _scrollController.animateTo(
+        0,
+        duration: 250.milliseconds,
+        curve: Curves.bounceOut,
+      ),
+      child: Icon(Icons.arrow_upward),
     );
   }
 
@@ -199,7 +194,7 @@ class _PostPageState extends State<PostPage> {
       data['id'] = doc.id;
 
       setState(() {
-        post = Post.fromJSON(data);
+        _post = Post.fromJSON(data);
       });
     } catch (error) {
       debugPrint(error.toString());
@@ -207,18 +202,18 @@ class _PostPageState extends State<PostPage> {
   }
 
   void fetchContent() async {
-    setState(() => isLoading = true);
+    setState(() => _isLoading = true);
 
     try {
       final response =
           await Cloud.fun('posts-fetch').call({'postId': widget.postId});
       final markdownData = response.data['post'];
 
-      postData = markdown.markdownToHtml(markdownData);
+      _postData = markdown.markdownToHtml(markdownData);
 
-      setState(() => isLoading = false);
+      setState(() => _isLoading = false);
     } catch (error) {
-      setState(() => isLoading = false);
+      setState(() => _isLoading = false);
       debugPrint(error.toString());
 
       Snack.e(
@@ -226,5 +221,16 @@ class _PostPageState extends State<PostPage> {
         message: "post_fetch_error".tr(),
       );
     }
+  }
+
+  bool onNotification(ScrollNotification notification) {
+    // FAB visibility
+    if (notification.metrics.pixels < 50 && _isFabVisible) {
+      setState(() => _isFabVisible = false);
+    } else if (notification.metrics.pixels > 50 && !_isFabVisible) {
+      setState(() => _isFabVisible = true);
+    }
+
+    return false;
   }
 }
