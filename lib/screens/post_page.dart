@@ -5,7 +5,6 @@ import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:markdown/markdown.dart' as markdown;
 import 'package:rootasjey/components/home_app_bar.dart';
 import 'package:rootasjey/components/markdown_viewer.dart';
@@ -13,6 +12,7 @@ import 'package:rootasjey/components/sliver_loading_view.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/types/post.dart';
 import 'package:rootasjey/utils/cloud.dart';
+import 'package:rootasjey/utils/keybindings.dart';
 import 'package:rootasjey/utils/mesure_size.dart';
 import 'package:rootasjey/utils/snack.dart';
 import 'package:unicons/unicons.dart';
@@ -33,13 +33,13 @@ class _PostPageState extends State<PostPage> {
   bool isTOCVisible = false;
   bool isFabVisible = false;
 
-  double pageHeight = 100.0;
-
-  final incrOffset = 80.0;
+  final double incrOffset = 80.0;
+  final double textWidth = 750.0;
   final scrollController = ScrollController();
-  final textWidth = 750.0;
 
   FocusNode focusNode = FocusNode();
+
+  KeyBindings _keyBindings = KeyBindings();
 
   Post post;
 
@@ -53,6 +53,15 @@ class _PostPageState extends State<PostPage> {
 
     fetchMeta();
     fetchContent();
+
+    // Delay initialization.
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      _keyBindings.init(
+        scrollController: scrollController,
+        pageHeight: 100.0,
+        router: context.router,
+      );
+    });
   }
 
   @override
@@ -73,7 +82,7 @@ class _PostPageState extends State<PostPage> {
       body: RawKeyboardListener(
         autofocus: true,
         focusNode: focusNode,
-        onKey: onKey,
+        onKey: _keyBindings.onKey,
         child: NotificationListener<ScrollNotification>(
           onNotification: (ScrollNotification scrollNotif) {
             // FAB visibility
@@ -147,31 +156,32 @@ class _PostPageState extends State<PostPage> {
     final bool isNarrow = MediaQuery.of(context).size.width < 500.0;
 
     return SliverList(
-        delegate: SliverChildListDelegate([
-      Row(
-        children: [
-          if (!isNarrow) Spacer(),
-          Expanded(
-            flex: 3,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 16.0,
-              ),
-              child: MeasureSize(
-                onChange: (size) {
-                  pageHeight = size.height;
-                },
-                child: MarkdownViewer(
-                  data: postData,
-                  width: textWidth,
+      delegate: SliverChildListDelegate([
+        Row(
+          children: [
+            if (!isNarrow) Spacer(),
+            Expanded(
+              flex: 3,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16.0,
+                ),
+                child: MeasureSize(
+                  onChange: (size) {
+                    _keyBindings.updatePageHeight(size.height);
+                  },
+                  child: MarkdownViewer(
+                    data: postData,
+                    width: textWidth,
+                  ),
                 ),
               ),
             ),
-          ),
-          if (!isNarrow) Spacer(),
-        ],
-      ),
-    ]));
+            if (!isNarrow) Spacer(),
+          ],
+        ),
+      ]),
+    );
   }
 
   void fetchMeta() async {
@@ -215,144 +225,6 @@ class _PostPageState extends State<PostPage> {
         context: context,
         message: "post_fetch_error".tr(),
       );
-    }
-  }
-
-  double getOffsetDown({bool altPressed = false}) {
-    double factor = altPressed ? 3 : 1;
-
-    final offset = scrollController.offset + incrOffset < pageHeight
-        ? scrollController.offset + (incrOffset * factor)
-        : pageHeight;
-
-    return offset;
-  }
-
-  double getOffsetUp({bool altPressed = false}) {
-    double factor = altPressed ? 3 : 1;
-
-    final offset = scrollController.offset - incrOffset > 90.0
-        ? scrollController.offset - (incrOffset * factor)
-        : 0.0;
-
-    return offset;
-  }
-
-  void onKey(keyEvent) {
-    // ?NOTE: Keys combinations must stay on top
-    // or other matching key events will override it.
-
-    // home
-    if (keyEvent.isMetaPressed &&
-        keyEvent.isKeyPressed(LogicalKeyboardKey.arrowUp)) {
-      scrollController.animateTo(
-        0,
-        duration: 100.milliseconds,
-        curve: Curves.ease,
-      );
-
-      return;
-    }
-
-    // end
-    if (keyEvent.isMetaPressed &&
-        keyEvent.isKeyPressed(LogicalKeyboardKey.arrowDown)) {
-      scrollController.animateTo(
-        pageHeight,
-        duration: 100.milliseconds,
-        curve: Curves.ease,
-      );
-
-      return;
-    }
-
-    // up + alt
-    if (keyEvent.isAltPressed &&
-        keyEvent.isKeyPressed(LogicalKeyboardKey.arrowUp)) {
-      scrollController.animateTo(
-        getOffsetUp(altPressed: true),
-        duration: 100.milliseconds,
-        curve: Curves.ease,
-      );
-
-      return;
-    }
-
-    // down + alt
-    if (keyEvent.isAltPressed &&
-        keyEvent.isKeyPressed(LogicalKeyboardKey.arrowDown)) {
-      scrollController.animateTo(
-        getOffsetDown(altPressed: true),
-        duration: 100.milliseconds,
-        curve: Curves.ease,
-      );
-
-      return;
-    }
-
-    // up
-    if (keyEvent.isKeyPressed(LogicalKeyboardKey.arrowUp)) {
-      scrollController.animateTo(
-        getOffsetUp(),
-        duration: 100.milliseconds,
-        curve: Curves.ease,
-      );
-
-      return;
-    }
-
-    // down
-    if (keyEvent.isKeyPressed(LogicalKeyboardKey.arrowDown)) {
-      scrollController.animateTo(
-        getOffsetDown(),
-        duration: 100.milliseconds,
-        curve: Curves.ease,
-      );
-
-      return;
-    }
-
-    // space
-    if (keyEvent.isKeyPressed(LogicalKeyboardKey.space)) {
-      scrollController.animateTo(
-        getOffsetDown(altPressed: true),
-        duration: 100.milliseconds,
-        curve: Curves.ease,
-      );
-
-      return;
-    }
-
-    // backspace
-    if (keyEvent.isKeyPressed(LogicalKeyboardKey.backspace)) {
-      if (context.router.root.stack.length < 2) {
-        return;
-      }
-
-      context.router.pop();
-      return;
-    }
-
-    // home
-    if (keyEvent.isKeyPressed(LogicalKeyboardKey.home)) {
-      scrollController.animateTo(
-        0,
-        duration: 100.milliseconds,
-        curve: Curves.ease,
-      );
-
-      return;
-    }
-
-    // end
-    if (keyEvent.isKeyPressed(LogicalKeyboardKey.end)) {
-      scrollController.animateTo(
-        pageHeight,
-        duration: 100.milliseconds,
-        curve: Curves.ease,
-      );
-
-      return;
     }
   }
 }
