@@ -133,7 +133,7 @@ class _MarkdownViewerState extends State<MarkdownViewer> {
           clipBehavior: Clip.hardEdge,
           child: Container(
             padding: const EdgeInsets.all(8.0),
-            color: Colors.black38,
+            color: Color.fromRGBO(30, 30, 30, 1.0),
             child: SyntaxView(
               code: element.innerHtml,
               syntax: getSyntax(attributes['class']),
