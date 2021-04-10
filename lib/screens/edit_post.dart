@@ -6,8 +6,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:rootasjey/components/home_app_bar.dart';
+import 'package:rootasjey/components/lang_popup_menu_button.dart';
+import 'package:rootasjey/components/pub_popup_menu_button.dart';
+import 'package:rootasjey/components/sliver_error_view.dart';
+import 'package:rootasjey/components/sliver_loading_view.dart';
+import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/state/colors.dart';
+import 'package:rootasjey/types/post.dart';
 import 'package:rootasjey/utils/app_logger.dart';
 import 'package:rootasjey/utils/cloud.dart';
 import 'package:rootasjey/utils/snack.dart';
@@ -24,26 +29,30 @@ class EditPost extends StatefulWidget {
 }
 
 class _EditPostState extends State<EditPost> {
-  bool isLoading = false;
-  bool isSaving = false;
-  bool hasError = false;
+  bool _isLoading = false;
+  bool _isSaving = false;
+  bool _hasError = false;
 
-  DocumentSnapshot postSnapshot;
+  DocumentSnapshot _postSnapshot;
 
-  final availableLang = ['en', 'fr'];
-  final clearFocusNode = FocusNode();
-  final postFocusNode = FocusNode();
-  final contentController = TextEditingController();
-  final titleFocusNode = FocusNode();
-  final titleController = TextEditingController();
+  final _clearFocusNode = FocusNode();
+  final _postFocusNode = FocusNode();
+  final _contentController = TextEditingController();
+  final _titleFocusNode = FocusNode();
+  final _titleController = TextEditingController();
 
-  String postTitle = '';
-  String postContent = '';
-  String lang = 'en';
-  String jwt = '';
+  static const PUBLISHED = 'published';
+  static const DRAFT = 'draft';
 
-  Timer saveTitleTimer;
-  Timer saveContentTimer;
+  String _publicationStatus = DRAFT;
+
+  String _title = '';
+  String _postContent = '';
+  String _lang = 'en';
+  String _jwt = '';
+
+  Timer _saveTitleTimer;
+  Timer _saveContentTimer;
 
   @override
   void initState() {
@@ -64,82 +73,96 @@ class _EditPostState extends State<EditPost> {
   }
 
   Widget appBar() {
-    Widget title;
+    return SliverAppBar(
+      floating: true,
+      snap: true,
+      pinned: true,
+      collapsedHeight: 80.0,
+      backgroundColor: stateColors.appBackground.withOpacity(1.0),
+      expandedHeight: 120.0,
+      automaticallyImplyLeading: false,
+      centerTitle: false,
+      title: appBarTitle(),
+      bottom: appBarBottom(),
+    );
+  }
 
-    if (isSaving) {
-      title = Wrap(
-        crossAxisAlignment: WrapCrossAlignment.center,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16.0),
-            child: CircularProgressIndicator(
-              strokeWidth: 2.0,
-            ),
-          ),
-          Opacity(
-            opacity: 0.6,
-            child: Text(
-              "saving_dot".tr(),
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                color: stateColors.foreground,
+  Widget appBarBottom() {
+    return PreferredSize(
+      preferredSize: Size.fromHeight(20.0),
+      child: Padding(
+        padding: const EdgeInsets.only(left: 28.0),
+        child: Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(right: 8.0),
+              child: LangPopupMenuButton(
+                lang: _lang,
+                onLangChanged: (newLang) {
+                  setState(() {
+                    _lang = newLang;
+                  });
+                },
               ),
             ),
-          )
-        ],
-      );
-    } else {
-      title = Opacity(
-        opacity: 0.6,
-        child: TextButton(
-          onPressed: () {
-            showDialog(
-                context: context,
-                builder: (context) {
-                  return AlertDialog(
-                    contentPadding: const EdgeInsets.only(
-                      top: 40.0,
-                      left: 30.0,
-                      right: 30.0,
-                    ),
-                    content: SizedBox(
-                      width: 400.0,
-                      child: Text(
-                        postTitle,
-                      ),
-                    ),
-                    actions: [
-                      TextButton(
-                        onPressed: context.router.pop,
-                        child: Text("close".tr().toUpperCase()),
-                      ),
-                    ],
-                  );
+            viewOnlineButton(),
+            saveButton(),
+            PubPopupMenuButton(
+              status: _publicationStatus,
+              onStatusChanged: (newStatus) {
+                setState(() {
+                  _publicationStatus = newStatus;
                 });
-          },
-          child: Text(
-            (postTitle.isEmpty ? "post_edit".tr() : postTitle),
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              color: stateColors.foreground,
-            ),
-          ),
-        ),
-      );
-    }
 
-    return HomeAppBar(
-      title: title,
+                updatePubStatus(newStatus);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget appBarTitle() {
+    return Padding(
+      padding: const EdgeInsets.only(left: 0.0),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (context.router.root.stack.length > 1)
+            IconButton(
+              icon: Icon(UniconsLine.arrow_left),
+              onPressed: () {
+                context.router.pop();
+              },
+            ),
+          if (_isSaving)
+            Padding(
+              padding: const EdgeInsets.only(right: 16.0),
+              child: CircularProgressIndicator(
+                strokeWidth: 2.0,
+              ),
+            ),
+          Text(
+            _title.isEmpty ? "post_edit".tr() : _title,
+          ),
+        ],
+      ),
     );
   }
 
   Widget body() {
-    if (isLoading) {
-      return loadingView();
+    if (_isLoading) {
+      return SliverLoadingView(
+        title: "loading_project".tr(),
+        padding: const EdgeInsets.only(top: 200.0),
+      );
     }
 
-    if (hasError) {
-      return errorView();
+    if (_hasError) {
+      return SliverErrorView(
+        textTitle: "post_loading_error".tr(),
+      );
     }
 
     return SliverList(
@@ -151,7 +174,6 @@ class _EditPostState extends State<EditPost> {
           ),
           child: Column(
             children: [
-              actionsInput(),
               titleInput(),
               contentInput(),
             ],
@@ -161,90 +183,56 @@ class _EditPostState extends State<EditPost> {
     );
   }
 
-  Widget errorView() {
-    return SliverList(
-      delegate: SliverChildListDelegate.fixed([
-        Padding(
-          padding: const EdgeInsets.only(
-            top: 200.0,
-            left: 40.0,
-            right: 40.0,
-          ),
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(bottom: 40.0),
-                child: Opacity(
-                  opacity: 0.6,
-                  child: Icon(
-                    Icons.sentiment_neutral,
-                    color: Colors.pink,
-                    size: 80.0,
-                  ),
-                ),
-              ),
-              Container(
-                width: 600.0,
-                padding: const EdgeInsets.only(
-                  bottom: 40.0,
-                ),
-                child: Opacity(
-                  opacity: 0.7,
-                  child: Text(
-                    "post_loading_error".tr(),
-                    style: TextStyle(
-                      fontSize: 30.0,
-                    ),
-                  ),
-                ),
-              ),
-              OutlinedButton.icon(
-                onPressed: context.router.pop,
-                icon: Icon(UniconsLine.arrow_left, color: Colors.pink),
-                label: Opacity(
-                  opacity: 0.6,
-                  child: Text(
-                    "back".tr(),
-                    style: TextStyle(
-                      fontSize: 16.0,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
+  Widget contentInput() {
+    return Container(
+      width: 700.0,
+      padding: const EdgeInsets.only(
+        top: 40.0,
+      ),
+      child: TextField(
+        maxLines: null,
+        autofocus: false,
+        focusNode: _postFocusNode,
+        controller: _contentController,
+        keyboardType: TextInputType.multiline,
+        textCapitalization: TextCapitalization.sentences,
+        onChanged: (newValue) {
+          _postContent = newValue;
+
+          if (_saveContentTimer != null) {
+            _saveContentTimer.cancel();
+          }
+
+          _saveContentTimer = Timer(1.seconds, () => updateContent());
+        },
+        style: TextStyle(
+          fontSize: 22.0,
+          fontWeight: FontWeight.w300,
         ),
-      ]),
+        decoration: InputDecoration(
+          icon: Icon(Icons.edit),
+          hintText: "once_upon_a_time".tr(),
+          border: OutlineInputBorder(borderSide: BorderSide.none),
+        ),
+      ),
     );
   }
 
-  Widget loadingView() {
-    return SliverList(
-      delegate: SliverChildListDelegate.fixed([
-        Padding(
-          padding: const EdgeInsets.only(
-            top: 200.0,
-            left: 40.0,
-            right: 40.0,
-          ),
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(
-                  bottom: 40.0,
-                ),
-                child: CircularProgressIndicator(),
-              ),
-              Text(
-                "loading".tr(),
-                style: TextStyle(
-                  fontSize: 30.0,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ]),
+  Widget saveButton() {
+    final saveStr =
+        _publicationStatus == DRAFT ? "save_draft".tr() : "save".tr();
+
+    return Padding(
+      padding: const EdgeInsets.only(right: 20.0),
+      child: OutlinedButton.icon(
+        onPressed: () {
+          updateTitle();
+          updateContent();
+        },
+        icon: Opacity(opacity: 0.6, child: Icon(Icons.save)),
+        label: Opacity(opacity: 0.6, child: Text(saveStr)),
+        style: OutlinedButton.styleFrom(primary: stateColors.foreground),
+      ),
     );
   }
 
@@ -269,18 +257,18 @@ class _EditPostState extends State<EditPost> {
               child: TextField(
                 maxLines: 1,
                 autofocus: true,
-                focusNode: titleFocusNode,
-                controller: titleController,
+                focusNode: _titleFocusNode,
+                controller: _titleController,
                 keyboardType: TextInputType.multiline,
                 textCapitalization: TextCapitalization.sentences,
                 onChanged: (newValue) {
-                  postTitle = newValue;
+                  _title = newValue;
 
-                  if (saveTitleTimer != null) {
-                    saveTitleTimer.cancel();
+                  if (_saveTitleTimer != null) {
+                    _saveTitleTimer.cancel();
                   }
 
-                  saveTitleTimer = Timer(1.seconds, () => saveTitle());
+                  _saveTitleTimer = Timer(1.seconds, () => updateTitle());
                 },
                 style: TextStyle(
                   fontSize: 42.0,
@@ -297,107 +285,40 @@ class _EditPostState extends State<EditPost> {
     );
   }
 
-  Widget contentInput() {
-    return Container(
-      width: 700.0,
-      padding: const EdgeInsets.only(
-        top: 40.0,
-      ),
-      child: TextField(
-        maxLines: null,
-        autofocus: false,
-        focusNode: postFocusNode,
-        controller: contentController,
-        keyboardType: TextInputType.multiline,
-        textCapitalization: TextCapitalization.sentences,
-        onChanged: (newValue) {
-          postContent = newValue;
+  Widget viewOnlineButton() {
+    if (_publicationStatus != PUBLISHED) {
+      return Container();
+    }
 
-          if (saveContentTimer != null) {
-            saveContentTimer.cancel();
-          }
-
-          saveContentTimer = Timer(1.seconds, () => saveContent());
-        },
-        style: TextStyle(
-          fontSize: 22.0,
-          fontWeight: FontWeight.w300,
-        ),
-        decoration: InputDecoration(
-          icon: Icon(Icons.edit),
-          hintText: "once_upon_a_time".tr(),
-          border: OutlineInputBorder(borderSide: BorderSide.none),
-        ),
-      ),
-    );
-  }
-
-  Widget actionsInput() {
     return Padding(
-      padding: const EdgeInsets.only(left: 120.0),
-      child: Row(
-        children: <Widget>[
-          langSelect(),
-          Padding(
-            padding: const EdgeInsets.only(left: 20.0),
-          ),
-          TextButton.icon(
-              focusNode: clearFocusNode,
-              onPressed: () {
-                postContent = '';
-                contentController.clear();
-                postFocusNode.requestFocus();
-              },
-              icon: Opacity(opacity: 0.6, child: Icon(Icons.clear)),
-              label: Opacity(
-                opacity: 0.6,
-                child: Text("clear_content".tr()),
-              )),
-          Padding(
-            padding: const EdgeInsets.only(left: 20.0),
-          ),
-          TextButton.icon(
-            focusNode: postFocusNode,
-            onPressed: () {
-              saveTitle();
-              saveContent();
-            },
-            icon: Opacity(
-              opacity: 0.6,
-              child: Icon(
-                UniconsLine.save,
-              ),
+      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+      child: OutlinedButton.icon(
+        style: OutlinedButton.styleFrom(
+          primary: stateColors.foreground,
+        ),
+        focusNode: _clearFocusNode,
+        onPressed: () {
+          context.router.root.push(
+            PostsDeepRoute(
+              children: [
+                PostPageRoute(postId: widget.postId),
+              ],
             ),
-            label: Opacity(
-              opacity: 0.6,
-              child: Text("save_draft".tr()),
-            ),
+          );
+        },
+        icon: Opacity(
+          opacity: 0.6,
+          child: Icon(
+            UniconsLine.eye,
           ),
-        ],
+        ),
+        label: Opacity(
+          opacity: 0.6,
+          child: Text(
+            "view_online".tr(),
+          ),
+        ),
       ),
-    );
-  }
-
-  Widget langSelect() {
-    return DropdownButton<String>(
-      value: lang,
-      style: TextStyle(
-        color: stateColors.primary,
-        fontSize: 20.0,
-      ),
-      icon: Icon(Icons.language),
-      iconEnabledColor: stateColors.primary,
-      onChanged: (newValue) {
-        setState(() {
-          lang = newValue;
-        });
-      },
-      items: availableLang.map<DropdownMenuItem<String>>((value) {
-        return DropdownMenuItem(
-          value: value,
-          child: Text(value.toUpperCase()),
-        );
-      }).toList(),
     );
   }
 
@@ -405,17 +326,17 @@ class _EditPostState extends State<EditPost> {
     try {
       final response = await Cloud.fun('posts-fetch').call({
         'postId': widget.postId,
-        'jwt': jwt,
+        'jwt': _jwt,
       });
 
       setState(() {
-        postContent = response.data['post'];
-        contentController.text = postContent;
+        _postContent = response.data['post'];
+        _contentController.text = _postContent;
       });
     } catch (error) {
       setState(() {
-        isLoading = false;
-        hasError = true;
+        _isLoading = false;
+        _hasError = true;
       });
       appLogger.e(error);
 
@@ -427,31 +348,36 @@ class _EditPostState extends State<EditPost> {
   }
 
   void fechtData() async {
-    setState(() => isLoading = true);
+    setState(() => _isLoading = true);
 
     await fetchMeta();
     await fetchContent();
 
-    setState(() => isLoading = false);
+    setState(() => _isLoading = false);
   }
 
   Future fetchMeta() async {
     try {
-      postSnapshot = await FirebaseFirestore.instance
+      _postSnapshot = await FirebaseFirestore.instance
           .collection('posts')
           .doc(widget.postId)
           .get();
 
-      jwt = await FirebaseAuth.instance.currentUser.getIdToken();
+      _jwt = await FirebaseAuth.instance.currentUser.getIdToken();
+
+      final Map<String, dynamic> data = _postSnapshot.data();
+      final Post post = Post.fromJSON(data);
 
       setState(() {
-        postTitle = postSnapshot.data()['title'];
-        titleController.text = postTitle;
+        _title = post.title;
+        _titleController.text = _title;
+        _lang = post.lang;
+        _publicationStatus = post.published ? PUBLISHED : DRAFT;
       });
     } catch (error) {
       setState(() {
-        isLoading = false;
-        hasError = true;
+        _isLoading = false;
+        _hasError = true;
       });
 
       appLogger.e(error);
@@ -463,25 +389,14 @@ class _EditPostState extends State<EditPost> {
     }
   }
 
-  void saveTitle() async {
-    try {
-      await postSnapshot.reference.update({'title': postTitle});
-
-      setState(() => isSaving = false);
-    } catch (error) {
-      appLogger.e(error);
-      setState(() => isSaving = false);
-    }
-  }
-
-  void saveContent() async {
-    setState(() => isSaving = true);
+  void updateContent() async {
+    setState(() => _isSaving = true);
 
     try {
       final resp = await Cloud.fun('posts-save').call({
-        'postId': postSnapshot.id,
-        'jwt': jwt,
-        'content': postContent,
+        'postId': _postSnapshot.id,
+        'jwt': _jwt,
+        'content': _postContent,
       });
 
       bool success = resp.data['success'];
@@ -490,10 +405,56 @@ class _EditPostState extends State<EditPost> {
         throw ErrorDescription(resp.data['error']);
       }
 
-      setState(() => isSaving = false);
+      setState(() => _isSaving = false);
     } catch (error) {
       appLogger.e(error);
-      setState(() => isSaving = false);
+      setState(() => _isSaving = false);
+    }
+  }
+
+  void updateLang() async {
+    setState(() => _isSaving = true);
+
+    try {
+      await _postSnapshot.reference.update({'lang': _lang});
+
+      setState(() => _isSaving = false);
+    } catch (error) {
+      appLogger.e(error);
+      setState(() => _isSaving = false);
+    }
+  }
+
+  void updatePubStatus(String status) async {
+    final prevValue = _publicationStatus;
+
+    setState(() {
+      _publicationStatus = status;
+      _isSaving = true;
+    });
+
+    try {
+      await _postSnapshot.reference.update({'published': status == PUBLISHED});
+
+      setState(() => _isSaving = false);
+    } catch (error) {
+      appLogger.e(error);
+
+      setState(() {
+        _publicationStatus = prevValue;
+        _isSaving = false;
+      });
+    }
+  }
+
+  void updateTitle() async {
+    try {
+      await _postSnapshot.reference.update({'title': _title});
+
+      setState(() => _isSaving = false);
+    } catch (error) {
+      appLogger.e(error);
+      setState(() => _isSaving = false);
     }
   }
 }
