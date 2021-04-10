@@ -9,7 +9,11 @@ class SliverLoadingView extends StatelessWidget {
 
   SliverLoadingView({
     this.title = '',
-    this.padding = const EdgeInsets.all(60.0),
+    this.padding = const EdgeInsets.only(
+      top: 260.0,
+      left: 24.0,
+      right: 24.0,
+    ),
   });
 
   @override
@@ -33,7 +37,7 @@ class SliverLoadingView extends StatelessWidget {
                   child: Text(
                     loadingText,
                     style: FontsUtils.mainStyle(
-                      fontSize: 40.0,
+                      fontSize: 24.0,
                       fontWeight: FontWeight.w300,
                     ),
                   ),
