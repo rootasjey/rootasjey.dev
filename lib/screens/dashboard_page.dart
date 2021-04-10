@@ -84,11 +84,13 @@ class _DashboardPageState extends State<DashboardPage> {
                 ),
                 sliver: HomeAppBar(
                   automaticallyImplyLeading: false,
+                  showAppIcon: false,
                 ),
               ),
               SliverPadding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20.0,
+                padding: const EdgeInsets.only(
+                  left: 20.0,
+                  right: 20.0,
                 ),
                 sliver: SliverList(
                     delegate: SliverChildListDelegate.fixed(
