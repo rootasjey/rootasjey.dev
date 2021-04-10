@@ -40,6 +40,9 @@ class _HomeAppBarState extends State<HomeAppBar> {
 
         return Observer(
           builder: (context) {
+            final bool showNavBack = widget.automaticallyImplyLeading &&
+                context.router.root.stack.length > 1;
+
             return SliverAppBar(
               floating: true,
               snap: true,
@@ -54,19 +57,23 @@ class _HomeAppBarState extends State<HomeAppBar> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   mainAxisSize: MainAxisSize.max,
                   children: <Widget>[
-                    if (widget.automaticallyImplyLeading)
-                      Padding(
-                        padding: const EdgeInsets.only(right: 16.0),
-                        child: IconButton(
-                          color: stateColors.foreground,
-                          onPressed: context.router.pop,
-                          icon: Icon(UniconsLine.arrow_left),
-                        ),
-                      ),
-                    if (widget.showAppIcon)
-                      AppIcon(
-                        onTap: widget.onTapIconHeader,
-                      ),
+                    Wrap(
+                      children: [
+                        if (showNavBack)
+                          Padding(
+                            padding: const EdgeInsets.only(right: 16.0),
+                            child: IconButton(
+                              color: stateColors.foreground,
+                              onPressed: context.router.pop,
+                              icon: Icon(UniconsLine.arrow_left),
+                            ),
+                          ),
+                        if (widget.showAppIcon)
+                          AppIcon(
+                            onTap: widget.onTapIconHeader,
+                          ),
+                      ],
+                    ),
                     if (widget.title != null)
                       Expanded(
                         child: Padding(

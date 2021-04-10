@@ -172,6 +172,7 @@ class _CVPageState extends State<CVPage> {
       body: CustomScrollView(
         slivers: [
           HomeAppBar(
+            automaticallyImplyLeading: true,
             onTapIconHeader: () {
               context.router.navigate(HomeRoute());
             },
