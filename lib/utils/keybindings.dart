@@ -9,7 +9,7 @@ class KeyBindings {
   double _pageHeight;
 
   /// Value to scroll on move up or down.
-  final incrOffset = 80.0;
+  final _incrOffset = 80.0;
 
   /// Page scroll controller to move up or down inside the widget.
   ScrollController _scrollController;
@@ -34,8 +34,8 @@ class KeyBindings {
   double _getOffsetDown({bool altPressed = false}) {
     double factor = altPressed ? 3 : 1;
 
-    final offset = _scrollController.offset + incrOffset < _pageHeight
-        ? _scrollController.offset + (incrOffset * factor)
+    final offset = _scrollController.offset + _incrOffset < _pageHeight
+        ? _scrollController.offset + (_incrOffset * factor)
         : _pageHeight;
 
     return offset;
@@ -45,8 +45,8 @@ class KeyBindings {
   double _getOffsetUp({bool altPressed = false}) {
     double factor = altPressed ? 3 : 1;
 
-    final offset = _scrollController.offset - incrOffset > 90.0
-        ? _scrollController.offset - (incrOffset * factor)
+    final offset = _scrollController.offset - _incrOffset > 90.0
+        ? _scrollController.offset - (_incrOffset * factor)
         : 0.0;
 
     return offset;

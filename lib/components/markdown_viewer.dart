@@ -24,8 +24,6 @@ class MarkdownViewer extends StatefulWidget {
 }
 
 class _MarkdownViewerState extends State<MarkdownViewer> {
-  // CodeController _codeController;
-
   @override
   Widget build(BuildContext context) {
     return Html(
