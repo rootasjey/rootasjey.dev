@@ -95,7 +95,7 @@ class _SettingsState extends State<Settings> {
     }
 
     return HomeAppBar(
-      title: Text("Settings".tr()),
+      title: Text("settings".tr()),
       automaticallyImplyLeading: true,
     );
   }
