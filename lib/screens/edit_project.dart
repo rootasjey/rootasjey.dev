@@ -133,6 +133,8 @@ class _EditProjectState extends State<EditProject> {
                 setState(() {
                   _lang = newLang;
                 });
+
+                updateLang();
               },
             ),
             viewOnlineButton(),
@@ -506,7 +508,7 @@ class _EditProjectState extends State<EditProject> {
           updateTitle();
           saveContent();
         },
-        icon: Opacity(opacity: 0.6, child: Icon(Icons.save)),
+        icon: Opacity(opacity: 0.6, child: Icon(UniconsLine.save)),
         label: Opacity(opacity: 0.6, child: Text(saveStr)),
         style: OutlinedButton.styleFrom(primary: stateColors.foreground),
       ),

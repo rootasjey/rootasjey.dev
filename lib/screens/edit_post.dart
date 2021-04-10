@@ -102,6 +102,8 @@ class _EditPostState extends State<EditPost> {
                   setState(() {
                     _lang = newLang;
                   });
+
+                  updateLang();
                 },
               ),
             ),
@@ -229,7 +231,7 @@ class _EditPostState extends State<EditPost> {
           updateTitle();
           updateContent();
         },
-        icon: Opacity(opacity: 0.6, child: Icon(Icons.save)),
+        icon: Opacity(opacity: 0.6, child: Icon(UniconsLine.save)),
         label: Opacity(opacity: 0.6, child: Text(saveStr)),
         style: OutlinedButton.styleFrom(primary: stateColors.foreground),
       ),
