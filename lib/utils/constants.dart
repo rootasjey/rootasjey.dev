@@ -1,5 +1,5 @@
 class Constants {
-  static const appVersion = '2.2.0';
+  static const appVersion = '2.10.0';
   static const appBuildNumber = 1;
   static const cardElevation = 2.0;
   static const maltProfileUrl = "https://www.malt.fr/profile/jeremiecorpinot";
