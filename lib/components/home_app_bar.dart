@@ -13,6 +13,7 @@ import 'package:unicons/unicons.dart';
 
 class HomeAppBar extends StatefulWidget {
   final bool automaticallyImplyLeading;
+  final bool showAppIcon;
   final Function onTapIconHeader;
   final Widget title;
   final List<Widget> trailing;
@@ -22,6 +23,7 @@ class HomeAppBar extends StatefulWidget {
     this.onTapIconHeader,
     this.title,
     this.trailing = const [],
+    this.showAppIcon = true,
   });
 
   @override
@@ -61,9 +63,10 @@ class _HomeAppBarState extends State<HomeAppBar> {
                           icon: Icon(UniconsLine.arrow_left),
                         ),
                       ),
-                    AppIcon(
-                      onTap: widget.onTapIconHeader,
-                    ),
+                    if (widget.showAppIcon)
+                      AppIcon(
+                        onTap: widget.onTapIconHeader,
+                      ),
                     if (widget.title != null)
                       Expanded(
                         child: Padding(
