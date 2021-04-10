@@ -127,15 +127,18 @@ class _EditProjectState extends State<EditProject> {
         padding: const EdgeInsets.only(left: 28.0),
         child: Row(
           children: [
-            LangPopupMenuButton(
-              lang: _lang,
-              onLangChanged: (newLang) {
-                setState(() {
-                  _lang = newLang;
-                });
+            Padding(
+              padding: const EdgeInsets.only(right: 16.0),
+              child: LangPopupMenuButton(
+                lang: _lang,
+                onLangChanged: (newLang) {
+                  setState(() {
+                    _lang = newLang;
+                  });
 
-                updateLang();
-              },
+                  updateLang();
+                },
+              ),
             ),
             viewOnlineButton(),
             saveButton(),
@@ -163,10 +166,11 @@ class _EditProjectState extends State<EditProject> {
         children: [
           if (context.router.root.stack.length > 1)
             IconButton(
-              icon: Icon(UniconsLine.arrow_left),
-              onPressed: () {
-                context.router.pop();
-              },
+              icon: Icon(
+                UniconsLine.arrow_left,
+                color: stateColors.foreground,
+              ),
+              onPressed: context.router.pop,
             ),
           if (_isSaving)
             Padding(
@@ -177,6 +181,9 @@ class _EditProjectState extends State<EditProject> {
             ),
           Text(
             _title.isEmpty ? "project_edit".tr() : _title,
+            style: TextStyle(
+              color: stateColors.foreground,
+            ),
           ),
         ],
       ),

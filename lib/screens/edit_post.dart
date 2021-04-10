@@ -95,7 +95,7 @@ class _EditPostState extends State<EditPost> {
         child: Row(
           children: [
             Padding(
-              padding: const EdgeInsets.only(right: 8.0),
+              padding: const EdgeInsets.only(right: 16.0),
               child: LangPopupMenuButton(
                 lang: _lang,
                 onLangChanged: (newLang) {
@@ -133,10 +133,11 @@ class _EditPostState extends State<EditPost> {
         children: [
           if (context.router.root.stack.length > 1)
             IconButton(
-              icon: Icon(UniconsLine.arrow_left),
-              onPressed: () {
-                context.router.pop();
-              },
+              icon: Icon(
+                UniconsLine.arrow_left,
+                color: stateColors.foreground,
+              ),
+              onPressed: context.router.pop,
             ),
           if (_isSaving)
             Padding(
@@ -147,6 +148,9 @@ class _EditPostState extends State<EditPost> {
             ),
           Text(
             _title.isEmpty ? "post_edit".tr() : _title,
+            style: TextStyle(
+              color: stateColors.foreground,
+            ),
           ),
         ],
       ),
