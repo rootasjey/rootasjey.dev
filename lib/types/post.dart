@@ -1,5 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rootasjey/types/urls.dart';
+import 'package:rootasjey/utils/date_helper.dart';
 
 class Post {
   final String id;
@@ -7,6 +7,7 @@ class Post {
   final List<String> coauthors;
   final DateTime createdAt;
   final bool featured;
+  final String lang;
   final String path;
   final bool published;
   final bool referenced;
@@ -19,51 +20,93 @@ class Post {
 
   Post({
     this.id = '',
-    this.author,
-    this.coauthors  = const [],
+    this.author = '',
+    this.coauthors = const [],
     this.createdAt,
-    this.featured   = false,
-    this.path       = '',
-    this.published  = false,
+    this.featured = false,
+    this.lang = 'en',
+    this.path = '',
+    this.published = false,
     this.referenced = true,
-    this.summary    = '',
-    this.tags       = const [],
+    this.summary = '',
+    this.tags = const [],
     this.timeToRead = '',
-    this.title      = '',
+    this.title = '',
     this.updatedAt,
     this.urls,
   });
 
-  factory Post.fromJSON(Map<String, dynamic> data) {
-    final _coauthors = <String>[];
-    final _tags = <String>[];
-    final dataTags = data['tags'] as Map<String, dynamic>;
+  factory Post.empty() {
+    return Post(
+      author: '',
+      coauthors: const [],
+      createdAt: DateTime.now(),
+      featured: false,
+      lang: 'en',
+      path: '',
+      published: false,
+      referenced: true,
+      summary: '',
+      tags: const [],
+      timeToRead: '',
+      title: '',
+      updatedAt: DateTime.now(),
+      urls: Urls.empty(),
+    );
+  }
 
-    dataTags.forEach((key, value) {
-      _tags.add(key);
-    });
+  factory Post.fromJSON(Map<String, dynamic> data) {
+    if (data == null) {
+      return Post.empty();
+    }
+
+    return Post(
+      author: data['author'] ?? '',
+      coauthors: parseCoAuthors(data),
+      createdAt: DateHelper.fromFirestore(data['createdAt']),
+      featured: data['featured'] ?? false,
+      id: data['id'] ?? '',
+      lang: data['lang'] ?? 'en',
+      path: data['path'] ?? '',
+      published: data['published'] ?? false,
+      referenced: data['referenced'] ?? true,
+      summary: data['summary'] ?? '',
+      tags: parseTags(data),
+      timeToRead: data['timeToRead'] ?? '',
+      title: data['title'] ?? '',
+      updatedAt: DateHelper.fromFirestore(data['updatedAt']),
+      urls: Urls.fromJSON(data['urls']),
+    );
+  }
+
+  static List<String> parseCoAuthors(Map<String, dynamic> data) {
+    final coAuthors = <String>[];
+
+    if (data == null || data['coauthors'] == null) {
+      return coAuthors;
+    }
 
     final dataAuthors = data['coauthors'] as List<dynamic>;
 
     dataAuthors.forEach((authorId) {
-      _coauthors.add(authorId);
+      coAuthors.add(authorId);
     });
 
-    return Post(
-      id          : data['id'],
-      author      : data['author'],
-      coauthors   : _coauthors,
-      createdAt   : (data['createdAt'] as Timestamp).toDate(),
-      featured    : data['featured'],
-      path        : data['path'],
-      published   : data['published'],
-      referenced  : data['referenced'],
-      summary     : data['summary'],
-      tags        : _tags,
-      timeToRead  : data['timeToRead'],
-      title       : data['title'],
-      updatedAt   : (data['updatedAt'] as Timestamp).toDate(),
-      urls        : Urls.fromJSON(data['urls']),
-    );
+    return coAuthors;
+  }
+
+  static List<String> parseTags(Map<String, dynamic> data) {
+    final tags = <String>[];
+
+    if (data == null || data['tags'] == null) {
+      return tags;
+    }
+    final dataTags = data['tags'] as Map<String, dynamic>;
+
+    dataTags.forEach((key, value) {
+      tags.add(key);
+    });
+
+    return tags;
   }
 }
