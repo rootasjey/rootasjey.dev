@@ -8,6 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/lang_popup_menu_button.dart';
 import 'package:rootasjey/components/pub_popup_menu_button.dart';
+import 'package:rootasjey/components/sliver_error_view.dart';
 import 'package:rootasjey/components/sliver_loading_view.dart';
 import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/state/colors.dart';
@@ -30,28 +31,28 @@ class EditProject extends StatefulWidget {
 }
 
 class _EditProjectState extends State<EditProject> {
-  bool isLoading = false;
-  bool isSaving = false;
-  bool hasError = false;
-  bool isMetaVisible = false;
+  bool _isLoading = false;
+  bool _isSaving = false;
+  bool _hasError = false;
+  bool _isMetaVisible = false;
 
-  DocumentSnapshot projectSnapshot;
+  DocumentSnapshot _projectSnapshot;
 
-  final clearFocusNode = FocusNode();
-  final projectFocusNode = FocusNode();
-  final contentController = TextEditingController();
+  final _clearFocusNode = FocusNode();
+  final _projectFocusNode = FocusNode();
+  final _contentController = TextEditingController();
 
-  final titleFocusNode = FocusNode();
-  final titleController = TextEditingController();
+  final _titleFocusNode = FocusNode();
+  final _titleController = TextEditingController();
 
-  final summaryFocusNode = FocusNode();
-  final summaryController = TextEditingController();
+  final _summaryFocusNode = FocusNode();
+  final _summaryController = TextEditingController();
 
-  final platformController = TextEditingController();
-  final tagController = TextEditingController();
-  final pLangController = TextEditingController();
+  final _platformController = TextEditingController();
+  final _tagController = TextEditingController();
+  final _pLangController = TextEditingController();
 
-  final platforms = {
+  final _platforms = {
     'android': false,
     'androidtv': false,
     'ios': false,
@@ -62,34 +63,34 @@ class _EditProjectState extends State<EditProject> {
     'windows': false,
   };
 
-  final programmingLanguages = Map<String, bool>();
-  final tags = Map<String, bool>();
-  final urls = Map<String, String>();
+  final _programmingLanguages = Map<String, bool>();
+  final _tags = Map<String, bool>();
+  final _urls = Map<String, String>();
 
   static const PUBLISHED = 'published';
   static const DRAFT = 'draft';
 
-  String publicationStatus = DRAFT;
+  String _publicationStatus = DRAFT;
 
-  String title = '';
-  String content = '';
-  String summary = '';
-  String platformInputValue = '';
-  String pLangInputValue = '';
-  String tagInputValue = '';
-  String lang = 'en';
-  String jwt = '';
-  String urlName = '';
-  String urlValue = '';
+  String _title = '';
+  String _content = '';
+  String _summary = '';
+  String _platformInputValue = '';
+  String _pLangInputValue = '';
+  String _tagInputValue = '';
+  String _lang = 'en';
+  String _jwt = '';
+  String _urlName = '';
+  String _urlValue = '';
 
-  Timer saveTitleTimer;
-  Timer saveSummaryTimer;
-  Timer saveContentTimer;
+  Timer _saveTitleTimer;
+  Timer _saveSummaryTimer;
+  Timer _saveContentTimer;
 
   @override
   void initState() {
     super.initState();
-    fetchData();
+    fetch();
   }
 
   @override
@@ -127,20 +128,20 @@ class _EditProjectState extends State<EditProject> {
         child: Row(
           children: [
             LangPopupMenuButton(
-              lang: lang,
+              lang: _lang,
               onLangChanged: (newLang) {
                 setState(() {
-                  lang = newLang;
+                  _lang = newLang;
                 });
               },
             ),
             viewOnlineButton(),
             saveButton(),
             PubPopupMenuButton(
-              status: publicationStatus,
+              status: _publicationStatus,
               onStatusChanged: (newStatus) {
                 setState(() {
-                  publicationStatus = newStatus;
+                  _publicationStatus = newStatus;
                 });
 
                 updatePubStatus(newStatus);
@@ -165,7 +166,7 @@ class _EditProjectState extends State<EditProject> {
                 context.router.pop();
               },
             ),
-          if (isSaving)
+          if (_isSaving)
             Padding(
               padding: const EdgeInsets.only(right: 16.0),
               child: CircularProgressIndicator(
@@ -173,7 +174,7 @@ class _EditProjectState extends State<EditProject> {
               ),
             ),
           Text(
-            title.isEmpty ? "project_edit".tr() : title,
+            _title.isEmpty ? "project_edit".tr() : _title,
           ),
         ],
       ),
@@ -181,15 +182,17 @@ class _EditProjectState extends State<EditProject> {
   }
 
   Widget body() {
-    if (isLoading) {
+    if (_isLoading) {
       return SliverLoadingView(
         title: "loading_project".tr(),
         padding: const EdgeInsets.only(top: 200.0),
       );
     }
 
-    if (hasError) {
-      return errorView();
+    if (_hasError) {
+      return SliverErrorView(
+        textTitle: "project_fetch_error".tr(),
+      );
     }
 
     return SliverList(
@@ -205,7 +208,7 @@ class _EditProjectState extends State<EditProject> {
               summaryInput(),
               contentInput(),
               buttonToggleMetaView(),
-              if (isMetaVisible)
+              if (_isMetaVisible)
                 Column(
                   children: [
                     progLangsSelection(),
@@ -230,74 +233,18 @@ class _EditProjectState extends State<EditProject> {
           left: 120.0,
         ),
         child: ElevatedButton.icon(
-          onPressed: () => setState(() => isMetaVisible = !isMetaVisible),
-          icon: isMetaVisible
+          onPressed: () => setState(() => _isMetaVisible = !_isMetaVisible),
+          icon: _isMetaVisible
               ? Icon(Icons.visibility_off)
               : Icon(Icons.visibility),
           label: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
-              isMetaVisible ? "meta_data_hide".tr() : "meta_data_show".tr(),
+              _isMetaVisible ? "meta_data_hide".tr() : "meta_data_show".tr(),
             ),
           ),
         ),
       ),
-    );
-  }
-
-  Widget errorView() {
-    return SliverList(
-      delegate: SliverChildListDelegate.fixed([
-        Padding(
-          padding: const EdgeInsets.only(
-            top: 200.0,
-            left: 40.0,
-            right: 40.0,
-          ),
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(bottom: 40.0),
-                child: Opacity(
-                  opacity: 0.6,
-                  child: Icon(
-                    Icons.sentiment_neutral,
-                    color: Colors.pink,
-                    size: 80.0,
-                  ),
-                ),
-              ),
-              Container(
-                width: 600.0,
-                padding: const EdgeInsets.only(
-                  bottom: 40.0,
-                ),
-                child: Opacity(
-                  opacity: 0.7,
-                  child: Text(
-                    "project_fetch_error".tr(),
-                    style: TextStyle(
-                      fontSize: 30.0,
-                    ),
-                  ),
-                ),
-              ),
-              OutlinedButton.icon(
-                  onPressed: context.router.pop,
-                  icon: Icon(UniconsLine.arrow_left, color: Colors.pink),
-                  label: Opacity(
-                    opacity: 0.6,
-                    child: Text(
-                      "back".tr(),
-                      style: TextStyle(
-                        fontSize: 16.0,
-                      ),
-                    ),
-                  )),
-            ],
-          ),
-        ),
-      ]),
     );
   }
 
@@ -310,18 +257,18 @@ class _EditProjectState extends State<EditProject> {
       child: TextField(
         maxLines: null,
         autofocus: false,
-        focusNode: projectFocusNode,
-        controller: contentController,
+        focusNode: _projectFocusNode,
+        controller: _contentController,
         keyboardType: TextInputType.multiline,
         textCapitalization: TextCapitalization.sentences,
         onChanged: (newValue) {
-          content = newValue;
+          _content = newValue;
 
-          if (saveContentTimer != null) {
-            saveContentTimer.cancel();
+          if (_saveContentTimer != null) {
+            _saveContentTimer.cancel();
           }
 
-          saveContentTimer = Timer(1.seconds, () => saveContent());
+          _saveContentTimer = Timer(1.seconds, () => saveContent());
         },
         style: TextStyle(
           fontSize: 22.0,
@@ -384,7 +331,7 @@ class _EditProjectState extends State<EditProject> {
     return Wrap(
         spacing: 10.0,
         runSpacing: 10.0,
-        children: platforms.entries.map((entry) {
+        children: _platforms.entries.map((entry) {
           return InputChip(
             label: Text(
               getPlatformName(entry.key),
@@ -398,11 +345,11 @@ class _EditProjectState extends State<EditProject> {
             deleteIconColor:
                 entry.value ? Colors.white : stateColors.foreground,
             onDeleted: () {
-              platforms.remove(entry.key);
+              _platforms.remove(entry.key);
               updatePlatforms();
             },
             onSelected: (isSelected) {
-              platforms[entry.key] = isSelected;
+              _platforms[entry.key] = isSelected;
               updatePlatforms();
             },
           );
@@ -421,13 +368,13 @@ class _EditProjectState extends State<EditProject> {
             height: 50.0,
             width: 250.0,
             child: TextFormField(
-              controller: platformController,
+              controller: _platformController,
               decoration: InputDecoration(
                 labelText: "platform_new".tr(),
                 border: OutlineInputBorder(),
               ),
               onChanged: (value) {
-                platformInputValue = value.toLowerCase();
+                _platformInputValue = value.toLowerCase();
               },
             ),
           ),
@@ -435,8 +382,8 @@ class _EditProjectState extends State<EditProject> {
             padding: const EdgeInsets.only(left: 8.0),
             child: TextButton.icon(
               onPressed: () {
-                platforms[platformInputValue] = true;
-                platformController.clear();
+                _platforms[_platformInputValue] = true;
+                _platformController.clear();
                 updatePlatforms();
               },
               icon: Icon(Icons.add),
@@ -496,13 +443,13 @@ class _EditProjectState extends State<EditProject> {
     return Wrap(
         spacing: 10.0,
         runSpacing: 10.0,
-        children: programmingLanguages.entries.map((entry) {
+        children: _programmingLanguages.entries.map((entry) {
           return InputChip(
             label: Text(
               entry.key,
             ),
             onDeleted: () {
-              programmingLanguages.remove(entry.key);
+              _programmingLanguages.remove(entry.key);
               updateProgLanguages();
             },
           );
@@ -521,13 +468,13 @@ class _EditProjectState extends State<EditProject> {
             height: 50.0,
             width: 300.0,
             child: TextFormField(
-              controller: pLangController,
+              controller: _pLangController,
               decoration: InputDecoration(
                 labelText: "programming_language_new_dot".tr(),
                 border: OutlineInputBorder(),
               ),
               onChanged: (value) {
-                pLangInputValue = value;
+                _pLangInputValue = value;
               },
             ),
           ),
@@ -535,8 +482,8 @@ class _EditProjectState extends State<EditProject> {
             padding: const EdgeInsets.only(left: 8.0),
             child: TextButton.icon(
               onPressed: () {
-                programmingLanguages[pLangInputValue] = true;
-                pLangController.clear();
+                _programmingLanguages[_pLangInputValue] = true;
+                _pLangController.clear();
                 updateProgLanguages();
               },
               icon: Icon(Icons.add),
@@ -549,6 +496,9 @@ class _EditProjectState extends State<EditProject> {
   }
 
   Widget saveButton() {
+    final saveStr =
+        _publicationStatus == DRAFT ? "save_draft".tr() : "save".tr();
+
     return Padding(
       padding: const EdgeInsets.only(right: 20.0),
       child: OutlinedButton.icon(
@@ -557,7 +507,7 @@ class _EditProjectState extends State<EditProject> {
           saveContent();
         },
         icon: Opacity(opacity: 0.6, child: Icon(Icons.save)),
-        label: Opacity(opacity: 0.6, child: Text("save_draft".tr())),
+        label: Opacity(opacity: 0.6, child: Text(saveStr)),
         style: OutlinedButton.styleFrom(primary: stateColors.foreground),
       ),
     );
@@ -572,8 +522,8 @@ class _EditProjectState extends State<EditProject> {
       ),
       child: TextField(
         maxLines: 1,
-        focusNode: summaryFocusNode,
-        controller: summaryController,
+        focusNode: _summaryFocusNode,
+        controller: _summaryController,
         keyboardType: TextInputType.multiline,
         textCapitalization: TextCapitalization.sentences,
         decoration: InputDecoration(
@@ -586,13 +536,13 @@ class _EditProjectState extends State<EditProject> {
           color: stateColors.foreground.withOpacity(0.4),
         ),
         onChanged: (newValue) {
-          summary = newValue;
+          _summary = newValue;
 
-          if (saveTitleTimer != null) {
-            saveSummaryTimer.cancel();
+          if (_saveTitleTimer != null) {
+            _saveSummaryTimer.cancel();
           }
 
-          saveSummaryTimer = Timer(1.seconds, () => updateSummary());
+          _saveSummaryTimer = Timer(1.seconds, () => updateSummary());
         },
       ),
     );
@@ -646,7 +596,7 @@ class _EditProjectState extends State<EditProject> {
     return Wrap(
         spacing: 10.0,
         runSpacing: 10.0,
-        children: tags.entries.map((entry) {
+        children: _tags.entries.map((entry) {
           return InputChip(
             label: Text(
               '${entry.key.substring(0, 1).toUpperCase()}${entry.key.substring(1)}',
@@ -660,11 +610,11 @@ class _EditProjectState extends State<EditProject> {
             deleteIconColor:
                 entry.value ? Colors.white : stateColors.foreground,
             onDeleted: () {
-              tags.remove(entry.key);
+              _tags.remove(entry.key);
               updateTags();
             },
             onSelected: (isSelected) {
-              tags[entry.key] = isSelected;
+              _tags[entry.key] = isSelected;
               updateTags();
             },
           );
@@ -683,13 +633,13 @@ class _EditProjectState extends State<EditProject> {
             height: 50.0,
             width: 250.0,
             child: TextFormField(
-              controller: tagController,
+              controller: _tagController,
               decoration: InputDecoration(
                 labelText: "tag_new_dot".tr(),
                 border: OutlineInputBorder(),
               ),
               onChanged: (value) {
-                tagInputValue = value.toLowerCase();
+                _tagInputValue = value.toLowerCase();
               },
             ),
           ),
@@ -697,8 +647,8 @@ class _EditProjectState extends State<EditProject> {
             padding: const EdgeInsets.only(left: 8.0),
             child: TextButton.icon(
               onPressed: () {
-                tags[tagInputValue] = true;
-                tagController.clear();
+                _tags[_tagInputValue] = true;
+                _tagController.clear();
                 updateTags();
               },
               icon: Icon(Icons.add),
@@ -731,18 +681,18 @@ class _EditProjectState extends State<EditProject> {
               child: TextField(
                 maxLines: 1,
                 autofocus: true,
-                focusNode: titleFocusNode,
-                controller: titleController,
+                focusNode: _titleFocusNode,
+                controller: _titleController,
                 keyboardType: TextInputType.multiline,
                 textCapitalization: TextCapitalization.sentences,
                 onChanged: (newValue) {
-                  title = newValue;
+                  _title = newValue;
 
-                  if (saveTitleTimer != null) {
-                    saveTitleTimer.cancel();
+                  if (_saveTitleTimer != null) {
+                    _saveTitleTimer.cancel();
                   }
 
-                  saveTitleTimer = Timer(1.seconds, () => updateTitle());
+                  _saveTitleTimer = Timer(1.seconds, () => updateTitle());
                 },
                 style: TextStyle(
                   fontSize: 42.0,
@@ -794,7 +744,7 @@ class _EditProjectState extends State<EditProject> {
         Wrap(
           spacing: 10.0,
           runSpacing: 10.0,
-          children: urls.entries.map((entry) {
+          children: _urls.entries.map((entry) {
             return InputChip(
               label: Text(entry.key),
               labelStyle: TextStyle(
@@ -809,12 +759,12 @@ class _EditProjectState extends State<EditProject> {
                   ? Colors.white
                   : stateColors.foreground,
               onDeleted: () {
-                urls.remove(entry.key);
+                _urls.remove(entry.key);
                 updateUrls();
               },
               onPressed: () {
-                urlName = entry.key;
-                urlValue = entry.value;
+                _urlName = entry.key;
+                _urlValue = entry.value;
 
                 showAddUrlSheet();
               },
@@ -823,8 +773,8 @@ class _EditProjectState extends State<EditProject> {
         ),
         TextButton.icon(
           onPressed: () {
-            urlName = '';
-            urlValue = '';
+            _urlName = '';
+            _urlValue = '';
 
             showAddUrlSheet();
           },
@@ -836,7 +786,7 @@ class _EditProjectState extends State<EditProject> {
   }
 
   Widget viewOnlineButton() {
-    if (publicationStatus != PUBLISHED) {
+    if (_publicationStatus != PUBLISHED) {
       return Container();
     }
 
@@ -846,7 +796,7 @@ class _EditProjectState extends State<EditProject> {
         style: OutlinedButton.styleFrom(
           primary: stateColors.foreground,
         ),
-        focusNode: clearFocusNode,
+        focusNode: _clearFocusNode,
         onPressed: () {
           context.router.root.push(
             ProjectsDeepRoute(
@@ -872,47 +822,56 @@ class _EditProjectState extends State<EditProject> {
     );
   }
 
+  void fetch() async {
+    setState(() => _isLoading = true);
+
+    await fetchMeta();
+    await fetchContent();
+
+    setState(() => _isLoading = false);
+  }
+
   Future fetchMeta() async {
     try {
-      projectSnapshot = await FirebaseFirestore.instance
+      _projectSnapshot = await FirebaseFirestore.instance
           .collection('projects')
           .doc(widget.projectId)
           .get();
 
-      jwt = await FirebaseAuth.instance.currentUser.getIdToken();
+      _jwt = await FirebaseAuth.instance.currentUser.getIdToken();
 
-      final Map<String, dynamic> data = projectSnapshot.data();
+      final Map<String, dynamic> data = _projectSnapshot.data();
       final Project project = Project.fromJSON(data);
 
       setState(() {
-        publicationStatus = project.published ? PUBLISHED : DRAFT;
+        _publicationStatus = project.published ? PUBLISHED : DRAFT;
 
-        title = project.title;
-        summary = project.summary;
+        _title = project.title;
+        _summary = project.summary;
 
         for (String platform in project.platforms) {
-          platforms[platform] = true;
+          _platforms[platform] = true;
         }
 
         for (String tag in project.tags) {
-          platforms[tag] = true;
+          _platforms[tag] = true;
         }
 
         for (String pLang in project.programmingLanguages) {
-          platforms[pLang] = true;
+          _platforms[pLang] = true;
         }
 
         project.urls.map.forEach((key, value) {
-          urls[key] = value;
+          _urls[key] = value;
         });
 
-        titleController.text = title;
-        summaryController.text = summary;
+        _titleController.text = _title;
+        _summaryController.text = _summary;
       });
     } catch (error) {
       setState(() {
-        isLoading = false;
-        hasError = true;
+        _isLoading = false;
+        _hasError = true;
       });
 
       appLogger.e(error);
@@ -928,17 +887,17 @@ class _EditProjectState extends State<EditProject> {
     try {
       final response = await Cloud.fun('projects-fetch').call({
         'projectId': widget.projectId,
-        'jwt': jwt,
+        'jwt': _jwt,
       });
 
       setState(() {
-        content = response.data['project'];
-        contentController.text = content;
+        _content = response.data['project'];
+        _contentController.text = _content;
       });
     } catch (error) {
       setState(() {
-        isLoading = false;
-        hasError = true;
+        _isLoading = false;
+        _hasError = true;
       });
 
       appLogger.e(error);
@@ -950,23 +909,14 @@ class _EditProjectState extends State<EditProject> {
     }
   }
 
-  void fetchData() async {
-    setState(() => isLoading = true);
-
-    await fetchMeta();
-    await fetchContent();
-
-    setState(() => isLoading = false);
-  }
-
   void saveContent() async {
-    setState(() => isSaving = true);
+    setState(() => _isSaving = true);
 
     try {
       final resp = await Cloud.fun('projects-save').call({
-        'projectId': projectSnapshot.id,
-        'jwt': jwt,
-        'content': content,
+        'projectId': _projectSnapshot.id,
+        'jwt': _jwt,
+        'content': _content,
       });
 
       bool success = resp.data['success'];
@@ -975,10 +925,10 @@ class _EditProjectState extends State<EditProject> {
         throw ErrorDescription(resp.data['error']);
       }
 
-      setState(() => isSaving = false);
+      setState(() => _isSaving = false);
     } catch (error) {
       appLogger.e(error);
-      setState(() => isSaving = false);
+      setState(() => _isSaving = false);
     }
   }
 
@@ -1019,10 +969,10 @@ class _EditProjectState extends State<EditProject> {
                           autofocus: true,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
-                            labelText: urlName,
+                            labelText: _urlName,
                           ),
                           onChanged: (value) {
-                            urlName = value;
+                            _urlName = value;
                           },
                         ),
                       ),
@@ -1031,11 +981,11 @@ class _EditProjectState extends State<EditProject> {
                         child: TextFormField(
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
-                            labelText: 'https://$urlName...',
+                            labelText: 'https://$_urlName...',
                           ),
                           keyboardType: TextInputType.url,
                           onChanged: (value) {
-                            urlValue = value;
+                            _urlValue = value;
                           },
                         ),
                       ),
@@ -1045,7 +995,7 @@ class _EditProjectState extends State<EditProject> {
                         ),
                         child: TextButton.icon(
                           onPressed: () {
-                            urls[urlName] = urlValue;
+                            _urls[_urlName] = _urlValue;
                             updateUrls();
                             context.router.pop();
                           },
@@ -1064,104 +1014,117 @@ class _EditProjectState extends State<EditProject> {
     );
   }
 
-  void updatePlatforms() async {
-    setState(() => isSaving = true);
+  void updateLang() async {
+    setState(() => _isSaving = true);
 
     try {
-      await projectSnapshot.reference.update({'platforms': platforms});
+      await _projectSnapshot.reference.update({'lang': _lang});
 
-      setState(() => isSaving = false);
+      setState(() => _isSaving = false);
     } catch (error) {
       appLogger.e(error);
-      setState(() => isSaving = false);
+      setState(() => _isSaving = false);
     }
   }
 
-  void updateSummary() async {
-    setState(() => isSaving = true);
+  void updatePlatforms() async {
+    setState(() => _isSaving = true);
 
     try {
-      await projectSnapshot.reference.update({'summary': summary});
+      await _projectSnapshot.reference.update({'platforms': _platforms});
 
-      setState(() => isSaving = false);
+      setState(() => _isSaving = false);
     } catch (error) {
       appLogger.e(error);
-      setState(() => isSaving = false);
+      setState(() => _isSaving = false);
     }
   }
 
   void updateProgLanguages() async {
-    setState(() => isSaving = true);
+    setState(() => _isSaving = true);
 
     try {
-      await projectSnapshot.reference
-          .update({'programmingLanguages': programmingLanguages});
+      await _projectSnapshot.reference
+          .update({'programmingLanguages': _programmingLanguages});
 
-      setState(() => isSaving = false);
+      setState(() => _isSaving = false);
     } catch (error) {
       appLogger.e(error);
-      setState(() => isSaving = false);
+      setState(() => _isSaving = false);
+    }
+  }
+
+  void updateSummary() async {
+    setState(() => _isSaving = true);
+
+    try {
+      await _projectSnapshot.reference.update({'summary': _summary});
+
+      setState(() => _isSaving = false);
+    } catch (error) {
+      appLogger.e(error);
+      setState(() => _isSaving = false);
     }
   }
 
   void updateTags() async {
-    setState(() => isSaving = true);
+    setState(() => _isSaving = true);
 
     try {
-      await projectSnapshot.reference.update({'tags': tags});
+      await _projectSnapshot.reference.update({'tags': _tags});
 
-      setState(() => isSaving = false);
+      setState(() => _isSaving = false);
     } catch (error) {
       appLogger.e(error);
-      setState(() => isSaving = false);
+      setState(() => _isSaving = false);
     }
   }
 
   void updateTitle() async {
-    setState(() => isSaving = true);
+    setState(() => _isSaving = true);
 
     try {
-      await projectSnapshot.reference.update({'title': title});
+      await _projectSnapshot.reference.update({'title': _title});
 
-      setState(() => isSaving = false);
+      setState(() => _isSaving = false);
     } catch (error) {
       appLogger.e(error);
-      setState(() => isSaving = false);
+      setState(() => _isSaving = false);
     }
   }
 
   void updateUrls() async {
-    setState(() => isSaving = true);
+    setState(() => _isSaving = true);
 
     try {
-      await projectSnapshot.reference.update({'urls': urls});
+      await _projectSnapshot.reference.update({'urls': _urls});
 
-      setState(() => isSaving = false);
+      setState(() => _isSaving = false);
     } catch (error) {
       appLogger.e(error);
-      setState(() => isSaving = false);
+      setState(() => _isSaving = false);
     }
   }
 
   void updatePubStatus(String status) async {
-    final prevValue = publicationStatus;
+    final prevValue = _publicationStatus;
 
     setState(() {
-      publicationStatus = status;
-      isSaving = true;
+      _publicationStatus = status;
+      _isSaving = true;
     });
 
     try {
-      await projectSnapshot.reference
+      await _projectSnapshot.reference
           .update({'published': status == PUBLISHED});
 
-      setState(() => isSaving = false);
+      setState(() => _isSaving = false);
     } catch (error) {
       appLogger.e(error);
 
       setState(() {
-        publicationStatus = prevValue;
-        isSaving = false;
+        _publicationStatus = prevValue;
+        _isSaving = false;
       });
     }
   }

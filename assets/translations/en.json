@@ -356,6 +356,7 @@
   "resources": "Resources",
   "route_undefined": "Route for {} is not defined.",
   "route_undefined_quote": "When we are lost, what matters is to find our way back.",
+  "save": "Save",
   "save_draft": "Save draft",
   "saving_dot": "Saving...",
   "saving_error": "There was an error while saving.",
