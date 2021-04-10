@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:rootasjey/components/home_app_bar.dart';
 import 'package:rootasjey/screens/draft_projects.dart';
 import 'package:rootasjey/screens/published_projects.dart';
-import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/utils/fonts.dart';
 import 'package:unicons/unicons.dart';
 
@@ -27,16 +26,7 @@ class _MyProjectsState extends State<MyProjects> {
       body: CustomScrollView(
         slivers: [
           HomeAppBar(
-            title: Opacity(
-              opacity: 0.6,
-              child: Text(
-                'Projects',
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  color: stateColors.foreground,
-                ),
-              ),
-            ),
+            textTitle: "projects".tr(),
           ),
           SliverList(
             delegate: SliverChildListDelegate([

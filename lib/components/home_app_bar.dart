@@ -3,6 +3,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:rootasjey/components/app_icon.dart';
+import 'package:rootasjey/components/avatar_menu.dart';
 import 'package:rootasjey/components/lang_popup_menu_button.dart';
 import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/state/colors.dart';
@@ -16,6 +17,7 @@ class HomeAppBar extends StatefulWidget {
   final bool showAppIcon;
   final Function onTapIconHeader;
   final Widget title;
+  final String textTitle;
   final List<Widget> trailing;
 
   HomeAppBar({
@@ -24,6 +26,7 @@ class HomeAppBar extends StatefulWidget {
     this.title,
     this.trailing = const [],
     this.showAppIcon = true,
+    this.textTitle,
   });
 
   @override
@@ -74,13 +77,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
                           ),
                       ],
                     ),
-                    if (widget.title != null)
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 40.0),
-                          child: widget.title,
-                        ),
-                      ),
+                    getTitleWidget(),
                     userSection(isNarrow),
                   ],
                 ),
@@ -131,7 +128,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
     );
   }
 
-  Widget authenticatedMenu(bool isNarrow) {
+  Widget authenticatedMenu(bool isSmall) {
     return Container(
       padding: const EdgeInsets.only(
         top: 5.0,
@@ -140,11 +137,11 @@ class _HomeAppBarState extends State<HomeAppBar> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          userAvatar(isNarrow: isNarrow),
-          if (!isNarrow) addNewPostButton(),
+          AvatarMenu(isSmall: isSmall),
+          if (!isSmall) addNewPostButton(),
           // searchButton(),
           brightnessButton(),
-          if (!isNarrow) langButton(),
+          if (!isSmall) langButton(),
         ],
       ),
     );
@@ -250,6 +247,34 @@ class _HomeAppBarState extends State<HomeAppBar> {
     );
   }
 
+  Widget getTitleWidget() {
+    Widget title;
+
+    if (widget.textTitle != null) {
+      title = Opacity(
+        opacity: 0.6,
+        child: Text(
+          widget.textTitle,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+            color: stateColors.foreground,
+          ),
+        ),
+      );
+    }
+
+    if (widget.title != null) {
+      title = widget.title;
+    }
+
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.only(left: 40.0),
+        child: title,
+      ),
+    );
+  }
+
   Widget guestMenu(bool isNarrow) {
     return Container(
       padding: const EdgeInsets.only(
@@ -289,125 +314,6 @@ class _HomeAppBarState extends State<HomeAppBar> {
       },
       color: stateColors.foreground,
       icon: Icon(UniconsLine.search),
-    );
-  }
-
-  Widget userAvatar({bool isNarrow = true}) {
-    final arrStr = stateUser.username.split(' ');
-    String initials = '';
-
-    if (arrStr.length > 0) {
-      initials = arrStr.length > 1
-          ? arrStr.reduce((value, element) => value + element.substring(1))
-          : arrStr.first;
-
-      if (initials != null && initials.isNotEmpty) {
-        initials = initials.substring(0, 1);
-      }
-    }
-
-    return Padding(
-      padding: const EdgeInsets.only(
-        left: 20.0,
-        right: 20.0,
-      ),
-      child: PopupMenuButton<PageRouteInfo>(
-        icon: CircleAvatar(
-          backgroundColor: stateColors.primary,
-          radius: 20.0,
-          child: Text(
-            initials,
-            style: TextStyle(
-              color: Colors.white,
-            ),
-          ),
-        ),
-        onSelected: (route) {
-          if (route.routeName == SignOutRoute.name) {
-            stateUser.signOut(context: context);
-            return;
-          }
-
-          context.router.root.push(route);
-        },
-        itemBuilder: (BuildContext context) => <PopupMenuEntry<PageRouteInfo>>[
-          if (isNarrow)
-            PopupMenuItem(
-                value: DashboardPageRoute(children: [NewPostRoute()]),
-                child: ListTile(
-                  leading: Icon(UniconsLine.plus),
-                  title: Text(
-                    "post_new".tr(),
-                    style: TextStyle(
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                )),
-          if (isNarrow)
-            PopupMenuItem(
-                value: SearchRoute(),
-                child: ListTile(
-                  leading: Icon(UniconsLine.search),
-                  title: Text(
-                    "search".tr(),
-                    style: TextStyle(
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                )),
-          PopupMenuItem(
-              value: DashboardPageRoute(children: [
-                DeepNewPage(children: [
-                  NewProjectRoute(),
-                ])
-              ]),
-              child: ListTile(
-                leading: Icon(UniconsLine.plus),
-                title: Text(
-                  "project_new".tr(),
-                  style: TextStyle(
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-              )),
-          PopupMenuItem(
-            value: DashboardPageRoute(children: [MyPostsRoute()]),
-            child: ListTile(
-              leading: Icon(UniconsLine.newspaper),
-              title: Text(
-                "posts_my".tr(),
-                style: TextStyle(
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
-            ),
-          ),
-          PopupMenuItem(
-            value: DashboardPageRoute(children: [MyProjectsRoute()]),
-            child: ListTile(
-              leading: Icon(UniconsLine.apps),
-              title: Text(
-                "projects_my".tr(),
-                style: TextStyle(
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
-            ),
-          ),
-          PopupMenuItem(
-            value: SignOutRoute(),
-            child: ListTile(
-              leading: Icon(UniconsLine.sign_left),
-              title: Text(
-                "signout".tr(),
-                style: TextStyle(
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 
