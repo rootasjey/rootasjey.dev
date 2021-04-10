@@ -52,7 +52,7 @@ class _DashboardPageState extends State<DashboardPage> {
         return Material(
           child: Row(
             children: [
-              buildSideMenu(context),
+              buildSidePanel(context),
               Expanded(child: child),
             ],
           ),
@@ -61,7 +61,7 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
-  Widget buildSideMenu(BuildContext context) {
+  Widget buildSidePanel(BuildContext context) {
     final router = context.router;
 
     if (MediaQuery.of(context).size.width < Constants.maxMobileWidth) {
