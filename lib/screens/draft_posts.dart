@@ -84,7 +84,7 @@ class _DraftPostsState extends State<DraftPosts> {
                 PopupMenuItem(
                   value: 'delete',
                   child: ListTile(
-                    leading: Icon(Icons.delete),
+                    leading: Icon(UniconsLine.trash),
                     title: Text("delete".tr()),
                   ),
                 ),
