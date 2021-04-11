@@ -22,22 +22,25 @@ class _MyProjectsState extends State<MyProjects> {
   ];
 
   @override
-  initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: NotificationListener<ScrollNotification>(
         onNotification: (ScrollNotification scrollNotification) {
-          if (scrollNotification.metrics.pixels <
-              scrollNotification.metrics.maxScrollExtent) {
-            stateDraftProjectsScroll.setHasReachEnd(false);
+          final double current = scrollNotification.metrics.pixels;
+          final double max = scrollNotification.metrics.maxScrollExtent;
+
+          if (current < max) {
+            bodyIndex == 0
+                ? stateDraftProjectsScroll.setHasReachEnd(false)
+                : statePubProjectsScroll.setHasReachEnd(false);
+
             return false;
           }
 
-          stateDraftProjectsScroll.setHasReachEnd(true);
+          bodyIndex == 0
+              ? stateDraftProjectsScroll.setHasReachEnd(true)
+              : statePubProjectsScroll.setHasReachEnd(true);
+
           return false;
         },
         child: CustomScrollView(

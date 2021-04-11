@@ -2,9 +2,11 @@ import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:mobx/mobx.dart';
 import 'package:rootasjey/components/project_card.dart';
 import 'package:rootasjey/components/sliver_empty_view.dart';
 import 'package:rootasjey/router/app_router.gr.dart';
+import 'package:rootasjey/state/scroll.dart';
 import 'package:rootasjey/types/project.dart';
 import 'package:rootasjey/utils/app_logger.dart';
 import 'package:unicons/unicons.dart';
@@ -20,12 +22,30 @@ class _PublishedProjectsState extends State<PublishedProjects> {
 
   bool hasNext = true;
   bool isLoading = false;
-  var lastDoc;
+
+  DocumentSnapshot _lastDocumentSnapshot;
+
+  ReactionDisposer _scrollReaction;
 
   @override
   void initState() {
     super.initState();
     fetch();
+
+    _scrollReaction = reaction(
+      (_) => statePubProjectsScroll.hasReachEnd,
+      (bool hasReachedEnd) {
+        if (hasReachedEnd && hasNext) {
+          fetchMore();
+        }
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    _scrollReaction.reaction.dispose();
+    super.dispose();
   }
 
   @override
@@ -185,7 +205,47 @@ class _PublishedProjectsState extends State<PublishedProjects> {
         return;
       }
 
-      lastDoc = snapshot.docs.last;
+      snapshot.docs.forEach((doc) {
+        final data = doc.data();
+        data['id'] = doc.id;
+
+        projectsList.add(Project.fromJSON(data));
+      });
+
+      setState(() {
+        isLoading = false;
+        hasNext = limit == snapshot.size;
+        _lastDocumentSnapshot = snapshot.docs.last;
+      });
+    } catch (error) {
+      appLogger.e(error);
+      setState(() => isLoading = false);
+    }
+  }
+
+  void fetchMore() async {
+    if (!hasNext || _lastDocumentSnapshot == null) {
+      return;
+    }
+
+    setState(() => isLoading = true);
+
+    try {
+      final snapshot = await FirebaseFirestore.instance
+          .collection('projects')
+          .where('published', isEqualTo: true)
+          .limit(limit)
+          .startAfterDocument(_lastDocumentSnapshot)
+          .get();
+
+      if (snapshot.size == 0) {
+        setState(() {
+          hasNext = false;
+          isLoading = false;
+        });
+
+        return;
+      }
 
       snapshot.docs.forEach((doc) {
         final data = doc.data();
@@ -197,9 +257,11 @@ class _PublishedProjectsState extends State<PublishedProjects> {
       setState(() {
         isLoading = false;
         hasNext = limit == snapshot.size;
+        _lastDocumentSnapshot = snapshot.docs.last;
       });
     } catch (error) {
       appLogger.e(error);
+      setState(() => isLoading = false);
     }
   }
 
