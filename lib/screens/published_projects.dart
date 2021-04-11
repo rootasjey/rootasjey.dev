@@ -17,11 +17,11 @@ class PublishedProjects extends StatefulWidget {
 }
 
 class _PublishedProjectsState extends State<PublishedProjects> {
-  final projectsList = <Project>[];
-  final limit = 10;
+  final _projects = <Project>[];
+  final _limit = 10;
 
-  bool hasNext = true;
-  bool isLoading = false;
+  bool _hasNext = true;
+  bool _isLoading = false;
 
   DocumentSnapshot _lastDocumentSnapshot;
 
@@ -35,7 +35,7 @@ class _PublishedProjectsState extends State<PublishedProjects> {
     _scrollReaction = reaction(
       (_) => statePubProjectsScroll.hasReachEnd,
       (bool hasReachedEnd) {
-        if (hasReachedEnd && hasNext) {
+        if (hasReachedEnd && _hasNext) {
           fetchMore();
         }
       },
@@ -50,11 +50,7 @@ class _PublishedProjectsState extends State<PublishedProjects> {
 
   @override
   Widget build(BuildContext context) {
-    return body();
-  }
-
-  Widget body() {
-    if (!isLoading && projectsList.isEmpty) {
+    if (!_isLoading && _projects.isEmpty) {
       return SliverEmptyView();
     }
 
@@ -68,7 +64,7 @@ class _PublishedProjectsState extends State<PublishedProjects> {
       ),
       delegate: SliverChildBuilderDelegate(
         (context, index) {
-          final project = projectsList.elementAt(index);
+          final project = _projects.elementAt(index);
 
           return ProjectCard(
             onTap: () {
@@ -138,7 +134,7 @@ class _PublishedProjectsState extends State<PublishedProjects> {
             project: project,
           );
         },
-        childCount: projectsList.length,
+        childCount: _projects.length,
       ),
     );
   }
@@ -185,21 +181,21 @@ class _PublishedProjectsState extends State<PublishedProjects> {
 
   void fetch() async {
     setState(() {
-      projectsList.clear();
-      isLoading = true;
+      _projects.clear();
+      _isLoading = true;
     });
 
     try {
       final snapshot = await FirebaseFirestore.instance
           .collection('projects')
           .where('published', isEqualTo: true)
-          .limit(limit)
+          .limit(_limit)
           .get();
 
       if (snapshot.size == 0) {
         setState(() {
-          hasNext = false;
-          isLoading = false;
+          _hasNext = false;
+          _isLoading = false;
         });
 
         return;
@@ -209,39 +205,39 @@ class _PublishedProjectsState extends State<PublishedProjects> {
         final data = doc.data();
         data['id'] = doc.id;
 
-        projectsList.add(Project.fromJSON(data));
+        _projects.add(Project.fromJSON(data));
       });
 
       setState(() {
-        isLoading = false;
-        hasNext = limit == snapshot.size;
+        _isLoading = false;
+        _hasNext = _limit == snapshot.size;
         _lastDocumentSnapshot = snapshot.docs.last;
       });
     } catch (error) {
       appLogger.e(error);
-      setState(() => isLoading = false);
+      setState(() => _isLoading = false);
     }
   }
 
   void fetchMore() async {
-    if (!hasNext || _lastDocumentSnapshot == null) {
+    if (!_hasNext || _lastDocumentSnapshot == null) {
       return;
     }
 
-    setState(() => isLoading = true);
+    setState(() => _isLoading = true);
 
     try {
       final snapshot = await FirebaseFirestore.instance
           .collection('projects')
           .where('published', isEqualTo: true)
-          .limit(limit)
+          .limit(_limit)
           .startAfterDocument(_lastDocumentSnapshot)
           .get();
 
       if (snapshot.size == 0) {
         setState(() {
-          hasNext = false;
-          isLoading = false;
+          _hasNext = false;
+          _isLoading = false;
         });
 
         return;
@@ -251,24 +247,24 @@ class _PublishedProjectsState extends State<PublishedProjects> {
         final data = doc.data();
         data['id'] = doc.id;
 
-        projectsList.add(Project.fromJSON(data));
+        _projects.add(Project.fromJSON(data));
       });
 
       setState(() {
-        isLoading = false;
-        hasNext = limit == snapshot.size;
+        _isLoading = false;
+        _hasNext = _limit == snapshot.size;
         _lastDocumentSnapshot = snapshot.docs.last;
       });
     } catch (error) {
       appLogger.e(error);
-      setState(() => isLoading = false);
+      setState(() => _isLoading = false);
     }
   }
 
   void delete(int index) async {
-    setState(() => isLoading = true);
+    setState(() => _isLoading = true);
 
-    final removedPost = projectsList.removeAt(index);
+    final removedPost = _projects.removeAt(index);
 
     try {
       await FirebaseFirestore.instance
@@ -276,20 +272,20 @@ class _PublishedProjectsState extends State<PublishedProjects> {
           .doc(removedPost.id)
           .delete();
 
-      setState(() => isLoading = false);
+      setState(() => _isLoading = false);
     } catch (error) {
       appLogger.e(error);
 
       setState(() {
-        projectsList.insert(index, removedPost);
+        _projects.insert(index, removedPost);
       });
     }
   }
 
   void unpublish(int index) async {
-    setState(() => isLoading = true);
+    setState(() => _isLoading = true);
 
-    final removedPost = projectsList.removeAt(index);
+    final removedPost = _projects.removeAt(index);
 
     try {
       await FirebaseFirestore.instance
@@ -299,12 +295,12 @@ class _PublishedProjectsState extends State<PublishedProjects> {
         'published': false,
       });
 
-      setState(() => isLoading = false);
+      setState(() => _isLoading = false);
     } catch (error) {
       appLogger.e(error);
 
       setState(() {
-        projectsList.insert(index, removedPost);
+        _projects.insert(index, removedPost);
       });
     }
   }

@@ -20,7 +20,7 @@ class DraftProjects extends StatefulWidget {
 }
 
 class _DraftProjectsState extends State<DraftProjects> {
-  final _projectsList = <Project>[];
+  final _projects = <Project>[];
   final _limit = 10;
 
   bool _hasNext = true;
@@ -53,11 +53,7 @@ class _DraftProjectsState extends State<DraftProjects> {
 
   @override
   Widget build(BuildContext context) {
-    return body();
-  }
-
-  Widget body() {
-    if (!_isLoading && _projectsList.isEmpty) {
+    if (!_isLoading && _projects.isEmpty) {
       return SliverEmptyView();
     }
 
@@ -71,7 +67,7 @@ class _DraftProjectsState extends State<DraftProjects> {
       ),
       delegate: SliverChildBuilderDelegate(
         (context, index) {
-          final project = _projectsList.elementAt(index);
+          final project = _projects.elementAt(index);
 
           return ProjectCard(
             onTap: () => goToEditPage(project),
@@ -107,14 +103,14 @@ class _DraftProjectsState extends State<DraftProjects> {
             project: project,
           );
         },
-        childCount: _projectsList.length,
+        childCount: _projects.length,
       ),
     );
   }
 
   void fetch() async {
     setState(() {
-      _projectsList.clear();
+      _projects.clear();
       _isLoading = true;
     });
 
@@ -144,7 +140,7 @@ class _DraftProjectsState extends State<DraftProjects> {
         final data = doc.data();
         data['id'] = doc.id;
 
-        _projectsList.add(Project.fromJSON(data));
+        _projects.add(Project.fromJSON(data));
       });
 
       setState(() {
@@ -188,7 +184,7 @@ class _DraftProjectsState extends State<DraftProjects> {
         final data = doc.data();
         data['id'] = doc.id;
 
-        _projectsList.add(Project.fromJSON(data));
+        _projects.add(Project.fromJSON(data));
       });
 
       setState(() {
@@ -203,7 +199,7 @@ class _DraftProjectsState extends State<DraftProjects> {
   void delete(int index) async {
     setState(() => _isLoading = true);
 
-    final removedProject = _projectsList.removeAt(index);
+    final removedProject = _projects.removeAt(index);
 
     try {
       await FirebaseFirestore.instance
@@ -216,7 +212,7 @@ class _DraftProjectsState extends State<DraftProjects> {
       appLogger.e(error);
 
       setState(() {
-        _projectsList.insert(index, removedProject);
+        _projects.insert(index, removedProject);
       });
     }
   }
@@ -224,7 +220,7 @@ class _DraftProjectsState extends State<DraftProjects> {
   void publish(int index) async {
     setState(() => _isLoading = true);
 
-    final removedProject = _projectsList.removeAt(index);
+    final removedProject = _projects.removeAt(index);
 
     try {
       await FirebaseFirestore.instance
@@ -239,7 +235,7 @@ class _DraftProjectsState extends State<DraftProjects> {
       appLogger.e(error);
 
       setState(() {
-        _projectsList.insert(index, removedProject);
+        _projects.insert(index, removedProject);
       });
     }
   }
