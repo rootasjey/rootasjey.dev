@@ -18,11 +18,11 @@ class DraftPosts extends StatefulWidget {
 }
 
 class _DraftPostsState extends State<DraftPosts> {
-  final postsList = <Post>[];
-  final limit = 10;
+  final _posts = <Post>[];
+  final _limit = 10;
 
-  bool hasNext = true;
-  bool isLoading = false;
+  bool _hasNext = true;
+  bool _isLoading = false;
 
   DocumentSnapshot _lastDocumentSnapshot;
 
@@ -36,7 +36,7 @@ class _DraftPostsState extends State<DraftPosts> {
     _scrollReaction = reaction(
       (_) => stateDraftPostsScroll.hasReachedEnd,
       (hasReachedEnd) {
-        if (hasReachedEnd && !isLoading && hasNext) {
+        if (hasReachedEnd && !_isLoading && _hasNext) {
           fetchMore();
         }
       },
@@ -55,7 +55,7 @@ class _DraftPostsState extends State<DraftPosts> {
   }
 
   Widget body() {
-    if (!isLoading && postsList.isEmpty) {
+    if (!_isLoading && _posts.isEmpty) {
       return SliverEmptyView();
     }
 
@@ -66,7 +66,7 @@ class _DraftPostsState extends State<DraftPosts> {
     return SliverList(
       delegate: SliverChildBuilderDelegate(
         (context, index) {
-          final post = postsList.elementAt(index);
+          final post = _posts.elementAt(index);
 
           return PostCard(
             onTap: () => goToEditPostPage(post),
@@ -114,15 +114,15 @@ class _DraftPostsState extends State<DraftPosts> {
             padding: const EdgeInsets.only(bottom: 20.0),
           );
         },
-        childCount: postsList.length,
+        childCount: _posts.length,
       ),
     );
   }
 
   void fetch() async {
     setState(() {
-      postsList.clear();
-      isLoading = true;
+      _posts.clear();
+      _isLoading = true;
     });
 
     try {
@@ -133,13 +133,13 @@ class _DraftPostsState extends State<DraftPosts> {
           .collection('posts')
           .where('published', isEqualTo: false)
           .where('author', isEqualTo: uid)
-          .limit(limit)
+          .limit(_limit)
           .get();
 
       if (snapshot.size == 0) {
         setState(() {
-          hasNext = false;
-          isLoading = false;
+          _hasNext = false;
+          _isLoading = false;
         });
 
         return;
@@ -149,26 +149,26 @@ class _DraftPostsState extends State<DraftPosts> {
         final data = doc.data();
         data['id'] = doc.id;
 
-        postsList.add(Post.fromJSON(data));
+        _posts.add(Post.fromJSON(data));
       });
 
       setState(() {
-        isLoading = false;
-        hasNext = limit == snapshot.size;
+        _isLoading = false;
+        _hasNext = _limit == snapshot.size;
         _lastDocumentSnapshot = snapshot.docs.last;
       });
     } catch (error) {
       appLogger.e(error);
-      setState(() => isLoading = false);
+      setState(() => _isLoading = false);
     }
   }
 
   void fetchMore() async {
-    if (_lastDocumentSnapshot == null || !hasNext || isLoading) {
+    if (_lastDocumentSnapshot == null || !_hasNext || _isLoading) {
       return;
     }
 
-    setState(() => isLoading = true);
+    setState(() => _isLoading = true);
 
     try {
       final userAuth = stateUser.userAuth;
@@ -178,14 +178,14 @@ class _DraftPostsState extends State<DraftPosts> {
           .collection('posts')
           .where('published', isEqualTo: false)
           .where('author', isEqualTo: uid)
-          .limit(limit)
+          .limit(_limit)
           .startAfterDocument(_lastDocumentSnapshot)
           .get();
 
       if (snapshot.size == 0) {
         setState(() {
-          hasNext = false;
-          isLoading = false;
+          _hasNext = false;
+          _isLoading = false;
         });
 
         return;
@@ -195,24 +195,24 @@ class _DraftPostsState extends State<DraftPosts> {
         final data = doc.data();
         data['id'] = doc.id;
 
-        postsList.add(Post.fromJSON(data));
+        _posts.add(Post.fromJSON(data));
       });
 
       setState(() {
-        isLoading = false;
-        hasNext = limit == snapshot.size;
+        _isLoading = false;
+        _hasNext = _limit == snapshot.size;
         _lastDocumentSnapshot = snapshot.docs.last;
       });
     } catch (error) {
       appLogger.e(error);
-      setState(() => isLoading = false);
+      setState(() => _isLoading = false);
     }
   }
 
   void delete(int index) async {
-    setState(() => isLoading = true);
+    setState(() => _isLoading = true);
 
-    final removedPost = postsList.removeAt(index);
+    final removedPost = _posts.removeAt(index);
 
     try {
       await FirebaseFirestore.instance
@@ -220,12 +220,12 @@ class _DraftPostsState extends State<DraftPosts> {
           .doc(removedPost.id)
           .delete();
 
-      setState(() => isLoading = false);
+      setState(() => _isLoading = false);
     } catch (error) {
       appLogger.e(error);
 
       setState(() {
-        postsList.insert(index, removedPost);
+        _posts.insert(index, removedPost);
       });
     }
   }
@@ -243,9 +243,9 @@ class _DraftPostsState extends State<DraftPosts> {
   }
 
   void publish(int index) async {
-    setState(() => isLoading = true);
+    setState(() => _isLoading = true);
 
-    final removedPost = postsList.removeAt(index);
+    final removedPost = _posts.removeAt(index);
 
     try {
       await FirebaseFirestore.instance
@@ -255,12 +255,12 @@ class _DraftPostsState extends State<DraftPosts> {
         'published': true,
       });
 
-      setState(() => isLoading = false);
+      setState(() => _isLoading = false);
     } catch (error) {
       appLogger.e(error);
 
       setState(() {
-        postsList.insert(index, removedPost);
+        _posts.insert(index, removedPost);
       });
     }
   }

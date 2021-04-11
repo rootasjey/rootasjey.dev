@@ -220,7 +220,7 @@ class _PublishedProjectsState extends State<PublishedProjects> {
   }
 
   void fetchMore() async {
-    if (_lastDocumentSnapshot == null || !_hasNext) {
+    if (_lastDocumentSnapshot == null || !_hasNext || _isLoading) {
       return;
     }
 

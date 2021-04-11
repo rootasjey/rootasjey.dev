@@ -134,8 +134,6 @@ class _DraftProjectsState extends State<DraftProjects> {
         return;
       }
 
-      _lastDocumentSnapshot = snapshot.docs.last;
-
       snapshot.docs.forEach((doc) {
         final data = doc.data();
         data['id'] = doc.id;
@@ -146,6 +144,7 @@ class _DraftProjectsState extends State<DraftProjects> {
       setState(() {
         _isLoading = false;
         _hasNext = _limit == snapshot.size;
+        _lastDocumentSnapshot = snapshot.docs.last;
       });
     } catch (error) {
       appLogger.e(error);
@@ -153,7 +152,7 @@ class _DraftProjectsState extends State<DraftProjects> {
   }
 
   void fetchMore() async {
-    if (_lastDocumentSnapshot == null || !_hasNext) {
+    if (_lastDocumentSnapshot == null || !_hasNext || _isLoading) {
       return;
     }
 
@@ -182,8 +181,6 @@ class _DraftProjectsState extends State<DraftProjects> {
         return;
       }
 
-      _lastDocumentSnapshot = snapshot.docs.last;
-
       snapshot.docs.forEach((doc) {
         final data = doc.data();
         data['id'] = doc.id;
@@ -194,6 +191,7 @@ class _DraftProjectsState extends State<DraftProjects> {
       setState(() {
         _isLoading = false;
         _hasNext = _limit == snapshot.size;
+        _lastDocumentSnapshot = snapshot.docs.last;
       });
     } catch (error) {
       appLogger.e(error);
