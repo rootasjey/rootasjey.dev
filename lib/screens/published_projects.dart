@@ -7,6 +7,7 @@ import 'package:rootasjey/components/sliver_empty_view.dart';
 import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/types/project.dart';
 import 'package:rootasjey/utils/app_logger.dart';
+import 'package:unicons/unicons.dart';
 
 class PublishedProjects extends StatefulWidget {
   @override
@@ -70,6 +71,9 @@ class _PublishedProjectsState extends State<PublishedProjects> {
                   case 'edit':
                     goToEditPage(project);
                     break;
+                  case 'view_online':
+                    viewOnline(project);
+                    break;
                   case 'unpublish':
                     unpublish(index);
                     break;
@@ -80,14 +84,23 @@ class _PublishedProjectsState extends State<PublishedProjects> {
                 PopupMenuItem(
                   value: 'edit',
                   child: ListTile(
-                    leading: Icon(Icons.edit),
+                    leading: Icon(UniconsLine.edit),
                     title: Text("edit".tr()),
+                  ),
+                ),
+                PopupMenuItem(
+                  value: 'view_online',
+                  child: ListTile(
+                    leading: Icon(UniconsLine.eye),
+                    title: Text(
+                      "view_online".tr(),
+                    ),
                   ),
                 ),
                 PopupMenuItem(
                   value: 'unpublish',
                   child: ListTile(
-                    leading: Icon(Icons.public_off_sharp),
+                    leading: Icon(UniconsLine.eye_slash),
                     title: Text(
                       "unpublish".tr(),
                     ),
@@ -96,7 +109,7 @@ class _PublishedProjectsState extends State<PublishedProjects> {
                 PopupMenuItem(
                   value: 'delete',
                   child: ListTile(
-                    leading: Icon(Icons.delete),
+                    leading: Icon(UniconsLine.trash),
                     title: Text("delete".tr()),
                   ),
                 ),
@@ -246,5 +259,15 @@ class _PublishedProjectsState extends State<PublishedProjects> {
     );
 
     fetch();
+  }
+
+  void viewOnline(Project project) {
+    context.router.root.push(
+      ProjectsDeepRoute(
+        children: [
+          ProjectPageRoute(projectId: project.id),
+        ],
+      ),
+    );
   }
 }
