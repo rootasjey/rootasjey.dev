@@ -29,7 +29,7 @@ class _MyProjectsState extends State<MyProjects> {
           final double current = scrollNotification.metrics.pixels;
           final double max = scrollNotification.metrics.maxScrollExtent;
 
-          if (current < max) {
+          if (current < max - 300.0) {
             bodyIndex == 0
                 ? stateDraftProjectsScroll.setHasReachedEnd(false)
                 : statePubProjectsScroll.setHasReachedEnd(false);
