@@ -3,7 +3,9 @@ import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:jiffy/jiffy.dart';
 import 'package:markdown/markdown.dart' as markdown;
+import 'package:rootasjey/components/better_avatar.dart';
 import 'package:rootasjey/components/home_app_bar.dart';
 import 'package:rootasjey/components/markdown_viewer.dart';
 import 'package:rootasjey/components/sliver_loading_view.dart';
@@ -11,10 +13,13 @@ import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/types/project.dart';
 import 'package:rootasjey/utils/app_logger.dart';
 import 'package:rootasjey/utils/cloud.dart';
+import 'package:rootasjey/utils/fonts.dart';
 import 'package:rootasjey/utils/keybindings.dart';
 import 'package:rootasjey/utils/mesure_size.dart';
 import 'package:rootasjey/utils/snack.dart';
 import 'package:supercharged/supercharged.dart';
+import 'package:unicons/unicons.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ProjectPage extends StatefulWidget {
   final String projectId;
@@ -94,6 +99,23 @@ class _ProjectPageState extends State<ProjectPage> {
     );
   }
 
+  Widget allChips() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 12.0),
+      child: Align(
+        alignment: Alignment.topLeft,
+        child: Wrap(
+          spacing: 16.0,
+          children: [
+            tags(),
+            links(),
+            programmingLang(),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget appBar() {
     return HomeAppBar(
       automaticallyImplyLeading: true,
@@ -106,6 +128,44 @@ class _ProjectPageState extends State<ProjectPage> {
             color: stateColors.foreground,
           ),
         ),
+      ),
+    );
+  }
+
+  Widget author() {
+    return Padding(
+      padding: const EdgeInsets.only(
+        top: 24.0,
+        bottom: 28.0,
+      ),
+      child: Row(
+        children: [
+          Hero(
+            tag: 'pp',
+            child: BetterAvatar(
+              size: 60.0,
+              image: AssetImage(
+                'assets/images/jeje.jpg',
+              ),
+              colorFilter: ColorFilter.mode(
+                Colors.grey,
+                BlendMode.saturation,
+              ),
+              onTap: () {},
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 16.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Opacity(opacity: 0.8, child: Text("Jérémie CORPINOT")),
+                Opacity(opacity: 0.4, child: Text("Dev web & mobile")),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -125,27 +185,103 @@ class _ProjectPageState extends State<ProjectPage> {
         Row(
           children: [
             if (!isNarrow) Spacer(),
-            Expanded(
-              flex: 3,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16.0,
-                ),
-                child: MeasureSize(
-                  onChange: (size) {
-                    _keyBindings.updatePageHeight(size.height);
-                  },
-                  child: MarkdownViewer(
-                    data: _projectData,
-                    width: _textWidth,
-                  ),
-                ),
-              ),
-            ),
+            bodyCentered(),
             if (!isNarrow) Spacer(),
           ],
         ),
       ]),
+    );
+  }
+
+  Widget bodyCentered() {
+    return Expanded(
+      flex: 3,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 16.0,
+        ),
+        child: MeasureSize(
+          onChange: (size) {
+            _keyBindings.updatePageHeight(size.height);
+          },
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              title(),
+              summary(),
+              dates(),
+              allChips(),
+              author(),
+              MarkdownViewer(
+                data: _projectData,
+                width: _textWidth,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget dates() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 4.0),
+      child: Align(
+        alignment: Alignment.topLeft,
+        child: Wrap(
+          spacing: 12.0,
+          children: [
+            Opacity(
+              opacity: 0.7,
+              child: Icon(UniconsLine.clock),
+            ),
+            Opacity(
+              opacity: 0.5,
+              child: Text(
+                "created:",
+                style: TextStyle(
+                  fontSize: 16.0,
+                ),
+              ),
+            ),
+            Opacity(
+              opacity: 0.5,
+              child: Text(
+                Jiffy(_project.createdAt).fromNow(),
+                style: TextStyle(
+                  fontSize: 16.0,
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 24.0,
+              child: VerticalDivider(
+                thickness: 2.0,
+                color: stateColors.primary,
+              ),
+            ),
+            Opacity(
+              opacity: 0.5,
+              child: Text(
+                "updated:",
+                style: TextStyle(
+                  fontSize: 16.0,
+                ),
+              ),
+            ),
+            Opacity(
+              opacity: 0.5,
+              child: Text(
+                Jiffy(_project.updatedAt).fromNow(),
+                style: TextStyle(
+                  fontSize: 16.0,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -163,6 +299,95 @@ class _ProjectPageState extends State<ProjectPage> {
         curve: Curves.bounceOut,
       ),
       child: Icon(Icons.arrow_upward),
+    );
+  }
+
+  Widget links() {
+    final chips = <InputChip>[];
+
+    _project.urls.map.forEach((name, value) {
+      if (value.isNotEmpty) {
+        chips.add(
+          InputChip(
+            label: Text(name),
+            tooltip: "Link",
+            side: BorderSide(color: stateColors.secondary),
+            onPressed: () {
+              launch(value);
+            },
+          ),
+        );
+      }
+    });
+
+    return Wrap(
+      spacing: 8.0,
+      runSpacing: 8.0,
+      children: chips,
+    );
+  }
+
+  Widget programmingLang() {
+    return Wrap(
+      spacing: 8.0,
+      children: _project.programmingLanguages
+          .map(
+            (pLang) => Tooltip(
+              message: "Programming language",
+              child: Chip(
+                label: Text(pLang),
+                side: BorderSide(color: Colors.pink),
+              ),
+            ),
+          )
+          .toList(),
+    );
+  }
+
+  Widget summary() {
+    return Align(
+      alignment: Alignment.topLeft,
+      child: Opacity(
+        opacity: 0.7,
+        child: Text(
+          _project.summary,
+          style: TextStyle(
+            fontSize: 16.0,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget tags() {
+    return Wrap(
+      spacing: 8.0,
+      children: _project.tags
+          .map(
+            (tag) => Tooltip(
+              message: "Tag",
+              child: Chip(
+                label: Text(tag),
+              ),
+            ),
+          )
+          .toList(),
+    );
+  }
+
+  Widget title() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 60.0),
+      child: Align(
+        alignment: Alignment.topLeft,
+        child: Text(
+          _project.title,
+          style: FontsUtils.mainStyle(
+            fontSize: 60.0,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+      ),
     );
   }
 
