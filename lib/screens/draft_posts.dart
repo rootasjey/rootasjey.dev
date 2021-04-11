@@ -51,7 +51,7 @@ class _DraftPostsState extends State<DraftPosts> {
           return PostCard(
             onTap: () => goToEditPostPage(post),
             popupMenuButton: PopupMenuButton<String>(
-              icon: Icon(Icons.more_vert),
+              icon: Icon(UniconsLine.ellipsis_v),
               onSelected: (value) {
                 switch (value) {
                   case 'edit':

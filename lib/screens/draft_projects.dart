@@ -10,6 +10,7 @@ import 'package:rootasjey/state/scroll.dart';
 import 'package:rootasjey/state/user.dart';
 import 'package:rootasjey/types/project.dart';
 import 'package:rootasjey/utils/app_logger.dart';
+import 'package:unicons/unicons.dart';
 
 class DraftProjects extends StatefulWidget {
   const DraftProjects({Key key}) : super(key: key);
@@ -90,14 +91,14 @@ class _DraftProjectsState extends State<DraftProjects> {
                 PopupMenuItem(
                   value: 'publish',
                   child: ListTile(
-                    leading: Icon(Icons.publish_outlined),
+                    leading: Icon(UniconsLine.cloud_upload),
                     title: Text("publish".tr()),
                   ),
                 ),
                 PopupMenuItem(
                   value: 'delete',
                   child: ListTile(
-                    leading: Icon(Icons.delete),
+                    leading: Icon(UniconsLine.trash),
                     title: Text("delete".tr()),
                   ),
                 ),
