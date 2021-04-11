@@ -6,12 +6,14 @@ class BetterAvatar extends StatefulWidget {
   final ImageProvider<Object> image;
   final double size;
   final double elevation;
+  final ColorFilter colorFilter;
 
   BetterAvatar({
     @required this.image,
     this.elevation = 4.0,
     this.onTap,
     this.size = 220.0,
+    this.colorFilter,
   });
 
   @override
@@ -70,6 +72,7 @@ class _BetterAvatarState extends State<BetterAvatar>
             width: size,
             height: size,
             fit: BoxFit.cover,
+            colorFilter: widget.colorFilter,
             child: InkWell(
               onTap: widget.onTap,
               onHover: (isHover) {
