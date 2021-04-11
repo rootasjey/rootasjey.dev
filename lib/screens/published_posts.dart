@@ -63,6 +63,9 @@ class _PublishedPostsState extends State<PublishedPosts> {
                   case 'unpublish':
                     unpublish(index);
                     break;
+                  case 'view_online':
+                    viewOnline(post);
+                    break;
                   default:
                 }
               },
@@ -72,6 +75,15 @@ class _PublishedPostsState extends State<PublishedPosts> {
                   child: ListTile(
                     leading: Icon(UniconsLine.edit),
                     title: Text("edit".tr()),
+                  ),
+                ),
+                PopupMenuItem(
+                  value: 'view_online',
+                  child: ListTile(
+                    leading: Icon(UniconsLine.eye),
+                    title: Text(
+                      "view_online".tr(),
+                    ),
                   ),
                 ),
                 PopupMenuItem(
@@ -235,5 +247,15 @@ class _PublishedPostsState extends State<PublishedPosts> {
     );
 
     fetch();
+  }
+
+  void viewOnline(Post post) {
+    context.router.root.push(
+      PostsDeepRoute(
+        children: [
+          PostPageRoute(postId: post.id),
+        ],
+      ),
+    );
   }
 }
