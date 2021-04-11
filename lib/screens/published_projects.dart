@@ -71,11 +71,11 @@ class _PublishedProjectsState extends State<PublishedProjects> {
                   case 'edit':
                     goToEditPage(project);
                     break;
-                  case 'view_online':
-                    viewOnline(project);
-                    break;
                   case 'unpublish':
                     unpublish(index);
+                    break;
+                  case 'view_online':
+                    viewOnline(project);
                     break;
                   default:
                 }
