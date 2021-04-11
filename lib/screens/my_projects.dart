@@ -33,11 +33,11 @@ class _MyProjectsState extends State<MyProjects> {
         onNotification: (ScrollNotification scrollNotification) {
           if (scrollNotification.metrics.pixels <
               scrollNotification.metrics.maxScrollExtent) {
-            stateDraftScroll.setHasReachEnd(false);
+            stateDraftProjectsScroll.setHasReachEnd(false);
             return false;
           }
 
-          stateDraftScroll.setHasReachEnd(true);
+          stateDraftProjectsScroll.setHasReachEnd(true);
           return false;
         },
         child: CustomScrollView(

@@ -14,4 +14,4 @@ abstract class StateScrollBase with Store {
   }
 }
 
-final stateDraftScroll = StateScroll();
+final stateDraftProjectsScroll = StateScroll();

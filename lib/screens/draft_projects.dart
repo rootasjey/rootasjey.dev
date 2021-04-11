@@ -36,7 +36,7 @@ class _DraftProjectsState extends State<DraftProjects> {
     fetch();
 
     _reactionDisposer = reaction(
-      (_) => stateDraftScroll.hasReachEnd,
+      (_) => stateDraftProjectsScroll.hasReachEnd,
       (bool hasReachEnd) {
         if (hasReachEnd && !_isLoading && _hasNext) {
           fetchMore();
