@@ -6,11 +6,11 @@ class StateScroll = StateScrollBase with _$StateScroll;
 
 abstract class StateScrollBase with Store {
   @observable
-  bool hasReachEnd = false;
+  bool hasReachedEnd = false;
 
   @action
-  void setHasReachEnd(bool newValue) {
-    hasReachEnd = newValue;
+  void setHasReachedEnd(bool newValue) {
+    hasReachedEnd = newValue;
   }
 }
 

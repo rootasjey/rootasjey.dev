@@ -9,18 +9,18 @@ part of 'scroll.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$StateScroll on StateScrollBase, Store {
-  final _$hasReachEndAtom = Atom(name: 'StateScrollBase.hasReachEnd');
+  final _$hasReachedEndAtom = Atom(name: 'StateScrollBase.hasReachedEnd');
 
   @override
-  bool get hasReachEnd {
-    _$hasReachEndAtom.reportRead();
-    return super.hasReachEnd;
+  bool get hasReachedEnd {
+    _$hasReachedEndAtom.reportRead();
+    return super.hasReachedEnd;
   }
 
   @override
-  set hasReachEnd(bool value) {
-    _$hasReachEndAtom.reportWrite(value, super.hasReachEnd, () {
-      super.hasReachEnd = value;
+  set hasReachedEnd(bool value) {
+    _$hasReachedEndAtom.reportWrite(value, super.hasReachedEnd, () {
+      super.hasReachedEnd = value;
     });
   }
 
@@ -28,11 +28,11 @@ mixin _$StateScroll on StateScrollBase, Store {
       ActionController(name: 'StateScrollBase');
 
   @override
-  void setHasReachEnd(bool newValue) {
+  void setHasReachedEnd(bool newValue) {
     final _$actionInfo = _$StateScrollBaseActionController.startAction(
-        name: 'StateScrollBase.setHasReachEnd');
+        name: 'StateScrollBase.setHasReachedEnd');
     try {
-      return super.setHasReachEnd(newValue);
+      return super.setHasReachedEnd(newValue);
     } finally {
       _$StateScrollBaseActionController.endAction(_$actionInfo);
     }
@@ -41,7 +41,7 @@ mixin _$StateScroll on StateScrollBase, Store {
   @override
   String toString() {
     return '''
-hasReachEnd: ${hasReachEnd}
+hasReachedEnd: ${hasReachedEnd}
     ''';
   }
 }

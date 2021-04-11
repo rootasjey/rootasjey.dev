@@ -31,15 +31,15 @@ class _MyProjectsState extends State<MyProjects> {
 
           if (current < max) {
             bodyIndex == 0
-                ? stateDraftProjectsScroll.setHasReachEnd(false)
-                : statePubProjectsScroll.setHasReachEnd(false);
+                ? stateDraftProjectsScroll.setHasReachedEnd(false)
+                : statePubProjectsScroll.setHasReachedEnd(false);
 
             return false;
           }
 
           bodyIndex == 0
-              ? stateDraftProjectsScroll.setHasReachEnd(true)
-              : statePubProjectsScroll.setHasReachEnd(true);
+              ? stateDraftProjectsScroll.setHasReachedEnd(true)
+              : statePubProjectsScroll.setHasReachedEnd(true);
 
           return false;
         },

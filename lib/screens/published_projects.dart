@@ -33,7 +33,7 @@ class _PublishedProjectsState extends State<PublishedProjects> {
     fetch();
 
     _scrollReaction = reaction(
-      (_) => statePubProjectsScroll.hasReachEnd,
+      (_) => statePubProjectsScroll.hasReachedEnd,
       (bool hasReachedEnd) {
         if (hasReachedEnd && !_isLoading && _hasNext) {
           fetchMore();
