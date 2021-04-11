@@ -35,7 +35,7 @@ class _PublishedProjectsState extends State<PublishedProjects> {
     _scrollReaction = reaction(
       (_) => statePubProjectsScroll.hasReachEnd,
       (bool hasReachedEnd) {
-        if (hasReachedEnd && _hasNext) {
+        if (hasReachedEnd && !_isLoading && _hasNext) {
           fetchMore();
         }
       },
@@ -220,7 +220,7 @@ class _PublishedProjectsState extends State<PublishedProjects> {
   }
 
   void fetchMore() async {
-    if (!_hasNext || _lastDocumentSnapshot == null) {
+    if (_lastDocumentSnapshot == null || !_hasNext) {
       return;
     }
 

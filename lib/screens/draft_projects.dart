@@ -153,6 +153,10 @@ class _DraftProjectsState extends State<DraftProjects> {
   }
 
   void fetchMore() async {
+    if (_lastDocumentSnapshot == null || !_hasNext) {
+      return;
+    }
+
     setState(() {
       _isLoading = true;
     });
