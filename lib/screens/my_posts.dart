@@ -5,6 +5,7 @@ import 'package:rootasjey/components/home_app_bar.dart';
 import 'package:rootasjey/screens/draft_posts.dart';
 import 'package:rootasjey/screens/published_posts.dart';
 import 'package:rootasjey/state/colors.dart';
+import 'package:rootasjey/state/scroll.dart';
 import 'package:rootasjey/utils/fonts.dart';
 import 'package:unicons/unicons.dart';
 
@@ -24,34 +25,54 @@ class _MyPostsState extends State<MyPosts> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          HomeAppBar(
-            title: Opacity(
-              opacity: 0.6,
-              child: Text(
-                "posts".tr(),
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  color: stateColors.foreground,
+      body: NotificationListener<ScrollNotification>(
+        onNotification: (ScrollNotification scrollNotification) {
+          final double current = scrollNotification.metrics.pixels;
+          final double max = scrollNotification.metrics.maxScrollExtent;
+
+          if (current < max - 300.0) {
+            bodyIndex == 0
+                ? stateDraftPostsScroll.setHasReachedEnd(false)
+                : statePubPostsScroll.setHasReachedEnd(false);
+
+            return false;
+          }
+
+          bodyIndex == 0
+              ? stateDraftPostsScroll.setHasReachedEnd(true)
+              : statePubPostsScroll.setHasReachedEnd(true);
+
+          return false;
+        },
+        child: CustomScrollView(
+          slivers: [
+            HomeAppBar(
+              title: Opacity(
+                opacity: 0.6,
+                child: Text(
+                  "posts".tr(),
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: stateColors.foreground,
+                  ),
                 ),
               ),
             ),
-          ),
-          SliverList(
-            delegate: SliverChildListDelegate([
-              header(),
-            ]),
-          ),
-          SliverPadding(
-            padding: const EdgeInsets.only(
-              left: 90.0,
-              right: 90.0,
-              bottom: 300.0,
+            SliverList(
+              delegate: SliverChildListDelegate([
+                header(),
+              ]),
             ),
-            sliver: bodyChildren[bodyIndex],
-          ),
-        ],
+            SliverPadding(
+              padding: const EdgeInsets.only(
+                left: 90.0,
+                right: 90.0,
+                bottom: 300.0,
+              ),
+              sliver: bodyChildren[bodyIndex],
+            ),
+          ],
+        ),
       ),
     );
   }

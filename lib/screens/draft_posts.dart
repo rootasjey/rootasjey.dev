@@ -2,9 +2,11 @@ import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:mobx/mobx.dart';
 import 'package:rootasjey/components/post_card.dart';
 import 'package:rootasjey/components/sliver_empty_view.dart';
 import 'package:rootasjey/router/app_router.gr.dart';
+import 'package:rootasjey/state/scroll.dart';
 import 'package:rootasjey/state/user.dart';
 import 'package:rootasjey/types/post.dart';
 import 'package:rootasjey/utils/app_logger.dart';
@@ -21,12 +23,30 @@ class _DraftPostsState extends State<DraftPosts> {
 
   bool hasNext = true;
   bool isLoading = false;
-  var lastDoc;
+
+  DocumentSnapshot _lastDocumentSnapshot;
+
+  ReactionDisposer _scrollReaction;
 
   @override
   void initState() {
     super.initState();
     fetch();
+
+    _scrollReaction = reaction(
+      (_) => stateDraftPostsScroll.hasReachedEnd,
+      (hasReachedEnd) {
+        if (hasReachedEnd && !isLoading && hasNext) {
+          fetchMore();
+        }
+      },
+    );
+  }
+
+  @override
+  dispose() {
+    _scrollReaction.reaction.dispose();
+    super.dispose();
   }
 
   @override
@@ -125,7 +145,51 @@ class _DraftPostsState extends State<DraftPosts> {
         return;
       }
 
-      lastDoc = snapshot.docs.last;
+      snapshot.docs.forEach((doc) {
+        final data = doc.data();
+        data['id'] = doc.id;
+
+        postsList.add(Post.fromJSON(data));
+      });
+
+      setState(() {
+        isLoading = false;
+        hasNext = limit == snapshot.size;
+        _lastDocumentSnapshot = snapshot.docs.last;
+      });
+    } catch (error) {
+      appLogger.e(error);
+      setState(() => isLoading = false);
+    }
+  }
+
+  void fetchMore() async {
+    if (_lastDocumentSnapshot == null || !hasNext || isLoading) {
+      return;
+    }
+
+    setState(() => isLoading = true);
+
+    try {
+      final userAuth = stateUser.userAuth;
+      final uid = userAuth.uid;
+
+      final snapshot = await FirebaseFirestore.instance
+          .collection('posts')
+          .where('published', isEqualTo: false)
+          .where('author', isEqualTo: uid)
+          .limit(limit)
+          .startAfterDocument(_lastDocumentSnapshot)
+          .get();
+
+      if (snapshot.size == 0) {
+        setState(() {
+          hasNext = false;
+          isLoading = false;
+        });
+
+        return;
+      }
 
       snapshot.docs.forEach((doc) {
         final data = doc.data();
@@ -137,9 +201,11 @@ class _DraftPostsState extends State<DraftPosts> {
       setState(() {
         isLoading = false;
         hasNext = limit == snapshot.size;
+        _lastDocumentSnapshot = snapshot.docs.last;
       });
     } catch (error) {
       appLogger.e(error);
+      setState(() => isLoading = false);
     }
   }
 
