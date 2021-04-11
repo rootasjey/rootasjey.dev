@@ -28,14 +28,14 @@ class _DraftProjectsState extends State<DraftProjects> {
 
   DocumentSnapshot _lastDocumentSnapshot;
 
-  ReactionDisposer _reactionDisposer;
+  ReactionDisposer _scrollReaction;
 
   @override
   void initState() {
     super.initState();
     fetch();
 
-    _reactionDisposer = reaction(
+    _scrollReaction = reaction(
       (_) => stateDraftProjectsScroll.hasReachedEnd,
       (bool hasReachedEnd) {
         if (hasReachedEnd && !_isLoading && _hasNext) {
@@ -47,7 +47,7 @@ class _DraftProjectsState extends State<DraftProjects> {
 
   @override
   void dispose() {
-    _reactionDisposer.reaction.dispose();
+    _scrollReaction.reaction.dispose();
     super.dispose();
   }
 
