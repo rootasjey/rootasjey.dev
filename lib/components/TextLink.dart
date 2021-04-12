@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:html/dom.dart' as dom;
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/utils/fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:html/dom.dart' as dom;
 
 class TextLink extends StatefulWidget {
   final Map<String, String> attributes;
