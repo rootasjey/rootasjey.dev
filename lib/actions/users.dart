@@ -16,10 +16,10 @@ class UsersActions {
 
       return resp.data['isAvailable'] as bool;
     } on FirebaseFunctionsException catch (exception) {
-      appLogger.d("[code: ${exception.code}] - ${exception.message}");
+      appLogger.e("[code: ${exception.code}] - ${exception.message}");
       return false;
     } catch (error) {
-      appLogger.d(error);
+      appLogger.e(error);
       return false;
     }
   }
@@ -39,7 +39,7 @@ class UsersActions {
 
       return CreateAccountResp.fromJSON(response.data);
     } on FirebaseFunctionsException catch (exception) {
-      appLogger.d("[code: ${exception.code}] - ${exception.message}");
+      appLogger.e("[code: ${exception.code}] - ${exception.message}");
       return CreateAccountResp(
         success: false,
         error: CloudFuncError(
@@ -72,10 +72,10 @@ class UsersActions {
           .call({'name': username});
       return resp.data['isAvailable'] as bool;
     } on FirebaseFunctionsException catch (exception) {
-      appLogger.d("[code: ${exception.code}] - ${exception.message}");
+      appLogger.e("[code: ${exception.code}] - ${exception.message}");
       return false;
     } catch (error) {
-      appLogger.d(error);
+      appLogger.e(error);
       return false;
     }
   }
