@@ -3,13 +3,17 @@ import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:jiffy/jiffy.dart';
 import 'package:markdown/markdown.dart' as markdown;
+import 'package:rootasjey/components/author_header.dart';
+import 'package:rootasjey/components/dates_header.dart';
 import 'package:rootasjey/components/home_app_bar.dart';
 import 'package:rootasjey/components/markdown_viewer.dart';
 import 'package:rootasjey/components/sliver_loading_view.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/types/post.dart';
 import 'package:rootasjey/utils/cloud.dart';
+import 'package:rootasjey/utils/fonts.dart';
 import 'package:rootasjey/utils/keybindings.dart';
 import 'package:rootasjey/utils/mesure_size.dart';
 import 'package:rootasjey/utils/snack.dart';
@@ -99,6 +103,22 @@ class _PostPageState extends State<PostPage> {
     );
   }
 
+  Widget allChips() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 12.0),
+      child: Align(
+        alignment: Alignment.topLeft,
+        child: Wrap(
+          spacing: 16.0,
+          children: [
+            tags(),
+            programmingLang(),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget appBar() {
     return HomeAppBar(
       automaticallyImplyLeading: true,
@@ -138,27 +158,45 @@ class _PostPageState extends State<PostPage> {
         Row(
           children: [
             if (!isNarrow) Spacer(),
-            Expanded(
-              flex: 3,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16.0,
-                ),
-                child: MeasureSize(
-                  onChange: (size) {
-                    _keyBindings.updatePageHeight(size.height);
-                  },
-                  child: MarkdownViewer(
-                    data: _postData,
-                    width: _textWidth,
-                  ),
-                ),
-              ),
-            ),
+            bodyCentered(),
             if (!isNarrow) Spacer(),
           ],
         ),
       ]),
+    );
+  }
+
+  Widget bodyCentered() {
+    return Expanded(
+      flex: 3,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 16.0,
+        ),
+        child: MeasureSize(
+          onChange: (size) {
+            _keyBindings.updatePageHeight(size.height);
+          },
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              header(),
+              MarkdownViewer(
+                data: _postData,
+                width: _textWidth,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget dates() {
+    return DatesHeader(
+      createdAt: Jiffy(_post.createdAt).fromNow(),
+      updatedAt: Jiffy(_post.updatedAt).fromNow(),
     );
   }
 
@@ -176,6 +214,91 @@ class _PostPageState extends State<PostPage> {
         curve: Curves.bounceOut,
       ),
       child: Icon(Icons.arrow_upward),
+    );
+  }
+
+  Widget header() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        title(),
+        summary(),
+        dates(),
+        allChips(),
+        AuthorHeader(),
+      ],
+    );
+  }
+
+  Widget programmingLang() {
+    if (_post.programmingLanguages.isEmpty) {
+      return Container();
+    }
+
+    return Wrap(
+      spacing: 8.0,
+      children: _post.programmingLanguages
+          .map(
+            (pLang) => Tooltip(
+              message: "Programming language",
+              child: Chip(
+                label: Text(pLang),
+                side: BorderSide(
+                  color: Colors.pink,
+                  width: 1.5,
+                ),
+              ),
+            ),
+          )
+          .toList(),
+    );
+  }
+
+  Widget summary() {
+    return Align(
+      alignment: Alignment.topLeft,
+      child: Opacity(
+        opacity: 0.7,
+        child: Text(
+          _post.summary,
+          style: TextStyle(
+            fontSize: 16.0,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget tags() {
+    if (_post.tags.isEmpty) {
+      return Container();
+    }
+
+    return Wrap(
+      spacing: 8.0,
+      children: _post.tags
+          .map(
+            (tag) => Tooltip(
+              message: "Tag",
+              child: Chip(
+                label: Text(tag),
+              ),
+            ),
+          )
+          .toList(),
+    );
+  }
+
+  Widget title() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 60.0),
+      child: Text(
+        _post.title,
+        style: FontsUtils.mainStyle(
+          fontSize: 60.0,
+          fontWeight: FontWeight.w700,
+        ),
+      ),
     );
   }
 
