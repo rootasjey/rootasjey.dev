@@ -5,6 +5,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html/style.dart';
 import 'package:flutter_syntax_view/flutter_syntax_view.dart';
 import 'package:html/dom.dart' as dom;
+import 'package:rootasjey/components/TextLink.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/utils/snack.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -31,31 +32,9 @@ class _MarkdownViewerState extends State<MarkdownViewer> {
       data: widget.data,
       customRender: {
         'a': (context, child, attributes, element) {
-          return InkWell(
-            onTap: () {
-              final String href = attributes['href'];
-              if (href == null || href.isEmpty) {
-                return;
-              }
-
-              launch(attributes['href']);
-            },
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 2.0),
-              child: Opacity(
-                opacity: 0.6,
-                child: Text(
-                  element.innerHtml,
-                  style: TextStyle(
-                    fontSize: 22.0,
-                    decoration: TextDecoration.underline,
-                    decorationColor: stateColors.primary,
-                    decorationStyle: TextDecorationStyle.wavy,
-                    decorationThickness: 1.5,
-                  ),
-                ),
-              ),
-            ),
+          return TextLink(
+            attributes: attributes,
+            element: element,
           );
         },
         'code': (context, child, attributes, element) {
