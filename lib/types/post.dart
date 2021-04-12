@@ -9,6 +9,7 @@ class Post {
   final bool featured;
   final String lang;
   final String path;
+  final List<String> programmingLanguages;
   final bool published;
   final bool referenced;
   final String summary;
@@ -26,6 +27,7 @@ class Post {
     this.featured = false,
     this.lang = 'en',
     this.path = '',
+    this.programmingLanguages,
     this.published = false,
     this.referenced = true,
     this.summary = '',
@@ -44,6 +46,7 @@ class Post {
       featured: false,
       lang: 'en',
       path: '',
+      programmingLanguages: const [],
       published: false,
       referenced: true,
       summary: '',
@@ -68,6 +71,7 @@ class Post {
       id: data['id'] ?? '',
       lang: data['lang'] ?? 'en',
       path: data['path'] ?? '',
+      programmingLanguages: parseProgrammingLangs(data),
       published: data['published'] ?? false,
       referenced: data['referenced'] ?? true,
       summary: data['summary'] ?? '',
@@ -93,6 +97,24 @@ class Post {
     });
 
     return coAuthors;
+  }
+
+  static List<String> parseProgrammingLangs(Map<String, dynamic> data) {
+    final languages = <String>[];
+
+    if (data == null || data['programmingLanguages'] == null) {
+      return languages;
+    }
+
+    final dataLanguages = data['programmingLanguages'] as Map<String, dynamic>;
+
+    dataLanguages.forEach((platformName, isAvailable) {
+      if (isAvailable) {
+        languages.add(platformName);
+      }
+    });
+
+    return languages;
   }
 
   static List<String> parseTags(Map<String, dynamic> data) {
