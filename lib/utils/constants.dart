@@ -8,4 +8,13 @@ class Constants {
   static const maxMobileHeight = 400.0;
   static const maxMobileWidth = 700.0;
   static const appGithubUrl = 'https://github.com/rootasjey/rootasjey.dev';
+
+  /// Twitter web intent API.
+  /// More info at https://twitter.com/intent/tweet.
+  static const baseTwitterShareUrl = "https://twitter.com/intent/tweet"
+      "?via=rootasjey&text=";
+
+  /// Twitter web intent API -> [hashtags] section.
+  /// More info at https://twitter.com/intent/tweet.
+  static const twitterShareHashtags = "&hashtags=";
 }

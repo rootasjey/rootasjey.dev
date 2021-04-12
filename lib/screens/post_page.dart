@@ -3,8 +3,11 @@ import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:like_button/like_button.dart';
 import 'package:markdown/markdown.dart' as markdown;
+import 'package:rootasjey/actions/posts.dart';
 import 'package:rootasjey/components/author_header.dart';
 import 'package:rootasjey/components/dates_header.dart';
 import 'package:rootasjey/components/home_app_bar.dart';
@@ -13,12 +16,14 @@ import 'package:rootasjey/components/sliver_loading_view.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/types/post.dart';
 import 'package:rootasjey/utils/cloud.dart';
+import 'package:rootasjey/utils/constants.dart';
 import 'package:rootasjey/utils/fonts.dart';
 import 'package:rootasjey/utils/keybindings.dart';
 import 'package:rootasjey/utils/mesure_size.dart';
 import 'package:rootasjey/utils/snack.dart';
 import 'package:unicons/unicons.dart';
 import 'package:supercharged/supercharged.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class PostPage extends StatefulWidget {
   @required
@@ -31,9 +36,10 @@ class PostPage extends StatefulWidget {
 }
 
 class _PostPageState extends State<PostPage> {
+  bool _isFabVisible = false;
+  bool _isLiked = false;
   bool _isLoading = false;
   bool _isTOCVisible = false;
-  bool _isFabVisible = false;
 
   final double _textWidth = 750.0;
   final _scrollController = ScrollController();
@@ -45,6 +51,7 @@ class _PostPageState extends State<PostPage> {
   Post _post;
 
   String _postData = '';
+  String _postShareUrl = '';
 
   @override
   initState() {
@@ -52,6 +59,8 @@ class _PostPageState extends State<PostPage> {
 
     fetchMeta();
     fetchContent();
+
+    _postShareUrl = "https://rootasjey.dev/posts/${widget.postId}";
 
     // Delay initialization.
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -84,16 +93,21 @@ class _PostPageState extends State<PostPage> {
             controller: _scrollController,
             child: Focus(
               descendantsAreFocusable: false,
-              child: CustomScrollView(
-                controller: _scrollController,
-                slivers: [
-                  appBar(),
-                  body(),
-                  SliverPadding(
-                    padding: const EdgeInsets.only(
-                      bottom: 400.0,
-                    ),
+              child: Stack(
+                children: [
+                  CustomScrollView(
+                    controller: _scrollController,
+                    slivers: [
+                      appBar(),
+                      body(),
+                      SliverPadding(
+                        padding: const EdgeInsets.only(
+                          bottom: 400.0,
+                        ),
+                      ),
+                    ],
                   ),
+                  socialButtons(),
                 ],
               ),
             ),
@@ -251,6 +265,77 @@ class _PostPageState extends State<PostPage> {
             ),
           )
           .toList(),
+    );
+  }
+
+  Widget socialButtons() {
+    final size = MediaQuery.of(context).size;
+    final top = size.height / 2 - 80.0;
+
+    return Positioned(
+      top: top,
+      left: 60.0,
+      child: Column(
+        children: [
+          IconButton(
+            tooltip: "copy_link".tr(),
+            onPressed: () {
+              Clipboard.setData(
+                ClipboardData(text: _postShareUrl),
+              );
+
+              PostsActions.share(postId: _post.id);
+
+              Snack.s(
+                context: context,
+                message: "copy_link_success".tr(),
+              );
+            },
+            icon: Opacity(
+              opacity: 0.6,
+              child: Icon(UniconsLine.link),
+            ),
+          ),
+          IconButton(
+            tooltip: "share_on_twitter".tr(),
+            onPressed: () {
+              final shareTags = _post.tags.join(",");
+              final baseShare = Constants.baseTwitterShareUrl;
+              final hashTags = Constants.twitterShareHashtags;
+
+              launch("$baseShare$_postShareUrl$hashTags$shareTags");
+
+              PostsActions.share(postId: _post.id);
+            },
+            icon: Opacity(
+              opacity: 0.6,
+              child: Icon(UniconsLine.twitter),
+            ),
+          ),
+          IconButton(
+            onPressed: () {},
+            tooltip: "like".tr(),
+            padding: EdgeInsets.zero,
+            icon: LikeButton(
+              size: 24.0,
+              padding: EdgeInsets.zero,
+              isLiked: _isLiked,
+              likeBuilder: (bool isLiked) {
+                return Icon(
+                  isLiked ? UniconsLine.heart_break : UniconsLine.heart,
+                  color: isLiked
+                      ? Colors.pink
+                      : stateColors.foreground.withOpacity(0.6),
+                );
+              },
+              onTap: (bool isLiked) async {
+                PostsActions.like(postId: _post.id, like: !isLiked);
+                return !isLiked;
+              },
+            ),
+          ),
+        ],
+      ),
     );
   }
 
