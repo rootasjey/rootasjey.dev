@@ -311,7 +311,10 @@ class _ProjectPageState extends State<ProjectPage> {
           InputChip(
             label: Text(name),
             tooltip: "Link",
-            side: BorderSide(color: stateColors.secondary),
+            side: BorderSide(
+              color: stateColors.secondary,
+              width: 1.5,
+            ),
             onPressed: () {
               launch(value);
             },
@@ -336,7 +339,10 @@ class _ProjectPageState extends State<ProjectPage> {
               message: "Programming language",
               child: Chip(
                 label: Text(pLang),
-                side: BorderSide(color: Colors.pink),
+                side: BorderSide(
+                  color: Colors.pink,
+                  width: 1.5,
+                ),
               ),
             ),
           )
