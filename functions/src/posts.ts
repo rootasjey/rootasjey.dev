@@ -9,7 +9,7 @@ export const onCreateFile = functions
   .region('europe-west3')
   .firestore
   .document('posts/{postId}')
-  .onCreate(async (snapshot, context) => {
+  .onCreate(async (snapshot) => {
     const postFile = storage
       .bucket()
       .file(`blog/posts/${snapshot.id}/post.md`);
@@ -21,7 +21,7 @@ export const onDeleteFile = functions
   .region('europe-west3')
   .firestore
   .document('posts/{postId}')
-  .onDelete(async (snapshot, context) => {
+  .onDelete(async (snapshot) => {
     const postFile = storage
       .bucket()
       .file(`blog/posts/${snapshot.id}/post.md`);
@@ -36,7 +36,7 @@ export const onDeleteFile = functions
 export const fetch = functions
   .region('europe-west3')
   .https
-  .onCall(async (data, context) => {
+  .onCall(async (data) => {
     const postId: string = data.postId;
 
     /** Used if the post is a draft or restricted to some members. */
@@ -71,7 +71,7 @@ export const fetch = functions
 export const fetchAuthorName = functions
   .region('europe-west3')
   .https
-  .onCall(async (data, context) => {
+  .onCall(async (data) => {
     const authorId = data.authorId;
 
     if (!authorId) {
@@ -92,6 +92,99 @@ export const fetchAuthorName = functions
     }
 
     return { authorName: authorData.name };
+  });
+
+  /**
+   * Increase/Decrease [post.stats.likes] property by 1.
+   * Need a [postId] parameter.
+   */
+export const statsLike = functions
+  .region('europe-west3')
+  .https
+  .onCall(async (data) => {
+    const postId = data.postId;
+    const like: boolean = data.like ?? false;
+
+    if (!postId) {
+      throw new functions.https.HttpsError(
+        'invalid-argument', 
+        `The function must be called with a (string) argument "postId" which is the post to update.`,
+      );
+    }
+
+    const postSnap = await firestore
+      .collection('posts')
+      .doc(postId)
+      .get();
+
+    const postData = postSnap.data();
+
+    if (!postSnap || !postSnap.exists || !postData) {
+      throw new functions.https.HttpsError(
+        'not-found', 
+        `The post to update doesn't exist anymore. It may have been deleted.`,
+      );
+    }
+
+    let statsLikes: number = postData.stats?.likes ?? 0;
+
+    statsLikes = like ? statsLikes + 1 : statsLikes - 1;
+    statsLikes = statsLikes > 0 ? statsLikes : 0;
+
+    await postSnap.ref.update({
+      'stats.likes': statsLikes,
+    });
+
+    return {
+      post: { id: postId },
+      success: true,
+      likes: statsLikes,
+    }
+  });
+
+/**
+ * Increase [post.stats.shares] property by 1.
+ * Need [postId] parameter.
+ */
+export const statsShare = functions
+  .region('europe-west3')
+  .https
+  .onCall(async (data) => {
+    const postId = data.postId;
+
+    if (!postId) {
+      throw new functions.https.HttpsError(
+        'invalid-argument', 
+        `The function must be called with a (string) argument "postId" which is the post to update.`,
+      );
+    }
+
+    const postSnap = await firestore
+      .collection('posts')
+      .doc(postId)
+      .get();
+
+    const postData = postSnap.data();
+
+    if (!postSnap || !postSnap.exists || !postData) {
+      throw new functions.https.HttpsError(
+        'not-found', 
+        `The post to update doesn't exist anymore. It may have been deleted.`,
+      );
+    }
+
+    let statsShares: number = postData.stats?.shares ?? 0;
+    statsShares += 1;
+
+    await postSnap.ref.update({
+      'stats.shares': statsShares,
+    });
+
+    return {
+      post: { id: postId },
+      success: true,
+      shares: statsShares,
+    }
   });
 
 async function checkAccessControl({postId, jwt}: {postId: string, jwt: string}) {
@@ -151,7 +244,7 @@ async function checkAccessControl({postId, jwt}: {postId: string, jwt: string}) 
 export const save = functions
   .region('europe-west3')
   .https
-  .onCall(async (data, context) => {
+  .onCall(async (data) => {
     const postId: string = data.postId;
     const jwt: string = data.jwt;
     const content: string = data.content;
