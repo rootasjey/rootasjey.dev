@@ -31,9 +31,31 @@ class _MarkdownViewerState extends State<MarkdownViewer> {
       data: widget.data,
       customRender: {
         'a': (context, child, attributes, element) {
-          return textLink(
-            href: attributes['href'],
-            child: child,
+          return InkWell(
+            onTap: () {
+              final String href = attributes['href'];
+              if (href == null || href.isEmpty) {
+                return;
+              }
+
+              launch(attributes['href']);
+            },
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 2.0),
+              child: Opacity(
+                opacity: 0.6,
+                child: Text(
+                  element.innerHtml,
+                  style: TextStyle(
+                    fontSize: 22.0,
+                    decoration: TextDecoration.underline,
+                    decorationColor: stateColors.primary,
+                    decorationStyle: TextDecorationStyle.wavy,
+                    decorationThickness: 1.5,
+                  ),
+                ),
+              ),
+            ),
           );
         },
         'code': (context, child, attributes, element) {
@@ -258,16 +280,6 @@ class _MarkdownViewerState extends State<MarkdownViewer> {
             ),
           ),
       ],
-    );
-  }
-
-  Widget textLink({@required String href, @required Widget child}) {
-    return SizedBox(
-      height: 40.0,
-      child: InkWell(
-        onTap: href != null && href.isNotEmpty ? () => launch(href) : null,
-        child: child,
-      ),
     );
   }
 }
