@@ -6,9 +6,9 @@ import 'package:flutter_html/style.dart';
 import 'package:flutter_syntax_view/flutter_syntax_view.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:rootasjey/components/TextLink.dart';
+import 'package:rootasjey/components/image_viewer.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/utils/snack.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class MarkdownViewer extends StatefulWidget {
   final String data;
@@ -45,26 +45,9 @@ class _MarkdownViewerState extends State<MarkdownViewer> {
           return codeBlock(attributes, element);
         },
         'img': (context, child, attributes, element) {
-          final String attrW = attributes['width'];
-          final String attrH = attributes['height'];
-
-          double width = attrW != null ? double.tryParse(attrW) : 300.0;
-          double height = attrH != null ? double.tryParse(attrH) : 300.0;
-
-          if (width == null) {
-            width = height ?? 300.0;
-          }
-
-          if (height == null) {
-            height = width ?? 300.0;
-          }
-
-          return imageViewer(
-            context: context.buildContext,
-            src: attributes['src'],
-            alt: attributes['alt'],
-            width: width,
-            height: height,
+          return ImageViewer(
+            attributes: attributes,
+            element: element,
           );
         },
         'li': (context, child, attributes, element) {
@@ -205,60 +188,5 @@ class _MarkdownViewerState extends State<MarkdownViewer> {
       default:
         return Syntax.JAVASCRIPT;
     }
-  }
-
-  Widget imageViewer({
-    @required BuildContext context,
-    @required String src,
-    @required String alt,
-    @required double width,
-    @required double height,
-  }) {
-    return Column(
-      children: [
-        SizedBox(
-          height: height > 500.0 ? 500.0 : height,
-          child: Ink.image(
-            image: NetworkImage(src),
-            width: width,
-            height: height,
-            fit: BoxFit.scaleDown,
-            child: InkWell(
-              onTap: () {
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return SimpleDialog(
-                      children: [
-                        Image.network(src),
-                      ],
-                    );
-                  },
-                );
-              },
-            ),
-          ),
-        ),
-        if (alt != null && alt.isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.only(
-              top: 8.0,
-            ),
-            child: TextButton(
-              onPressed: () => launch(src),
-              child: Opacity(
-                opacity: 0.6,
-                child: Text(
-                  alt,
-                  style: TextStyle(
-                    fontSize: 16.0,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-              ),
-            ),
-          ),
-      ],
-    );
   }
 }
