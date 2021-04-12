@@ -261,6 +261,10 @@ class _NewPostState extends State<NewPost> {
         'restrictedTo': {
           'premium': false,
         },
+        'stats': {
+          'likes': 0,
+          'shares': 0,
+        },
         'summary': '',
         'tags': {},
         'timeToRead': '',

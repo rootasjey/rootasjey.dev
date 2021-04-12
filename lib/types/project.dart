@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:rootasjey/types/stats.dart';
 import 'package:rootasjey/types/urls.dart';
 
 class Project {
@@ -9,6 +10,7 @@ class Project {
   final List<String> platforms;
   final List<String> programmingLanguages;
   final bool published;
+  final Stats stats;
   final String summary;
   final List<String> tags;
   final String title;
@@ -23,6 +25,7 @@ class Project {
     this.platforms,
     this.programmingLanguages,
     this.published,
+    this.stats,
     this.summary,
     this.tags,
     this.title,
@@ -39,6 +42,7 @@ class Project {
       platforms: const [],
       programmingLanguages: const [],
       published: false,
+      stats: Stats.empty(),
       summary: '',
       tags: const [],
       title: '',
@@ -60,6 +64,7 @@ class Project {
       platforms: parsePlatforms(data),
       programmingLanguages: parseProgrammingLangs(data),
       published: data['published'],
+      stats: Stats.fromJSON(data['stats']),
       summary: data['summary'],
       title: data['title'],
       tags: parseTags(data),

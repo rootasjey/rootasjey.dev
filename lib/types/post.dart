@@ -1,3 +1,4 @@
+import 'package:rootasjey/types/stats.dart';
 import 'package:rootasjey/types/urls.dart';
 import 'package:rootasjey/utils/date_helper.dart';
 
@@ -13,6 +14,7 @@ class Post {
   final bool published;
   final bool referenced;
   final String summary;
+  final Stats stats;
   final List<String> tags;
   final String title;
   final String timeToRead;
@@ -30,6 +32,7 @@ class Post {
     this.programmingLanguages,
     this.published = false,
     this.referenced = true,
+    this.stats,
     this.summary = '',
     this.tags = const [],
     this.timeToRead = '',
@@ -49,6 +52,7 @@ class Post {
       programmingLanguages: const [],
       published: false,
       referenced: true,
+      stats: Stats.empty(),
       summary: '',
       tags: const [],
       timeToRead: '',
@@ -74,6 +78,7 @@ class Post {
       programmingLanguages: parseProgrammingLangs(data),
       published: data['published'] ?? false,
       referenced: data['referenced'] ?? true,
+      stats: Stats.fromJSON(data['stats']),
       summary: data['summary'] ?? '',
       tags: parseTags(data),
       timeToRead: data['timeToRead'] ?? '',
