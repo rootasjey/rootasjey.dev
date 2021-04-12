@@ -239,7 +239,7 @@ class _ImageViewerState extends State<ImageViewer> {
 
     Snack.i(
       context: context,
-      message: "Image link copied to your clipboard.",
+      message: "copy_image_link_success".tr(),
     );
   }
 }

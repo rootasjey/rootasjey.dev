@@ -73,6 +73,7 @@
   "cookies": "Cookies",
   "cookies_content": "The application uses only necessaries cookies for usage statistiques. It's anonymized and don't track specific users. We don't volontary share cookies with third-party. We don't have id advertising.",
   "copy": "Copy",
+  "copy_image_link_success": "Image link successfully copied to your clipboard!",
   "copy_link": "Copy link",
   "copy_link_success": "Link successfully copied!",
   "copy_success": "Text successfully copied!",
