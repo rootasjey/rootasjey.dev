@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/types/cloud_func_error.dart';
 import 'package:rootasjey/types/create_account_resp.dart';
+import 'package:rootasjey/utils/app_logger.dart';
 import 'package:rootasjey/utils/cloud.dart';
 
 /// Network interface for user's actions.
@@ -15,10 +16,10 @@ class UsersActions {
 
       return resp.data['isAvailable'] as bool;
     } on FirebaseFunctionsException catch (exception) {
-      debugPrint("[code: ${exception.code}] - ${exception.message}");
+      appLogger.d("[code: ${exception.code}] - ${exception.message}");
       return false;
     } catch (error) {
-      debugPrint(error.toString());
+      appLogger.d(error);
       return false;
     }
   }
@@ -38,7 +39,7 @@ class UsersActions {
 
       return CreateAccountResp.fromJSON(response.data);
     } on FirebaseFunctionsException catch (exception) {
-      debugPrint("[code: ${exception.code}] - ${exception.message}");
+      appLogger.d("[code: ${exception.code}] - ${exception.message}");
       return CreateAccountResp(
         success: false,
         error: CloudFuncError(
@@ -71,10 +72,10 @@ class UsersActions {
           .call({'name': username});
       return resp.data['isAvailable'] as bool;
     } on FirebaseFunctionsException catch (exception) {
-      debugPrint("[code: ${exception.code}] - ${exception.message}");
+      appLogger.d("[code: ${exception.code}] - ${exception.message}");
       return false;
     } catch (error) {
-      debugPrint(error.toString());
+      appLogger.d(error);
       return false;
     }
   }
