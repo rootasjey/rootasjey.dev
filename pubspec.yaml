@@ -50,6 +50,7 @@ dependencies:
   google_fonts: 2.0.0
   jiffy: 4.0.0
   line_awesome_flutter: 1.0.1
+  like_button: 2.0.2
   logger: 1.0.0
   markdown: 4.0.0
   mobx: 2.0.0-nullsafety.5
