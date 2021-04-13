@@ -1,52 +1,62 @@
 import * as functions from 'firebase-functions';
-import * as admin from 'firebase-admin';
+
+const firebaseTools = require('firebase-tools');
 
 import { adminApp } from './adminApp';
+import { checkUserIsSignedIn } from './utils';
 
 const firestore = adminApp.firestore();
 
 export const checkEmailAvailability = functions
   .region('europe-west3')
   .https
-  .onCall(async (data, context) => {
+  .onCall(async (data) => {
     const email: string = data.email;
 
-    if (!(typeof email === 'string') || email.length === 0) {
-      throw new functions.https.HttpsError('invalid-argument', 'The function must be called with ' +
-        'one (string) argument "email" which is the email to check.');
+    if (typeof email !== 'string' || email.length === 0) {
+      throw new functions.https.HttpsError(
+        'invalid-argument',
+        `The function must be called with one (string)
+         argument [email] which is the email to check.`,
+      );
     }
 
     if (!validateEmailFormat(email)) {
-      throw new functions.https.HttpsError('invalid-argument', 'The function must be called with ' +
-        'a valid email address.');
+      throw new functions.https.HttpsError(
+        'invalid-argument',
+        `The function must be called with a valid email address.`,
+      );
     }
 
-    const emailSnap = await firestore
-      .collection('users')
-      .where('email', '==', email)
-      .limit(1)
-      .get();
+    const exists = await isUserExistsByEmail(email);
+    const isAvailable = !exists;
 
     return {
       email,
-      isAvailable: emailSnap.empty,
+      isAvailable,
     };
   });
 
-export const checkNameAvailability = functions
+export const checkUsernameAvailability = functions
   .region('europe-west3')
   .https
-  .onCall(async (data, context) => {
+  .onCall(async (data) => {
     const name: string = data.name;
 
-    if (!(typeof name === 'string') || name.length === 0) {
-      throw new functions.https.HttpsError('invalid-argument', 'The function must be called with ' +
-        'one (string) argument "name" which is the name to check.');
+    if (typeof name !== 'string' || name.length === 0) {
+      throw new functions.https.HttpsError(
+        'invalid-argument',
+        `The function must be called with one (string)
+         argument "name" which is the name to check.`,
+      );
     }
 
     if (!validateNameFormat(name)) {
-      throw new functions.https.HttpsError('invalid-argument', 'The function must be called with ' +
-        'a valid name with at least 3 alpha-numeric characters (underscore is allowed) (A-Z, 0-9, _).');
+      throw new functions.https.HttpsError(
+        'invalid-argument',
+        `The function must be called with a valid [name]
+         with at least 3 alpha-numeric characters (underscore is allowed) (A-Z, 0-9, _).`,
+      );
     }
 
     const nameSnap = await firestore
@@ -61,236 +71,345 @@ export const checkNameAvailability = functions
     };
   });
 
-async function checkNameUpdate(params: DataUpdateParams) {
-  const { beforeData, afterData, payload, docId } = params;
+/**
+ * Create an user with Firebase auth then with Firestore.
+ * Check user's provided arguments and exit if wrong.
+ */
+export const createAccount = functions
+  .region('europe-west3')
+  .https
+  .onCall(async (data: CreateUserAccountParams) => {
+    if (!checkCreateAccountData(data)) {
+      throw new functions.https.HttpsError(
+        'invalid-argument',
+        `The function must be called with 3 string 
+        arguments [username], [email] and [password].`,
+      );
+    }
 
-  if (beforeData.name === afterData.name) { return payload; }
+    const { username, password, email } = data;
 
-  if (!afterData.name) {
-    payload['name'] = beforeData.name || `user_${Date.now()}`;
-    return payload;
+    const userRecord = await adminApp
+      .auth()
+      .createUser({
+        displayName: username,
+        password: password,
+        email: email,
+        emailVerified: false,
+      });
+
+    await adminApp.firestore()
+      .collection('users')
+      .doc(userRecord.uid)
+      .set({
+        developer: {
+          apps: {
+            current: 0,
+            limit: 5,
+          },
+          isProgramActive: false,
+          payment: {
+            isActive: false,
+            plan: 'free',
+            stripeId: '',
+          }
+        },
+        email: email,
+        lang: 'en',
+        name: username,
+        nameLowerCase: username.toLowerCase(),
+        pricing: 'free',
+        quota: {
+          current: 0,
+          date: new Date(),
+          limit: 20,
+        },
+        rights: {
+          'user:managedata': false,
+          'user:manageauthor': false,
+          'user:managequote': false,
+          'user:managequotidian': false,
+          'user:managereference': false,
+          'user:proposequote': true,
+          'user:readquote': true,
+          'user:validatequote': false,
+        },
+        settings: {
+          notifications: {
+            email: {
+              tempQuotes: true,
+              quotidians: false,
+            },
+            push: {
+              quotidians: true,
+              tempQuotes: true,
+            }
+          },
+        },
+        stats: {
+          fav: 0,
+          lists: 0,
+          proposed: 0,
+          published: 0,
+          tempQuotes: 0,
+          notifications: {
+            total: 0,
+            unread: 0,
+          }
+        },
+        urls: {
+          image: '',
+          twitter: '',
+          facebook: '',
+          instagram: '',
+          twitch: '',
+          website: '',
+          wikipedia: '',
+          youtube: '',
+        },
+        uid: userRecord.uid,
+      });
+
+    return {
+      user: {
+        id: userRecord.uid,
+        email,
+      },
+    };
+  });
+
+function checkCreateAccountData(data: any) {
+  if (Object.keys(data).length !== 3) {
+    return false;
   }
 
-  const nameLowerCase = (afterData.name as string).toLowerCase();
+  const keys = Object.keys(data);
 
-  if (!validateNameFormat(nameLowerCase)) {
-    const sampleName = `user_${Date.now()}`;
-    payload.name = sampleName;
-    payload.nameLowerCase = sampleName;
-
-    return payload;
+  if (!keys.includes('username')
+    || !keys.includes('email')
+    || !keys.includes('password')) {
+    return false;
   }
 
-  const userNamesSnap = await firestore
+  if (typeof data['username'] !== 'string' ||
+    typeof data['email'] !== 'string' ||
+    typeof data['password'] !== 'string') {
+    return false;
+  }
+
+  return true;
+}
+
+/**
+ * Delete user's document from Firebase auth & Firestore.
+ */
+export const deleteAccount = functions
+  .region('europe-west3')
+  .https
+  .onCall(async (data: DeleteAccountParams, context) => {
+    const userAuth = context.auth;
+    const { idToken } = data;
+
+    if (!userAuth) {
+      throw new functions.https.HttpsError(
+        'unauthenticated',
+        `The function must be called from an authenticated user.`,
+      );
+    }
+
+    await checkUserIsSignedIn(context, idToken);
+
+    const userSnap = await firestore
+      .collection('users')
+      .doc(userAuth.uid)
+      .get();
+
+    const userData = userSnap.data();
+
+    if (!userSnap.exists || !userData) {
+      throw new functions.https.HttpsError(
+        'not-found',
+        `This user document doesn't exist. It may have been deleted.`,
+      );
+    }
+
+    await adminApp
+      .auth()
+      .deleteUser(userAuth.uid);
+
+    await firebaseTools.firestore
+      .delete(userSnap.ref.path, {
+        project: process.env.GCLOUD_PROJECT,
+        recursive: true,
+        yes: true,
+      });
+
+    return {
+      success: true,
+      user: {
+        id: userAuth.uid,
+      },
+    };
+  });
+
+async function isUserExistsByEmail(email: string) {
+  const emailSnapshot = await firestore
     .collection('users')
-    .where('nameLowerCase', '==', nameLowerCase)
-    .limit(2)
+    .where('email', '==', email)
+    .limit(1)
     .get();
 
-  // Remove possible duplicate.
-  // Can happen on rollback.
-  const exactMatch = userNamesSnap.docs
-    .filter((doc) => doc.id !== docId);
-
-  // There're more than 1 result with the same nameLowerCase
-  // so the user cannot take this name.
-  if (exactMatch.length > 0) {
-    payload['name'] = beforeData.name; // rollback
-  }
-  // Check if we're not updating the same prop. with the same value.
-  // (Infinite loop check)
-  else if (beforeData.nameLowerCase !== nameLowerCase) {
-    payload['nameLowerCase'] = (afterData.name as string).toLowerCase(); // validate
+  if (!emailSnapshot.empty) {
+    return true;
   }
 
-  return payload;
+  try {
+    const userRecord = await adminApp
+      .auth()
+      .getUserByEmail(email);
+
+    if (userRecord) {
+      return true;
+    }
+
+    return false;
+
+  } catch (error) {
+    return false;
+  }
 }
 
-async function checkRole(params: DataUpdateParams) {
-  const { beforeData, afterData, payload, docId } = params;
-
-  if (beforeData.role === afterData.role) { return payload; }
-
-  const rollbackPayload = { ...payload, ...{ 'role': beforeData.role } };
-
-  const snapshot = await firestore
-    .collection('roles')
-    .doc(docId)
-    .get();
-
-  if (!snapshot || !snapshot.exists) {
-    return rollbackPayload;
-  }
-
-  const data = snapshot.data();
-
-  if (!data || !canEditRole(data.role)) {
-    return rollbackPayload;
-  }
-
-  return payload;
-}
-
-function canEditRole(role: string): boolean {
-  return role === 'admin' || role === 'owner' || role === 'editor';
-}
-
-async function checkUserName(
-  data: FirebaseFirestore.DocumentData,
-  payload: any,
-) {
-
-  if (!data) { return payload; }
-
-  let nameLowerCase = '';
-
-  if (data.name) { nameLowerCase = (data.name as string).toLowerCase(); }
-  else { nameLowerCase = payload.nameLowerCase; }
-
-  const userNamesSnap = await firestore
+async function isUserExistsByUsername(nameLowerCase: string) {
+  const nameSnapshot = await firestore
     .collection('users')
     .where('nameLowerCase', '==', nameLowerCase)
     .limit(1)
     .get();
 
-  if (userNamesSnap.empty) {
-    payload.nameLowerCase = nameLowerCase;
-    return payload;
+  if (nameSnapshot.empty) {
+    return false;
   }
 
-  const suffix = Date.now();
-
-  return {
-    ...payload, ...{
-      name: `${payload.name}-${suffix}`,
-      nameLowerCase: `${payload.name}-${suffix}`
-    }
-  };
+  return true;
 }
 
-// Check that the new created doc is well-formatted.
-export const newAccountCheck = functions
+/**
+ * Update an user's email in Firebase auth and in Firestore.
+ * Several security checks are made (email format, password, email unicity)
+ * before validating the new email.
+ */
+export const updateEmail = functions
   .region('europe-west3')
-  .firestore
-  .document('users/{userId}')
-  .onCreate(async (snapshot, context) => {
-    const data = snapshot.data();
-    let payload: any = {};
+  .https
+  .onCall(async (data: UpdateEmailParams, context) => {
+    const userAuth = context.auth;
+    const { idToken, newEmail } = data;
 
-    payload = await populateUserData(snapshot);
-
-    if (!data.name) {
-      payload = populateUserNameIfEmpty(data, payload);
+    if (!userAuth) {
+      throw new functions.https.HttpsError(
+        'unauthenticated',
+        `The function must be called from an authenticated user (1).`,
+      );
     }
 
-    payload = await checkUserName(data, payload);
+    await checkUserIsSignedIn(context, idToken);
+    const isFormatOk = validateEmailFormat(newEmail);
 
-    if (!validateNameFormat(payload.name)) {
-      const sampleName = `user_${Date.now()}`;
-      payload.name = sampleName;
-      payload.nameLowerCase = sampleName;
+    if (!newEmail || !isFormatOk) {
+      throw new functions.https.HttpsError(
+        'invalid-argument',
+        `The function must be called with a valid [newEmail] argument. 
+        The value you specified is not in a correct email format.`,
+      );
     }
 
-    if (Object.keys(payload).length === 0) { return; }
+    const isEmailTaken = await isUserExistsByEmail(newEmail);
 
-    return await snapshot.ref.update(payload);
+    if (isEmailTaken) {
+      throw new functions.https.HttpsError(
+        'invalid-argument',
+        `The email specified is not available.
+         Try specify a new one in the "newEmail" argument.`,
+      );
+    }
+
+    await adminApp
+      .auth()
+      .updateUser(userAuth.uid, {
+        email: newEmail,
+        emailVerified: false,
+      });
+
+    await firestore
+      .collection('users')
+      .doc(userAuth.uid)
+      .update({
+        email: newEmail,
+      });
+
+    return {
+      success: true,
+      user: { id: userAuth.uid },
+    };
   });
 
-// Add all missing props.
-async function populateUserData(snapshot: functions.firestore.DocumentSnapshot) {
-  const user = await admin.auth().getUser(snapshot.id);
-  const email = typeof user !== 'undefined' ?
-    user.email : '';
-
-  const data = snapshot.data() ?? {} ;
-
-  const suffix = Date.now();
-  const name: string = data.name ?? `user_${suffix}`;
-
-  return {
-    'createdAt': adminApp.firestore.FieldValue.serverTimestamp(),
-    'email': email,
-    'flag': '',
-    'job': data.job ?? '',
-    'lang': 'en',
-    'location': data.location ?? '',
-    'name': name,
-    'nameLowerCase': name.toLowerCase(),
-    'pricing': 'free',
-    'role': 'member',
-    'stats': {
-      'contributed': 0,
-      'drafts': 0,
-      'published': 0,
-    },
-    'summary': '',
-    'tokens': {},
-    'urls': {
-      'image': '',
-    },
-    'uid': snapshot.id,
-    'updatedAt': adminApp.firestore.FieldValue.serverTimestamp(),
-  };
-}
-
-function populateUserNameIfEmpty(
-  data: FirebaseFirestore.DocumentData,
-  payload: any,
-): FirebaseFirestore.DocumentData {
-
-  if (!data) { return payload; }
-  if (data.name) { return payload; }
-
-  let name = data.name || data.nameLowerCase;
-  name = name || `user_${Date.now()}`;
-
-  return {
-    ...payload, ...{
-      name: name,
-      nameLowerCase: name,
-    }
-  };
-}
-
-// Prevent user's rights update
-// and user name conflicts.
-// TODO: Allow admins to update user's rights.
-export const updateUserCheck = functions
+/**
+ * Update a new username in Firebase auth and in Firestore.
+ * Several security checks are made (name format & unicity, password)
+ * before validating the new username.
+ */
+export const updateUsername = functions
   .region('europe-west3')
-  .firestore
-  .document('users/{userId}')
-  .onUpdate(async (change, context) => {
-    const beforeData = change.before.data();
-    const afterData = change.after.data();
+  .https
+  .onCall(async (data: UpdateUsernameParams, context) => {
+    const userAuth = context.auth;
 
-    if (!beforeData || !afterData) { return; }
-
-    let payload: any = {};
-
-    const params: DataUpdateParams = {
-      beforeData,
-      afterData,
-      payload,
-      docId: change.after.id,
-    };
-
-    payload = await checkRole(params);
-    payload = await checkNameUpdate(params);
-
-    if (Object.keys(payload).length === 0) { return; }
-
-    if (payload.nameLowerCase) { // auto-update auth user's displayName
-      const displayName = payload.name ?? afterData.name;
-
-      await admin
-        .auth()
-        .updateUser(change.after.id, {
-          displayName: displayName,
-        });
+    if (!userAuth) {
+      throw new functions.https.HttpsError(
+        'unauthenticated',
+        `The function must be called from an authenticated user.`,
+      );
     }
 
-    return await change.after.ref
-      .update(payload);
+    const { newUsername } = data;
+    const isFormatOk = validateNameFormat(newUsername);
+
+    if (!newUsername || !isFormatOk) {
+      throw new functions.https.HttpsError(
+        'invalid-argument',
+        `The function must be called with a valid [newUsername].
+         The value you specified is not in a correct format.`,
+      );
+    }
+
+    const isUsernameTaken = await isUserExistsByUsername(newUsername.toLowerCase());
+
+    if (isUsernameTaken) {
+      throw new functions.https.HttpsError(
+        'invalid-argument',
+        `The name specified is not available.
+         Please try with a new one.`,
+      );
+    }
+
+    await adminApp
+      .auth()
+      .updateUser(userAuth.uid, {
+        displayName: newUsername,
+      });
+
+    await firestore
+      .collection('users')
+      .doc(userAuth.uid)
+      .update({
+        name: newUsername,
+        nameLowerCase: newUsername.toLowerCase(),
+      });
+
+    return {
+      success: true,
+      user: { id: userAuth.uid },
+    };
   });
 
 function validateEmailFormat(email: string) {
