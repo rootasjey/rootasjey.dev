@@ -17,6 +17,13 @@ export const onIndexPost = functions
     const data = snapshot.data();
     const objectID = snapshot.id;
 
+    const published = data['published'];
+    const referenced = data['referenced'];
+
+    if (!published || !referenced) {
+      return;
+    }
+
     return postsIndex.saveObject({
       objectID,
       ...data,
@@ -28,12 +35,24 @@ export const onReIndexPost = functions
   .firestore
   .document('posts/{postId}')
   .onUpdate(async (snapshot) => {
-    const data = snapshot.after.data();
+    const beforeData = snapshot.before.data();
+    const afterData = snapshot.after.data();
     const objectID = snapshot.after.id;
+
+    const beforePublished = beforeData['published'];
+    const beforeReferenced = beforeData['referenced'];
+
+    const afterPublished = afterData['published'];
+    const afterReferenced = afterData['referenced'];
+
+    if (((beforePublished !== afterPublished) && !afterPublished) || 
+      ((beforeReferenced !== afterReferenced) && !afterReferenced)) {
+      return postsIndex.deleteObject(objectID);
+    }
 
     return postsIndex.saveObject({
       objectID,
-      ...data,
+      ...afterData,
     })
   });
 
@@ -55,6 +74,13 @@ export const onIndexProject = functions
   .onCreate(async (snapshot) => {
     const data = snapshot.data();
     const objectID = snapshot.id;
+
+    const published = data['published'];
+    const referenced = data['referenced'];
+
+    if (!published || !referenced) {
+      return;
+    }
 
     return projectsIndex.saveObject({
       objectID,
@@ -83,6 +109,18 @@ export const onReIndexProject = functions
     if (statsChanged) {
       return;
     }
+
+    const beforePublished = beforeData['published'];
+    const beforeReferenced = beforeData['referenced'];
+
+    const afterPublished = afterData['published'];
+    const afterReferenced = afterData['referenced'];
+
+    if (((beforePublished !== afterPublished) && !afterPublished) ||
+      ((beforeReferenced !== afterReferenced) && !afterReferenced)) {
+      return postsIndex.deleteObject(objectID);
+    }
+
 
     return projectsIndex.saveObject({
       objectID,
