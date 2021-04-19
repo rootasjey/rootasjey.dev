@@ -139,7 +139,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
         children: [
           AvatarMenu(isSmall: isSmall),
           if (!isSmall) addNewPostButton(),
-          // searchButton(),
+          searchButton(),
           brightnessButton(),
           if (!isSmall) langButton(),
         ],
@@ -285,7 +285,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           userSigninMenu(),
-          // searchButton(),
+          searchButton(),
           ...widget.trailing,
           brightnessButton(),
           if (!isNarrow) langButton(),
@@ -308,12 +308,22 @@ class _HomeAppBarState extends State<HomeAppBar> {
   }
 
   Widget searchButton() {
-    return IconButton(
-      onPressed: () {
-        context.router.push(SearchRoute());
-      },
-      color: stateColors.foreground,
-      icon: Icon(UniconsLine.search),
+    return Padding(
+      padding: const EdgeInsets.only(
+        left: 16.0,
+        right: 8.0,
+      ),
+      child: Opacity(
+        opacity: 0.6,
+        child: IconButton(
+          onPressed: () {
+            context.router.root.push(SearchRoute());
+          },
+          tooltip: "search".tr(),
+          color: stateColors.foreground,
+          icon: Icon(UniconsLine.search),
+        ),
+      ),
     );
   }
 

@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:global_configuration/global_configuration.dart';
 import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/router/auth_guard.dart';
 import 'package:rootasjey/router/no_auth_guard.dart';
@@ -13,6 +14,7 @@ import 'package:rootasjey/utils/app_logger.dart';
 import 'package:rootasjey/utils/app_storage.dart';
 import 'package:rootasjey/utils/brightness.dart';
 import 'package:rootasjey/utils/fonts.dart';
+import 'package:rootasjey/utils/search.dart';
 import 'package:supercharged/supercharged.dart';
 import 'package:url_strategy/url_strategy.dart';
 
@@ -27,6 +29,12 @@ void main() async {
   await appStorage.initialize();
   await Future.wait([_autoLogin(), _initLang()]);
   await EasyLocalization.ensureInitialized();
+  await GlobalConfiguration().loadFromAsset('app_settings');
+
+  AlgoliaHelper.init(
+    applicationId: GlobalConfiguration().getValue('algolia_app_id'),
+    searchApiKey: GlobalConfiguration().getValue('algolia_search_api_key'),
+  );
 
   final brightness = BrightnessUtils.getCurrent();
 

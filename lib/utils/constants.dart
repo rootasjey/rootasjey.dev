@@ -9,6 +9,10 @@ class Constants {
   static const maxMobileWidth = 700.0;
   static const appGithubUrl = 'https://github.com/rootasjey/rootasjey.dev';
 
+  static const baseAppUrl = "https://rootasjey.dev/";
+  static const basePostUrl = "https://rootasjey.dev/posts/";
+  static const baseProjectUrl = "https://rootasjey.dev/projects/";
+
   /// Twitter web intent API.
   /// More info at https://twitter.com/intent/tweet.
   static const baseTwitterShareUrl = "https://twitter.com/intent/tweet"
