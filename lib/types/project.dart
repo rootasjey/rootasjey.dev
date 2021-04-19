@@ -1,6 +1,6 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rootasjey/types/stats.dart';
 import 'package:rootasjey/types/urls.dart';
+import 'package:rootasjey/utils/date_helper.dart';
 
 class Project {
   final String author;
@@ -58,7 +58,7 @@ class Project {
 
     return Project(
       author: data['author'],
-      createdAt: (data['createdAt'] as Timestamp).toDate(),
+      createdAt: DateHelper.fromFirestore(data['createdAt']),
       id: data['id'],
       lang: data['lang'],
       platforms: parsePlatforms(data),
@@ -68,7 +68,7 @@ class Project {
       summary: data['summary'],
       title: data['title'],
       tags: parseTags(data),
-      updatedAt: (data['updatedAt'] as Timestamp).toDate(),
+      updatedAt: DateHelper.fromFirestore(data['updatedAt']),
       urls: Urls.fromJSON(data['urls']),
     );
   }
