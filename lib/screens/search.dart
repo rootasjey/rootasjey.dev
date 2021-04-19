@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:rootasjey/components/home_app_bar.dart';
 import 'package:rootasjey/components/post_card.dart';
 import 'package:rootasjey/components/project_card.dart';
+import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/types/post.dart';
 import 'package:rootasjey/types/project.dart';
@@ -169,6 +171,11 @@ class _SearchState extends State<Search> {
       children: _postsSuggestions.map((post) {
         return PostCard(
           post: post,
+          onTap: () => context.router.push(
+            PostsDeepRoute(children: [
+              PostPageRoute(postId: post.id),
+            ]),
+          ),
         );
       }).toList(),
     );
@@ -179,6 +186,11 @@ class _SearchState extends State<Search> {
       children: _projectsSuggestions.map((project) {
         return ProjectCard(
           project: project,
+          onTap: () => context.router.push(
+            ProjectsDeepRoute(children: [
+              ProjectPageRoute(projectId: project.id),
+            ]),
+          ),
         );
       }).toList(),
     );
