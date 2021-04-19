@@ -82,64 +82,52 @@ class _SearchState extends State<Search> {
   }
 
   Widget body() {
-    return RefreshIndicator(
-        onRefresh: () async {
-          await search();
-          return null;
-        },
-        child: NotificationListener<ScrollNotification>(
-          onNotification: (ScrollNotification scrollNotif) {
-            // FAB visibility
-            if (scrollNotif.metrics.pixels < 50 && _isFabVisible) {
-              setState(() {
-                _isFabVisible = false;
-              });
-            } else if (scrollNotif.metrics.pixels > 50 && !_isFabVisible) {
-              setState(() {
-                _isFabVisible = true;
-              });
-            }
+    return NotificationListener<ScrollNotification>(
+      onNotification: (ScrollNotification scrollNotif) {
+        // FAB visibility
+        if (scrollNotif.metrics.pixels < 50 && _isFabVisible) {
+          setState(() {
+            _isFabVisible = false;
+          });
+        } else if (scrollNotif.metrics.pixels > 50 && !_isFabVisible) {
+          setState(() {
+            _isFabVisible = true;
+          });
+        }
 
-            // Load more scenario
-            if (scrollNotif.metrics.pixels <
-                scrollNotif.metrics.maxScrollExtent) {
-              return false;
-            }
-
-            return false;
-          },
-          child: CustomScrollView(
-            controller: _scrollController,
-            slivers: <Widget>[
-              HomeAppBar(
-                title: Opacity(
-                  opacity: 0.6,
-                  child: Text(
-                    "search".tr(),
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      color: stateColors.foreground,
-                    ),
-                  ),
-                ),
-                automaticallyImplyLeading: true,
-              ),
-              SliverPadding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 100.0,
-                ),
-                sliver: SliverList(
-                  delegate: SliverChildListDelegate([
-                    searchHeader(),
-                    postsSection(),
-                    projectsSection(),
-                    Padding(padding: const EdgeInsets.only(bottom: 300.0)),
-                  ]),
+        return false;
+      },
+      child: CustomScrollView(
+        controller: _scrollController,
+        slivers: <Widget>[
+          HomeAppBar(
+            title: Opacity(
+              opacity: 0.6,
+              child: Text(
+                "search".tr(),
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: stateColors.foreground,
                 ),
               ),
-            ],
+            ),
+            automaticallyImplyLeading: true,
           ),
-        ));
+          SliverPadding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 100.0,
+            ),
+            sliver: SliverList(
+              delegate: SliverChildListDelegate([
+                searchHeader(),
+                postsSection(),
+                projectsSection(),
+              ]),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget postsSection() {
@@ -153,7 +141,10 @@ class _SearchState extends State<Search> {
         _postsSuggestions.isEmpty ? emptyView('posts') : postsColumn();
 
     return Padding(
-      padding: const EdgeInsets.only(top: 40.0),
+      padding: const EdgeInsets.only(
+        top: 40.0,
+        bottom: 28.0,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -206,44 +197,18 @@ class _SearchState extends State<Search> {
     final dataView =
         _projectsSuggestions.isEmpty ? emptyView('projects') : projectsColumn();
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        titleSection(
-          text: '${_projectsSuggestions.length} projects',
-        ),
-        dataView,
-      ],
-    );
-  }
-
-  Widget referencesSection() {
     return Padding(
-      padding: EdgeInsets.zero,
+      padding: const EdgeInsets.only(bottom: 300.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          titleSection(
+            text: '${_projectsSuggestions.length} projects',
+          ),
+          dataView,
+        ],
+      ),
     );
-    // if (searchInputValue.isEmpty) {
-    //   return Padding(
-    //     padding: EdgeInsets.zero,
-    //   );
-    // }
-
-    // final dataView = quotesResults.isEmpty
-    //   ? emptyView('quotes')
-    //   : referencesResultsView();
-
-    // return Padding(
-    //   padding: const EdgeInsets.only(top: 40.0),
-    //   child: Column(
-    //     crossAxisAlignment: CrossAxisAlignment.start,
-    //     children: [
-    //       titleSection(
-    //         text: '${referencesResults.length} references',
-    //       ),
-
-    //       dataView,
-    //     ],
-    //   ),
-    // );
   }
 
   Widget titleSection({String text}) {
@@ -305,19 +270,23 @@ class _SearchState extends State<Search> {
 
   Widget searchActions() {
     return Wrap(spacing: 20.0, runSpacing: 20.0, children: [
-      ElevatedButton.icon(
-          onPressed: () {
-            _searchInputValue = '';
-            _searchInputController.clear();
-            _searchFocusNode.requestFocus();
+      OutlinedButton.icon(
+        onPressed: () {
+          _searchInputValue = '';
+          _searchInputController.clear();
+          _searchFocusNode.requestFocus();
 
-            setState(() {});
-          },
-          icon: Opacity(opacity: 0.6, child: Icon(Icons.clear)),
-          label: Opacity(
+          setState(() {});
+        },
+        icon: Opacity(opacity: 0.6, child: Icon(Icons.clear)),
+        label: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Opacity(
             opacity: 0.6,
             child: Text("clear_content".tr()),
-          )),
+          ),
+        ),
+      ),
     ]);
   }
 
