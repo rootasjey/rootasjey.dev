@@ -22,6 +22,7 @@ environment:
 
 dependencies:
   adaptive_theme: 2.0.0
+  algolia: 1.0.1
   animations: 2.0.0
   auto_route:  1.0.2
   cloud_firestore: 1.0.1
@@ -47,6 +48,7 @@ dependencies:
   flutter_syntax_view: 4.0.0
   font_awesome_flutter: 9.0.0
   github: 8.0.1
+  global_configuration: 2.0.0-nullsafety.0
   google_fonts: 2.0.0
   jiffy: 4.0.0
   line_awesome_flutter: 1.0.1
