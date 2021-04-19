@@ -10,7 +10,7 @@ class ProjectCard extends StatefulWidget {
   ProjectCard({
     this.onTap,
     this.popupMenuButton,
-    this.project,
+    @required this.project,
   });
 
   @override

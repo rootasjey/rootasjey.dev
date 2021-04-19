@@ -9,7 +9,7 @@ class PostCard extends StatefulWidget {
 
   PostCard({
     this.padding = EdgeInsets.zero,
-    this.post,
+    @required this.post,
     this.popupMenuButton,
     this.onTap,
   });
@@ -43,26 +43,25 @@ class _PostCardState extends State<PostCard> {
                           bottom: 20.0,
                         ),
                         child: post.title.isEmpty
-                          ? Opacity(
-                              opacity: 0.6,
-                              child: Text(
-                                'No title yet.',
+                            ? Opacity(
+                                opacity: 0.6,
+                                child: Text(
+                                  'No title yet.',
+                                  style: TextStyle(
+                                    fontSize: 30.0,
+                                    fontWeight: FontWeight.w600,
+                                    fontStyle: FontStyle.italic,
+                                  ),
+                                ),
+                              )
+                            : Text(
+                                post.title,
                                 style: TextStyle(
                                   fontSize: 30.0,
                                   fontWeight: FontWeight.w600,
-                                  fontStyle: FontStyle.italic,
                                 ),
                               ),
-                            )
-                          : Text(
-                            post.title,
-                            style: TextStyle(
-                              fontSize: 30.0,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
                       ),
-
                       if (post.summary.isNotEmpty)
                         Opacity(
                           opacity: 0.6,
@@ -73,14 +72,11 @@ class _PostCardState extends State<PostCard> {
                             ),
                           ),
                         ),
-
                       metaData(post),
                     ],
                   ),
                 ),
-
-                if (widget.popupMenuButton != null)
-                  widget.popupMenuButton,
+                if (widget.popupMenuButton != null) widget.popupMenuButton,
               ],
             ),
           ),
@@ -103,7 +99,6 @@ class _PostCardState extends State<PostCard> {
               post.updatedAt.toString().split(' ')[0],
             ),
           ),
-
           Container(
             width: 20.0,
             height: 20.0,
@@ -112,7 +107,6 @@ class _PostCardState extends State<PostCard> {
               borderRadius: BorderRadius.circular(10.0),
             ),
           ),
-
           Opacity(
             opacity: 0.6,
             child: Text(
