@@ -20,7 +20,9 @@ class TextLink extends StatefulWidget {
 
 class _TextLinkState extends State<TextLink> {
   double opacity = 0.6;
+
   Color backgroundColor = Colors.transparent;
+  Color textColor;
 
   @override
   Widget build(BuildContext context) {
@@ -42,6 +44,7 @@ class _TextLinkState extends State<TextLink> {
         },
         onHover: (isHit) {
           setState(() {
+            textColor = isHit ? Colors.white : null;
             backgroundColor = isHit ? stateColors.primary : Colors.transparent;
             opacity = isHit ? 1.0 : 0.6;
           });
@@ -55,6 +58,7 @@ class _TextLinkState extends State<TextLink> {
               style: TextStyle(
                 fontSize: 22.0,
                 backgroundColor: backgroundColor,
+                color: textColor,
                 decoration: TextDecoration.underline,
                 decorationColor: stateColors.primary,
                 decorationStyle: TextDecorationStyle.dotted,
