@@ -6,6 +6,7 @@ const env = functions.config();
 const client = algolia(env.algolia.appid, env.algolia.apikey);
 const postsIndex = client.initIndex('posts');
 const projectsIndex = client.initIndex('projects');
+const usersIndex = client.initIndex('users');
 
 // Post index
 // ----------
@@ -135,4 +136,43 @@ export const onUnIndexProject = functions
   .onDelete(async (snapshot) => {
     const objectID = snapshot.id;
     return projectsIndex.deleteObject(objectID);
+  });
+
+// Users index
+// --------------
+export const onIndexUser = functions
+  .region('europe-west3')
+  .firestore
+  .document('users/{userId}')
+  .onCreate(async (snapshot) => {
+    const data = snapshot.data();
+    const objectID = snapshot.id;
+
+    return usersIndex.saveObject({
+      objectID,
+      ...data,
+    })
+  });
+
+export const onReIndexUser = functions
+  .region('europe-west3')
+  .firestore
+  .document('users/{userId}')
+  .onUpdate(async (snapshot) => {
+    const afterData = snapshot.after.data();
+    const objectID = snapshot.after.id;
+
+    return usersIndex.saveObject({
+      objectID,
+      ...afterData,
+    })
+  });
+
+export const onUnIndexUser = functions
+  .region('europe-west3')
+  .firestore
+  .document('users/{userId}')
+  .onDelete(async (snapshot) => {
+    const objectID = snapshot.id;
+    return usersIndex.deleteObject(objectID);
   });
