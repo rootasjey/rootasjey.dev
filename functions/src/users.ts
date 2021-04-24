@@ -198,15 +198,20 @@ export const createAccount = functions
           },
         },
         stats: {
-          fav: 0,
-          lists: 0,
-          proposed: 0,
-          published: 0,
-          tempQuotes: 0,
           notifications: {
             total: 0,
             unread: 0,
-          }
+          },
+          posts: {
+            contributed: 0,
+            drafts: 0,
+            published: 0,
+          },
+          projects: {
+            contributed: 0,
+            drafts: 0,
+            published: 0,
+          },
         },
         urls: {
           image: '',
