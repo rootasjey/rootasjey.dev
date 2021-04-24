@@ -166,8 +166,8 @@ export const onCreateProject = functions
   .firestore
   .document('projects/{projectId}')
   .onCreate(async (snapshot) => {
-    const data = snapshot.data();
-    const lang: string = data.lang ?? 'en';
+    const projectData = snapshot.data();
+    const lang: string = projectData.lang ?? 'en';
 
     const statsSnap = await firestore
       .collection('stats')
@@ -188,6 +188,7 @@ export const onCreateProject = functions
     }
 
     await statsSnap.ref.update(payload);
+    await updateAuthorProjectStats(projectData);
     return true;
   });
 
@@ -196,8 +197,8 @@ export const onDeleteProject = functions
   .firestore
   .document('projects/{projectId}')
   .onDelete(async (snapshot) => {
-    const data = snapshot.data();
-    const lang: string = data.lang ?? 'en';
+    const projectData = snapshot.data();
+    const lang: string = projectData.lang ?? 'en';
 
     const statsSnap = await firestore
       .collection('stats')
@@ -218,6 +219,51 @@ export const onDeleteProject = functions
     }
 
     await statsSnap.ref.update(payload);
+    await updateAuthorProjectStats(projectData);
+    return true;
+  });
+
+/**
+ * Update user's projects stats.
+ */
+export const onUpdateProject = functions
+  .region('europe-west3')
+  .firestore
+  .document('projects/{projectId}')
+  .onUpdate(async (snapshot) => {
+    const beforePostData = snapshot.before.data();
+    const afterPostData = snapshot.after.data();
+
+    if (beforePostData.published === afterPostData.published) {
+      return true;
+    }
+
+    const authorSnap = await firestore
+      .collection('users')
+      .doc(afterPostData.author.id)
+      .get();
+
+    const authorData = authorSnap.data();
+
+    if (!authorSnap.exists || !authorData) {
+      return true;
+    }
+
+    const payload = {
+      'stats.projects.drafts': authorData.stats.projects ?? 0,
+      'stats.projects.published': authorData.stats.projects ?? 0,
+    };
+
+    if (!beforePostData.published && afterPostData.published) {
+      payload['stats.projects.drafts'] = Math.max(0, payload['stats.projects.drafts'] - 1);
+      payload['stats.projects.published'] = payload['stats.projects.published'] + 1;
+
+    } else if (beforePostData.published && !afterPostData.published) {
+      payload['stats.projects.published'] = Math.max(0, payload['stats.projects.published'] - 1);
+      payload['stats.projects.drafts'] = payload['stats.projects.drafts'] + 1;
+    }
+
+    await authorSnap.ref.update(payload);
     return true;
   });
 
@@ -313,7 +359,7 @@ function getStatsRole(role: string) {
 }
 
 /**
- * Update author's stats about a post.
+ * Update author's post stats.
  * @param postData Firestore document which triggered the cloud function.
  * @returns True if the update succeded. False otherwise.
  */
@@ -347,6 +393,46 @@ async function updateAuthorPostStats(postData: any) {
 
   await authorSnap.ref.update({
     'stats.posts.drafts': drafts,
+  });
+
+  return true;
+}
+
+/**
+ * Update author's projects stats.
+ * @param postData Firestore document which triggered the cloud function.
+ * @returns True if the update succeded. False otherwise.
+ */
+async function updateAuthorProjectStats(postData: any) {
+  const authorId: string = postData.author.id;
+
+  const authorSnap = await firestore
+    .collection('users')
+    .doc(authorId)
+    .get();
+
+  const authorData = authorSnap.data();
+
+  if (!authorSnap.exists || !authorData) {
+    return false;
+  }
+
+  if (postData.published) {
+    let published: number = authorData.stats.projects.published ?? 0;
+    published++;
+
+    await authorSnap.ref.update({
+      'stats.projects.published': published,
+    });
+
+    return true;
+  }
+
+  let drafts: number = authorData.stats.projects.drafts ?? 0;
+  drafts++;
+
+  await authorSnap.ref.update({
+    'stats.projects.drafts': drafts,
   });
 
   return true;
