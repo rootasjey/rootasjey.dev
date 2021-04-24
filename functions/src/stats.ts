@@ -113,7 +113,7 @@ export const onDeletePost = functions
     }
 
     await statsSnap.ref.update(payload);
-    await updateAuthorPostStats(postData);
+    await updateAuthorPostStats(postData, false);
     return true;
   });
 
@@ -219,7 +219,7 @@ export const onDeleteProject = functions
     }
 
     await statsSnap.ref.update(payload);
-    await updateAuthorProjectStats(projectData);
+    await updateAuthorProjectStats(projectData, false);
     return true;
   });
 
@@ -361,9 +361,10 @@ function getStatsRole(role: string) {
 /**
  * Update author's post stats.
  * @param postData Firestore document which triggered the cloud function.
+ * @param add True if stats should be incremented (+1). False if stats should be decremented (-1).
  * @returns True if the update succeded. False otherwise.
  */
-async function updateAuthorPostStats(postData: any) {
+async function updateAuthorPostStats(postData: any, add: boolean = true) {
   const authorId: string = postData.author.id;
 
   const authorSnap = await firestore
@@ -379,7 +380,7 @@ async function updateAuthorPostStats(postData: any) {
 
   if (postData.published) {
     let published: number = authorData.stats.posts.published ?? 0;
-    published++;
+    published = add ? published + 1 : Math.max(0, published - 1);
 
     await authorSnap.ref.update({
       'stats.posts.published': published,
@@ -389,7 +390,7 @@ async function updateAuthorPostStats(postData: any) {
   }
 
   let drafts: number = authorData.stats.posts.drafts ?? 0;
-  drafts++;
+  drafts = add ? drafts + 1 : Math.max(0, drafts - 1);
 
   await authorSnap.ref.update({
     'stats.posts.drafts': drafts,
@@ -401,9 +402,10 @@ async function updateAuthorPostStats(postData: any) {
 /**
  * Update author's projects stats.
  * @param postData Firestore document which triggered the cloud function.
+ * @param add True if stats should be incremented (+1). False if stats should be decremented (-1).
  * @returns True if the update succeded. False otherwise.
  */
-async function updateAuthorProjectStats(postData: any) {
+async function updateAuthorProjectStats(postData: any, add: boolean = true) {
   const authorId: string = postData.author.id;
 
   const authorSnap = await firestore
@@ -419,7 +421,7 @@ async function updateAuthorProjectStats(postData: any) {
 
   if (postData.published) {
     let published: number = authorData.stats.projects.published ?? 0;
-    published++;
+    published = add ? published + 1 : Math.max(0, published - 1);
 
     await authorSnap.ref.update({
       'stats.projects.published': published,
@@ -429,7 +431,7 @@ async function updateAuthorProjectStats(postData: any) {
   }
 
   let drafts: number = authorData.stats.projects.drafts ?? 0;
-  drafts++;
+  drafts = add ? drafts + 1 : Math.max(0, drafts - 1);
 
   await authorSnap.ref.update({
     'stats.projects.drafts': drafts,
