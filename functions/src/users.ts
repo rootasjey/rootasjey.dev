@@ -7,57 +7,6 @@ import { checkUserIsSignedIn } from './utils';
 
 const firestore = adminApp.firestore();
 
-export const updateDataScheme = functions
-  .region('europe-west3')
-  .https
-  .onRequest(async (req, resp) => {
-    const posts = await firestore
-      .collection('posts')
-      .get();
-
-    if (posts.empty) {
-      resp.status(200).send('ok');
-      return;
-    }
-
-    for await (const post of posts.docs) {
-      const postData = post.data();
-      if (postData) {
-        const authorId = postData.author;
-
-        await post.ref.update({
-          author: {
-            id: authorId,
-          },
-        });
-      }
-    }
-
-    const projects = await firestore
-      .collection('projects')
-      .get();
-
-    if (posts.empty) {
-      resp.status(200).send('ok');
-      return;
-    }
-
-    for await (const project of projects.docs) {
-      const postData = project.data();
-      if (postData) {
-        const authorId = postData.author;
-
-        await project.ref.update({
-          author: {
-            id: authorId,
-          },
-        });
-      }
-    }
-
-    resp.status(200).send('ok');
-  });
-
 export const checkEmailAvailability = functions
   .region('europe-west3')
   .https
