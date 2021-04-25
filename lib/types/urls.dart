@@ -10,6 +10,8 @@ class Urls {
   String instagram;
   String linkedin;
   String other;
+  String tiktok;
+  String twitch;
   String twitter;
   String website;
   String wikipedia;
@@ -29,6 +31,8 @@ class Urls {
     this.instagram = '',
     this.linkedin = '',
     this.other = '',
+    this.tiktok = '',
+    this.twitch = '',
     this.twitter = '',
     this.website = '',
     this.wikipedia = '',
@@ -46,6 +50,8 @@ class Urls {
         instagram.isEmpty &&
         linkedin.isEmpty &&
         other.isEmpty &&
+        tiktok.isEmpty &&
+        twitch.isEmpty &&
         twitter.isEmpty &&
         website.isEmpty &&
         wikipedia.isEmpty &&
@@ -65,6 +71,8 @@ class Urls {
       instagram: '',
       linkedin: '',
       other: '',
+      tiktok: '',
+      twitch: '',
       twitter: '',
       website: '',
       wikipedia: '',
@@ -84,8 +92,6 @@ class Urls {
 
     return Urls(
       artbooking: data['artbooking'] ?? '',
-      linkedin: data['linkedin'] ?? '',
-      other: data['other'] ?? '',
       behance: data['behance'] ?? '',
       dribbble: data['dribbble'] ?? '',
       facebook: data['facebook'] ?? '',
@@ -93,7 +99,11 @@ class Urls {
       gitlab: data['gitlab'] ?? '',
       image: data['image'] ?? '',
       instagram: data['instagram'] ?? '',
+      linkedin: data['linkedin'] ?? '',
       map: dataMap,
+      other: data['other'] ?? '',
+      tiktok: data['tiktok'] ?? '',
+      twitch: data['twitch'] ?? '',
       twitter: data['twitter'] ?? '',
       website: data['website'] ?? '',
       wikipedia: data['wikipedia'] ?? '',
