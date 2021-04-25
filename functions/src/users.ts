@@ -257,6 +257,79 @@ export const deleteAccount = functions
     };
   });
 
+  /**
+   * Return user's data.
+   */
+export const fetchUserData = functions
+  .region('europe-west3')
+  .https
+  .onCall(async (data) => {
+    const authorId: string = data.authorId;
+
+    if (!authorId) {
+      throw new functions.https.HttpsError(
+        'invalid-argument', 
+        `'fetchAuthorData' must be called with one (1) argument whichis the author's id to fetch.`,
+      );
+    }
+
+    const authorSnap = await firestore
+      .collection('users')
+      .doc(authorId)
+      .get();
+
+    const authorData = authorSnap.data();
+
+    if (!authorSnap.exists || ! authorData) {
+      throw new functions.https.HttpsError(
+        'not-found',
+        `The specified author does NOT exist. It may have been deleted.`,
+      );
+    }
+
+    return {
+      createdAt: authorData.createdAt,
+      email: authorData.email,
+      id: authorSnap.id,
+      job: authorData.job,
+      location: authorData.location,
+      name: authorData.name,
+      role: authorData.role,
+      stats: {
+        posts: {
+          contributed: authorData.stats.contributed,
+          drafts: authorData.stats.drafts,
+          published: authorData.stats.published,
+        },
+        projects: {
+          contributed: authorData.stats.contributed,
+          drafts: authorData.stats.drafts,
+          published: authorData.stats.published,
+        },
+      },
+      summary: authorData.summary,
+      updatedAt: authorData.updatedAt,
+      urls: {
+        artbooking: authorData.urls.artbooking,
+        behance: authorData.urls.behance,
+        dribbble: authorData.urls.dribbble,
+        facebook: authorData.urls.facebook,
+        github: authorData.urls.github,
+        gitlab: authorData.urls.gitlab,
+        image: authorData.urls.image,
+        instagram: authorData.urls.instagram,
+        linkedin: authorData.urls.linkedin,
+        other: authorData.urls.other,
+        tiktok: authorData.urls.tiktok,
+        twitch: authorData.urls.twitch,
+        twitter: authorData.urls.twitter,
+        website: authorData.urls.website,
+        wikipedia: authorData.urls.wikipedia,
+        youtube: authorData.urls.youtube,
+      },
+    };
+  });
+
 async function isUserExistsByEmail(email: string) {
   const emailSnapshot = await firestore
     .collection('users')
