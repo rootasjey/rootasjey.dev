@@ -31,7 +31,6 @@ class _HomeState extends State<Home> {
               );
             },
           ),
-
           SliverList(
             delegate: SliverChildListDelegate([
               HomePresentation(),
@@ -39,7 +38,7 @@ class _HomeState extends State<Home> {
               RecentActivities(),
               RecentPosts(),
               Newsletter(),
-              Footer(pageScrollController: scrollController,),
+              Footer(pageScrollController: scrollController),
             ]),
           ),
         ],
