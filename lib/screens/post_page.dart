@@ -15,6 +15,7 @@ import 'package:rootasjey/components/markdown_viewer.dart';
 import 'package:rootasjey/components/sliver_loading_view.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/types/post.dart';
+import 'package:rootasjey/utils/app_logger.dart';
 import 'package:rootasjey/utils/cloud.dart';
 import 'package:rootasjey/utils/constants.dart';
 import 'package:rootasjey/utils/fonts.dart';
@@ -239,7 +240,9 @@ class _PostPageState extends State<PostPage> {
         summary(),
         dates(),
         allChips(),
-        AuthorHeader(),
+        AuthorHeader(
+          authorId: _post?.author?.id ?? '',
+        ),
       ],
     );
   }
@@ -405,7 +408,7 @@ class _PostPageState extends State<PostPage> {
         _post = Post.fromJSON(data);
       });
     } catch (error) {
-      debugPrint(error.toString());
+      appLogger.e(error.toString());
     }
   }
 
@@ -422,7 +425,7 @@ class _PostPageState extends State<PostPage> {
       setState(() => _isLoading = false);
     } catch (error) {
       setState(() => _isLoading = false);
-      debugPrint(error.toString());
+      appLogger.e(error.toString());
 
       Snack.e(
         context: context,

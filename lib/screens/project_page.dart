@@ -214,7 +214,9 @@ class _ProjectPageState extends State<ProjectPage> {
         summary(),
         dates(),
         allChips(),
-        AuthorHeader(),
+        AuthorHeader(
+          authorId: _project?.author?.id ?? '',
+        ),
       ],
     );
   }
