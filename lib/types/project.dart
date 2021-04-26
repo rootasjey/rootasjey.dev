@@ -1,9 +1,10 @@
+import 'package:rootasjey/types/author.dart';
 import 'package:rootasjey/types/stats.dart';
 import 'package:rootasjey/types/urls.dart';
 import 'package:rootasjey/utils/date_helper.dart';
 
 class Project {
-  final String author;
+  final Author author;
   final DateTime createdAt;
   final String id;
   final String lang;
@@ -35,7 +36,7 @@ class Project {
 
   factory Project.empty() {
     return Project(
-      author: '',
+      author: Author.empty(),
       createdAt: DateTime.now(),
       id: '',
       lang: '',
@@ -57,7 +58,7 @@ class Project {
     }
 
     return Project(
-      author: data['author'],
+      author: Author.fromJSON(data['author']),
       createdAt: DateHelper.fromFirestore(data['createdAt']),
       id: data['id'],
       lang: data['lang'],
