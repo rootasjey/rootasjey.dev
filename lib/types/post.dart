@@ -1,13 +1,14 @@
+import 'package:rootasjey/types/author.dart';
 import 'package:rootasjey/types/stats.dart';
 import 'package:rootasjey/types/urls.dart';
 import 'package:rootasjey/utils/date_helper.dart';
 
 class Post {
-  final String id;
-  final String author;
+  final Author author;
   final List<String> coauthors;
   final DateTime createdAt;
   final bool featured;
+  final String id;
   final String lang;
   final String path;
   final List<String> programmingLanguages;
@@ -23,7 +24,7 @@ class Post {
 
   Post({
     this.id = '',
-    this.author = '',
+    this.author,
     this.coauthors = const [],
     this.createdAt,
     this.featured = false,
@@ -43,7 +44,7 @@ class Post {
 
   factory Post.empty() {
     return Post(
-      author: '',
+      author: Author.empty(),
       coauthors: const [],
       createdAt: DateTime.now(),
       featured: false,
@@ -68,7 +69,7 @@ class Post {
     }
 
     return Post(
-      author: data['author'] ?? '',
+      author: Author.fromJSON(data['author']),
       coauthors: parseCoAuthors(data),
       createdAt: DateHelper.fromFirestore(data['createdAt']),
       featured: data['featured'] ?? false,
