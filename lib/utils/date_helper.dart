@@ -14,11 +14,11 @@ class DateHelper {
     }
 
     try {
-      if (data.runtimeType == int) {
+      if (data is int) {
         date = DateTime.fromMillisecondsSinceEpoch(data);
-      } else if (data.runtimeType == Timestamp) {
-        date = (data as Timestamp)?.toDate();
-      } else if (data.runtimeType == String) {
+      } else if (data is Timestamp) {
+        date = data?.toDate();
+      } else if (data is String) {
         date = DateTime.parse(data);
       } else if (data != null && data['_seconds'] != null) {
         date = DateTime.fromMillisecondsSinceEpoch(data['_seconds'] * 1000);
