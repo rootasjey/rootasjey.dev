@@ -162,7 +162,7 @@ class _PubPostCardState extends State<PubPostCard> {
   void fetchAuthorName() async {
     try {
       final resp = await Cloud.fun('posts-fetchAuthorName')
-          .call({'authorId': widget.postHeadline.author});
+          .call({'authorId': widget.postHeadline.author.id});
 
       // ?NOTE: Prevent setState if not mounted.
       // This is due to each card having its own fetch & state,

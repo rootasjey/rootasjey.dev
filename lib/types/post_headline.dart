@@ -1,16 +1,19 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
+import 'package:rootasjey/types/author.dart';
 import 'package:rootasjey/types/urls.dart';
+import 'package:rootasjey/utils/date_helper.dart';
 
 class PostHeadline {
-  final String author;
+  final Author author;
   final List<String> coauthors;
   final DateTime createdAt;
-  @required final String id;
+  @required
+  final String id;
   final String summary;
   final List<String> tags;
   final String timeToRead;
-  @required final String title;
+  @required
+  final String title;
   final DateTime updatedAt;
   Urls urls;
 
@@ -47,16 +50,16 @@ class PostHeadline {
     }
 
     return PostHeadline(
-      author      : data['author'],
-      coauthors   : _coauthors,
-      createdAt   : (data['createdAt'] as Timestamp).toDate(),
-      id          : data['id'],
-      summary     : data['summary'],
-      tags        : _tags,
-      timeToRead  : data['timeToRead'],
-      title       : data['title'],
-      updatedAt   : (data['updatedAt'] as Timestamp).toDate(),
-      urls        : Urls.fromJSON(data['urls']),
+      author: Author.fromJSON(data['author']),
+      coauthors: _coauthors,
+      createdAt: DateHelper.fromFirestore(data['createdAt']),
+      id: data['id'],
+      summary: data['summary'],
+      tags: _tags,
+      timeToRead: data['timeToRead'],
+      title: data['title'],
+      updatedAt: DateHelper.fromFirestore(data['updatedAt']),
+      urls: Urls.fromJSON(data['urls']),
     );
   }
 }
