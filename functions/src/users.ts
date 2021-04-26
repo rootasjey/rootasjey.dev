@@ -264,9 +264,9 @@ export const fetchUserData = functions
   .region('europe-west3')
   .https
   .onCall(async (data) => {
-    const authorId: string = data.authorId;
+    const userId: string = data.userId;
 
-    if (!authorId) {
+    if (!userId) {
       throw new functions.https.HttpsError(
         'invalid-argument', 
         `'fetchAuthorData' must be called with one (1) argument whichis the author's id to fetch.`,
@@ -275,7 +275,7 @@ export const fetchUserData = functions
 
     const authorSnap = await firestore
       .collection('users')
-      .doc(authorId)
+      .doc(userId)
       .get();
 
     const authorData = authorSnap.data();
