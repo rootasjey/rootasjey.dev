@@ -132,7 +132,7 @@ class _DraftPostsState extends State<DraftPosts> {
       final snapshot = await FirebaseFirestore.instance
           .collection('posts')
           .where('published', isEqualTo: false)
-          .where('author', isEqualTo: uid)
+          .where('author.id', isEqualTo: uid)
           .limit(_limit)
           .get();
 
@@ -177,7 +177,7 @@ class _DraftPostsState extends State<DraftPosts> {
       final snapshot = await FirebaseFirestore.instance
           .collection('posts')
           .where('published', isEqualTo: false)
-          .where('author', isEqualTo: uid)
+          .where('author.id', isEqualTo: uid)
           .limit(_limit)
           .startAfterDocument(_lastDocumentSnapshot)
           .get();
