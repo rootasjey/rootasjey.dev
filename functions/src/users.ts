@@ -269,63 +269,168 @@ export const fetchUserData = functions
     if (!userId) {
       throw new functions.https.HttpsError(
         'invalid-argument', 
-        `'fetchAuthorData' must be called with one (1) argument whichis the author's id to fetch.`,
+        `'fetchUserData' must be called with one (1) argument representing the author's id to fetch.`,
       );
     }
 
-    const authorSnap = await firestore
+    const userSnap = await firestore
       .collection('users')
       .doc(userId)
       .get();
 
-    const authorData = authorSnap.data();
+    const userData = userSnap.data();
 
-    if (!authorSnap.exists || ! authorData) {
+    if (!userSnap.exists || ! userData) {
       throw new functions.https.HttpsError(
         'not-found',
-        `The specified author does NOT exist. It may have been deleted.`,
+        `The specified user does not exist. It may have been deleted.`,
       );
     }
 
     return {
-      createdAt: authorData.createdAt,
-      email: authorData.email,
-      id: authorSnap.id,
-      job: authorData.job,
-      location: authorData.location,
-      name: authorData.name,
-      role: authorData.role,
+      createdAt: userData.createdAt,
+      email: userData.email,
+      id: userSnap.id,
+      job: userData.job,
+      location: userData.location,
+      name: userData.name,
+      role: userData.role,
       stats: {
         posts: {
-          contributed: authorData.stats.contributed,
-          drafts: authorData.stats.drafts,
-          published: authorData.stats.published,
+          contributed: userData.stats.contributed,
+          drafts: userData.stats.drafts,
+          published: userData.stats.published,
         },
         projects: {
-          contributed: authorData.stats.contributed,
-          drafts: authorData.stats.drafts,
-          published: authorData.stats.published,
+          contributed: userData.stats.contributed,
+          drafts: userData.stats.drafts,
+          published: userData.stats.published,
         },
       },
-      summary: authorData.summary,
-      updatedAt: authorData.updatedAt,
+      summary: userData.summary,
+      updatedAt: userData.updatedAt,
       urls: {
-        artbooking: authorData.urls.artbooking,
-        behance: authorData.urls.behance,
-        dribbble: authorData.urls.dribbble,
-        facebook: authorData.urls.facebook,
-        github: authorData.urls.github,
-        gitlab: authorData.urls.gitlab,
-        image: authorData.urls.image,
-        instagram: authorData.urls.instagram,
-        linkedin: authorData.urls.linkedin,
-        other: authorData.urls.other,
-        tiktok: authorData.urls.tiktok,
-        twitch: authorData.urls.twitch,
-        twitter: authorData.urls.twitter,
-        website: authorData.urls.website,
-        wikipedia: authorData.urls.wikipedia,
-        youtube: authorData.urls.youtube,
+        artbooking: userData.urls.artbooking,
+        behance: userData.urls.behance,
+        dribbble: userData.urls.dribbble,
+        facebook: userData.urls.facebook,
+        github: userData.urls.github,
+        gitlab: userData.urls.gitlab,
+        image: userData.urls.image,
+        instagram: userData.urls.instagram,
+        linkedin: userData.urls.linkedin,
+        other: userData.urls.other,
+        tiktok: userData.urls.tiktok,
+        twitch: userData.urls.twitch,
+        twitter: userData.urls.twitter,
+        website: userData.urls.website,
+        wikipedia: userData.urls.wikipedia,
+        youtube: userData.urls.youtube,
+      },
+    };
+  });
+
+  /**
+   * Update an user's data with the specified payload.
+   */
+export const updateUser = functions
+  .region('europe-west3')
+  .https
+  .onCall(async (data, context) => {
+    const userAuth = context.auth;
+    const userId: string = data.userId;
+    const updatePayload: any = data.updatePayload;
+
+    if (!userAuth) {
+      throw new functions.https.HttpsError(
+        'unauthenticated',
+        `The function must be called from an authenticated user.`,
+      );
+    }
+
+    if (!userId) {
+      throw new functions.https.HttpsError(
+        'invalid-argument',
+        `'updateUserData' must be called with a valid user's id to update.`,
+      );
+    }
+
+    if (!updatePayload) {
+      throw new functions.https.HttpsError(
+        'invalid-argument',
+        `'updateUserData' must be called with a valid "updatePayload" argument reprensenting new data.`,
+      );
+    }
+
+    if (userAuth.uid !== userId) {
+      throw new functions.https.HttpsError(
+        'permission-denied',
+        `You do not have the permission to update this user.`,
+      );
+    }
+
+    const userSnap = await firestore
+      .collection('users')
+      .doc(userId)
+      .get();
+
+      if (!userSnap.exists) {
+        throw new functions.https.HttpsError(
+          'not-found',
+          `The specified user does not exist. It may have been deleted.`,
+        );
+      }
+
+    await userSnap.ref.update(updatePayload);
+
+    const userData = userSnap.data();
+
+    if (!userData) {
+      throw new functions.https.HttpsError(
+        'data-loss',
+        `Something went wrong while fetching updated user's data. Please try again.`,
+      );
+    }
+
+    return {
+      createdAt: userData.createdAt,
+      email: userData.email,
+      id: userSnap.id,
+      job: userData.job,
+      location: userData.location,
+      name: userData.name,
+      role: userData.role,
+      stats: {
+        posts: {
+          contributed: userData.stats.contributed,
+          drafts: userData.stats.drafts,
+          published: userData.stats.published,
+        },
+        projects: {
+          contributed: userData.stats.contributed,
+          drafts: userData.stats.drafts,
+          published: userData.stats.published,
+        },
+      },
+      summary: userData.summary,
+      updatedAt: userData.updatedAt,
+      urls: {
+        artbooking: userData.urls.artbooking,
+        behance: userData.urls.behance,
+        dribbble: userData.urls.dribbble,
+        facebook: userData.urls.facebook,
+        github: userData.urls.github,
+        gitlab: userData.urls.gitlab,
+        image: userData.urls.image,
+        instagram: userData.urls.instagram,
+        linkedin: userData.urls.linkedin,
+        other: userData.urls.other,
+        tiktok: userData.urls.tiktok,
+        twitch: userData.urls.twitch,
+        twitter: userData.urls.twitter,
+        website: userData.urls.website,
+        wikipedia: userData.urls.wikipedia,
+        youtube: userData.urls.youtube,
       },
     };
   });
