@@ -439,47 +439,6 @@ export const updateUser = functions
     };
   });
 
-async function isUserExistsByEmail(email: string) {
-  const emailSnapshot = await firestore
-    .collection('users')
-    .where('email', '==', email)
-    .limit(1)
-    .get();
-
-  if (!emailSnapshot.empty) {
-    return true;
-  }
-
-  try {
-    const userRecord = await adminApp
-      .auth()
-      .getUserByEmail(email);
-
-    if (userRecord) {
-      return true;
-    }
-
-    return false;
-
-  } catch (error) {
-    return false;
-  }
-}
-
-async function isUserExistsByUsername(nameLowerCase: string) {
-  const nameSnapshot = await firestore
-    .collection('users')
-    .where('nameLowerCase', '==', nameLowerCase)
-    .limit(1)
-    .get();
-
-  if (nameSnapshot.empty) {
-    return false;
-  }
-
-  return true;
-}
-
 /**
  * Update an user's email in Firebase auth and in Firestore.
  * Several security checks are made (email format, password, email unicity)
@@ -598,6 +557,51 @@ export const updateUsername = functions
       user: { id: userAuth.uid },
     };
   });
+
+// ----------------
+// HELPER FUNCTIONS
+// ----------------
+
+async function isUserExistsByEmail(email: string) {
+  const emailSnapshot = await firestore
+    .collection('users')
+    .where('email', '==', email)
+    .limit(1)
+    .get();
+
+  if (!emailSnapshot.empty) {
+    return true;
+  }
+
+  try {
+    const userRecord = await adminApp
+      .auth()
+      .getUserByEmail(email);
+
+    if (userRecord) {
+      return true;
+    }
+
+    return false;
+
+  } catch (error) {
+    return false;
+  }
+}
+
+async function isUserExistsByUsername(nameLowerCase: string) {
+  const nameSnapshot = await firestore
+    .collection('users')
+    .where('nameLowerCase', '==', nameLowerCase)
+    .limit(1)
+    .get();
+
+  if (nameSnapshot.empty) {
+    return false;
+  }
+
+  return true;
+}
 
 function validateEmailFormat(email: string) {
   const re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
