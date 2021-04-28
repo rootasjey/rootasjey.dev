@@ -260,7 +260,7 @@ export const deleteAccount = functions
   /**
    * Return user's data.
    */
-export const fetchUserData = functions
+export const fetchUser = functions
   .region('europe-west3')
   .https
   .onCall(async (data) => {
