@@ -374,12 +374,16 @@ export const updateUser = functions
       .doc(userId)
       .get();
 
-      if (!userSnap.exists) {
-        throw new functions.https.HttpsError(
-          'not-found',
-          `The specified user does not exist. It may have been deleted.`,
-        );
-      }
+    if (!userSnap.exists) {
+      throw new functions.https.HttpsError(
+        'not-found',
+        `The specified user does not exist. It may have been deleted.`,
+      );
+    }
+
+    // Use specific function to update user's name & email.
+    delete updatePayload.name;
+    delete updatePayload.email;
 
     await userSnap.ref.update(updatePayload);
 
