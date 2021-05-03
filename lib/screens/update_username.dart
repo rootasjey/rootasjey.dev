@@ -385,7 +385,7 @@ class _UpdateUsernameState extends State<UpdateUsername> {
             Padding(
               padding: const EdgeInsets.all(18.0),
               child: Text(
-                "username_update",
+                "username_update".tr(),
                 style: FontsUtils.mainStyle(
                   fontSize: 15.0,
                   fontWeight: FontWeight.bold,
