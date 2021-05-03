@@ -257,9 +257,9 @@ export const deleteAccount = functions
     };
   });
 
-  /**
-   * Return user's data.
-   */
+/**
+ * Return user's data.
+ */
 export const fetchUser = functions
   .region('europe-west3')
   .https
@@ -287,54 +287,14 @@ export const fetchUser = functions
       );
     }
 
-    return {
-      createdAt: userData.createdAt,
-      email: userData.email,
-      id: userSnap.id,
-      job: userData.job,
-      lang: userData.lang,
-      location: userData.location,
-      name: userData.name,
-      pricing: userData.pricing,
-      role: userData.role,
-      stats: {
-        posts: {
-          contributed: userData.stats.contributed,
-          drafts: userData.stats.drafts,
-          published: userData.stats.published,
-        },
-        projects: {
-          contributed: userData.stats.contributed,
-          drafts: userData.stats.drafts,
-          published: userData.stats.published,
-        },
-      },
-      summary: userData.summary,
-      updatedAt: userData.updatedAt,
-      urls: {
-        artbooking: userData.urls.artbooking,
-        behance: userData.urls.behance,
-        dribbble: userData.urls.dribbble,
-        facebook: userData.urls.facebook,
-        github: userData.urls.github,
-        gitlab: userData.urls.gitlab,
-        image: userData.urls.image,
-        instagram: userData.urls.instagram,
-        linkedin: userData.urls.linkedin,
-        other: userData.urls.other,
-        tiktok: userData.urls.tiktok,
-        twitch: userData.urls.twitch,
-        twitter: userData.urls.twitter,
-        website: userData.urls.website,
-        wikipedia: userData.urls.wikipedia,
-        youtube: userData.urls.youtube,
-      },
-    };
+
+    const userDataWithId = { ...userData, ...{ id: userSnap.id } };
+    return formatUserData(userDataWithId);
   });
 
-  /**
-   * Update an user's data with the specified payload.
-   */
+/**
+ * Update an user's data with the specified payload.
+ */
 export const updateUser = functions
   .region('europe-west3')
   .https
@@ -398,47 +358,9 @@ export const updateUser = functions
       );
     }
 
-    return {
-      createdAt: userData.createdAt,
-      email: userData.email,
-      id: userSnap.id,
-      job: userData.job,
-      location: userData.location,
-      name: userData.name,
-      role: userData.role,
-      stats: {
-        posts: {
-          contributed: userData.stats.contributed,
-          drafts: userData.stats.drafts,
-          published: userData.stats.published,
-        },
-        projects: {
-          contributed: userData.stats.contributed,
-          drafts: userData.stats.drafts,
-          published: userData.stats.published,
-        },
-      },
-      summary: userData.summary,
-      updatedAt: userData.updatedAt,
-      urls: {
-        artbooking: userData.urls.artbooking,
-        behance: userData.urls.behance,
-        dribbble: userData.urls.dribbble,
-        facebook: userData.urls.facebook,
-        github: userData.urls.github,
-        gitlab: userData.urls.gitlab,
-        image: userData.urls.image,
-        instagram: userData.urls.instagram,
-        linkedin: userData.urls.linkedin,
-        other: userData.urls.other,
-        tiktok: userData.urls.tiktok,
-        twitch: userData.urls.twitch,
-        twitter: userData.urls.twitter,
-        website: userData.urls.website,
-        wikipedia: userData.urls.wikipedia,
-        youtube: userData.urls.youtube,
-      },
-    };
+
+    const userDataWithId = { ...userData, ...{ id: userSnap.id } };
+    return formatUserData(userDataWithId);
   });
 
 /**
@@ -563,6 +485,57 @@ export const updateUsername = functions
 // ----------------
 // HELPER FUNCTIONS
 // ----------------
+
+/**
+ * Take a raw Firestore data object and return formated data.
+ * @param userData User's data.
+ * @returns Return a formated data to consume.
+ */
+function formatUserData(userData: any) {
+  return {
+    createdAt: userData.createdAt,
+    email: userData.email,
+    id: userData.id,
+    job: userData.job,
+    lang: userData.lang,
+    location: userData.location,
+    name: userData.name,
+    pricing: userData.pricing,
+    role: userData.role,
+    stats: {
+      posts: {
+        contributed: userData.stats.contributed,
+        drafts: userData.stats.drafts,
+        published: userData.stats.published,
+      },
+      projects: {
+        contributed: userData.stats.contributed,
+        drafts: userData.stats.drafts,
+        published: userData.stats.published,
+      },
+    },
+    summary: userData.summary,
+    updatedAt: userData.updatedAt,
+    urls: {
+      artbooking: userData.urls.artbooking,
+      behance: userData.urls.behance,
+      dribbble: userData.urls.dribbble,
+      facebook: userData.urls.facebook,
+      github: userData.urls.github,
+      gitlab: userData.urls.gitlab,
+      image: userData.urls.image,
+      instagram: userData.urls.instagram,
+      linkedin: userData.urls.linkedin,
+      other: userData.urls.other,
+      tiktok: userData.urls.tiktok,
+      twitch: userData.urls.twitch,
+      twitter: userData.urls.twitter,
+      website: userData.urls.website,
+      wikipedia: userData.urls.wikipedia,
+      youtube: userData.urls.youtube,
+    },
+  };
+}
 
 async function isUserExistsByEmail(email: string) {
   const emailSnapshot = await firestore
