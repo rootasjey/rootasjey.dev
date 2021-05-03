@@ -387,7 +387,7 @@ export const updateUser = functions
 
     await userSnap.ref.update(updatePayload);
 
-    const userData = userSnap.data();
+    const userData = (await userSnap.ref.get()).data();
 
     if (!userData) {
       throw new functions.https.HttpsError(
