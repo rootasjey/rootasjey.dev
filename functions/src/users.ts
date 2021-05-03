@@ -269,7 +269,7 @@ export const fetchUser = functions
     if (!userId) {
       throw new functions.https.HttpsError(
         'invalid-argument', 
-        `'fetchUserData' must be called with one (1) argument representing the author's id to fetch.`,
+        `'fetchUser' must be called with one (1) argument representing the author's id to fetch.`,
       );
     }
 
@@ -292,8 +292,10 @@ export const fetchUser = functions
       email: userData.email,
       id: userSnap.id,
       job: userData.job,
+      lang: userData.lang,
       location: userData.location,
       name: userData.name,
+      pricing: userData.pricing,
       role: userData.role,
       stats: {
         posts: {
