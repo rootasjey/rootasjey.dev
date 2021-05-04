@@ -437,6 +437,7 @@
   "upgrade_description": "We'll upgrade your website Whenever a bug is detected or a more recent dependency is available.",
   "url_add": "Add URL",
   "urls_ext": "External URLs",
+  "user_updating": "Updating your data...",
   "username": "Username",
   "username_choose_description": "You can choose a new one as long as it's unique.",
   "username_current": "Current username",

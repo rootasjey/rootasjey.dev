@@ -437,6 +437,7 @@
   "upgrade_description": "Nous mettrons à jour votre site dès qu'un bug sera détecté ou qu'une faille de sécurité sera répertoriée.",
   "url_add": "Ajouter un lien",
   "urls_ext": "Liens externes",
+  "user_updating": "Mise à jour de vos données...",
   "username": "Nom d'utilisateur",
   "username_choose_description": "Vous pouvez en choisir un nouveau tant qu'il est unique.",
   "username_current": "Nom d'utilisateur actuel",

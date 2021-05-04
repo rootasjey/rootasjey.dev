@@ -163,7 +163,17 @@ class Urls {
     youtube = copy.youtube;
   }
 
+  Map<String, String> getAvailableLinks() {
+    return Map.from(profilesMap)
+      ..removeWhere((key, value) => value == null || value.isEmpty);
+  }
+
+  /// Update the URL specified by [key] with the new [value].
+  /// This function will propagate update to [map] and [profilesMap].
   void setUrl(String key, String value) {
+    map[key] = value;
+    profilesMap[key] = value;
+
     switch (key) {
       case "artbooking":
         artbooking = value;
