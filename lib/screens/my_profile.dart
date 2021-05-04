@@ -454,12 +454,12 @@ class _MyProfileState extends State<MyProfile> {
       child: Wrap(
         spacing: 12.0,
         runSpacing: 12.0,
-        children: _user.urls.profilesMap.entries.map((entry) {
+        children: _user.urls.socialMap.entries.map((entry) {
           return SizedBox(
             width: 80.0,
             height: 80.0,
             child: Card(
-              elevation: _user.urls.profilesMap[entry.key].isEmpty ? 0.0 : 3.0,
+              elevation: _user.urls.socialMap[entry.key].isEmpty ? 0.0 : 3.0,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(6.0),
                 side: BorderSide(
