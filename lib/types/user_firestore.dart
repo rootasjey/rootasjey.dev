@@ -8,15 +8,15 @@ class UserFirestore {
   final DateTime createdAt;
   final String email;
   final String id;
-  final String job;
+  String job;
   final String lang;
-  final String location;
+  String location;
   final String name;
   final String nameLowerCase;
   final String pricing;
   final String role;
   final UserStats stats;
-  final String summary;
+  String summary;
   final DateTime updatedAt;
   final Urls urls;
 
@@ -77,5 +77,26 @@ class UserFirestore {
       updatedAt: DateHelper.fromFirestore(data['updatedAt']),
       urls: Urls.fromJSON(data['urls']),
     );
+  }
+
+  Map<String, dynamic> toJSON({bool withAllFields = false}) {
+    Map<String, dynamic> data = Map();
+
+    if (withAllFields) {
+      data['email'] = email;
+      data['name'] = name;
+      data['nameLowerCase'] = nameLowerCase;
+    }
+
+    data['job'] = job;
+    data['lang'] = lang;
+    data['location'] = location;
+    data['pricing'] = pricing;
+    data['role'] = role;
+    data['summary'] = summary;
+    data['updatedAt'] = DateTime.now().millisecondsSinceEpoch;
+    data['urls'] = urls.toJSON();
+
+    return data;
   }
 }

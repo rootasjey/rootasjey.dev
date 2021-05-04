@@ -63,28 +63,30 @@ class AvatarMenu extends StatelessWidget {
     return [
       if (isSmall)
         PopupMenuItem(
-            value: DashboardPageRoute(children: [NewPostRoute()]),
-            child: ListTile(
-              leading: Icon(UniconsLine.plus),
-              title: Text(
-                "post_new".tr(),
-                style: TextStyle(
-                  fontWeight: FontWeight.w400,
-                ),
+          value: DashboardPageRoute(children: [NewPostRoute()]),
+          child: ListTile(
+            leading: Icon(UniconsLine.plus),
+            title: Text(
+              "post_new".tr(),
+              style: TextStyle(
+                fontWeight: FontWeight.w400,
               ),
-            )),
+            ),
+          ),
+        ),
       if (isSmall)
         PopupMenuItem(
-            value: SearchRoute(),
-            child: ListTile(
-              leading: Icon(UniconsLine.search),
-              title: Text(
-                "search".tr(),
-                style: TextStyle(
-                  fontWeight: FontWeight.w400,
-                ),
+          value: SearchRoute(),
+          child: ListTile(
+            leading: Icon(UniconsLine.search),
+            title: Text(
+              "search".tr(),
+              style: TextStyle(
+                fontWeight: FontWeight.w400,
               ),
-            )),
+            ),
+          ),
+        ),
       PopupMenuItem(
           value: DashboardPageRoute(children: [
             DeepNewPage(children: [
@@ -118,6 +120,18 @@ class AvatarMenu extends StatelessWidget {
           leading: Icon(UniconsLine.apps),
           title: Text(
             "projects_my".tr(),
+            style: TextStyle(
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+        ),
+      ),
+      PopupMenuItem(
+        value: DashboardPageRoute(children: [MyProfileRoute()]),
+        child: ListTile(
+          leading: Icon(UniconsLine.user),
+          title: Text(
+            "profile_my".tr(),
             style: TextStyle(
               fontWeight: FontWeight.w400,
             ),

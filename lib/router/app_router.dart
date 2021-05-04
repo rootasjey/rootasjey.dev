@@ -15,6 +15,7 @@ import 'package:rootasjey/screens/forgot_password.dart';
 import 'package:rootasjey/screens/home.dart';
 import 'package:rootasjey/screens/about_me.dart';
 import 'package:rootasjey/screens/my_posts.dart';
+import 'package:rootasjey/screens/my_profile.dart';
 import 'package:rootasjey/screens/my_projects.dart';
 import 'package:rootasjey/screens/new_post.dart';
 import 'package:rootasjey/screens/new_project.dart';
@@ -68,6 +69,7 @@ import 'package:rootasjey/screens/update_username.dart';
         ),
         MaterialRoute(path: 'posts', page: MyPosts),
         MaterialRoute(path: 'projects', page: MyProjects),
+        MaterialRoute(path: 'profile', page: MyProfile),
         AutoRoute(
           path: 'settings',
           page: EmptyRouterPage,

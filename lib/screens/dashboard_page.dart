@@ -29,6 +29,12 @@ class _DashboardPageState extends State<DashboardPage> {
       hoverColor: Colors.yellow.shade800,
     ),
     SideMenuItem(
+      destination: MyProfileRoute(),
+      iconData: UniconsLine.user,
+      label: "profile_my".tr(),
+      hoverColor: Colors.green,
+    ),
+    SideMenuItem(
       destination: DashboardSettingsDeepRoute(
         children: [DashboardSettingsRoute()],
       ),

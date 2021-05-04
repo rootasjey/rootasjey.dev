@@ -6,7 +6,7 @@
 
 import 'package:auto_route/auto_route.dart' as _i1;
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart' as _i34;
+import 'package:flutter/material.dart' as _i35;
 
 import '../screens/about.dart' as _i5;
 import '../screens/about_me.dart' as _i12;
@@ -14,30 +14,31 @@ import '../screens/activities.dart' as _i6;
 import '../screens/contact.dart' as _i7;
 import '../screens/cv_page.dart' as _i8;
 import '../screens/dashboard_page.dart' as _i9;
-import '../screens/delete_account.dart' as _i26;
-import '../screens/edit_post.dart' as _i24;
-import '../screens/edit_project.dart' as _i25;
+import '../screens/delete_account.dart' as _i27;
+import '../screens/edit_post.dart' as _i25;
+import '../screens/edit_project.dart' as _i26;
 import '../screens/enroll.dart' as _i10;
 import '../screens/forgot_password.dart' as _i11;
 import '../screens/home.dart' as _i4;
 import '../screens/my_posts.dart' as _i20;
+import '../screens/my_profile.dart' as _i22;
 import '../screens/my_projects.dart' as _i21;
-import '../screens/new_post.dart' as _i22;
-import '../screens/new_project.dart' as _i23;
-import '../screens/post_page.dart' as _i31;
-import '../screens/posts.dart' as _i30;
+import '../screens/new_post.dart' as _i23;
+import '../screens/new_project.dart' as _i24;
+import '../screens/post_page.dart' as _i32;
+import '../screens/posts.dart' as _i31;
 import '../screens/pricing.dart' as _i13;
-import '../screens/project_page.dart' as _i33;
-import '../screens/projects.dart' as _i32;
+import '../screens/project_page.dart' as _i34;
+import '../screens/projects.dart' as _i33;
 import '../screens/search.dart' as _i14;
 import '../screens/settings.dart' as _i15;
 import '../screens/signin.dart' as _i16;
 import '../screens/signup.dart' as _i17;
 import '../screens/tos.dart' as _i18;
 import '../screens/undefined_page.dart' as _i19;
-import '../screens/update_email.dart' as _i27;
-import '../screens/update_password.dart' as _i28;
-import '../screens/update_username.dart' as _i29;
+import '../screens/update_email.dart' as _i28;
+import '../screens/update_password.dart' as _i29;
+import '../screens/update_username.dart' as _i30;
 import 'auth_guard.dart' as _i2;
 import 'no_auth_guard.dart' as _i3;
 
@@ -149,15 +150,18 @@ class AppRouter extends _i1.RootStackRouter {
     MyProjectsRoute.name: (entry) {
       return _i1.MaterialPageX(entry: entry, child: _i21.MyProjects());
     },
+    MyProfileRoute.name: (entry) {
+      return _i1.MaterialPageX(entry: entry, child: _i22.MyProfile());
+    },
     DashboardSettingsDeepRoute.name: (entry) {
       return _i1.MaterialPageX(
           entry: entry, child: const _i1.EmptyRouterPage());
     },
     NewPostRoute.name: (entry) {
-      return _i1.MaterialPageX(entry: entry, child: _i22.NewPost());
+      return _i1.MaterialPageX(entry: entry, child: _i23.NewPost());
     },
     NewProjectRoute.name: (entry) {
-      return _i1.MaterialPageX(entry: entry, child: _i23.NewProject());
+      return _i1.MaterialPageX(entry: entry, child: _i24.NewProject());
     },
     EditPostRoute.name: (entry) {
       var pathParams = entry.routeData.pathParams;
@@ -165,7 +169,7 @@ class AppRouter extends _i1.RootStackRouter {
           orElse: () =>
               EditPostRouteArgs(postId: pathParams.getString('postId')));
       return _i1.MaterialPageX(
-          entry: entry, child: _i24.EditPost(postId: args.postId));
+          entry: entry, child: _i25.EditPost(postId: args.postId));
     },
     EditProjectRoute.name: (entry) {
       var pathParams = entry.routeData.pathParams;
@@ -173,7 +177,7 @@ class AppRouter extends _i1.RootStackRouter {
           orElse: () => EditProjectRouteArgs(
               projectId: pathParams.getString('projectId')));
       return _i1.MaterialPageX(
-          entry: entry, child: _i25.EditProject(projectId: args.projectId));
+          entry: entry, child: _i26.EditProject(projectId: args.projectId));
     },
     DashboardSettingsRoute.name: (entry) {
       var pathParams = entry.routeData.pathParams;
@@ -185,23 +189,23 @@ class AppRouter extends _i1.RootStackRouter {
           child: _i15.Settings(key: args.key, showAppBar: args.showAppBar));
     },
     DeleteAccountRoute.name: (entry) {
-      return _i1.MaterialPageX(entry: entry, child: _i26.DeleteAccount());
+      return _i1.MaterialPageX(entry: entry, child: _i27.DeleteAccount());
     },
     AccountUpdateDeepRoute.name: (entry) {
       return _i1.MaterialPageX(
           entry: entry, child: const _i1.EmptyRouterPage());
     },
     UpdateEmailRoute.name: (entry) {
-      return _i1.MaterialPageX(entry: entry, child: _i27.UpdateEmail());
+      return _i1.MaterialPageX(entry: entry, child: _i28.UpdateEmail());
     },
     UpdatePasswordRoute.name: (entry) {
-      return _i1.MaterialPageX(entry: entry, child: _i28.UpdatePassword());
+      return _i1.MaterialPageX(entry: entry, child: _i29.UpdatePassword());
     },
     UpdateUsernameRoute.name: (entry) {
-      return _i1.MaterialPageX(entry: entry, child: _i29.UpdateUsername());
+      return _i1.MaterialPageX(entry: entry, child: _i30.UpdateUsername());
     },
     PostsRoute.name: (entry) {
-      return _i1.MaterialPageX(entry: entry, child: _i30.Posts());
+      return _i1.MaterialPageX(entry: entry, child: _i31.Posts());
     },
     PostPageRoute.name: (entry) {
       var pathParams = entry.routeData.pathParams;
@@ -209,10 +213,10 @@ class AppRouter extends _i1.RootStackRouter {
           orElse: () =>
               PostPageRouteArgs(postId: pathParams.getString('postId')));
       return _i1.MaterialPageX(
-          entry: entry, child: _i31.PostPage(postId: args.postId));
+          entry: entry, child: _i32.PostPage(postId: args.postId));
     },
     ProjectsRoute.name: (entry) {
-      return _i1.MaterialPageX(entry: entry, child: _i32.Projects());
+      return _i1.MaterialPageX(entry: entry, child: _i33.Projects());
     },
     ProjectPageRoute.name: (entry) {
       var pathParams = entry.routeData.pathParams;
@@ -220,7 +224,7 @@ class AppRouter extends _i1.RootStackRouter {
           orElse: () => ProjectPageRouteArgs(
               projectId: pathParams.getString('projectId')));
       return _i1.MaterialPageX(
-          entry: entry, child: _i33.ProjectPage(projectId: args.projectId));
+          entry: entry, child: _i34.ProjectPage(projectId: args.projectId));
     },
     GitHubRoute.name: (entry) {
       return _i1.MaterialPageX(
@@ -254,6 +258,7 @@ class AppRouter extends _i1.RootStackRouter {
           ]),
           _i1.RouteConfig(MyPostsRoute.name, path: 'posts'),
           _i1.RouteConfig(MyProjectsRoute.name, path: 'projects'),
+          _i1.RouteConfig(MyProfileRoute.name, path: 'profile'),
           _i1.RouteConfig(DashboardSettingsDeepRoute.name,
               path: 'settings',
               children: [
@@ -380,7 +385,7 @@ class SearchRoute extends _i1.PageRouteInfo {
 }
 
 class SettingsRoute extends _i1.PageRouteInfo<SettingsRouteArgs> {
-  SettingsRoute({_i34.Key key, bool showAppBar = true})
+  SettingsRoute({_i35.Key key, bool showAppBar = true})
       : super(name,
             path: '/settings',
             args: SettingsRouteArgs(key: key, showAppBar: showAppBar),
@@ -392,13 +397,13 @@ class SettingsRoute extends _i1.PageRouteInfo<SettingsRouteArgs> {
 class SettingsRouteArgs {
   const SettingsRouteArgs({this.key, this.showAppBar = true});
 
-  final _i34.Key key;
+  final _i35.Key key;
 
   final bool showAppBar;
 }
 
 class SigninRoute extends _i1.PageRouteInfo<SigninRouteArgs> {
-  SigninRoute({_i34.Key key, void Function(bool) onSigninResult})
+  SigninRoute({_i35.Key key, void Function(bool) onSigninResult})
       : super(name,
             path: '/signin',
             args: SigninRouteArgs(key: key, onSigninResult: onSigninResult));
@@ -409,13 +414,13 @@ class SigninRoute extends _i1.PageRouteInfo<SigninRouteArgs> {
 class SigninRouteArgs {
   const SigninRouteArgs({this.key, this.onSigninResult});
 
-  final _i34.Key key;
+  final _i35.Key key;
 
   final void Function(bool) onSigninResult;
 }
 
 class SignupRoute extends _i1.PageRouteInfo<SignupRouteArgs> {
-  SignupRoute({_i34.Key key, void Function(bool) onSignupResult})
+  SignupRoute({_i35.Key key, void Function(bool) onSignupResult})
       : super(name,
             path: '/signup',
             args: SignupRouteArgs(key: key, onSignupResult: onSignupResult));
@@ -426,7 +431,7 @@ class SignupRoute extends _i1.PageRouteInfo<SignupRouteArgs> {
 class SignupRouteArgs {
   const SignupRouteArgs({this.key, this.onSignupResult});
 
-  final _i34.Key key;
+  final _i35.Key key;
 
   final void Function(bool) onSignupResult;
 }
@@ -482,6 +487,12 @@ class MyProjectsRoute extends _i1.PageRouteInfo {
   static const String name = 'MyProjectsRoute';
 }
 
+class MyProfileRoute extends _i1.PageRouteInfo {
+  const MyProfileRoute() : super(name, path: 'profile');
+
+  static const String name = 'MyProfileRoute';
+}
+
 class DashboardSettingsDeepRoute extends _i1.PageRouteInfo {
   const DashboardSettingsDeepRoute({List<_i1.PageRouteInfo> children})
       : super(name, path: 'settings', initialChildren: children);
@@ -535,7 +546,7 @@ class EditProjectRouteArgs {
 
 class DashboardSettingsRoute
     extends _i1.PageRouteInfo<DashboardSettingsRouteArgs> {
-  DashboardSettingsRoute({_i34.Key key, bool showAppBar = true})
+  DashboardSettingsRoute({_i35.Key key, bool showAppBar = true})
       : super(name,
             path: '',
             args: DashboardSettingsRouteArgs(key: key, showAppBar: showAppBar),
@@ -547,7 +558,7 @@ class DashboardSettingsRoute
 class DashboardSettingsRouteArgs {
   const DashboardSettingsRouteArgs({this.key, this.showAppBar = true});
 
-  final _i34.Key key;
+  final _i35.Key key;
 
   final bool showAppBar;
 }
