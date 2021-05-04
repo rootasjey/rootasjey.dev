@@ -77,6 +77,7 @@ class _UpdateUsernameState extends State<UpdateUsername> {
     }
 
     return PageAppBar(
+      showNavBackIcon: true,
       textTitle: "username_update".tr(),
       textSubTitle: "username_update_description".tr(),
       titlePadding: EdgeInsets.only(
