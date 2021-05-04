@@ -24,7 +24,7 @@ class CircleButton extends StatelessWidget {
     this.radius = 20.0,
     this.elevation = 0.0,
     this.backgroundColor = Colors.black12,
-    this.tooltip,
+    this.tooltip = "Close",
   });
 
   @override
