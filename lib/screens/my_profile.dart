@@ -104,6 +104,56 @@ class _MyProfileState extends State<MyProfile> {
     );
   }
 
+  Widget addLinkContainer(void Function(void Function()) childSetState) {
+    return Scaffold(
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(40.0),
+          child: Column(
+            children: [
+              SheetHeader(
+                title: "link".tr(),
+                tooltip: "close".tr(),
+                subtitle: "link_subtitle".tr(),
+              ),
+              Container(
+                width: 600.0,
+                padding: EdgeInsets.only(
+                  top: 60.0,
+                ),
+                child: Column(
+                  children: [
+                    inputLink(childSetState),
+                    clearInputButton(childSetState),
+                    pageLinkDescription(),
+                    gridLinks(childSetState),
+                    FormActionInputs(
+                      padding: const EdgeInsets.only(
+                        top: 40.0,
+                        bottom: 200.0,
+                      ),
+                      cancelTextString: "cancel".tr(),
+                      saveTextString: "done".tr(),
+                      onCancel: context.router.pop,
+                      onValidate: () {
+                        appLogger.d(_tempUserUrls.twitter);
+                        setState(() {
+                          _user.urls.copyFrom(_tempUserUrls);
+                        });
+
+                        updateUser();
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget availableLinks() {
     return Container(
       width: 600.0,
@@ -177,6 +227,159 @@ class _MyProfileState extends State<MyProfile> {
     ]);
   }
 
+  Widget clearInputButton(void Function(void Function() p1) childSetState) {
+    if (_textInputController.text.isEmpty) {
+      return Container(height: 36.0);
+    }
+
+    return Align(
+      alignment: Alignment.topLeft,
+      child: Padding(
+        padding: const EdgeInsets.only(
+          top: 8.0,
+          left: 32.0,
+        ),
+        child: Opacity(
+          opacity: 0.6,
+          child: TextButton.icon(
+            onPressed: () {
+              childSetState(() {
+                _textInputController.clear();
+                _tempUserUrls.setUrl(_selectedLink, '');
+              });
+            },
+            icon: Icon(UniconsLine.times),
+            label: Padding(
+              padding: const EdgeInsets.only(right: 8.0),
+              child: Text("clear".tr()),
+            ),
+            style: TextButton.styleFrom(
+              primary: stateColors.foreground,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget gridLinks(void Function(void Function()) childSetState) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 40.0),
+      child: Wrap(
+        spacing: 12.0,
+        runSpacing: 12.0,
+        children: _user.urls.socialMap.entries.map((entry) {
+          return SizedBox(
+            width: 80.0,
+            height: 80.0,
+            child: Card(
+              elevation: _user.urls.socialMap[entry.key].isEmpty ? 0.0 : 3.0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(6.0),
+                side: BorderSide(
+                  width: 2.0,
+                  color: _selectedLink == entry.key
+                      ? stateColors.primary
+                      : Colors.transparent,
+                ),
+              ),
+              child: Tooltip(
+                message: entry.key,
+                child: InkWell(
+                  onTap: () {
+                    childSetState(() {
+                      _selectedLink = entry.key;
+                      _textInputController.text = _user.urls.map[entry.key];
+                    });
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: Opacity(
+                        opacity: 0.6,
+                        child: getPicLink(entry.key),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  Widget getPicLink(String key) {
+    switch (key) {
+      case 'artbooking':
+        return Image.asset(
+          "assets/images/artbooking.png",
+          width: 40.0,
+          height: 40.0,
+        );
+      case 'behance':
+        return FaIcon(FontAwesomeIcons.behance);
+      case 'dribbble':
+        return Icon(UniconsLine.dribbble);
+      case 'facebook':
+        return Icon(UniconsLine.facebook);
+      case 'github':
+        return Icon(UniconsLine.github);
+      case 'gitlab':
+        return FaIcon(FontAwesomeIcons.gitlab);
+      case 'instagram':
+        return Icon(UniconsLine.instagram);
+      case 'linkedin':
+        return Icon(UniconsLine.linkedin);
+      case 'other':
+        return Icon(UniconsLine.question);
+      case 'tiktok':
+        return FaIcon(FontAwesomeIcons.tiktok);
+      case 'twitch':
+        return FaIcon(FontAwesomeIcons.twitch);
+      case 'twitter':
+        return Icon(UniconsLine.twitter);
+      case 'website':
+        return Icon(UniconsLine.globe);
+      case 'wikipedia':
+        return FaIcon(FontAwesomeIcons.wikipediaW);
+      case 'youtube':
+        return Icon(UniconsLine.youtube);
+      default:
+        return Icon(UniconsLine.globe);
+    }
+  }
+
+  Widget inputLink(void Function(void Function()) childSetState) {
+    return TextField(
+      autofocus: true,
+      controller: _textInputController,
+      keyboardType: TextInputType.multiline,
+      decoration: InputDecoration(
+        labelText: "link_label_text".tr(),
+        icon: Icon(UniconsLine.link),
+      ),
+      onChanged: (_) {
+        childSetState(() {
+          _tempUserUrls.setUrl(
+            _selectedLink,
+            _textInputController.text,
+          );
+        });
+      },
+      onSubmitted: (_) {
+        setState(() {
+          _user.urls.copyFrom(_tempUserUrls);
+        });
+
+        context.router.pop();
+        updateUser();
+      },
+    );
+  }
+
   Widget job() {
     return InkWell(
       onTap: showEditJob,
@@ -219,6 +422,76 @@ class _MyProfileState extends State<MyProfile> {
                 ),
               ],
             ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget pageLinkDescription() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 80.0),
+      child: Opacity(
+        opacity: 0.6,
+        child: Text(
+          _selectedLink.isEmpty
+              ? "link_select_list".tr()
+              : "link_selected_edit".tr(args: [_selectedLink]),
+          style: TextStyle(
+            fontSize: 24.0,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget popupProgressIndicator() {
+    if (!_isUpdating) {
+      return Container();
+    }
+
+    return Positioned(
+      top: 100.0,
+      right: 24.0,
+      child: SizedBox(
+        width: 240.0,
+        child: Card(
+          elevation: 4.0,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(
+                height: 4.0,
+                child: LinearProgressIndicator(),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      UniconsLine.circle,
+                      color: stateColors.secondary,
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 8.0),
+                        child: Opacity(
+                          opacity: 0.6,
+                          child: Text(
+                            "user_updating".tr(),
+                            style: FontsUtils.mainStyle(
+                              fontSize: 14.0,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -332,279 +605,6 @@ class _MyProfileState extends State<MyProfile> {
       builder: (context) => StatefulBuilder(builder: (context, childSetState) {
         return addLinkContainer(childSetState);
       }),
-    );
-  }
-
-  Widget addLinkContainer(void Function(void Function()) childSetState) {
-    return Scaffold(
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(40.0),
-          child: Column(
-            children: [
-              SheetHeader(
-                title: "link".tr(),
-                tooltip: "close".tr(),
-                subtitle: "link_subtitle".tr(),
-              ),
-              Container(
-                width: 600.0,
-                padding: EdgeInsets.only(
-                  top: 60.0,
-                ),
-                child: Column(
-                  children: [
-                    inputLink(childSetState),
-                    clearInputButton(childSetState),
-                    pageLinkDescription(),
-                    gridLinks(childSetState),
-                    FormActionInputs(
-                      padding: const EdgeInsets.only(
-                        top: 40.0,
-                        bottom: 200.0,
-                      ),
-                      cancelTextString: "cancel".tr(),
-                      saveTextString: "done".tr(),
-                      onCancel: context.router.pop,
-                      onValidate: () {
-                        appLogger.d(_tempUserUrls.twitter);
-                        setState(() {
-                          _user.urls.copyFrom(_tempUserUrls);
-                        });
-
-                        updateUser();
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget clearInputButton(void Function(void Function() p1) childSetState) {
-    if (_textInputController.text.isEmpty) {
-      return Container(height: 36.0);
-    }
-
-    return Align(
-      alignment: Alignment.topLeft,
-      child: Padding(
-        padding: const EdgeInsets.only(
-          top: 8.0,
-          left: 32.0,
-        ),
-        child: Opacity(
-          opacity: 0.6,
-          child: TextButton.icon(
-            onPressed: () {
-              childSetState(() {
-                _textInputController.clear();
-                _tempUserUrls.setUrl(_selectedLink, '');
-              });
-            },
-            icon: Icon(UniconsLine.times),
-            label: Padding(
-              padding: const EdgeInsets.only(right: 8.0),
-              child: Text("clear".tr()),
-            ),
-            style: TextButton.styleFrom(
-              primary: stateColors.foreground,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget inputLink(void Function(void Function()) childSetState) {
-    return TextField(
-      autofocus: true,
-      controller: _textInputController,
-      keyboardType: TextInputType.multiline,
-      decoration: InputDecoration(
-        labelText: "link_label_text".tr(),
-        icon: Icon(UniconsLine.link),
-      ),
-      onChanged: (_) {
-        childSetState(() {
-          _tempUserUrls.setUrl(
-            _selectedLink,
-            _textInputController.text,
-          );
-        });
-      },
-      onSubmitted: (_) {
-        setState(() {
-          _user.urls.copyFrom(_tempUserUrls);
-        });
-
-        context.router.pop();
-        updateUser();
-      },
-    );
-  }
-
-  Widget gridLinks(void Function(void Function()) childSetState) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 40.0),
-      child: Wrap(
-        spacing: 12.0,
-        runSpacing: 12.0,
-        children: _user.urls.socialMap.entries.map((entry) {
-          return SizedBox(
-            width: 80.0,
-            height: 80.0,
-            child: Card(
-              elevation: _user.urls.socialMap[entry.key].isEmpty ? 0.0 : 3.0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(6.0),
-                side: BorderSide(
-                  width: 2.0,
-                  color: _selectedLink == entry.key
-                      ? stateColors.primary
-                      : Colors.transparent,
-                ),
-              ),
-              child: Tooltip(
-                message: entry.key,
-                child: InkWell(
-                  onTap: () {
-                    childSetState(() {
-                      _selectedLink = entry.key;
-                      _textInputController.text = _user.urls.map[entry.key];
-                    });
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Align(
-                      alignment: Alignment.center,
-                      child: Opacity(
-                        opacity: 0.6,
-                        child: getPicLink(entry.key),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          );
-        }).toList(),
-      ),
-    );
-  }
-
-  Widget getPicLink(String key) {
-    switch (key) {
-      case 'artbooking':
-        return Image.asset(
-          "assets/images/artbooking.png",
-          width: 40.0,
-          height: 40.0,
-        );
-      case 'behance':
-        return FaIcon(FontAwesomeIcons.behance);
-      case 'dribbble':
-        return Icon(UniconsLine.dribbble);
-      case 'facebook':
-        return Icon(UniconsLine.facebook);
-      case 'github':
-        return Icon(UniconsLine.github);
-      case 'gitlab':
-        return FaIcon(FontAwesomeIcons.gitlab);
-      case 'instagram':
-        return Icon(UniconsLine.instagram);
-      case 'linkedin':
-        return Icon(UniconsLine.linkedin);
-      case 'other':
-        return Icon(UniconsLine.question);
-      case 'tiktok':
-        return FaIcon(FontAwesomeIcons.tiktok);
-      case 'twitch':
-        return FaIcon(FontAwesomeIcons.twitch);
-      case 'twitter':
-        return Icon(UniconsLine.twitter);
-      case 'website':
-        return Icon(UniconsLine.globe);
-      case 'wikipedia':
-        return FaIcon(FontAwesomeIcons.wikipediaW);
-      case 'youtube':
-        return Icon(UniconsLine.youtube);
-      default:
-        return Icon(UniconsLine.globe);
-    }
-  }
-
-  Widget pageLinkDescription() {
-    return Padding(
-      padding: const EdgeInsets.only(top: 80.0),
-      child: Opacity(
-        opacity: 0.6,
-        child: Text(
-          _selectedLink.isEmpty
-              ? "link_select_list".tr()
-              : "link_selected_edit".tr(args: [_selectedLink]),
-          style: TextStyle(
-            fontSize: 24.0,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget popupProgressIndicator() {
-    if (!_isUpdating) {
-      return Container();
-    }
-
-    return Positioned(
-      top: 100.0,
-      right: 24.0,
-      child: SizedBox(
-        width: 240.0,
-        child: Card(
-          elevation: 4.0,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              SizedBox(
-                height: 4.0,
-                child: LinearProgressIndicator(),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      UniconsLine.circle,
-                      color: stateColors.secondary,
-                    ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 8.0),
-                        child: Opacity(
-                          opacity: 0.6,
-                          child: Text(
-                            "user_updating".tr(),
-                            style: FontsUtils.mainStyle(
-                              fontSize: 14.0,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 
