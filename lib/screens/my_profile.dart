@@ -114,10 +114,10 @@ class _MyProfileState extends State<MyProfile> {
       ),
       username(),
       job(),
-      // location(),
-      // summary(),
       Padding(
-        padding: const EdgeInsets.only(top: 40.0),
+        padding: const EdgeInsets.only(
+          top: 40.0,
+        ),
         child: Wrap(
           spacing: 12.0,
           runSpacing: 12.0,
@@ -181,8 +181,12 @@ class _MyProfileState extends State<MyProfile> {
   }
 
   Widget summary() {
-    return Padding(
-      padding: const EdgeInsets.only(top: 24.0),
+    return Container(
+      width: 600.0,
+      padding: const EdgeInsets.only(
+        top: 40.0,
+        bottom: 300.0,
+      ),
       child: InkWell(
         onTap: showEditSummary,
         child: Padding(
@@ -671,11 +675,12 @@ class _MyProfileState extends State<MyProfile> {
                           childSetState(() {});
                         },
                         onSubmitted: (_) {
-                          childSetState(() {
+                          setState(() {
                             _user.summary = textInputController.text;
                           });
 
                           context.router.pop();
+                          updateUser();
                         },
                       ),
                       if (textInputController.text.isNotEmpty)
@@ -719,6 +724,8 @@ class _MyProfileState extends State<MyProfile> {
                               setState(() {
                                 _user.summary = textInputController.text;
                               });
+
+                              updateUser();
                             },
                           ),
                         ),
