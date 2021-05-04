@@ -1,13 +1,15 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:rootasjey/components/app_icon.dart';
 import 'package:rootasjey/components/base_app_bar.dart';
 import 'package:rootasjey/components/circle_button.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/types/enums.dart';
+import 'package:rootasjey/utils/fonts.dart';
 import 'package:rootasjey/utils/language.dart';
+import 'package:unicons/unicons.dart';
 
 class PageAppBar extends StatefulWidget {
   final bool descending;
@@ -141,14 +143,14 @@ class _PageAppBarState extends State<PageAppBar> {
           value: ItemsLayout.list,
           child: Opacity(
             opacity: 0.6,
-            child: Icon(Icons.list),
+            child: Icon(UniconsLine.list_ul),
           ),
         ),
         DropdownMenuItem(
           value: ItemsLayout.grid,
           child: Opacity(
             opacity: 0.6,
-            child: Icon(Icons.grid_on),
+            child: Icon(UniconsLine.grid),
           ),
         ),
       ],
@@ -168,7 +170,7 @@ class _PageAppBarState extends State<PageAppBar> {
           style: TextStyle(
             color: stateColors.foreground.withOpacity(0.6),
             fontSize: 20.0,
-            fontFamily: GoogleFonts.raleway().fontFamily,
+            fontFamily: FontsUtils.fontFamily,
           ),
           onChanged: widget.onLangChanged,
           items: Language.available().map((String value) {
@@ -216,7 +218,7 @@ class _PageAppBarState extends State<PageAppBar> {
               child: IconButton(
                 color: stateColors.foreground,
                 icon: Icon(Icons.close),
-                onPressed: () => Navigator.of(context).pop(),
+                onPressed: context.router.pop,
               ),
             ),
           ],
@@ -232,8 +234,11 @@ class _PageAppBarState extends State<PageAppBar> {
             Padding(
               padding: const EdgeInsets.only(right: 8.0),
               child: CircleButton(
-                onTap: () => Navigator.of(context).pop(),
-                icon: Icon(Icons.arrow_back, color: stateColors.foreground),
+                onTap: context.router.pop,
+                icon: Icon(
+                  UniconsLine.arrow_left,
+                  color: stateColors.foreground,
+                ),
               ),
             ),
             TextButton.icon(
@@ -322,7 +327,7 @@ class _PageAppBarState extends State<PageAppBar> {
         children: [
           if (widget.showNavBackIcon)
             CircleButton(
-                onTap: () => Navigator.of(context).pop(),
+                onTap: context.router.pop,
                 icon: Icon(Icons.arrow_back, color: stateColors.foreground)),
           AppIcon(
             padding: const EdgeInsets.symmetric(horizontal: 10.0),
@@ -365,8 +370,8 @@ class _PageAppBarState extends State<PageAppBar> {
               padding: const EdgeInsets.only(left: 8.0),
               child: IconButton(
                 color: stateColors.foreground,
-                icon: Icon(Icons.close),
-                onPressed: () => Navigator.of(context).pop(),
+                icon: Icon(UniconsLine.times),
+                onPressed: context.router.pop,
               ),
             ),
         ],
