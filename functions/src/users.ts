@@ -216,28 +216,6 @@ export const createAccount = functions
     };
   });
 
-function checkCreateAccountData(data: any) {
-  if (Object.keys(data).length !== 3) {
-    return false;
-  }
-
-  const keys = Object.keys(data);
-
-  if (!keys.includes('username')
-    || !keys.includes('email')
-    || !keys.includes('password')) {
-    return false;
-  }
-
-  if (typeof data['username'] !== 'string' ||
-    typeof data['email'] !== 'string' ||
-    typeof data['password'] !== 'string') {
-    return false;
-  }
-
-  return true;
-}
-
 /**
  * Delete user's document from Firebase auth & Firestore.
  */
@@ -518,6 +496,28 @@ export const updateUsername = functions
 // ----------------
 // HELPER FUNCTIONS
 // ----------------
+
+function checkCreateAccountData(data: any) {
+  if (Object.keys(data).length !== 3) {
+    return false;
+  }
+
+  const keys = Object.keys(data);
+
+  if (!keys.includes('username')
+    || !keys.includes('email')
+    || !keys.includes('password')) {
+    return false;
+  }
+
+  if (typeof data['username'] !== 'string' ||
+    typeof data['email'] !== 'string' ||
+    typeof data['password'] !== 'string') {
+    return false;
+  }
+
+  return true;
+}
 
 /**
  * Take a raw Firestore data object and return formated data.
