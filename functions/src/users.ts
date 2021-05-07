@@ -72,6 +72,39 @@ export const checkUsernameAvailability = functions
   });
 
 /**
+ * Delete user profile picture files.
+ */
+export const clearUserProfilePicture = functions
+  .region('europe-west3')
+  .https
+  .onCall(async ({}, context) => {
+    const userAuth = context.auth;
+    if (!userAuth) {
+      throw new functions.https.HttpsError(
+        'permission-denied',
+        `The function must be called from an authenticated user.`,
+      )
+    }
+
+    // Delete files from Cloud Storage
+    const dir = await adminApp.storage()
+      .bucket()
+      .getFiles({
+        directory: `images/users/${userAuth.uid}/pp`
+      });
+
+    const files = dir[0];
+
+    for await (const file of files) {
+      await file.delete();
+    }
+
+    return {
+      success: true,
+    };
+  })
+
+/**
  * Create an user with Firebase auth then with Firestore.
  * Check user's provided arguments and exit if wrong.
  */
