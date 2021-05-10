@@ -196,6 +196,9 @@ class Urls {
       case "gitlab":
         gitlab = value;
         break;
+      case "image":
+        image = value;
+        break;
       case "instagram":
         instagram = value;
         break;
