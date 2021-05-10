@@ -74,10 +74,10 @@ export const checkUsernameAvailability = functions
 /**
  * Delete user profile picture files.
  */
-export const clearUserProfilePicture = functions
+export const clearProfilePicture = functions
   .region('europe-west3')
   .https
-  .onCall(async ({}, context) => {
+  .onCall(async (data, context) => {
     const userAuth = context.auth;
     if (!userAuth) {
       throw new functions.https.HttpsError(
