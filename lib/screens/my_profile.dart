@@ -3,9 +3,12 @@ import 'dart:collection';
 import 'package:auto_route/auto_route.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:file_picker_cross/file_picker_cross.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:mime_type/mime_type.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:rootasjey/components/better_avatar.dart';
 import 'package:rootasjey/components/form_actions_inputs.dart';
@@ -188,24 +191,60 @@ class _MyProfileState extends State<MyProfile> {
     );
   }
 
-  Widget body() {
+  Widget avatar() {
     final avatarUrl = _user.urls.image.isNotEmpty
         ? _user.urls.image
         : "https://img.icons8.com/plasticine/100/000000/flower.png";
 
-    return Column(children: [
-      Padding(
-        padding: const EdgeInsets.only(top: 120.0),
-        child: BetterAvatar(
-          size: 160.0,
-          image: NetworkImage(avatarUrl),
-          colorFilter: ColorFilter.mode(
-            Colors.grey,
-            BlendMode.saturation,
+    return Padding(
+      padding: const EdgeInsets.only(top: 120.0),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(
+              left: 32.0,
+              right: 0.0,
+            ),
+            child: BetterAvatar(
+              size: 160.0,
+              image: NetworkImage(avatarUrl),
+              colorFilter: ColorFilter.mode(
+                Colors.grey,
+                BlendMode.saturation,
+              ),
+              onTap: showEditPictureLink,
+            ),
           ),
-          onTap: () {},
-        ),
+          Padding(
+            padding: const EdgeInsets.only(left: 8.0),
+            child: Opacity(
+              opacity: 0.6,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    tooltip: "pp_insert_link".tr(),
+                    onPressed: showEditPictureLink,
+                    icon: Icon(UniconsLine.link_add),
+                  ),
+                  IconButton(
+                    tooltip: "pp_upload".tr(),
+                    onPressed: uploadPicture,
+                    icon: Icon(UniconsLine.upload),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
+    );
+  }
+
+  Widget body() {
+    return Column(children: [
+      avatar(),
       username(),
       job(),
       availableLinks(),
@@ -911,6 +950,108 @@ class _MyProfileState extends State<MyProfile> {
     );
   }
 
+  void showEditPictureLink() {
+    _textInputController.text =
+        _user.urls.image.isNotEmpty ? _user.urls.image : '';
+
+    showCupertinoModalBottomSheet(
+      context: context,
+      builder: (context) => StatefulBuilder(builder: (context, childSetState) {
+        return Scaffold(
+          body: Padding(
+            padding: const EdgeInsets.all(40.0),
+            child: Column(
+              children: [
+                SheetHeader(
+                  title: "pp".tr(),
+                  tooltip: "close".tr(),
+                  subtitle: "pp_subtitle".tr(),
+                ),
+                Container(
+                  width: 600.0,
+                  padding: EdgeInsets.only(
+                    top: 60.0,
+                  ),
+                  child: Column(
+                    children: [
+                      TextField(
+                        autofocus: true,
+                        controller: _textInputController,
+                        keyboardType: TextInputType.multiline,
+                        decoration: InputDecoration(
+                          labelText: "pp_label_text".tr(),
+                          icon: Icon(UniconsLine.image),
+                        ),
+                        onChanged: (_) {
+                          childSetState(() {});
+                        },
+                        onSubmitted: (_) {
+                          childSetState(() {
+                            _user.urls.image = _textInputController.text;
+                          });
+
+                          context.router.pop();
+                          updateUser();
+                        },
+                      ),
+                      if (_textInputController.text.isNotEmpty)
+                        Align(
+                          alignment: Alignment.topLeft,
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                              top: 8.0,
+                              left: 32.0,
+                            ),
+                            child: Opacity(
+                              opacity: 0.6,
+                              child: TextButton.icon(
+                                onPressed: () {
+                                  childSetState(() {
+                                    _textInputController.clear();
+                                  });
+                                },
+                                icon: Icon(UniconsLine.times),
+                                label: Padding(
+                                  padding: const EdgeInsets.only(right: 8.0),
+                                  child: Text("clear".tr()),
+                                ),
+                                style: TextButton.styleFrom(
+                                  primary: stateColors.foreground,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          top: 40.0,
+                        ),
+                        child: Align(
+                          alignment: Alignment.topRight,
+                          child: FormActionInputs(
+                            cancelTextString: "cancel".tr(),
+                            onCancel: context.router.pop,
+                            onValidate: () {
+                              setState(() {
+                                _user.urls.image = _textInputController.text;
+                              });
+
+                              updateUser();
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      }),
+    );
+  }
+
   void updateUser() async {
     setState(() => _isUpdating = true);
 
@@ -934,6 +1075,57 @@ class _MyProfileState extends State<MyProfile> {
     } catch (error) {
       setState(() => _isUpdating = false);
       appLogger.e(error);
+    }
+  }
+
+  void uploadPicture() async {
+    FilePickerCross myFile = await FilePickerCross.importFromStorage(
+      type: FileTypeCross.image,
+      fileExtension: 'jpg,jpeg,png,gif',
+    );
+
+    final user = FirebaseAuth.instance.currentUser;
+
+    if (user == null) {
+      throw Exception("You're not connected.");
+    }
+
+    setState(() => _isUpdating = true);
+
+    final ext = myFile.fileName.substring(myFile.fileName.lastIndexOf('.'));
+
+    final metadata = SettableMetadata(
+      contentType: mime(myFile.fileName),
+      customMetadata: {
+        'extension': ext,
+        'userId': user.uid,
+      },
+    );
+
+    try {
+      final response = await Cloud.fun('users-clearProfilePicture').call();
+      final bool success = response.data['success'];
+
+      if (!success) {
+        throw "Error while calling cloud function.";
+      }
+
+      final task = FirebaseStorage.instance
+          .ref("images/users/${user.uid}/pp/original$ext")
+          .putData(myFile.toUint8List(), metadata);
+
+      final snapshot = await task;
+      final String downloadUrl = await snapshot.ref.getDownloadURL();
+
+      setState(() {
+        _user.urls.setUrl('image', downloadUrl);
+        _isUpdating = false;
+      });
+
+      updateUser();
+    } catch (error) {
+      appLogger.e(error);
+      setState(() => _isUpdating = false);
     }
   }
 }
