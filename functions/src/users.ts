@@ -151,6 +151,19 @@ export const createAccount = functions
         lang: 'en',
         name: username,
         nameLowerCase: username.toLowerCase(),
+        pp: {
+          ext: '',
+          size: 0,
+          path: {
+            original: '',
+            edited: '',
+          },
+          updatedAt: adminApp.firestore.Timestamp.now(),
+          url: {
+            original: '',
+            edited: '',
+          },
+        },
         pricing: 'free',
         quota: {
           current: 0,
@@ -533,40 +546,13 @@ function formatUserData(userData: any) {
     lang: userData.lang,
     location: userData.location,
     name: userData.name,
+    pp: userData.pp,
     pricing: userData.pricing,
     role: userData.role,
-    stats: {
-      posts: {
-        contributed: userData.stats.contributed,
-        drafts: userData.stats.drafts,
-        published: userData.stats.published,
-      },
-      projects: {
-        contributed: userData.stats.contributed,
-        drafts: userData.stats.drafts,
-        published: userData.stats.published,
-      },
-    },
+    stats: userData.stats,
     summary: userData.summary,
     updatedAt: userData.updatedAt,
-    urls: {
-      artbooking: userData.urls.artbooking,
-      behance: userData.urls.behance,
-      dribbble: userData.urls.dribbble,
-      facebook: userData.urls.facebook,
-      github: userData.urls.github,
-      gitlab: userData.urls.gitlab,
-      image: userData.urls.image,
-      instagram: userData.urls.instagram,
-      linkedin: userData.urls.linkedin,
-      other: userData.urls.other,
-      tiktok: userData.urls.tiktok,
-      twitch: userData.urls.twitch,
-      twitter: userData.urls.twitter,
-      website: userData.urls.website,
-      wikipedia: userData.urls.wikipedia,
-      youtube: userData.urls.youtube,
-    },
+    urls: userData.urls,
   };
 }
 
