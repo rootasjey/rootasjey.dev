@@ -81,13 +81,7 @@ class FormActionInputs extends StatelessWidget {
             ),
           ),
           ElevatedButton.icon(
-            onPressed: () {
-              if (onValidate != null) {
-                onValidate();
-              }
-
-              Navigator.of(context).pop();
-            },
+            onPressed: onValidate,
             icon: Icon(UniconsLine.check),
             label: Padding(
               padding: const EdgeInsets.symmetric(
