@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:rootasjey/types/user_pp.dart';
 import 'package:rootasjey/types/user_stats.dart';
 import 'package:rootasjey/utils/date_helper.dart';
 
@@ -19,6 +20,7 @@ class UserFirestore {
   String summary;
   final DateTime updatedAt;
   final Urls urls;
+  final UserPP pp;
 
   UserFirestore({
     this.createdAt,
@@ -29,6 +31,7 @@ class UserFirestore {
     this.location = 'Nowhere',
     this.name = 'Anonymous',
     this.nameLowerCase = 'anonymous',
+    this.pp,
     this.pricing = 'free',
     this.role = 'user',
     this.stats,
@@ -47,6 +50,7 @@ class UserFirestore {
       location: 'Nowhere',
       name: 'Anonymous',
       nameLowerCase: 'anonymous',
+      pp: UserPP.empty(),
       pricing: 'free',
       role: 'user',
       summary: 'An anonymous user ghosting decent people.',
@@ -70,6 +74,7 @@ class UserFirestore {
       location: data['location'],
       name: data['name'],
       nameLowerCase: data['nameLowerCase'],
+      pp: UserPP.fromJSON(data['pp']),
       pricing: data['pricing'],
       role: data['role'],
       stats: UserStats.fromJSON(data['stats']),
@@ -91,6 +96,7 @@ class UserFirestore {
     data['job'] = job;
     data['lang'] = lang;
     data['location'] = location;
+    data['pp'] = pp.toJSON();
     data['pricing'] = pricing;
     data['role'] = role;
     data['summary'] = summary;
