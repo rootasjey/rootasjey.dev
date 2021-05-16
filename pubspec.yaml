@@ -34,6 +34,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   data_connection_checker: 0.3.4
   easy_localization: 3.0.0
+  extended_image: 4.1.0
   file_picker_cross: 4.3.2
   file_saver: 0.0.6
   firebase_analytics: 7.1.1
@@ -52,6 +53,8 @@ dependencies:
   github: 8.0.1
   global_configuration: 2.0.0-nullsafety.0
   google_fonts: 2.0.0
+  image: 3.0.2
+  image_editor: 1.0.0
   jiffy: 4.0.0
   line_awesome_flutter: 1.0.1
   like_button: 2.0.2
