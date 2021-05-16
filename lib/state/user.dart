@@ -19,6 +19,8 @@ class StateUser = StateUserBase with _$StateUser;
 
 abstract class StateUserBase with Store {
   User _userAuth;
+
+  @observable
   UserFirestore userFirestore;
 
   @observable
@@ -53,34 +55,6 @@ abstract class StateUserBase with Store {
 
   User get userAuth {
     return _userAuth;
-  }
-
-  Future refreshUserRights() async {
-    try {
-      if (_userAuth == null || _userAuth.uid == null) {
-        setAllRightsToFalse();
-      }
-
-      final userSnap = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(_userAuth.uid)
-          .get();
-
-      final userData = userSnap.data();
-
-      if (!userSnap.exists || userData == null) {
-        setAllRightsToFalse();
-      }
-
-      userFirestore = UserFirestore.fromJSON(userData);
-      setUsername(userData['name']);
-    } on FirebaseFunctionsException catch (exception) {
-      appLogger.e("[code: ${exception.code}] - ${exception.message}");
-      setAllRightsToFalse();
-    } catch (error) {
-      appLogger.e(error.toString());
-      setAllRightsToFalse();
-    }
   }
 
   /// Use on sign out / user's data has changed.
@@ -135,6 +109,101 @@ abstract class StateUserBase with Store {
     }
   }
 
+  Future refreshUserRights() async {
+    try {
+      if (_userAuth == null || _userAuth.uid == null) {
+        setAllRightsToFalse();
+      }
+
+      final userSnap = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(_userAuth.uid)
+          .get();
+
+      final userData = userSnap.data();
+
+      if (!userSnap.exists || userData == null) {
+        setAllRightsToFalse();
+      }
+
+      userFirestore = UserFirestore.fromJSON(userData);
+      setUsername(userData['name']);
+    } on FirebaseFunctionsException catch (exception) {
+      appLogger.e("[code: ${exception.code}] - ${exception.message}");
+      setAllRightsToFalse();
+    } catch (error) {
+      appLogger.e(error.toString());
+      setAllRightsToFalse();
+    }
+  }
+
+  /// Signin user with credentials if FirebaseAuth is null.
+  Future<User> signin({String email, String password}) async {
+    try {
+      final credentialsMap = appStorage.getCredentials();
+
+      email = email ?? credentialsMap['email'];
+      password = password ?? credentialsMap['password'];
+
+      if ((email == null || email.isEmpty) ||
+          (password == null || password.isEmpty)) {
+        return null;
+      }
+
+      final auth = await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      _userAuth = auth.user;
+      setUserConnected();
+
+      appStorage.setCredentials(
+        email: email,
+        password: password,
+      );
+
+      appStorage.setUserName(_userAuth.displayName);
+      // PushNotifications.linkAuthUser(_userAuth.uid);
+      setEmail(email);
+
+      await refreshUserRights();
+      startRealTimeAuthUpdates();
+      startRealTimeUserUpdates();
+
+      return _userAuth;
+    } catch (error) {
+      appStorage.clearUserAuthData();
+      return null;
+    }
+  }
+
+  void startRealTimeAuthUpdates() {
+    FirebaseAuth.instance.userChanges().listen((userEvent) {
+      _userAuth = userEvent;
+      refreshUserRights();
+    }, onError: (error) {
+      appLogger.e(error);
+    }, onDone: () {
+      _userAuth = null;
+    });
+  }
+
+  void startRealTimeUserUpdates() async {
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(_userAuth.uid)
+        .snapshots()
+        .listen((docSnap) {
+      setUserData(docSnap);
+    }, onError: (error) {
+      appLogger.e(error);
+    });
+  }
+
+  // ACTIONS
+  // -------
+
   @action
   void setAvatarUrl(String url) {
     avatarUrl = url;
@@ -175,52 +244,9 @@ abstract class StateUserBase with Store {
     email = value;
   }
 
-  /// Signin user with credentials if FirebaseAuth is null.
-  Future<User> signin({String email, String password}) async {
-    try {
-      final credentialsMap = appStorage.getCredentials();
-
-      email = email ?? credentialsMap['email'];
-      password = password ?? credentialsMap['password'];
-
-      if ((email == null || email.isEmpty) ||
-          (password == null || password.isEmpty)) {
-        return null;
-      }
-
-      final auth = await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-
-      _userAuth = auth.user;
-
-      // Subscription updates.
-      FirebaseAuth.instance.userChanges().listen((userEvent) {
-        _userAuth = userEvent;
-        refreshUserRights();
-      }, onDone: () {
-        _userAuth = null;
-      });
-
-      setUserConnected();
-
-      appStorage.setCredentials(
-        email: email,
-        password: password,
-      );
-
-      appStorage.setUserName(_userAuth.displayName);
-      // PushNotifications.linkAuthUser(_userAuth.uid);
-      setEmail(email);
-
-      await refreshUserRights();
-
-      return _userAuth;
-    } catch (error) {
-      appStorage.clearUserAuthData();
-      return null;
-    }
+  @action
+  void setUserData(DocumentSnapshot<Map<String, dynamic>> docSnap) {
+    userFirestore = UserFirestore.fromJSON(docSnap.data());
   }
 
   @action

@@ -8,6 +8,7 @@ import 'package:rootasjey/screens/contact.dart';
 import 'package:rootasjey/screens/cv_page.dart';
 import 'package:rootasjey/screens/dashboard_page.dart';
 import 'package:rootasjey/screens/delete_account.dart';
+import 'package:rootasjey/screens/edit_image.dart';
 import 'package:rootasjey/screens/edit_post.dart';
 import 'package:rootasjey/screens/edit_project.dart';
 import 'package:rootasjey/screens/enroll.dart';
@@ -65,6 +66,7 @@ import 'package:rootasjey/screens/update_username.dart';
             RedirectRoute(path: '', redirectTo: 'post'),
             MaterialRoute(path: 'post/:postId', page: EditPost),
             MaterialRoute(path: 'project/:projectId', page: EditProject),
+            MaterialRoute(path: 'me/pp', page: EditImage),
           ],
         ),
         MaterialRoute(path: 'posts', page: MyPosts),

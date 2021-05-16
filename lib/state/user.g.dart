@@ -9,6 +9,21 @@ part of 'user.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$StateUser on StateUserBase, Store {
+  final _$userFirestoreAtom = Atom(name: 'StateUserBase.userFirestore');
+
+  @override
+  UserFirestore get userFirestore {
+    _$userFirestoreAtom.reportRead();
+    return super.userFirestore;
+  }
+
+  @override
+  set userFirestore(UserFirestore value) {
+    _$userFirestoreAtom.reportWrite(value, super.userFirestore, () {
+      super.userFirestore = value;
+    });
+  }
+
   final _$avatarUrlAtom = Atom(name: 'StateUserBase.avatarUrl');
 
   @override
@@ -230,6 +245,17 @@ mixin _$StateUser on StateUserBase, Store {
   }
 
   @override
+  void setUserData(DocumentSnapshot<Map<String, dynamic>> docSnap) {
+    final _$actionInfo = _$StateUserBaseActionController.startAction(
+        name: 'StateUserBase.setUserData');
+    try {
+      return super.setUserData(docSnap);
+    } finally {
+      _$StateUserBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void updateFavDate() {
     final _$actionInfo = _$StateUserBaseActionController.startAction(
         name: 'StateUserBase.updateFavDate');
@@ -243,6 +269,7 @@ mixin _$StateUser on StateUserBase, Store {
   @override
   String toString() {
     return '''
+userFirestore: ${userFirestore},
 avatarUrl: ${avatarUrl},
 canManageData: ${canManageData},
 email: ${email},

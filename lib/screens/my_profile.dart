@@ -3,10 +3,12 @@ import 'dart:collection';
 import 'package:auto_route/auto_route.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:extended_image/extended_image.dart';
 import 'package:file_picker_cross/file_picker_cross.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mime_type/mime_type.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
@@ -16,8 +18,12 @@ import 'package:rootasjey/components/home_app_bar.dart';
 import 'package:rootasjey/components/sheet_header.dart';
 import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/state/colors.dart';
+import 'package:rootasjey/state/user.dart';
 import 'package:rootasjey/types/urls.dart';
 import 'package:rootasjey/types/user_firestore.dart';
+import 'package:rootasjey/types/user_pp.dart';
+import 'package:rootasjey/types/user_pp_path.dart';
+import 'package:rootasjey/types/user_pp_url.dart';
 import 'package:rootasjey/utils/app_logger.dart';
 import 'package:rootasjey/utils/cloud.dart';
 import 'package:rootasjey/utils/fonts.dart';
@@ -32,8 +38,6 @@ class MyProfile extends StatefulWidget {
 class _MyProfileState extends State<MyProfile> {
   bool _isUpdating = false;
 
-  UserFirestore _user = UserFirestore.empty();
-
   TextEditingController _textInputController;
 
   String _selectedLink = '';
@@ -45,7 +49,7 @@ class _MyProfileState extends State<MyProfile> {
     super.initState();
     _textInputController = TextEditingController();
 
-    fetch();
+    // fetch();
   }
 
   @override
@@ -139,12 +143,12 @@ class _MyProfileState extends State<MyProfile> {
                       saveTextString: "done".tr(),
                       onCancel: context.router.pop,
                       onValidate: () {
-                        appLogger.d(_tempUserUrls.twitter);
                         setState(() {
-                          _user.urls.copyFrom(_tempUserUrls);
+                          stateUser.userFirestore.urls.copyFrom(_tempUserUrls);
                         });
 
                         updateUser();
+                        context.router.pop();
                       },
                     ),
                   ],
@@ -165,7 +169,10 @@ class _MyProfileState extends State<MyProfile> {
         spacing: 4.0,
         runSpacing: 4.0,
         alignment: WrapAlignment.center,
-        children: _user.urls.getAvailableLinks().entries.map((entry) {
+        children: stateUser.userFirestore.urls
+            .getAvailableLinks()
+            .entries
+            .map((entry) {
           return SizedBox(
             width: 50.0,
             height: 50.0,
@@ -192,54 +199,74 @@ class _MyProfileState extends State<MyProfile> {
   }
 
   Widget avatar() {
-    final avatarUrl = _user.urls.image.isNotEmpty
-        ? _user.urls.image
-        : "https://img.icons8.com/plasticine/100/000000/flower.png";
+    return Observer(builder: (context) {
+      final avatarUrl = stateUser.userFirestore.pp.url.edited.isNotEmpty
+          ? stateUser.userFirestore.pp.url.edited
+          : "https://img.icons8.com/plasticine/100/000000/flower.png";
 
-    return Padding(
-      padding: const EdgeInsets.only(top: 120.0),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(
-              left: 32.0,
-              right: 0.0,
-            ),
-            child: BetterAvatar(
-              size: 160.0,
-              image: NetworkImage(avatarUrl),
-              colorFilter: ColorFilter.mode(
-                Colors.grey,
-                BlendMode.saturation,
+      return Padding(
+        padding: const EdgeInsets.only(top: 120.0),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(
+                left: 32.0,
+                right: 0.0,
               ),
-              onTap: showEditPictureLink,
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(left: 8.0),
-            child: Opacity(
-              opacity: 0.6,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  IconButton(
-                    tooltip: "pp_insert_link".tr(),
-                    onPressed: showEditPictureLink,
-                    icon: Icon(UniconsLine.link_add),
-                  ),
-                  IconButton(
-                    tooltip: "pp_upload".tr(),
-                    onPressed: uploadPicture,
-                    icon: Icon(UniconsLine.upload),
-                  ),
-                ],
+              child: BetterAvatar(
+                size: 160.0,
+                image: NetworkImage(avatarUrl),
+                colorFilter: ColorFilter.mode(
+                  Colors.grey,
+                  BlendMode.saturation,
+                ),
+                onTap: () {
+                  if (stateUser.userFirestore.pp.url.edited.isEmpty) {
+                    return;
+                  }
+
+                  context.router.push(
+                    DeepEditPage(
+                      children: [
+                        EditImageRoute(
+                          image: ExtendedNetworkImageProvider(
+                            stateUser.userFirestore.pp.url.original,
+                            cache: true,
+                            cacheRawData: true,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
               ),
             ),
-          ),
-        ],
-      ),
-    );
+            Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: Opacity(
+                opacity: 0.6,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      tooltip: "pp_insert_link".tr(),
+                      onPressed: showEditPictureLink,
+                      icon: Icon(UniconsLine.link_add),
+                    ),
+                    IconButton(
+                      tooltip: "pp_upload".tr(),
+                      onPressed: uploadPicture,
+                      icon: Icon(UniconsLine.upload),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    });
   }
 
   Widget body() {
@@ -302,17 +329,19 @@ class _MyProfileState extends State<MyProfile> {
   }
 
   Widget gridLinks(void Function(void Function()) childSetState) {
+    final user = stateUser.userFirestore;
+
     return Padding(
       padding: const EdgeInsets.only(top: 40.0),
       child: Wrap(
         spacing: 12.0,
         runSpacing: 12.0,
-        children: _user.urls.socialMap.entries.map((entry) {
+        children: user.urls.socialMap.entries.map((entry) {
           return SizedBox(
             width: 80.0,
             height: 80.0,
             child: Card(
-              elevation: _user.urls.socialMap[entry.key].isEmpty ? 0.0 : 3.0,
+              elevation: user.urls.socialMap[entry.key].isEmpty ? 0.0 : 3.0,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(6.0),
                 side: BorderSide(
@@ -328,7 +357,7 @@ class _MyProfileState extends State<MyProfile> {
                   onTap: () {
                     childSetState(() {
                       _selectedLink = entry.key;
-                      _textInputController.text = _user.urls.map[entry.key];
+                      _textInputController.text = user.urls.map[entry.key];
                     });
                   },
                   child: Padding(
@@ -410,7 +439,7 @@ class _MyProfileState extends State<MyProfile> {
       },
       onSubmitted: (_) {
         setState(() {
-          _user.urls.copyFrom(_tempUserUrls);
+          stateUser.userFirestore.urls.copyFrom(_tempUserUrls);
         });
 
         context.router.pop();
@@ -429,7 +458,7 @@ class _MyProfileState extends State<MyProfile> {
         child: Opacity(
           opacity: 0.6,
           child: Text(
-            _user.job,
+            stateUser.userFirestore.job,
             style: TextStyle(
               fontSize: 18.0,
             ),
@@ -455,9 +484,9 @@ class _MyProfileState extends State<MyProfile> {
                   child: Icon(UniconsLine.location_point),
                 ),
                 Text(
-                  _user.location.isEmpty
+                  stateUser.userFirestore.location.isEmpty
                       ? "edit_location".tr()
-                      : _user.location,
+                      : stateUser.userFirestore.location,
                 ),
               ],
             ),
@@ -551,7 +580,7 @@ class _MyProfileState extends State<MyProfile> {
           child: Opacity(
             opacity: 0.6,
             child: Text(
-              _user.summary,
+              stateUser.userFirestore.summary,
               style: TextStyle(
                 fontSize: 18.0,
               ),
@@ -606,7 +635,7 @@ class _MyProfileState extends State<MyProfile> {
             horizontal: 8.0,
           ),
           child: Text(
-            _user.name,
+            stateUser.userFirestore.name,
             style: TextStyle(
               fontSize: 32.0,
             ),
@@ -627,17 +656,18 @@ class _MyProfileState extends State<MyProfile> {
 
       final Map<String, dynamic> data = Cloud.convertFromFun(hashMap);
 
-      setState(() => _user = UserFirestore.fromJSON(data));
+      setState(() => stateUser.userFirestore = UserFirestore.fromJSON(data));
     } catch (error) {
       appLogger.e(error);
     }
   }
 
   void showAddLink() {
-    _textInputController.text =
-        _selectedLink.isEmpty ? '' : _user.urls.map[_selectedLink];
+    _textInputController.text = _selectedLink.isEmpty
+        ? ''
+        : stateUser.userFirestore.urls.map[_selectedLink];
 
-    _tempUserUrls = Urls.fromJSON(_user.urls.map);
+    _tempUserUrls = Urls.fromJSON(stateUser.userFirestore.urls.map);
 
     showCupertinoModalBottomSheet(
       context: context,
@@ -648,7 +678,9 @@ class _MyProfileState extends State<MyProfile> {
   }
 
   void showEditJob() {
-    _textInputController.text = _user.job.isNotEmpty ? _user.job : '';
+    final user = stateUser.userFirestore;
+
+    _textInputController.text = user.job.isNotEmpty ? user.job : '';
 
     showCupertinoModalBottomSheet(
       context: context,
@@ -683,7 +715,7 @@ class _MyProfileState extends State<MyProfile> {
                         },
                         onSubmitted: (_) {
                           childSetState(() {
-                            _user.job = _textInputController.text;
+                            user.job = _textInputController.text;
                           });
 
                           context.router.pop();
@@ -729,7 +761,7 @@ class _MyProfileState extends State<MyProfile> {
                             onCancel: context.router.pop,
                             onValidate: () {
                               setState(() {
-                                _user.job = _textInputController.text;
+                                user.job = _textInputController.text;
                               });
 
                               updateUser();
@@ -749,7 +781,8 @@ class _MyProfileState extends State<MyProfile> {
   }
 
   void showEditLocation() {
-    _textInputController.text = _user.location.isNotEmpty ? _user.location : '';
+    final user = stateUser.userFirestore;
+    _textInputController.text = user.location.isNotEmpty ? user.location : '';
 
     showCupertinoModalBottomSheet(
       context: context,
@@ -784,7 +817,8 @@ class _MyProfileState extends State<MyProfile> {
                         },
                         onSubmitted: (_) {
                           childSetState(() {
-                            _user.location = _textInputController.text;
+                            stateUser.userFirestore.location =
+                                _textInputController.text;
                           });
 
                           context.router.pop();
@@ -830,8 +864,10 @@ class _MyProfileState extends State<MyProfile> {
                             onCancel: context.router.pop,
                             onValidate: () {
                               setState(() {
-                                _user.location = _textInputController.text;
+                                stateUser.userFirestore.location =
+                                    _textInputController.text;
                               });
+
                               updateUser();
                             },
                           ),
@@ -849,7 +885,8 @@ class _MyProfileState extends State<MyProfile> {
   }
 
   void showEditSummary() {
-    _textInputController.text = _user.summary.isNotEmpty ? _user.summary : '';
+    final user = stateUser.userFirestore;
+    _textInputController.text = user.summary.isNotEmpty ? user.summary : '';
 
     showCupertinoModalBottomSheet(
       context: context,
@@ -885,7 +922,8 @@ class _MyProfileState extends State<MyProfile> {
                         },
                         onSubmitted: (_) {
                           setState(() {
-                            _user.summary = _textInputController.text;
+                            stateUser.userFirestore.summary =
+                                _textInputController.text;
                           });
 
                           context.router.pop();
@@ -931,7 +969,8 @@ class _MyProfileState extends State<MyProfile> {
                             onCancel: context.router.pop,
                             onValidate: () {
                               setState(() {
-                                _user.summary = _textInputController.text;
+                                stateUser.userFirestore.summary =
+                                    _textInputController.text;
                               });
 
                               updateUser();
@@ -951,8 +990,10 @@ class _MyProfileState extends State<MyProfile> {
   }
 
   void showEditPictureLink() {
+    final user = stateUser.userFirestore;
+
     _textInputController.text =
-        _user.urls.image.isNotEmpty ? _user.urls.image : '';
+        user.urls.image.isNotEmpty ? user.urls.image : '';
 
     showCupertinoModalBottomSheet(
       context: context,
@@ -987,7 +1028,8 @@ class _MyProfileState extends State<MyProfile> {
                         },
                         onSubmitted: (_) {
                           childSetState(() {
-                            _user.urls.image = _textInputController.text;
+                            stateUser.userFirestore.urls.image =
+                                _textInputController.text;
                           });
 
                           context.router.pop();
@@ -1033,7 +1075,8 @@ class _MyProfileState extends State<MyProfile> {
                             onCancel: context.router.pop,
                             onValidate: () {
                               setState(() {
-                                _user.urls.image = _textInputController.text;
+                                stateUser.userFirestore.urls.image =
+                                    _textInputController.text;
                               });
 
                               updateUser();
@@ -1058,18 +1101,10 @@ class _MyProfileState extends State<MyProfile> {
     try {
       final String uid = FirebaseAuth.instance.currentUser?.uid ?? '';
 
-      final HttpsCallableResult<dynamic> resp =
-          await Cloud.fun('users-updateUser').call({
+      await Cloud.fun('users-updateUser').call({
         'userId': uid,
-        'updatePayload': _user.toJSON(),
+        'updatePayload': stateUser.userFirestore.toJSON(),
       });
-
-      final LinkedHashMap<dynamic, dynamic> hashMap =
-          LinkedHashMap.from(resp.data);
-
-      final Map<String, dynamic> data = Cloud.convertFromFun(hashMap);
-
-      setState(() => _user = UserFirestore.fromJSON(data));
 
       setState(() => _isUpdating = false);
     } catch (error) {
@@ -1110,15 +1145,27 @@ class _MyProfileState extends State<MyProfile> {
         throw "Error while calling cloud function.";
       }
 
+      final imagePath = "images/users/${user.uid}/pp/original$ext";
+
       final task = FirebaseStorage.instance
-          .ref("images/users/${user.uid}/pp/original$ext")
+          .ref(imagePath)
           .putData(myFile.toUint8List(), metadata);
 
       final snapshot = await task;
       final String downloadUrl = await snapshot.ref.getDownloadURL();
 
       setState(() {
-        _user.urls.setUrl('image', downloadUrl);
+        stateUser.userFirestore.urls.setUrl('image', downloadUrl);
+        stateUser.userFirestore.pp.update(
+          UserPP(
+            ext: ext.replaceFirst('.', ''),
+            size: myFile.length,
+            updatedAt: DateTime.now(),
+            path: UserPPPath(original: imagePath),
+            url: UserPPUrl(original: downloadUrl),
+          ),
+        );
+
         _isUpdating = false;
       });
 

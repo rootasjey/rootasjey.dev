@@ -14,7 +14,8 @@ import '../screens/activities.dart' as _i7;
 import '../screens/contact.dart' as _i8;
 import '../screens/cv_page.dart' as _i9;
 import '../screens/dashboard_page.dart' as _i10;
-import '../screens/delete_account.dart' as _i28;
+import '../screens/delete_account.dart' as _i29;
+import '../screens/edit_image.dart' as _i28;
 import '../screens/edit_post.dart' as _i26;
 import '../screens/edit_project.dart' as _i27;
 import '../screens/enroll.dart' as _i11;
@@ -25,20 +26,20 @@ import '../screens/my_profile.dart' as _i23;
 import '../screens/my_projects.dart' as _i22;
 import '../screens/new_post.dart' as _i24;
 import '../screens/new_project.dart' as _i25;
-import '../screens/post_page.dart' as _i33;
-import '../screens/posts.dart' as _i32;
+import '../screens/post_page.dart' as _i34;
+import '../screens/posts.dart' as _i33;
 import '../screens/pricing.dart' as _i14;
-import '../screens/project_page.dart' as _i35;
-import '../screens/projects.dart' as _i34;
+import '../screens/project_page.dart' as _i36;
+import '../screens/projects.dart' as _i35;
 import '../screens/search.dart' as _i15;
 import '../screens/settings.dart' as _i16;
 import '../screens/signin.dart' as _i17;
 import '../screens/signup.dart' as _i18;
 import '../screens/tos.dart' as _i19;
 import '../screens/undefined_page.dart' as _i20;
-import '../screens/update_email.dart' as _i29;
-import '../screens/update_password.dart' as _i30;
-import '../screens/update_username.dart' as _i31;
+import '../screens/update_email.dart' as _i30;
+import '../screens/update_password.dart' as _i31;
+import '../screens/update_username.dart' as _i32;
 import 'auth_guard.dart' as _i3;
 import 'no_auth_guard.dart' as _i4;
 
@@ -226,6 +227,13 @@ class AppRouter extends _i1.RootStackRouter {
                   projectId: pathParams.getString('projectId')));
           return _i27.EditProject(projectId: args.projectId);
         }),
+    EditImageRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
+        routeData: routeData,
+        builder: (data) {
+          final args = data.argsAs<EditImageRouteArgs>(
+              orElse: () => const EditImageRouteArgs());
+          return _i28.EditImage(key: args.key, image: args.image);
+        }),
     DashboardSettingsRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
         routeData: routeData,
         builder: (data) {
@@ -238,7 +246,7 @@ class AppRouter extends _i1.RootStackRouter {
     DeleteAccountRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
         routeData: routeData,
         builder: (_) {
-          return _i28.DeleteAccount();
+          return _i29.DeleteAccount();
         }),
     AccountUpdateDeepRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
         routeData: routeData,
@@ -248,22 +256,22 @@ class AppRouter extends _i1.RootStackRouter {
     UpdateEmailRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
         routeData: routeData,
         builder: (_) {
-          return _i29.UpdateEmail();
+          return _i30.UpdateEmail();
         }),
     UpdatePasswordRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
         routeData: routeData,
         builder: (_) {
-          return _i30.UpdatePassword();
+          return _i31.UpdatePassword();
         }),
     UpdateUsernameRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
         routeData: routeData,
         builder: (_) {
-          return _i31.UpdateUsername();
+          return _i32.UpdateUsername();
         }),
     PostsRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
         routeData: routeData,
         builder: (_) {
-          return _i32.Posts();
+          return _i33.Posts();
         }),
     PostPageRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
         routeData: routeData,
@@ -272,12 +280,12 @@ class AppRouter extends _i1.RootStackRouter {
           final args = data.argsAs<PostPageRouteArgs>(
               orElse: () =>
                   PostPageRouteArgs(postId: pathParams.getString('postId')));
-          return _i33.PostPage(postId: args.postId);
+          return _i34.PostPage(postId: args.postId);
         }),
     ProjectsRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
         routeData: routeData,
         builder: (_) {
-          return _i34.Projects();
+          return _i35.Projects();
         }),
     ProjectPageRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
         routeData: routeData,
@@ -286,7 +294,7 @@ class AppRouter extends _i1.RootStackRouter {
           final args = data.argsAs<ProjectPageRouteArgs>(
               orElse: () => ProjectPageRouteArgs(
                   projectId: pathParams.getString('projectId')));
-          return _i35.ProjectPage(projectId: args.projectId);
+          return _i36.ProjectPage(projectId: args.projectId);
         }),
     GitHubRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
         routeData: routeData,
@@ -317,7 +325,8 @@ class AppRouter extends _i1.RootStackRouter {
             _i1.RouteConfig('#redirect',
                 path: '', redirectTo: 'post', fullMatch: true),
             _i1.RouteConfig(EditPostRoute.name, path: 'post/:postId'),
-            _i1.RouteConfig(EditProjectRoute.name, path: 'project/:projectId')
+            _i1.RouteConfig(EditProjectRoute.name, path: 'project/:projectId'),
+            _i1.RouteConfig(EditImageRoute.name, path: 'me/pp')
           ]),
           _i1.RouteConfig(MyPostsRoute.name, path: 'posts'),
           _i1.RouteConfig(MyProjectsRoute.name, path: 'projects'),
@@ -604,6 +613,22 @@ class EditProjectRouteArgs {
   const EditProjectRouteArgs({this.projectId});
 
   final String projectId;
+}
+
+class EditImageRoute extends _i1.PageRouteInfo<EditImageRouteArgs> {
+  EditImageRoute({_i2.Key key, _i2.ImageProvider<Object> image})
+      : super(name,
+            path: 'me/pp', args: EditImageRouteArgs(key: key, image: image));
+
+  static const String name = 'EditImageRoute';
+}
+
+class EditImageRouteArgs {
+  const EditImageRouteArgs({this.key, this.image});
+
+  final _i2.Key key;
+
+  final _i2.ImageProvider<Object> image;
 }
 
 class DashboardSettingsRoute
