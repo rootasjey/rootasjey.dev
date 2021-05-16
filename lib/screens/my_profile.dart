@@ -1,7 +1,4 @@
-import 'dart:collection';
-
 import 'package:auto_route/auto_route.dart';
-import 'package:cloud_functions/cloud_functions.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:file_picker_cross/file_picker_cross.dart';
@@ -20,7 +17,6 @@ import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/state/user.dart';
 import 'package:rootasjey/types/urls.dart';
-import 'package:rootasjey/types/user_firestore.dart';
 import 'package:rootasjey/types/user_pp.dart';
 import 'package:rootasjey/types/user_pp_path.dart';
 import 'package:rootasjey/types/user_pp_url.dart';
@@ -48,8 +44,6 @@ class _MyProfileState extends State<MyProfile> {
   initState() {
     super.initState();
     _textInputController = TextEditingController();
-
-    // fetch();
   }
 
   @override
@@ -643,23 +637,6 @@ class _MyProfileState extends State<MyProfile> {
         ),
       ),
     );
-  }
-
-  void fetch() async {
-    try {
-      final String uid = FirebaseAuth.instance.currentUser?.uid ?? '';
-      final HttpsCallableResult<dynamic> resp =
-          await Cloud.fun('users-fetchUser').call({'userId': uid});
-
-      final LinkedHashMap<dynamic, dynamic> hashMap =
-          LinkedHashMap.from(resp.data);
-
-      final Map<String, dynamic> data = Cloud.convertFromFun(hashMap);
-
-      setState(() => stateUser.userFirestore = UserFirestore.fromJSON(data));
-    } catch (error) {
-      appLogger.e(error);
-    }
   }
 
   void showAddLink() {
