@@ -100,7 +100,7 @@ class _RecentPostsState extends State<RecentPosts> {
       children: [
         TextButton.icon(
           onPressed: () {
-            context.router.push(PostsDeepRoute(children: [PostsRoute()]));
+            context.router.push(PostsRouter());
           },
           icon: Icon(
             UniconsLine.newspaper,

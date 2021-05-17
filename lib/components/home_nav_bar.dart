@@ -84,37 +84,37 @@ class HomeNavBar extends StatelessWidget {
             context: context,
             icon: UniconsLine.bag,
             titleText: "hire_me".tr(),
-            routeInfo: EnrollRoute(),
+            routeInfo: EnrollPageRoute(),
           ),
           cardLink(
             context: context,
             icon: UniconsLine.apps,
             titleText: "projects".tr(),
-            routeInfo: ProjectsRoute(),
+            routeInfo: ProjectsPageRoute(),
           ),
           cardLink(
             context: context,
             icon: UniconsLine.newspaper,
             titleText: "posts",
-            routeInfo: PostsRoute(),
+            routeInfo: PostsPageRoute(),
           ),
           cardLink(
             context: context,
             icon: UniconsLine.bill,
             titleText: "pricing".tr(),
-            routeInfo: PricingRoute(),
+            routeInfo: PricingPageRoute(),
           ),
           cardLink(
             context: context,
             icon: UniconsLine.envelope,
             titleText: "contact_me".tr(),
-            routeInfo: ContactRoute(),
+            routeInfo: ContactPageRoute(),
           ),
           cardLink(
             context: context,
             icon: UniconsLine.question,
             titleText: "about".tr(),
-            routeInfo: AboutRoute(),
+            routeInfo: AboutPageRoute(),
           ),
         ],
       ),
@@ -135,7 +135,7 @@ class HomeNavBar extends StatelessWidget {
           children: [
             ElevatedButton.icon(
               onPressed: () {
-                context.router.push(EnrollRoute());
+                context.router.push(EnrollPageRoute());
               },
               style: ElevatedButton.styleFrom(
                 primary: stateColors.primary,
@@ -156,31 +156,31 @@ class HomeNavBar extends StatelessWidget {
               context: context,
               icon: UniconsLine.apps,
               titleText: "projects".tr(),
-              routeInfo: ProjectsDeepRoute(children: [ProjectsRoute()]),
+              routeInfo: ProjectsRouter(),
             ),
             buttonLink(
               context: context,
               icon: UniconsLine.newspaper,
               titleText: "posts".tr(),
-              routeInfo: PostsDeepRoute(children: [PostsRoute()]),
+              routeInfo: PostsRouter(children: []),
             ),
             buttonLink(
               context: context,
               icon: UniconsLine.bill,
               titleText: "pricing".tr(),
-              routeInfo: PricingRoute(),
+              routeInfo: PricingPageRoute(),
             ),
             buttonLink(
               context: context,
               icon: UniconsLine.envelope,
               titleText: "contact_me".tr(),
-              routeInfo: ContactRoute(),
+              routeInfo: ContactPageRoute(),
             ),
             buttonLink(
               context: context,
               icon: UniconsLine.question,
               titleText: "about".tr(),
-              routeInfo: AboutRoute(),
+              routeInfo: AboutPageRoute(),
             ),
           ],
         ),

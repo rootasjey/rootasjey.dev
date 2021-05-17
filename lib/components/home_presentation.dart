@@ -117,7 +117,7 @@ class _HomePresentationState extends State<HomePresentation> {
           'assets/images/jeje.jpg',
         ),
         onTap: () {
-          context.router.push(AboutMeRoute());
+          context.router.push(AboutMePageRoute());
         },
       ),
     );

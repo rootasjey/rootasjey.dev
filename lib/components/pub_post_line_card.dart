@@ -142,9 +142,11 @@ class _PubPostLineCardState extends State<PubPostLineCard> {
 
   void navigateToPost() {
     context.router.push(
-      PostsDeepRoute(
+      PostsRouter(
         children: [
-          PostPageRoute(postId: widget.postHeadline.id),
+          PostPageRoute(
+            postId: widget.postHeadline.id,
+          ),
         ],
       ),
     );

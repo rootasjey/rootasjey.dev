@@ -8,38 +8,42 @@ import 'package:auto_route/auto_route.dart' as _i1;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' as _i2;
 
-import '../screens/about.dart' as _i6;
-import '../screens/about_me.dart' as _i13;
-import '../screens/activities.dart' as _i7;
-import '../screens/contact.dart' as _i8;
+import '../screens/about_me_page.dart' as _i13;
+import '../screens/about_page.dart' as _i6;
+import '../screens/activities_page.dart' as _i7;
+import '../screens/contact_page.dart' as _i8;
 import '../screens/cv_page.dart' as _i9;
 import '../screens/dashboard_page.dart' as _i10;
-import '../screens/delete_account.dart' as _i29;
-import '../screens/edit_image.dart' as _i28;
-import '../screens/edit_post.dart' as _i26;
-import '../screens/edit_project.dart' as _i27;
-import '../screens/enroll.dart' as _i11;
-import '../screens/forgot_password.dart' as _i12;
-import '../screens/home.dart' as _i5;
-import '../screens/my_posts.dart' as _i21;
-import '../screens/my_profile.dart' as _i23;
-import '../screens/my_projects.dart' as _i22;
-import '../screens/new_post.dart' as _i24;
-import '../screens/new_project.dart' as _i25;
-import '../screens/post_page.dart' as _i34;
-import '../screens/posts.dart' as _i33;
-import '../screens/pricing.dart' as _i14;
-import '../screens/project_page.dart' as _i36;
-import '../screens/projects.dart' as _i35;
-import '../screens/search.dart' as _i15;
-import '../screens/settings.dart' as _i16;
-import '../screens/signin.dart' as _i17;
-import '../screens/signup.dart' as _i18;
-import '../screens/tos.dart' as _i19;
+import '../screens/delete_account_page.dart' as _i35;
+import '../screens/draft_posts_page.dart' as _i26;
+import '../screens/draft_projects_page.dart' as _i32;
+import '../screens/edit_image_page.dart' as _i34;
+import '../screens/edit_post_page.dart' as _i23;
+import '../screens/edit_project_page.dart' as _i29;
+import '../screens/enroll_page.dart' as _i11;
+import '../screens/forgot_password_page.dart' as _i12;
+import '../screens/home_page.dart' as _i5;
+import '../screens/my_posts_page.dart' as _i21;
+import '../screens/my_profile_page.dart' as _i33;
+import '../screens/my_projects_page.dart' as _i27;
+import '../screens/new_post_page.dart' as _i22;
+import '../screens/new_project_page.dart' as _i28;
+import '../screens/post_page.dart' as _i24;
+import '../screens/posts_page.dart' as _i39;
+import '../screens/pricing_page.dart' as _i14;
+import '../screens/project_page.dart' as _i30;
+import '../screens/projects_page.dart' as _i40;
+import '../screens/published_posts_page.dart' as _i25;
+import '../screens/published_projects_page.dart' as _i31;
+import '../screens/search_page.dart' as _i15;
+import '../screens/settings_page.dart' as _i16;
+import '../screens/signin_page.dart' as _i17;
+import '../screens/signup_page.dart' as _i18;
+import '../screens/tos_page.dart' as _i19;
 import '../screens/undefined_page.dart' as _i20;
-import '../screens/update_email.dart' as _i30;
-import '../screens/update_password.dart' as _i31;
-import '../screens/update_username.dart' as _i32;
+import '../screens/update_email_page.dart' as _i36;
+import '../screens/update_password_page.dart' as _i37;
+import '../screens/update_username_page.dart' as _i38;
 import 'auth_guard.dart' as _i3;
 import 'no_auth_guard.dart' as _i4;
 
@@ -56,25 +60,25 @@ class AppRouter extends _i1.RootStackRouter {
 
   @override
   final Map<String, _i1.PageFactory> pagesMap = {
-    HomeRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
+    HomePageRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
         routeData: routeData,
         builder: (_) {
-          return _i5.Home();
+          return _i5.HomePage();
         }),
-    AboutRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
+    AboutPageRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
         routeData: routeData,
         builder: (_) {
-          return _i6.About();
+          return _i6.AboutPage();
         }),
-    ActivitiesRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
+    ActivitiesPageRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
         routeData: routeData,
         builder: (_) {
-          return _i7.Activities();
+          return _i7.ActivitiesPage();
         }),
-    ContactRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
+    ContactPageRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
         routeData: routeData,
         builder: (_) {
-          return _i8.Contact();
+          return _i8.ContactPage();
         }),
     CVPageRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
         routeData: routeData,
@@ -86,67 +90,67 @@ class AppRouter extends _i1.RootStackRouter {
         builder: (_) {
           return _i10.DashboardPage();
         }),
-    EnrollRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
+    EnrollPageRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
         routeData: routeData,
         builder: (_) {
-          return _i11.Enroll();
+          return _i11.EnrollPage();
         }),
-    ForgotPasswordRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
+    ForgotPasswordPageRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
         routeData: routeData,
         builder: (_) {
-          return _i12.ForgotPassword();
+          return _i12.ForgotPasswordPage();
         }),
-    AboutMeRoute.name: (routeData) => _i1.CustomPage<dynamic>(
+    AboutMePageRoute.name: (routeData) => _i1.CustomPage<dynamic>(
         routeData: routeData,
         builder: (_) {
-          return _i13.AboutMe();
+          return _i13.AboutMePage();
         },
         transitionsBuilder: _i1.TransitionsBuilders.fadeIn,
         opaque: true,
         barrierDismissible: false),
-    PostsDeepRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
+    PostsRouter.name: (routeData) => _i1.MaterialPageX<dynamic>(
         routeData: routeData,
         builder: (_) {
           return const _i1.EmptyRouterPage();
         }),
-    ProjectsDeepRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
+    ProjectsRouter.name: (routeData) => _i1.MaterialPageX<dynamic>(
         routeData: routeData,
         builder: (_) {
           return const _i1.EmptyRouterPage();
         }),
-    PricingRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
+    PricingPageRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
         routeData: routeData,
         builder: (_) {
-          return _i14.Pricing();
+          return _i14.PricingPage();
         }),
-    SearchRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
+    SearchPageRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
         routeData: routeData,
         builder: (_) {
-          return _i15.Search();
+          return _i15.SearchPage();
         }),
-    SettingsRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
+    SettingsPageRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
         routeData: routeData,
         builder: (data) {
           final pathParams = data.pathParams;
-          final args = data.argsAs<SettingsRouteArgs>(
-              orElse: () => SettingsRouteArgs(
+          final args = data.argsAs<SettingsPageRouteArgs>(
+              orElse: () => SettingsPageRouteArgs(
                   showAppBar: pathParams.getBool('showAppBar', true)));
-          return _i16.Settings(key: args.key, showAppBar: args.showAppBar);
+          return _i16.SettingsPage(key: args.key, showAppBar: args.showAppBar);
         }),
-    SigninRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
+    SigninPageRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
         routeData: routeData,
         builder: (data) {
-          final args = data.argsAs<SigninRouteArgs>(
-              orElse: () => const SigninRouteArgs());
-          return _i17.Signin(
+          final args = data.argsAs<SigninPageRouteArgs>(
+              orElse: () => const SigninPageRouteArgs());
+          return _i17.SigninPage(
               key: args.key, onSigninResult: args.onSigninResult);
         }),
-    SignupRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
+    SignupPageRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
         routeData: routeData,
         builder: (data) {
-          final args = data.argsAs<SignupRouteArgs>(
-              orElse: () => const SignupRouteArgs());
-          return _i18.Signup(
+          final args = data.argsAs<SignupPageRouteArgs>(
+              orElse: () => const SignupPageRouteArgs());
+          return _i18.SignupPage(
               key: args.key, onSignupResult: args.onSignupResult);
         }),
     SignOutRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
@@ -154,124 +158,167 @@ class AppRouter extends _i1.RootStackRouter {
         builder: (_) {
           return const _i1.EmptyRouterPage();
         }),
-    ExtDeepRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
+    ExtRouter.name: (routeData) => _i1.MaterialPageX<dynamic>(
         routeData: routeData,
         builder: (_) {
           return const _i1.EmptyRouterPage();
         }),
-    TosRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
+    TosPageRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
         routeData: routeData,
         builder: (_) {
-          return _i19.Tos();
+          return _i19.TosPage();
         }),
     UndefinedPageRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
         routeData: routeData,
         builder: (_) {
           return _i20.UndefinedPage();
         }),
-    DeepNewPage.name: (routeData) => _i1.MaterialPageX<dynamic>(
+    DashPostsRouter.name: (routeData) => _i1.MaterialPageX<dynamic>(
         routeData: routeData,
         builder: (_) {
           return const _i1.EmptyRouterPage();
         }),
-    DeepEditPage.name: (routeData) => _i1.MaterialPageX<dynamic>(
+    DashProjectsRouter.name: (routeData) => _i1.MaterialPageX<dynamic>(
         routeData: routeData,
         builder: (_) {
           return const _i1.EmptyRouterPage();
         }),
-    MyPostsRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
-        routeData: routeData,
-        builder: (_) {
-          return _i21.MyPosts();
-        }),
-    MyProjectsRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
-        routeData: routeData,
-        builder: (_) {
-          return _i22.MyProjects();
-        }),
-    MyProfileRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
-        routeData: routeData,
-        builder: (_) {
-          return _i23.MyProfile();
-        }),
-    DashboardSettingsDeepRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
+    DashProfileRouter.name: (routeData) => _i1.MaterialPageX<dynamic>(
         routeData: routeData,
         builder: (_) {
           return const _i1.EmptyRouterPage();
         }),
-    NewPostRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
+    DashSettingsRouter.name: (routeData) => _i1.MaterialPageX<dynamic>(
         routeData: routeData,
         builder: (_) {
-          return _i24.NewPost();
+          return const _i1.EmptyRouterPage();
         }),
-    NewProjectRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
+    MyPostsPageRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
         routeData: routeData,
         builder: (_) {
-          return _i25.NewProject();
+          return _i21.MyPostsPage();
         }),
-    EditPostRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
+    NewPostPageRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
+        routeData: routeData,
+        builder: (_) {
+          return _i22.NewPostPage();
+        }),
+    EditPostPageRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
         routeData: routeData,
         builder: (data) {
           final pathParams = data.pathParams;
-          final args = data.argsAs<EditPostRouteArgs>(
+          final args = data.argsAs<EditPostPageRouteArgs>(
+              orElse: () => EditPostPageRouteArgs(
+                  postId: pathParams.getString('postId')));
+          return _i23.EditPostPage(postId: args.postId);
+        }),
+    DashPostPage.name: (routeData) => _i1.MaterialPageX<dynamic>(
+        routeData: routeData,
+        builder: (data) {
+          final pathParams = data.pathParams;
+          final args = data.argsAs<DashPostPageArgs>(
               orElse: () =>
-                  EditPostRouteArgs(postId: pathParams.getString('postId')));
-          return _i26.EditPost(postId: args.postId);
+                  DashPostPageArgs(postId: pathParams.getString('postId')));
+          return _i24.PostPage(postId: args.postId);
         }),
-    EditProjectRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
-        routeData: routeData,
-        builder: (data) {
-          final pathParams = data.pathParams;
-          final args = data.argsAs<EditProjectRouteArgs>(
-              orElse: () => EditProjectRouteArgs(
-                  projectId: pathParams.getString('projectId')));
-          return _i27.EditProject(projectId: args.projectId);
-        }),
-    EditImageRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
-        routeData: routeData,
-        builder: (data) {
-          final args = data.argsAs<EditImageRouteArgs>(
-              orElse: () => const EditImageRouteArgs());
-          return _i28.EditImage(key: args.key, image: args.image);
-        }),
-    DashboardSettingsRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
-        routeData: routeData,
-        builder: (data) {
-          final pathParams = data.pathParams;
-          final args = data.argsAs<DashboardSettingsRouteArgs>(
-              orElse: () => DashboardSettingsRouteArgs(
-                  showAppBar: pathParams.getBool('showAppBar', true)));
-          return _i16.Settings(key: args.key, showAppBar: args.showAppBar);
-        }),
-    DeleteAccountRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
+    PublishedPostsPageRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
         routeData: routeData,
         builder: (_) {
-          return _i29.DeleteAccount();
+          return _i25.PublishedPostsPage();
         }),
-    AccountUpdateDeepRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
+    DraftPostsPageRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
+        routeData: routeData,
+        builder: (_) {
+          return _i26.DraftPostsPage();
+        }),
+    MyProjectsPageRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
+        routeData: routeData,
+        builder: (_) {
+          return _i27.MyProjectsPage();
+        }),
+    NewProjectPageRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
+        routeData: routeData,
+        builder: (_) {
+          return _i28.NewProjectPage();
+        }),
+    EditProjectPageRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
+        routeData: routeData,
+        builder: (data) {
+          final pathParams = data.pathParams;
+          final args = data.argsAs<EditProjectPageRouteArgs>(
+              orElse: () => EditProjectPageRouteArgs(
+                  projectId: pathParams.getString('projectId')));
+          return _i29.EditProjectPage(projectId: args.projectId);
+        }),
+    DashProjectPage.name: (routeData) => _i1.MaterialPageX<dynamic>(
+        routeData: routeData,
+        builder: (data) {
+          final pathParams = data.pathParams;
+          final args = data.argsAs<DashProjectPageArgs>(
+              orElse: () => DashProjectPageArgs(
+                  projectId: pathParams.getString('projectId')));
+          return _i30.ProjectPage(projectId: args.projectId);
+        }),
+    PublishedProjectsPageRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
+        routeData: routeData,
+        builder: (_) {
+          return _i31.PublishedProjectsPage();
+        }),
+    DraftProjectsPageRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
+        routeData: routeData,
+        builder: (_) {
+          return const _i32.DraftProjectsPage();
+        }),
+    MyProfilePageRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
+        routeData: routeData,
+        builder: (_) {
+          return _i33.MyProfilePage();
+        }),
+    EditImagePageRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
+        routeData: routeData,
+        builder: (data) {
+          final args = data.argsAs<EditImagePageRouteArgs>(
+              orElse: () => const EditImagePageRouteArgs());
+          return _i34.EditImagePage(key: args.key, image: args.image);
+        }),
+    DashSettingsRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
+        routeData: routeData,
+        builder: (data) {
+          final pathParams = data.pathParams;
+          final args = data.argsAs<DashSettingsRouteArgs>(
+              orElse: () => DashSettingsRouteArgs(
+                  showAppBar: pathParams.getBool('showAppBar', true)));
+          return _i16.SettingsPage(key: args.key, showAppBar: args.showAppBar);
+        }),
+    DeleteAccountPageRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
+        routeData: routeData,
+        builder: (_) {
+          return _i35.DeleteAccountPage();
+        }),
+    DashAccountUpdateRouter.name: (routeData) => _i1.MaterialPageX<dynamic>(
         routeData: routeData,
         builder: (_) {
           return const _i1.EmptyRouterPage();
         }),
-    UpdateEmailRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
+    UpdateEmailPageRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
         routeData: routeData,
         builder: (_) {
-          return _i30.UpdateEmail();
+          return _i36.UpdateEmailPage();
         }),
-    UpdatePasswordRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
+    UpdatePasswordPageRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
         routeData: routeData,
         builder: (_) {
-          return _i31.UpdatePassword();
+          return _i37.UpdatePasswordPage();
         }),
-    UpdateUsernameRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
+    UpdateUsernamePageRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
         routeData: routeData,
         builder: (_) {
-          return _i32.UpdateUsername();
+          return _i38.UpdateUsernamePage();
         }),
-    PostsRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
+    PostsPageRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
         routeData: routeData,
         builder: (_) {
-          return _i33.Posts();
+          return _i39.PostsPage();
         }),
     PostPageRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
         routeData: routeData,
@@ -280,12 +327,12 @@ class AppRouter extends _i1.RootStackRouter {
           final args = data.argsAs<PostPageRouteArgs>(
               orElse: () =>
                   PostPageRouteArgs(postId: pathParams.getString('postId')));
-          return _i34.PostPage(postId: args.postId);
+          return _i24.PostPage(postId: args.postId);
         }),
-    ProjectsRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
+    ProjectsPageRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
         routeData: routeData,
         builder: (_) {
-          return _i35.Projects();
+          return _i40.ProjectsPage();
         }),
     ProjectPageRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
         routeData: routeData,
@@ -294,7 +341,7 @@ class AppRouter extends _i1.RootStackRouter {
           final args = data.argsAs<ProjectPageRouteArgs>(
               orElse: () => ProjectPageRouteArgs(
                   projectId: pathParams.getString('projectId')));
-          return _i36.ProjectPage(projectId: args.projectId);
+          return _i30.ProjectPage(projectId: args.projectId);
         }),
     GitHubRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
         routeData: routeData,
@@ -305,98 +352,113 @@ class AppRouter extends _i1.RootStackRouter {
 
   @override
   List<_i1.RouteConfig> get routes => [
-        _i1.RouteConfig(HomeRoute.name, path: '/'),
-        _i1.RouteConfig(AboutRoute.name, path: '/about'),
-        _i1.RouteConfig(ActivitiesRoute.name, path: '/activities'),
-        _i1.RouteConfig(ContactRoute.name, path: '/contact'),
+        _i1.RouteConfig(HomePageRoute.name, path: '/'),
+        _i1.RouteConfig(AboutPageRoute.name, path: '/about'),
+        _i1.RouteConfig(ActivitiesPageRoute.name, path: '/activities'),
+        _i1.RouteConfig(ContactPageRoute.name, path: '/contact'),
         _i1.RouteConfig(CVPageRoute.name, path: '/cv'),
         _i1.RouteConfig(DashboardPageRoute.name, path: '/dashboard', guards: [
           authGuard
         ], children: [
+          _i1.RouteConfig(DashPostsRouter.name, path: 'posts', children: [
+            _i1.RouteConfig(MyPostsPageRoute.name, path: '', children: [
+              _i1.RouteConfig(PublishedPostsPageRoute.name, path: 'published'),
+              _i1.RouteConfig(DraftPostsPageRoute.name, path: 'draft'),
+              _i1.RouteConfig('*#redirect',
+                  path: '*', redirectTo: 'published', fullMatch: true)
+            ]),
+            _i1.RouteConfig(NewPostPageRoute.name, path: 'new'),
+            _i1.RouteConfig(EditPostPageRoute.name, path: 'edit/:postId'),
+            _i1.RouteConfig(DashPostPage.name, path: 'preview/:postId'),
+            _i1.RouteConfig('*#redirect',
+                path: '*', redirectTo: '', fullMatch: true)
+          ]),
+          _i1.RouteConfig(DashProjectsRouter.name, path: 'projects', children: [
+            _i1.RouteConfig(MyProjectsPageRoute.name, path: '', children: [
+              _i1.RouteConfig(PublishedProjectsPageRoute.name,
+                  path: 'published'),
+              _i1.RouteConfig(DraftProjectsPageRoute.name, path: 'draft'),
+              _i1.RouteConfig('*#redirect',
+                  path: '*', redirectTo: 'published', fullMatch: true)
+            ]),
+            _i1.RouteConfig(NewProjectPageRoute.name, path: 'new'),
+            _i1.RouteConfig(EditProjectPageRoute.name, path: 'edit/:projectId'),
+            _i1.RouteConfig(DashProjectPage.name, path: 'preview/:projectId'),
+            _i1.RouteConfig('*#redirect',
+                path: '*', redirectTo: '', fullMatch: true)
+          ]),
+          _i1.RouteConfig(DashProfileRouter.name, path: 'profile', children: [
+            _i1.RouteConfig(MyProfilePageRoute.name, path: ''),
+            _i1.RouteConfig(EditImagePageRoute.name, path: 'edit/pp'),
+            _i1.RouteConfig('*#redirect',
+                path: '*', redirectTo: '', fullMatch: true)
+          ]),
+          _i1.RouteConfig(DashSettingsRouter.name, path: 'settings', children: [
+            _i1.RouteConfig(DashSettingsRoute.name, path: ''),
+            _i1.RouteConfig(DeleteAccountPageRoute.name,
+                path: 'delete/account'),
+            _i1.RouteConfig(DashAccountUpdateRouter.name,
+                path: 'update',
+                children: [
+                  _i1.RouteConfig(UpdateEmailPageRoute.name, path: 'email'),
+                  _i1.RouteConfig(UpdatePasswordPageRoute.name,
+                      path: 'password'),
+                  _i1.RouteConfig(UpdateUsernamePageRoute.name,
+                      path: 'username')
+                ])
+          ]),
           _i1.RouteConfig('#redirect',
-              path: '', redirectTo: 'settings', fullMatch: true),
-          _i1.RouteConfig(DeepNewPage.name, path: 'new', children: [
-            _i1.RouteConfig('#redirect',
-                path: '', redirectTo: 'post', fullMatch: true),
-            _i1.RouteConfig(NewPostRoute.name, path: 'post'),
-            _i1.RouteConfig(NewProjectRoute.name, path: 'project')
-          ]),
-          _i1.RouteConfig(DeepEditPage.name, path: 'edit', children: [
-            _i1.RouteConfig('#redirect',
-                path: '', redirectTo: 'post', fullMatch: true),
-            _i1.RouteConfig(EditPostRoute.name, path: 'post/:postId'),
-            _i1.RouteConfig(EditProjectRoute.name, path: 'project/:projectId'),
-            _i1.RouteConfig(EditImageRoute.name, path: 'me/pp')
-          ]),
-          _i1.RouteConfig(MyPostsRoute.name, path: 'posts'),
-          _i1.RouteConfig(MyProjectsRoute.name, path: 'projects'),
-          _i1.RouteConfig(MyProfileRoute.name, path: 'profile'),
-          _i1.RouteConfig(DashboardSettingsDeepRoute.name,
-              path: 'settings',
-              children: [
-                _i1.RouteConfig(DashboardSettingsRoute.name, path: ''),
-                _i1.RouteConfig(DeleteAccountRoute.name,
-                    path: 'delete/account'),
-                _i1.RouteConfig(AccountUpdateDeepRoute.name,
-                    path: 'update',
-                    children: [
-                      _i1.RouteConfig(UpdateEmailRoute.name, path: 'email'),
-                      _i1.RouteConfig(UpdatePasswordRoute.name,
-                          path: 'password'),
-                      _i1.RouteConfig(UpdateUsernameRoute.name,
-                          path: 'username')
-                    ])
-              ])
+              path: '', redirectTo: 'posts', fullMatch: true)
         ]),
-        _i1.RouteConfig(EnrollRoute.name, path: '/enroll'),
-        _i1.RouteConfig(ForgotPasswordRoute.name, path: '/forgotpassword'),
-        _i1.RouteConfig(AboutMeRoute.name, path: '/me'),
-        _i1.RouteConfig(PostsDeepRoute.name, path: '/posts', children: [
-          _i1.RouteConfig(PostsRoute.name, path: ''),
+        _i1.RouteConfig(EnrollPageRoute.name, path: '/enroll'),
+        _i1.RouteConfig(ForgotPasswordPageRoute.name, path: '/forgotpassword'),
+        _i1.RouteConfig(AboutMePageRoute.name, path: '/me'),
+        _i1.RouteConfig(PostsRouter.name, path: '/posts', children: [
+          _i1.RouteConfig(PostsPageRoute.name, path: ''),
           _i1.RouteConfig(PostPageRoute.name, path: ':postId')
         ]),
-        _i1.RouteConfig(ProjectsDeepRoute.name, path: '/projects', children: [
-          _i1.RouteConfig(ProjectsRoute.name, path: ''),
+        _i1.RouteConfig(ProjectsRouter.name, path: '/projects', children: [
+          _i1.RouteConfig(ProjectsPageRoute.name, path: ''),
           _i1.RouteConfig(ProjectPageRoute.name, path: ':projectId')
         ]),
-        _i1.RouteConfig(PricingRoute.name, path: '/pricing'),
-        _i1.RouteConfig(SearchRoute.name, path: '/search'),
-        _i1.RouteConfig(SettingsRoute.name, path: '/settings'),
-        _i1.RouteConfig(SigninRoute.name,
+        _i1.RouteConfig(PricingPageRoute.name, path: '/pricing'),
+        _i1.RouteConfig(SearchPageRoute.name, path: '/search'),
+        _i1.RouteConfig(SettingsPageRoute.name, path: '/settings'),
+        _i1.RouteConfig(SigninPageRoute.name,
             path: '/signin', guards: [noAuthGuard]),
-        _i1.RouteConfig(SignupRoute.name,
+        _i1.RouteConfig(SignupPageRoute.name,
             path: '/signup', guards: [noAuthGuard]),
         _i1.RouteConfig(SignOutRoute.name, path: '/signout'),
-        _i1.RouteConfig(ExtDeepRoute.name,
+        _i1.RouteConfig(ExtRouter.name,
             path: '/ext',
             children: [_i1.RouteConfig(GitHubRoute.name, path: 'github')]),
-        _i1.RouteConfig(TosRoute.name, path: '/tos'),
+        _i1.RouteConfig(TosPageRoute.name, path: '/tos'),
         _i1.RouteConfig(UndefinedPageRoute.name, path: '*')
       ];
 }
 
-class HomeRoute extends _i1.PageRouteInfo {
-  const HomeRoute() : super(name, path: '/');
+class HomePageRoute extends _i1.PageRouteInfo {
+  const HomePageRoute() : super(name, path: '/');
 
-  static const String name = 'HomeRoute';
+  static const String name = 'HomePageRoute';
 }
 
-class AboutRoute extends _i1.PageRouteInfo {
-  const AboutRoute() : super(name, path: '/about');
+class AboutPageRoute extends _i1.PageRouteInfo {
+  const AboutPageRoute() : super(name, path: '/about');
 
-  static const String name = 'AboutRoute';
+  static const String name = 'AboutPageRoute';
 }
 
-class ActivitiesRoute extends _i1.PageRouteInfo {
-  const ActivitiesRoute() : super(name, path: '/activities');
+class ActivitiesPageRoute extends _i1.PageRouteInfo {
+  const ActivitiesPageRoute() : super(name, path: '/activities');
 
-  static const String name = 'ActivitiesRoute';
+  static const String name = 'ActivitiesPageRoute';
 }
 
-class ContactRoute extends _i1.PageRouteInfo {
-  const ContactRoute() : super(name, path: '/contact');
+class ContactPageRoute extends _i1.PageRouteInfo {
+  const ContactPageRoute() : super(name, path: '/contact');
 
-  static const String name = 'ContactRoute';
+  static const String name = 'ContactPageRoute';
 }
 
 class CVPageRoute extends _i1.PageRouteInfo {
@@ -412,95 +474,97 @@ class DashboardPageRoute extends _i1.PageRouteInfo {
   static const String name = 'DashboardPageRoute';
 }
 
-class EnrollRoute extends _i1.PageRouteInfo {
-  const EnrollRoute() : super(name, path: '/enroll');
+class EnrollPageRoute extends _i1.PageRouteInfo {
+  const EnrollPageRoute() : super(name, path: '/enroll');
 
-  static const String name = 'EnrollRoute';
+  static const String name = 'EnrollPageRoute';
 }
 
-class ForgotPasswordRoute extends _i1.PageRouteInfo {
-  const ForgotPasswordRoute() : super(name, path: '/forgotpassword');
+class ForgotPasswordPageRoute extends _i1.PageRouteInfo {
+  const ForgotPasswordPageRoute() : super(name, path: '/forgotpassword');
 
-  static const String name = 'ForgotPasswordRoute';
+  static const String name = 'ForgotPasswordPageRoute';
 }
 
-class AboutMeRoute extends _i1.PageRouteInfo {
-  const AboutMeRoute() : super(name, path: '/me');
+class AboutMePageRoute extends _i1.PageRouteInfo {
+  const AboutMePageRoute() : super(name, path: '/me');
 
-  static const String name = 'AboutMeRoute';
+  static const String name = 'AboutMePageRoute';
 }
 
-class PostsDeepRoute extends _i1.PageRouteInfo {
-  const PostsDeepRoute({List<_i1.PageRouteInfo> children})
+class PostsRouter extends _i1.PageRouteInfo {
+  const PostsRouter({List<_i1.PageRouteInfo> children})
       : super(name, path: '/posts', initialChildren: children);
 
-  static const String name = 'PostsDeepRoute';
+  static const String name = 'PostsRouter';
 }
 
-class ProjectsDeepRoute extends _i1.PageRouteInfo {
-  const ProjectsDeepRoute({List<_i1.PageRouteInfo> children})
+class ProjectsRouter extends _i1.PageRouteInfo {
+  const ProjectsRouter({List<_i1.PageRouteInfo> children})
       : super(name, path: '/projects', initialChildren: children);
 
-  static const String name = 'ProjectsDeepRoute';
+  static const String name = 'ProjectsRouter';
 }
 
-class PricingRoute extends _i1.PageRouteInfo {
-  const PricingRoute() : super(name, path: '/pricing');
+class PricingPageRoute extends _i1.PageRouteInfo {
+  const PricingPageRoute() : super(name, path: '/pricing');
 
-  static const String name = 'PricingRoute';
+  static const String name = 'PricingPageRoute';
 }
 
-class SearchRoute extends _i1.PageRouteInfo {
-  const SearchRoute() : super(name, path: '/search');
+class SearchPageRoute extends _i1.PageRouteInfo {
+  const SearchPageRoute() : super(name, path: '/search');
 
-  static const String name = 'SearchRoute';
+  static const String name = 'SearchPageRoute';
 }
 
-class SettingsRoute extends _i1.PageRouteInfo<SettingsRouteArgs> {
-  SettingsRoute({_i2.Key key, bool showAppBar = true})
+class SettingsPageRoute extends _i1.PageRouteInfo<SettingsPageRouteArgs> {
+  SettingsPageRoute({_i2.Key key, bool showAppBar = true})
       : super(name,
             path: '/settings',
-            args: SettingsRouteArgs(key: key, showAppBar: showAppBar));
+            args: SettingsPageRouteArgs(key: key, showAppBar: showAppBar));
 
-  static const String name = 'SettingsRoute';
+  static const String name = 'SettingsPageRoute';
 }
 
-class SettingsRouteArgs {
-  const SettingsRouteArgs({this.key, this.showAppBar = true});
+class SettingsPageRouteArgs {
+  const SettingsPageRouteArgs({this.key, this.showAppBar = true});
 
   final _i2.Key key;
 
   final bool showAppBar;
 }
 
-class SigninRoute extends _i1.PageRouteInfo<SigninRouteArgs> {
-  SigninRoute({_i2.Key key, void Function(bool) onSigninResult})
+class SigninPageRoute extends _i1.PageRouteInfo<SigninPageRouteArgs> {
+  SigninPageRoute({_i2.Key key, void Function(bool) onSigninResult})
       : super(name,
             path: '/signin',
-            args: SigninRouteArgs(key: key, onSigninResult: onSigninResult));
+            args:
+                SigninPageRouteArgs(key: key, onSigninResult: onSigninResult));
 
-  static const String name = 'SigninRoute';
+  static const String name = 'SigninPageRoute';
 }
 
-class SigninRouteArgs {
-  const SigninRouteArgs({this.key, this.onSigninResult});
+class SigninPageRouteArgs {
+  const SigninPageRouteArgs({this.key, this.onSigninResult});
 
   final _i2.Key key;
 
   final void Function(bool) onSigninResult;
 }
 
-class SignupRoute extends _i1.PageRouteInfo<SignupRouteArgs> {
-  SignupRoute({_i2.Key key, void Function(bool) onSignupResult})
+class SignupPageRoute extends _i1.PageRouteInfo<SignupPageRouteArgs> {
+  SignupPageRoute({_i2.Key key, void Function(bool) onSignupResult})
       : super(name,
             path: '/signup',
-            args: SignupRouteArgs(key: key, onSignupResult: onSignupResult));
+            args:
+                SignupPageRouteArgs(key: key, onSignupResult: onSignupResult));
 
-  static const String name = 'SignupRoute';
+  static const String name = 'SignupPageRoute';
 }
 
-class SignupRouteArgs {
-  const SignupRouteArgs({this.key, this.onSignupResult});
+class SignupPageRouteArgs {
+  const SignupPageRouteArgs({this.key, this.onSignupResult});
 
   final _i2.Key key;
 
@@ -513,17 +577,17 @@ class SignOutRoute extends _i1.PageRouteInfo {
   static const String name = 'SignOutRoute';
 }
 
-class ExtDeepRoute extends _i1.PageRouteInfo {
-  const ExtDeepRoute({List<_i1.PageRouteInfo> children})
+class ExtRouter extends _i1.PageRouteInfo {
+  const ExtRouter({List<_i1.PageRouteInfo> children})
       : super(name, path: '/ext', initialChildren: children);
 
-  static const String name = 'ExtDeepRoute';
+  static const String name = 'ExtRouter';
 }
 
-class TosRoute extends _i1.PageRouteInfo {
-  const TosRoute() : super(name, path: '/tos');
+class TosPageRoute extends _i1.PageRouteInfo {
+  const TosPageRoute() : super(name, path: '/tos');
 
-  static const String name = 'TosRoute';
+  static const String name = 'TosPageRoute';
 }
 
 class UndefinedPageRoute extends _i1.PageRouteInfo {
@@ -532,158 +596,223 @@ class UndefinedPageRoute extends _i1.PageRouteInfo {
   static const String name = 'UndefinedPageRoute';
 }
 
-class DeepNewPage extends _i1.PageRouteInfo {
-  const DeepNewPage({List<_i1.PageRouteInfo> children})
-      : super(name, path: 'new', initialChildren: children);
+class DashPostsRouter extends _i1.PageRouteInfo {
+  const DashPostsRouter({List<_i1.PageRouteInfo> children})
+      : super(name, path: 'posts', initialChildren: children);
 
-  static const String name = 'DeepNewPage';
+  static const String name = 'DashPostsRouter';
 }
 
-class DeepEditPage extends _i1.PageRouteInfo {
-  const DeepEditPage({List<_i1.PageRouteInfo> children})
-      : super(name, path: 'edit', initialChildren: children);
+class DashProjectsRouter extends _i1.PageRouteInfo {
+  const DashProjectsRouter({List<_i1.PageRouteInfo> children})
+      : super(name, path: 'projects', initialChildren: children);
 
-  static const String name = 'DeepEditPage';
+  static const String name = 'DashProjectsRouter';
 }
 
-class MyPostsRoute extends _i1.PageRouteInfo {
-  const MyPostsRoute() : super(name, path: 'posts');
+class DashProfileRouter extends _i1.PageRouteInfo {
+  const DashProfileRouter({List<_i1.PageRouteInfo> children})
+      : super(name, path: 'profile', initialChildren: children);
 
-  static const String name = 'MyPostsRoute';
+  static const String name = 'DashProfileRouter';
 }
 
-class MyProjectsRoute extends _i1.PageRouteInfo {
-  const MyProjectsRoute() : super(name, path: 'projects');
-
-  static const String name = 'MyProjectsRoute';
-}
-
-class MyProfileRoute extends _i1.PageRouteInfo {
-  const MyProfileRoute() : super(name, path: 'profile');
-
-  static const String name = 'MyProfileRoute';
-}
-
-class DashboardSettingsDeepRoute extends _i1.PageRouteInfo {
-  const DashboardSettingsDeepRoute({List<_i1.PageRouteInfo> children})
+class DashSettingsRouter extends _i1.PageRouteInfo {
+  const DashSettingsRouter({List<_i1.PageRouteInfo> children})
       : super(name, path: 'settings', initialChildren: children);
 
-  static const String name = 'DashboardSettingsDeepRoute';
+  static const String name = 'DashSettingsRouter';
 }
 
-class NewPostRoute extends _i1.PageRouteInfo {
-  const NewPostRoute() : super(name, path: 'post');
+class MyPostsPageRoute extends _i1.PageRouteInfo {
+  const MyPostsPageRoute({List<_i1.PageRouteInfo> children})
+      : super(name, path: '', initialChildren: children);
 
-  static const String name = 'NewPostRoute';
+  static const String name = 'MyPostsPageRoute';
 }
 
-class NewProjectRoute extends _i1.PageRouteInfo {
-  const NewProjectRoute() : super(name, path: 'project');
+class NewPostPageRoute extends _i1.PageRouteInfo {
+  const NewPostPageRoute() : super(name, path: 'new');
 
-  static const String name = 'NewProjectRoute';
+  static const String name = 'NewPostPageRoute';
 }
 
-class EditPostRoute extends _i1.PageRouteInfo<EditPostRouteArgs> {
-  EditPostRoute({String postId})
+class EditPostPageRoute extends _i1.PageRouteInfo<EditPostPageRouteArgs> {
+  EditPostPageRoute({String postId})
       : super(name,
-            path: 'post/:postId',
-            args: EditPostRouteArgs(postId: postId),
+            path: 'edit/:postId',
+            args: EditPostPageRouteArgs(postId: postId),
             rawPathParams: {'postId': postId});
 
-  static const String name = 'EditPostRoute';
+  static const String name = 'EditPostPageRoute';
 }
 
-class EditPostRouteArgs {
-  const EditPostRouteArgs({this.postId});
+class EditPostPageRouteArgs {
+  const EditPostPageRouteArgs({this.postId});
 
   final String postId;
 }
 
-class EditProjectRoute extends _i1.PageRouteInfo<EditProjectRouteArgs> {
-  EditProjectRoute({String projectId})
+class DashPostPage extends _i1.PageRouteInfo<DashPostPageArgs> {
+  DashPostPage({String postId})
       : super(name,
-            path: 'project/:projectId',
-            args: EditProjectRouteArgs(projectId: projectId),
-            rawPathParams: {'projectId': projectId});
+            path: 'preview/:postId',
+            args: DashPostPageArgs(postId: postId),
+            rawPathParams: {'postId': postId});
 
-  static const String name = 'EditProjectRoute';
+  static const String name = 'DashPostPage';
 }
 
-class EditProjectRouteArgs {
-  const EditProjectRouteArgs({this.projectId});
+class DashPostPageArgs {
+  const DashPostPageArgs({this.postId});
+
+  final String postId;
+}
+
+class PublishedPostsPageRoute extends _i1.PageRouteInfo {
+  const PublishedPostsPageRoute() : super(name, path: 'published');
+
+  static const String name = 'PublishedPostsPageRoute';
+}
+
+class DraftPostsPageRoute extends _i1.PageRouteInfo {
+  const DraftPostsPageRoute() : super(name, path: 'draft');
+
+  static const String name = 'DraftPostsPageRoute';
+}
+
+class MyProjectsPageRoute extends _i1.PageRouteInfo {
+  const MyProjectsPageRoute({List<_i1.PageRouteInfo> children})
+      : super(name, path: '', initialChildren: children);
+
+  static const String name = 'MyProjectsPageRoute';
+}
+
+class NewProjectPageRoute extends _i1.PageRouteInfo {
+  const NewProjectPageRoute() : super(name, path: 'new');
+
+  static const String name = 'NewProjectPageRoute';
+}
+
+class EditProjectPageRoute extends _i1.PageRouteInfo<EditProjectPageRouteArgs> {
+  EditProjectPageRoute({String projectId})
+      : super(name,
+            path: 'edit/:projectId',
+            args: EditProjectPageRouteArgs(projectId: projectId),
+            rawPathParams: {'projectId': projectId});
+
+  static const String name = 'EditProjectPageRoute';
+}
+
+class EditProjectPageRouteArgs {
+  const EditProjectPageRouteArgs({this.projectId});
 
   final String projectId;
 }
 
-class EditImageRoute extends _i1.PageRouteInfo<EditImageRouteArgs> {
-  EditImageRoute({_i2.Key key, _i2.ImageProvider<Object> image})
+class DashProjectPage extends _i1.PageRouteInfo<DashProjectPageArgs> {
+  DashProjectPage({String projectId})
       : super(name,
-            path: 'me/pp', args: EditImageRouteArgs(key: key, image: image));
+            path: 'preview/:projectId',
+            args: DashProjectPageArgs(projectId: projectId),
+            rawPathParams: {'projectId': projectId});
 
-  static const String name = 'EditImageRoute';
+  static const String name = 'DashProjectPage';
 }
 
-class EditImageRouteArgs {
-  const EditImageRouteArgs({this.key, this.image});
+class DashProjectPageArgs {
+  const DashProjectPageArgs({this.projectId});
+
+  final String projectId;
+}
+
+class PublishedProjectsPageRoute extends _i1.PageRouteInfo {
+  const PublishedProjectsPageRoute() : super(name, path: 'published');
+
+  static const String name = 'PublishedProjectsPageRoute';
+}
+
+class DraftProjectsPageRoute extends _i1.PageRouteInfo {
+  const DraftProjectsPageRoute() : super(name, path: 'draft');
+
+  static const String name = 'DraftProjectsPageRoute';
+}
+
+class MyProfilePageRoute extends _i1.PageRouteInfo {
+  const MyProfilePageRoute() : super(name, path: '');
+
+  static const String name = 'MyProfilePageRoute';
+}
+
+class EditImagePageRoute extends _i1.PageRouteInfo<EditImagePageRouteArgs> {
+  EditImagePageRoute({_i2.Key key, _i2.ImageProvider<Object> image})
+      : super(name,
+            path: 'edit/pp',
+            args: EditImagePageRouteArgs(key: key, image: image));
+
+  static const String name = 'EditImagePageRoute';
+}
+
+class EditImagePageRouteArgs {
+  const EditImagePageRouteArgs({this.key, this.image});
 
   final _i2.Key key;
 
   final _i2.ImageProvider<Object> image;
 }
 
-class DashboardSettingsRoute
-    extends _i1.PageRouteInfo<DashboardSettingsRouteArgs> {
-  DashboardSettingsRoute({_i2.Key key, bool showAppBar = true})
+class DashSettingsRoute extends _i1.PageRouteInfo<DashSettingsRouteArgs> {
+  DashSettingsRoute({_i2.Key key, bool showAppBar = true})
       : super(name,
             path: '',
-            args: DashboardSettingsRouteArgs(key: key, showAppBar: showAppBar));
+            args: DashSettingsRouteArgs(key: key, showAppBar: showAppBar));
 
-  static const String name = 'DashboardSettingsRoute';
+  static const String name = 'DashSettingsRoute';
 }
 
-class DashboardSettingsRouteArgs {
-  const DashboardSettingsRouteArgs({this.key, this.showAppBar = true});
+class DashSettingsRouteArgs {
+  const DashSettingsRouteArgs({this.key, this.showAppBar = true});
 
   final _i2.Key key;
 
   final bool showAppBar;
 }
 
-class DeleteAccountRoute extends _i1.PageRouteInfo {
-  const DeleteAccountRoute() : super(name, path: 'delete/account');
+class DeleteAccountPageRoute extends _i1.PageRouteInfo {
+  const DeleteAccountPageRoute() : super(name, path: 'delete/account');
 
-  static const String name = 'DeleteAccountRoute';
+  static const String name = 'DeleteAccountPageRoute';
 }
 
-class AccountUpdateDeepRoute extends _i1.PageRouteInfo {
-  const AccountUpdateDeepRoute({List<_i1.PageRouteInfo> children})
+class DashAccountUpdateRouter extends _i1.PageRouteInfo {
+  const DashAccountUpdateRouter({List<_i1.PageRouteInfo> children})
       : super(name, path: 'update', initialChildren: children);
 
-  static const String name = 'AccountUpdateDeepRoute';
+  static const String name = 'DashAccountUpdateRouter';
 }
 
-class UpdateEmailRoute extends _i1.PageRouteInfo {
-  const UpdateEmailRoute() : super(name, path: 'email');
+class UpdateEmailPageRoute extends _i1.PageRouteInfo {
+  const UpdateEmailPageRoute() : super(name, path: 'email');
 
-  static const String name = 'UpdateEmailRoute';
+  static const String name = 'UpdateEmailPageRoute';
 }
 
-class UpdatePasswordRoute extends _i1.PageRouteInfo {
-  const UpdatePasswordRoute() : super(name, path: 'password');
+class UpdatePasswordPageRoute extends _i1.PageRouteInfo {
+  const UpdatePasswordPageRoute() : super(name, path: 'password');
 
-  static const String name = 'UpdatePasswordRoute';
+  static const String name = 'UpdatePasswordPageRoute';
 }
 
-class UpdateUsernameRoute extends _i1.PageRouteInfo {
-  const UpdateUsernameRoute() : super(name, path: 'username');
+class UpdateUsernamePageRoute extends _i1.PageRouteInfo {
+  const UpdateUsernamePageRoute() : super(name, path: 'username');
 
-  static const String name = 'UpdateUsernameRoute';
+  static const String name = 'UpdateUsernamePageRoute';
 }
 
-class PostsRoute extends _i1.PageRouteInfo {
-  const PostsRoute() : super(name, path: '');
+class PostsPageRoute extends _i1.PageRouteInfo {
+  const PostsPageRoute() : super(name, path: '');
 
-  static const String name = 'PostsRoute';
+  static const String name = 'PostsPageRoute';
 }
 
 class PostPageRoute extends _i1.PageRouteInfo<PostPageRouteArgs> {
@@ -702,10 +831,10 @@ class PostPageRouteArgs {
   final String postId;
 }
 
-class ProjectsRoute extends _i1.PageRouteInfo {
-  const ProjectsRoute() : super(name, path: '');
+class ProjectsPageRoute extends _i1.PageRouteInfo {
+  const ProjectsPageRoute() : super(name, path: '');
 
-  static const String name = 'ProjectsRoute';
+  static const String name = 'ProjectsPageRoute';
 }
 
 class ProjectPageRoute extends _i1.PageRouteInfo<ProjectPageRouteArgs> {

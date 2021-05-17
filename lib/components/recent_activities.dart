@@ -91,7 +91,7 @@ class _RecentActivitiesState extends State<RecentActivities> {
             opacity: 0.6,
             child: TextButton.icon(
               onPressed: () {
-                context.router.push(ActivitiesRoute());
+                context.router.push(ActivitiesPageRoute());
               },
               icon: Icon(
                 UniconsLine.clock,

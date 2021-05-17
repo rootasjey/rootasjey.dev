@@ -95,9 +95,11 @@ class _HomeAppBarState extends State<HomeAppBar> {
         context.router.root.push(
           DashboardPageRoute(
             children: [
-              DeepNewPage(children: [
-                NewPostRoute(),
-              ]),
+              DashPostsRouter(
+                children: [
+                  NewPostPageRoute(),
+                ],
+              ),
             ],
           ),
         );
@@ -317,7 +319,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
         opacity: 0.6,
         child: IconButton(
           onPressed: () {
-            context.router.root.push(SearchRoute());
+            context.router.root.push(SearchPageRoute());
           },
           tooltip: "search".tr(),
           color: stateColors.foreground,
@@ -341,21 +343,21 @@ class _HomeAppBarState extends State<HomeAppBar> {
       itemBuilder: (context) => <PopupMenuEntry<PageRouteInfo>>[
         if (showSearch)
           PopupMenuItem(
-            value: SearchRoute(),
+            value: SearchPageRoute(),
             child: ListTile(
               leading: Icon(UniconsLine.search),
               title: Text("search".tr()),
             ),
           ),
         PopupMenuItem(
-          value: SigninRoute(),
+          value: SigninPageRoute(),
           child: ListTile(
             leading: Icon(UniconsLine.signout),
             title: Text("signin".tr()),
           ),
         ),
         PopupMenuItem(
-          value: SignupRoute(),
+          value: SignupPageRoute(),
           child: ListTile(
             leading: Icon(UniconsLine.user_plus),
             title: Text("signup".tr()),

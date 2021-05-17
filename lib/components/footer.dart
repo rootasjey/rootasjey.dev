@@ -143,21 +143,21 @@ class _FooterState extends State<Footer> {
           label: "about".tr(),
           onPressed: () {
             onBeforeNav();
-            context.router.push(AboutRoute());
+            context.router.push(AboutPageRoute());
           },
         ),
         textLink(
           label: "contact".tr(),
           onPressed: () {
             onBeforeNav();
-            context.router.push(ContactRoute());
+            context.router.push(ContactPageRoute());
           },
         ),
         textLink(
           label: "who_am_i".tr(),
           onPressed: () {
             onBeforeNav();
-            context.router.push(AboutMeRoute());
+            context.router.push(AboutMePageRoute());
           },
         ),
       ],
@@ -194,7 +194,7 @@ class _FooterState extends State<Footer> {
         curve: Curves.easeOut,
       );
     } else if (widget.autoNavToHome) {
-      context.router.push(HomeRoute());
+      context.router.push(HomePageRoute());
     }
 
     Snack.s(

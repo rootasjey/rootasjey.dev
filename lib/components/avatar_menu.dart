@@ -63,7 +63,15 @@ class AvatarMenu extends StatelessWidget {
     return [
       if (isSmall)
         PopupMenuItem(
-          value: DashboardPageRoute(children: [NewPostRoute()]),
+          value: DashboardPageRoute(
+            children: [
+              DashPostsRouter(
+                children: [
+                  NewPostPageRoute(),
+                ],
+              ),
+            ],
+          ),
           child: ListTile(
             leading: Icon(UniconsLine.plus),
             title: Text(
@@ -76,7 +84,7 @@ class AvatarMenu extends StatelessWidget {
         ),
       if (isSmall)
         PopupMenuItem(
-          value: SearchRoute(),
+          value: SearchPageRoute(),
           child: ListTile(
             leading: Icon(UniconsLine.search),
             title: Text(
@@ -89,9 +97,9 @@ class AvatarMenu extends StatelessWidget {
         ),
       PopupMenuItem(
           value: DashboardPageRoute(children: [
-            DeepNewPage(children: [
-              NewProjectRoute(),
-            ])
+            DashProjectsRouter(children: [
+              NewProjectPageRoute(),
+            ]),
           ]),
           child: ListTile(
             leading: Icon(UniconsLine.plus),
@@ -103,7 +111,13 @@ class AvatarMenu extends StatelessWidget {
             ),
           )),
       PopupMenuItem(
-        value: DashboardPageRoute(children: [MyPostsRoute()]),
+        value: DashboardPageRoute(children: [
+          DashPostsRouter(
+            children: [
+              MyPostsPageRoute(),
+            ],
+          )
+        ]),
         child: ListTile(
           leading: Icon(UniconsLine.newspaper),
           title: Text(
@@ -115,7 +129,13 @@ class AvatarMenu extends StatelessWidget {
         ),
       ),
       PopupMenuItem(
-        value: DashboardPageRoute(children: [MyProjectsRoute()]),
+        value: DashboardPageRoute(children: [
+          DashProjectsRouter(
+            children: [
+              MyProjectsPageRoute(),
+            ],
+          )
+        ]),
         child: ListTile(
           leading: Icon(UniconsLine.apps),
           title: Text(
@@ -127,7 +147,7 @@ class AvatarMenu extends StatelessWidget {
         ),
       ),
       PopupMenuItem(
-        value: DashboardPageRoute(children: [MyProfileRoute()]),
+        value: DashboardPageRoute(children: [DashProfileRouter()]),
         child: ListTile(
           leading: Icon(UniconsLine.user),
           title: Text(

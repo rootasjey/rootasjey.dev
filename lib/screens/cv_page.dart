@@ -174,7 +174,7 @@ class _CVPageState extends State<CVPage> {
           HomeAppBar(
             automaticallyImplyLeading: true,
             onTapIconHeader: () {
-              context.router.navigate(HomeRoute());
+              context.router.navigate(HomePageRoute());
             },
             trailing: [
               Observer(builder: (_) {

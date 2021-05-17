@@ -75,7 +75,7 @@ class _UndefinedPageState extends State<UndefinedPage> {
           padding: const EdgeInsets.only(top: 100.0),
           child: TextButton(
             onPressed: () {
-              context.router.navigate(HomeRoute());
+              context.router.navigate(HomePageRoute());
             },
             child: Padding(
               padding: const EdgeInsets.all(8.0),

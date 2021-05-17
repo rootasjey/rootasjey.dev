@@ -17,27 +17,25 @@ class DashboardPage extends StatefulWidget {
 class _DashboardPageState extends State<DashboardPage> {
   final _sideMenuItems = <SideMenuItem>[
     SideMenuItem(
-      destination: MyPostsRoute(),
+      index: 0,
       iconData: UniconsLine.newspaper,
       label: "posts_my".tr(),
       hoverColor: Colors.green,
     ),
     SideMenuItem(
-      destination: MyProjectsRoute(),
+      index: 1,
       iconData: UniconsLine.apps,
       label: "projects_my".tr(),
       hoverColor: Colors.yellow.shade800,
     ),
     SideMenuItem(
-      destination: MyProfileRoute(),
+      index: 2,
       iconData: UniconsLine.user,
       label: "profile_my".tr(),
       hoverColor: Colors.green,
     ),
     SideMenuItem(
-      destination: DashboardSettingsDeepRoute(
-        children: [DashboardSettingsRoute()],
-      ),
+      index: 3,
       iconData: UniconsLine.setting,
       label: 'Settings',
       hoverColor: Colors.blueGrey,
@@ -52,12 +50,18 @@ class _DashboardPageState extends State<DashboardPage> {
 
   @override
   Widget build(context) {
-    return AutoRouter(
-      builder: (context, child) {
+    return AutoTabsScaffold(
+      routes: const [
+        DashPostsRouter(),
+        DashProjectsRouter(),
+        DashProfileRouter(),
+        DashSettingsRouter(),
+      ],
+      builder: (context, child, animation) {
         return Material(
           child: Row(
             children: [
-              buildSidePanel(context),
+              buildSidePanel(context, context.tabsRouter),
               Expanded(child: child),
             ],
           ),
@@ -66,10 +70,10 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
-  Widget buildSidePanel(BuildContext context) {
-    final router = context.router;
+  Widget buildSidePanel(BuildContext context, TabsRouter tabsRouter) {
+    final double windowWidth = MediaQuery.of(context).size.width;
 
-    if (MediaQuery.of(context).size.width < Constants.maxMobileWidth) {
+    if (windowWidth < Constants.maxMobileWidth) {
       return Container();
     }
 
@@ -105,8 +109,7 @@ class _DashboardPageState extends State<DashboardPage> {
                     Color textColor = stateColors.foreground.withOpacity(0.6);
                     FontWeight fontWeight = FontWeight.w400;
 
-                    if (item.destination.fullPath ==
-                        router.current?.route?.path) {
+                    if (tabsRouter.activeIndex == item.index) {
                       color = item.hoverColor;
                       textColor = stateColors.foreground;
                       fontWeight = FontWeight.w600;
@@ -125,12 +128,7 @@ class _DashboardPageState extends State<DashboardPage> {
                         ),
                       ),
                       onTap: () {
-                        if (item.destination.routeName == 'AdminDeepRoute') {
-                          item.destination.show(context);
-                          return;
-                        }
-
-                        router.navigate(item.destination);
+                        tabsRouter.setActiveIndex(item.index);
                       },
                     );
                   }).toList(),

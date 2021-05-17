@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobx/mobx.dart';
 import 'package:rootasjey/components/footer.dart';
-import 'package:rootasjey/screens/home.dart';
+import 'package:rootasjey/screens/home_page.dart';
 import 'package:rootasjey/state/colors.dart';
 
 class AppIconHeader extends StatefulWidget {
@@ -50,19 +50,19 @@ class _AppIconHeaderState extends State<AppIconHeader> {
         clipBehavior: Clip.hardEdge,
         color: Colors.transparent,
         child: InkWell(
-          onTap: widget.onTap
-            ?? () => Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) {
-                  return Home();
-                },
-              ),
-            ),
+          onTap: widget.onTap ??
+              () => Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return HomePage();
+                      },
+                    ),
+                  ),
           onLongPress: () => showFooter(),
           onHover: (isHover) {
             isHover
-              ? setState(() => foreground = stateColors.primary)
-              : setState(() => foreground = stateColors.foreground);
+                ? setState(() => foreground = stateColors.primary)
+                : setState(() => foreground = stateColors.foreground);
           },
           child: Text(
             '>r.',
@@ -81,7 +81,9 @@ class _AppIconHeaderState extends State<AppIconHeader> {
       context: context,
       isScrollControlled: true,
       builder: (BuildContext context) {
-        return Footer(closeModalOnNav: true,);
+        return Footer(
+          closeModalOnNav: true,
+        );
       },
     );
   }
