@@ -2,11 +2,9 @@ import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:mobx/mobx.dart';
 import 'package:rootasjey/components/project_card.dart';
 import 'package:rootasjey/components/sliver_empty_view.dart';
 import 'package:rootasjey/router/app_router.gr.dart';
-import 'package:rootasjey/state/scroll.dart';
 import 'package:rootasjey/state/user.dart';
 import 'package:rootasjey/types/project.dart';
 import 'package:rootasjey/utils/app_logger.dart';
@@ -29,27 +27,10 @@ class _DraftProjectsPageState extends State<DraftProjectsPage> {
 
   DocumentSnapshot _lastDocumentSnapshot;
 
-  ReactionDisposer _scrollReaction;
-
   @override
   void initState() {
     super.initState();
     fetch();
-
-    _scrollReaction = reaction(
-      (_) => stateDraftProjectsScroll.hasReachedEnd,
-      (bool hasReachedEnd) {
-        if (hasReachedEnd && !_isLoading && _hasNext) {
-          fetchMore();
-        }
-      },
-    );
-  }
-
-  @override
-  void dispose() {
-    _scrollReaction.reaction.dispose();
-    super.dispose();
   }
 
   @override
