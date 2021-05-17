@@ -239,7 +239,7 @@ class _PublishedPostsPageState extends State<PublishedPostsPage> {
       final snapshot = await FirebaseFirestore.instance
           .collection('posts')
           .where('published', isEqualTo: true)
-          .where('author', isEqualTo: uid)
+          .where('author.id', isEqualTo: uid)
           .limit(_limit)
           .get();
 
@@ -284,7 +284,7 @@ class _PublishedPostsPageState extends State<PublishedPostsPage> {
       final snapshot = await FirebaseFirestore.instance
           .collection('posts')
           .where('published', isEqualTo: true)
-          .where('author', isEqualTo: uid)
+          .where('author.id', isEqualTo: uid)
           .limit(_limit)
           .startAfterDocument(_lastDocumentSnapshot)
           .get();
