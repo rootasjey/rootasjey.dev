@@ -14,7 +14,7 @@ class HomePresentation extends StatefulWidget {
 }
 
 class _HomePresentationState extends State<HomePresentation> {
-  final width = 600.0;
+  final width = 650.0;
   bool isNarrow = false;
 
   @override
@@ -180,8 +180,9 @@ class _HomePresentationState extends State<HomePresentation> {
         child: Text(
           "welcome_text".tr(),
           style: FontsUtils.mainStyle(
-            fontSize: isNarrow ? 40.0 : 50.0,
-            fontWeight: FontWeight.w500,
+            height: 1.0,
+            fontSize: isNarrow ? 40.0 : 60.0,
+            fontWeight: FontWeight.w700,
           ),
         ),
       ),
