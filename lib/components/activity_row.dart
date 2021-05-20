@@ -18,54 +18,110 @@ class ActivityRow extends StatefulWidget {
 }
 
 class _ActivityRowState extends State<ActivityRow> {
+  double elevation = 0.0;
+
   @override
   Widget build(BuildContext context) {
     final activity = widget.activity;
 
-    return TextButton.icon(
-      onPressed: () {
-        launch('https://github.com/${activity.repo.name}');
-      },
-      style: TextButton.styleFrom(
-        primary: stateColors.foreground,
+    return Card(
+      elevation: elevation,
+      color: stateColors.newLightBackground,
+      child: InkWell(
+        onTap: () => launch('https://github.com/${activity.repo.name}'),
+        onHover: (isHit) {
+          setState(() => elevation = isHit ? 2.0 : 0.0);
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              leftIcon(activity),
+              content(activity),
+            ],
+          ),
+        ),
       ),
-      icon: Icon(
-        getEventIcon(activity.type),
-        color: stateColors.primary,
-      ),
-      label: Row(
+    );
+  }
+
+  Widget content(Event activity) {
+    return Expanded(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            '${getEventType(activity.type, activity.payload)}: ',
-            style: FontsUtils.mainStyle(
-              fontWeight: FontWeight.w700,
-              fontSize: 14.0,
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(
-              right: 16.0,
-            ),
-            child: Opacity(
-              opacity: 0.8,
-              child: Text(
-                '${activity.repo.name}',
-                style: FontsUtils.mainStyle(
-                  fontWeight: FontWeight.w500,
-                  fontSize: 14.0,
-                ),
-              ),
-            ),
-          ),
-          Text(
-            Jiffy(activity.createdAt).fromNow(),
-            style: FontsUtils.mainStyle(
-              color: stateColors.primary,
-            ),
-          ),
+          type(activity),
+          repo(activity),
+          date(activity),
         ],
       ),
     );
+  }
+
+  Widget date(Event activity) {
+    return Text(
+      Jiffy(activity.createdAt).fromNow(),
+      style: FontsUtils.mainStyle(
+        color: stateColors.primary,
+        fontSize: 14.0,
+      ),
+    );
+  }
+
+  Widget leftIcon(Event activity) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 16.0),
+      child: Icon(
+        getEventIcon(activity.type),
+        size: 32.0,
+        color: stateColors.primary,
+      ),
+    );
+  }
+
+  Widget repo(Event activity) {
+    return Padding(
+      padding: const EdgeInsets.only(
+        bottom: 6.0,
+      ),
+      child: Opacity(
+        opacity: 0.6,
+        child: Text(
+          '${activity.repo.name}',
+          style: FontsUtils.mainStyle(
+            fontWeight: FontWeight.w500,
+            fontSize: 16.0,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget type(Event activity) {
+    return Text(
+      "${getEventType(activity.type, activity.payload)}".toUpperCase(),
+      style: FontsUtils.mainStyle(
+        fontWeight: FontWeight.w700,
+        fontSize: 16.0,
+      ),
+    );
+  }
+
+  IconData getEventIcon(String type) {
+    switch (type) {
+      case 'PushEvent':
+        return UniconsLine.upload;
+      case 'WatchEvent':
+        return UniconsLine.eye;
+      case 'PullRequestEvent':
+        return UniconsLine.arrows_merge;
+      case 'DeleteEvent':
+        return UniconsLine.trash;
+      default:
+        return UniconsLine.brackets_curly;
+    }
   }
 
   String getEventType(String type, Map<String, dynamic> payload) {
@@ -123,21 +179,6 @@ class _ActivityRowState extends State<ActivityRow> {
         return 'Synchronize $pr';
       default:
         return action;
-    }
-  }
-
-  IconData getEventIcon(String type) {
-    switch (type) {
-      case 'PushEvent':
-        return UniconsLine.upload;
-      case 'WatchEvent':
-        return UniconsLine.eye;
-      case 'PullRequestEvent':
-        return UniconsLine.arrows_merge;
-      case 'DeleteEvent':
-        return UniconsLine.trash;
-      default:
-        return UniconsLine.brackets_curly;
     }
   }
 }
