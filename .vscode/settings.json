@@ -1,5 +1,9 @@
 {
   "conventionalCommits.scopes": [
-    "routing"
+    "app",
+    "component",
+    "in18n",
+    "page",
+    "routing",
   ]
 }
