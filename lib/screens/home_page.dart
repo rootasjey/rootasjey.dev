@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rootasjey/components/landing_github.dart';
 import 'package:rootasjey/components/landing_hero.dart';
 import 'package:rootasjey/components/main_app_bar.dart';
 import 'package:rootasjey/components/recent_posts.dart';
@@ -32,6 +33,7 @@ class _HomePageState extends State<HomePage> {
           SliverList(
             delegate: SliverChildListDelegate.fixed([
               LandingHero(),
+              LandingGitHub(),
             ]),
           )
         ],
