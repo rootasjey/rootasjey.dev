@@ -18,6 +18,8 @@ class Constants {
   static const baseTwitterShareUrl = "https://twitter.com/intent/tweet"
       "?via=rootasjey&text=";
 
+  static const githubProfileUrl = "https://github.com/rootasjey";
+
   /// Twitter web intent API -> [hashtags] section.
   /// More info at https://twitter.com/intent/tweet.
   static const twitterShareHashtags = "&hashtags=";
