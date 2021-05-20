@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rootasjey/state/colors.dart';
 import 'package:supercharged/supercharged.dart';
 
 class BetterAvatar extends StatefulWidget {
@@ -26,7 +27,6 @@ class _BetterAvatarState extends State<BetterAvatar>
   AnimationController scaleAnimationController;
 
   double elevation;
-  double size;
 
   @override
   void initState() {
@@ -45,7 +45,6 @@ class _BetterAvatarState extends State<BetterAvatar>
     );
 
     setState(() {
-      size = widget.size;
       elevation = widget.elevation;
     });
   }
@@ -58,35 +57,50 @@ class _BetterAvatarState extends State<BetterAvatar>
 
   @override
   Widget build(BuildContext context) {
+    final size = widget.size;
+
     return ScaleTransition(
       scale: scaleAnimation,
       child: Material(
         elevation: elevation,
-        clipBehavior: Clip.hardEdge,
-        shape: CircleBorder(),
-        child: Container(
-          width: size,
-          height: size,
-          child: Ink.image(
-            image: widget.image,
-            width: size,
-            height: size,
-            fit: BoxFit.cover,
-            colorFilter: widget.colorFilter,
-            child: InkWell(
-              onTap: widget.onTap,
-              onHover: (isHover) {
-                if (isHover) {
-                  elevation = widget.elevation * 2;
-                  scaleAnimationController.forward();
-                  setState(() {});
-                  return;
-                }
+        color: stateColors.newLightBackground,
+        clipBehavior: Clip.antiAlias,
+        shape: CircleBorder(
+          side: BorderSide(
+            color: stateColors.primary,
+            width: 3.0,
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Material(
+            clipBehavior: Clip.antiAlias,
+            shape: CircleBorder(),
+            child: SizedBox(
+              width: size,
+              height: size,
+              child: Ink.image(
+                image: widget.image,
+                width: size,
+                height: size,
+                fit: BoxFit.cover,
+                colorFilter: widget.colorFilter,
+                child: InkWell(
+                  onTap: widget.onTap,
+                  onHover: (isHover) {
+                    if (isHover) {
+                      elevation = (widget.elevation + 1.0) * 2;
+                      scaleAnimationController.forward();
+                      setState(() {});
+                      return;
+                    }
 
-                elevation = widget.elevation;
-                scaleAnimationController.reverse();
-                setState(() {});
-              },
+                    elevation = widget.elevation;
+                    scaleAnimationController.reverse();
+                    setState(() {});
+                  },
+                ),
+              ),
             ),
           ),
         ),
