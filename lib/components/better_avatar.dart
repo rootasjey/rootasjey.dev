@@ -7,6 +7,8 @@ class BetterAvatar extends StatefulWidget {
   final ImageProvider<Object> image;
   final double size;
   final double elevation;
+
+  /// Not used if onTap is null.
   final ColorFilter colorFilter;
 
   BetterAvatar({
@@ -57,6 +59,14 @@ class _BetterAvatarState extends State<BetterAvatar>
 
   @override
   Widget build(BuildContext context) {
+    if (widget.onTap == null) {
+      return withoutLink();
+    }
+
+    return withLink();
+  }
+
+  Widget withLink() {
     final size = widget.size;
 
     return ScaleTransition(
@@ -101,6 +111,39 @@ class _BetterAvatarState extends State<BetterAvatar>
                   },
                 ),
               ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget withoutLink() {
+    final size = widget.size;
+
+    return Material(
+      elevation: elevation,
+      color: stateColors.newLightBackground,
+      clipBehavior: Clip.antiAlias,
+      shape: CircleBorder(
+        side: BorderSide(
+          color: stateColors.primary,
+          width: 3.0,
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Material(
+          clipBehavior: Clip.antiAlias,
+          shape: CircleBorder(),
+          child: SizedBox(
+            width: size,
+            height: size,
+            child: Image(
+              image: widget.image,
+              width: size,
+              height: size,
+              fit: BoxFit.cover,
             ),
           ),
         ),
