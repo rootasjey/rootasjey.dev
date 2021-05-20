@@ -66,6 +66,7 @@ class _ActivityRowState extends State<ActivityRow> {
       style: FontsUtils.mainStyle(
         color: stateColors.primary,
         fontSize: 14.0,
+        fontWeight: FontWeight.w600,
       ),
     );
   }
