@@ -38,6 +38,8 @@ abstract class StateColorsBase with Store {
   Color dark = Color(0xFF303030);
   Color light = Color(0xFFEEEEEE);
 
+  Color newLightBackground = Color(0xFfe3e6ec);
+
   @observable
   Color softBackground = Color(0xFFEEEEEE);
 

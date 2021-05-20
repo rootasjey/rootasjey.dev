@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:rootasjey/components/landing_hero.dart';
+import 'package:rootasjey/components/main_app_bar.dart';
 import 'package:rootasjey/components/recent_posts.dart';
 import 'package:rootasjey/components/footer.dart';
 import 'package:rootasjey/components/home_app_bar.dart';
@@ -18,6 +20,26 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    return newUI();
+  }
+
+  Widget newUI() {
+    return Scaffold(
+      body: CustomScrollView(
+        controller: scrollController,
+        slivers: [
+          MainAppBar(),
+          SliverList(
+            delegate: SliverChildListDelegate.fixed([
+              LandingHero(),
+            ]),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget oldUI() {
     return Scaffold(
       body: CustomScrollView(
         controller: scrollController,
