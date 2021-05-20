@@ -1,8 +1,10 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:github/github.dart';
 import 'package:rootasjey/components/activity_row.dart';
 import 'package:rootasjey/components/better_avatar.dart';
 import 'package:rootasjey/components/underlined_button.dart';
+import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/utils/app_logger.dart';
 import 'package:rootasjey/utils/constants.dart';
@@ -64,6 +66,7 @@ class _LandingGitHubState extends State<LandingGitHub> {
               );
             }).toList(),
           ),
+          viewMoreButton(),
         ],
       ),
     );
@@ -136,6 +139,42 @@ class _LandingGitHubState extends State<LandingGitHub> {
           color: stateColors.primary,
         ),
         textValue: "Follow me there",
+      ),
+    );
+  }
+
+  Widget viewMoreButton() {
+    return OutlinedButton(
+      onPressed: () {
+        context.router.push(ActivitiesPageRoute());
+      },
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            minWidth: 200.0,
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                "View more".toUpperCase(),
+                style: FontsUtils.mainStyle(
+                  fontSize: 14.0,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 8.0),
+                child: Icon(UniconsLine.arrow_right),
+              ),
+            ],
+          ),
+        ),
+      ),
+      style: OutlinedButton.styleFrom(
+        primary: Colors.pink,
       ),
     );
   }
