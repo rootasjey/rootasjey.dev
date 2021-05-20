@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:rootasjey/types/author.dart';
+import 'package:rootasjey/types/post_image_map.dart';
 import 'package:rootasjey/types/urls.dart';
 import 'package:rootasjey/utils/date_helper.dart';
 
@@ -17,11 +18,14 @@ class PostHeadline {
   final DateTime updatedAt;
   Urls urls;
 
+  final PostImageMap image;
+
   PostHeadline({
     this.author,
     this.coauthors = const [],
     this.createdAt,
     this.id,
+    this.image,
     this.summary,
     this.tags = const [],
     this.timeToRead,
@@ -54,6 +58,7 @@ class PostHeadline {
       coauthors: _coauthors,
       createdAt: DateHelper.fromFirestore(data['createdAt']),
       id: data['id'],
+      image: PostImageMap.fromJSON(data['image']),
       summary: data['summary'],
       tags: _tags,
       timeToRead: data['timeToRead'],
