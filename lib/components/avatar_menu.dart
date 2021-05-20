@@ -8,10 +8,12 @@ import 'package:unicons/unicons.dart';
 
 class AvatarMenu extends StatelessWidget {
   final bool isSmall;
+  final EdgeInsets padding;
 
   const AvatarMenu({
     Key key,
     this.isSmall = false,
+    this.padding = EdgeInsets.zero,
   }) : super(key: key);
 
   @override
@@ -30,18 +32,16 @@ class AvatarMenu extends StatelessWidget {
     }
 
     return Padding(
-      padding: const EdgeInsets.only(
-        left: 20.0,
-        right: 20.0,
-      ),
+      padding: padding,
       child: PopupMenuButton<PageRouteInfo>(
-        icon: CircleAvatar(
-          backgroundColor: stateColors.primary,
-          radius: 20.0,
-          child: Text(
-            initials,
-            style: TextStyle(
-              color: Colors.white,
+        icon: Material(
+          elevation: 4.0,
+          shape: CircleBorder(),
+          child: CircleAvatar(
+            backgroundColor: stateColors.newLightBackground,
+            radius: 20.0,
+            backgroundImage: NetworkImage(
+              stateUser.userFirestore.pp.url.edited,
             ),
           ),
         ),
