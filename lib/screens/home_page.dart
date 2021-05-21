@@ -4,6 +4,7 @@ import 'package:rootasjey/components/landing_hero.dart';
 import 'package:rootasjey/components/landing_inside.dart';
 import 'package:rootasjey/components/landing_posts.dart';
 import 'package:rootasjey/components/landing_quote.dart';
+import 'package:rootasjey/components/landing_work_us.dart';
 import 'package:rootasjey/components/main_app_bar.dart';
 import 'package:rootasjey/components/recent_posts.dart';
 import 'package:rootasjey/components/footer.dart';
@@ -44,6 +45,7 @@ class _HomePageState extends State<HomePage> {
                 LandingPosts(),
                 LandingQuote(),
                 LandingInside(),
+                LandingWorkUs(),
               ]),
             ),
           )
