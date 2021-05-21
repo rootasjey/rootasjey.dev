@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:rootasjey/components/landing_github.dart';
 import 'package:rootasjey/components/landing_hero.dart';
 import 'package:rootasjey/components/landing_posts.dart';
+import 'package:rootasjey/components/landing_quote.dart';
 import 'package:rootasjey/components/main_app_bar.dart';
 import 'package:rootasjey/components/recent_posts.dart';
 import 'package:rootasjey/components/footer.dart';
@@ -40,6 +41,7 @@ class _HomePageState extends State<HomePage> {
                 LandingHero(),
                 LandingGitHub(),
                 LandingPosts(),
+                LandingQuote(),
               ]),
             ),
           )
