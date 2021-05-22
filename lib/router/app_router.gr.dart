@@ -163,16 +163,22 @@ class AppRouter extends _i1.RootStackRouter {
         builder: (_) {
           return const _i1.EmptyRouterPage();
         }),
-    TosPageRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
+    TosPageRoute.name: (routeData) => _i1.CustomPage<dynamic>(
         routeData: routeData,
         builder: (_) {
           return _i19.TosPage();
-        }),
-    UndefinedPageRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
+        },
+        transitionsBuilder: _i1.TransitionsBuilders.fadeIn,
+        opaque: true,
+        barrierDismissible: false),
+    UndefinedPageRoute.name: (routeData) => _i1.CustomPage<dynamic>(
         routeData: routeData,
         builder: (_) {
           return _i20.UndefinedPage();
-        }),
+        },
+        transitionsBuilder: _i1.TransitionsBuilders.fadeIn,
+        opaque: true,
+        barrierDismissible: false),
     DashPostsRouter.name: (routeData) => _i1.MaterialPageX<dynamic>(
         routeData: routeData,
         builder: (_) {

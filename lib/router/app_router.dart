@@ -192,8 +192,16 @@ import 'package:rootasjey/screens/update_username_page.dart';
         // ),
       ],
     ),
-    MaterialRoute(path: '/tos', page: TosPage),
-    MaterialRoute(path: '*', page: UndefinedPage),
+    CustomRoute(
+      path: '/tos',
+      page: TosPage,
+      transitionsBuilder: TransitionsBuilders.fadeIn,
+    ),
+    CustomRoute(
+      path: '*',
+      page: UndefinedPage,
+      transitionsBuilder: TransitionsBuilders.fadeIn,
+    ),
   ],
 )
 class $AppRouter {}

@@ -209,21 +209,31 @@ class _FooterState extends State<Footer> {
 
   Widget textLink({
     VoidCallback onPressed,
+    String heroTag,
     @required String label,
   }) {
+    final Widget text = Text(
+      label,
+      style: FontsUtils.mainStyle(
+        fontSize: 16.0,
+        fontWeight: FontWeight.w400,
+      ),
+    );
+
+    final Widget textContainer = heroTag != null
+        ? Hero(
+            tag: label,
+            child: text,
+          )
+        : text;
+
     return TextButton(
       onPressed: onPressed,
       child: Opacity(
         opacity: 0.5,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: Text(
-            label,
-            style: FontsUtils.mainStyle(
-              fontSize: 16.0,
-              fontWeight: FontWeight.w400,
-            ),
-          ),
+          child: textContainer,
         ),
       ),
       style: TextButton.styleFrom(
@@ -235,6 +245,7 @@ class _FooterState extends State<Footer> {
   Widget tos() {
     return textLink(
       label: "tos".tr(),
+      heroTag: "tos_hero",
       onPressed: () {
         context.router.push(TosPageRoute());
       },

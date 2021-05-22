@@ -96,6 +96,7 @@ class _TosPageState extends State<TosPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     backButton(),
+                    pageTitle(),
                     termsBlock(),
                     cookiesBlock(),
                     analyticsBlock(),
@@ -147,22 +148,28 @@ class _TosPageState extends State<TosPage> {
     );
   }
 
+  Widget pageTitle() {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 24.0),
+      child: Hero(
+        tag: "tos_hero",
+        child: Text(
+          "tos".tr(),
+          style: TextStyle(
+            fontSize: 50.0,
+            color: stateColors.accent,
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget termsBlock() {
     return Padding(
       padding: const EdgeInsets.only(bottom: 60.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.only(bottom: 24.0),
-            child: Text(
-              "tos".tr(),
-              style: TextStyle(
-                fontSize: 50.0,
-                color: stateColors.accent,
-              ),
-            ),
-          ),
           textSuperBlock(text: "tos_1".tr()),
           textSuperBlock(text: "tos_2".tr()),
           textSuperBlock(text: "tos_3".tr()),
