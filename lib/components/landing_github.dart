@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:github/github.dart';
 import 'package:rootasjey/components/activity_row.dart';
+import 'package:rootasjey/components/arrow_divider.dart';
 import 'package:rootasjey/components/better_avatar.dart';
 import 'package:rootasjey/components/underlined_button.dart';
 import 'package:rootasjey/router/app_router.gr.dart';
@@ -31,17 +32,24 @@ class _LandingGitHubState extends State<LandingGitHub> {
     return Container(
       color: stateColors.newLightBackground,
       height: MediaQuery.of(context).size.height,
-      padding: const EdgeInsets.only(
-        top: 200.0,
-        left: 120.0,
-        right: 120.0,
-      ),
-      child: Wrap(
-        spacing: 0.0,
-        runSpacing: 20.0,
+      child: Column(
         children: [
-          leftSide(),
-          rightSide(),
+          ArrowDivider(),
+          Padding(
+            padding: const EdgeInsets.only(
+              top: 100.0,
+              left: 120.0,
+              right: 120.0,
+            ),
+            child: Wrap(
+              spacing: 0.0,
+              runSpacing: 20.0,
+              children: [
+                leftSide(),
+                rightSide(),
+              ],
+            ),
+          ),
         ],
       ),
     );

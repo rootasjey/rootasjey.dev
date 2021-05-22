@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:github/github.dart';
+import 'package:rootasjey/components/arrow_divider.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/utils/fonts.dart';
 import 'package:unicons/unicons.dart';
@@ -17,15 +18,23 @@ class _LandingWorkUsState extends State<LandingWorkUs> {
     return Container(
       color: stateColors.newLightBackground,
       height: MediaQuery.of(context).size.height,
-      padding: const EdgeInsets.only(
-        top: 200.0,
-        left: 120.0,
-        right: 120.0,
-      ),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          leftSide(),
-          rightSide(),
+          ArrowDivider(),
+          Padding(
+            padding: const EdgeInsets.only(
+              top: 100.0,
+              left: 120.0,
+              right: 120.0,
+            ),
+            child: Row(
+              children: [
+                leftSide(),
+                rightSide(),
+              ],
+            ),
+          ),
         ],
       ),
     );

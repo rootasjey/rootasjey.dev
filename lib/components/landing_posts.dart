@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:rootasjey/components/arrow_divider.dart';
 import 'package:rootasjey/components/new_pub_post_card.dart';
 import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/state/colors.dart';
@@ -27,18 +28,26 @@ class _LandingPostsState extends State<LandingPosts> {
   Widget build(BuildContext context) {
     return Container(
       color: stateColors.newLightBackground,
-      padding: const EdgeInsets.only(
-        top: 100.0,
-        left: 120.0,
-        right: 120.0,
-      ),
       child: Column(
-        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          title(),
-          postsWrap(),
-          viewMoreButton(),
+          ArrowDivider(),
+          Padding(
+            padding: const EdgeInsets.only(
+              top: 100.0,
+              left: 120.0,
+              right: 120.0,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                title(),
+                postsWrap(),
+                viewMoreButton(),
+              ],
+            ),
+          ),
         ],
       ),
     );

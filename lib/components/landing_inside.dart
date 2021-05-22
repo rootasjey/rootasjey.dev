@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:rootasjey/components/arrow_divider.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/utils/fonts.dart';
 import 'package:unicons/unicons.dart';
@@ -18,29 +19,37 @@ class _LandingInsideState extends State<LandingInside> {
     return Container(
       color: stateColors.newLightBackground,
       height: MediaQuery.of(context).size.height,
-      padding: const EdgeInsets.only(
-        top: 200.0,
-        left: 120.0,
-        right: 120.0,
-      ),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              title(),
-              descriptionOne(),
-              descriptionTwo(),
-              callToAction(),
-              disclaimer(),
-              buttonsRow(),
-            ],
-          ),
-          Expanded(
-            child: Icon(
-              UniconsLine.box,
-              size: 160.0,
+          ArrowDivider(),
+          Padding(
+            padding: const EdgeInsets.only(
+              top: 100.0,
+              left: 120.0,
+              right: 120.0,
+            ),
+            child: Row(
+              children: [
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    title(),
+                    descriptionOne(),
+                    descriptionTwo(),
+                    callToAction(),
+                    disclaimer(),
+                    buttonsRow(),
+                  ],
+                ),
+                Expanded(
+                  child: Icon(
+                    UniconsLine.box,
+                    size: 160.0,
+                  ),
+                ),
+              ],
             ),
           ),
         ],

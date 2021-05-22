@@ -87,23 +87,26 @@ class _LandingHeroState extends State<LandingHero> {
   }
 
   Widget description() {
-    return Opacity(
-      opacity: 0.8,
-      child: Text.rich(
-        TextSpan(
-          style: FontsUtils.mainStyle(),
-          text: "The advantage of working with Flutter "
-              "& Dart is the ability to develop apps for "
-              "Web, iOS, Android, Windows, macOS, Linux, "
-              "Backend, and integrated devices. ",
-          children: [
-            TextSpan(
-              text: "That gives a hell lot of options!",
-              style: FontsUtils.mainStyle(
-                color: Colors.pink,
+    return SizedBox(
+      width: 500.0,
+      child: Opacity(
+        opacity: 0.8,
+        child: Text.rich(
+          TextSpan(
+            style: FontsUtils.mainStyle(),
+            text: "The advantage of working with Flutter "
+                "& Dart is the ability to develop apps for "
+                "Web, iOS, Android, Windows, macOS, Linux, "
+                "Backend, and integrated devices. ",
+            children: [
+              TextSpan(
+                text: "That gives a hell lot of options!",
+                style: FontsUtils.mainStyle(
+                  color: Colors.pink,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rootasjey/components/arrow_divider.dart';
 import 'package:rootasjey/utils/fonts.dart';
 import 'package:unicons/unicons.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -12,24 +13,31 @@ class _LandingQuoteState extends State<LandingQuote> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height,
-      padding: const EdgeInsets.only(
-        top: 200.0,
-        left: 120.0,
-        right: 120.0,
-      ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            "If you don't like using a tool,"
-            " build a new one.",
-            style: FontsUtils.mainStyle(
-              fontSize: 90,
-              fontWeight: FontWeight.w700,
+          ArrowDivider(),
+          Padding(
+            padding: const EdgeInsets.only(
+              top: 100.0,
+              left: 120.0,
+              right: 120.0,
+            ),
+            child: Column(
+              children: [
+                Text(
+                  "If you don't like using a tool,"
+                  " build a new one.",
+                  style: FontsUtils.mainStyle(
+                    fontSize: 90,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                author(),
+                viewMoreButton(),
+              ],
             ),
           ),
-          author(),
-          viewMoreButton(),
         ],
       ),
     );
