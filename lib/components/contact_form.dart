@@ -10,6 +10,13 @@ import 'package:rootasjey/utils/snack.dart';
 import 'package:unicons/unicons.dart';
 
 class ContactForm extends StatefulWidget {
+  final bool autoFocus;
+
+  const ContactForm({
+    Key key,
+    this.autoFocus = false,
+  }) : super(key: key);
+
   @override
   _ContactFormState createState() => _ContactFormState();
 }
@@ -89,12 +96,13 @@ class _ContactFormState extends State<ContactForm> {
         bottom: 40.0,
       ),
       child: TextFormField(
-        autofocus: true,
+        autofocus: widget.autoFocus,
         decoration: InputDecoration(
           labelText: "message_your".tr(),
           alignLabelWithHint: true,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16.0),
+            borderSide: BorderSide(width: 2.0),
           ),
           errorText: getBodyErrorText(),
         ),
@@ -178,6 +186,7 @@ class _ContactFormState extends State<ContactForm> {
         decoration: InputDecoration(
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(24.0),
+            borderSide: BorderSide(width: 2.0),
           ),
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 20.0,
