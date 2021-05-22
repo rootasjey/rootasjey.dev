@@ -19,9 +19,13 @@ class _AnimatedAppIconState extends State<AnimatedAppIcon> {
     return Column(
       children: [
         Image.asset(
-          'assets/images/app_icon/animation.gif',
+          'assets/images/app_icon/128.png',
           height: widget.size,
           width: widget.size,
+        ),
+        SizedBox(
+          width: 200.0,
+          child: LinearProgressIndicator(),
         ),
         if (widget.textTitle != null)
           Padding(
