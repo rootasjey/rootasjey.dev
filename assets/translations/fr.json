@@ -394,6 +394,7 @@
   "scaling_description": "Votre site sera résilient à l'augmentation de traffic et ne deviendra pas inaccessible lors d'un pic d'utilisation (sauf exception)",
   "search": "Search",
   "search_hint_text": "Rechercher un article ou un projet...",
+  "scroll_to_top": "Retour en haut",
   "security_checks": "Vérifications de sécurité",
   "security_checks_description": "Déployé en HTTPS (chiffrement) et tests de vulnérabilités.",
   "send": "Envoyer",
