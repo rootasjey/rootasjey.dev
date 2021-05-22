@@ -45,7 +45,7 @@ class _MainAppBarState extends State<MainAppBar> {
                   mainAxisSize: MainAxisSize.max,
                   children: <Widget>[
                     AppIcon(),
-                    sectionsRow(),
+                    sectionsRow(isNarrow),
                     userSpace(isNarrow),
                   ],
                 ),
@@ -224,29 +224,7 @@ class _MainAppBarState extends State<MainAppBar> {
     );
   }
 
-  Widget sectionButton({
-    VoidCallback onPressed,
-    String text,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.only(right: 16.0),
-      child: Opacity(
-        opacity: 0.8,
-        child: TextButton(
-          onPressed: onPressed,
-          child: Text(
-            text,
-            style: FontsUtils.mainStyle(
-              color: stateColors.foreground,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget sectionsRow() {
+  Widget desktopSectionsRow() {
     return Wrap(
       spacing: 12.0,
       crossAxisAlignment: WrapCrossAlignment.center,
@@ -328,6 +306,26 @@ class _MainAppBarState extends State<MainAppBar> {
     );
   }
 
+  Widget mobileSectionsRow() {
+    return Wrap(
+      crossAxisAlignment: WrapCrossAlignment.center,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(right: 24.0),
+          child: sectionsPopupMenu(),
+        ),
+        IconButton(
+          tooltip: "search".tr(),
+          onPressed: () {
+            context.router.root.push(SearchPageRoute());
+          },
+          color: stateColors.foreground.withOpacity(0.8),
+          icon: Icon(UniconsLine.search),
+        ),
+      ],
+    );
+  }
+
   Widget searchButton() {
     return Padding(
       padding: const EdgeInsets.only(
@@ -346,6 +344,89 @@ class _MainAppBarState extends State<MainAppBar> {
         ),
       ),
     );
+  }
+
+  Widget sectionButton({
+    VoidCallback onPressed,
+    String text,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 16.0),
+      child: Opacity(
+        opacity: 0.8,
+        child: TextButton(
+          onPressed: onPressed,
+          child: Text(
+            text,
+            style: FontsUtils.mainStyle(
+              color: stateColors.foreground,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget sectionsPopupMenu() {
+    return PopupMenuButton(
+      child: Text(
+        "sections".toUpperCase(),
+        style: FontsUtils.mainStyle(
+          color: Colors.black,
+          fontSize: 18.0,
+        ),
+      ),
+      itemBuilder: (context) => <PopupMenuItem<PageRouteInfo>>[
+        PopupMenuItem(
+          value: PostsRouter(),
+          child: ListTile(
+            leading: Icon(UniconsLine.newspaper),
+            title: Text("posts".tr()),
+          ),
+        ),
+        PopupMenuItem(
+          value: ProjectsRouter(),
+          child: ListTile(
+            leading: Icon(UniconsLine.apps),
+            title: Text("projects".tr()),
+          ),
+        ),
+        PopupMenuItem(
+          value: SettingsPageRoute(),
+          child: ListTile(
+            leading: Icon(UniconsLine.setting),
+            title: Text("settings".tr()),
+          ),
+        ),
+      ],
+      onSelected: (PageRouteInfo pageRouteInfo) {
+        if (pageRouteInfo.path != SettingsPageRoute().path) {
+          context.router.root.push(pageRouteInfo);
+          return;
+        }
+
+        if (stateUser.isUserConnected) {
+          context.router.root.push(
+            DashboardPageRoute(
+              children: [DashSettingsRouter()],
+            ),
+          );
+
+          return;
+        }
+
+        context.router.root.push(pageRouteInfo);
+      },
+    );
+  }
+
+  Widget sectionsRow(bool isNarrow) {
+    if (isNarrow) {
+      return mobileSectionsRow();
+    }
+
+    return desktopSectionsRow();
   }
 
   Widget userSpace(bool isNarrow) {
