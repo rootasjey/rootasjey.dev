@@ -139,6 +139,10 @@ class _LandingPostsState extends State<LandingPosts> {
         posts.add(PostHeadline.fromJSON(data));
       });
 
+      if (!mounted) {
+        return;
+      }
+
       setState(() {});
     } catch (error) {
       appLogger.e(error);
