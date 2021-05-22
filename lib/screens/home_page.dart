@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/landing_contact.dart';
 import 'package:rootasjey/components/landing_github.dart';
@@ -23,33 +24,55 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final scrollController = ScrollController();
+  final _scrollController = ScrollController();
+  bool _isFabVisible = false;
 
   @override
   Widget build(BuildContext context) {
     return newUI();
   }
 
+  Widget floattingActionButton() {
+    if (!_isFabVisible) {
+      return Container();
+    }
+
+    return FloatingActionButton.extended(
+      onPressed: () {
+        _scrollController.animateTo(
+          0.0,
+          duration: 500.milliseconds,
+          curve: Curves.bounceIn,
+        );
+      },
+      label: Text("scroll_to_top".tr()),
+    );
+  }
+
   Widget newUI() {
     return Scaffold(
       backgroundColor: stateColors.newLightBackground,
-      body: CustomScrollView(
-        controller: scrollController,
-        slivers: [
-          MainAppBar(),
-          SliverList(
-            delegate: SliverChildListDelegate.fixed([
-              LandingHero(),
-              LandingGitHub(),
-              LandingPosts(),
-              LandingQuote(),
-              LandingInside(),
-              LandingWorkUs(),
-              LandingContact(),
-              Footer(pageScrollController: scrollController),
-            ]),
-          ),
-        ],
+      floatingActionButton: floattingActionButton(),
+      body: NotificationListener<ScrollNotification>(
+        onNotification: onNotification,
+        child: CustomScrollView(
+          controller: _scrollController,
+          slivers: [
+            MainAppBar(),
+            SliverList(
+              delegate: SliverChildListDelegate.fixed([
+                LandingHero(),
+                LandingGitHub(),
+                LandingPosts(),
+                LandingQuote(),
+                LandingInside(),
+                LandingWorkUs(),
+                LandingContact(),
+                Footer(pageScrollController: _scrollController),
+              ]),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -57,11 +80,11 @@ class _HomePageState extends State<HomePage> {
   Widget oldUI() {
     return Scaffold(
       body: CustomScrollView(
-        controller: scrollController,
+        controller: _scrollController,
         slivers: <Widget>[
           HomeAppBar(
             onTapIconHeader: () {
-              scrollController.animateTo(
+              _scrollController.animateTo(
                 0,
                 duration: 250.milliseconds,
                 curve: Curves.decelerate,
@@ -75,11 +98,22 @@ class _HomePageState extends State<HomePage> {
               RecentActivities(),
               RecentPosts(),
               Newsletter(),
-              Footer(pageScrollController: scrollController),
+              Footer(pageScrollController: _scrollController),
             ]),
           ),
         ],
       ),
     );
+  }
+
+  bool onNotification(ScrollNotification notification) {
+    // FAB visibility
+    if (notification.metrics.pixels < 50 && _isFabVisible) {
+      setState(() => _isFabVisible = false);
+    } else if (notification.metrics.pixels > 50 && !_isFabVisible) {
+      setState(() => _isFabVisible = true);
+    }
+
+    return false;
   }
 }
