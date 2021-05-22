@@ -252,19 +252,36 @@ class _MainAppBarState extends State<MainAppBar> {
       crossAxisAlignment: WrapCrossAlignment.center,
       children: [
         sectionButton(
-          onPressed: () {},
+          onPressed: () {
+            context.router.root.push(ProjectsRouter());
+          },
           text: "projects".tr().toUpperCase(),
         ),
         sectionButton(
-          onPressed: () {},
+          onPressed: () {
+            context.router.root.push(PostsRouter());
+          },
           text: "posts".tr().toUpperCase(),
         ),
         sectionButton(
-          onPressed: () {},
+          onPressed: () {
+            if (stateUser.isUserConnected) {
+              context.router.root.push(
+                DashboardPageRoute(
+                  children: [DashSettingsRouter()],
+                ),
+              );
+              return;
+            }
+
+            context.router.root.push(SettingsPageRoute());
+          },
           text: "settings".tr().toUpperCase(),
         ),
         IconButton(
-          onPressed: () {},
+          onPressed: () {
+            context.router.root.push(SearchPageRoute());
+          },
           color: stateColors.foreground.withOpacity(0.8),
           icon: Icon(UniconsLine.search),
         ),
