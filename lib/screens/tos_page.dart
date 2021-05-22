@@ -1,12 +1,14 @@
+import 'package:auto_route/auto_route.dart';
+import 'package:rootasjey/components/footer.dart';
+import 'package:rootasjey/components/main_app_bar.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/utils/constants.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:unicons/unicons.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:supercharged/supercharged.dart';
-
-import '../components/home_app_bar.dart';
 
 /// Terms Of Service.
 class TosPage extends StatefulWidget {
@@ -21,72 +23,20 @@ class _TosPageState extends State<TosPage> {
 
   @override
   Widget build(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
-
-    double horPadding = 80.0;
-
-    if (width < Constants.maxMobileWidth) {
-      horPadding = 20.0;
-    }
-
     return Scaffold(
-      floatingActionButton: isFabVisible
-          ? FloatingActionButton(
-              onPressed: () {
-                _pageScrollController.animateTo(
-                  0.0,
-                  duration: 500.milliseconds,
-                  curve: Curves.easeOut,
-                );
-              },
-              backgroundColor: stateColors.accent,
-              foregroundColor: Colors.white,
-              child: Icon(Icons.arrow_upward),
-            )
-          : null,
+      backgroundColor: stateColors.newLightBackground,
+      floatingActionButton: floatingActionButton(),
       body: NotificationListener<ScrollNotification>(
-        onNotification: (ScrollNotification scrollNotif) {
-          // FAB visibility
-          if (scrollNotif.metrics.pixels < 50 && isFabVisible) {
-            setState(() => isFabVisible = false);
-          } else if (scrollNotif.metrics.pixels > 50 && !isFabVisible) {
-            setState(() => isFabVisible = true);
-          }
-          return false;
-        },
+        onNotification: onNotification,
         child: CustomScrollView(
           controller: _pageScrollController,
           slivers: [
-            HomeAppBar(
-              automaticallyImplyLeading: true,
-              title: Text("privacy".tr()),
-            ),
-            SliverPadding(
-              padding: EdgeInsets.symmetric(
-                horizontal: horPadding,
-                vertical: 60.0,
-              ),
-              sliver: SliverList(
-                delegate: SliverChildListDelegate.fixed([
-                  Column(
-                    children: [
-                      SizedBox(
-                        width: 600.0,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            termsBlock(),
-                            cookiesBlock(),
-                            analyticsBlock(),
-                            advertisingBlock(),
-                            inAppPurchasesBlock(),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ]),
-              ),
+            MainAppBar(),
+            body(),
+            SliverList(
+              delegate: SliverChildListDelegate.fixed([
+                Footer(),
+              ]),
             ),
           ],
         ),
@@ -94,11 +44,14 @@ class _TosPageState extends State<TosPage> {
     );
   }
 
-  Widget cookiesBlock() {
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      titleBlock(text: 'cookies'.tr()),
-      textSuperBlock(text: 'cookies_content'.tr()),
-    ]);
+  Widget advertisingBlock() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        titleBlock(text: 'avertising'.tr()),
+        textSuperBlock(text: 'avertising_content'.tr()),
+      ],
+    );
   }
 
   Widget analyticsBlock() {
@@ -111,13 +64,76 @@ class _TosPageState extends State<TosPage> {
     );
   }
 
-  Widget advertisingBlock() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        titleBlock(text: 'avertising'.tr()),
-        textSuperBlock(text: 'avertising_content'.tr()),
-      ],
+  Widget backButton() {
+    return IconButton(
+      tooltip: "back".tr(),
+      onPressed: context.router.pop,
+      icon: Icon(UniconsLine.arrow_left),
+    );
+  }
+
+  Widget body() {
+    final width = MediaQuery.of(context).size.width;
+
+    double horPadding = 80.0;
+
+    if (width < Constants.maxMobileWidth) {
+      horPadding = 20.0;
+    }
+
+    return SliverPadding(
+      padding: EdgeInsets.symmetric(
+        horizontal: horPadding,
+        vertical: 60.0,
+      ),
+      sliver: SliverList(
+        delegate: SliverChildListDelegate.fixed([
+          Column(
+            children: [
+              SizedBox(
+                width: 600.0,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    backButton(),
+                    termsBlock(),
+                    cookiesBlock(),
+                    analyticsBlock(),
+                    advertisingBlock(),
+                    inAppPurchasesBlock(),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ]),
+      ),
+    );
+  }
+
+  Widget cookiesBlock() {
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      titleBlock(text: 'cookies'.tr()),
+      textSuperBlock(text: 'cookies_content'.tr()),
+    ]);
+  }
+
+  Widget floatingActionButton() {
+    if (!isFabVisible) {
+      return Container();
+    }
+
+    return FloatingActionButton(
+      onPressed: () {
+        _pageScrollController.animateTo(
+          0.0,
+          duration: 500.milliseconds,
+          curve: Curves.easeOut,
+        );
+      },
+      backgroundColor: stateColors.accent,
+      foregroundColor: Colors.white,
+      child: Icon(Icons.arrow_upward),
     );
   }
 
@@ -202,5 +218,16 @@ class _TosPageState extends State<TosPage> {
         ),
       ),
     );
+  }
+
+  bool onNotification(ScrollNotification notification) {
+    // FAB visibility
+    if (notification.metrics.pixels < 50 && isFabVisible) {
+      setState(() => isFabVisible = false);
+    } else if (notification.metrics.pixels > 50 && !isFabVisible) {
+      setState(() => isFabVisible = true);
+    }
+
+    return false;
   }
 }
