@@ -3,12 +3,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:rootasjey/components/app_icon.dart';
 import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/state/user.dart';
 import 'package:rootasjey/utils/fonts.dart';
 import 'package:rootasjey/utils/snack.dart';
+import 'package:unicons/unicons.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Footer extends StatefulWidget {
@@ -27,69 +28,133 @@ class Footer extends StatefulWidget {
 }
 
 class _FooterState extends State<Footer> {
-  final titleStyle = FontsUtils.mainStyle(
-    fontSize: 20.0,
-    fontWeight: FontWeight.w400,
-  );
-
-  final linkStyle = FontsUtils.mainStyle(
-    fontSize: 17.0,
-    fontWeight: FontWeight.w300,
-  );
-
-  final titlePadding = const EdgeInsets.only(bottom: 30.0);
-
   @override
   Widget build(BuildContext context) {
-    return Observer(builder: (context) {
-      final alignment = MediaQuery.of(context).size.width < 700.0
-          ? WrapAlignment.spaceBetween
-          : WrapAlignment.spaceAround;
+    final width = MediaQuery.of(context).size.width;
 
-      return Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 60.0,
-          vertical: 90.0,
-        ),
-        foregroundDecoration: BoxDecoration(
-          color: Color.fromRGBO(0, 0, 0, 0.1),
-        ),
-        child: Wrap(
-          runSpacing: 80.0,
-          alignment: alignment,
-          children: <Widget>[
-            languages(),
-            developers(),
-            resourcesLinks(),
-          ],
-        ),
-      );
-    });
+    final WrapAlignment alignment =
+        width < 700.0 ? WrapAlignment.spaceBetween : WrapAlignment.spaceAround;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 60.0,
+        vertical: 90.0,
+      ),
+      child: Wrap(
+        runSpacing: 80.0,
+        alignment: alignment,
+        children: <Widget>[
+          Divider(
+            height: 20.0,
+            thickness: 1.0,
+            color: Colors.black38,
+          ),
+          copyright(),
+          editorial(),
+          user(),
+          aboutUs(),
+        ],
+      ),
+    );
   }
 
-  Widget developers() {
+  Widget copyright() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Padding(
-          padding: titlePadding,
-          child: Opacity(
-            opacity: 0.5,
-            child: Text(
-              "developers".tr().toUpperCase(),
-              style: titleStyle,
-            ),
-          ),
-        ),
-        textLink(label: "documentation".tr()),
+      children: [
+        AppIcon(),
+        companyName(),
+        tos(),
+        privacyPolicy(),
+      ],
+    );
+  }
+
+  Widget aboutUs() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        titleSection(title: "about".tr().toUpperCase()),
         textLink(
-          label: "github".tr(),
-          onPressed: () async {
-            onBeforeNav();
-            await launch('https://github.com/rootasjey/rootasjey.dev');
+          label: "about_us".tr(),
+          onPressed: () {
+            context.router.push(AboutPageRoute());
+          },
+        ),
+        textLink(
+          label: "contact_us".tr(),
+          onPressed: () {
+            context.router.push(ContactPageRoute());
+          },
+        ),
+        textLink(
+          label: "GitHub",
+          onPressed: () {
+            launch('https://github.com/rootasjey/rootasjey.dev');
           },
         ),
       ],
+    );
+  }
+
+  Widget editorial() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        titleSection(title: "editorial".tr().toUpperCase()),
+        textLink(
+          label: "posts".tr(),
+          onPressed: () {
+            context.router.push(PostsPageRoute());
+          },
+        ),
+        textLink(
+          label: "projects".tr(),
+          onPressed: () {
+            context.router.push(ProjectsPageRoute());
+          },
+        ),
+        textLink(
+          label: "activity".tr(),
+          onPressed: () {
+            context.router.push(ActivitiesPageRoute());
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget companyName() {
+    return Padding(
+      padding: const EdgeInsets.only(
+        left: 8.0,
+        bottom: 8.0,
+      ),
+      child: Text.rich(TextSpan(
+        children: [
+          TextSpan(
+            text: "rootasjey ${DateTime.now().year}",
+            style: FontsUtils.mainStyle(
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          WidgetSpan(
+            child: Padding(
+              padding: const EdgeInsets.only(left: 4.0),
+              child: Opacity(
+                opacity: 0.6,
+                child: Icon(
+                  UniconsLine.copyright,
+                  size: 18.0,
+                ),
+              ),
+            ),
+          ),
+          TextSpan(
+            text: "\nby Jeremie Codes, SASU",
+          ),
+        ],
+      )),
     );
   }
 
@@ -97,27 +162,16 @@ class _FooterState extends State<Footer> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Padding(
-          padding: titlePadding,
-          child: Opacity(
-            opacity: 0.5,
-            child: Text(
-              "language".tr().toUpperCase(),
-              style: titleStyle,
-            ),
-          ),
-        ),
+        titleSection(title: "language".tr().toUpperCase()),
         textLink(
           label: 'English',
           onPressed: () async {
-            onBeforeNav();
             updateUserAccountLang();
           },
         ),
         textLink(
           label: 'Français',
           onPressed: () async {
-            onBeforeNav();
             updateUserAccountLang();
           },
         ),
@@ -125,42 +179,31 @@ class _FooterState extends State<Footer> {
     );
   }
 
-  Widget resourcesLinks() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Padding(
-          padding: titlePadding,
-          child: Opacity(
-            opacity: 0.5,
-            child: Text(
-              "resources".tr().toUpperCase(),
-              style: titleStyle,
-            ),
+  Widget privacyPolicy() {
+    return textLink(
+      label: "privacy".tr(),
+      onPressed: () {
+        context.router.push(TosPageRoute());
+      },
+    );
+  }
+
+  Widget titleSection({@required title}) {
+    return Padding(
+      padding: const EdgeInsets.only(
+        left: 8.0,
+        bottom: 8.0,
+      ),
+      child: Opacity(
+        opacity: 0.8,
+        child: Text(
+          title,
+          style: FontsUtils.mainStyle(
+            fontSize: 18.0,
+            fontWeight: FontWeight.w700,
           ),
         ),
-        textLink(
-          label: "about".tr(),
-          onPressed: () {
-            onBeforeNav();
-            context.router.push(AboutPageRoute());
-          },
-        ),
-        textLink(
-          label: "contact".tr(),
-          onPressed: () {
-            onBeforeNav();
-            context.router.push(ContactPageRoute());
-          },
-        ),
-        textLink(
-          label: "who_am_i".tr(),
-          onPressed: () {
-            onBeforeNav();
-            context.router.push(AboutMePageRoute());
-          },
-        ),
-      ],
+      ),
     );
   }
 
@@ -172,17 +215,66 @@ class _FooterState extends State<Footer> {
       onPressed: onPressed,
       child: Opacity(
         opacity: 0.5,
-        child: Text(
-          label,
-          style: FontsUtils.mainStyle(
-            fontSize: 16.0,
-            fontWeight: FontWeight.w400,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: Text(
+            label,
+            style: FontsUtils.mainStyle(
+              fontSize: 16.0,
+              fontWeight: FontWeight.w400,
+            ),
           ),
         ),
       ),
       style: TextButton.styleFrom(
         primary: stateColors.foreground,
       ),
+    );
+  }
+
+  Widget tos() {
+    return textLink(
+      label: "tos".tr(),
+      onPressed: () {
+        context.router.push(TosPageRoute());
+      },
+    );
+  }
+
+  Widget user() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        titleSection(title: "user".tr().toUpperCase()),
+        textLink(
+            label: "signin".tr(),
+            onPressed: () {
+              context.router.push(SigninPageRoute());
+            }),
+        textLink(
+          label: "signup".tr(),
+          onPressed: () {
+            context.router.push(SignupPageRoute());
+          },
+        ),
+        textLink(
+          label: "settings".tr(),
+          onPressed: () {
+            if (stateUser.isUserConnected) {
+              context.router.push(
+                DashboardPageRoute(
+                  children: [DashSettingsRoute()],
+                ),
+              );
+              return;
+            }
+
+            context.router.push(
+              SettingsPageRoute(),
+            );
+          },
+        ),
+      ],
     );
   }
 
@@ -201,12 +293,6 @@ class _FooterState extends State<Footer> {
       context: context,
       message: "language_update_success".tr(),
     );
-  }
-
-  void onBeforeNav() {
-    if (widget.closeModalOnNav) {
-      context.router.pop();
-    }
   }
 
   void updateUserAccountLang() async {

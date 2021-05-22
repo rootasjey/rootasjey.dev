@@ -37,20 +37,18 @@ class _HomePageState extends State<HomePage> {
         controller: scrollController,
         slivers: [
           MainAppBar(),
-          SliverPadding(
-            padding: const EdgeInsets.only(bottom: 200.0),
-            sliver: SliverList(
-              delegate: SliverChildListDelegate.fixed([
-                LandingHero(),
-                LandingGitHub(),
-                LandingPosts(),
-                LandingQuote(),
-                LandingInside(),
-                LandingWorkUs(),
-                LandingContact(),
-              ]),
-            ),
-          )
+          SliverList(
+            delegate: SliverChildListDelegate.fixed([
+              LandingHero(),
+              LandingGitHub(),
+              LandingPosts(),
+              LandingQuote(),
+              LandingInside(),
+              LandingWorkUs(),
+              LandingContact(),
+              Footer(pageScrollController: scrollController),
+            ]),
+          ),
         ],
       ),
     );
