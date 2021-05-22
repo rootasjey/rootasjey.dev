@@ -269,6 +269,7 @@
   "message_send_error": "Couldn't send your message. Please check your connection and try again.",
   "message_send_other": "Send another message?",
   "message_send_success": "Your message has successfully been sent",
+  "message_your": "Your message",
   "meet_person": "Meet in person",
   "meet_personne_description": "We can organize a meeting in a café",
   "meta_data_hide": "Hide meta data",

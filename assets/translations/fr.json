@@ -269,6 +269,7 @@
   "message_send_error": "Votre message n'a pas pu être envoyé. Veuillez réessayer.",
   "message_send_other": "Envoyer un autre message ?",
   "message_send_success": "Votre message a été envoyé avec succès",
+  "message_your": "Votre message",
   "meet_person": "Rencontrer en personne (chair et en os)",
   "meet_personne_description": "Nous pouvons improviser une discussion autour d'un thé ou d'un café",
   "meta_data_hide": "Cacher les meta-données",
