@@ -61,7 +61,7 @@ class AvatarMenu extends StatelessWidget {
   List<PopupMenuEntry<PageRouteInfo<dynamic>>> itemBuilder(
       BuildContext context) {
     return [
-      if (isSmall)
+      if (isSmall) ...[
         PopupMenuItem(
           value: DashboardPageRoute(
             children: [
@@ -82,20 +82,7 @@ class AvatarMenu extends StatelessWidget {
             ),
           ),
         ),
-      if (isSmall)
         PopupMenuItem(
-          value: SearchPageRoute(),
-          child: ListTile(
-            leading: Icon(UniconsLine.search),
-            title: Text(
-              "search".tr(),
-              style: TextStyle(
-                fontWeight: FontWeight.w400,
-              ),
-            ),
-          ),
-        ),
-      PopupMenuItem(
           value: DashboardPageRoute(children: [
             DashProjectsRouter(children: [
               NewProjectPageRoute(),
@@ -109,7 +96,21 @@ class AvatarMenu extends StatelessWidget {
                 fontWeight: FontWeight.w400,
               ),
             ),
-          )),
+          ),
+        ),
+        PopupMenuItem(
+          value: SearchPageRoute(),
+          child: ListTile(
+            leading: Icon(UniconsLine.search),
+            title: Text(
+              "search".tr(),
+              style: TextStyle(
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          ),
+        ),
+      ],
       PopupMenuItem(
         value: DashboardPageRoute(children: [
           DashPostsRouter(
