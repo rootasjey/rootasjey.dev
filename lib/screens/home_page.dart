@@ -8,13 +8,7 @@ import 'package:rootasjey/components/landing_posts.dart';
 import 'package:rootasjey/components/landing_quote.dart';
 import 'package:rootasjey/components/landing_work_us.dart';
 import 'package:rootasjey/components/main_app_bar.dart';
-import 'package:rootasjey/components/recent_posts.dart';
 import 'package:rootasjey/components/footer.dart';
-import 'package:rootasjey/components/home_app_bar.dart';
-import 'package:rootasjey/components/home_nav_bar.dart';
-import 'package:rootasjey/components/home_presentation.dart';
-import 'package:rootasjey/components/newsletter.dart';
-import 'package:rootasjey/components/recent_activities.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:supercharged/supercharged.dart';
 
@@ -73,35 +67,6 @@ class _HomePageState extends State<HomePage> {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget oldUI() {
-    return Scaffold(
-      body: CustomScrollView(
-        controller: _scrollController,
-        slivers: <Widget>[
-          HomeAppBar(
-            onTapIconHeader: () {
-              _scrollController.animateTo(
-                0,
-                duration: 250.milliseconds,
-                curve: Curves.decelerate,
-              );
-            },
-          ),
-          SliverList(
-            delegate: SliverChildListDelegate([
-              HomePresentation(),
-              HomeNavBar(),
-              RecentActivities(),
-              RecentPosts(),
-              Newsletter(),
-              Footer(pageScrollController: _scrollController),
-            ]),
-          ),
-        ],
       ),
     );
   }
