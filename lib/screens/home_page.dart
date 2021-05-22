@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rootasjey/components/landing_contact.dart';
 import 'package:rootasjey/components/landing_github.dart';
 import 'package:rootasjey/components/landing_hero.dart';
 import 'package:rootasjey/components/landing_inside.dart';
@@ -46,6 +47,7 @@ class _HomePageState extends State<HomePage> {
                 LandingQuote(),
                 LandingInside(),
                 LandingWorkUs(),
+                LandingContact(),
               ]),
             ),
           )
