@@ -73,9 +73,12 @@ class _ContactFormState extends State<ContactForm> {
       width: 460.0,
       child: Form(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             formBody(),
             Wrap(
+              runSpacing: 20.0,
+              spacing: 30.0,
               children: [
                 formEmail(),
                 validationButton(),
@@ -382,37 +385,32 @@ class _ContactFormState extends State<ContactForm> {
   }
 
   Widget validationButton() {
-    return Padding(
-      padding: const EdgeInsets.only(
-        left: 30.0,
-      ),
-      child: ElevatedButton(
-        onPressed: sendMessage,
-        style: ElevatedButton.styleFrom(
-          elevation: 0.0,
-          primary: Colors.pink.shade300,
-          textStyle: TextStyle(
-            color: Colors.white,
-          ),
-          padding: const EdgeInsets.symmetric(
-            horizontal: 50.0,
-            vertical: 20.0,
-          ),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(24.0),
-          ),
+    return ElevatedButton(
+      onPressed: sendMessage,
+      style: ElevatedButton.styleFrom(
+        elevation: 0.0,
+        primary: Colors.pink.shade300,
+        textStyle: TextStyle(
+          color: Colors.white,
         ),
-        child: ConstrainedBox(
-          constraints: BoxConstraints(
-              // minWidth: 120.0,
-              ),
-          child: Text(
-            "send".tr(),
-            textAlign: TextAlign.center,
-            style: FontsUtils.mainStyle(
-              fontSize: 18.0,
-              fontWeight: FontWeight.w600,
+        padding: const EdgeInsets.symmetric(
+          horizontal: 50.0,
+          vertical: 20.0,
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(24.0),
+        ),
+      ),
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+            // minWidth: 120.0,
             ),
+        child: Text(
+          "send".tr(),
+          textAlign: TextAlign.center,
+          style: FontsUtils.mainStyle(
+            fontSize: 18.0,
+            fontWeight: FontWeight.w600,
           ),
         ),
       ),
