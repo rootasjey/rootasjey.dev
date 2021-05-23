@@ -1,4 +1,5 @@
 import 'package:rootasjey/types/author.dart';
+import 'package:rootasjey/types/post_image_map.dart';
 import 'package:rootasjey/types/stats.dart';
 import 'package:rootasjey/types/urls.dart';
 import 'package:rootasjey/utils/date_helper.dart';
@@ -9,6 +10,7 @@ class Post {
   final DateTime createdAt;
   final bool featured;
   final String id;
+  final PostImageMap image;
   final String lang;
   final String path;
   final List<String> programmingLanguages;
@@ -23,11 +25,12 @@ class Post {
   final Urls urls;
 
   Post({
-    this.id = '',
     this.author,
     this.coauthors = const [],
     this.createdAt,
     this.featured = false,
+    this.id = '',
+    this.image,
     this.lang = 'en',
     this.path = '',
     this.programmingLanguages,
@@ -49,6 +52,8 @@ class Post {
       createdAt: DateTime.now(),
       featured: false,
       lang: 'en',
+      id: '',
+      image: PostImageMap.empty(),
       path: '',
       programmingLanguages: const [],
       published: false,
@@ -74,6 +79,7 @@ class Post {
       createdAt: DateHelper.fromFirestore(data['createdAt']),
       featured: data['featured'] ?? false,
       id: data['id'] ?? '',
+      image: PostImageMap.fromJSON(data['image']),
       lang: data['lang'] ?? 'en',
       path: data['path'] ?? '',
       programmingLanguages: parseProgrammingLangs(data),
