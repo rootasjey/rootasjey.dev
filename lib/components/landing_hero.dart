@@ -99,8 +99,8 @@ class _LandingHeroState extends State<LandingHero> {
             child: projectCard(
               textTitle: "fig.style",
               backgroundUrl: "https://firebasestorage.googleapis.com/v0/b/"
-                  "rootasjey.appspot.com/o/images%2Ftemp%2Ffig-xs.png?"
-                  "alt=media&token=16d9875e-d47a-4396-82aa-d74e1744f384",
+                  "rootasjey.appspot.com/o/images%2Ftemp%2Ffig.jpg"
+                  "?alt=media&token=817917e0-5074-4307-8903-119e680f0c7b",
             ),
           ),
           Positioned(
@@ -109,8 +109,9 @@ class _LandingHeroState extends State<LandingHero> {
             child: projectCard(
               textTitle: "artbooking",
               height: 300.0,
-              backgroundUrl:
-                  "https://firebasestorage.googleapis.com/v0/b/rootasjey.appspot.com/o/images%2Ftemp%2Fartbooking-xs.png?alt=media&token=5f52d86e-7b22-448c-b9c6-c535671eee64",
+              backgroundUrl: "https://firebasestorage.googleapis.com/v0/b/"
+                  "rootasjey.appspot.com/o/images%2Ftemp%2Fartbooking-xs."
+                  "?alt=media&token=5f52d86e-7b22-448c-b9c6-c535671eee64",
             ),
           ),
           Positioned(
@@ -120,8 +121,8 @@ class _LandingHeroState extends State<LandingHero> {
               textTitle: "feels",
               height: 300.0,
               backgroundUrl: "https://firebasestorage.googleapis.com/v0/b/"
-                  "rootasjey.appspot.com/o/images%2Ftemp%2Fweather-xs.png?"
-                  "alt=media&token=378cff01-b8a3-499e-af1a-6fd8530597af",
+                  "rootasjey.appspot.com/o/images%2Ftemp%2Fweather.jpg"
+                  "?alt=media&token=c2303046-c105-498b-a664-bc1c9d8dcdf8",
             ),
           ),
           Positioned(
@@ -166,13 +167,14 @@ class _LandingHeroState extends State<LandingHero> {
             projectCard(
               textTitle: "fig.style",
               backgroundUrl: "https://firebasestorage.googleapis.com/v0/b/"
-                  "rootasjey.appspot.com/o/images%2Ftemp%2Ffig-xs.png?"
-                  "alt=media&token=16d9875e-d47a-4396-82aa-d74e1744f384",
+                  "rootasjey.appspot.com/o/images%2Ftemp%2Ffig.jpg"
+                  "?alt=media&token=817917e0-5074-4307-8903-119e680f0c7b",
             ),
             projectCard(
               textTitle: "artbooking",
-              backgroundUrl:
-                  "https://firebasestorage.googleapis.com/v0/b/rootasjey.appspot.com/o/images%2Ftemp%2Fartbooking-xs.png?alt=media&token=5f52d86e-7b22-448c-b9c6-c535671eee64",
+              backgroundUrl: "https://firebasestorage.googleapis.com/v0/b/"
+                  "rootasjey.appspot.com/o/images%2Ftemp%2Fartbooking-xs."
+                  "?alt=media&token=5f52d86e-7b22-448c-b9c6-c535671eee64",
             ),
             projectCard(
               textTitle: "conway",
