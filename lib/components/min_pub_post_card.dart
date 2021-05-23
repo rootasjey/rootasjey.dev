@@ -3,17 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/state/colors.dart';
-import 'package:rootasjey/types/post_headline.dart';
+import 'package:rootasjey/types/post.dart';
 import 'package:rootasjey/utils/cloud.dart';
 import 'package:unicons/unicons.dart';
 
 /// Minimal published post card.
 class MinPubPostCard extends StatefulWidget {
   @required
-  final PostHeadline postHeadline;
+  final Post post;
 
   MinPubPostCard({
-    @required this.postHeadline,
+    @required this.post,
   });
 
   @override
@@ -72,7 +72,7 @@ class _MinPubPostCardState extends State<MinPubPostCard> {
   }
 
   Widget texts() {
-    final postHeadline = widget.postHeadline;
+    final postHeadline = widget.post;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -135,7 +135,7 @@ class _MinPubPostCardState extends State<MinPubPostCard> {
       PostsRouter(
         children: [
           PostPageRoute(
-            postId: widget.postHeadline.id,
+            postId: widget.post.id,
           ),
         ],
       ),
@@ -145,7 +145,7 @@ class _MinPubPostCardState extends State<MinPubPostCard> {
   void fetchAuthorName() async {
     try {
       final resp = await Cloud.fun('posts-fetchAuthorName')
-          .call({'authorId': widget.postHeadline.author.id});
+          .call({'authorId': widget.post.author.id});
 
       // ?NOTE: Prevent setState if not mounted.
       // This is due to each card having its own fetch & state,

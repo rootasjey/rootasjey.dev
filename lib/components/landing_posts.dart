@@ -2,11 +2,11 @@ import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/arrow_divider.dart';
+import 'package:rootasjey/components/better_post_card.dart';
 import 'package:rootasjey/components/min_pub_post_card.dart';
-import 'package:rootasjey/components/headline_post_card.dart';
 import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/state/colors.dart';
-import 'package:rootasjey/types/post_headline.dart';
+import 'package:rootasjey/types/post.dart';
 import 'package:rootasjey/utils/app_logger.dart';
 import 'package:rootasjey/utils/constants.dart';
 import 'package:rootasjey/utils/fonts.dart';
@@ -19,7 +19,7 @@ class LandingPosts extends StatefulWidget {
 
 class _LandingPostsState extends State<LandingPosts> {
   bool _isSmallView = false;
-  List<PostHeadline> _posts = [];
+  List<Post> _posts = [];
 
   @override
   void initState() {
@@ -81,8 +81,8 @@ class _LandingPostsState extends State<LandingPosts> {
         spacing: 20.0,
         runSpacing: 20.0,
         children: _posts.map((post) {
-          return HeadlinePostCard(
-            postHeadline: post,
+          return BetterPostCard(
+            post: post,
           );
         }).toList(),
       ),
@@ -98,7 +98,7 @@ class _LandingPostsState extends State<LandingPosts> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              MinPubPostCard(postHeadline: post),
+              MinPubPostCard(post: post),
               Divider(height: 40.0),
             ],
           );
@@ -184,7 +184,7 @@ class _LandingPostsState extends State<LandingPosts> {
         final data = doc.data();
         data['id'] = doc.id;
 
-        _posts.add(PostHeadline.fromJSON(data));
+        _posts.add(Post.fromJSON(data));
       });
 
       if (!mounted) {
