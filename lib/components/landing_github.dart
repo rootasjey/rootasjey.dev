@@ -83,6 +83,29 @@ class _LandingGitHubState extends State<LandingGitHub> {
     );
   }
 
+  Widget description() {
+    return Opacity(
+      opacity: 0.8,
+      child: Text.rich(
+        TextSpan(
+          style: FontsUtils.mainStyle(),
+          text: "This is my public activity "
+              "about programming. I mainly use GitHub "
+              "for my projects. Most of my projects are under ",
+          children: [
+            TextSpan(
+              text: "Mozilla Public License 2.0",
+              style: FontsUtils.mainStyle(
+                color: Colors.pink,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget leftSide() {
     return Container(
       width: 400.0,
@@ -108,6 +131,29 @@ class _LandingGitHubState extends State<LandingGitHub> {
     );
   }
 
+  Widget ppGitHubButton() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 30.0),
+      child: UnderlinedButton(
+        onTap: () {
+          launch(Constants.githubProfileUrl);
+        },
+        leading: BetterAvatar(
+          size: 30.0,
+          elevation: 0.0,
+          image: AssetImage(
+            'assets/images/jeje.jpg',
+          ),
+        ),
+        trailing: Icon(
+          UniconsLine.arrow_right,
+          color: stateColors.primary,
+        ),
+        textValue: "Follow me there",
+      ),
+    );
+  }
+
   Widget rightSide() {
     return Container(
       width: 500.0,
@@ -129,52 +175,6 @@ class _LandingGitHubState extends State<LandingGitHub> {
         fontSize: _isSmallView ? 60.0 : 100.0,
         height: 1.2,
         fontWeight: FontWeight.w800,
-      ),
-    );
-  }
-
-  Widget description() {
-    return Opacity(
-      opacity: 0.8,
-      child: Text.rich(
-        TextSpan(
-          style: FontsUtils.mainStyle(),
-          text: "This is my public activity "
-              "about programming. I mainly use GitHub "
-              "for my projects. Most of my projects are under ",
-          children: [
-            TextSpan(
-              text: "Mozilla Public License 2.0",
-              style: FontsUtils.mainStyle(
-                color: Colors.pink,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget ppGitHubButton() {
-    return Padding(
-      padding: const EdgeInsets.only(top: 30.0),
-      child: UnderlinedButton(
-        onTap: () {
-          launch(Constants.githubProfileUrl);
-        },
-        leading: BetterAvatar(
-          size: 30.0,
-          elevation: 0.0,
-          image: AssetImage(
-            'assets/images/jeje.jpg',
-          ),
-        ),
-        trailing: Icon(
-          UniconsLine.arrow_right,
-          color: stateColors.primary,
-        ),
-        textValue: "Follow me there",
       ),
     );
   }
