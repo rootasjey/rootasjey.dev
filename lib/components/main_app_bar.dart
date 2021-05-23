@@ -5,6 +5,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:rootasjey/components/app_icon.dart';
 import 'package:rootasjey/components/avatar_menu.dart';
 import 'package:rootasjey/components/lang_popup_menu_button.dart';
+import 'package:rootasjey/components/underlined_button.dart';
 import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/state/user.dart';
@@ -230,15 +231,11 @@ class _MainAppBarState extends State<MainAppBar> {
       crossAxisAlignment: WrapCrossAlignment.center,
       children: [
         sectionButton(
-          onPressed: () {
-            context.router.root.push(ProjectsRouter());
-          },
+          onPressed: () => context.router.root.push(ProjectsRouter()),
           text: "projects".tr().toUpperCase(),
         ),
         sectionButton(
-          onPressed: () {
-            context.router.root.push(PostsRouter());
-          },
+          onPressed: () => context.router.root.push(PostsRouter()),
           text: "posts".tr().toUpperCase(),
         ),
         sectionButton(
@@ -335,10 +332,10 @@ class _MainAppBarState extends State<MainAppBar> {
       child: Opacity(
         opacity: 0.6,
         child: IconButton(
+          tooltip: "search".tr(),
           onPressed: () {
             context.router.root.push(SearchPageRoute());
           },
-          tooltip: "search".tr(),
           color: stateColors.foreground,
           icon: Icon(UniconsLine.search),
         ),
@@ -351,11 +348,11 @@ class _MainAppBarState extends State<MainAppBar> {
     String text,
   }) {
     return Padding(
-      padding: const EdgeInsets.only(right: 16.0),
-      child: Opacity(
-        opacity: 0.8,
-        child: TextButton(
-          onPressed: onPressed,
+      padding: const EdgeInsets.only(right: 8.0),
+      child: UnderlinedButton(
+        onTap: onPressed,
+        child: Opacity(
+          opacity: 0.8,
           child: Text(
             text,
             style: FontsUtils.mainStyle(
