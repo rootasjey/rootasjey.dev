@@ -224,6 +224,10 @@ class _LandingGitHubState extends State<LandingGitHub> {
           .take(3)
           .toList()
           .then((activities) {
+        if (!mounted) {
+          return;
+        }
+
         setState(() {
           _userActivities = activities;
         });
