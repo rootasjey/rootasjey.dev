@@ -19,6 +19,7 @@ class LandingGitHub extends StatefulWidget {
 }
 
 class _LandingGitHubState extends State<LandingGitHub> {
+  bool _isSmallView = false;
   List<Event> userActivities = [];
 
   @override
@@ -29,28 +30,55 @@ class _LandingGitHubState extends State<LandingGitHub> {
 
   @override
   Widget build(BuildContext context) {
+    _isSmallView = false;
+
+    final viewWidth = MediaQuery.of(context).size.width;
+    double minHeight = MediaQuery.of(context).size.height;
+
+    List<Widget> wrapChildren = [
+      leftSide(),
+      rightSide(),
+    ];
+
+    EdgeInsets padding = const EdgeInsets.only(
+      top: 100.0,
+      left: 120.0,
+      right: 120.0,
+    );
+
+    if (viewWidth < Constants.maxMobileWidth) {
+      _isSmallView = true;
+      minHeight = 0.0;
+
+      padding = const EdgeInsets.only(
+        top: 80.0,
+        left: 20.0,
+        right: 20.0,
+      );
+
+      wrapChildren = [
+        rightSide(),
+        leftSide(),
+      ];
+    }
+
     return Container(
       color: stateColors.newLightBackground,
-      height: MediaQuery.of(context).size.height,
-      child: Column(
-        children: [
-          ArrowDivider(),
-          Padding(
-            padding: const EdgeInsets.only(
-              top: 100.0,
-              left: 120.0,
-              right: 120.0,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(minHeight: minHeight),
+        child: Column(
+          children: [
+            ArrowDivider(),
+            Padding(
+              padding: padding,
+              child: Wrap(
+                spacing: 0.0,
+                runSpacing: 20.0,
+                children: wrapChildren,
+              ),
             ),
-            child: Wrap(
-              spacing: 0.0,
-              runSpacing: 20.0,
-              children: [
-                leftSide(),
-                rightSide(),
-              ],
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -98,7 +126,7 @@ class _LandingGitHubState extends State<LandingGitHub> {
     return Text(
       "GitHub Activity",
       style: FontsUtils.mainStyle(
-        fontSize: 100.0,
+        fontSize: _isSmallView ? 60.0 : 100.0,
         height: 1.2,
         fontWeight: FontWeight.w800,
       ),
