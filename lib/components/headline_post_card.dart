@@ -6,11 +6,10 @@ import 'package:rootasjey/types/post_headline.dart';
 import 'package:rootasjey/utils/cloud.dart';
 
 class HeadlinePostCard extends StatefulWidget {
-  @required
   final PostHeadline postHeadline;
 
   HeadlinePostCard({
-    this.postHeadline,
+    @required this.postHeadline,
   });
 
   @override

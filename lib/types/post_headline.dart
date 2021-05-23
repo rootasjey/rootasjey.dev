@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:rootasjey/types/author.dart';
 import 'package:rootasjey/types/post_image_map.dart';
 import 'package:rootasjey/types/urls.dart';
@@ -8,17 +7,14 @@ class PostHeadline {
   final Author author;
   final List<String> coauthors;
   final DateTime createdAt;
-  @required
   final String id;
+  final PostImageMap image;
   final String summary;
   final List<String> tags;
   final String timeToRead;
-  @required
   final String title;
   final DateTime updatedAt;
   Urls urls;
-
-  final PostImageMap image;
 
   PostHeadline({
     this.author,
