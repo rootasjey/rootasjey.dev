@@ -68,7 +68,7 @@ class _LandingGitHubState extends State<LandingGitHub> {
         constraints: BoxConstraints(minHeight: minHeight),
         child: Column(
           children: [
-            ArrowDivider(),
+            ArrowDivider(padding: EdgeInsets.zero),
             Padding(
               padding: padding,
               child: Wrap(

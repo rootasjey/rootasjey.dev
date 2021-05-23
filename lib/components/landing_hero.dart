@@ -23,7 +23,6 @@ class _LandingHeroState extends State<LandingHero> {
     _isSmallView = false;
 
     final viewWidth = MediaQuery.of(context).size.width;
-    double minHeight = MediaQuery.of(context).size.height;
 
     EdgeInsets padding = const EdgeInsets.only(
       top: 200.0,
@@ -33,7 +32,6 @@ class _LandingHeroState extends State<LandingHero> {
 
     if (viewWidth < Constants.maxMobileWidth) {
       _isSmallView = true;
-      minHeight = 0.0;
 
       padding = const EdgeInsets.only(
         top: 80.0,
@@ -45,18 +43,13 @@ class _LandingHeroState extends State<LandingHero> {
     return Container(
       color: stateColors.newLightBackground,
       padding: padding,
-      child: ConstrainedBox(
-        constraints: BoxConstraints(
-          minHeight: minHeight,
-        ),
-        child: Wrap(
-          spacing: 40.0,
-          runSpacing: 20.0,
-          children: [
-            leftSide(),
-            rightSide(),
-          ],
-        ),
+      child: Wrap(
+        spacing: 40.0,
+        runSpacing: 20.0,
+        children: [
+          leftSide(),
+          rightSide(),
+        ],
       ),
     );
   }
