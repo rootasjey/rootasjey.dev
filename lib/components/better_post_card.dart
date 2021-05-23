@@ -82,62 +82,61 @@ class _BetterPostCardState extends State<BetterPostCard> {
   Widget texts() {
     final post = widget.post;
 
-    return Padding(
-      padding: const EdgeInsets.only(left: 16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(
-              top: 16.0,
-              left: 10.0,
-            ),
-            child: Opacity(
-              opacity: 0.6,
-              child: Text(
-                '$_authorName - ${Jiffy(post.createdAt).fromNow()}',
-                style: FontsUtils.mainStyle(
-                  fontSize: 15.0,
-                  fontWeight: FontWeight.w300,
-                ),
-              ),
-            ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(
+            top: 16.0,
+            left: 10.0,
           ),
-          Padding(
-            padding: const EdgeInsets.only(
-              top: 10.0,
-              left: 8.0,
-            ),
+          child: Opacity(
+            opacity: 0.6,
             child: Text(
-              post.title,
+              '$_authorName - ${Jiffy(post.createdAt).fromNow()}',
               style: FontsUtils.mainStyle(
-                fontSize: 26.0,
-                fontWeight: FontWeight.w600,
+                fontSize: 15.0,
+                fontWeight: FontWeight.w300,
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.only(
-              top: 8.0,
-            ),
-            child: Wrap(
-              spacing: 10.0,
-              runSpacing: 10.0,
-              children: post.tags.map((tag) {
-                return Opacity(
-                  opacity: 0.6,
-                  child: Chip(
-                    elevation: 2.0,
-                    label: Text(
-                      tag,
-                    ),
-                  ),
-                );
-              }).toList(),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(
+            top: 10.0,
+            left: 8.0,
+          ),
+          child: Text(
+            post.title,
+            overflow: TextOverflow.ellipsis,
+            maxLines: 3,
+            style: FontsUtils.mainStyle(
+              fontSize: 26.0,
+              fontWeight: FontWeight.w600,
             ),
           ),
-        ],
-      ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(
+            top: 8.0,
+          ),
+          child: Wrap(
+            spacing: 10.0,
+            runSpacing: 10.0,
+            children: post.tags.map((tag) {
+              return Opacity(
+                opacity: 0.6,
+                child: Chip(
+                  elevation: 2.0,
+                  label: Text(
+                    tag,
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+        ),
+      ],
     );
   }
 
