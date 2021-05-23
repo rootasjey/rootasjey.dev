@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/better_post_card.dart';
+import 'package:rootasjey/components/footer.dart';
 import 'package:rootasjey/components/main_app_bar.dart';
 import 'package:rootasjey/components/min_pub_post_card.dart';
 import 'package:rootasjey/components/page_title.dart';
@@ -50,10 +51,15 @@ class _PostsPageState extends State<PostsPage> {
               padding: EdgeInsets.only(
                 left: _isSmallView ? 20.0 : 80.0,
                 right: 20.0,
-                bottom: 400.0,
+                bottom: 100.0,
               ),
               sliver: body(),
             ),
+            SliverList(
+              delegate: SliverChildListDelegate.fixed([
+                Footer(),
+              ]),
+            )
           ],
         ),
       ),
