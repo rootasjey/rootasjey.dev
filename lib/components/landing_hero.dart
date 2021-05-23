@@ -157,29 +157,31 @@ class _LandingHeroState extends State<LandingHero> {
   Widget mobileViewProjects() {
     return Padding(
       padding: const EdgeInsets.only(top: 40.0),
-      child: Wrap(
-        spacing: 20.0,
-        runSpacing: 20.0,
-        alignment: WrapAlignment.start,
-        children: [
-          projectCard(
-            textTitle: "fig.style",
-            backgroundUrl: "https://firebasestorage.googleapis.com/v0/b/"
-                "rootasjey.appspot.com/o/images%2Ftemp%2Ffig-xs.png?"
-                "alt=media&token=16d9875e-d47a-4396-82aa-d74e1744f384",
-          ),
-          projectCard(
-            textTitle: "artbooking",
-            backgroundUrl:
-                "https://firebasestorage.googleapis.com/v0/b/rootasjey.appspot.com/o/images%2Ftemp%2Fartbooking-xs.png?alt=media&token=5f52d86e-7b22-448c-b9c6-c535671eee64",
-          ),
-          projectCard(
-            textTitle: "conway",
-            backgroundUrl: "https://firebasestorage.googleapis.com/v0/b/"
-                "rootasjey.appspot.com/o/images%2Ftemp%2Fconway.png?"
-                "alt=media&token=3cb34b33-8926-4c77-bdbe-ed3c56859306",
-          ),
-        ],
+      child: Center(
+        child: Wrap(
+          spacing: 20.0,
+          runSpacing: 20.0,
+          alignment: WrapAlignment.start,
+          children: [
+            projectCard(
+              textTitle: "fig.style",
+              backgroundUrl: "https://firebasestorage.googleapis.com/v0/b/"
+                  "rootasjey.appspot.com/o/images%2Ftemp%2Ffig-xs.png?"
+                  "alt=media&token=16d9875e-d47a-4396-82aa-d74e1744f384",
+            ),
+            projectCard(
+              textTitle: "artbooking",
+              backgroundUrl:
+                  "https://firebasestorage.googleapis.com/v0/b/rootasjey.appspot.com/o/images%2Ftemp%2Fartbooking-xs.png?alt=media&token=5f52d86e-7b22-448c-b9c6-c535671eee64",
+            ),
+            projectCard(
+              textTitle: "conway",
+              backgroundUrl: "https://firebasestorage.googleapis.com/v0/b/"
+                  "rootasjey.appspot.com/o/images%2Ftemp%2Fconway.png?"
+                  "alt=media&token=3cb34b33-8926-4c77-bdbe-ed3c56859306",
+            ),
+          ],
+        ),
       ),
     );
   }
