@@ -1,7 +1,9 @@
 {
   "conventionalCommits.scopes": [
     "app",
+    "class",
     "component",
+    "config",
     "in18n",
     "page",
     "routing",
