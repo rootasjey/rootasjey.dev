@@ -4,14 +4,14 @@ import 'package:simple_animations/simple_animations.dart';
 import 'package:supercharged/supercharged.dart';
 
 class UnderlinedButton extends StatefulWidget {
-  final String textValue;
+  final Widget child;
   final Widget leading;
   final Widget trailing;
   final VoidCallback onTap;
 
   const UnderlinedButton({
     Key key,
-    this.textValue,
+    @required this.child,
     this.leading,
     this.trailing,
     this.onTap,
@@ -71,15 +71,7 @@ class _UnderlinedButtonState extends State<UnderlinedButton>
             ),
             child: Stack(
               children: [
-                Opacity(
-                  opacity: 0.6,
-                  child: Text(
-                    widget.textValue,
-                    style: TextStyle(
-                      fontSize: 20.0,
-                    ),
-                  ),
-                ),
+                widget.child,
                 Positioned(
                   left: 0.0,
                   right: right,
