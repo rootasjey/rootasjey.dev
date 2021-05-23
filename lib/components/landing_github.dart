@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:github/github.dart';
 import 'package:rootasjey/components/activity_row.dart';
@@ -89,9 +90,7 @@ class _LandingGitHubState extends State<LandingGitHub> {
       child: Text.rich(
         TextSpan(
           style: FontsUtils.mainStyle(),
-          text: "This is my public activity "
-              "about programming. I mainly use GitHub "
-              "for my projects. Most of my projects are under ",
+          text: "github_description".tr(),
           children: [
             TextSpan(
               text: "Mozilla Public License 2.0",
@@ -149,7 +148,15 @@ class _LandingGitHubState extends State<LandingGitHub> {
           UniconsLine.arrow_right,
           color: stateColors.primary,
         ),
-        textValue: "Follow me there",
+        child: Opacity(
+          opacity: 0.6,
+          child: Text(
+            "follow_me_there".tr(),
+            style: TextStyle(
+              fontSize: 20.0,
+            ),
+          ),
+        ),
       ),
     );
   }
