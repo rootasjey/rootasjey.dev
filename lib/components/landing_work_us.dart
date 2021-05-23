@@ -28,6 +28,13 @@ class _LandingWorkUsState extends State<LandingWorkUs> {
       right: 120.0,
     );
 
+    Widget bothSide = Row(
+      children: [
+        leftSide(),
+        rightSide(),
+      ],
+    );
+
     if (viewWidth < Constants.maxMobileWidth) {
       _isSmallView = true;
       minHeight = 0.0;
@@ -36,6 +43,13 @@ class _LandingWorkUsState extends State<LandingWorkUs> {
         top: 80.0,
         left: 20.0,
         right: 20.0,
+      );
+
+      bothSide = Wrap(
+        children: [
+          leftSide(),
+          rightSide(),
+        ],
       );
     }
 
@@ -49,12 +63,7 @@ class _LandingWorkUsState extends State<LandingWorkUs> {
             ArrowDivider(),
             Padding(
               padding: padding,
-              child: Wrap(
-                children: [
-                  leftSide(),
-                  rightSide(),
-                ],
-              ),
+              child: bothSide,
             ),
           ],
         ),
