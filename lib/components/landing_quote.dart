@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/arrow_divider.dart';
+import 'package:rootasjey/utils/constants.dart';
 import 'package:rootasjey/utils/fonts.dart';
 import 'package:unicons/unicons.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -10,26 +11,44 @@ class LandingQuote extends StatefulWidget {
 }
 
 class _LandingQuoteState extends State<LandingQuote> {
+  bool _isSmallView = false;
+
   @override
   Widget build(BuildContext context) {
+    _isSmallView = false;
+
+    final viewWidth = MediaQuery.of(context).size.width;
+
+    EdgeInsets padding = const EdgeInsets.only(
+      top: 100.0,
+      left: 120.0,
+      right: 120.0,
+    );
+
+    if (viewWidth < Constants.maxMobileWidth) {
+      _isSmallView = true;
+
+      padding = const EdgeInsets.only(
+        top: 80.0,
+        left: 20.0,
+        right: 20.0,
+      );
+    }
+
     return Container(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ArrowDivider(),
           Padding(
-            padding: const EdgeInsets.only(
-              top: 100.0,
-              left: 120.0,
-              right: 120.0,
-            ),
+            padding: padding,
             child: Column(
               children: [
                 Text(
                   "If you don't like using a tool,"
                   " build a new one.",
                   style: FontsUtils.mainStyle(
-                    fontSize: 90,
+                    fontSize: _isSmallView ? 60.0 : 90.0,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
