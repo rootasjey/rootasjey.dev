@@ -99,8 +99,8 @@ class _LandingHeroState extends State<LandingHero> {
             child: projectCard(
               textTitle: "fig.style",
               backgroundUrl: "https://firebasestorage.googleapis.com/v0/b/"
-                  "rootasjey.appspot.com/o/images%2Ftemp%2Ffig.jpg"
-                  "?alt=media&token=817917e0-5074-4307-8903-119e680f0c7b",
+                  "rootasjey.appspot.com/o/images%2Ftemp%2Ffig-xs.jpg"
+                  "?alt=media&token=ca59ece7-4fd9-4997-b482-c2976549665f",
             ),
           ),
           Positioned(
@@ -110,7 +110,7 @@ class _LandingHeroState extends State<LandingHero> {
               textTitle: "artbooking",
               height: 300.0,
               backgroundUrl: "https://firebasestorage.googleapis.com/v0/b/"
-                  "rootasjey.appspot.com/o/images%2Ftemp%2Fartbooking-xs."
+                  "rootasjey.appspot.com/o/images%2Ftemp%2Fartbooking-xs.png"
                   "?alt=media&token=5f52d86e-7b22-448c-b9c6-c535671eee64",
             ),
           ),
@@ -167,13 +167,13 @@ class _LandingHeroState extends State<LandingHero> {
             projectCard(
               textTitle: "fig.style",
               backgroundUrl: "https://firebasestorage.googleapis.com/v0/b/"
-                  "rootasjey.appspot.com/o/images%2Ftemp%2Ffig.jpg"
-                  "?alt=media&token=817917e0-5074-4307-8903-119e680f0c7b",
+                  "rootasjey.appspot.com/o/images%2Ftemp%2Ffig-xs.jpg"
+                  "?alt=media&token=ca59ece7-4fd9-4997-b482-c2976549665f",
             ),
             projectCard(
               textTitle: "artbooking",
               backgroundUrl: "https://firebasestorage.googleapis.com/v0/b/"
-                  "rootasjey.appspot.com/o/images%2Ftemp%2Fartbooking-xs."
+                  "rootasjey.appspot.com/o/images%2Ftemp%2Fartbooking-xs.png"
                   "?alt=media&token=5f52d86e-7b22-448c-b9c6-c535671eee64",
             ),
             projectCard(
