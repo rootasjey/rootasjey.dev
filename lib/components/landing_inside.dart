@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/arrow_divider.dart';
 import 'package:rootasjey/state/colors.dart';
+import 'package:rootasjey/utils/constants.dart';
 import 'package:rootasjey/utils/fonts.dart';
 import 'package:unicons/unicons.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -13,46 +14,53 @@ class LandingInside extends StatefulWidget {
 
 class _LandingInsideState extends State<LandingInside> {
   final maxTextWidth = 400.0;
+  bool _isSmallView = false;
 
   @override
   Widget build(BuildContext context) {
+    _isSmallView = false;
+
+    final viewWidth = MediaQuery.of(context).size.width;
+    double minHeight = MediaQuery.of(context).size.height;
+
+    EdgeInsets padding = const EdgeInsets.only(
+      top: 100.0,
+      left: 120.0,
+      right: 120.0,
+    );
+
+    if (viewWidth < Constants.maxMobileWidth) {
+      _isSmallView = true;
+      minHeight = 0.0;
+
+      padding = const EdgeInsets.only(
+        top: 80.0,
+        left: 20.0,
+        right: 20.0,
+      );
+    }
+
     return Container(
       color: stateColors.newLightBackground,
-      height: MediaQuery.of(context).size.height,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ArrowDivider(),
-          Padding(
-            padding: const EdgeInsets.only(
-              top: 100.0,
-              left: 120.0,
-              right: 120.0,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          minHeight: minHeight,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ArrowDivider(),
+            Padding(
+              padding: padding,
+              child: Row(
+                children: [
+                  mainContent(),
+                  sideContent(),
+                ],
+              ),
             ),
-            child: Row(
-              children: [
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    title(),
-                    descriptionOne(),
-                    descriptionTwo(),
-                    callToAction(),
-                    disclaimer(),
-                    buttonsRow(),
-                  ],
-                ),
-                Expanded(
-                  child: Icon(
-                    UniconsLine.box,
-                    size: 160.0,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -211,13 +219,63 @@ class _LandingInsideState extends State<LandingInside> {
     );
   }
 
+  Widget mainContent() {
+    return Expanded(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          title(),
+          descriptionOne(),
+          descriptionTwo(),
+          callToAction(),
+          disclaimer(),
+          buttonsRow(),
+        ],
+      ),
+    );
+  }
+
+  Widget sideContent() {
+    if (_isSmallView) {
+      return Container();
+    }
+
+    return Expanded(
+      child: Icon(
+        UniconsLine.box,
+        size: 160.0,
+      ),
+    );
+  }
+
   Widget title() {
-    return Text(
+    final textWidget = Text(
       "What's \ninside?",
       style: FontsUtils.mainStyle(
-        fontSize: 100.0,
+        fontSize: _isSmallView ? 60.0 : 100.0,
         height: 1.0,
         fontWeight: FontWeight.w800,
+      ),
+    );
+
+    if (!_isSmallView) {
+      return textWidget;
+    }
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16.0),
+      child: Row(
+        children: [
+          textWidget,
+          Padding(
+            padding: const EdgeInsets.only(left: 16.0),
+            child: Icon(
+              UniconsLine.box,
+              size: 100.0,
+            ),
+          ),
+        ],
       ),
     );
   }
