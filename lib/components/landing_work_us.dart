@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:github/github.dart';
 import 'package:rootasjey/components/arrow_divider.dart';
 import 'package:rootasjey/state/colors.dart';
+import 'package:rootasjey/utils/constants.dart';
 import 'package:rootasjey/utils/fonts.dart';
 import 'package:unicons/unicons.dart';
 
@@ -11,31 +12,52 @@ class LandingWorkUs extends StatefulWidget {
 }
 
 class _LandingWorkUsState extends State<LandingWorkUs> {
+  bool _isSmallView = false;
   List<Event> userActivities = [];
 
   @override
   Widget build(BuildContext context) {
+    _isSmallView = false;
+
+    final viewWidth = MediaQuery.of(context).size.width;
+    double minHeight = MediaQuery.of(context).size.height;
+
+    EdgeInsets padding = const EdgeInsets.only(
+      top: 100.0,
+      left: 120.0,
+      right: 120.0,
+    );
+
+    if (viewWidth < Constants.maxMobileWidth) {
+      _isSmallView = true;
+      minHeight = 0.0;
+
+      padding = const EdgeInsets.only(
+        top: 80.0,
+        left: 20.0,
+        right: 20.0,
+      );
+    }
+
     return Container(
       color: stateColors.newLightBackground,
-      height: MediaQuery.of(context).size.height,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ArrowDivider(),
-          Padding(
-            padding: const EdgeInsets.only(
-              top: 100.0,
-              left: 120.0,
-              right: 120.0,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(minHeight: minHeight),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ArrowDivider(),
+            Padding(
+              padding: padding,
+              child: Wrap(
+                children: [
+                  leftSide(),
+                  rightSide(),
+                ],
+              ),
             ),
-            child: Row(
-              children: [
-                leftSide(),
-                rightSide(),
-              ],
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -45,47 +67,53 @@ class _LandingWorkUsState extends State<LandingWorkUs> {
     @required List<Color> colors,
     @required Widget icon,
   }) {
-    return SizedBox(
-      width: 260.0,
-      height: 150.0,
-      child: Card(
-        elevation: 4.0,
-        child: Container(
-          padding: const EdgeInsets.all(22.0),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(4.0),
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: colors,
-            ),
+    double width = 260.0;
+    double height = 150.0;
+
+    if (_isSmallView) {
+      width = MediaQuery.of(context).size.width - 50.0;
+      height = 100.0;
+    }
+
+    return Card(
+      elevation: 4.0,
+      child: Container(
+        height: height,
+        width: width,
+        padding: const EdgeInsets.all(22.0),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(4.0),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: colors,
           ),
-          clipBehavior: Clip.hardEdge,
-          child: Row(
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(right: 24.0),
-                child: Opacity(
-                  opacity: 0.8,
-                  child: icon,
-                ),
+        ),
+        clipBehavior: Clip.hardEdge,
+        child: Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(right: 24.0),
+              child: Opacity(
+                opacity: 0.8,
+                child: icon,
               ),
-              Expanded(
-                child: Opacity(
-                  opacity: 0.8,
-                  child: Text(
-                    textTitle,
-                    style: FontsUtils.mainStyle(
-                      color: Colors.white,
-                      fontSize: 17.0,
-                      fontWeight: FontWeight.w600,
-                      height: 1.2,
-                    ),
+            ),
+            Expanded(
+              child: Opacity(
+                opacity: 0.8,
+                child: Text(
+                  textTitle,
+                  style: FontsUtils.mainStyle(
+                    color: Colors.white,
+                    fontSize: 17.0,
+                    fontWeight: FontWeight.w600,
+                    height: 1.2,
                   ),
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -199,18 +227,27 @@ class _LandingWorkUsState extends State<LandingWorkUs> {
   }
 
   Widget rightSide() {
+    final childWrap = Wrap(
+      direction: Axis.vertical,
+      runAlignment: WrapAlignment.center,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      spacing: 16.0,
+      children: [
+        websiteCard(),
+        mobileCard(),
+        webMobileCard(),
+      ],
+    );
+
+    if (_isSmallView) {
+      return Padding(
+        padding: const EdgeInsets.only(top: 40.0),
+        child: childWrap,
+      );
+    }
+
     return Expanded(
-      child: Wrap(
-        direction: Axis.vertical,
-        runAlignment: WrapAlignment.center,
-        crossAxisAlignment: WrapCrossAlignment.center,
-        spacing: 16.0,
-        children: [
-          websiteCard(),
-          mobileCard(),
-          webMobileCard(),
-        ],
-      ),
+      child: childWrap,
     );
   }
 
@@ -218,7 +255,7 @@ class _LandingWorkUsState extends State<LandingWorkUs> {
     return Text(
       "Work with us <3",
       style: FontsUtils.mainStyle(
-        fontSize: 100.0,
+        fontSize: _isSmallView ? 60.0 : 100.0,
         height: 0.9,
         fontWeight: FontWeight.w800,
       ),
