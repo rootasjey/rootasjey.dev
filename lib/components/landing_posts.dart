@@ -2,7 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/arrow_divider.dart';
-import 'package:rootasjey/components/better_post_card.dart';
+import 'package:rootasjey/components/post_card.dart';
 import 'package:rootasjey/components/min_pub_post_card.dart';
 import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/state/colors.dart';
@@ -81,8 +81,19 @@ class _LandingPostsState extends State<LandingPosts> {
         spacing: 20.0,
         runSpacing: 20.0,
         children: _posts.map((post) {
-          return BetterPostCard(
+          return PostCard(
             post: post,
+            onTap: () {
+              context.router.push(
+                PostsRouter(
+                  children: [
+                    PostPageRoute(
+                      postId: post.id,
+                    ),
+                  ],
+                ),
+              );
+            },
           );
         }).toList(),
       ),

@@ -1,17 +1,21 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:jiffy/jiffy.dart';
 import 'package:rootasjey/types/post.dart';
+import 'package:rootasjey/utils/cloud.dart';
+import 'package:rootasjey/utils/fonts.dart';
 
 class PostCard extends StatefulWidget {
-  final EdgeInsets padding;
   final Post post;
-  final Widget popupMenuButton;
   final VoidCallback onTap;
+  final PopupMenuButton popupMenuButton;
+  final EdgeInsets padding;
 
   PostCard({
-    this.padding = EdgeInsets.zero,
     @required this.post,
-    this.popupMenuButton,
     this.onTap,
+    this.popupMenuButton,
+    this.padding = EdgeInsets.zero,
   });
 
   @override
@@ -19,102 +23,161 @@ class PostCard extends StatefulWidget {
 }
 
 class _PostCardState extends State<PostCard> {
+  double _elevation;
+
+  String _authorName = '';
+
+  @override
+  void initState() {
+    super.initState();
+
+    setState(() {
+      _elevation = 0.0;
+    });
+
+    if (widget.post.author.id.isNotEmpty) {
+      fetchAuthorName();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final post = widget.post;
-
-    return Padding(
+    return Container(
       padding: widget.padding,
-      child: Card(
-        elevation: 2.0,
-        child: InkWell(
-          onTap: widget.onTap,
-          child: Container(
-            width: 700.0,
-            padding: const EdgeInsets.all(40.0),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          bottom: 20.0,
-                        ),
-                        child: post.title.isEmpty
-                            ? Opacity(
-                                opacity: 0.6,
-                                child: Text(
-                                  'No title yet.',
-                                  style: TextStyle(
-                                    fontSize: 30.0,
-                                    fontWeight: FontWeight.w600,
-                                    fontStyle: FontStyle.italic,
-                                  ),
-                                ),
-                              )
-                            : Text(
-                                post.title,
-                                style: TextStyle(
-                                  fontSize: 30.0,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                      ),
-                      if (post.summary.isNotEmpty)
-                        Opacity(
-                          opacity: 0.6,
-                          child: Text(
-                            post.summary,
-                            style: TextStyle(
-                              fontSize: 18.0,
-                            ),
-                          ),
-                        ),
-                      metaData(post),
-                    ],
-                  ),
-                ),
-                if (widget.popupMenuButton != null) widget.popupMenuButton,
-              ],
-            ),
-          ),
+      width: 300.0,
+      child: InkWell(
+        onTap: widget.onTap,
+        onHover: (isHover) {
+          setState(() {
+            _elevation = isHover ? 4.0 : 0.0;
+          });
+        },
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            background(),
+            texts(),
+          ],
         ),
       ),
     );
   }
 
-  Widget metaData(Post post) {
-    return Padding(
-      padding: const EdgeInsets.only(
-        top: 8.0,
+  Widget background() {
+    final post = widget.post;
+
+    if (post.image.thumbnail.isEmpty) {
+      return Padding(
+        padding: EdgeInsets.zero,
+      );
+    }
+
+    return Card(
+      elevation: _elevation,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10.0),
       ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
+      clipBehavior: Clip.antiAlias,
+      child: Stack(
         children: [
-          Opacity(
-            opacity: 0.6,
-            child: Text(
-              post.updatedAt.toString().split(' ')[0],
-            ),
+          Image.network(
+            post.image.thumbnail,
+            fit: BoxFit.cover,
+            width: 300.0,
+            height: 300.0,
           ),
-          Container(
-            width: 20.0,
-            height: 20.0,
-            clipBehavior: Clip.hardEdge,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10.0),
+          if (widget.popupMenuButton != null)
+            Positioned(
+              bottom: 12.0,
+              right: 12.0,
+              child: widget.popupMenuButton,
             ),
-          ),
-          Opacity(
-            opacity: 0.6,
-            child: Text(
-              post.timeToRead,
-            ),
-          ),
         ],
       ),
     );
+  }
+
+  Widget texts() {
+    final post = widget.post;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(
+            top: 16.0,
+            left: 10.0,
+          ),
+          child: Opacity(
+            opacity: 0.6,
+            child: Text(
+              '$_authorName - ${Jiffy(post.createdAt).fromNow()}',
+              style: FontsUtils.mainStyle(
+                fontSize: 15.0,
+                fontWeight: FontWeight.w300,
+              ),
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(
+            top: 10.0,
+            left: 8.0,
+          ),
+          child: Text(
+            post.title.isEmpty ? "no_title".tr() : post.title,
+            overflow: TextOverflow.ellipsis,
+            maxLines: 3,
+            style: FontsUtils.mainStyle(
+              fontSize: 26.0,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(
+            top: 8.0,
+          ),
+          child: Wrap(
+            spacing: 10.0,
+            runSpacing: 10.0,
+            children: post.tags.map((tag) {
+              return Opacity(
+                opacity: 0.6,
+                child: Chip(
+                  elevation: 2.0,
+                  label: Text(
+                    tag,
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+        ),
+      ],
+    );
+  }
+
+  void fetchAuthorName() async {
+    try {
+      final resp = await Cloud.fun('posts-fetchAuthorName')
+          .call({'authorId': widget.post.author.id});
+
+      // ?NOTE: Prevent setState if not mounted.
+      // This is due to each card having its own fetch & state,
+      // and Flutter having not displayed widget to dispose().
+      // So, lifecycle states are called in this order:
+      // iniState --> dispose --> (fetch) setState
+      // which is wrong cause the widget is no longer in the tree.
+      if (!mounted) {
+        return;
+      }
+
+      setState(() {
+        _authorName = resp.data['authorName'];
+      });
+    } catch (error) {
+      debugPrint(error.toString());
+    }
   }
 }

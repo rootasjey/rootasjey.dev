@@ -1,12 +1,14 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:rootasjey/components/better_post_card.dart';
+import 'package:rootasjey/components/post_card.dart';
 import 'package:rootasjey/components/footer.dart';
 import 'package:rootasjey/components/main_app_bar.dart';
 import 'package:rootasjey/components/min_pub_post_card.dart';
 import 'package:rootasjey/components/page_title.dart';
 import 'package:rootasjey/components/sliver_empty_view.dart';
+import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/types/post.dart';
 import 'package:rootasjey/utils/app_logger.dart';
@@ -87,7 +89,21 @@ class _PostsPageState extends State<PostsPage> {
       delegate: SliverChildBuilderDelegate(
         (context, index) {
           final post = _posts.elementAt(index);
-          return BetterPostCard(post: post);
+
+          return PostCard(
+            post: post,
+            onTap: () {
+              context.router.push(
+                PostsRouter(
+                  children: [
+                    PostPageRoute(
+                      postId: post.id,
+                    ),
+                  ],
+                ),
+              );
+            },
+          );
         },
         childCount: _posts.length,
       ),
