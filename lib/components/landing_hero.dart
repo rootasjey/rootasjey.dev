@@ -5,6 +5,7 @@ import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:rootasjey/components/better_avatar.dart';
 import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/state/colors.dart';
+import 'package:rootasjey/utils/constants.dart';
 import 'package:rootasjey/utils/fonts.dart';
 import 'package:unicons/unicons.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -15,23 +16,47 @@ class LandingHero extends StatefulWidget {
 }
 
 class _LandingHeroState extends State<LandingHero> {
+  bool _isSmallView = false;
+
   @override
   Widget build(BuildContext context) {
+    _isSmallView = false;
+
+    final viewWidth = MediaQuery.of(context).size.width;
+    double minHeight = MediaQuery.of(context).size.height;
+
+    EdgeInsets padding = const EdgeInsets.only(
+      top: 200.0,
+      left: 120.0,
+      right: 120.0,
+    );
+
+    if (viewWidth < Constants.maxMobileWidth) {
+      _isSmallView = true;
+      minHeight = 0.0;
+
+      padding = const EdgeInsets.only(
+        top: 80.0,
+        left: 20.0,
+        right: 20.0,
+      );
+    }
+
     return Container(
       color: stateColors.newLightBackground,
-      height: MediaQuery.of(context).size.height,
-      padding: const EdgeInsets.only(
-        top: 200.0,
-        left: 120.0,
-        right: 120.0,
-      ),
-      child: Wrap(
-        spacing: 40.0,
-        runSpacing: 20.0,
-        children: [
-          leftSide(),
-          rightSide(),
-        ],
+      padding: padding,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          minHeight: minHeight,
+        ),
+        child: Wrap(
+          spacing: 40.0,
+          runSpacing: 20.0,
+          children: [
+            leftSide(),
+            rightSide(),
+          ],
+        ),
       ),
     );
   }
@@ -79,7 +104,7 @@ class _LandingHeroState extends State<LandingHero> {
     return Text(
       "Flutter Developer",
       style: FontsUtils.mainStyle(
-        fontSize: 100.0,
+        fontSize: _isSmallView ? 60.0 : 100.0,
         height: 1.2,
         fontWeight: FontWeight.w800,
       ),
@@ -112,7 +137,7 @@ class _LandingHeroState extends State<LandingHero> {
     );
   }
 
-  Widget rightSide() {
+  Widget desktopViewProjects() {
     return SizedBox(
       width: 320.0,
       height: 600.0,
@@ -162,6 +187,44 @@ class _LandingHeroState extends State<LandingHero> {
         ],
       ),
     );
+  }
+
+  Widget mobileViewProjects() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 40.0),
+      child: Wrap(
+        spacing: 20.0,
+        runSpacing: 20.0,
+        alignment: WrapAlignment.start,
+        children: [
+          projectCard(
+            textTitle: "fig.style",
+            backgroundUrl: "https://firebasestorage.googleapis.com/v0/b/"
+                "rootasjey.appspot.com/o/images%2Ftemp%2Ffig-xs.png?"
+                "alt=media&token=16d9875e-d47a-4396-82aa-d74e1744f384",
+          ),
+          projectCard(
+            textTitle: "artbooking",
+            backgroundUrl:
+                "https://firebasestorage.googleapis.com/v0/b/rootasjey.appspot.com/o/images%2Ftemp%2Fartbooking-xs.png?alt=media&token=5f52d86e-7b22-448c-b9c6-c535671eee64",
+          ),
+          projectCard(
+            textTitle: "conway",
+            backgroundUrl: "https://firebasestorage.googleapis.com/v0/b/"
+                "rootasjey.appspot.com/o/images%2Ftemp%2Fconway.png?"
+                "alt=media&token=3cb34b33-8926-4c77-bdbe-ed3c56859306",
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget rightSide() {
+    if (_isSmallView) {
+      return mobileViewProjects();
+    }
+
+    return desktopViewProjects();
   }
 
   Widget profilePicture() {
