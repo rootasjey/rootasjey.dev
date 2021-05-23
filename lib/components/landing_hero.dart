@@ -61,56 +61,6 @@ class _LandingHeroState extends State<LandingHero> {
     );
   }
 
-  Widget leftSide() {
-    return SizedBox(
-      width: 600.0,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          topLine(),
-          title(),
-          description(),
-          ppNameSummarySocial(),
-        ],
-      ),
-    );
-  }
-
-  Widget topLine() {
-    return Wrap(
-      spacing: 12.0,
-      crossAxisAlignment: WrapCrossAlignment.center,
-      children: [
-        SizedBox(
-          width: 50.0,
-          child: Divider(
-            thickness: 2.0,
-          ),
-        ),
-        Opacity(
-          opacity: 0.6,
-          child: Text(
-            "Fullstack Web & Mobile",
-            style: TextStyle(
-              fontSize: 20.0,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget title() {
-    return Text(
-      "Flutter Developer",
-      style: FontsUtils.mainStyle(
-        fontSize: _isSmallView ? 60.0 : 100.0,
-        height: 1.2,
-        fontWeight: FontWeight.w800,
-      ),
-    );
-  }
-
   Widget description() {
     return SizedBox(
       width: 500.0,
@@ -189,6 +139,21 @@ class _LandingHeroState extends State<LandingHero> {
     );
   }
 
+  Widget leftSide() {
+    return SizedBox(
+      width: 600.0,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          topLine(),
+          title(),
+          description(),
+          ppNameSummarySocial(),
+        ],
+      ),
+    );
+  }
+
   Widget mobileViewProjects() {
     return Padding(
       padding: const EdgeInsets.only(top: 40.0),
@@ -219,12 +184,39 @@ class _LandingHeroState extends State<LandingHero> {
     );
   }
 
-  Widget rightSide() {
-    if (_isSmallView) {
-      return mobileViewProjects();
-    }
-
-    return desktopViewProjects();
+  Widget ppNameSummarySocial() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 40.0),
+      child: Row(
+        children: [
+          profilePicture(),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 10.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "rootasjey",
+                        style: FontsUtils.mainStyle(
+                          color: stateColors.primary,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      profileSummary(),
+                    ],
+                  ),
+                ),
+                socialNetworks(),
+              ],
+            ),
+          )
+        ],
+      ),
+    );
   }
 
   Widget profilePicture() {
@@ -309,6 +301,14 @@ class _LandingHeroState extends State<LandingHero> {
     );
   }
 
+  Widget rightSide() {
+    if (_isSmallView) {
+      return mobileViewProjects();
+    }
+
+    return desktopViewProjects();
+  }
+
   Widget socialNetworks() {
     return Wrap(
       children: [
@@ -352,38 +352,38 @@ class _LandingHeroState extends State<LandingHero> {
     );
   }
 
-  Widget ppNameSummarySocial() {
-    return Padding(
-      padding: const EdgeInsets.only(top: 40.0),
-      child: Row(
-        children: [
-          profilePicture(),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 10.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "rootasjey",
-                        style: FontsUtils.mainStyle(
-                          color: stateColors.primary,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      profileSummary(),
-                    ],
-                  ),
-                ),
-                socialNetworks(),
-              ],
-            ),
-          )
-        ],
+  Widget title() {
+    return Text(
+      "Flutter Developer",
+      style: FontsUtils.mainStyle(
+        fontSize: _isSmallView ? 60.0 : 100.0,
+        height: 1.2,
+        fontWeight: FontWeight.w800,
       ),
+    );
+  }
+
+  Widget topLine() {
+    return Wrap(
+      spacing: 12.0,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      children: [
+        SizedBox(
+          width: 50.0,
+          child: Divider(
+            thickness: 2.0,
+          ),
+        ),
+        Opacity(
+          opacity: 0.6,
+          child: Text(
+            "Fullstack Web & Mobile",
+            style: TextStyle(
+              fontSize: 20.0,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
