@@ -20,7 +20,7 @@ class LandingGitHub extends StatefulWidget {
 
 class _LandingGitHubState extends State<LandingGitHub> {
   bool _isSmallView = false;
-  List<Event> userActivities = [];
+  List<Event> _userActivities = [];
 
   @override
   void initState() {
@@ -118,7 +118,7 @@ class _LandingGitHubState extends State<LandingGitHub> {
         children: [
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: userActivities.map((activity) {
+            children: _userActivities.map((activity) {
               return Padding(
                 padding: const EdgeInsets.only(bottom: 42.0),
                 child: ActivityRow(activity: activity),
@@ -225,7 +225,7 @@ class _LandingGitHubState extends State<LandingGitHub> {
           .toList()
           .then((activities) {
         setState(() {
-          userActivities = activities;
+          _userActivities = activities;
         });
       });
     } catch (error) {

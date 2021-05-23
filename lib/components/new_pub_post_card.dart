@@ -18,16 +18,16 @@ class NewPubPostCard extends StatefulWidget {
 }
 
 class _NewPubPostCardState extends State<NewPubPostCard> {
-  double elevation;
+  double _elevation;
 
-  String authorName = '';
+  String _authorName = '';
 
   @override
   void initState() {
     super.initState();
 
     setState(() {
-      elevation = 0.0;
+      _elevation = 0.0;
     });
 
     fetchAuthorName();
@@ -41,7 +41,7 @@ class _NewPubPostCardState extends State<NewPubPostCard> {
         onTap: navigateToPost,
         onHover: (isHover) {
           setState(() {
-            elevation = isHover ? 4.0 : 0.0;
+            _elevation = isHover ? 4.0 : 0.0;
           });
         },
         child: Column(
@@ -65,7 +65,7 @@ class _NewPubPostCardState extends State<NewPubPostCard> {
     }
 
     return Card(
-      elevation: elevation,
+      elevation: _elevation,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10.0),
       ),
@@ -95,7 +95,7 @@ class _NewPubPostCardState extends State<NewPubPostCard> {
             child: Opacity(
               opacity: 0.6,
               child: Text(
-                '$authorName - ${Jiffy(postHeadline.createdAt).fromNow()}',
+                '$_authorName - ${Jiffy(postHeadline.createdAt).fromNow()}',
                 style: TextStyle(
                   fontSize: 15.0,
                   fontWeight: FontWeight.w300,
@@ -169,7 +169,7 @@ class _NewPubPostCardState extends State<NewPubPostCard> {
       }
 
       setState(() {
-        authorName = resp.data['authorName'];
+        _authorName = resp.data['authorName'];
       });
     } catch (error) {
       debugPrint(error.toString());

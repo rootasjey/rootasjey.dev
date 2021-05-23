@@ -19,7 +19,7 @@ class LandingPosts extends StatefulWidget {
 
 class _LandingPostsState extends State<LandingPosts> {
   bool _isSmallView = false;
-  List<PostHeadline> posts = [];
+  List<PostHeadline> _posts = [];
 
   @override
   void initState() {
@@ -72,20 +72,6 @@ class _LandingPostsState extends State<LandingPosts> {
     );
   }
 
-  Widget title() {
-    return Padding(
-      padding: const EdgeInsets.only(left: 16.0),
-      child: Text(
-        "Latest Posts",
-        style: FontsUtils.mainStyle(
-          fontSize: _isSmallView ? 60.0 : 100.0,
-          height: 1.2,
-          fontWeight: FontWeight.w800,
-        ),
-      ),
-    );
-  }
-
   Widget postsDesktopView() {
     return Padding(
       padding: const EdgeInsets.only(
@@ -94,7 +80,7 @@ class _LandingPostsState extends State<LandingPosts> {
       child: Wrap(
         spacing: 20.0,
         runSpacing: 20.0,
-        children: posts.map((post) {
+        children: _posts.map((post) {
           return NewPubPostCard(
             postHeadline: post,
           );
@@ -107,7 +93,7 @@ class _LandingPostsState extends State<LandingPosts> {
     return Padding(
       padding: const EdgeInsets.only(top: 24.0),
       child: Column(
-        children: posts.map((post) {
+        children: _posts.map((post) {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
@@ -127,6 +113,20 @@ class _LandingPostsState extends State<LandingPosts> {
     }
 
     return postsDesktopView();
+  }
+
+  Widget title() {
+    return Padding(
+      padding: const EdgeInsets.only(left: 16.0),
+      child: Text(
+        "Latest Posts",
+        style: FontsUtils.mainStyle(
+          fontSize: _isSmallView ? 60.0 : 100.0,
+          height: 1.2,
+          fontWeight: FontWeight.w800,
+        ),
+      ),
+    );
   }
 
   Widget viewMoreButton() {
@@ -184,7 +184,7 @@ class _LandingPostsState extends State<LandingPosts> {
         final data = doc.data();
         data['id'] = doc.id;
 
-        posts.add(PostHeadline.fromJSON(data));
+        _posts.add(PostHeadline.fromJSON(data));
       });
 
       if (!mounted) {
