@@ -1,5 +1,8 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:rootasjey/utils/fonts.dart';
+import 'package:unicons/unicons.dart';
 
 class PageTitle extends StatelessWidget {
   final String textTitle;
@@ -16,19 +19,25 @@ class PageTitle extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Padding(
-          padding: const EdgeInsets.only(right: 16.0),
-          child: IconButton(
-            onPressed: context.router.pop,
-            icon: Icon(Icons.arrow_back),
-          ),
-        ),
-        Text(
-          textTitle,
-          style: TextStyle(
-            fontSize: 70.0,
-            fontWeight: FontWeight.bold,
-          ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(right: 16.0),
+              child: IconButton(
+                tooltip: "back".tr(),
+                onPressed: context.router.pop,
+                icon: Icon(UniconsLine.arrow_left),
+              ),
+            ),
+            Text(
+              textTitle,
+              style: FontsUtils.mainStyle(
+                fontSize: 80.0,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ],
         ),
         if (isLoading)
           Padding(
