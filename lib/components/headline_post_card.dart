@@ -5,19 +5,19 @@ import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/types/post_headline.dart';
 import 'package:rootasjey/utils/cloud.dart';
 
-class NewPubPostCard extends StatefulWidget {
+class HeadlinePostCard extends StatefulWidget {
   @required
   final PostHeadline postHeadline;
 
-  NewPubPostCard({
+  HeadlinePostCard({
     this.postHeadline,
   });
 
   @override
-  _NewPubPostCardState createState() => _NewPubPostCardState();
+  _HeadlinePostCardState createState() => _HeadlinePostCardState();
 }
 
-class _NewPubPostCardState extends State<NewPubPostCard> {
+class _HeadlinePostCardState extends State<HeadlinePostCard> {
   double _elevation;
 
   String _authorName = '';
