@@ -235,6 +235,7 @@
   "iap": "Achats intégrés",
   "iap_content": "Cette app peut contenir des achats intégrés dans le but de vous fournir des fonctionnalités supplémentaires.",
   "i_dont_know": "Je ne sais pas",
+  "image_size_exceeded": "La taille de l'image ne doit être inférieure 5MB",
   "input_minimum_char": "Veuillez saisir 3 caractères au minimum",
   "input_valid_format": "Veuillez utiliser des caract§res alpha-numeriques (A-Z, 0-9) et l'underscore (_)",
   "job": "Job",

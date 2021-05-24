@@ -23,6 +23,7 @@ import 'package:rootasjey/types/user_pp_url.dart';
 import 'package:rootasjey/utils/app_logger.dart';
 import 'package:rootasjey/utils/cloud.dart';
 import 'package:rootasjey/utils/fonts.dart';
+import 'package:rootasjey/utils/snack.dart';
 import 'package:unicons/unicons.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -987,10 +988,19 @@ class _MyProfilePageState extends State<MyProfilePage> {
   }
 
   void uploadPicture() async {
-    FilePickerCross myFile = await FilePickerCross.importFromStorage(
+    FilePickerCross choosenFile = await FilePickerCross.importFromStorage(
       type: FileTypeCross.image,
       fileExtension: 'jpg,jpeg,png,gif',
     );
+
+    if (choosenFile.length >= 5 * 1024 * 1024) {
+      Snack.e(
+        context: context,
+        message: "image_size_exceeded".tr(),
+      );
+
+      return;
+    }
 
     final user = FirebaseAuth.instance.currentUser;
 
@@ -1000,10 +1010,11 @@ class _MyProfilePageState extends State<MyProfilePage> {
 
     setState(() => _isUpdating = true);
 
-    final ext = myFile.fileName.substring(myFile.fileName.lastIndexOf('.'));
+    final ext =
+        choosenFile.fileName.substring(choosenFile.fileName.lastIndexOf('.'));
 
     final metadata = SettableMetadata(
-      contentType: mime(myFile.fileName),
+      contentType: mime(choosenFile.fileName),
       customMetadata: {
         'extension': ext,
         'userId': user.uid,
@@ -1022,7 +1033,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
 
       final task = FirebaseStorage.instance
           .ref(imagePath)
-          .putData(myFile.toUint8List(), metadata);
+          .putData(choosenFile.toUint8List(), metadata);
 
       final snapshot = await task;
       final String downloadUrl = await snapshot.ref.getDownloadURL();
@@ -1032,7 +1043,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
         stateUser.userFirestore.pp.update(
           UserPP(
             ext: ext.replaceFirst('.', ''),
-            size: myFile.length,
+            size: choosenFile.length,
             updatedAt: DateTime.now(),
             path: UserPPPath(original: imagePath),
             url: UserPPUrl(original: downloadUrl),
