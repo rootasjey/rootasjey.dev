@@ -1,6 +1,19 @@
 import 'dart:async';
 
+import 'package:extended_image/extended_image.dart';
+import 'package:file_picker_cross/file_picker_cross.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:mime_type/mime_type.dart';
+import 'package:rootasjey/components/better_avatar.dart';
+import 'package:rootasjey/components/main_app_bar.dart';
+import 'package:rootasjey/components/page_title.dart';
+import 'package:rootasjey/types/user_pp.dart';
+import 'package:rootasjey/types/user_pp_path.dart';
+import 'package:rootasjey/types/user_pp_url.dart';
 import 'package:rootasjey/utils/app_logger.dart';
+import 'package:rootasjey/utils/cloud.dart';
+import 'package:rootasjey/utils/constants.dart';
 import 'package:rootasjey/utils/snack.dart';
 import 'package:auto_route/annotations.dart';
 import 'package:auto_route/auto_route.dart';
@@ -11,14 +24,11 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rootasjey/components/fade_in_x.dart';
 import 'package:rootasjey/components/fade_in_y.dart';
-import 'package:rootasjey/components/home_app_bar.dart';
-import 'package:rootasjey/components/page_app_bar.dart';
 import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/state/user.dart';
 import 'package:rootasjey/utils/app_storage.dart';
 import 'package:rootasjey/utils/brightness.dart';
-import 'package:rootasjey/utils/constants.dart';
 import 'package:rootasjey/utils/fonts.dart';
 import 'package:rootasjey/utils/language.dart';
 import 'package:supercharged/supercharged.dart';
@@ -42,6 +52,7 @@ class _SettingsPageState extends State<SettingsPage> {
   bool isNameAvailable = false;
   bool isThemeAuto = true;
   bool notificationsON = false;
+  bool _isUpdating = false;
 
   Brightness brightness;
   Brightness currentBrightness;
@@ -72,31 +83,19 @@ class _SettingsPageState extends State<SettingsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: NotificationListener<ScrollNotification>(
-        child: CustomScrollView(
-          controller: _pageScrollController,
-          slivers: <Widget>[
-            if (widget.showAppBar) appBar(),
-            body(),
+        child: Stack(
+          children: [
+            CustomScrollView(
+              controller: _pageScrollController,
+              slivers: <Widget>[
+                if (widget.showAppBar) MainAppBar(),
+                body(),
+              ],
+            ),
+            popupProgressIndicator(),
           ],
         ),
       ),
-    );
-  }
-
-  Widget appBar() {
-    final width = MediaQuery.of(context).size.width;
-
-    if (width < Constants.maxMobileWidth) {
-      return PageAppBar(
-        textTitle: "settings".tr(),
-        textSubTitle: "You can change your preferences here",
-        titlePadding: const EdgeInsets.only(top: 16.0),
-      );
-    }
-
-    return HomeAppBar(
-      title: Text("settings".tr()),
-      automaticallyImplyLeading: true,
     );
   }
 
@@ -108,50 +107,23 @@ class _SettingsPageState extends State<SettingsPage> {
         if (isUserConnected) {
           return Column(
             children: [
-              FadeInY(
-                delay: 0.milliseconds,
-                beginY: 50.0,
-                child: avatar(isUserConnected),
-              ),
+              avatar(),
               accountActions(isUserConnected),
-              FadeInY(
-                delay: 100.milliseconds,
-                beginY: 50.0,
-                child: updateUsernameButton(isUserConnected),
-              ),
-              Padding(padding: const EdgeInsets.only(top: 20.0)),
-              FadeInY(
-                delay: 200.milliseconds,
-                beginY: 50.0,
-                child: emailButton(),
-              ),
-              Divider(
-                thickness: 1.0,
-                height: 50.0,
-              ),
+              updateUsernameButton(isUserConnected),
+              emailButton(),
+              // Divider(thickness: 1.0, height: 80.0),
             ],
           );
         }
 
-        return Column(
-          children: [
-            // SizedBox(
-            //   width: 450.0,
-            //   child: FadeInY(
-            //     delay: 1.0,
-            //     beginY: beginY,
-            //     child: langSelect(),
-            //   ),
-            // ),
-          ],
-        );
+        return Container();
       },
     );
   }
 
   Widget accountActions(bool isUserConnected) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 40.0),
+      padding: const EdgeInsets.only(bottom: 80.0),
       child: Wrap(
         spacing: 15.0,
         children: <Widget>[
@@ -177,72 +149,93 @@ class _SettingsPageState extends State<SettingsPage> {
         children: <Widget>[
           themeSwitcher(),
           Padding(
-              padding: const EdgeInsets.only(
-            bottom: 100.0,
-          )),
+            padding: const EdgeInsets.only(
+              bottom: 100.0,
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget avatar(bool isUserConnected) {
-    // if (isLoadingImageURL) {
-    //   return Padding(
-    //     padding: const EdgeInsets.only(
-    //       bottom: 30.0,
-    //     ),
-    //     child: Material(
-    //       elevation: 4.0,
-    //       shape: CircleBorder(),
-    //       clipBehavior: Clip.hardEdge,
-    //       child: InkWell(
-    //         child: Padding(
-    //           padding: const EdgeInsets.all(40.0),
-    //           child: CircularProgressIndicator(),
-    //         ),
-    //       ),
-    //     ),
-    //   );
-    // }
+  Widget avatar() {
+    return Observer(builder: (context) {
+      final String avatarUrl = getAvatarUrl();
 
-    return Padding(
-      padding: const EdgeInsets.only(
-        bottom: 30.0,
-      ),
-      child: Material(
-        elevation: 4.0,
-        shape: CircleBorder(),
-        clipBehavior: Clip.hardEdge,
-        child: InkWell(
-          child: Padding(
-            padding: const EdgeInsets.all(40.0),
-            child: Icon(
-              UniconsLine.user_circle,
-              color: stateColors.primary,
-              size: 64.0,
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 30.0),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(
+                left: 42.0,
+                right: 8.0,
+              ),
+              child: BetterAvatar(
+                size: 160.0,
+                image: NetworkImage(avatarUrl),
+                colorFilter: ColorFilter.mode(
+                  Colors.grey,
+                  BlendMode.saturation,
+                ),
+                onTap: () {
+                  if (stateUser.userFirestore.pp.url.edited.isEmpty) {
+                    return;
+                  }
+
+                  context.router.root.push(
+                    DashboardPageRoute(children: [
+                      DashProfileRouter(
+                        children: [
+                          EditImagePageRoute(
+                            image: ExtendedNetworkImageProvider(
+                              stateUser.userFirestore.pp.url.original,
+                              cache: true,
+                              cacheRawData: true,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ]),
+                  );
+                },
+              ),
             ),
-          ),
+            Opacity(
+              opacity: 0.6,
+              child: IconButton(
+                tooltip: "pp_upload".tr(),
+                onPressed: uploadPicture,
+                icon: Icon(UniconsLine.upload),
+              ),
+            ),
+          ],
         ),
-      ),
-    );
+      );
+    });
   }
 
   Widget body() {
     double paddingTop = 0.0;
     bool showBigTitle = false;
 
-    if (MediaQuery.of(context).size.width > 700.0) {
-      paddingTop = widget.showAppBar ? 100.0 : 20.0;
+    if (MediaQuery.of(context).size.width > Constants.maxMobileWidth) {
+      paddingTop = widget.showAppBar ? 60.0 : 20.0;
       showBigTitle = true;
     }
 
     return SliverPadding(
-      padding: EdgeInsets.only(top: paddingTop),
+      padding: EdgeInsets.only(
+        top: paddingTop,
+        bottom: 300.0,
+      ),
       sliver: SliverList(
         delegate: SliverChildListDelegate([
           if (showBigTitle) header(),
           accountSettings(),
-          appSettings(),
+          // appSettings(),
         ]),
       ),
     );
@@ -263,17 +256,24 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
               child: Padding(
                 padding: const EdgeInsets.all(15.0),
-                child: Icon(Icons.delete_outline),
+                child: Opacity(
+                  opacity: 0.6,
+                  child: Icon(UniconsLine.trash),
+                ),
               ),
             ),
           ),
         ),
-        Opacity(
-          opacity: .8,
-          child: Text(
-            "account_delete".tr(),
-            style: FontsUtils.mainStyle(
-              fontWeight: FontWeight.w700,
+        SizedBox(
+          width: 80.0,
+          child: Opacity(
+            opacity: 0.8,
+            child: Text(
+              "account_delete".tr(),
+              textAlign: TextAlign.center,
+              style: FontsUtils.mainStyle(
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
         )
@@ -283,23 +283,10 @@ class _SettingsPageState extends State<SettingsPage> {
 
   Widget header() {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 80.0),
-      child: Row(
+      padding: const EdgeInsets.only(bottom: 40.0),
+      child: PageTitle(
+        textTitle: "settings".tr(),
         mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          if (context.router.root.stack.length > 1)
-            Padding(
-              padding: const EdgeInsets.only(right: 16.0),
-              child: IconButton(
-                onPressed: context.router.pop,
-                icon: Icon(Icons.arrow_back),
-              ),
-            ),
-          Text(
-            "settings".tr(),
-            style: FontsUtils.boldTitleStyle(),
-          ),
-        ],
       ),
     );
   }
@@ -313,6 +300,9 @@ class _SettingsPageState extends State<SettingsPage> {
           ),
         );
       },
+      style: TextButton.styleFrom(
+        primary: Colors.black,
+      ),
       onLongPress: () {
         showDialog(
             context: context,
@@ -320,8 +310,8 @@ class _SettingsPageState extends State<SettingsPage> {
               return SimpleDialog(
                 title: Text(
                   "email".tr(),
-                  style: TextStyle(
-                    fontSize: 15.0,
+                  style: FontsUtils.mainStyle(
+                    fontSize: 14.0,
                   ),
                 ),
                 children: <Widget>[
@@ -349,59 +339,37 @@ class _SettingsPageState extends State<SettingsPage> {
             Row(
               children: <Widget>[
                 Padding(
-                  padding: const EdgeInsets.only(right: 10.0),
-                  child: Icon(Icons.alternate_email),
-                ),
-                Opacity(
-                  opacity: .7,
-                  child: Text(
-                    'Email',
+                  padding: const EdgeInsets.only(right: 24.0),
+                  child: Opacity(
+                    opacity: 0.6,
+                    child: Icon(UniconsLine.envelope),
                   ),
                 ),
-              ],
-            ),
-            Row(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(left: 35.0),
-                  child: Text(
-                    stateUser.email,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Opacity(
+                        opacity: 0.3,
+                        child: Text(
+                          "email".tr().toUpperCase(),
+                          style: FontsUtils.mainStyle(
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                      Text(
+                        stateUser.email,
+                        style: FontsUtils.mainStyle(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
             ),
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget ppCard({String imageName}) {
-    return Container(
-      padding: const EdgeInsets.all(8.0),
-      width: 90.0,
-      child: Material(
-        elevation: 3.0,
-        shape: avatarUrl.replaceFirst('local:', '') == imageName
-            ? CircleBorder(
-                side: BorderSide(
-                width: 2.0,
-                color: stateColors.primary,
-              ))
-            : CircleBorder(),
-        clipBehavior: Clip.hardEdge,
-        child: InkWell(
-          onTap: () {
-            Navigator.pop(context);
-            updateImageUrl(imageName: imageName);
-          },
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Image.asset('assets/images/$imageName-light.png'),
-          ),
         ),
       ),
     );
@@ -416,6 +384,9 @@ class _SettingsPageState extends State<SettingsPage> {
           ),
         );
       },
+      style: TextButton.styleFrom(
+        primary: Colors.black,
+      ),
       child: Container(
         width: 250.0,
         padding: const EdgeInsets.all(5.0),
@@ -424,24 +395,32 @@ class _SettingsPageState extends State<SettingsPage> {
             Row(
               children: <Widget>[
                 Padding(
-                  padding: const EdgeInsets.only(right: 10.0),
-                  child: Icon(Icons.person_outline),
+                  padding: const EdgeInsets.only(right: 24.0),
+                  child: Opacity(
+                    opacity: 0.6,
+                    child: Icon(UniconsLine.user),
+                  ),
                 ),
-                Opacity(
-                  opacity: .7,
-                  child: Text("username".tr()),
-                ),
-              ],
-            ),
-            Row(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(left: 35.0),
-                  child: Text(
-                    stateUser.username,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Opacity(
+                        opacity: 0.3,
+                        child: Text(
+                          "username".tr().toUpperCase(),
+                          style: FontsUtils.mainStyle(
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                      Text(
+                        stateUser.username,
+                        style: FontsUtils.mainStyle(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
@@ -483,6 +462,59 @@ class _SettingsPageState extends State<SettingsPage> {
                   value,
                 ));
           }).toList(),
+        ),
+      ),
+    );
+  }
+
+  Widget popupProgressIndicator() {
+    if (!_isUpdating) {
+      return Container();
+    }
+
+    return Positioned(
+      top: 100.0,
+      right: 24.0,
+      child: SizedBox(
+        width: 240.0,
+        child: Card(
+          elevation: 4.0,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(
+                height: 4.0,
+                child: LinearProgressIndicator(),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      UniconsLine.circle,
+                      color: stateColors.secondary,
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 8.0),
+                        child: Opacity(
+                          opacity: 0.6,
+                          child: Text(
+                            "user_updating".tr(),
+                            style: FontsUtils.mainStyle(
+                              fontSize: 14.0,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -593,17 +625,24 @@ class _SettingsPageState extends State<SettingsPage> {
               },
               child: Padding(
                 padding: const EdgeInsets.all(15.0),
-                child: Icon(Icons.lock),
+                child: Opacity(
+                  opacity: 0.6,
+                  child: Icon(UniconsLine.shield),
+                ),
               ),
             ),
           ),
         ),
-        Opacity(
-          opacity: 0.8,
-          child: Text(
-            "password_update".tr(),
-            style: TextStyle(
-              fontWeight: FontWeight.w700,
+        SizedBox(
+          width: 80.0,
+          child: Opacity(
+            opacity: 0.8,
+            child: Text(
+              "password_update".tr(),
+              textAlign: TextAlign.center,
+              style: FontsUtils.mainStyle(
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
         ),
@@ -611,81 +650,18 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  AlertDialog showAvatarDialog() {
-    final width = MediaQuery.of(context).size.width;
+  String getAvatarUrl() {
+    String avatarUrl = stateUser.userFirestore.pp.url.edited;
 
-    return AlertDialog(
-      actions: <Widget>[
-        TextButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          child: Padding(
-            padding: const EdgeInsets.all(15.0),
-            child: Text(
-              "cancel".tr().toUpperCase(),
-              style: TextStyle(
-                color: Colors.red,
-              ),
-            ),
-          ),
-        ),
-      ],
-      title: Text(
-        "profile_picture_choose".tr(),
-        style: TextStyle(
-          fontSize: 15.0,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-      contentPadding: const EdgeInsets.symmetric(
-        vertical: 20.0,
-      ),
-      content: SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
-            Divider(
-              thickness: 2.0,
-            ),
-            SizedBox(
-              height: 150.0,
-              width: width > 400.0 ? 400.0 : width,
-              child: ListView(
-                shrinkWrap: true,
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                children: <Widget>[
-                  FadeInX(
-                    child: ppCard(
-                      imageName: 'boy',
-                    ),
-                    delay: 100.milliseconds,
-                    beginX: 50.0,
-                  ),
-                  FadeInX(
-                    child: ppCard(imageName: 'employee'),
-                    delay: 200.milliseconds,
-                    beginX: 50.0,
-                  ),
-                  FadeInX(
-                    child: ppCard(imageName: 'lady'),
-                    delay: 300.milliseconds,
-                    beginX: 50.0,
-                  ),
-                  FadeInX(
-                    child: ppCard(
-                      imageName: 'user',
-                    ),
-                    delay: 400.milliseconds,
-                    beginX: 50.0,
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+    if (avatarUrl == null || avatarUrl.isEmpty) {
+      avatarUrl = stateUser.userFirestore.pp.url.original;
+    }
+
+    if (avatarUrl.isEmpty) {
+      avatarUrl = "https://img.icons8.com/plasticine/100/000000/flower.png";
+    }
+
+    return avatarUrl;
   }
 
   void initBrightness() {
@@ -761,7 +737,98 @@ class _SettingsPageState extends State<SettingsPage> {
 
     Snack.s(
       context: context,
-      message: 'Your language has been successfully updated.',
+      message: "language_update_success".tr(),
     );
+  }
+
+  void updateUser() async {
+    setState(() => _isUpdating = true);
+
+    try {
+      final String uid = FirebaseAuth.instance.currentUser?.uid ?? '';
+
+      await Cloud.fun('users-updateUser').call({
+        'userId': uid,
+        'updatePayload': stateUser.userFirestore.toJSON(),
+      });
+
+      setState(() => _isUpdating = false);
+    } catch (error) {
+      setState(() => _isUpdating = false);
+      appLogger.e(error);
+    }
+  }
+
+  void uploadPicture() async {
+    FilePickerCross choosenFile = await FilePickerCross.importFromStorage(
+      type: FileTypeCross.image,
+      fileExtension: 'jpg,jpeg,png,gif',
+    );
+
+    if (choosenFile.length >= 5 * 1024 * 1024) {
+      Snack.e(
+        context: context,
+        message: "image_size_exceeded".tr(),
+      );
+
+      return;
+    }
+
+    final user = FirebaseAuth.instance.currentUser;
+
+    if (user == null) {
+      throw Exception("user_not_connected".tr());
+    }
+
+    setState(() => _isUpdating = true);
+
+    final ext =
+        choosenFile.fileName.substring(choosenFile.fileName.lastIndexOf('.'));
+
+    final metadata = SettableMetadata(
+      contentType: mime(choosenFile.fileName),
+      customMetadata: {
+        'extension': ext,
+        'userId': user.uid,
+      },
+    );
+
+    try {
+      final response = await Cloud.fun('users-clearProfilePicture').call();
+      final bool success = response.data['success'];
+
+      if (!success) {
+        throw "Error while calling cloud function.";
+      }
+
+      final imagePath = "images/users/${user.uid}/pp/original$ext";
+
+      final task = FirebaseStorage.instance
+          .ref(imagePath)
+          .putData(choosenFile.toUint8List(), metadata);
+
+      final snapshot = await task;
+      final String downloadUrl = await snapshot.ref.getDownloadURL();
+
+      setState(() {
+        stateUser.userFirestore.urls.setUrl('image', downloadUrl);
+        stateUser.userFirestore.pp.update(
+          UserPP(
+            ext: ext.replaceFirst('.', ''),
+            size: choosenFile.length,
+            updatedAt: DateTime.now(),
+            path: UserPPPath(original: imagePath),
+            url: UserPPUrl(original: downloadUrl),
+          ),
+        );
+
+        _isUpdating = false;
+      });
+
+      updateUser();
+    } catch (error) {
+      appLogger.e(error);
+      setState(() => _isUpdating = false);
+    }
   }
 }
