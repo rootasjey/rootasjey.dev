@@ -1,14 +1,11 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:rootasjey/components/animated_app_icon.dart';
-import 'package:rootasjey/components/app_icon.dart';
-import 'package:rootasjey/components/base_app_bar.dart';
-import 'package:rootasjey/components/circle_button.dart';
 import 'package:rootasjey/components/fade_in_y.dart';
+import 'package:rootasjey/components/main_app_bar.dart';
 import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/state/user.dart';
 import 'package:rootasjey/utils/app_storage.dart';
-import 'package:rootasjey/utils/constants.dart';
 import 'package:rootasjey/utils/fonts.dart';
 import 'package:rootasjey/utils/snack.dart';
 import 'package:auto_route/auto_route.dart';
@@ -16,6 +13,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:supercharged/supercharged.dart';
+import 'package:unicons/unicons.dart';
 
 class DeleteAccountPage extends StatefulWidget {
   @override
@@ -35,65 +33,9 @@ class DeleteAccountPageState extends State<DeleteAccountPage> {
     return Scaffold(
       body: CustomScrollView(
         slivers: <Widget>[
-          appBar(),
+          MainAppBar(),
+          header(),
           body(),
-        ],
-      ),
-    );
-  }
-
-  Widget appBar() {
-    final width = MediaQuery.of(context).size.width;
-    double titleLeftPadding = 70.0;
-
-    if (width < Constants.maxMobileWidth) {
-      titleLeftPadding = 0.0;
-    }
-
-    return BasePageAppBar(
-      expandedHeight: 90.0,
-      title: Row(
-        children: [
-          Padding(
-            padding: EdgeInsets.only(left: titleLeftPadding),
-            child: CircleButton(
-              onTap: context.router.pop,
-              icon: Icon(
-                Icons.arrow_back,
-                color: stateColors.foreground,
-              ),
-            ),
-          ),
-          AppIcon(
-            padding: const EdgeInsets.symmetric(horizontal: 10.0),
-            size: 30.0,
-          ),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Delete accouunt',
-                  style: TextStyle(
-                    fontSize: 18.0,
-                    fontWeight: FontWeight.w300,
-                    color: stateColors.foreground,
-                  ),
-                ),
-                Opacity(
-                  opacity: .6,
-                  child: Text(
-                    'Well, this marks the end of the adventure',
-                    style: TextStyle(
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.w400,
-                      color: stateColors.foreground,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
         ],
       ),
     );
@@ -113,63 +55,62 @@ class DeleteAccountPageState extends State<DeleteAccountPage> {
 
   Widget completedView() {
     return SliverList(
-        delegate: SliverChildListDelegate([
-      Container(
-        padding: const EdgeInsets.all(40.0),
-        child: Column(
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(top: 40.0),
-              child: Icon(
-                Icons.check,
-                color: Colors.green.shade300,
-                size: 80.0,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(
-                top: 30.0,
-              ),
-              child: Text(
-                'Your account has been successfuly deleted',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 20.0,
+      delegate: SliverChildListDelegate([
+        Container(
+          padding: const EdgeInsets.all(40.0),
+          child: Column(
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.only(top: 40.0),
+                child: Icon(
+                  UniconsLine.check,
+                  color: Colors.green.shade300,
+                  size: 80.0,
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(
-                top: 10.0,
-              ),
-              child: Opacity(
-                opacity: .6,
+              Padding(
+                padding: const EdgeInsets.only(
+                  top: 30.0,
+                ),
                 child: Text(
-                  'We hope to see you again',
+                  "account_delete_successfull".tr(),
+                  textAlign: TextAlign.center,
                   style: TextStyle(
-                    fontSize: 15.0,
+                    fontSize: 20.0,
                   ),
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(
-                top: 45.0,
-              ),
-              child: OutlinedButton(
-                onPressed: () => context.router.navigate(HomePageRoute()),
+              Padding(
+                padding: const EdgeInsets.only(
+                  top: 10.0,
+                ),
                 child: Opacity(
-                  opacity: .6,
+                  opacity: 0.6,
                   child: Text(
-                    'Back home',
+                    "see_you".tr(),
+                    style: TextStyle(
+                      fontSize: 15.0,
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+              Padding(
+                padding: const EdgeInsets.only(
+                  top: 45.0,
+                ),
+                child: OutlinedButton(
+                  onPressed: () => context.router.navigate(HomePageRoute()),
+                  child: Opacity(
+                    opacity: 0.6,
+                    child: Text("back".tr()),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
-    ]));
+      ]),
+    );
   }
 
   Widget deletingView() {
@@ -197,6 +138,133 @@ class DeleteAccountPageState extends State<DeleteAccountPage> {
     );
   }
 
+  Widget header() {
+    return SliverList(
+      delegate: SliverChildListDelegate.fixed([
+        Padding(
+          padding: const EdgeInsets.only(top: 60.0),
+          child: Column(
+            children: [
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(right: 24.0),
+                    child: Opacity(
+                      opacity: 0.8,
+                      child: IconButton(
+                        onPressed: context.router.pop,
+                        icon: Icon(UniconsLine.arrow_left),
+                      ),
+                    ),
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Opacity(
+                        opacity: 0.4,
+                        child: Text(
+                          "settings".tr().toUpperCase(),
+                          style: FontsUtils.mainStyle(
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ),
+                      Opacity(
+                        opacity: 0.8,
+                        child: Text(
+                          "account_delete".tr(),
+                          style: FontsUtils.mainStyle(
+                            fontSize: 50.0,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                      Container(
+                        width: 400.0,
+                        padding: const EdgeInsets.only(left: 8.0),
+                        child: Opacity(
+                          opacity: 0.5,
+                          child: Text(
+                            "account_delete_description".tr(),
+                            style: FontsUtils.mainStyle(
+                              fontSize: 16.0,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ]),
+    );
+  }
+
+  Widget helperCard() {
+    return Container(
+      width: 350.0,
+      padding: EdgeInsets.only(
+        top: 60.0,
+        bottom: 40.0,
+      ),
+      child: Card(
+        color: stateColors.clairPink,
+        child: ListTile(
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 32.0,
+            vertical: 16.0,
+          ),
+          title: Row(
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.only(right: 30.0),
+                child: Icon(
+                  UniconsLine.exclamation_triangle,
+                  color: stateColors.secondary,
+                ),
+              ),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      "are_you_sure".tr(),
+                      style: FontsUtils.mainStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 16.0,
+                      ),
+                    ),
+                    Opacity(
+                      opacity: 0.6,
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 0.0),
+                        child: Text(
+                          "action_irreversible".tr(),
+                          style: FontsUtils.mainStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14.0,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          onTap: showTipsDialog,
+        ),
+      ),
+    );
+  }
+
   Widget idleView() {
     return SliverList(
       delegate: SliverChildListDelegate([
@@ -207,7 +275,7 @@ class DeleteAccountPageState extends State<DeleteAccountPage> {
               FadeInY(
                 delay: 0.milliseconds,
                 beginY: beginY,
-                child: warningCard(),
+                child: helperCard(),
               ),
               FadeInY(
                 delay: 100.milliseconds,
@@ -244,14 +312,19 @@ class DeleteAccountPageState extends State<DeleteAccountPage> {
 
   Widget passwordInput() {
     return SizedBox(
-      width: 500.0,
+      width: 340.0,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           TextFormField(
             decoration: InputDecoration(
-              icon: Icon(Icons.lock_outline),
-              labelText: 'Enter your password',
+              fillColor: Colors.white,
+              focusColor: stateColors.clairPink,
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 8.0,
+              ),
+              labelText: "password_enter".tr(),
+              border: OutlineInputBorder(),
             ),
             autofocus: true,
             obscureText: true,
@@ -261,7 +334,7 @@ class DeleteAccountPageState extends State<DeleteAccountPage> {
             onFieldSubmitted: (value) => deleteAccountProcess(),
             validator: (value) {
               if (value.isEmpty) {
-                return 'Password login cannot be empty';
+                return "password_empty_forbidden".tr();
               }
 
               return null;
@@ -272,126 +345,28 @@ class DeleteAccountPageState extends State<DeleteAccountPage> {
     );
   }
 
-  Widget textTitle() {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 80.0),
-      child: Text(
-        'Delete account',
-        style: TextStyle(
-          fontSize: 35.0,
-        ),
-      ),
-    );
-  }
-
   Widget validationButton() {
-    return OutlinedButton(
-      onPressed: () => deleteAccountProcess(),
-      style: OutlinedButton.styleFrom(
-        primary: Colors.red,
+    return ElevatedButton(
+      onPressed: deleteAccountProcess,
+      style: ElevatedButton.styleFrom(
+        primary: Colors.black87,
       ),
       child: SizedBox(
-        width: 260.0,
+        width: 324.0,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.all(18.0),
+              padding: const EdgeInsets.all(14.0),
               child: Text(
-                'DELETE ACCOUNT',
-                style: TextStyle(
+                "account_delete".tr().toUpperCase(),
+                style: FontsUtils.mainStyle(
                   fontSize: 15.0,
                   fontWeight: FontWeight.bold,
                 ),
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget warningCard() {
-    return Container(
-      width: 500.0,
-      padding: EdgeInsets.only(
-        top: 60.0,
-        bottom: 40.0,
-      ),
-      child: Card(
-        child: ListTile(
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 32.0,
-            vertical: 16.0,
-          ),
-          title: Row(
-            children: <Widget>[
-              Opacity(
-                opacity: 0.6,
-                child: Icon(
-                  Icons.warning,
-                  color: stateColors.secondary,
-                ),
-              ),
-              Padding(padding: const EdgeInsets.only(left: 30.0)),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Opacity(
-                      opacity: .8,
-                      child: Text("are_you_sure".tr()),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 8.0),
-                      child: Text(
-                        "action_irreversible".tr(),
-                        style: FontsUtils.mainStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14.0,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          onTap: () {
-            showDialog(
-              context: context,
-              builder: (context) {
-                return SimpleDialog(
-                  title: Text(
-                    "account_deletion_after".tr(),
-                    style: FontsUtils.mainStyle(
-                      fontSize: 15.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  children: <Widget>[
-                    Divider(
-                      color: stateColors.secondary,
-                      thickness: 1.0,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(25.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text("account_deletion_point_1".tr()),
-                          Padding(padding: const EdgeInsets.only(top: 15.0)),
-                          Text("account_deletion_point_2".tr()),
-                          Padding(padding: const EdgeInsets.only(top: 15.0)),
-                          Text("account_deletion_point_3".tr()),
-                        ],
-                      ),
-                    ),
-                  ],
-                );
-              },
-            );
-          },
         ),
       ),
     );
@@ -473,5 +448,42 @@ class DeleteAccountPageState extends State<DeleteAccountPage> {
     }
 
     return true;
+  }
+
+  void showTipsDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return SimpleDialog(
+          backgroundColor: stateColors.clairPink,
+          title: Text(
+            "account_deletion_after".tr(),
+            style: FontsUtils.mainStyle(
+              fontSize: 14.0,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          children: <Widget>[
+            Divider(
+              color: stateColors.secondary,
+              thickness: 1.0,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(25.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text("account_deletion_point_1".tr()),
+                  Padding(padding: const EdgeInsets.only(top: 15.0)),
+                  Text("account_deletion_point_2".tr()),
+                  Padding(padding: const EdgeInsets.only(top: 15.0)),
+                  Text("account_deletion_point_3".tr()),
+                ],
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 }
