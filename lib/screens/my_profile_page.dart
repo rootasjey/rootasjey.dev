@@ -79,6 +79,12 @@ class _MyProfilePageState extends State<MyProfilePage> {
       width: 54.0,
       height: 54.0,
       child: Card(
+        elevation: 1.0,
+        color: stateColors.lightBackground,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(6.0),
+          side: BorderSide(color: Colors.black26, width: 1.5),
+        ),
         child: Tooltip(
           message: "link_add".tr(),
           child: InkWell(
@@ -87,6 +93,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
               opacity: 0.6,
               child: Icon(
                 UniconsLine.link_add,
+                size: 18.0,
               ),
             ),
           ),
@@ -442,10 +449,19 @@ class _MyProfilePageState extends State<MyProfilePage> {
 
   Widget location() {
     return Card(
+      elevation: 1.0,
+      color: stateColors.lightBackground,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(4.0),
+        side: BorderSide(color: Colors.black26, width: 1.5),
+      ),
       child: InkWell(
         onTap: showEditLocation,
         child: Padding(
-          padding: const EdgeInsets.all(12.0),
+          padding: const EdgeInsets.symmetric(
+            horizontal: 12.0,
+            vertical: 14.0,
+          ),
           child: Opacity(
             opacity: 0.6,
             child: Row(
@@ -453,12 +469,16 @@ class _MyProfilePageState extends State<MyProfilePage> {
               children: [
                 Padding(
                   padding: const EdgeInsets.only(right: 8.0),
-                  child: Icon(UniconsLine.location_point),
+                  child: Icon(UniconsLine.location_point, size: 18.0),
                 ),
                 Text(
                   stateUser.userFirestore.location.isEmpty
-                      ? "edit_location".tr()
-                      : stateUser.userFirestore.location,
+                      ? "edit_location".tr().toUpperCase()
+                      : stateUser.userFirestore.location.toUpperCase(),
+                  style: FontsUtils.mainStyle(
+                    fontSize: 14.0,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ],
             ),
@@ -565,10 +585,19 @@ class _MyProfilePageState extends State<MyProfilePage> {
 
   Widget summaryEditButton() {
     return Card(
+      elevation: 1.0,
+      color: stateColors.lightBackground,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(4.0),
+        side: BorderSide(color: Colors.black26, width: 1.5),
+      ),
       child: InkWell(
         onTap: showEditSummary,
         child: Padding(
-          padding: const EdgeInsets.all(12.0),
+          padding: const EdgeInsets.symmetric(
+            horizontal: 12.0,
+            vertical: 14.0,
+          ),
           child: Opacity(
             opacity: 0.6,
             child: Row(
@@ -576,9 +605,15 @@ class _MyProfilePageState extends State<MyProfilePage> {
               children: [
                 Padding(
                   padding: const EdgeInsets.only(right: 8.0),
-                  child: Icon(UniconsLine.edit),
+                  child: Icon(UniconsLine.edit, size: 18.0),
                 ),
-                Text("summary_edit".tr()),
+                Text(
+                  "summary_edit".tr().toUpperCase(),
+                  style: FontsUtils.mainStyle(
+                    fontSize: 14.0,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
               ],
             ),
           ),
