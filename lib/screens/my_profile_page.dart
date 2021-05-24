@@ -11,7 +11,7 @@ import 'package:mime_type/mime_type.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:rootasjey/components/better_avatar.dart';
 import 'package:rootasjey/components/form_actions_inputs.dart';
-import 'package:rootasjey/components/home_app_bar.dart';
+import 'package:rootasjey/components/main_app_bar.dart';
 import 'package:rootasjey/components/sheet_header.dart';
 import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/state/colors.dart';
@@ -60,18 +60,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
         children: [
           CustomScrollView(
             slivers: [
-              HomeAppBar(
-                title: Opacity(
-                  opacity: 0.6,
-                  child: Text(
-                    "profile_my".tr(),
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      color: stateColors.foreground,
-                    ),
-                  ),
-                ),
-              ),
+              MainAppBar(),
               SliverList(
                 delegate: SliverChildListDelegate.fixed([
                   body(),
