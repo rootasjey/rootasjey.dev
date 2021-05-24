@@ -105,7 +105,7 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
             textInputAction: TextInputAction.next,
             decoration: InputDecoration(
               fillColor: Colors.white,
-              focusColor: Colors.pink,
+              focusColor: stateColors.clairPink,
               labelText: "password_current".tr(),
               border: OutlineInputBorder(),
               contentPadding: const EdgeInsets.symmetric(
@@ -285,7 +285,7 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
             focusNode: newPasswordNode,
             decoration: InputDecoration(
               fillColor: Colors.white,
-              focusColor: Colors.pink,
+              focusColor: stateColors.clairPink,
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 8.0,
               ),
