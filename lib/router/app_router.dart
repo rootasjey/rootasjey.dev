@@ -41,15 +41,32 @@ import 'package:rootasjey/screens/update_username_page.dart';
 
 @MaterialAutoRouter(
   routes: [
-    AutoRoute(path: '/', page: HomePage),
-    MaterialRoute(path: '/about', page: AboutPage),
-    MaterialRoute(path: '/activities', page: ActivitiesPage),
-    MaterialRoute(path: '/contact', page: ContactPage),
+    CustomRoute(
+      path: '/',
+      page: HomePage,
+      transitionsBuilder: TransitionsBuilders.fadeIn,
+    ),
+    CustomRoute(
+      path: '/about',
+      page: AboutPage,
+      transitionsBuilder: TransitionsBuilders.fadeIn,
+    ),
+    CustomRoute(
+      path: '/activities',
+      page: ActivitiesPage,
+      transitionsBuilder: TransitionsBuilders.fadeIn,
+    ),
+    CustomRoute(
+      path: '/contact',
+      page: ContactPage,
+      transitionsBuilder: TransitionsBuilders.fadeIn,
+    ),
     MaterialRoute(path: '/cv', page: CVPage),
-    AutoRoute(
+    CustomRoute(
       path: '/dashboard',
       page: DashboardPage,
       guards: [AuthGuard],
+      transitionsBuilder: TransitionsBuilders.fadeIn,
       children: [
         AutoRoute(
           path: 'posts',
@@ -120,10 +137,11 @@ import 'package:rootasjey/screens/update_username_page.dart';
               name: 'DashSettingsRoute',
             ),
             AutoRoute(path: 'delete/account', page: DeleteAccountPage),
-            AutoRoute(
+            CustomRoute(
               path: 'update',
               page: EmptyRouterPage,
               name: 'DashAccountUpdateRouter',
+              transitionsBuilder: TransitionsBuilders.fadeIn,
               children: [
                 MaterialRoute(path: 'email', page: UpdateEmailPage),
                 MaterialRoute(path: 'password', page: UpdatePasswordPage),
@@ -142,29 +160,53 @@ import 'package:rootasjey/screens/update_username_page.dart';
       page: AboutMePage,
       transitionsBuilder: TransitionsBuilders.fadeIn,
     ),
-    MaterialRoute(
+    CustomRoute(
       path: '/posts',
       page: EmptyRouterPage,
       name: 'PostsRouter',
+      transitionsBuilder: TransitionsBuilders.fadeIn,
       children: [
         MaterialRoute(path: '', page: PostsPage),
         MaterialRoute(path: ':postId', page: PostPage),
       ],
     ),
-    MaterialRoute(
+    CustomRoute(
       path: '/projects',
       page: EmptyRouterPage,
       name: 'ProjectsRouter',
+      transitionsBuilder: TransitionsBuilders.fadeIn,
       children: [
         MaterialRoute(path: '', page: ProjectsPage),
         MaterialRoute(path: ':projectId', page: ProjectPage),
       ],
     ),
-    MaterialRoute(path: '/pricing', page: PricingPage),
-    MaterialRoute(path: '/search', page: SearchPage),
-    MaterialRoute(path: '/settings', page: SettingsPage),
-    MaterialRoute(path: '/signin', page: SigninPage, guards: [NoAuthGuard]),
-    MaterialRoute(path: '/signup', page: SignupPage, guards: [NoAuthGuard]),
+    CustomRoute(
+      path: '/pricing',
+      page: PricingPage,
+      transitionsBuilder: TransitionsBuilders.fadeIn,
+    ),
+    CustomRoute(
+      path: '/search',
+      page: SearchPage,
+      transitionsBuilder: TransitionsBuilders.fadeIn,
+    ),
+    CustomRoute(
+      path: '/settings',
+      page: SettingsPage,
+      transitionsBuilder: TransitionsBuilders.fadeIn,
+    ),
+    CustomRoute(
+      path: '/signin',
+      page: SigninPage,
+      guards: [NoAuthGuard],
+      transitionsBuilder: TransitionsBuilders.fadeIn,
+    ),
+    CustomRoute(
+      path: '/signup',
+      page: SignupPage,
+      guards: [NoAuthGuard],
+      transitionsBuilder: TransitionsBuilders.fadeIn,
+    ),
     MaterialRoute(
       path: '/signout',
       page: EmptyRouterPage,
