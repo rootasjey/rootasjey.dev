@@ -20,7 +20,6 @@ class _SimpleAppBarState extends State<SimpleAppBar> {
   Widget build(BuildContext context) {
     return AppBar(
       centerTitle: false,
-      backgroundColor: stateColors.appBackground.withOpacity(1.0),
       title: Row(
         children: [
           AppIcon(

@@ -12,9 +12,6 @@ abstract class StateColorsBase with Store {
   Color accent = Color(0xFF796AD2);
 
   @observable
-  Color appBackground = Color(0xFAFAFA);
-
-  @observable
   Color background = Colors.white;
 
   @observable
@@ -55,7 +52,6 @@ abstract class StateColorsBase with Store {
     if (brightness == Brightness.dark) {
       foreground = Colors.white;
       background = Colors.black;
-      appBackground = Color(0xFF303030);
       softBackground = Color(0xFF303030);
       tileBackground = Color(0xFF303030);
       iconExt = 'light';
@@ -64,7 +60,6 @@ abstract class StateColorsBase with Store {
 
     foreground = Colors.black;
     background = Colors.white;
-    appBackground = Color(0xFAFAFA);
     softBackground = Color(0xFFEEEEEE);
     tileBackground = Color(0xFFFAFAFA);
     iconExt = 'dark';

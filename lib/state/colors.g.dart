@@ -24,21 +24,6 @@ mixin _$StateColors on StateColorsBase, Store {
     });
   }
 
-  final _$appBackgroundAtom = Atom(name: 'StateColorsBase.appBackground');
-
-  @override
-  Color get appBackground {
-    _$appBackgroundAtom.reportRead();
-    return super.appBackground;
-  }
-
-  @override
-  set appBackground(Color value) {
-    _$appBackgroundAtom.reportWrite(value, super.appBackground, () {
-      super.appBackground = value;
-    });
-  }
-
   final _$backgroundAtom = Atom(name: 'StateColorsBase.background');
 
   @override
@@ -143,7 +128,6 @@ mixin _$StateColors on StateColorsBase, Store {
   String toString() {
     return '''
 accent: ${accent},
-appBackground: ${appBackground},
 background: ${background},
 foreground: ${foreground},
 tileBackground: ${tileBackground},

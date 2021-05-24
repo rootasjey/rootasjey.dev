@@ -111,7 +111,6 @@ class _EditProjectPageState extends State<EditProjectPage> {
       snap: true,
       pinned: true,
       collapsedHeight: 80.0,
-      backgroundColor: stateColors.appBackground.withOpacity(1.0),
       expandedHeight: 120.0,
       automaticallyImplyLeading: false,
       centerTitle: false,

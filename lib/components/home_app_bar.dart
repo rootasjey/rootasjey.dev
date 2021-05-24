@@ -50,7 +50,6 @@ class _HomeAppBarState extends State<HomeAppBar> {
               floating: true,
               snap: true,
               pinned: true,
-              backgroundColor: stateColors.appBackground.withOpacity(1.0),
               automaticallyImplyLeading: false,
               title: Padding(
                 padding: EdgeInsets.only(

@@ -216,7 +216,6 @@ class _ContactPageState extends State<ContactPage> {
           ),
           child: Card(
             elevation: 4.0,
-            color: stateColors.appBackground,
             child: Padding(
               padding: const EdgeInsets.only(
                 left: 60.0,
