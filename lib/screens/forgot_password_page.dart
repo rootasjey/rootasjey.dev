@@ -236,7 +236,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         child: ElevatedButton(
           onPressed: sendResetLink,
           style: ElevatedButton.styleFrom(
-            primary: stateColors.accent,
+            primary: stateColors.primary,
             textStyle: TextStyle(
               color: Colors.white,
             ),

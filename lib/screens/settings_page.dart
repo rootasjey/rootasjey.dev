@@ -385,7 +385,6 @@ class _SettingsPageState extends State<SettingsPage> {
       width: 90.0,
       child: Material(
         elevation: 3.0,
-        color: stateColors.softBackground,
         shape: avatarUrl.replaceFirst('local:', '') == imageName
             ? CircleBorder(
                 side: BorderSide(
@@ -401,8 +400,7 @@ class _SettingsPageState extends State<SettingsPage> {
           },
           child: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Image.asset(
-                'assets/images/$imageName-${stateColors.iconExt}.png'),
+            child: Image.asset('assets/images/$imageName-light.png'),
           ),
         ),
       ),

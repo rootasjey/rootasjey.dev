@@ -236,7 +236,7 @@ class DeleteAccountPageState extends State<DeleteAccountPage> {
     return Padding(
       padding: const EdgeInsets.only(top: 20.0, bottom: 50.0),
       child: Image.asset(
-        'assets/images/delete-user-${stateColors.iconExt}.png',
+        'assets/images/delete-user-light.png',
         width: 100.0,
       ),
     );

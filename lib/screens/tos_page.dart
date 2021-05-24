@@ -132,7 +132,7 @@ class _TosPageState extends State<TosPage> {
           curve: Curves.easeOut,
         );
       },
-      backgroundColor: stateColors.accent,
+      backgroundColor: stateColors.primary,
       foregroundColor: Colors.white,
       child: Icon(Icons.arrow_upward),
     );
@@ -157,7 +157,7 @@ class _TosPageState extends State<TosPage> {
           "tos".tr(),
           style: TextStyle(
             fontSize: 50.0,
-            color: stateColors.accent,
+            color: stateColors.primary,
           ),
         ),
       ),

@@ -204,8 +204,7 @@ class _CVPageState extends State<CVPage> {
   Widget body() {
     return Observer(
       builder: (context) {
-        return Container(
-          color: stateColors.tileBackground,
+        return Padding(
           padding: const EdgeInsets.all(80.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
