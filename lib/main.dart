@@ -80,6 +80,8 @@ class AppState extends State<App> {
       light: ThemeData(
         brightness: Brightness.light,
         fontFamily: FontsUtils.fontFamily,
+        backgroundColor: stateColors.newLightBackground,
+        scaffoldBackgroundColor: stateColors.newLightBackground,
       ),
       dark: ThemeData(
         brightness: Brightness.dark,

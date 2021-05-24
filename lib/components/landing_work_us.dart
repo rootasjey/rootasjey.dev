@@ -53,20 +53,17 @@ class _LandingWorkUsState extends State<LandingWorkUs> {
       );
     }
 
-    return Container(
-      color: stateColors.newLightBackground,
-      child: ConstrainedBox(
-        constraints: BoxConstraints(minHeight: minHeight),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ArrowDivider(),
-            Padding(
-              padding: padding,
-              child: bothSide,
-            ),
-          ],
-        ),
+    return ConstrainedBox(
+      constraints: BoxConstraints(minHeight: minHeight),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ArrowDivider(),
+          Padding(
+            padding: padding,
+            child: bothSide,
+          ),
+        ],
       ),
     );
   }

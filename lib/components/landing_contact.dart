@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/arrow_divider.dart';
 import 'package:rootasjey/components/contact_form.dart';
-import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/utils/constants.dart';
 import 'package:rootasjey/utils/fonts.dart';
 
@@ -29,17 +28,14 @@ class _LandingContactState extends State<LandingContact> {
       );
     }
 
-    return Container(
-      color: stateColors.newLightBackground,
-      child: Column(
-        children: [
-          ArrowDivider(),
-          Padding(
-            padding: padding,
-            child: contactForm(),
-          ),
-        ],
-      ),
+    return Column(
+      children: [
+        ArrowDivider(),
+        Padding(
+          padding: padding,
+          child: contactForm(),
+        ),
+      ],
     );
   }
 

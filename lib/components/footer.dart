@@ -35,7 +35,7 @@ class _FooterState extends State<Footer> {
     final WrapAlignment alignment =
         width < 700.0 ? WrapAlignment.spaceBetween : WrapAlignment.spaceAround;
 
-    return Container(
+    return Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: 60.0,
         vertical: 90.0,

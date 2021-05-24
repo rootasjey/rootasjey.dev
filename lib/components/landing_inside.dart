@@ -1,7 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/arrow_divider.dart';
-import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/utils/constants.dart';
 import 'package:rootasjey/utils/fonts.dart';
 import 'package:unicons/unicons.dart';
@@ -40,27 +39,24 @@ class _LandingInsideState extends State<LandingInside> {
       );
     }
 
-    return Container(
-      color: stateColors.newLightBackground,
-      child: ConstrainedBox(
-        constraints: BoxConstraints(
-          minHeight: minHeight,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ArrowDivider(),
-            Padding(
-              padding: padding,
-              child: Row(
-                children: [
-                  mainContent(),
-                  sideContent(),
-                ],
-              ),
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+        minHeight: minHeight,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ArrowDivider(),
+          Padding(
+            padding: padding,
+            child: Row(
+              children: [
+                mainContent(),
+                sideContent(),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

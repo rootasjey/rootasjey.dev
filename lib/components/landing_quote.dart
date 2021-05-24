@@ -35,30 +35,28 @@ class _LandingQuoteState extends State<LandingQuote> {
       );
     }
 
-    return Container(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ArrowDivider(),
-          Padding(
-            padding: padding,
-            child: Column(
-              children: [
-                Text(
-                  "If you don't like using a tool,"
-                  " build a new one.",
-                  style: FontsUtils.mainStyle(
-                    fontSize: _isSmallView ? 60.0 : 90.0,
-                    fontWeight: FontWeight.w700,
-                  ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ArrowDivider(),
+        Padding(
+          padding: padding,
+          child: Column(
+            children: [
+              Text(
+                "If you don't like using a tool,"
+                " build a new one.",
+                style: FontsUtils.mainStyle(
+                  fontSize: _isSmallView ? 60.0 : 90.0,
+                  fontWeight: FontWeight.w700,
                 ),
-                author(),
-                viewMoreButton(),
-              ],
-            ),
+              ),
+              author(),
+              viewMoreButton(),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 

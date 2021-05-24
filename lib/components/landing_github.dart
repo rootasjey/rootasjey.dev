@@ -64,7 +64,6 @@ class _LandingGitHubState extends State<LandingGitHub> {
     }
 
     return Container(
-      color: stateColors.newLightBackground,
       child: ConstrainedBox(
         constraints: BoxConstraints(minHeight: minHeight),
         child: Column(

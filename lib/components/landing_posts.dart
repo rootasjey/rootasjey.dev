@@ -5,7 +5,6 @@ import 'package:rootasjey/components/arrow_divider.dart';
 import 'package:rootasjey/components/post_card.dart';
 import 'package:rootasjey/components/min_pub_post_card.dart';
 import 'package:rootasjey/router/app_router.gr.dart';
-import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/types/post.dart';
 import 'package:rootasjey/utils/app_logger.dart';
 import 'package:rootasjey/utils/constants.dart';
@@ -49,26 +48,23 @@ class _LandingPostsState extends State<LandingPosts> {
       );
     }
 
-    return Container(
-      color: stateColors.newLightBackground,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ArrowDivider(),
-          Padding(
-            padding: padding,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                title(),
-                postsWrap(),
-                viewMoreButton(),
-              ],
-            ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ArrowDivider(),
+        Padding(
+          padding: padding,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              title(),
+              postsWrap(),
+              viewMoreButton(),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 

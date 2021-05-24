@@ -41,7 +41,6 @@ class _LandingHeroState extends State<LandingHero> {
     }
 
     return Container(
-      color: stateColors.newLightBackground,
       padding: padding,
       child: Wrap(
         spacing: 40.0,
