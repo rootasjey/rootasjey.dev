@@ -194,9 +194,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
 
   Widget avatar() {
     return Observer(builder: (context) {
-      final avatarUrl = stateUser.userFirestore.pp.url.edited.isNotEmpty
-          ? stateUser.userFirestore.pp.url.edited
-          : "https://img.icons8.com/plasticine/100/000000/flower.png";
+      final String avatarUrl = getAvatarUrl();
 
       return Padding(
         padding: const EdgeInsets.only(top: 120.0),
@@ -206,7 +204,6 @@ class _MyProfilePageState extends State<MyProfilePage> {
             Padding(
               padding: const EdgeInsets.only(
                 left: 32.0,
-                right: 0.0,
               ),
               child: BetterAvatar(
                 size: 160.0,
@@ -239,11 +236,6 @@ class _MyProfilePageState extends State<MyProfilePage> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    IconButton(
-                      tooltip: "pp_insert_link".tr(),
-                      onPressed: showEditPictureLink,
-                      icon: Icon(UniconsLine.link_add),
-                    ),
                     IconButton(
                       tooltip: "pp_upload".tr(),
                       onPressed: uploadPicture,
@@ -635,6 +627,20 @@ class _MyProfilePageState extends State<MyProfilePage> {
     );
   }
 
+  String getAvatarUrl() {
+    String avatarUrl = stateUser.userFirestore.pp.url.edited;
+
+    if (avatarUrl == null || avatarUrl.isEmpty) {
+      avatarUrl = stateUser.userFirestore.pp.url.original;
+    }
+
+    if (avatarUrl.isEmpty) {
+      avatarUrl = "https://img.icons8.com/plasticine/100/000000/flower.png";
+    }
+
+    return avatarUrl;
+  }
+
   void showAddLink() {
     _textInputController.text = _selectedLink.isEmpty
         ? ''
@@ -943,112 +949,6 @@ class _MyProfilePageState extends State<MyProfilePage> {
                             onValidate: () {
                               setState(() {
                                 stateUser.userFirestore.summary =
-                                    _textInputController.text;
-                              });
-
-                              updateUser();
-                            },
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      }),
-    );
-  }
-
-  void showEditPictureLink() {
-    final user = stateUser.userFirestore;
-
-    _textInputController.text =
-        user.urls.image.isNotEmpty ? user.urls.image : '';
-
-    showCupertinoModalBottomSheet(
-      context: context,
-      builder: (context) => StatefulBuilder(builder: (context, childSetState) {
-        return Scaffold(
-          body: Padding(
-            padding: const EdgeInsets.all(40.0),
-            child: Column(
-              children: [
-                SheetHeader(
-                  title: "pp".tr(),
-                  tooltip: "close".tr(),
-                  subtitle: "pp_subtitle".tr(),
-                ),
-                Container(
-                  width: 600.0,
-                  padding: EdgeInsets.only(
-                    top: 60.0,
-                  ),
-                  child: Column(
-                    children: [
-                      TextField(
-                        autofocus: true,
-                        controller: _textInputController,
-                        keyboardType: TextInputType.multiline,
-                        decoration: InputDecoration(
-                          labelText: "pp_label_text".tr(),
-                          icon: Icon(UniconsLine.image),
-                        ),
-                        onChanged: (_) {
-                          childSetState(() {});
-                        },
-                        onSubmitted: (_) {
-                          childSetState(() {
-                            stateUser.userFirestore.urls.image =
-                                _textInputController.text;
-                          });
-
-                          context.router.pop();
-                          updateUser();
-                        },
-                      ),
-                      if (_textInputController.text.isNotEmpty)
-                        Align(
-                          alignment: Alignment.topLeft,
-                          child: Padding(
-                            padding: const EdgeInsets.only(
-                              top: 8.0,
-                              left: 32.0,
-                            ),
-                            child: Opacity(
-                              opacity: 0.6,
-                              child: TextButton.icon(
-                                onPressed: () {
-                                  childSetState(() {
-                                    _textInputController.clear();
-                                  });
-                                },
-                                icon: Icon(UniconsLine.times),
-                                label: Padding(
-                                  padding: const EdgeInsets.only(right: 8.0),
-                                  child: Text("clear".tr()),
-                                ),
-                                style: TextButton.styleFrom(
-                                  primary: stateColors.foreground,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          top: 40.0,
-                        ),
-                        child: Align(
-                          alignment: Alignment.topRight,
-                          child: FormActionInputs(
-                            cancelTextString: "cancel".tr(),
-                            onCancel: context.router.pop,
-                            onValidate: () {
-                              setState(() {
-                                stateUser.userFirestore.urls.image =
                                     _textInputController.text;
                               });
 
