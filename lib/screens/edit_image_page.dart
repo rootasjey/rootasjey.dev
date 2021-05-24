@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:cloud_functions/cloud_functions.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -11,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:mime_type/mime_type.dart';
 import 'package:rootasjey/components/form_actions_inputs.dart';
 import 'package:rootasjey/components/loading_view.dart';
+import 'package:rootasjey/components/main_app_bar.dart';
 import 'package:rootasjey/state/user.dart';
 import 'package:rootasjey/types/user_pp_path.dart';
 import 'package:rootasjey/types/user_pp_url.dart';
@@ -37,11 +39,10 @@ class EditImagePage extends StatefulWidget {
 
 class _EditImagePageState extends State<EditImagePage> {
   bool _isCropping = false;
+  bool _isUpdating = false;
 
   final GlobalKey<ExtendedImageEditorState> _editorKey =
       GlobalKey<ExtendedImageEditorState>();
-
-  bool _isUpdating = false;
 
   @override
   void initState() {
@@ -50,107 +51,171 @@ class _EditImagePageState extends State<EditImagePage> {
 
   @override
   Widget build(BuildContext context) {
+    return Scaffold(
+      body: CustomScrollView(
+        slivers: [
+          MainAppBar(),
+          header(),
+          body(),
+        ],
+      ),
+    );
+  }
+
+  Widget body() {
+    Widget child;
+
     if (_isCropping) {
-      return LoadingView(
-        title: "Cropping your image...",
+      child = LoadingView(
+        title: "image_cropping".tr(),
       );
+    } else if (_isUpdating) {
+      child = LoadingView(
+        title: "image_update_cloud".tr(),
+      );
+    } else {
+      child = idleView();
     }
 
-    if (_isUpdating) {
-      return LoadingView(
-        title: "Updating your image to the cloud...",
-      );
-    }
-
-    return idleView();
+    return SliverList(
+      delegate: SliverChildListDelegate.fixed([
+        child,
+      ]),
+    );
   }
 
   Widget idleView() {
-    return CustomScrollView(
-      slivers: [
-        SliverList(
-          delegate: SliverChildListDelegate.fixed(
-            [
-              Column(
-                children: [
-                  title(),
-                  ExtendedImage(
-                    width: 600.0,
-                    height: 500.0,
-                    image: widget.image,
-                    fit: BoxFit.contain,
-                    mode: ExtendedImageMode.editor,
-                    extendedImageEditorKey: _editorKey,
-                    initEditorConfigHandler: (state) {
-                      return EditorConfig(
-                        maxScale: 8.0,
-                        cropRectPadding: const EdgeInsets.all(20.0),
-                        hitTestSize: 20.0,
-                      );
-                    },
-                  ),
-                  imageActions(),
-                  FormActionInputs(
-                    cancelTextString: "Cancel",
-                    onCancel: context.router.pop,
-                    onValidate: () {
-                      _cropImage(useNativeLib: false);
-                    },
-                  ),
-                ],
-              ),
-            ],
-          ),
+    return Column(children: [
+      ExtendedImage(
+        width: 600.0,
+        height: 400.0,
+        image: widget.image,
+        fit: BoxFit.contain,
+        mode: ExtendedImageMode.editor,
+        extendedImageEditorKey: _editorKey,
+        initEditorConfigHandler: (state) {
+          return EditorConfig(
+            maxScale: 8.0,
+            cropRectPadding: const EdgeInsets.all(20.0),
+            hitTestSize: 20.0,
+          );
+        },
+      ),
+      imageActions(),
+      FormActionInputs(
+        padding: const EdgeInsets.only(
+          bottom: 300.0,
         ),
-      ],
-    );
+        cancelTextString: "cancel".tr(),
+        onCancel: context.router.pop,
+        onValidate: () {
+          _cropImage(useNativeLib: false);
+        },
+      ),
+    ]);
   }
 
   Widget imageActions() {
     return Padding(
-      padding: const EdgeInsets.only(top: 20.0),
+      padding: const EdgeInsets.only(bottom: 20.0),
       child: Wrap(
         spacing: 20.0,
         runSpacing: 20.0,
         children: [
           IconButton(
+            icon: Icon(UniconsLine.crop_alt_rotate_left),
             onPressed: () {
               _editorKey.currentState.rotate(right: false);
             },
-            icon: Icon(UniconsLine.crop_alt_rotate_left),
           ),
           IconButton(
+            icon: Icon(UniconsLine.crop_alt_rotate_right),
             onPressed: () {
               _editorKey.currentState.rotate(right: true);
             },
-            icon: Icon(UniconsLine.crop_alt_rotate_right),
           ),
           IconButton(
+            icon: Icon(UniconsLine.flip_v),
             onPressed: () {
               _editorKey.currentState.flip();
             },
-            icon: Icon(UniconsLine.flip_v),
           ),
           IconButton(
+            icon: Icon(UniconsLine.history),
             onPressed: () {
               _editorKey.currentState.reset();
             },
-            icon: Icon(UniconsLine.history),
           ),
         ],
       ),
     );
   }
 
-  Widget title() {
-    return Padding(
-      padding: const EdgeInsets.only(top: 32.0),
-      child: Text(
-        "Crop, resize, rotate, flip your profile picture",
-        style: FontsUtils.mainStyle(
-          fontSize: 24.0,
+  Widget header() {
+    return SliverList(
+      delegate: SliverChildListDelegate.fixed([
+        Padding(
+          padding: const EdgeInsets.only(top: 60.0),
+          child: Column(
+            children: [
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(right: 24.0),
+                    child: Opacity(
+                      opacity: 0.8,
+                      child: IconButton(
+                        onPressed: context.router.pop,
+                        icon: Icon(UniconsLine.arrow_left),
+                      ),
+                    ),
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Opacity(
+                        opacity: 0.4,
+                        child: Text(
+                          "edit".tr().toUpperCase(),
+                          style: FontsUtils.mainStyle(
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ),
+                      Opacity(
+                        opacity: 0.8,
+                        child: Text(
+                          "pp".tr(),
+                          style: FontsUtils.mainStyle(
+                            fontSize: 50.0,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 400.0,
+                        child: Opacity(
+                          opacity: 0.5,
+                          child: Text(
+                            "pp_description".tr(),
+                            style: FontsUtils.mainStyle(
+                              fontSize: 16.0,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
-      ),
+      ]),
     );
   }
 
