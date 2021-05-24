@@ -37,7 +37,8 @@ class _UnderlinedButtonState extends State<UnderlinedButton>
     _slideAnimation =
         Offset.zero.tweenTo(Offset(0.2, 0.0)).animatedBy(controller);
 
-    _underlineAnimation = 50.0.tweenTo(0.0).animatedBy(controller);
+    _underlineAnimation =
+        50.0.tweenTo(0.0).curved(Curves.decelerate).animatedBy(controller);
   }
 
   @override
@@ -48,7 +49,7 @@ class _UnderlinedButtonState extends State<UnderlinedButton>
         if (isHit) {
           right = 40.0;
           width = null;
-          controller.play(duration: 500.milliseconds);
+          controller.play(duration: 250.milliseconds);
 
           _underlineAnimation.addListener(underlineAnimListener);
 
@@ -59,7 +60,7 @@ class _UnderlinedButtonState extends State<UnderlinedButton>
 
         right = null;
         width = 0.0;
-        controller.playReverse(duration: 500.milliseconds);
+        controller.playReverse(duration: 250.milliseconds);
       },
       child: Row(
         mainAxisSize: MainAxisSize.min,
