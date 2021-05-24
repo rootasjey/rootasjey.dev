@@ -24,7 +24,7 @@ class _TosPageState extends State<TosPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: stateColors.newLightBackground,
+      backgroundColor: stateColors.lightBackground,
       floatingActionButton: floatingActionButton(),
       body: NotificationListener<ScrollNotification>(
         onNotification: onNotification,

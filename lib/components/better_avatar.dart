@@ -73,7 +73,7 @@ class _BetterAvatarState extends State<BetterAvatar>
       scale: scaleAnimation,
       child: Material(
         elevation: elevation,
-        color: stateColors.newLightBackground,
+        color: stateColors.lightBackground,
         clipBehavior: Clip.antiAlias,
         shape: CircleBorder(
           side: BorderSide(
@@ -123,7 +123,7 @@ class _BetterAvatarState extends State<BetterAvatar>
 
     return Material(
       elevation: elevation,
-      color: stateColors.newLightBackground,
+      color: stateColors.lightBackground,
       clipBehavior: Clip.antiAlias,
       shape: CircleBorder(
         side: BorderSide(

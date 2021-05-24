@@ -41,7 +41,7 @@ class _MinPubPostCardState extends State<MinPubPostCard> {
     return SizedBox(
       width: 420.0,
       child: Card(
-        color: stateColors.newLightBackground,
+        color: stateColors.lightBackground,
         elevation: _elevation,
         child: InkWell(
           onTap: navigateToPost,

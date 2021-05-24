@@ -42,7 +42,7 @@ class _PostsPageState extends State<PostsPage> {
     _isSmallView = viewWidth < Constants.maxMobileWidth;
 
     return Scaffold(
-      backgroundColor: stateColors.newLightBackground,
+      backgroundColor: stateColors.lightBackground,
       body: NotificationListener<ScrollNotification>(
         onNotification: onNotification,
         child: CustomScrollView(

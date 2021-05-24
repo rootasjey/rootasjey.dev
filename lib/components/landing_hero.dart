@@ -258,7 +258,7 @@ class _LandingHeroState extends State<LandingHero> {
       width: width,
       height: height,
       child: Card(
-        color: stateColors.newLightBackground,
+        color: stateColors.lightBackground,
         elevation: 2.0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(6.0),

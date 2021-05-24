@@ -26,7 +26,7 @@ class _ActivityRowState extends State<ActivityRow> {
 
     return Card(
       elevation: elevation,
-      color: stateColors.newLightBackground,
+      color: stateColors.lightBackground,
       child: InkWell(
         onTap: () => launch('https://github.com/${activity.repo.name}'),
         onHover: (isHit) {

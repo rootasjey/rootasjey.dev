@@ -35,7 +35,7 @@ class _MainAppBarState extends State<MainAppBar> {
               floating: true,
               snap: true,
               pinned: true,
-              backgroundColor: stateColors.newLightBackground,
+              backgroundColor: stateColors.lightBackground,
               automaticallyImplyLeading: false,
               title: Padding(
                 padding: EdgeInsets.only(

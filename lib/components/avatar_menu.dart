@@ -38,7 +38,7 @@ class AvatarMenu extends StatelessWidget {
           elevation: 4.0,
           shape: CircleBorder(),
           child: CircleAvatar(
-            backgroundColor: stateColors.newLightBackground,
+            backgroundColor: stateColors.lightBackground,
             radius: 20.0,
             backgroundImage: NetworkImage(
               stateUser.userFirestore.pp.url.edited,
