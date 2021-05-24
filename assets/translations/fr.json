@@ -311,7 +311,7 @@
   "password_tips_2": "Préférer une phrase de passe",
   "password_tips_3": "Utiliser des caractères spéciaux (e.g. *!#?)",
   "password_update": "Mettre à jour le mot de passe",
-  "password_update_description": "Si votre mot de passe est trop ancien ou compromis",
+  "password_update_description": "Veuillez choisir un bon mot de passe et de vous en souvenir. Vous pouvez utiliser un gestionnaire de mot de passes si vous le pouvez.",
   "password_update_error": "Une erreur est survenue durant la mise à jour de votre mot de passe.",
   "password_update_success": "Votre mot de passe a été mis à jour.",
   "password_updating": "Mise à jour du mot de passe...",

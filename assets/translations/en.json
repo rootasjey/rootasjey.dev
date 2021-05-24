@@ -311,7 +311,7 @@
   "password_tips_2": "Choose a pass-phrase",
   "password_tips_3": "Use special characters (e.g. *!#?)",
   "password_update": "Update password",
-  "password_update_description": "If your password is old or compromised",
+  "password_update_description": "Be sure to choose a good password and to remember it. Please use a password manager if you can.",
   "password_update_error": "Error while updating your password.",
   "password_update_success": "Your password has been successfuly updated.",
   "password_updating": "Updating your password...",

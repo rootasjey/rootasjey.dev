@@ -4,12 +4,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/animated_app_icon.dart';
 import 'package:rootasjey/components/fade_in_y.dart';
-import 'package:rootasjey/components/page_app_bar.dart';
+import 'package:rootasjey/components/main_app_bar.dart';
 import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/state/user.dart';
 import 'package:rootasjey/utils/app_storage.dart';
-import 'package:rootasjey/utils/constants.dart';
 import 'package:rootasjey/utils/fonts.dart';
 import 'package:rootasjey/utils/snack.dart';
 import 'package:supercharged/supercharged.dart';
@@ -42,29 +41,10 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
     return Scaffold(
       body: CustomScrollView(
         slivers: <Widget>[
-          appBar(),
+          MainAppBar(),
+          header(),
           body(),
         ],
-      ),
-    );
-  }
-
-  Widget appBar() {
-    final width = MediaQuery.of(context).size.width;
-    double titleLeftPadding = 70.0;
-
-    if (width < Constants.maxMobileWidth) {
-      titleLeftPadding = 0.0;
-    }
-
-    return PageAppBar(
-      textTitle: "password_update".tr(),
-      textSubTitle: "password_update_description".tr(),
-      titlePadding: EdgeInsets.only(
-        left: titleLeftPadding,
-      ),
-      bottomPadding: EdgeInsets.only(
-        bottom: 10.0,
       ),
     );
   }
@@ -124,8 +104,13 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
             autofocus: true,
             textInputAction: TextInputAction.next,
             decoration: InputDecoration(
-              icon: Icon(Icons.lock_open),
+              fillColor: Colors.white,
+              focusColor: Colors.pink,
               labelText: "password_current".tr(),
+              border: OutlineInputBorder(),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 8.0,
+              ),
             ),
             onChanged: (value) {
               password = value;
@@ -145,72 +130,106 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
     );
   }
 
+  Widget header() {
+    return SliverList(
+      delegate: SliverChildListDelegate.fixed([
+        Padding(
+          padding: const EdgeInsets.only(top: 60.0),
+          child: Column(
+            children: [
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(right: 24.0),
+                    child: Opacity(
+                      opacity: 0.8,
+                      child: IconButton(
+                        onPressed: context.router.pop,
+                        icon: Icon(UniconsLine.arrow_left),
+                      ),
+                    ),
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Opacity(
+                        opacity: 0.4,
+                        child: Text(
+                          "settings".tr().toUpperCase(),
+                          style: FontsUtils.mainStyle(
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ),
+                      Opacity(
+                        opacity: 0.8,
+                        child: Text(
+                          "password_update".tr(),
+                          style: FontsUtils.mainStyle(
+                            fontSize: 50.0,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                      Container(
+                        width: 400.0,
+                        padding: const EdgeInsets.only(left: 8.0),
+                        child: Opacity(
+                          opacity: 0.5,
+                          child: Text(
+                            "password_update_description".tr(),
+                            style: FontsUtils.mainStyle(
+                              fontSize: 16.0,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ]),
+    );
+  }
+
   Widget helpCard() {
     return Container(
       padding: EdgeInsets.only(
         left: 25.0,
-        top: 80.0,
         right: 25.0,
+        top: 80.0,
         bottom: 40.0,
       ),
-      width: 500.0,
+      width: 378.0,
       child: Card(
+        color: stateColors.clairPink,
         child: ListTile(
           contentPadding: const EdgeInsets.all(16.0),
-          leading: Icon(
-            Icons.help_outline,
-            color: stateColors.secondary,
-          ),
+          leading: Icon(UniconsLine.question),
           title: Opacity(
-            opacity: .6,
+            opacity: 0.6,
             child: Text(
               "password_choosing_good".tr(),
-            ),
-          ),
-          subtitle: Padding(
-            padding: const EdgeInsets.only(top: 8.0),
-            child: Text(
-              "password_choosing_good_desc".tr(),
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 14.0,
+              style: FontsUtils.mainStyle(
+                fontWeight: FontWeight.w600,
               ),
             ),
           ),
-          onTap: () {
-            showDialog(
-                context: context,
-                builder: (context) {
-                  return SimpleDialog(
-                    title: Text(
-                      "password_tips".tr(),
-                      style: TextStyle(
-                        fontSize: 15.0,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    children: <Widget>[
-                      Divider(
-                        color: stateColors.secondary,
-                        thickness: 1.0,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(25.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text("password_tips_1".tr()),
-                            Padding(padding: const EdgeInsets.only(top: 15.0)),
-                            Text("password_tips_2".tr()),
-                            Padding(padding: const EdgeInsets.only(top: 15.0)),
-                            Text("password_tips_3".tr()),
-                          ],
-                        ),
-                      ),
-                    ],
-                  );
-                });
-          },
+          subtitle: Text(
+            "password_choosing_good_desc".tr(),
+            style: FontsUtils.mainStyle(
+              fontSize: 14.0,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          onTap: showTipsDialog,
         ),
       ),
     );
@@ -265,8 +284,17 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
           TextFormField(
             focusNode: newPasswordNode,
             decoration: InputDecoration(
-              icon: Icon(Icons.lock_outline),
+              fillColor: Colors.white,
+              focusColor: Colors.pink,
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 8.0,
+              ),
               labelText: "password_new".tr(),
+              border: OutlineInputBorder(
+                borderSide: BorderSide(
+                  width: 2.0,
+                ),
+              ),
             ),
             obscureText: true,
             onChanged: (value) {
@@ -319,19 +347,18 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
   }
 
   Widget validationButton() {
-    return OutlinedButton.icon(
+    return ElevatedButton(
       onPressed: updatePassword,
-      style: OutlinedButton.styleFrom(
-        primary: stateColors.primary,
+      style: ElevatedButton.styleFrom(
+        primary: Colors.black87,
       ),
-      icon: Icon(Icons.check),
-      label: SizedBox(
-        width: 240.0,
+      child: SizedBox(
+        width: 300.0,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.all(18.0),
+              padding: const EdgeInsets.all(14.0),
               child: Text(
                 "password_update".tr().toUpperCase(),
                 style: FontsUtils.mainStyle(
@@ -340,6 +367,7 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
                 ),
               ),
             ),
+            Icon(UniconsLine.check),
           ],
         ),
       ),
@@ -409,5 +437,42 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
     }
 
     return true;
+  }
+
+  void showTipsDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return SimpleDialog(
+          backgroundColor: stateColors.clairPink,
+          title: Text(
+            "password_tips".tr(),
+            style: FontsUtils.mainStyle(
+              fontSize: 14.0,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          children: <Widget>[
+            Divider(
+              color: stateColors.secondary,
+              thickness: 1.0,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(25.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text("password_tips_1".tr()),
+                  Padding(padding: const EdgeInsets.only(top: 15.0)),
+                  Text("password_tips_2".tr()),
+                  Padding(padding: const EdgeInsets.only(top: 15.0)),
+                  Text("password_tips_3".tr()),
+                ],
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 }
