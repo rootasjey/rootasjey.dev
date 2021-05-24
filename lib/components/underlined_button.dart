@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:rootasjey/state/colors.dart';
 import 'package:simple_animations/simple_animations.dart';
 import 'package:supercharged/supercharged.dart';
 
 class UnderlinedButton extends StatefulWidget {
+  final Color underlineColor;
+  final VoidCallback onTap;
   final Widget child;
   final Widget leading;
   final Widget trailing;
-  final VoidCallback onTap;
 
   const UnderlinedButton({
     Key key,
+    this.underlineColor = Colors.black45,
     @required this.child,
     this.leading,
     this.trailing,
@@ -78,7 +79,7 @@ class _UnderlinedButtonState extends State<UnderlinedButton>
                   width: width,
                   bottom: 0.0,
                   child: Container(
-                    color: stateColors.primary,
+                    color: widget.underlineColor,
                     height: 2.0,
                   ),
                 ),
