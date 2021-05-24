@@ -456,6 +456,7 @@
   "url_add": "Ajouter un lien",
   "urls_ext": "Liens externes",
   "user": "Utilisateur",
+  "user_not_connected": "Vous n'êtes pas connecté(e).",
   "user_updating": "Mise à jour de vos données...",
   "username": "Nom d'utilisateur",
   "username_choose_description": "Vous pouvez en choisir un nouveau tant qu'il est unique.",

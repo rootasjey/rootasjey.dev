@@ -1005,7 +1005,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
     final user = FirebaseAuth.instance.currentUser;
 
     if (user == null) {
-      throw Exception("You're not connected.");
+      throw Exception("user_not_connected".tr());
     }
 
     setState(() => _isUpdating = true);
