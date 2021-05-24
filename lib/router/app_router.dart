@@ -116,27 +116,41 @@ import 'package:rootasjey/screens/update_username_page.dart';
             RedirectRoute(path: '*', redirectTo: ''),
           ],
         ),
-        AutoRoute(
+        CustomRoute(
           path: 'profile',
           name: 'DashProfileRouter',
           page: EmptyRouterPage,
+          transitionsBuilder: TransitionsBuilders.fadeIn,
           children: [
-            AutoRoute(path: '', page: MyProfilePage),
-            AutoRoute(path: 'edit/pp', page: EditImagePage),
+            CustomRoute(
+              path: '',
+              page: MyProfilePage,
+              transitionsBuilder: TransitionsBuilders.fadeIn,
+            ),
+            CustomRoute(
+              path: 'edit/pp',
+              page: EditImagePage,
+              transitionsBuilder: TransitionsBuilders.fadeIn,
+            ),
             RedirectRoute(path: '*', redirectTo: ''),
           ],
         ),
-        AutoRoute(
+        CustomRoute(
           path: 'settings',
           page: EmptyRouterPage,
           name: 'DashSettingsRouter',
+          transitionsBuilder: TransitionsBuilders.fadeIn,
           children: [
             MaterialRoute(
               path: '',
               page: SettingsPage,
               name: 'DashSettingsRoute',
             ),
-            AutoRoute(path: 'delete/account', page: DeleteAccountPage),
+            CustomRoute(
+              path: 'delete/account',
+              page: DeleteAccountPage,
+              transitionsBuilder: TransitionsBuilders.fadeIn,
+            ),
             CustomRoute(
               path: 'update',
               page: EmptyRouterPage,

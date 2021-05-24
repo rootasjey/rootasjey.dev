@@ -225,16 +225,22 @@ class AppRouter extends _i1.RootStackRouter {
         builder: (_) {
           return const _i1.EmptyRouterPage();
         }),
-    DashProfileRouter.name: (routeData) => _i1.MaterialPageX<dynamic>(
+    DashProfileRouter.name: (routeData) => _i1.CustomPage<dynamic>(
         routeData: routeData,
         builder: (_) {
           return const _i1.EmptyRouterPage();
-        }),
-    DashSettingsRouter.name: (routeData) => _i1.MaterialPageX<dynamic>(
+        },
+        transitionsBuilder: _i1.TransitionsBuilders.fadeIn,
+        opaque: true,
+        barrierDismissible: false),
+    DashSettingsRouter.name: (routeData) => _i1.CustomPage<dynamic>(
         routeData: routeData,
         builder: (_) {
           return const _i1.EmptyRouterPage();
-        }),
+        },
+        transitionsBuilder: _i1.TransitionsBuilders.fadeIn,
+        opaque: true,
+        barrierDismissible: false),
     MyPostsPageRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
         routeData: routeData,
         builder: (_) {
@@ -311,18 +317,24 @@ class AppRouter extends _i1.RootStackRouter {
         builder: (_) {
           return const _i32.DraftProjectsPage();
         }),
-    MyProfilePageRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
+    MyProfilePageRoute.name: (routeData) => _i1.CustomPage<dynamic>(
         routeData: routeData,
         builder: (_) {
           return _i33.MyProfilePage();
-        }),
-    EditImagePageRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
+        },
+        transitionsBuilder: _i1.TransitionsBuilders.fadeIn,
+        opaque: true,
+        barrierDismissible: false),
+    EditImagePageRoute.name: (routeData) => _i1.CustomPage<dynamic>(
         routeData: routeData,
         builder: (data) {
           final args = data.argsAs<EditImagePageRouteArgs>(
               orElse: () => const EditImagePageRouteArgs());
           return _i34.EditImagePage(key: args.key, image: args.image);
-        }),
+        },
+        transitionsBuilder: _i1.TransitionsBuilders.fadeIn,
+        opaque: true,
+        barrierDismissible: false),
     DashSettingsRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
         routeData: routeData,
         builder: (data) {
@@ -332,11 +344,14 @@ class AppRouter extends _i1.RootStackRouter {
                   showAppBar: pathParams.getBool('showAppBar', true)));
           return _i16.SettingsPage(key: args.key, showAppBar: args.showAppBar);
         }),
-    DeleteAccountPageRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
+    DeleteAccountPageRoute.name: (routeData) => _i1.CustomPage<dynamic>(
         routeData: routeData,
         builder: (_) {
           return _i35.DeleteAccountPage();
-        }),
+        },
+        transitionsBuilder: _i1.TransitionsBuilders.fadeIn,
+        opaque: true,
+        barrierDismissible: false),
     DashAccountUpdateRouter.name: (routeData) => _i1.CustomPage<dynamic>(
         routeData: routeData,
         builder: (_) {
