@@ -1,8 +1,8 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:rootasjey/components/avatar_menu.dart';
 import 'package:rootasjey/components/side_menu_item.dart';
+import 'package:rootasjey/components/underlined_button.dart';
 import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/utils/constants.dart';
@@ -37,7 +37,7 @@ class _DashboardPageState extends State<DashboardPage> {
     SideMenuItem(
       index: 3,
       iconData: UniconsLine.setting,
-      label: 'Settings',
+      label: "settings".tr(),
       hoverColor: Colors.blueGrey,
     ),
   ];
@@ -70,6 +70,56 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
+  Widget bodySidePanel(TabsRouter tabsRouter) {
+    return SliverPadding(
+      padding: const EdgeInsets.only(
+        left: 20.0,
+        right: 20.0,
+      ),
+      sliver: SliverList(
+          delegate: SliverChildListDelegate.fixed(
+        _sideMenuItems.map((item) {
+          Color color = stateColors.foreground.withOpacity(0.6);
+          Color textColor = stateColors.foreground.withOpacity(0.4);
+          FontWeight fontWeight = FontWeight.w600;
+
+          if (tabsRouter.activeIndex == item.index) {
+            color = item.hoverColor;
+            textColor = stateColors.foreground.withOpacity(0.6);
+            fontWeight = FontWeight.w700;
+          }
+
+          return Padding(
+            padding: const EdgeInsets.only(
+              left: 24.0,
+              top: 32.0,
+            ),
+            child: UnderlinedButton(
+              leading: Padding(
+                padding: const EdgeInsets.only(right: 16.0),
+                child: Icon(
+                  item.iconData,
+                  color: color,
+                ),
+              ),
+              child: Text(
+                item.label,
+                style: FontsUtils.mainStyle(
+                  color: textColor,
+                  fontSize: 16.0,
+                  fontWeight: fontWeight,
+                ),
+              ),
+              onTap: () {
+                tabsRouter.setActiveIndex(item.index);
+              },
+            ),
+          );
+        }).toList(),
+      )),
+    );
+  }
+
   Widget buildSidePanel(BuildContext context, TabsRouter tabsRouter) {
     final double windowWidth = MediaQuery.of(context).size.width;
 
@@ -78,65 +128,35 @@ class _DashboardPageState extends State<DashboardPage> {
     }
 
     return Container(
-      foregroundDecoration: BoxDecoration(
-        color: Color.fromRGBO(0, 0, 0, 0.05),
-      ),
       width: 300.0,
+      color: stateColors.lightBackground,
       child: Stack(
         children: <Widget>[
           CustomScrollView(
             slivers: <Widget>[
-              SliverPadding(
-                padding: const EdgeInsets.only(
-                  top: 20.0,
-                  bottom: 50.0,
-                ),
-                sliver: SliverList(
-                  delegate: SliverChildListDelegate.fixed([
-                    AvatarMenu(),
-                  ]),
-                ),
-              ),
-              SliverPadding(
-                padding: const EdgeInsets.only(
-                  left: 20.0,
-                  right: 20.0,
-                ),
-                sliver: SliverList(
-                    delegate: SliverChildListDelegate.fixed(
-                  _sideMenuItems.map((item) {
-                    Color color = stateColors.foreground.withOpacity(0.6);
-                    Color textColor = stateColors.foreground.withOpacity(0.6);
-                    FontWeight fontWeight = FontWeight.w400;
-
-                    if (tabsRouter.activeIndex == item.index) {
-                      color = item.hoverColor;
-                      textColor = stateColors.foreground;
-                      fontWeight = FontWeight.w600;
-                    }
-
-                    return ListTile(
-                      leading: Icon(
-                        item.iconData,
-                        color: color,
-                      ),
-                      title: Text(
-                        item.label,
-                        style: FontsUtils.mainStyle(
-                          color: textColor,
-                          fontWeight: fontWeight,
-                        ),
-                      ),
-                      onTap: () {
-                        tabsRouter.setActiveIndex(item.index);
-                      },
-                    );
-                  }).toList(),
-                )),
-              ),
+              topSidePanel(),
+              bodySidePanel(tabsRouter),
             ],
           ),
         ],
+      ),
+    );
+  }
+
+  Widget topSidePanel() {
+    return SliverPadding(
+      padding: const EdgeInsets.only(
+        top: 20.0,
+        bottom: 50.0,
+      ),
+      sliver: SliverList(
+        delegate: SliverChildListDelegate.fixed([
+          IconButton(
+            tooltip: "home".tr(),
+            onPressed: () => context.router.navigate(HomePageRoute()),
+            icon: Icon(UniconsLine.home),
+          ),
+        ]),
       ),
     );
   }
