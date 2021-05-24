@@ -7,16 +7,16 @@ import 'package:flutter/material.dart';
 import 'package:rootasjey/actions/users.dart';
 import 'package:rootasjey/components/animated_app_icon.dart';
 import 'package:rootasjey/components/fade_in_y.dart';
-import 'package:rootasjey/components/page_app_bar.dart';
+import 'package:rootasjey/components/main_app_bar.dart';
 import 'package:rootasjey/components/sliver_edge_padding.dart';
 import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/state/user.dart';
 import 'package:rootasjey/utils/app_logger.dart';
-import 'package:rootasjey/utils/constants.dart';
 import 'package:rootasjey/utils/fonts.dart';
 import 'package:rootasjey/utils/snack.dart';
 import 'package:supercharged/supercharged.dart';
+import 'package:unicons/unicons.dart';
 
 class UpdateEmailPage extends StatefulWidget {
   @override
@@ -24,29 +24,26 @@ class UpdateEmailPage extends StatefulWidget {
 }
 
 class _UpdateEmailPageState extends State<UpdateEmailPage> {
-  bool isCheckingEmail = false;
-  bool isEmailAvailable = false;
-  bool isCheckingAuth = false;
-  bool isUpdating = false;
-  bool isCompleted = false;
+  bool _isCheckingEmail = false;
+  bool _isUpdating = false;
+  bool _isCompleted = false;
 
-  final beginY = 10.0;
-  final passwordNode = FocusNode();
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
+  final _beginY = 10.0;
+  final _passwordNode = FocusNode();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
 
-  String currentEmail = '';
-  String email = '';
-  String emailErrorMessage = '';
-  String password = '';
+  String _emailInputValue = '';
+  String _emailInputErrorMessage = '';
+  String _passwordInputValue = '';
 
-  Timer emailTimer;
+  Timer _emailTimer;
 
   @override
   void dispose() {
-    passwordNode.dispose();
-    emailController.dispose();
-    passwordController.dispose();
+    _passwordNode.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
     super.dispose();
   }
 
@@ -56,37 +53,20 @@ class _UpdateEmailPageState extends State<UpdateEmailPage> {
       body: CustomScrollView(
         slivers: <Widget>[
           SliverEdgePadding(),
-          appBar(),
+          MainAppBar(),
+          header(),
           body(),
         ],
       ),
     );
   }
 
-  Widget appBar() {
-    final width = MediaQuery.of(context).size.width;
-    double titleLeftPadding = 70.0;
-
-    if (width < Constants.maxMobileWidth) {
-      titleLeftPadding = 0.0;
-    }
-
-    return PageAppBar(
-      textTitle: "email_update".tr(),
-      textSubTitle: "email_update_example".tr(),
-      titlePadding: EdgeInsets.only(
-        left: titleLeftPadding,
-      ),
-      expandedHeight: 90.0,
-    );
-  }
-
   Widget body() {
-    if (isCompleted) {
+    if (_isCompleted) {
       return completedView();
     }
 
-    if (isUpdating) {
+    if (_isUpdating) {
       return updatingView();
     }
 
@@ -104,22 +84,22 @@ class _UpdateEmailPageState extends State<UpdateEmailPage> {
               children: <Widget>[
                 FadeInY(
                   delay: 0.milliseconds,
-                  beginY: beginY,
-                  child: currentEmailCard(),
+                  beginY: _beginY,
+                  child: helperCard(),
                 ),
                 FadeInY(
                   delay: 100.milliseconds,
-                  beginY: beginY,
+                  beginY: _beginY,
                   child: emailInput(),
                 ),
                 FadeInY(
                   delay: 200.milliseconds,
-                  beginY: beginY,
+                  beginY: _beginY,
                   child: passwordInput(),
                 ),
                 FadeInY(
                   delay: 300.milliseconds,
-                  beginY: beginY,
+                  beginY: _beginY,
                   child: validationButton(),
                 ),
                 Padding(
@@ -170,16 +150,86 @@ class _UpdateEmailPageState extends State<UpdateEmailPage> {
     );
   }
 
-  Widget currentEmailCard() {
+  Widget header() {
+    return SliverList(
+      delegate: SliverChildListDelegate.fixed([
+        Padding(
+          padding: const EdgeInsets.only(top: 60.0),
+          child: Column(
+            children: [
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(right: 24.0),
+                    child: Opacity(
+                      opacity: 0.8,
+                      child: IconButton(
+                        onPressed: context.router.pop,
+                        icon: Icon(UniconsLine.arrow_left),
+                      ),
+                    ),
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Opacity(
+                        opacity: 0.4,
+                        child: Text(
+                          "settings".tr().toUpperCase(),
+                          style: FontsUtils.mainStyle(
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ),
+                      Opacity(
+                        opacity: 0.8,
+                        child: Text(
+                          "email_update".tr(),
+                          style: FontsUtils.mainStyle(
+                            fontSize: 50.0,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                      Container(
+                        width: 400.0,
+                        padding: const EdgeInsets.only(left: 8.0),
+                        child: Opacity(
+                          opacity: 0.5,
+                          child: Text(
+                            "email_update_description".tr(),
+                            style: FontsUtils.mainStyle(
+                              fontSize: 16.0,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ]),
+    );
+  }
+
+  Widget helperCard() {
     return Padding(
       padding: const EdgeInsets.only(
         bottom: 40.0,
       ),
       child: Card(
+        color: stateColors.clairPink,
         elevation: 2.0,
         child: InkWell(
           child: Container(
-            width: 300.0,
+            width: 330.0,
             padding: const EdgeInsets.all(20.0),
             child: Column(
               children: <Widget>[
@@ -187,72 +237,34 @@ class _UpdateEmailPageState extends State<UpdateEmailPage> {
                   children: <Widget>[
                     Padding(
                       padding: const EdgeInsets.only(right: 10.0),
-                      child: Opacity(
+                      child: Icon(
+                        UniconsLine.envelope,
+                        color: stateColors.secondary,
+                      ),
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Opacity(
                           opacity: 0.6,
-                          child: Icon(
-                            Icons.alternate_email,
-                            color: stateColors.secondary,
-                          )),
-                    ),
-                    Opacity(
-                      opacity: 0.6,
-                      child: Text(
-                        "emai_current".tr(),
-                      ),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.only(left: 35.0),
-                      child: Text(
-                        currentEmail,
-                        style: FontsUtils.mainStyle(
-                          fontWeight: FontWeight.bold,
+                          child: Text(
+                            "email_current".tr(),
+                          ),
                         ),
-                      ),
+                        Text(
+                          stateUser.email,
+                          style: FontsUtils.mainStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
               ],
             ),
           ),
-          onTap: () {
-            showDialog(
-              context: context,
-              builder: (context) {
-                return SimpleDialog(
-                  title: Text(
-                    "email_current".tr(),
-                    style: TextStyle(
-                      fontSize: 15.0,
-                    ),
-                  ),
-                  children: <Widget>[
-                    Divider(
-                      color: stateColors.secondary,
-                      thickness: 1.0,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 25.0,
-                      ),
-                      child: Opacity(
-                        opacity: 0.6,
-                        child: Text(
-                          currentEmail,
-                          style: FontsUtils.mainStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                );
-              },
-            );
-          },
+          onTap: showTipsDialog,
         ),
       ),
     );
@@ -260,60 +272,66 @@ class _UpdateEmailPageState extends State<UpdateEmailPage> {
 
   Widget emailInput() {
     return Container(
-      width: 350.0,
+      width: 390.0,
       padding: const EdgeInsets.symmetric(horizontal: 30.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           TextFormField(
             autofocus: true,
-            controller: emailController,
+            controller: _emailController,
             textInputAction: TextInputAction.next,
-            onFieldSubmitted: (_) => passwordNode.requestFocus(),
+            onFieldSubmitted: (_) => _passwordNode.requestFocus(),
             decoration: InputDecoration(
-              icon: Icon(Icons.email),
+              border: OutlineInputBorder(),
+              fillColor: Colors.white,
+              focusColor: stateColors.clairPink,
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 8.0,
+              ),
               labelText: "email_new".tr(),
             ),
             keyboardType: TextInputType.emailAddress,
             onChanged: (value) async {
-              email = value;
+              _emailInputValue = value;
 
               setState(() {
-                isCheckingEmail = true;
+                _isCheckingEmail = true;
               });
 
-              final isWellFormatted = UsersActions.checkEmailFormat(email);
+              final isWellFormatted =
+                  UsersActions.checkEmailFormat(_emailInputValue);
 
               if (!isWellFormatted) {
                 setState(() {
-                  isCheckingEmail = false;
-                  emailErrorMessage = "email_not_valid".tr();
+                  _isCheckingEmail = false;
+                  _emailInputErrorMessage = "email_not_valid".tr();
                 });
 
                 return;
               }
 
-              if (emailTimer != null) {
-                emailTimer.cancel();
-                emailTimer = null;
+              if (_emailTimer != null) {
+                _emailTimer.cancel();
+                _emailTimer = null;
               }
 
-              emailTimer = Timer(1.seconds, () async {
+              _emailTimer = Timer(1.seconds, () async {
                 final isAvailable =
-                    await UsersActions.checkEmailAvailability(email);
+                    await UsersActions.checkEmailAvailability(_emailInputValue);
 
                 if (!isAvailable) {
                   setState(() {
-                    isCheckingEmail = false;
-                    emailErrorMessage = "email_not_available".tr();
+                    _isCheckingEmail = false;
+                    _emailInputErrorMessage = "email_not_available".tr();
                   });
 
                   return;
                 }
 
                 setState(() {
-                  isCheckingEmail = false;
-                  emailErrorMessage = '';
+                  _isCheckingEmail = false;
+                  _emailInputErrorMessage = '';
                 });
               });
             },
@@ -325,8 +343,8 @@ class _UpdateEmailPageState extends State<UpdateEmailPage> {
               return null;
             },
           ),
-          if (isCheckingEmail) emailProgress(),
-          if (emailErrorMessage.isNotEmpty) emailInputError(),
+          if (_isCheckingEmail) emailProgress(),
+          if (_emailInputErrorMessage.isNotEmpty) emailInputError(),
         ],
       ),
     );
@@ -338,7 +356,7 @@ class _UpdateEmailPageState extends State<UpdateEmailPage> {
         top: 8.0,
         left: 40.0,
       ),
-      child: Text(emailErrorMessage,
+      child: Text(_emailInputErrorMessage,
           style: TextStyle(
             color: Colors.red.shade300,
           )),
@@ -356,7 +374,7 @@ class _UpdateEmailPageState extends State<UpdateEmailPage> {
 
   Widget passwordInput() {
     return Container(
-      width: 350.0,
+      width: 390.0,
       padding: EdgeInsets.only(
         top: 20.0,
         bottom: 60.0,
@@ -367,15 +385,20 @@ class _UpdateEmailPageState extends State<UpdateEmailPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           TextFormField(
-            focusNode: passwordNode,
-            controller: passwordController,
+            focusNode: _passwordNode,
+            controller: _passwordController,
             decoration: InputDecoration(
-              icon: Icon(Icons.lock_outline),
-              labelText: "password".tr(),
+              border: OutlineInputBorder(),
+              fillColor: Colors.white,
+              focusColor: stateColors.clairPink,
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 8.0,
+              ),
+              labelText: "password_current".tr(),
             ),
             obscureText: true,
             onChanged: (value) {
-              password = value;
+              _passwordInputValue = value;
             },
             onFieldSubmitted: (value) => updateEmailProcess(),
             validator: (value) {
@@ -416,24 +439,23 @@ class _UpdateEmailPageState extends State<UpdateEmailPage> {
   }
 
   Widget validationButton() {
-    return OutlinedButton.icon(
-      onPressed: () => updateEmailProcess(),
-      style: OutlinedButton.styleFrom(
-        primary: stateColors.primary,
+    return ElevatedButton(
+      onPressed: updateEmailProcess,
+      style: ElevatedButton.styleFrom(
+        primary: Colors.black87,
       ),
-      icon: Icon(Icons.check),
-      label: SizedBox(
-        width: 240.0,
+      child: SizedBox(
+        width: 320.0,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.all(18.0),
+              padding: const EdgeInsets.all(14.0),
               child: Text(
                 "email_update".tr().toUpperCase(),
                 style: FontsUtils.mainStyle(
                   fontSize: 15.0,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ),
@@ -449,12 +471,12 @@ class _UpdateEmailPageState extends State<UpdateEmailPage> {
     }
 
     setState(() {
-      isUpdating = true;
+      _isUpdating = true;
     });
 
     try {
       if (!await valuesAvailabilityCheck()) {
-        setState(() => isUpdating = false);
+        setState(() => _isUpdating = false);
 
         Snack.e(
           context: context,
@@ -467,26 +489,27 @@ class _UpdateEmailPageState extends State<UpdateEmailPage> {
       final userAuth = stateUser.userAuth;
 
       if (userAuth == null) {
-        setState(() => isUpdating = false);
+        setState(() => _isUpdating = false);
         context.router.navigate(SigninPageRoute());
         return;
       }
 
       final credentials = EmailAuthProvider.credential(
         email: userAuth.email,
-        password: password,
+        password: _passwordInputValue,
       );
 
       await userAuth.reauthenticateWithCredential(credentials);
       final idToken = await userAuth.getIdToken();
 
-      final respUpdateEmail = await stateUser.updateEmail(email, idToken);
+      final respUpdateEmail =
+          await stateUser.updateEmail(_emailInputValue, idToken);
 
       if (!respUpdateEmail.success) {
         final exception = respUpdateEmail.error;
 
         setState(() {
-          isUpdating = false;
+          _isUpdating = false;
         });
 
         Snack.e(
@@ -500,14 +523,14 @@ class _UpdateEmailPageState extends State<UpdateEmailPage> {
       stateUser.clearAuthCache();
 
       setState(() {
-        isUpdating = false;
-        isCompleted = true;
+        _isUpdating = false;
+        _isCompleted = true;
       });
     } catch (error) {
       appLogger.e(error);
 
       setState(() {
-        isUpdating = false;
+        _isUpdating = false;
       });
 
       Snack.e(
@@ -518,11 +541,11 @@ class _UpdateEmailPageState extends State<UpdateEmailPage> {
   }
 
   Future<bool> valuesAvailabilityCheck() async {
-    return await UsersActions.checkEmailAvailability(email);
+    return await UsersActions.checkEmailAvailability(_emailInputValue);
   }
 
   bool inputValuesOk() {
-    if (email.isEmpty) {
+    if (_emailInputValue.isEmpty) {
       Snack.e(
         context: context,
         message: "email_empty_forbidden".tr(),
@@ -531,7 +554,7 @@ class _UpdateEmailPageState extends State<UpdateEmailPage> {
       return false;
     }
 
-    if (password.isEmpty) {
+    if (_passwordInputValue.isEmpty) {
       Snack.e(
         context: context,
         message: "password_empty_forbidden".tr(),
@@ -540,7 +563,7 @@ class _UpdateEmailPageState extends State<UpdateEmailPage> {
       return false;
     }
 
-    if (!UsersActions.checkEmailFormat(email)) {
+    if (!UsersActions.checkEmailFormat(_emailInputValue)) {
       Snack.e(
         context: context,
         message: "email_not_validd".tr(),
@@ -550,5 +573,43 @@ class _UpdateEmailPageState extends State<UpdateEmailPage> {
     }
 
     return true;
+  }
+
+  void showTipsDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return SimpleDialog(
+          backgroundColor: stateColors.clairPink,
+          title: Text(
+            "email_current".tr(),
+            style: FontsUtils.mainStyle(
+              fontSize: 14.0,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          children: <Widget>[
+            Divider(
+              color: stateColors.secondary,
+              thickness: 1.0,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 25.0,
+              ),
+              child: Opacity(
+                opacity: 0.6,
+                child: Text(
+                  stateUser.email,
+                  style: FontsUtils.mainStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 }

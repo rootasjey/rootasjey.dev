@@ -142,6 +142,7 @@
   "email_send_me": "Send me an email",
   "email_sending": "Sending email...",
   "email_update": "Update email",
+  "email_update_description": "Your email can only be associated with one account.",
   "email_update_error": "Error while updating your email. Please try again later.",
   "email_update_successful": "Your email has been successfuly updated",
   "email_update_example": "If your email is outdated",

@@ -142,6 +142,7 @@
   "email_send_me": "Envoyez-moi un email",
   "email_sending": "Envoie de l'email...",
   "email_update": "Mise à jour de l'email",
+  "email_update_description": "Votre email ne peut être associé qu'à un seul compte.",
   "email_update_example": "Si votre email n'est plus utilisé",
   "email_update_error": "Une erreur est survenue durant la mise à jour de votre email. Veuillez réessayer.",
   "email_update_successful": "Votre email a été mis à jour",
