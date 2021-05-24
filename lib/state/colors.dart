@@ -20,13 +20,14 @@ abstract class StateColorsBase with Store {
 
   /// Secondary application's color.
   @observable
-  Color secondary = Colors.orange.shade600;
+  Color secondary = Colors.pink;
 
   final Color dark = Color(0xFF303030);
   final Color deletion = Color(0xfff55c5c);
   final Color light = Color(0xFFEEEEEE);
   final Color lightBackground = Color(0xFfe3e6ec);
   final Color validation = Color(0xff38d589);
+  final Color clairPink = Color(0xFFf5eaf9);
 
   ThemeData themeData;
 
