@@ -7,17 +7,20 @@ import 'package:unicons/unicons.dart';
 class PageTitle extends StatelessWidget {
   final String textTitle;
   final bool isLoading;
+  final MainAxisAlignment mainAxisAlignment;
 
   const PageTitle({
     Key key,
     @required this.textTitle,
     this.isLoading = false,
+    this.mainAxisAlignment = MainAxisAlignment.start,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: mainAxisAlignment,
       children: [
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
