@@ -47,19 +47,8 @@ class _PostsPageState extends State<PostsPage> {
           slivers: [
             MainAppBar(),
             title(),
-            SliverPadding(
-              padding: EdgeInsets.only(
-                left: _isSmallView ? 20.0 : 80.0,
-                right: 20.0,
-                bottom: 100.0,
-              ),
-              sliver: body(),
-            ),
-            SliverList(
-              delegate: SliverChildListDelegate.fixed([
-                Footer(),
-              ]),
-            ),
+            body(),
+            footer(),
           ],
         ),
       ),
@@ -67,15 +56,32 @@ class _PostsPageState extends State<PostsPage> {
   }
 
   Widget body() {
+    Widget child;
+
     if (!_isLoading && _posts.isEmpty) {
-      return SliverEmptyView();
+      child = SliverEmptyView();
+    } else if (_isSmallView) {
+      child = postsListView();
+    } else {
+      child = postsGridView();
     }
 
-    if (_isSmallView) {
-      return postsListView();
-    }
+    return SliverPadding(
+      padding: EdgeInsets.only(
+        left: _isSmallView ? 20.0 : 80.0,
+        right: 20.0,
+        bottom: 100.0,
+      ),
+      sliver: child,
+    );
+  }
 
-    return postsGridView();
+  Widget footer() {
+    return SliverList(
+      delegate: SliverChildListDelegate.fixed([
+        Footer(),
+      ]),
+    );
   }
 
   Widget postsGridView() {
