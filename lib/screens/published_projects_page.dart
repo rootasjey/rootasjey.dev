@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/project_card.dart';
+import 'package:rootasjey/components/sliver_edge_padding.dart';
 import 'package:rootasjey/components/sliver_empty_view.dart';
 import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/types/project.dart';
@@ -36,16 +37,12 @@ class _PublishedProjectsPageState extends State<PublishedProjectsPage> {
       onNotification: onNotification,
       child: CustomScrollView(
         slivers: [
-          SliverList(
-            delegate: SliverChildListDelegate.fixed([
-              header(context.tabsRouter),
-            ]),
-          ),
-          SliverPadding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 80.0,
+          header(context.tabsRouter),
+          body(),
+          SliverEdgePadding(
+            padding: const EdgeInsets.only(
+              bottom: 300.0,
             ),
-            sliver: body(),
           ),
         ],
       ),
@@ -53,39 +50,52 @@ class _PublishedProjectsPageState extends State<PublishedProjectsPage> {
   }
 
   Widget body() {
+    Widget child;
+
     if (!_isLoading && _projects.isEmpty) {
-      return SliverEmptyView();
+      child = SliverEmptyView();
+    } else {
+      child = projectsGrid();
     }
 
-    return projectsGrid();
+    return SliverPadding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 80.0,
+      ),
+      sliver: child,
+    );
   }
 
   Widget header(TabsRouter tabsRouter) {
-    return Padding(
-      padding: const EdgeInsets.all(
-        80.0,
-      ),
-      child: Row(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(right: 0.0),
-            child: IconButton(
-              onPressed: context.router.pop,
-              icon: Icon(UniconsLine.arrow_left),
-            ),
+    return SliverList(
+      delegate: SliverChildListDelegate.fixed([
+        Padding(
+          padding: const EdgeInsets.all(
+            80.0,
           ),
-          headerSection(
-            textTitle: "drafts".tr(),
-            index: 0,
-            tabsRouter: tabsRouter,
+          child: Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(right: 0.0),
+                child: IconButton(
+                  onPressed: context.router.pop,
+                  icon: Icon(UniconsLine.arrow_left),
+                ),
+              ),
+              headerSection(
+                textTitle: "drafts".tr(),
+                index: 0,
+                tabsRouter: tabsRouter,
+              ),
+              headerSection(
+                textTitle: "published".tr(),
+                index: 1,
+                tabsRouter: tabsRouter,
+              ),
+            ],
           ),
-          headerSection(
-            textTitle: "published".tr(),
-            index: 1,
-            tabsRouter: tabsRouter,
-          ),
-        ],
-      ),
+        ),
+      ]),
     );
   }
 

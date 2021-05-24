@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/post_card.dart';
+import 'package:rootasjey/components/sliver_edge_padding.dart';
 import 'package:rootasjey/components/sliver_empty_view.dart';
 import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/state/user.dart';
@@ -37,58 +38,61 @@ class _DraftPostsPageState extends State<DraftPostsPage> {
       onNotification: onNotification,
       child: CustomScrollView(
         slivers: [
-          SliverList(
-            delegate: SliverChildListDelegate.fixed([
-              header(context.tabsRouter),
-            ]),
-          ),
-          SliverPadding(
-            padding: const EdgeInsets.only(
-              left: 90.0,
-              right: 90.0,
-              bottom: 300.0,
-            ),
-            sliver: body(),
-          ),
+          header(context.tabsRouter),
+          body(),
+          SliverEdgePadding(),
         ],
       ),
     );
   }
 
   Widget body() {
+    Widget child;
+
     if (!_isLoading && _posts.isEmpty) {
-      return SliverEmptyView();
+      child = SliverEmptyView();
+    } else {
+      child = postsListView();
     }
 
-    return postsListView();
+    return SliverPadding(
+      padding: const EdgeInsets.only(
+        left: 90.0,
+        right: 90.0,
+        bottom: 300.0,
+      ),
+      sliver: child,
+    );
   }
 
   Widget header(TabsRouter tabsRouter) {
-    return Padding(
-      padding: const EdgeInsets.all(
-        80.0,
-      ),
-      child: Row(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(right: 0.0),
-            child: IconButton(
-              onPressed: context.router.pop,
-              icon: Icon(UniconsLine.arrow_left),
-            ),
+    return SliverList(
+      delegate: SliverChildListDelegate.fixed([
+        Padding(
+          padding: const EdgeInsets.all(80.0),
+          child: Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(right: 0.0),
+                child: IconButton(
+                  onPressed: context.router.pop,
+                  icon: Icon(UniconsLine.arrow_left),
+                ),
+              ),
+              headerSection(
+                textTitle: "drafts".tr(),
+                index: 0,
+                tabsRouter: tabsRouter,
+              ),
+              headerSection(
+                textTitle: "published".tr(),
+                index: 1,
+                tabsRouter: tabsRouter,
+              ),
+            ],
           ),
-          headerSection(
-            textTitle: "drafts".tr(),
-            index: 0,
-            tabsRouter: tabsRouter,
-          ),
-          headerSection(
-            textTitle: "published".tr(),
-            index: 1,
-            tabsRouter: tabsRouter,
-          ),
-        ],
-      ),
+        ),
+      ]),
     );
   }
 
