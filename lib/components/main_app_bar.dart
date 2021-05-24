@@ -1,7 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:rootasjey/components/app_icon.dart';
 import 'package:rootasjey/components/avatar_menu.dart';
 import 'package:rootasjey/components/lang_popup_menu_button.dart';
@@ -11,11 +10,17 @@ import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/state/user.dart';
 import 'package:rootasjey/utils/app_storage.dart';
 import 'package:rootasjey/utils/brightness.dart';
+import 'package:rootasjey/utils/constants.dart';
 import 'package:rootasjey/utils/fonts.dart';
 import 'package:unicons/unicons.dart';
 
 class MainAppBar extends StatefulWidget {
-  MainAppBar();
+  final bool renderSliver;
+
+  const MainAppBar({
+    Key key,
+    this.renderSliver = true,
+  }) : super(key: key);
 
   @override
   _MainAppBarState createState() => _MainAppBarState();
@@ -24,37 +29,23 @@ class MainAppBar extends StatefulWidget {
 class _MainAppBarState extends State<MainAppBar> {
   @override
   Widget build(BuildContext context) {
-    return SliverLayoutBuilder(
-      builder: (context, constrains) {
-        final isNarrow = constrains.crossAxisExtent < 700.0;
-        final leftPadding = isNarrow ? 0.0 : 80.0;
+    final isNarrow =
+        MediaQuery.of(context).size.width < Constants.maxMobileWidth;
 
-        return Observer(
-          builder: (context) {
-            return SliverAppBar(
-              floating: true,
-              snap: true,
-              pinned: true,
-              backgroundColor: stateColors.lightBackground,
-              automaticallyImplyLeading: false,
-              title: Padding(
-                padding: EdgeInsets.only(
-                  left: leftPadding,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  mainAxisSize: MainAxisSize.max,
-                  children: <Widget>[
-                    AppIcon(),
-                    sectionsRow(isNarrow),
-                    userSpace(isNarrow),
-                  ],
-                ),
-              ),
-            );
-          },
-        );
-      },
+    final padding = EdgeInsets.only(
+      left: isNarrow ? 0.0 : 80.0,
+    );
+
+    if (widget.renderSliver) {
+      return renderSliver(
+        isNarrow: isNarrow,
+        padding: padding,
+      );
+    }
+
+    return renderBox(
+      isNarrow: isNarrow,
+      padding: padding,
     );
   }
 
@@ -320,6 +311,52 @@ class _MainAppBarState extends State<MainAppBar> {
           icon: Icon(UniconsLine.search),
         ),
       ],
+    );
+  }
+
+  Widget renderBox({
+    bool isNarrow = false,
+    EdgeInsets padding = EdgeInsets.zero,
+  }) {
+    return AppBar(
+      backgroundColor: stateColors.lightBackground,
+      title: Padding(
+        padding: padding,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisSize: MainAxisSize.max,
+          children: <Widget>[
+            AppIcon(),
+            sectionsRow(isNarrow),
+            userSpace(isNarrow),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget renderSliver({
+    bool isNarrow,
+    EdgeInsets padding = EdgeInsets.zero,
+  }) {
+    return SliverAppBar(
+      floating: true,
+      snap: true,
+      pinned: true,
+      backgroundColor: stateColors.lightBackground,
+      automaticallyImplyLeading: false,
+      title: Padding(
+        padding: padding,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisSize: MainAxisSize.max,
+          children: <Widget>[
+            AppIcon(),
+            sectionsRow(isNarrow),
+            userSpace(isNarrow),
+          ],
+        ),
+      ),
     );
   }
 
