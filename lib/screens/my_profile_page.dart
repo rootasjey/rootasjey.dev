@@ -198,9 +198,17 @@ class _MyProfilePageState extends State<MyProfilePage> {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
+            Opacity(
+              opacity: 0.6,
+              child: IconButton(
+                tooltip: "back".tr(),
+                onPressed: context.router.pop,
+                icon: Icon(UniconsLine.arrow_left),
+              ),
+            ),
             Padding(
-              padding: const EdgeInsets.only(
-                left: 32.0,
+              padding: const EdgeInsets.symmetric(
+                horizontal: 8.0,
               ),
               child: BetterAvatar(
                 size: 160.0,
@@ -226,20 +234,12 @@ class _MyProfilePageState extends State<MyProfilePage> {
                 },
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(left: 8.0),
-              child: Opacity(
-                opacity: 0.6,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton(
-                      tooltip: "pp_upload".tr(),
-                      onPressed: uploadPicture,
-                      icon: Icon(UniconsLine.upload),
-                    ),
-                  ],
-                ),
+            Opacity(
+              opacity: 0.6,
+              child: IconButton(
+                tooltip: "pp_upload".tr(),
+                onPressed: uploadPicture,
+                icon: Icon(UniconsLine.upload),
               ),
             ),
           ],
