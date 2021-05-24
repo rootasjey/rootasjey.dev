@@ -9,7 +9,6 @@ import 'package:rootasjey/components/min_pub_post_card.dart';
 import 'package:rootasjey/components/page_title.dart';
 import 'package:rootasjey/components/sliver_empty_view.dart';
 import 'package:rootasjey/router/app_router.gr.dart';
-import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/types/post.dart';
 import 'package:rootasjey/utils/app_logger.dart';
 import 'package:rootasjey/utils/constants.dart';
@@ -42,7 +41,6 @@ class _PostsPageState extends State<PostsPage> {
     _isSmallView = viewWidth < Constants.maxMobileWidth;
 
     return Scaffold(
-      backgroundColor: stateColors.lightBackground,
       body: NotificationListener<ScrollNotification>(
         onNotification: onNotification,
         child: CustomScrollView(
@@ -61,7 +59,7 @@ class _PostsPageState extends State<PostsPage> {
               delegate: SliverChildListDelegate.fixed([
                 Footer(),
               ]),
-            )
+            ),
           ],
         ),
       ),
