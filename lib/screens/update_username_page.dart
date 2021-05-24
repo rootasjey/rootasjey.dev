@@ -4,19 +4,19 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:rootasjey/actions/users.dart';
 import 'package:rootasjey/components/animated_app_icon.dart';
 import 'package:rootasjey/components/fade_in_y.dart';
-import 'package:rootasjey/components/page_app_bar.dart';
+import 'package:rootasjey/components/main_app_bar.dart';
 import 'package:rootasjey/components/sliver_edge_padding.dart';
 import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/state/user.dart';
 import 'package:rootasjey/utils/app_logger.dart';
-import 'package:rootasjey/utils/constants.dart';
 import 'package:rootasjey/utils/fonts.dart';
 import 'package:rootasjey/utils/snack.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:supercharged/supercharged.dart';
+import 'package:unicons/unicons.dart';
 
 class UpdateUsernamePage extends StatefulWidget {
   @override
@@ -61,29 +61,11 @@ class _UpdateUsernamePageState extends State<UpdateUsernamePage> {
         controller: _pageScrollController,
         slivers: <Widget>[
           SliverEdgePadding(),
-          appBar(),
+          MainAppBar(),
+          header(),
           body(),
         ],
       ),
-    );
-  }
-
-  Widget appBar() {
-    final width = MediaQuery.of(context).size.width;
-    double titleLeftPadding = 70.0;
-
-    if (width < Constants.maxMobileWidth) {
-      titleLeftPadding = 0.0;
-    }
-
-    return PageAppBar(
-      showNavBackIcon: true,
-      textTitle: "username_update".tr(),
-      textSubTitle: "username_update_description".tr(),
-      titlePadding: EdgeInsets.only(
-        left: titleLeftPadding,
-      ),
-      expandedHeight: 90.0,
     );
   }
 
@@ -97,31 +79,6 @@ class _UpdateUsernamePageState extends State<UpdateUsernamePage> {
     }
 
     return idleView();
-  }
-
-  Widget idleView() {
-    return SliverList(
-      delegate: SliverChildListDelegate([
-        Column(
-          children: [
-            FadeInY(
-              beginY: 10.0,
-              child: currentUsernameCard(),
-            ),
-            FadeInY(
-              beginY: 10.0,
-              delay: 100.milliseconds,
-              child: usernameInput(),
-            ),
-            FadeInY(
-              beginY: 10.0,
-              delay: 200.milliseconds,
-              child: validationButton(),
-            ),
-          ],
-        ),
-      ]),
-    );
   }
 
   Widget completedView() {
@@ -161,17 +118,87 @@ class _UpdateUsernamePageState extends State<UpdateUsernamePage> {
     );
   }
 
-  Widget currentUsernameCard() {
+  Widget header() {
+    return SliverList(
+      delegate: SliverChildListDelegate.fixed([
+        Padding(
+          padding: const EdgeInsets.only(top: 60.0),
+          child: Column(
+            children: [
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(right: 24.0),
+                    child: Opacity(
+                      opacity: 0.8,
+                      child: IconButton(
+                        onPressed: context.router.pop,
+                        icon: Icon(UniconsLine.arrow_left),
+                      ),
+                    ),
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Opacity(
+                        opacity: 0.4,
+                        child: Text(
+                          "settings".tr().toUpperCase(),
+                          style: FontsUtils.mainStyle(
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ),
+                      Opacity(
+                        opacity: 0.8,
+                        child: Text(
+                          "username_update".tr(),
+                          style: FontsUtils.mainStyle(
+                            fontSize: 50.0,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                      Container(
+                        width: 400.0,
+                        padding: const EdgeInsets.only(left: 8.0),
+                        child: Opacity(
+                          opacity: 0.5,
+                          child: Text(
+                            "username_update_description".tr(),
+                            style: FontsUtils.mainStyle(
+                              fontSize: 16.0,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ]),
+    );
+  }
+
+  Widget helperCard() {
     return Padding(
       padding: const EdgeInsets.only(
         top: 80.0,
         bottom: 40.0,
       ),
       child: Card(
+        color: stateColors.clairPink,
         elevation: 2.0,
         child: InkWell(
           child: Container(
-            width: 300.0,
+            width: 340.0,
             padding: const EdgeInsets.all(20.0),
             child: Column(
               children: <Widget>[
@@ -179,86 +206,64 @@ class _UpdateUsernamePageState extends State<UpdateUsernamePage> {
                   children: <Widget>[
                     Padding(
                       padding: const EdgeInsets.only(right: 10.0),
-                      child: Opacity(
-                          opacity: 0.6,
-                          child: Icon(
-                            Icons.alternate_email,
-                            color: stateColors.secondary,
-                          )),
-                    ),
-                    Opacity(
-                      opacity: 0.6,
-                      child: Text("username_current".tr()),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.only(left: 35.0),
-                      child: Text(
-                        currentUsername,
-                        style: FontsUtils.mainStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
+                      child: Icon(
+                        UniconsLine.envelope,
+                        color: stateColors.secondary,
                       ),
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Opacity(
+                          opacity: 0.6,
+                          child: Text(
+                            "username_current".tr(),
+                            style: FontsUtils.mainStyle(
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                        Text(
+                          currentUsername,
+                          style: FontsUtils.mainStyle(
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
               ],
             ),
           ),
-          onTap: () {
-            showDialog(
-              context: context,
-              builder: (context) {
-                return SimpleDialog(
-                  title: Text(
-                    "username_current".tr(),
-                    style: TextStyle(
-                      fontSize: 15.0,
-                    ),
-                  ),
-                  children: <Widget>[
-                    Divider(
-                      color: stateColors.secondary,
-                      thickness: 1.0,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 25.0,
-                      ),
-                      child: Opacity(
-                        opacity: 0.6,
-                        child: Text(
-                          currentUsername,
-                          style: FontsUtils.mainStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 25.0,
-                      ),
-                      child: Opacity(
-                        opacity: 0.6,
-                        child: Text(
-                          "username_choose_description".tr(),
-                          style: FontsUtils.mainStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                );
-              },
-            );
-          },
+          onTap: showTipsDialog,
         ),
       ),
+    );
+  }
+
+  Widget idleView() {
+    return SliverList(
+      delegate: SliverChildListDelegate([
+        Column(
+          children: [
+            FadeInY(
+              beginY: 10.0,
+              child: helperCard(),
+            ),
+            FadeInY(
+              beginY: 10.0,
+              delay: 100.milliseconds,
+              child: usernameInput(),
+            ),
+            FadeInY(
+              beginY: 10.0,
+              delay: 200.milliseconds,
+              child: validationButton(),
+            ),
+          ],
+        ),
+      ]),
     );
   }
 
@@ -288,7 +293,7 @@ class _UpdateUsernamePageState extends State<UpdateUsernamePage> {
 
   Widget usernameInput() {
     return Container(
-      width: 400.0,
+      width: 370.0,
       padding: const EdgeInsets.only(
         left: 16.0,
         right: 16.0,
@@ -300,8 +305,13 @@ class _UpdateUsernamePageState extends State<UpdateUsernamePage> {
             autofocus: true,
             controller: usernameController,
             decoration: InputDecoration(
-              icon: Icon(Icons.person_outline),
+              fillColor: Colors.white,
+              focusColor: stateColors.clairPink,
               labelText: "username_new".tr(),
+              border: OutlineInputBorder(),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 8.0,
+              ),
             ),
             keyboardType: TextInputType.text,
             onChanged: (value) async {
@@ -372,21 +382,20 @@ class _UpdateUsernamePageState extends State<UpdateUsernamePage> {
   }
 
   Widget validationButton() {
-    return OutlinedButton.icon(
-      onPressed: () => updateUsernameProcess(),
-      style: OutlinedButton.styleFrom(
-        primary: stateColors.primary,
+    return ElevatedButton(
+      onPressed: updateUsernameProcess,
+      style: ElevatedButton.styleFrom(
+        primary: Colors.black87,
       ),
-      icon: Icon(Icons.check),
-      label: SizedBox(
-        width: 240.0,
+      child: SizedBox(
+        width: 320.0,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.all(18.0),
+              padding: const EdgeInsets.all(14.0),
               child: Text(
-                "username_update".tr(),
+                "username_update".tr().toUpperCase(),
                 style: FontsUtils.mainStyle(
                   fontSize: 15.0,
                   fontWeight: FontWeight.bold,
@@ -532,5 +541,56 @@ class _UpdateUsernamePageState extends State<UpdateUsernamePage> {
         message: "username_update_error".tr(),
       );
     }
+  }
+
+  void showTipsDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return SimpleDialog(
+          backgroundColor: stateColors.clairPink,
+          title: Text(
+            "username_current".tr(),
+            style: TextStyle(
+              fontSize: 15.0,
+            ),
+          ),
+          children: <Widget>[
+            Divider(
+              color: stateColors.secondary,
+              thickness: 1.0,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 25.0,
+              ),
+              child: Opacity(
+                opacity: 0.6,
+                child: Text(
+                  currentUsername,
+                  style: FontsUtils.mainStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 25.0,
+              ),
+              child: Opacity(
+                opacity: 0.6,
+                child: Text(
+                  "username_choose_description".tr(),
+                  style: FontsUtils.mainStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 }
