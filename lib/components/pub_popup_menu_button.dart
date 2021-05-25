@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/state/colors.dart';
+import 'package:rootasjey/utils/fonts.dart';
 
 class PubPopupMenuButton extends StatelessWidget {
   final String status;
@@ -26,18 +27,22 @@ class PubPopupMenuButton extends StatelessWidget {
       padding: margin,
       child: Material(
         elevation: elevation,
+        color: stateColors.lightBackground,
         borderRadius: BorderRadius.circular(4.0),
         child: Opacity(
           opacity: opacity,
           child: PopupMenuButton<String>(
-            tooltip: "Change publication status",
+            tooltip: "publication_change_status".tr(),
             child: Padding(
               padding: padding,
-              child: Text(
-                status.tr(),
-                style: TextStyle(
-                  color: stateColors.foreground,
-                  fontSize: 16.0,
+              child: Opacity(
+                opacity: 0.6,
+                child: Text(
+                  status.tr().toUpperCase(),
+                  style: FontsUtils.mainStyle(
+                    fontSize: 16.0,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ),
             ),
