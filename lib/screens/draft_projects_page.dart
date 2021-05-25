@@ -10,6 +10,7 @@ import 'package:rootasjey/state/user.dart';
 import 'package:rootasjey/types/project.dart';
 import 'package:rootasjey/utils/app_logger.dart';
 import 'package:rootasjey/utils/fonts.dart';
+import 'package:rootasjey/utils/snack.dart';
 import 'package:unicons/unicons.dart';
 
 class DraftProjectsPage extends StatefulWidget {
@@ -275,14 +276,19 @@ class _DraftProjectsPageState extends State<DraftProjectsPage> {
           .collection('projects')
           .doc(removedProject.id)
           .delete();
-
-      setState(() => _isLoading = false);
     } catch (error) {
       appLogger.e(error);
+
+      Snack.e(
+        context: context,
+        message: "project_delete_failed".tr(),
+      );
 
       setState(() {
         _projects.insert(index, removedProject);
       });
+    } finally {
+      setState(() => _isLoading = false);
     }
   }
 
