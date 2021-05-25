@@ -7,7 +7,9 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/lang_popup_menu_button.dart';
+import 'package:rootasjey/components/main_app_bar.dart';
 import 'package:rootasjey/components/pub_popup_menu_button.dart';
+import 'package:rootasjey/components/sliver_edge_padding.dart';
 import 'package:rootasjey/components/sliver_error_view.dart';
 import 'package:rootasjey/components/sliver_loading_view.dart';
 import 'package:rootasjey/router/app_router.gr.dart';
@@ -15,6 +17,7 @@ import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/types/post.dart';
 import 'package:rootasjey/utils/app_logger.dart';
 import 'package:rootasjey/utils/cloud.dart';
+import 'package:rootasjey/utils/fonts.dart';
 import 'package:rootasjey/utils/snack.dart';
 import 'package:supercharged/supercharged.dart';
 import 'package:unicons/unicons.dart';
@@ -35,7 +38,6 @@ class _EditPostPageState extends State<EditPostPage> {
 
   DocumentSnapshot _postSnapshot;
 
-  final _clearFocusNode = FocusNode();
   final _postFocusNode = FocusNode();
   final _contentController = TextEditingController();
   final _titleFocusNode = FocusNode();
@@ -63,95 +65,58 @@ class _EditPostPageState extends State<EditPostPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          appBar(),
-          body(),
+      body: Stack(
+        children: [
+          CustomScrollView(
+            slivers: [
+              SliverEdgePadding(),
+              MainAppBar(),
+              body(),
+            ],
+          ),
+          popupProgressIndicator(),
         ],
       ),
     );
   }
 
-  Widget appBar() {
-    return SliverAppBar(
-      floating: true,
-      snap: true,
-      pinned: true,
-      collapsedHeight: 80.0,
-      expandedHeight: 120.0,
-      automaticallyImplyLeading: false,
-      centerTitle: false,
-      title: appBarTitle(),
-      bottom: appBarBottom(),
-    );
-  }
-
-  Widget appBarBottom() {
-    return PreferredSize(
-      preferredSize: Size.fromHeight(20.0),
-      child: Padding(
-        padding: const EdgeInsets.only(left: 28.0),
-        child: Row(
+  Widget actionsRow() {
+    return Column(
+      children: [
+        SizedBox(
+          width: 700.0,
+          child: Divider(thickness: 1, height: 24.0),
+        ),
+        Wrap(
+          spacing: 20.0,
+          runSpacing: 20.0,
           children: [
-            Padding(
-              padding: const EdgeInsets.only(right: 16.0),
-              child: LangPopupMenuButton(
-                lang: _lang,
-                onLangChanged: (newLang) {
-                  setState(() {
-                    _lang = newLang;
-                  });
-
-                  updateLang();
-                },
-              ),
-            ),
-            viewOnlineButton(),
+            backButton(),
+            langButton(),
+            pubPopupMenuButton(),
+            vDivider(),
             saveButton(),
-            PubPopupMenuButton(
-              status: _publicationStatus,
-              onStatusChanged: (newStatus) {
-                setState(() {
-                  _publicationStatus = newStatus;
-                });
-
-                updatePubStatus(newStatus);
-              },
-            ),
+            viewOnlineButton(),
           ],
         ),
-      ),
+        SizedBox(
+          width: 700.0,
+          child: Divider(thickness: 1, height: 24.0),
+        ),
+      ],
     );
   }
 
-  Widget appBarTitle() {
+  Widget backButton() {
+    if (context.router.root.stack.length < 1) {
+      return Container(width: 0.0, height: 0.0);
+    }
+
     return Padding(
-      padding: const EdgeInsets.only(left: 0.0),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (context.router.root.stack.length > 1)
-            IconButton(
-              icon: Icon(
-                UniconsLine.arrow_left,
-                color: stateColors.foreground,
-              ),
-              onPressed: context.router.pop,
-            ),
-          if (_isSaving)
-            Padding(
-              padding: const EdgeInsets.only(right: 16.0),
-              child: CircularProgressIndicator(
-                strokeWidth: 2.0,
-              ),
-            ),
-          Text(
-            _title.isEmpty ? "post_edit".tr() : _title,
-            style: TextStyle(
-              color: stateColors.foreground,
-            ),
-          ),
-        ],
+      padding: const EdgeInsets.only(right: 15.0),
+      child: IconButton(
+        onPressed: context.router.pop,
+        icon: Icon(UniconsLine.arrow_left),
       ),
     );
   }
@@ -170,29 +135,14 @@ class _EditPostPageState extends State<EditPostPage> {
       );
     }
 
-    return SliverList(
-      delegate: SliverChildListDelegate.fixed([
-        Padding(
-          padding: const EdgeInsets.only(
-            top: 40.0,
-            bottom: 400.0,
-          ),
-          child: Column(
-            children: [
-              titleInput(),
-              contentInput(),
-            ],
-          ),
-        ),
-      ]),
-    );
+    return idleView();
   }
 
   Widget contentInput() {
     return Container(
       width: 700.0,
       padding: const EdgeInsets.only(
-        top: 40.0,
+        top: 0.0,
       ),
       child: TextField(
         maxLines: null,
@@ -201,6 +151,14 @@ class _EditPostPageState extends State<EditPostPage> {
         controller: _contentController,
         keyboardType: TextInputType.multiline,
         textCapitalization: TextCapitalization.sentences,
+        style: FontsUtils.mainStyle(
+          fontSize: 18.0,
+          fontWeight: FontWeight.w500,
+        ),
+        decoration: InputDecoration(
+          hintText: "once_upon_a_time".tr(),
+          border: OutlineInputBorder(borderSide: BorderSide.none),
+        ),
         onChanged: (newValue) {
           _postContent = newValue;
 
@@ -210,16 +168,116 @@ class _EditPostPageState extends State<EditPostPage> {
 
           _saveContentTimer = Timer(1.seconds, () => updateContent());
         },
-        style: TextStyle(
-          fontSize: 22.0,
-          fontWeight: FontWeight.w300,
-        ),
-        decoration: InputDecoration(
-          icon: Icon(Icons.edit),
-          hintText: "once_upon_a_time".tr(),
-          border: OutlineInputBorder(borderSide: BorderSide.none),
+      ),
+    );
+  }
+
+  Widget header() {
+    return Column(
+      children: [
+        actionsRow(),
+        titleInput(),
+      ],
+    );
+  }
+
+  Widget idleView() {
+    return SliverPadding(
+      padding: const EdgeInsets.only(
+        top: 40.0,
+        bottom: 400.0,
+      ),
+      sliver: SliverList(
+        delegate: SliverChildListDelegate.fixed([
+          Column(
+            children: [
+              header(),
+              contentInput(),
+            ],
+          ),
+        ]),
+      ),
+    );
+  }
+
+  Widget langButton() {
+    return LangPopupMenuButton(
+      lang: _lang,
+      opacity: 0.6,
+      color: stateColors.lightBackground,
+      onLangChanged: (newLang) {
+        setState(() {
+          _lang = newLang;
+        });
+
+        updateLang();
+      },
+    );
+  }
+
+  Widget popupProgressIndicator() {
+    if (!_isSaving) {
+      return Container();
+    }
+
+    return Positioned(
+      top: 100.0,
+      right: 24.0,
+      child: SizedBox(
+        width: 240.0,
+        child: Card(
+          elevation: 4.0,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(
+                height: 4.0,
+                child: LinearProgressIndicator(),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      UniconsLine.circle,
+                      color: stateColors.secondary,
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 8.0),
+                        child: Opacity(
+                          opacity: 0.6,
+                          child: Text(
+                            "post_updating".tr(),
+                            style: FontsUtils.mainStyle(
+                              fontSize: 14.0,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
+    );
+  }
+
+  Widget pubPopupMenuButton() {
+    return PubPopupMenuButton(
+      status: _publicationStatus,
+      onStatusChanged: (newStatus) {
+        setState(() {
+          _publicationStatus = newStatus;
+        });
+
+        updatePubStatus(newStatus);
+      },
     );
   }
 
@@ -227,104 +285,86 @@ class _EditPostPageState extends State<EditPostPage> {
     final saveStr =
         _publicationStatus == DRAFT ? "save_draft".tr() : "save".tr();
 
-    return Padding(
-      padding: const EdgeInsets.only(right: 20.0),
-      child: OutlinedButton.icon(
-        onPressed: () {
-          updateTitle();
-          updateContent();
-        },
-        icon: Opacity(opacity: 0.6, child: Icon(UniconsLine.save)),
-        label: Opacity(opacity: 0.6, child: Text(saveStr)),
-        style: OutlinedButton.styleFrom(primary: stateColors.foreground),
+    return IconButton(
+      tooltip: saveStr,
+      icon: Opacity(
+        opacity: 0.6,
+        child: Icon(UniconsLine.save),
       ),
+      onPressed: () {
+        updateTitle();
+        updateContent();
+      },
     );
   }
 
   Widget titleInput() {
     return Padding(
       padding: const EdgeInsets.only(
-        left: 110.0,
         top: 60.0,
       ),
-      child: Row(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(right: 15.0),
-            child: IconButton(
-              onPressed: context.router.pop,
-              icon: Icon(UniconsLine.arrow_left),
-            ),
-          ),
-          Expanded(
-            child: Container(
-              width: 700.0,
-              child: TextField(
-                maxLines: 1,
-                autofocus: true,
-                focusNode: _titleFocusNode,
-                controller: _titleController,
-                keyboardType: TextInputType.multiline,
-                textCapitalization: TextCapitalization.sentences,
-                onChanged: (newValue) {
-                  _title = newValue;
+      child: Container(
+        width: 700.0,
+        child: TextField(
+          maxLines: null,
+          autofocus: true,
+          focusNode: _titleFocusNode,
+          controller: _titleController,
+          keyboardType: TextInputType.multiline,
+          textCapitalization: TextCapitalization.sentences,
+          onChanged: (newValue) {
+            _title = newValue;
 
-                  if (_saveTitleTimer != null) {
-                    _saveTitleTimer.cancel();
-                  }
+            if (_saveTitleTimer != null) {
+              _saveTitleTimer.cancel();
+            }
 
-                  _saveTitleTimer = Timer(1.seconds, () => updateTitle());
-                },
-                style: TextStyle(
-                  fontSize: 42.0,
-                ),
-                decoration: InputDecoration(
-                  hintText: "post_title_dot".tr(),
-                  border: OutlineInputBorder(borderSide: BorderSide.none),
-                ),
-              ),
-            ),
+            _saveTitleTimer = Timer(1.seconds, () => updateTitle());
+          },
+          style: FontsUtils.mainStyle(
+            fontSize: 42.0,
+            fontWeight: FontWeight.w600,
           ),
-        ],
+          decoration: InputDecoration(
+            hintText: "post_title_dot".tr(),
+            border: OutlineInputBorder(borderSide: BorderSide.none),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget vDivider() {
+    return SizedBox(
+      height: 40.0,
+      child: VerticalDivider(
+        thickness: 1.0,
+        width: 24.0,
       ),
     );
   }
 
   Widget viewOnlineButton() {
     if (_publicationStatus != PUBLISHED) {
-      return Container();
+      return Container(width: 0, height: 0);
     }
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20.0),
-      child: OutlinedButton.icon(
-        style: OutlinedButton.styleFrom(
-          primary: stateColors.foreground,
-        ),
-        focusNode: _clearFocusNode,
-        onPressed: () {
-          context.router.root.push(
-            PostsRouter(
-              children: [
-                PostPageRoute(
-                  postId: widget.postId,
-                ),
-              ],
-            ),
-          );
-        },
-        icon: Opacity(
-          opacity: 0.6,
-          child: Icon(
-            UniconsLine.eye,
+    return IconButton(
+      tooltip: "view_online".tr(),
+      onPressed: () {
+        context.router.root.push(
+          PostsRouter(
+            children: [
+              PostPageRoute(
+                postId: widget.postId,
+              ),
+            ],
           ),
-        ),
-        label: Opacity(
-          opacity: 0.6,
-          child: Text(
-            "view_online".tr(),
-          ),
-        ),
+        );
+      },
+      icon: Opacity(
+        opacity: 0.6,
+        child: Icon(UniconsLine.eye),
       ),
     );
   }
