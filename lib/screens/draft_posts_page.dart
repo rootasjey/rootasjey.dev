@@ -10,6 +10,7 @@ import 'package:rootasjey/state/user.dart';
 import 'package:rootasjey/types/post.dart';
 import 'package:rootasjey/utils/app_logger.dart';
 import 'package:rootasjey/utils/fonts.dart';
+import 'package:rootasjey/utils/snack.dart';
 import 'package:unicons/unicons.dart';
 
 class DraftPostsPage extends StatefulWidget {
@@ -240,7 +241,7 @@ class _DraftPostsPageState extends State<DraftPostsPage> {
     }
   }
 
-  void delete(int index) async {
+  void deletePost(int index) async {
     setState(() => _isLoading = true);
 
     final removedPost = _posts.removeAt(index);
@@ -250,14 +251,19 @@ class _DraftPostsPageState extends State<DraftPostsPage> {
           .collection('posts')
           .doc(removedPost.id)
           .delete();
-
-      setState(() => _isLoading = false);
     } catch (error) {
       appLogger.e(error);
+
+      Snack.e(
+        context: context,
+        message: "post_delete_failed".tr(),
+      );
 
       setState(() {
         _posts.insert(index, removedPost);
       });
+    } finally {
+      setState(() => _isLoading = false);
     }
   }
 
@@ -316,7 +322,7 @@ class _DraftPostsPageState extends State<DraftPostsPage> {
             goToEditPostPage(post);
             break;
           case 'delete':
-            delete(index);
+            deletePost(index);
             break;
           case 'publish':
             publish(index);
