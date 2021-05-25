@@ -1,7 +1,5 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
-import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/types/post.dart';
 import 'package:rootasjey/utils/cloud.dart';
@@ -9,11 +7,18 @@ import 'package:unicons/unicons.dart';
 
 /// Minimal published post card.
 class MinPubPostCard extends StatefulWidget {
-  @required
   final Post post;
+  final double width;
+  final EdgeInsets contentPadding;
+  final VoidCallback onTap;
+  final PopupMenuButton<dynamic> popupMenuButton;
 
   MinPubPostCard({
     @required this.post,
+    this.contentPadding = const EdgeInsets.all(8.0),
+    this.width,
+    this.onTap,
+    this.popupMenuButton,
   });
 
   @override
@@ -39,19 +44,19 @@ class _MinPubPostCardState extends State<MinPubPostCard> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 420.0,
+      width: widget.width,
       child: Card(
         color: stateColors.lightBackground,
         elevation: _elevation,
         child: InkWell(
-          onTap: navigateToPost,
+          onTap: widget.onTap,
           onHover: (isHover) {
             setState(() {
               _elevation = isHover ? 4.0 : 0.0;
             });
           },
           child: Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: widget.contentPadding,
             child: Row(
               mainAxisSize: MainAxisSize.max,
               children: [
@@ -92,7 +97,7 @@ class _MinPubPostCardState extends State<MinPubPostCard> {
         ),
         Padding(
           padding: const EdgeInsets.only(
-            top: 16.0,
+            top: 8.0,
             left: 10.0,
           ),
           child: Opacity(
@@ -126,23 +131,16 @@ class _MinPubPostCardState extends State<MinPubPostCard> {
             }).toList(),
           ),
         ),
+        if (widget.popupMenuButton != null) widget.popupMenuButton,
       ],
     );
   }
 
-  void navigateToPost() {
-    context.router.push(
-      PostsRouter(
-        children: [
-          PostPageRoute(
-            postId: widget.post.id,
-          ),
-        ],
-      ),
-    );
-  }
-
   void fetchAuthorName() async {
+    if (widget.post.author.id.isEmpty) {
+      return;
+    }
+
     try {
       final resp = await Cloud.fun('posts-fetchAuthorName')
           .call({'authorId': widget.post.author.id});

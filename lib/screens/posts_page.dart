@@ -124,7 +124,20 @@ class _PostsPageState extends State<PostsPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              MinPubPostCard(post: post),
+              MinPubPostCard(
+                  post: post,
+                  width: 420.0,
+                  onTap: () {
+                    context.router.push(
+                      PostsRouter(
+                        children: [
+                          PostPageRoute(
+                            postId: post.id,
+                          ),
+                        ],
+                      ),
+                    );
+                  }),
               Divider(height: 40.0),
             ],
           );
