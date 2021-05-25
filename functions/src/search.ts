@@ -1,5 +1,6 @@
 import * as functions from 'firebase-functions';
 import algolia from 'algoliasearch';
+import { cloudRegions } from './utils';
 
 const env = functions.config();
 
@@ -11,7 +12,7 @@ const usersIndex = client.initIndex('users');
 // Post index
 // ----------
 export const onIndexPost = functions
-  .region('europe-west3')
+  .region(cloudRegions.eu)
   .firestore
   .document('posts/{postId}')
   .onCreate(async (snapshot) => {
@@ -32,7 +33,7 @@ export const onIndexPost = functions
   });
 
 export const onReIndexPost = functions
-  .region('europe-west3')
+  .region(cloudRegions.eu)
   .firestore
   .document('posts/{postId}')
   .onUpdate(async (snapshot) => {
@@ -58,7 +59,7 @@ export const onReIndexPost = functions
   });
 
 export const onUnIndexPost = functions
-  .region('europe-west3')
+  .region(cloudRegions.eu)
   .firestore
   .document('posts/{postId}')
   .onDelete(async (snapshot) => {
@@ -69,7 +70,7 @@ export const onUnIndexPost = functions
 // Projects index
 // --------------
 export const onIndexProject = functions
-  .region('europe-west3')
+  .region(cloudRegions.eu)
   .firestore
   .document('projects/{projectId}')
   .onCreate(async (snapshot) => {
@@ -90,7 +91,7 @@ export const onIndexProject = functions
   });
 
 export const onReIndexProject = functions
-  .region('europe-west3')
+  .region(cloudRegions.eu)
   .firestore
   .document('projects/{projectId}')
   .onUpdate(async (snapshot) => {
@@ -130,7 +131,7 @@ export const onReIndexProject = functions
   });
 
 export const onUnIndexProject = functions
-  .region('europe-west3')
+  .region(cloudRegions.eu)
   .firestore
   .document('projects/{projectId}')
   .onDelete(async (snapshot) => {
@@ -141,7 +142,7 @@ export const onUnIndexProject = functions
 // Users index
 // --------------
 export const onIndexUser = functions
-  .region('europe-west3')
+  .region(cloudRegions.eu)
   .firestore
   .document('users/{userId}')
   .onCreate(async (snapshot) => {
@@ -155,7 +156,7 @@ export const onIndexUser = functions
   });
 
 export const onReIndexUser = functions
-  .region('europe-west3')
+  .region(cloudRegions.eu)
   .firestore
   .document('users/{userId}')
   .onUpdate(async (snapshot) => {
@@ -169,7 +170,7 @@ export const onReIndexUser = functions
   });
 
 export const onUnIndexUser = functions
-  .region('europe-west3')
+  .region(cloudRegions.eu)
   .firestore
   .document('users/{userId}')
   .onDelete(async (snapshot) => {

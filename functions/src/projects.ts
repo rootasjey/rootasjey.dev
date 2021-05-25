@@ -1,15 +1,16 @@
 import * as functions from 'firebase-functions';
 import { adminApp } from './adminApp';
+import { cloudRegions } from './utils';
 
 const firestore = adminApp.firestore();
 const storage = adminApp.storage();
 const auth = adminApp.auth();
 
 export const onCreateFile = functions
-  .region('europe-west3')
+  .region(cloudRegions.eu)
   .firestore
   .document('projects/{projectId}')
-  .onCreate(async (snapshot, context) => {
+  .onCreate(async (snapshot) => {
     const projectFile = storage
       .bucket()
       .file(`blog/projects/${snapshot.id}/post.md`);
@@ -18,10 +19,10 @@ export const onCreateFile = functions
   });
 
 export const onDeleteFile = functions
-  .region('europe-west3')
+  .region(cloudRegions.eu)
   .firestore
   .document('projects/{projectId}')
-  .onDelete(async (snapshot, context) => {
+  .onDelete(async (snapshot) => {
     const projectFile = storage
       .bucket()
       .file(`blog/projects/${snapshot.id}/post.md`);
@@ -34,9 +35,9 @@ export const onDeleteFile = functions
  * (With accessibility check).
  */
 export const fetch = functions
-  .region('europe-west3')
+  .region(cloudRegions.eu)
   .https
-  .onCall(async (data, context) => {
+  .onCall(async (data) => {
     const projectId: string = data.projectId;
 
     /** Used if the project is a draft or restricted to some members. */
@@ -69,9 +70,9 @@ export const fetch = functions
   });
 
 export const fetchAuthorName = functions
-  .region('europe-west3')
+  .region(cloudRegions.eu)
   .https
-  .onCall(async (data, context) => {
+  .onCall(async (data) => {
     const authorId = data.authorId;
 
     if (!authorId) {
@@ -123,7 +124,7 @@ async function checkAccessControl({ projectId, jwt }: { projectId: string, jwt: 
 
       let hasAuthorAccess = false;
 
-      if (projectData['author'] === decodedToken.uid) {
+      if (projectData.author.id === decodedToken.uid) {
         hasAuthorAccess = true;
 
       } else if (projectData['coauthors'].indexOf(decodedToken.uid) > -1) {
@@ -149,9 +150,9 @@ async function checkAccessControl({ projectId, jwt }: { projectId: string, jwt: 
  * (With accessibility check).
  */
 export const save = functions
-  .region('europe-west3')
+  .region(cloudRegions.eu)
   .https
-  .onCall(async (data, context) => {
+  .onCall(async (data) => {
     const projectId: string = data.projectId;
     const jwt: string = data.jwt;
     const content: string = data.content;

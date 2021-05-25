@@ -1,5 +1,6 @@
 import * as functions from 'firebase-functions';
 import { adminApp } from './adminApp';
+import { cloudRegions } from './utils';
 
 const firestore = adminApp.firestore();
 
@@ -7,7 +8,7 @@ const firestore = adminApp.firestore();
 // Authors
 // -------
 export const onCreateAuthors = functions
-  .region('europe-west3')
+  .region(cloudRegions.eu)
   .firestore
   .document('authors/{authorId}')
   .onCreate(async () => {
@@ -30,7 +31,7 @@ export const onCreateAuthors = functions
   });
 
 export const onDeleteAuthor = functions
-  .region('europe-west3')
+  .region(cloudRegions.eu)
   .firestore
   .document('authors/{authorId}')
   .onDelete(async () => {
@@ -56,7 +57,7 @@ export const onDeleteAuthor = functions
 // Posts
 // -----
 export const onCreatePost = functions
-  .region('europe-west3')
+  .region(cloudRegions.eu)
   .firestore
   .document('posts/{postId}')
   .onCreate(async (snapshot) => {
@@ -87,7 +88,7 @@ export const onCreatePost = functions
   });
 
 export const onDeletePost = functions
-  .region('europe-west3')
+  .region(cloudRegions.eu)
   .firestore
   .document('posts/{postId}')
   .onDelete(async (snapshot) => {
@@ -118,7 +119,7 @@ export const onDeletePost = functions
   });
 
 export const onUpdatePost = functions
-  .region('europe-west3')
+  .region(cloudRegions.eu)
   .firestore
   .document('posts/{postId}')
   .onUpdate(async (snapshot) => {
@@ -162,7 +163,7 @@ export const onUpdatePost = functions
 // Projects
 // --------
 export const onCreateProject = functions
-  .region('europe-west3')
+  .region(cloudRegions.eu)
   .firestore
   .document('projects/{projectId}')
   .onCreate(async (snapshot) => {
@@ -193,7 +194,7 @@ export const onCreateProject = functions
   });
 
 export const onDeleteProject = functions
-  .region('europe-west3')
+  .region(cloudRegions.eu)
   .firestore
   .document('projects/{projectId}')
   .onDelete(async (snapshot) => {
@@ -227,7 +228,7 @@ export const onDeleteProject = functions
  * Update user's projects stats.
  */
 export const onUpdateProject = functions
-  .region('europe-west3')
+  .region(cloudRegions.eu)
   .firestore
   .document('projects/{projectId}')
   .onUpdate(async (snapshot) => {
@@ -271,7 +272,7 @@ export const onUpdateProject = functions
 // Users
 // -----
 export const onCreateUser = functions
-  .region('europe-west3')
+  .region(cloudRegions.eu)
   .firestore
   .document('users/{userId}')
   .onCreate(async (snapshot) => {
@@ -303,7 +304,7 @@ export const onCreateUser = functions
   });
 
 export const onDeleteUser = functions
-  .region('europe-west3')
+  .region(cloudRegions.eu)
   .firestore
   .document('users/{userId}')
   .onDelete(async (snapshot) => {

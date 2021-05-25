@@ -3,12 +3,12 @@ import * as functions from 'firebase-functions';
 const firebaseTools = require('firebase-tools');
 
 import { adminApp } from './adminApp';
-import { checkUserIsSignedIn } from './utils';
+import { checkUserIsSignedIn, cloudRegions } from './utils';
 
 const firestore = adminApp.firestore();
 
 export const checkEmailAvailability = functions
-  .region('europe-west3')
+  .region(cloudRegions.eu)
   .https
   .onCall(async (data) => {
     const email: string = data.email;
@@ -38,7 +38,7 @@ export const checkEmailAvailability = functions
   });
 
 export const checkUsernameAvailability = functions
-  .region('europe-west3')
+  .region(cloudRegions.eu)
   .https
   .onCall(async (data) => {
     const name: string = data.name;
@@ -75,7 +75,7 @@ export const checkUsernameAvailability = functions
  * Delete user profile picture files.
  */
 export const clearProfilePicture = functions
-  .region('europe-west3')
+  .region(cloudRegions.eu)
   .https
   .onCall(async (data, context) => {
     const userAuth = context.auth;
@@ -109,7 +109,7 @@ export const clearProfilePicture = functions
  * Check user's provided arguments and exit if wrong.
  */
 export const createAccount = functions
-  .region('europe-west3')
+  .region(cloudRegions.eu)
   .https
   .onCall(async (data: CreateUserAccountParams) => {
     if (!checkCreateAccountData(data)) {
@@ -233,7 +233,7 @@ export const createAccount = functions
  * Delete user's document from Firebase auth & Firestore.
  */
 export const deleteAccount = functions
-  .region('europe-west3')
+  .region(cloudRegions.eu)
   .https
   .onCall(async (data: DeleteAccountParams, context) => {
     const userAuth = context.auth;
@@ -285,7 +285,7 @@ export const deleteAccount = functions
  * Return user's data.
  */
 export const fetchUser = functions
-  .region('europe-west3')
+  .region(cloudRegions.eu)
   .https
   .onCall(async (data) => {
     const userId: string = data.userId;
@@ -320,7 +320,7 @@ export const fetchUser = functions
  * Update an user's data with the specified payload.
  */
 export const updateUser = functions
-  .region('europe-west3')
+  .region(cloudRegions.eu)
   .https
   .onCall(async (data, context) => {
     const userAuth = context.auth;
@@ -393,7 +393,7 @@ export const updateUser = functions
  * before validating the new email.
  */
 export const updateEmail = functions
-  .region('europe-west3')
+  .region(cloudRegions.eu)
   .https
   .onCall(async (data: UpdateEmailParams, context) => {
     const userAuth = context.auth;
@@ -453,7 +453,7 @@ export const updateEmail = functions
  * before validating the new username.
  */
 export const updateUsername = functions
-  .region('europe-west3')
+  .region(cloudRegions.eu)
   .https
   .onCall(async (data: UpdateUsernameParams, context) => {
     const userAuth = context.auth;

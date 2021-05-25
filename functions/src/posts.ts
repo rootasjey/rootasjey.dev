@@ -1,12 +1,13 @@
 import * as functions from 'firebase-functions';
 import { adminApp } from './adminApp';
+import { cloudRegions } from './utils';
 
 const firestore = adminApp.firestore();
 const storage = adminApp.storage();
 const auth = adminApp.auth();
 
 export const onCreateFile = functions
-  .region('europe-west3')
+  .region(cloudRegions.eu)
   .firestore
   .document('posts/{postId}')
   .onCreate(async (snapshot) => {
@@ -18,7 +19,7 @@ export const onCreateFile = functions
   });
 
 export const onDeleteFile = functions
-  .region('europe-west3')
+  .region(cloudRegions.eu)
   .firestore
   .document('posts/{postId}')
   .onDelete(async (snapshot) => {
@@ -34,7 +35,7 @@ export const onDeleteFile = functions
  * (With accessibility check).
  */
 export const fetch = functions
-  .region('europe-west3')
+  .region(cloudRegions.eu)
   .https
   .onCall(async (data) => {
     const postId: string = data.postId;
@@ -69,7 +70,7 @@ export const fetch = functions
   });
 
 export const fetchAuthorName = functions
-  .region('europe-west3')
+  .region(cloudRegions.eu)
   .https
   .onCall(async (data) => {
     const authorId = data.authorId;
@@ -99,7 +100,7 @@ export const fetchAuthorName = functions
    * Need a [postId] parameter.
    */
 export const statsLike = functions
-  .region('europe-west3')
+  .region(cloudRegions.eu)
   .https
   .onCall(async (data) => {
     const postId = data.postId;
@@ -147,7 +148,7 @@ export const statsLike = functions
  * Need [postId] parameter.
  */
 export const statsShare = functions
-  .region('europe-west3')
+  .region(cloudRegions.eu)
   .https
   .onCall(async (data) => {
     const postId = data.postId;
@@ -216,7 +217,7 @@ async function checkAccessControl({postId, jwt}: {postId: string, jwt: string}) 
 
       let hasAuthorAccess = false;
 
-      if (postData['author'] === decodedToken.uid) {
+      if (postData['author']['id'] === decodedToken.uid) {
         hasAuthorAccess = true;
 
       } else if (postData['coauthors'].indexOf(decodedToken.uid) > -1) {
@@ -242,7 +243,7 @@ async function checkAccessControl({postId, jwt}: {postId: string, jwt: string}) 
  * (With accessibility check).
  */
 export const save = functions
-  .region('europe-west3')
+  .region(cloudRegions.eu)
   .https
   .onCall(async (data) => {
     const postId: string = data.postId;

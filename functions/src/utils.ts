@@ -1,6 +1,10 @@
 import * as functions from 'firebase-functions';
 import { adminApp } from './adminApp';
 
+export const cloudRegions = {
+  eu: 'europe-west3'
+};
+
 export async function checkUserIsSignedIn(
   context: functions.https.CallableContext,
   idToken: string,

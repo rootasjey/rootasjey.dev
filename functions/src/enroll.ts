@@ -1,13 +1,14 @@
 import * as functions from 'firebase-functions';
 import { Domain } from 'domain-check';
+import { cloudRegions } from './utils';
 
 /**
  * Check domain name availability.
  */
 export const domainCheck = functions
-  .region('europe-west3')
+  .region(cloudRegions.eu)
   .https
-  .onCall(async (data, context) => {
+  .onCall(async (data) => {
     const domainName: string = data.domain;
 
     if (!domainName) {
