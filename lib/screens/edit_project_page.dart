@@ -7,7 +7,9 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/lang_popup_menu_button.dart';
+import 'package:rootasjey/components/main_app_bar.dart';
 import 'package:rootasjey/components/pub_popup_menu_button.dart';
+import 'package:rootasjey/components/sliver_edge_padding.dart';
 import 'package:rootasjey/components/sliver_error_view.dart';
 import 'package:rootasjey/components/sliver_loading_view.dart';
 import 'package:rootasjey/router/app_router.gr.dart';
@@ -38,7 +40,6 @@ class _EditProjectPageState extends State<EditProjectPage> {
 
   DocumentSnapshot _projectSnapshot;
 
-  final _clearFocusNode = FocusNode();
   final _projectFocusNode = FocusNode();
   final _contentController = TextEditingController();
 
@@ -96,95 +97,63 @@ class _EditProjectPageState extends State<EditProjectPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          appBar(),
-          body(),
+      body: Stack(
+        children: [
+          CustomScrollView(
+            slivers: [
+              SliverEdgePadding(),
+              MainAppBar(),
+              body(),
+            ],
+          ),
+          popupProgressIndicator(),
         ],
       ),
     );
   }
 
-  Widget appBar() {
-    return SliverAppBar(
-      floating: true,
-      snap: true,
-      pinned: true,
-      collapsedHeight: 80.0,
-      expandedHeight: 120.0,
-      automaticallyImplyLeading: false,
-      centerTitle: false,
-      title: appBarTitle(),
-      bottom: appBarBottom(),
-    );
-  }
-
-  Widget appBarBottom() {
-    return PreferredSize(
-      preferredSize: Size.fromHeight(20.0),
-      child: Padding(
-        padding: const EdgeInsets.only(left: 28.0),
-        child: Row(
+  Widget actionsRow() {
+    return Column(
+      children: [
+        SizedBox(
+          width: 700.0,
+          child: Divider(thickness: 1, height: 24.0),
+        ),
+        Wrap(
+          spacing: 20.0,
+          runSpacing: 20.0,
           children: [
-            Padding(
-              padding: const EdgeInsets.only(right: 16.0),
-              child: LangPopupMenuButton(
-                lang: _lang,
-                onLangChanged: (newLang) {
-                  setState(() {
-                    _lang = newLang;
-                  });
-
-                  updateLang();
-                },
-              ),
-            ),
-            viewOnlineButton(),
+            backButton(),
+            langButton(),
+            pubPopupMenuButton(),
+            vDivider(),
             saveButton(),
-            PubPopupMenuButton(
-              status: _publicationStatus,
-              onStatusChanged: (newStatus) {
-                setState(() {
-                  _publicationStatus = newStatus;
-                });
-
-                updatePubStatus(newStatus);
-              },
-            ),
+            if (_publicationStatus == PUBLISHED) viewOnlineButton(),
+            deleteButton(),
           ],
         ),
-      ),
+        SizedBox(
+          width: 700.0,
+          child: Divider(thickness: 1, height: 24.0),
+        ),
+      ],
     );
   }
 
-  Widget appBarTitle() {
+  Widget backButton() {
+    if (context.router.root.stack.length < 1) {
+      return Container(width: 0.0, height: 0.0);
+    }
+
     return Padding(
-      padding: const EdgeInsets.only(left: 0.0),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (context.router.root.stack.length > 1)
-            IconButton(
-              icon: Icon(
-                UniconsLine.arrow_left,
-                color: stateColors.foreground,
-              ),
-              onPressed: context.router.pop,
-            ),
-          if (_isSaving)
-            Padding(
-              padding: const EdgeInsets.only(right: 16.0),
-              child: CircularProgressIndicator(
-                strokeWidth: 2.0,
-              ),
-            ),
-          Text(
-            _title.isEmpty ? "project_edit".tr() : _title,
-            style: TextStyle(
-              color: stateColors.foreground,
-            ),
-          ),
-        ],
+      padding: const EdgeInsets.only(right: 15.0),
+      child: IconButton(
+        tooltip: "back".tr(),
+        onPressed: context.router.pop,
+        icon: Opacity(
+          opacity: 0.6,
+          child: Icon(UniconsLine.arrow_left),
+        ),
       ),
     );
   }
@@ -203,33 +172,7 @@ class _EditProjectPageState extends State<EditProjectPage> {
       );
     }
 
-    return SliverList(
-      delegate: SliverChildListDelegate.fixed([
-        Padding(
-          padding: const EdgeInsets.only(
-            top: 40.0,
-            bottom: 400.0,
-          ),
-          child: Column(
-            children: [
-              titleInput(),
-              summaryInput(),
-              contentInput(),
-              buttonToggleMetaView(),
-              if (_isMetaVisible)
-                Column(
-                  children: [
-                    progLangsSelection(),
-                    platformsSelection(),
-                    tagsSelection(),
-                    urlsSections(),
-                  ],
-                ),
-            ],
-          ),
-        ),
-      ]),
-    );
+    return idleView();
   }
 
   Widget buttonToggleMetaView() {
@@ -257,37 +200,107 @@ class _EditProjectPageState extends State<EditProjectPage> {
   }
 
   Widget contentInput() {
-    return Container(
+    return SizedBox(
       width: 700.0,
-      padding: const EdgeInsets.only(
-        top: 40.0,
-      ),
-      child: TextField(
-        maxLines: null,
-        autofocus: false,
-        focusNode: _projectFocusNode,
-        controller: _contentController,
-        keyboardType: TextInputType.multiline,
-        textCapitalization: TextCapitalization.sentences,
-        onChanged: (newValue) {
-          _content = newValue;
+      child: Opacity(
+        opacity: 0.8,
+        child: TextField(
+          maxLines: null,
+          autofocus: false,
+          focusNode: _projectFocusNode,
+          controller: _contentController,
+          keyboardType: TextInputType.multiline,
+          textCapitalization: TextCapitalization.sentences,
+          style: FontsUtils.mainStyle(
+            fontSize: 18.0,
+            fontWeight: FontWeight.w600,
+          ),
+          decoration: InputDecoration(
+            hintText: "project_story_dot".tr(),
+            border: OutlineInputBorder(borderSide: BorderSide.none),
+          ),
+          onChanged: (newValue) {
+            _content = newValue;
 
-          if (_saveContentTimer != null) {
-            _saveContentTimer.cancel();
-          }
+            if (_saveContentTimer != null) {
+              _saveContentTimer.cancel();
+            }
 
-          _saveContentTimer = Timer(1.seconds, () => saveContent());
-        },
-        style: TextStyle(
-          fontSize: 22.0,
-          fontWeight: FontWeight.w300,
-        ),
-        decoration: InputDecoration(
-          icon: Icon(Icons.edit),
-          hintText: "project_story_dot".tr(),
-          border: OutlineInputBorder(borderSide: BorderSide.none),
+            _saveContentTimer = Timer(1.seconds, () => saveContent());
+          },
         ),
       ),
+    );
+  }
+
+  Widget deleteButton() {
+    return IconButton(
+      tooltip: "project_delete".tr(),
+      icon: Opacity(
+        opacity: 0.6,
+        child: Icon(UniconsLine.trash),
+      ),
+      onPressed: () async {
+        final success = await deleteProject();
+
+        if (success) {
+          context.router.pop();
+        }
+      },
+    );
+  }
+
+  Widget header() {
+    return Column(
+      children: [
+        actionsRow(),
+        titleInput(),
+      ],
+    );
+  }
+
+  Widget idleView() {
+    return SliverList(
+      delegate: SliverChildListDelegate.fixed([
+        Padding(
+          padding: const EdgeInsets.only(
+            top: 40.0,
+            bottom: 400.0,
+          ),
+          child: Column(
+            children: [
+              header(),
+              summaryInput(),
+              contentInput(),
+              buttonToggleMetaView(),
+              if (_isMetaVisible)
+                Column(
+                  children: [
+                    progLangsSelection(),
+                    platformsSelection(),
+                    tagsSelection(),
+                    urlsSections(),
+                  ],
+                ),
+            ],
+          ),
+        ),
+      ]),
+    );
+  }
+
+  Widget langButton() {
+    return LangPopupMenuButton(
+      lang: _lang,
+      opacity: 0.6,
+      color: stateColors.lightBackground,
+      onLangChanged: (newLang) {
+        setState(() {
+          _lang = newLang;
+        });
+
+        updateLang();
+      },
     );
   }
 
@@ -403,6 +416,59 @@ class _EditProjectPageState extends State<EditProjectPage> {
     );
   }
 
+  Widget popupProgressIndicator() {
+    if (!_isSaving) {
+      return Container();
+    }
+
+    return Positioned(
+      top: 100.0,
+      right: 24.0,
+      child: SizedBox(
+        width: 240.0,
+        child: Card(
+          elevation: 4.0,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(
+                height: 4.0,
+                child: LinearProgressIndicator(),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      UniconsLine.circle,
+                      color: stateColors.secondary,
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 8.0),
+                        child: Opacity(
+                          opacity: 0.6,
+                          child: Text(
+                            "project_updating".tr(),
+                            style: FontsUtils.mainStyle(
+                              fontSize: 14.0,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget progLangsSelection() {
     return Container(
       width: 600.0,
@@ -503,33 +569,41 @@ class _EditProjectPageState extends State<EditProjectPage> {
     );
   }
 
+  Widget pubPopupMenuButton() {
+    return PubPopupMenuButton(
+      status: _publicationStatus,
+      onStatusChanged: (newStatus) {
+        setState(() {
+          _publicationStatus = newStatus;
+        });
+
+        updatePubStatus(newStatus);
+      },
+    );
+  }
+
   Widget saveButton() {
     final saveStr =
         _publicationStatus == DRAFT ? "save_draft".tr() : "save".tr();
 
-    return Padding(
-      padding: const EdgeInsets.only(right: 20.0),
-      child: OutlinedButton.icon(
-        onPressed: () {
-          updateTitle();
-          saveContent();
-        },
-        icon: Opacity(opacity: 0.6, child: Icon(UniconsLine.save)),
-        label: Opacity(opacity: 0.6, child: Text(saveStr)),
-        style: OutlinedButton.styleFrom(primary: stateColors.foreground),
+    return IconButton(
+      tooltip: saveStr,
+      icon: Opacity(
+        opacity: 0.6,
+        child: Icon(UniconsLine.save),
       ),
+      onPressed: () {
+        updateTitle();
+        saveContent();
+      },
     );
   }
 
   Widget summaryInput() {
-    return Container(
+    return SizedBox(
       width: 700.0,
-      padding: const EdgeInsets.only(
-        left: 0.0,
-        top: 10.0,
-      ),
       child: TextField(
-        maxLines: 1,
+        maxLines: null,
         focusNode: _summaryFocusNode,
         controller: _summaryController,
         keyboardType: TextInputType.multiline,
@@ -670,50 +744,34 @@ class _EditProjectPageState extends State<EditProjectPage> {
 
   Widget titleInput() {
     return Container(
-      width: 720.0,
+      width: 700.0,
       padding: const EdgeInsets.only(
         top: 60.0,
       ),
-      child: Row(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(right: 15.0),
-            child: IconButton(
-              onPressed: context.router.pop,
-              icon: Icon(Icons.arrow_back),
-            ),
-          ),
-          Expanded(
-            child: Container(
-              width: 670.0,
-              child: TextField(
-                maxLines: 1,
-                autofocus: true,
-                focusNode: _titleFocusNode,
-                controller: _titleController,
-                keyboardType: TextInputType.multiline,
-                textCapitalization: TextCapitalization.sentences,
-                onChanged: (newValue) {
-                  _title = newValue;
+      child: TextField(
+        maxLines: null,
+        autofocus: true,
+        focusNode: _titleFocusNode,
+        controller: _titleController,
+        keyboardType: TextInputType.multiline,
+        textCapitalization: TextCapitalization.sentences,
+        style: FontsUtils.mainStyle(
+          fontSize: 42.0,
+          fontWeight: FontWeight.w700,
+        ),
+        decoration: InputDecoration(
+          hintText: "project_title_dot".tr(),
+          border: OutlineInputBorder(borderSide: BorderSide.none),
+        ),
+        onChanged: (newValue) {
+          _title = newValue;
 
-                  if (_saveTitleTimer != null) {
-                    _saveTitleTimer.cancel();
-                  }
+          if (_saveTitleTimer != null) {
+            _saveTitleTimer.cancel();
+          }
 
-                  _saveTitleTimer = Timer(1.seconds, () => updateTitle());
-                },
-                style: TextStyle(
-                  fontSize: 42.0,
-                  fontWeight: FontWeight.w500,
-                ),
-                decoration: InputDecoration(
-                  hintText: "project_title_dot".tr(),
-                  border: OutlineInputBorder(borderSide: BorderSide.none),
-                ),
-              ),
-            ),
-          ),
-        ],
+          _saveTitleTimer = Timer(1.seconds, () => updateTitle());
+        },
       ),
     );
   }
@@ -793,41 +851,33 @@ class _EditProjectPageState extends State<EditProjectPage> {
     );
   }
 
-  Widget viewOnlineButton() {
-    if (_publicationStatus != PUBLISHED) {
-      return Container();
-    }
+  Widget vDivider() {
+    return SizedBox(
+      height: 40.0,
+      child: VerticalDivider(
+        thickness: 1.0,
+        width: 24.0,
+      ),
+    );
+  }
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20.0),
-      child: OutlinedButton.icon(
-        style: OutlinedButton.styleFrom(
-          primary: stateColors.foreground,
-        ),
-        focusNode: _clearFocusNode,
-        onPressed: () {
-          context.router.root.push(
-            ProjectsRouter(
-              children: [
-                ProjectPageRoute(
-                  projectId: widget.projectId,
-                ),
-              ],
-            ),
-          );
-        },
-        icon: Opacity(
-          opacity: 0.6,
-          child: Icon(
-            UniconsLine.eye,
+  Widget viewOnlineButton() {
+    return IconButton(
+      tooltip: "view_online".tr(),
+      onPressed: () {
+        context.router.root.push(
+          ProjectsRouter(
+            children: [
+              ProjectPageRoute(
+                projectId: widget.projectId,
+              ),
+            ],
           ),
-        ),
-        label: Opacity(
-          opacity: 0.6,
-          child: Text(
-            "view_online".tr(),
-          ),
-        ),
+        );
+      },
+      icon: Opacity(
+        opacity: 0.6,
+        child: Icon(UniconsLine.eye),
       ),
     );
   }
@@ -916,6 +966,29 @@ class _EditProjectPageState extends State<EditProjectPage> {
         context: context,
         message: "project_fetch_error".tr(),
       );
+    }
+  }
+
+  Future<bool> deleteProject() async {
+    bool success = true;
+    setState(() => _isLoading = true);
+
+    try {
+      await FirebaseFirestore.instance
+          .collection('projects')
+          .doc(widget.projectId)
+          .delete();
+    } catch (error) {
+      success = false;
+      appLogger.e(error);
+
+      Snack.e(
+        context: context,
+        message: "project_delete_failed".tr(),
+      );
+    } finally {
+      setState(() => _isLoading = false);
+      return success;
     }
   }
 
