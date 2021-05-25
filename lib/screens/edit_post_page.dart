@@ -115,8 +115,12 @@ class _EditPostPageState extends State<EditPostPage> {
     return Padding(
       padding: const EdgeInsets.only(right: 15.0),
       child: IconButton(
+        tooltip: "back".tr(),
         onPressed: context.router.pop,
-        icon: Icon(UniconsLine.arrow_left),
+        icon: Opacity(
+          opacity: 0.6,
+          child: Icon(UniconsLine.arrow_left),
+        ),
       ),
     );
   }
