@@ -96,7 +96,8 @@ class _EditPostPageState extends State<EditPostPage> {
             pubPopupMenuButton(),
             vDivider(),
             saveButton(),
-            viewOnlineButton(),
+            if (_publicationStatus == PUBLISHED) viewOnlineButton(),
+            deleteButton(),
           ],
         ),
         SizedBox(
@@ -128,7 +129,7 @@ class _EditPostPageState extends State<EditPostPage> {
   Widget body() {
     if (_isLoading) {
       return SliverLoadingView(
-        title: "loading_project".tr(),
+        title: "loading_post".tr(),
         padding: const EdgeInsets.only(top: 200.0),
       );
     }
@@ -143,36 +144,53 @@ class _EditPostPageState extends State<EditPostPage> {
   }
 
   Widget contentInput() {
-    return Container(
+    return SizedBox(
       width: 700.0,
-      padding: const EdgeInsets.only(
-        top: 0.0,
-      ),
-      child: TextField(
-        maxLines: null,
-        autofocus: false,
-        focusNode: _postFocusNode,
-        controller: _contentController,
-        keyboardType: TextInputType.multiline,
-        textCapitalization: TextCapitalization.sentences,
-        style: FontsUtils.mainStyle(
-          fontSize: 18.0,
-          fontWeight: FontWeight.w500,
-        ),
-        decoration: InputDecoration(
-          hintText: "once_upon_a_time".tr(),
-          border: OutlineInputBorder(borderSide: BorderSide.none),
-        ),
-        onChanged: (newValue) {
-          _postContent = newValue;
+      child: Opacity(
+        opacity: 0.8,
+        child: TextField(
+          maxLines: null,
+          autofocus: false,
+          focusNode: _postFocusNode,
+          controller: _contentController,
+          keyboardType: TextInputType.multiline,
+          textCapitalization: TextCapitalization.sentences,
+          style: FontsUtils.mainStyle(
+            fontSize: 18.0,
+            fontWeight: FontWeight.w500,
+          ),
+          decoration: InputDecoration(
+            hintText: "once_upon_a_time".tr(),
+            border: OutlineInputBorder(borderSide: BorderSide.none),
+          ),
+          onChanged: (newValue) {
+            _postContent = newValue;
 
-          if (_saveContentTimer != null) {
-            _saveContentTimer.cancel();
-          }
+            if (_saveContentTimer != null) {
+              _saveContentTimer.cancel();
+            }
 
-          _saveContentTimer = Timer(1.seconds, () => updateContent());
-        },
+            _saveContentTimer = Timer(1.seconds, () => updateContent());
+          },
+        ),
       ),
+    );
+  }
+
+  Widget deleteButton() {
+    return IconButton(
+      tooltip: "post_delete".tr(),
+      icon: Opacity(
+        opacity: 0.6,
+        child: Icon(UniconsLine.trash),
+      ),
+      onPressed: () async {
+        final success = await deletePost();
+
+        if (success) {
+          context.router.pop();
+        }
+      },
     );
   }
 
@@ -303,37 +321,35 @@ class _EditPostPageState extends State<EditPostPage> {
   }
 
   Widget titleInput() {
-    return Padding(
+    return Container(
+      width: 700.0,
       padding: const EdgeInsets.only(
         top: 60.0,
       ),
-      child: Container(
-        width: 700.0,
-        child: TextField(
-          maxLines: null,
-          autofocus: true,
-          focusNode: _titleFocusNode,
-          controller: _titleController,
-          keyboardType: TextInputType.multiline,
-          textCapitalization: TextCapitalization.sentences,
-          onChanged: (newValue) {
-            _title = newValue;
-
-            if (_saveTitleTimer != null) {
-              _saveTitleTimer.cancel();
-            }
-
-            _saveTitleTimer = Timer(1.seconds, () => updateTitle());
-          },
-          style: FontsUtils.mainStyle(
-            fontSize: 42.0,
-            fontWeight: FontWeight.w600,
-          ),
-          decoration: InputDecoration(
-            hintText: "post_title_dot".tr(),
-            border: OutlineInputBorder(borderSide: BorderSide.none),
-          ),
+      child: TextField(
+        maxLines: null,
+        autofocus: true,
+        focusNode: _titleFocusNode,
+        controller: _titleController,
+        keyboardType: TextInputType.multiline,
+        textCapitalization: TextCapitalization.sentences,
+        style: FontsUtils.mainStyle(
+          fontSize: 42.0,
+          fontWeight: FontWeight.w600,
         ),
+        decoration: InputDecoration(
+          hintText: "post_title_dot".tr(),
+          border: OutlineInputBorder(borderSide: BorderSide.none),
+        ),
+        onChanged: (newValue) {
+          _title = newValue;
+
+          if (_saveTitleTimer != null) {
+            _saveTitleTimer.cancel();
+          }
+
+          _saveTitleTimer = Timer(1.seconds, () => updateTitle());
+        },
       ),
     );
   }
@@ -349,10 +365,6 @@ class _EditPostPageState extends State<EditPostPage> {
   }
 
   Widget viewOnlineButton() {
-    if (_publicationStatus != PUBLISHED) {
-      return Container(width: 0, height: 0);
-    }
-
     return IconButton(
       tooltip: "view_online".tr(),
       onPressed: () {
@@ -371,6 +383,29 @@ class _EditPostPageState extends State<EditPostPage> {
         child: Icon(UniconsLine.eye),
       ),
     );
+  }
+
+  Future<bool> deletePost() async {
+    bool success = true;
+    setState(() => _isLoading = true);
+
+    try {
+      await FirebaseFirestore.instance
+          .collection('posts')
+          .doc(widget.postId)
+          .delete();
+    } catch (error) {
+      success = false;
+      appLogger.e(error);
+
+      Snack.e(
+        context: context,
+        message: "post_delete_failed".tr(),
+      );
+    } finally {
+      setState(() => _isLoading = false);
+      return success;
+    }
   }
 
   Future fetchContent() async {
