@@ -68,59 +68,78 @@ import 'package:rootasjey/screens/update_username_page.dart';
       guards: [AuthGuard],
       transitionsBuilder: TransitionsBuilders.fadeIn,
       children: [
-        AutoRoute(
+        MaterialRoute(
           path: 'posts',
           name: 'DashPostsRouter',
           page: EmptyRouterPage,
           children: [
-            AutoRoute(
+            CustomRoute(
               path: '',
               page: MyPostsPage,
+              transitionsBuilder: TransitionsBuilders.fadeIn,
               children: [
-                AutoRoute(path: 'published', page: PublishedPostsPage),
-                AutoRoute(path: 'draft', page: DraftPostsPage),
+                CustomRoute(path: 'published', page: PublishedPostsPage),
+                CustomRoute(path: 'draft', page: DraftPostsPage),
                 RedirectRoute(path: '*', redirectTo: 'published'),
               ],
             ),
-            AutoRoute(path: 'new', page: NewPostPage),
-            AutoRoute(path: 'edit/:postId', page: EditPostPage),
-            AutoRoute(
+            CustomRoute(
+              path: 'new',
+              page: NewPostPage,
+              transitionsBuilder: TransitionsBuilders.fadeIn,
+            ),
+            CustomRoute(
+              path: 'edit/:postId',
+              page: EditPostPage,
+              transitionsBuilder: TransitionsBuilders.fadeIn,
+            ),
+            CustomRoute(
               path: 'preview/:postId',
               name: 'DashPostPage',
               page: PostPage,
+              transitionsBuilder: TransitionsBuilders.fadeIn,
             ),
             RedirectRoute(path: '*', redirectTo: ''),
           ],
         ),
-        AutoRoute(
+        MaterialRoute(
           path: 'projects',
           name: 'DashProjectsRouter',
           page: EmptyRouterPage,
           children: [
-            AutoRoute(
+            CustomRoute(
               path: '',
               page: MyProjectsPage,
+              transitionsBuilder: TransitionsBuilders.fadeIn,
               children: [
-                AutoRoute(path: 'published', page: PublishedProjectsPage),
-                AutoRoute(path: 'draft', page: DraftProjectsPage),
+                CustomRoute(path: 'published', page: PublishedProjectsPage),
+                CustomRoute(path: 'draft', page: DraftProjectsPage),
                 RedirectRoute(path: '*', redirectTo: 'published'),
               ],
             ),
-            AutoRoute(path: 'new', page: NewProjectPage),
-            AutoRoute(path: 'edit/:projectId', page: EditProjectPage),
-            AutoRoute(
+            CustomRoute(
+              path: 'new',
+              page: NewProjectPage,
+              transitionsBuilder: TransitionsBuilders.fadeIn,
+            ),
+            CustomRoute(
+              path: 'edit/:projectId',
+              page: EditProjectPage,
+              transitionsBuilder: TransitionsBuilders.fadeIn,
+            ),
+            CustomRoute(
               path: 'preview/:projectId',
               name: 'DashProjectPage',
               page: ProjectPage,
+              transitionsBuilder: TransitionsBuilders.fadeIn,
             ),
             RedirectRoute(path: '*', redirectTo: ''),
           ],
         ),
-        CustomRoute(
+        MaterialRoute(
           path: 'profile',
           name: 'DashProfileRouter',
           page: EmptyRouterPage,
-          transitionsBuilder: TransitionsBuilders.fadeIn,
           children: [
             CustomRoute(
               path: '',

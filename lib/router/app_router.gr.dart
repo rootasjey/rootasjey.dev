@@ -225,14 +225,11 @@ class AppRouter extends _i1.RootStackRouter {
         builder: (_) {
           return const _i1.EmptyRouterPage();
         }),
-    DashProfileRouter.name: (routeData) => _i1.CustomPage<dynamic>(
+    DashProfileRouter.name: (routeData) => _i1.MaterialPageX<dynamic>(
         routeData: routeData,
         builder: (_) {
           return const _i1.EmptyRouterPage();
-        },
-        transitionsBuilder: _i1.TransitionsBuilders.fadeIn,
-        opaque: true,
-        barrierDismissible: false),
+        }),
     DashSettingsRouter.name: (routeData) => _i1.CustomPage<dynamic>(
         routeData: routeData,
         builder: (_) {
@@ -241,17 +238,23 @@ class AppRouter extends _i1.RootStackRouter {
         transitionsBuilder: _i1.TransitionsBuilders.fadeIn,
         opaque: true,
         barrierDismissible: false),
-    MyPostsPageRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
+    MyPostsPageRoute.name: (routeData) => _i1.CustomPage<dynamic>(
         routeData: routeData,
         builder: (_) {
           return _i21.MyPostsPage();
-        }),
-    NewPostPageRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
+        },
+        transitionsBuilder: _i1.TransitionsBuilders.fadeIn,
+        opaque: true,
+        barrierDismissible: false),
+    NewPostPageRoute.name: (routeData) => _i1.CustomPage<dynamic>(
         routeData: routeData,
         builder: (_) {
           return _i22.NewPostPage();
-        }),
-    EditPostPageRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
+        },
+        transitionsBuilder: _i1.TransitionsBuilders.fadeIn,
+        opaque: true,
+        barrierDismissible: false),
+    EditPostPageRoute.name: (routeData) => _i1.CustomPage<dynamic>(
         routeData: routeData,
         builder: (data) {
           final pathParams = data.pathParams;
@@ -259,8 +262,11 @@ class AppRouter extends _i1.RootStackRouter {
               orElse: () => EditPostPageRouteArgs(
                   postId: pathParams.getString('postId')));
           return _i23.EditPostPage(postId: args.postId);
-        }),
-    DashPostPage.name: (routeData) => _i1.MaterialPageX<dynamic>(
+        },
+        transitionsBuilder: _i1.TransitionsBuilders.fadeIn,
+        opaque: true,
+        barrierDismissible: false),
+    DashPostPage.name: (routeData) => _i1.CustomPage<dynamic>(
         routeData: routeData,
         builder: (data) {
           final pathParams = data.pathParams;
@@ -268,28 +274,41 @@ class AppRouter extends _i1.RootStackRouter {
               orElse: () =>
                   DashPostPageArgs(postId: pathParams.getString('postId')));
           return _i24.PostPage(postId: args.postId);
-        }),
-    PublishedPostsPageRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
+        },
+        transitionsBuilder: _i1.TransitionsBuilders.fadeIn,
+        opaque: true,
+        barrierDismissible: false),
+    PublishedPostsPageRoute.name: (routeData) => _i1.CustomPage<dynamic>(
         routeData: routeData,
         builder: (_) {
           return _i25.PublishedPostsPage();
-        }),
-    DraftPostsPageRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
+        },
+        opaque: true,
+        barrierDismissible: false),
+    DraftPostsPageRoute.name: (routeData) => _i1.CustomPage<dynamic>(
         routeData: routeData,
         builder: (_) {
           return _i26.DraftPostsPage();
-        }),
-    MyProjectsPageRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
+        },
+        opaque: true,
+        barrierDismissible: false),
+    MyProjectsPageRoute.name: (routeData) => _i1.CustomPage<dynamic>(
         routeData: routeData,
         builder: (_) {
           return _i27.MyProjectsPage();
-        }),
-    NewProjectPageRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
+        },
+        transitionsBuilder: _i1.TransitionsBuilders.fadeIn,
+        opaque: true,
+        barrierDismissible: false),
+    NewProjectPageRoute.name: (routeData) => _i1.CustomPage<dynamic>(
         routeData: routeData,
         builder: (_) {
           return _i28.NewProjectPage();
-        }),
-    EditProjectPageRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
+        },
+        transitionsBuilder: _i1.TransitionsBuilders.fadeIn,
+        opaque: true,
+        barrierDismissible: false),
+    EditProjectPageRoute.name: (routeData) => _i1.CustomPage<dynamic>(
         routeData: routeData,
         builder: (data) {
           final pathParams = data.pathParams;
@@ -297,8 +316,11 @@ class AppRouter extends _i1.RootStackRouter {
               orElse: () => EditProjectPageRouteArgs(
                   projectId: pathParams.getString('projectId')));
           return _i29.EditProjectPage(projectId: args.projectId);
-        }),
-    DashProjectPage.name: (routeData) => _i1.MaterialPageX<dynamic>(
+        },
+        transitionsBuilder: _i1.TransitionsBuilders.fadeIn,
+        opaque: true,
+        barrierDismissible: false),
+    DashProjectPage.name: (routeData) => _i1.CustomPage<dynamic>(
         routeData: routeData,
         builder: (data) {
           final pathParams = data.pathParams;
@@ -306,17 +328,24 @@ class AppRouter extends _i1.RootStackRouter {
               orElse: () => DashProjectPageArgs(
                   projectId: pathParams.getString('projectId')));
           return _i30.ProjectPage(projectId: args.projectId);
-        }),
-    PublishedProjectsPageRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
+        },
+        transitionsBuilder: _i1.TransitionsBuilders.fadeIn,
+        opaque: true,
+        barrierDismissible: false),
+    PublishedProjectsPageRoute.name: (routeData) => _i1.CustomPage<dynamic>(
         routeData: routeData,
         builder: (_) {
           return _i31.PublishedProjectsPage();
-        }),
-    DraftProjectsPageRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
+        },
+        opaque: true,
+        barrierDismissible: false),
+    DraftProjectsPageRoute.name: (routeData) => _i1.CustomPage<dynamic>(
         routeData: routeData,
         builder: (_) {
           return const _i32.DraftProjectsPage();
-        }),
+        },
+        opaque: true,
+        barrierDismissible: false),
     MyProfilePageRoute.name: (routeData) => _i1.CustomPage<dynamic>(
         routeData: routeData,
         builder: (_) {
