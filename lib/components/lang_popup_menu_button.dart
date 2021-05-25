@@ -1,5 +1,7 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/state/colors.dart';
+import 'package:rootasjey/utils/fonts.dart';
 import 'package:rootasjey/utils/language.dart';
 
 class LangPopupMenuButton extends StatelessWidget {
@@ -9,11 +11,13 @@ class LangPopupMenuButton extends StatelessWidget {
   final EdgeInsets margin;
   final EdgeInsets padding;
   final double elevation;
+  final Color color;
 
   const LangPopupMenuButton({
     Key key,
     @required this.lang,
     @required this.onLangChanged,
+    this.color,
     this.elevation = 0.0,
     this.opacity = 1.0,
     this.margin = EdgeInsets.zero,
@@ -25,19 +29,21 @@ class LangPopupMenuButton extends StatelessWidget {
     return Padding(
       padding: margin,
       child: Material(
+        color: color,
         elevation: elevation,
         borderRadius: BorderRadius.circular(4.0),
         child: Opacity(
           opacity: opacity,
           child: PopupMenuButton<String>(
-            tooltip: "Change language",
+            tooltip: "language_change".tr(),
             child: Padding(
               padding: padding,
               child: Text(
                 lang.toUpperCase(),
-                style: TextStyle(
-                  color: stateColors.foreground,
+                style: FontsUtils.mainStyle(
                   fontSize: 16.0,
+                  fontWeight: FontWeight.w700,
+                  color: stateColors.foreground,
                 ),
               ),
             ),
