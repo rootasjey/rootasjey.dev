@@ -5,15 +5,15 @@ import 'package:rootasjey/types/post.dart';
 import 'package:rootasjey/utils/cloud.dart';
 import 'package:unicons/unicons.dart';
 
-/// Minimal published post card.
-class MinPubPostCard extends StatefulWidget {
+/// Minimal post card.
+class MinPostCard extends StatefulWidget {
   final Post post;
   final double width;
   final EdgeInsets contentPadding;
   final VoidCallback onTap;
   final PopupMenuButton<dynamic> popupMenuButton;
 
-  MinPubPostCard({
+  MinPostCard({
     @required this.post,
     this.contentPadding = const EdgeInsets.all(8.0),
     this.width,
@@ -22,10 +22,10 @@ class MinPubPostCard extends StatefulWidget {
   });
 
   @override
-  _MinPubPostCardState createState() => _MinPubPostCardState();
+  _MinPostCardState createState() => _MinPostCardState();
 }
 
-class _MinPubPostCardState extends State<MinPubPostCard> {
+class _MinPostCardState extends State<MinPostCard> {
   double _elevation;
 
   String _authorName = '';

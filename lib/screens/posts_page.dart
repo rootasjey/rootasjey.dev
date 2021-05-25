@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:rootasjey/components/post_card.dart';
 import 'package:rootasjey/components/footer.dart';
 import 'package:rootasjey/components/main_app_bar.dart';
-import 'package:rootasjey/components/min_pub_post_card.dart';
+import 'package:rootasjey/components/min_post_card.dart';
 import 'package:rootasjey/components/page_title.dart';
 import 'package:rootasjey/components/sliver_empty_view.dart';
 import 'package:rootasjey/router/app_router.gr.dart';
@@ -124,7 +124,7 @@ class _PostsPageState extends State<PostsPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              MinPubPostCard(
+              MinPostCard(
                   post: post,
                   width: 420.0,
                   onTap: () {

@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/arrow_divider.dart';
 import 'package:rootasjey/components/post_card.dart';
-import 'package:rootasjey/components/min_pub_post_card.dart';
+import 'package:rootasjey/components/min_post_card.dart';
 import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/types/post.dart';
 import 'package:rootasjey/utils/app_logger.dart';
@@ -105,7 +105,7 @@ class _LandingPostsState extends State<LandingPosts> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              MinPubPostCard(post: post),
+              MinPostCard(post: post),
               Divider(height: 40.0),
             ],
           );
