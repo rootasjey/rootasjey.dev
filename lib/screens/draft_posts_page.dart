@@ -2,7 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:rootasjey/components/post_card.dart';
+import 'package:rootasjey/components/min_pub_post_card.dart';
 import 'package:rootasjey/components/sliver_edge_padding.dart';
 import 'package:rootasjey/components/sliver_empty_view.dart';
 import 'package:rootasjey/router/app_router.gr.dart';
@@ -128,51 +128,21 @@ class _DraftPostsPageState extends State<DraftPostsPage> {
       delegate: SliverChildBuilderDelegate(
         (context, index) {
           final post = _posts.elementAt(index);
+          final popupButton = buildPopupMenuButton(post, index);
 
-          return PostCard(
-            onTap: () => goToEditPostPage(post),
-            popupMenuButton: PopupMenuButton<String>(
-              icon: Icon(UniconsLine.ellipsis_v),
-              onSelected: (value) {
-                switch (value) {
-                  case 'edit':
-                    goToEditPostPage(post);
-                    break;
-                  case 'delete':
-                    delete(index);
-                    break;
-                  case 'publish':
-                    publish(index);
-                    break;
-                  default:
-                }
-              },
-              itemBuilder: (context) => [
-                PopupMenuItem(
-                  value: 'edit',
-                  child: ListTile(
-                    leading: Icon(UniconsLine.edit),
-                    title: Text("edit".tr()),
-                  ),
-                ),
-                PopupMenuItem(
-                  value: 'publish',
-                  child: ListTile(
-                    leading: Icon(UniconsLine.cloud_upload),
-                    title: Text("publish".tr()),
-                  ),
-                ),
-                PopupMenuItem(
-                  value: 'delete',
-                  child: ListTile(
-                    leading: Icon(UniconsLine.trash),
-                    title: Text("delete".tr()),
-                  ),
-                ),
-              ],
-            ),
-            post: post,
-            padding: const EdgeInsets.only(bottom: 20.0),
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              MinPubPostCard(
+                post: post,
+                width: 800.0,
+                onTap: () => goToEditPostPage(post),
+                contentPadding: const EdgeInsets.all(24.0),
+                popupMenuButton: popupButton,
+              ),
+              Divider(height: 40.0),
+            ],
           );
         },
         childCount: _posts.length,
@@ -332,5 +302,51 @@ class _DraftPostsPageState extends State<DraftPostsPage> {
 
     fetchMore();
     return false;
+  }
+
+  PopupMenuButton buildPopupMenuButton(Post post, int index) {
+    return PopupMenuButton<String>(
+      icon: Opacity(
+        opacity: 0.6,
+        child: Icon(UniconsLine.ellipsis_h),
+      ),
+      onSelected: (value) {
+        switch (value) {
+          case 'edit':
+            goToEditPostPage(post);
+            break;
+          case 'delete':
+            delete(index);
+            break;
+          case 'publish':
+            publish(index);
+            break;
+          default:
+        }
+      },
+      itemBuilder: (context) => [
+        PopupMenuItem(
+          value: 'edit',
+          child: ListTile(
+            leading: Icon(UniconsLine.edit),
+            title: Text("edit".tr()),
+          ),
+        ),
+        PopupMenuItem(
+          value: 'publish',
+          child: ListTile(
+            leading: Icon(UniconsLine.cloud_upload),
+            title: Text("publish".tr()),
+          ),
+        ),
+        PopupMenuItem(
+          value: 'delete',
+          child: ListTile(
+            leading: Icon(UniconsLine.trash),
+            title: Text("delete".tr()),
+          ),
+        ),
+      ],
+    );
   }
 }
