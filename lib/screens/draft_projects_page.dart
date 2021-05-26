@@ -177,6 +177,42 @@ class _DraftProjectsPageState extends State<DraftProjectsPage> {
     );
   }
 
+  void confirmDeleteProject(int index) {
+    FlashHelper.deleteDialog(
+      context,
+      message: "project_delete_description".tr(),
+      onConfirm: () {
+        deleteProject(index);
+      },
+    );
+  }
+
+  void deleteProject(int index) async {
+    setState(() => _isLoading = true);
+
+    final removedProject = _projects.removeAt(index);
+
+    try {
+      await FirebaseFirestore.instance
+          .collection('projects')
+          .doc(removedProject.id)
+          .delete();
+    } catch (error) {
+      appLogger.e(error);
+
+      Snack.e(
+        context: context,
+        message: "project_delete_failed".tr(),
+      );
+
+      setState(() {
+        _projects.insert(index, removedProject);
+      });
+    } finally {
+      setState(() => _isLoading = false);
+    }
+  }
+
   void fetch() async {
     setState(() {
       _projects.clear();
@@ -267,40 +303,26 @@ class _DraftProjectsPageState extends State<DraftProjectsPage> {
     }
   }
 
-  void confirmDeleteProject(int index) {
-    FlashHelper.deleteDialog(
-      context,
-      message: "project_delete_description".tr(),
-      onConfirm: () {
-        deleteProject(index);
-      },
+  Future goToEditPage(Project project) async {
+    await context.router.push(
+      EditProjectPageRoute(
+        projectId: project.id,
+      ),
     );
+
+    fetch();
   }
 
-  void deleteProject(int index) async {
-    setState(() => _isLoading = true);
+  bool onNotification(ScrollNotification scrollNotification) {
+    final double current = scrollNotification.metrics.pixels;
+    final double max = scrollNotification.metrics.maxScrollExtent;
 
-    final removedProject = _projects.removeAt(index);
-
-    try {
-      await FirebaseFirestore.instance
-          .collection('projects')
-          .doc(removedProject.id)
-          .delete();
-    } catch (error) {
-      appLogger.e(error);
-
-      Snack.e(
-        context: context,
-        message: "project_delete_failed".tr(),
-      );
-
-      setState(() {
-        _projects.insert(index, removedProject);
-      });
-    } finally {
-      setState(() => _isLoading = false);
+    if (current < max - 300.0) {
+      return false;
     }
+
+    fetchMore();
+    return false;
   }
 
   void publish(int index) async {
@@ -324,27 +346,5 @@ class _DraftProjectsPageState extends State<DraftProjectsPage> {
         _projects.insert(index, removedProject);
       });
     }
-  }
-
-  Future goToEditPage(Project project) async {
-    await context.router.push(
-      EditProjectPageRoute(
-        projectId: project.id,
-      ),
-    );
-
-    fetch();
-  }
-
-  bool onNotification(ScrollNotification scrollNotification) {
-    final double current = scrollNotification.metrics.pixels;
-    final double max = scrollNotification.metrics.maxScrollExtent;
-
-    if (current < max - 300.0) {
-      return false;
-    }
-
-    fetchMore();
-    return false;
   }
 }

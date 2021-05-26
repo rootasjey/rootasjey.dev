@@ -202,7 +202,7 @@ class _DraftPostsPageState extends State<DraftPostsPage> {
     FlashHelper.deleteDialog(
       context,
       message: "post_delete_description".tr(),
-      onConfirm: () async {
+      onConfirm: () {
         deletePost(index);
       },
     );
