@@ -1,10 +1,14 @@
 import 'dart:async';
 import 'dart:collection';
 
+import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:rootasjey/components/animated_app_icon.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:flash/flash.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:rootasjey/utils/fonts.dart';
 import 'package:unicons/unicons.dart';
 
 class _MessageItem<T> {
@@ -20,6 +24,7 @@ class FlashHelper {
   static Completer _previousCompleter;
   static FlashController _previousController;
   static String _currentProgressId = '';
+  static bool _isLoading = false;
 
   static void init(BuildContext context) {
     if (_buildCompleter?.isCompleted == false) {
@@ -290,6 +295,148 @@ class FlashHelper {
           );
         });
       },
+    );
+  }
+
+  static Future<T> deleteDialog<T>(
+    BuildContext context, {
+    VoidCallback onConfirm,
+    @required String message,
+  }) {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, dialogSetState) {
+            return SimpleDialog(
+              backgroundColor: stateColors.clairPink,
+              title: Opacity(
+                opacity: 0.8,
+                child: Text(
+                  "confirm".tr(),
+                  style: FontsUtils.mainStyle(
+                    fontSize: 18.0,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+              children: <Widget>[
+                Divider(
+                  color: Colors.black87,
+                  thickness: 1.0,
+                ),
+                _deleteDialogBody(message: message),
+                _deleteDialogFooter(
+                  context: context,
+                  dialogSetState: dialogSetState,
+                  onConfirm: onConfirm,
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  static Widget _deleteDialogBody({@required String message}) {
+    if (_isLoading) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 25.0,
+        ),
+        child: Opacity(
+          opacity: 0.8,
+          child: AnimatedAppIcon(
+            size: 60.0,
+            textTitle: "post_deleting".tr(),
+          ),
+        ),
+      );
+    }
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 25.0,
+        vertical: 12.0,
+      ),
+      child: Opacity(
+        opacity: 0.6,
+        child: Text(
+          message,
+          style: FontsUtils.mainStyle(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+    );
+  }
+
+  static Widget _deleteDialogFooter({
+    BuildContext context,
+    StateSetter dialogSetState,
+    VoidCallback onConfirm,
+  }) {
+    if (_isLoading) {
+      return Container();
+    }
+
+    return Padding(
+      padding: const EdgeInsets.only(
+        top: 24.0,
+        right: 24.0,
+      ),
+      child: Wrap(
+        spacing: 24.0,
+        alignment: WrapAlignment.end,
+        children: [
+          OutlinedButton(
+            onPressed: context.router.pop,
+            style: OutlinedButton.styleFrom(
+              primary: stateColors.secondary,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 20.0,
+                vertical: 8.0,
+              ),
+              child: Text(
+                "cancel".tr(),
+                style: FontsUtils.mainStyle(
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              dialogSetState(() => _isLoading = true);
+
+              if (onConfirm != null) {
+                await onConfirm();
+              }
+
+              _isLoading = false;
+              context.router.pop();
+            },
+            style: ElevatedButton.styleFrom(
+              primary: Colors.black87,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 20.0,
+                vertical: 8.0,
+              ),
+              child: Text(
+                "delete".tr(),
+                style: FontsUtils.mainStyle(
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
