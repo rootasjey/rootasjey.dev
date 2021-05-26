@@ -9,6 +9,7 @@ import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/state/user.dart';
 import 'package:rootasjey/types/post.dart';
 import 'package:rootasjey/utils/app_logger.dart';
+import 'package:rootasjey/utils/flash_helper.dart';
 import 'package:rootasjey/utils/fonts.dart';
 import 'package:rootasjey/utils/snack.dart';
 import 'package:unicons/unicons.dart';
@@ -148,6 +149,16 @@ class _DraftPostsPageState extends State<DraftPostsPage> {
         },
         childCount: _posts.length,
       ),
+    );
+  }
+
+  void confirmDeletePost(int index) {
+    FlashHelper.deleteDialog(
+      context,
+      message: "post_delete_description".tr(),
+      onConfirm: () async {
+        deletePost(index);
+      },
     );
   }
 
@@ -322,7 +333,7 @@ class _DraftPostsPageState extends State<DraftPostsPage> {
             goToEditPostPage(post);
             break;
           case 'delete':
-            deletePost(index);
+            confirmDeletePost(index);
             break;
           case 'publish':
             publish(index);
