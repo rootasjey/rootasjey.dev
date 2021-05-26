@@ -49,7 +49,7 @@ class _MainAppBarState extends State<MainAppBar> {
     );
   }
 
-  Widget addNewPostButton() {
+  Widget addButton() {
     return PopupMenuButton(
       tooltip: "new".tr(),
       icon: Icon(
@@ -78,7 +78,7 @@ class _MainAppBarState extends State<MainAppBar> {
         PopupMenuItem(
           value: DashboardPageRoute(
             children: [
-              DashPostsRouter(
+              DashProjectsRouter(
                 children: [
                   NewProjectPageRoute(),
                 ],
@@ -103,7 +103,7 @@ class _MainAppBarState extends State<MainAppBar> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          addNewPostButton(),
+          addButton(),
           AvatarMenu(
             isSmall: isSmall,
             padding: const EdgeInsets.only(
