@@ -17,6 +17,7 @@ import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/types/project.dart';
 import 'package:rootasjey/utils/app_logger.dart';
 import 'package:rootasjey/utils/cloud.dart';
+import 'package:rootasjey/utils/flash_helper.dart';
 import 'package:rootasjey/utils/fonts.dart';
 import 'package:rootasjey/utils/snack.dart';
 import 'package:rootasjey/utils/texts.dart';
@@ -240,12 +241,22 @@ class _EditProjectPageState extends State<EditProjectPage> {
         opacity: 0.6,
         child: Icon(UniconsLine.trash),
       ),
-      onPressed: () async {
-        final success = await deleteProject();
+      onPressed: () {
+        FlashHelper.deleteDialog(
+          context,
+          message: "project_delete_description".tr(),
+          onConfirm: () async {
+            final success = await deleteProject();
 
-        if (success) {
-          context.router.pop();
-        }
+            if (success) {
+              context.router.navigate(
+                DashboardPageRoute(
+                  children: [DashProjectsRouter()],
+                ),
+              );
+            }
+          },
+        );
       },
     );
   }

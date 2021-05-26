@@ -382,6 +382,7 @@
   "project": "Project",
   "project_after": "After project",
   "project_delete": "Delete project",
+  "project_delete_description": "Delete this project? This action is irreversible.",
   "project_delete_failed": "Sorry, we couldn't delete this project. Try later.",
   "project_edit": "Edit project",
   "project_fetch_error": "An error occurred. Maybe the project doesn't exist anymore or there's a network issue.",
