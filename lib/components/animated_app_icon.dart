@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rootasjey/utils/fonts.dart';
 
 class AnimatedAppIcon extends StatefulWidget {
   final double size;
@@ -36,8 +37,9 @@ class _AnimatedAppIconState extends State<AnimatedAppIcon> {
               opacity: 0.6,
               child: Text(
                 widget.textTitle,
-                style: TextStyle(
+                style: FontsUtils.mainStyle(
                   fontSize: 18.0,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ),

@@ -1,7 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/animated_app_icon.dart';
-import 'package:rootasjey/utils/fonts.dart';
 
 class SliverLoadingView extends StatelessWidget {
   final String title;
@@ -27,21 +26,8 @@ class SliverLoadingView extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              AnimatedAppIcon(),
-              Padding(
-                padding: const EdgeInsets.only(
-                  top: 40.0,
-                ),
-                child: Opacity(
-                  opacity: 0.6,
-                  child: Text(
-                    loadingText,
-                    style: FontsUtils.mainStyle(
-                      fontSize: 24.0,
-                      fontWeight: FontWeight.w300,
-                    ),
-                  ),
-                ),
+              AnimatedAppIcon(
+                textTitle: loadingText,
               ),
             ],
           ),
