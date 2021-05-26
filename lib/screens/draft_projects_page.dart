@@ -9,6 +9,7 @@ import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/state/user.dart';
 import 'package:rootasjey/types/project.dart';
 import 'package:rootasjey/utils/app_logger.dart';
+import 'package:rootasjey/utils/flash_helper.dart';
 import 'package:rootasjey/utils/fonts.dart';
 import 'package:rootasjey/utils/snack.dart';
 import 'package:unicons/unicons.dart';
@@ -143,7 +144,7 @@ class _DraftProjectsPageState extends State<DraftProjectsPage> {
               onSelected: (value) {
                 switch (value) {
                   case 'delete':
-                    delete(index);
+                    confirmDeleteProject(index);
                     break;
                   case 'publish':
                     publish(index);
@@ -266,7 +267,17 @@ class _DraftProjectsPageState extends State<DraftProjectsPage> {
     }
   }
 
-  void delete(int index) async {
+  void confirmDeleteProject(int index) {
+    FlashHelper.deleteDialog(
+      context,
+      message: "project_delete_description".tr(),
+      onConfirm: () {
+        deleteProject(index);
+      },
+    );
+  }
+
+  void deleteProject(int index) async {
     setState(() => _isLoading = true);
 
     final removedProject = _projects.removeAt(index);
