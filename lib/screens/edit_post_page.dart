@@ -194,7 +194,7 @@ class _EditPostPageState extends State<EditPostPage> {
             final success = await deletePost();
 
             if (success) {
-              context.router.push(
+              context.router.navigate(
                 DashboardPageRoute(
                   children: [DashPostsRouter()],
                 ),
