@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:rootasjey/components/animated_app_icon.dart';
 import 'package:rootasjey/components/lang_popup_menu_button.dart';
 import 'package:rootasjey/components/main_app_bar.dart';
 import 'package:rootasjey/components/pub_popup_menu_button.dart';
@@ -33,6 +34,7 @@ class EditPostPage extends StatefulWidget {
 
 class _EditPostPageState extends State<EditPostPage> {
   bool _isLoading = false;
+  bool _isDeleting = false;
   bool _isSaving = false;
   bool _hasError = false;
 
@@ -177,6 +179,104 @@ class _EditPostPageState extends State<EditPostPage> {
     );
   }
 
+  Widget deleteDialogBody() {
+    if (_isDeleting) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 25.0,
+        ),
+        child: Opacity(
+          opacity: 0.6,
+          child: AnimatedAppIcon(
+            size: 60.0,
+            textTitle: "post_deleting".tr(),
+          ),
+        ),
+      );
+    }
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 25.0,
+        vertical: 12.0,
+      ),
+      child: Opacity(
+        opacity: 0.6,
+        child: Text(
+          "post_delete_description".tr(),
+          style: FontsUtils.mainStyle(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget deleteDialogFooter(BuildContext context, StateSetter dialogSetState) {
+    if (_isDeleting) {
+      return Container();
+    }
+
+    return Padding(
+      padding: const EdgeInsets.only(
+        top: 24.0,
+        right: 24.0,
+      ),
+      child: Wrap(
+        spacing: 24.0,
+        alignment: WrapAlignment.end,
+        children: [
+          OutlinedButton(
+            onPressed: context.router.pop,
+            style: OutlinedButton.styleFrom(
+              primary: stateColors.secondary,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 20.0,
+                vertical: 8.0,
+              ),
+              child: Text(
+                "cancel".tr(),
+                style: FontsUtils.mainStyle(
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              final success = await deletePost(dialogSetState);
+
+              if (success) {
+                context.router.push(
+                  DashboardPageRoute(
+                    children: [DashPostsRouter()],
+                  ),
+                );
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              primary: Colors.black87,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 20.0,
+                vertical: 8.0,
+              ),
+              child: Text(
+                "delete".tr(),
+                style: FontsUtils.mainStyle(
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget deleteButton() {
     return IconButton(
       tooltip: "post_delete".tr(),
@@ -184,13 +284,7 @@ class _EditPostPageState extends State<EditPostPage> {
         opacity: 0.6,
         child: Icon(UniconsLine.trash),
       ),
-      onPressed: () async {
-        final success = await deletePost();
-
-        if (success) {
-          context.router.pop();
-        }
-      },
+      onPressed: showDeleteDialog,
     );
   }
 
@@ -385,9 +479,13 @@ class _EditPostPageState extends State<EditPostPage> {
     );
   }
 
-  Future<bool> deletePost() async {
+  Future<bool> deletePost(StateSetter dialogSetState) async {
+    if (_isDeleting || _isLoading || _isSaving) {
+      return false;
+    }
+
     bool success = true;
-    setState(() => _isLoading = true);
+    dialogSetState(() => _isDeleting = true);
 
     try {
       await FirebaseFirestore.instance
@@ -403,7 +501,9 @@ class _EditPostPageState extends State<EditPostPage> {
         message: "post_delete_failed".tr(),
       );
     } finally {
-      setState(() => _isLoading = false);
+      _isLoading = false;
+      _isDeleting = false;
+
       return success;
     }
   }
@@ -473,6 +573,39 @@ class _EditPostPageState extends State<EditPostPage> {
         message: "post_save_error".tr(),
       );
     }
+  }
+
+  void showDeleteDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, dialogSetState) {
+            return SimpleDialog(
+              backgroundColor: stateColors.clairPink,
+              title: Opacity(
+                opacity: 0.8,
+                child: Text(
+                  "confirm".tr(),
+                  style: FontsUtils.mainStyle(
+                    fontSize: 18.0,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+              children: <Widget>[
+                Divider(
+                  color: Colors.black87,
+                  thickness: 1.0,
+                ),
+                deleteDialogBody(),
+                deleteDialogFooter(context, dialogSetState),
+              ],
+            );
+          },
+        );
+      },
+    );
   }
 
   void updateContent() async {
