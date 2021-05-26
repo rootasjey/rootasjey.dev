@@ -5,7 +5,7 @@ class AnimatedAppIcon extends StatefulWidget {
   final String textTitle;
 
   AnimatedAppIcon({
-    this.size = 100.0,
+    this.size = 60.0,
     this.textTitle,
   });
 
