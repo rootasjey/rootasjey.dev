@@ -45,7 +45,7 @@ class _NewPostPageState extends State<NewPostPage> {
     }
 
     return ErrorView(
-      textTitle: "post_create_error",
+      textTitle: "post_create_error".tr(),
     );
   }
 
@@ -88,7 +88,12 @@ class _NewPostPageState extends State<NewPostPage> {
       });
 
       _jwt = await FirebaseAuth.instance.currentUser.getIdToken();
-      await createContent();
+      
+      final success = await createContent();
+
+      if (!success) {
+        throw ErrorDescription("post_create_error_storage".tr());
+      }
     } catch (error) {
       appLogger.e(error);
 
