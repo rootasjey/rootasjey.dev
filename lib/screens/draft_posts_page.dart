@@ -67,6 +67,52 @@ class _DraftPostsPageState extends State<DraftPostsPage> {
     );
   }
 
+  PopupMenuButton buildPopupMenuButton(Post post, int index) {
+    return PopupMenuButton<String>(
+      icon: Opacity(
+        opacity: 0.6,
+        child: Icon(UniconsLine.ellipsis_h),
+      ),
+      onSelected: (value) {
+        switch (value) {
+          case 'edit':
+            goToEditPostPage(post);
+            break;
+          case 'delete':
+            confirmDeletePost(index);
+            break;
+          case 'publish':
+            publish(index);
+            break;
+          default:
+        }
+      },
+      itemBuilder: (context) => [
+        PopupMenuItem(
+          value: 'edit',
+          child: ListTile(
+            leading: Icon(UniconsLine.edit),
+            title: Text("edit".tr()),
+          ),
+        ),
+        PopupMenuItem(
+          value: 'publish',
+          child: ListTile(
+            leading: Icon(UniconsLine.cloud_upload),
+            title: Text("publish".tr()),
+          ),
+        ),
+        PopupMenuItem(
+          value: 'delete',
+          child: ListTile(
+            leading: Icon(UniconsLine.trash),
+            title: Text("delete".tr()),
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget header(TabsRouter tabsRouter) {
     return SliverList(
       delegate: SliverChildListDelegate.fixed([
@@ -162,6 +208,32 @@ class _DraftPostsPageState extends State<DraftPostsPage> {
     );
   }
 
+  void deletePost(int index) async {
+    setState(() => _isLoading = true);
+
+    final removedPost = _posts.removeAt(index);
+
+    try {
+      await FirebaseFirestore.instance
+          .collection('posts')
+          .doc(removedPost.id)
+          .delete();
+    } catch (error) {
+      appLogger.e(error);
+
+      Snack.e(
+        context: context,
+        message: "post_delete_failed".tr(),
+      );
+
+      setState(() {
+        _posts.insert(index, removedPost);
+      });
+    } finally {
+      setState(() => _isLoading = false);
+    }
+  }
+
   void fetch() async {
     setState(() {
       _posts.clear();
@@ -252,38 +324,24 @@ class _DraftPostsPageState extends State<DraftPostsPage> {
     }
   }
 
-  void deletePost(int index) async {
-    setState(() => _isLoading = true);
-
-    final removedPost = _posts.removeAt(index);
-
-    try {
-      await FirebaseFirestore.instance
-          .collection('posts')
-          .doc(removedPost.id)
-          .delete();
-    } catch (error) {
-      appLogger.e(error);
-
-      Snack.e(
-        context: context,
-        message: "post_delete_failed".tr(),
-      );
-
-      setState(() {
-        _posts.insert(index, removedPost);
-      });
-    } finally {
-      setState(() => _isLoading = false);
-    }
-  }
-
   void goToEditPostPage(Post post) async {
     await context.router.push(
       EditPostPageRoute(postId: post.id),
     );
 
     fetch();
+  }
+
+  bool onNotification(ScrollNotification scrollNotification) {
+    final double current = scrollNotification.metrics.pixels;
+    final double max = scrollNotification.metrics.maxScrollExtent;
+
+    if (current < max - 300.0) {
+      return false;
+    }
+
+    fetchMore();
+    return false;
   }
 
   void publish(int index) async {
@@ -307,63 +365,5 @@ class _DraftPostsPageState extends State<DraftPostsPage> {
         _posts.insert(index, removedPost);
       });
     }
-  }
-
-  bool onNotification(ScrollNotification scrollNotification) {
-    final double current = scrollNotification.metrics.pixels;
-    final double max = scrollNotification.metrics.maxScrollExtent;
-
-    if (current < max - 300.0) {
-      return false;
-    }
-
-    fetchMore();
-    return false;
-  }
-
-  PopupMenuButton buildPopupMenuButton(Post post, int index) {
-    return PopupMenuButton<String>(
-      icon: Opacity(
-        opacity: 0.6,
-        child: Icon(UniconsLine.ellipsis_h),
-      ),
-      onSelected: (value) {
-        switch (value) {
-          case 'edit':
-            goToEditPostPage(post);
-            break;
-          case 'delete':
-            confirmDeletePost(index);
-            break;
-          case 'publish':
-            publish(index);
-            break;
-          default:
-        }
-      },
-      itemBuilder: (context) => [
-        PopupMenuItem(
-          value: 'edit',
-          child: ListTile(
-            leading: Icon(UniconsLine.edit),
-            title: Text("edit".tr()),
-          ),
-        ),
-        PopupMenuItem(
-          value: 'publish',
-          child: ListTile(
-            leading: Icon(UniconsLine.cloud_upload),
-            title: Text("publish".tr()),
-          ),
-        ),
-        PopupMenuItem(
-          value: 'delete',
-          child: ListTile(
-            leading: Icon(UniconsLine.trash),
-            title: Text("delete".tr()),
-          ),
-        ),
-      ],
-    );
   }
 }

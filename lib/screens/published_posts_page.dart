@@ -199,6 +199,27 @@ class _PublishedPostsPageState extends State<PublishedPostsPage> {
     );
   }
 
+  void deletePost(int index) async {
+    setState(() => _isLoading = true);
+
+    final removedPost = _posts.removeAt(index);
+
+    try {
+      await FirebaseFirestore.instance
+          .collection('posts')
+          .doc(removedPost.id)
+          .delete();
+    } catch (error) {
+      appLogger.e(error);
+
+      setState(() {
+        _posts.insert(index, removedPost);
+      });
+    } finally {
+      setState(() => _isLoading = false);
+    }
+  }
+
   void fetch() async {
     setState(() {
       _posts.clear();
@@ -289,25 +310,24 @@ class _PublishedPostsPageState extends State<PublishedPostsPage> {
     }
   }
 
-  void deletePost(int index) async {
-    setState(() => _isLoading = true);
+  void goToEditPostPage(Post post) async {
+    await context.router.push(
+      EditPostPageRoute(postId: post.id),
+    );
 
-    final removedPost = _posts.removeAt(index);
+    fetch();
+  }
 
-    try {
-      await FirebaseFirestore.instance
-          .collection('posts')
-          .doc(removedPost.id)
-          .delete();
-    } catch (error) {
-      appLogger.e(error);
+  bool onNotification(ScrollNotification scrollNotification) {
+    final double current = scrollNotification.metrics.pixels;
+    final double max = scrollNotification.metrics.maxScrollExtent;
 
-      setState(() {
-        _posts.insert(index, removedPost);
-      });
-    } finally {
-      setState(() => _isLoading = false);
+    if (current < max - 300.0) {
+      return false;
     }
+
+    fetchMore();
+    return false;
   }
 
   void unpublish(int index) async {
@@ -333,14 +353,6 @@ class _PublishedPostsPageState extends State<PublishedPostsPage> {
     }
   }
 
-  void goToEditPostPage(Post post) async {
-    await context.router.push(
-      EditPostPageRoute(postId: post.id),
-    );
-
-    fetch();
-  }
-
   void viewOnline(Post post) {
     context.router.root.push(
       PostsRouter(
@@ -351,17 +363,5 @@ class _PublishedPostsPageState extends State<PublishedPostsPage> {
         ],
       ),
     );
-  }
-
-  bool onNotification(ScrollNotification scrollNotification) {
-    final double current = scrollNotification.metrics.pixels;
-    final double max = scrollNotification.metrics.maxScrollExtent;
-
-    if (current < max - 300.0) {
-      return false;
-    }
-
-    fetchMore();
-    return false;
   }
 }
