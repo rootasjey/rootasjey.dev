@@ -62,7 +62,12 @@ class _DashboardPageState extends State<DashboardPage> {
           child: Row(
             children: [
               buildSidePanel(context, context.tabsRouter),
-              Expanded(child: child),
+              Expanded(
+                child: Material(
+                  elevation: 6.0,
+                  child: child,
+                ),
+              ),
             ],
           ),
         );

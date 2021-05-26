@@ -160,7 +160,7 @@ import 'package:rootasjey/screens/update_username_page.dart';
           name: 'DashSettingsRouter',
           transitionsBuilder: TransitionsBuilders.fadeIn,
           children: [
-            MaterialRoute(
+            CustomRoute(
               path: '',
               page: SettingsPage,
               name: 'DashSettingsRoute',
@@ -176,9 +176,9 @@ import 'package:rootasjey/screens/update_username_page.dart';
               name: 'DashAccountUpdateRouter',
               transitionsBuilder: TransitionsBuilders.fadeIn,
               children: [
-                MaterialRoute(path: 'email', page: UpdateEmailPage),
-                MaterialRoute(path: 'password', page: UpdatePasswordPage),
-                MaterialRoute(path: 'username', page: UpdateUsernamePage),
+                CustomRoute(path: 'email', page: UpdateEmailPage),
+                CustomRoute(path: 'password', page: UpdatePasswordPage),
+                CustomRoute(path: 'username', page: UpdateUsernamePage),
               ],
             ),
           ],

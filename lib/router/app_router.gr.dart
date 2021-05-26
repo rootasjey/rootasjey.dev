@@ -364,7 +364,7 @@ class AppRouter extends _i1.RootStackRouter {
         transitionsBuilder: _i1.TransitionsBuilders.fadeIn,
         opaque: true,
         barrierDismissible: false),
-    DashSettingsRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
+    DashSettingsRoute.name: (routeData) => _i1.CustomPage<dynamic>(
         routeData: routeData,
         builder: (data) {
           final pathParams = data.pathParams;
@@ -372,7 +372,9 @@ class AppRouter extends _i1.RootStackRouter {
               orElse: () => DashSettingsRouteArgs(
                   showAppBar: pathParams.getBool('showAppBar', true)));
           return _i16.SettingsPage(key: args.key, showAppBar: args.showAppBar);
-        }),
+        },
+        opaque: true,
+        barrierDismissible: false),
     DeleteAccountPageRoute.name: (routeData) => _i1.CustomPage<dynamic>(
         routeData: routeData,
         builder: (_) {
@@ -389,21 +391,27 @@ class AppRouter extends _i1.RootStackRouter {
         transitionsBuilder: _i1.TransitionsBuilders.fadeIn,
         opaque: true,
         barrierDismissible: false),
-    UpdateEmailPageRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
+    UpdateEmailPageRoute.name: (routeData) => _i1.CustomPage<dynamic>(
         routeData: routeData,
         builder: (_) {
           return _i36.UpdateEmailPage();
-        }),
-    UpdatePasswordPageRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
+        },
+        opaque: true,
+        barrierDismissible: false),
+    UpdatePasswordPageRoute.name: (routeData) => _i1.CustomPage<dynamic>(
         routeData: routeData,
         builder: (_) {
           return _i37.UpdatePasswordPage();
-        }),
-    UpdateUsernamePageRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
+        },
+        opaque: true,
+        barrierDismissible: false),
+    UpdateUsernamePageRoute.name: (routeData) => _i1.CustomPage<dynamic>(
         routeData: routeData,
         builder: (_) {
           return _i38.UpdateUsernamePage();
-        }),
+        },
+        opaque: true,
+        barrierDismissible: false),
     PostsPageRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
         routeData: routeData,
         builder: (_) {
