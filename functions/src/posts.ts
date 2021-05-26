@@ -44,8 +44,11 @@ export const fetch = functions
     const jwt: string = data.jwt;
 
     if (!postId) {
-      throw new functions.https.HttpsError('invalid-argument', 'The function must be called with ' +
-        'one (string) argument "postId" which is the post to fetch.');
+      throw new functions.https.HttpsError(
+        'invalid-argument', 
+        `The function must be called with one (string) argument 
+        "postId" which is the post to fetch.`,
+      );
     }
 
     await checkAccessControl({postId, jwt});
@@ -76,8 +79,11 @@ export const fetchAuthorName = functions
     const authorId = data.authorId;
 
     if (!authorId) {
-      throw new functions.https.HttpsError('invalid-argument', 'The function must be called with ' +
-        'one (string) argument "authorId" which is the author to fetch.');
+      throw new functions.https.HttpsError(
+        'invalid-argument',
+        `The function must be called with one (string) argument 
+        "authorId" which is the author to fetch.`,
+      );
     }
 
     const author = await firestore
@@ -88,8 +94,11 @@ export const fetchAuthorName = functions
     const authorData = author.data();
 
     if (!authorData) {
-      throw new functions.https.HttpsError('data-loss', 'No data found for author ' +
-        `${authorId}. They may have been an issue while creating or deleting this author.`);
+      throw new functions.https.HttpsError(
+        'data-loss',
+        `No data found for author ${authorId}. 
+        They may have been an issue while creating or deleting this author.`,
+      );
     }
 
     return { authorName: authorData.name };
@@ -109,7 +118,8 @@ export const statsLike = functions
     if (!postId) {
       throw new functions.https.HttpsError(
         'invalid-argument', 
-        `The function must be called with a (string) argument "postId" which is the post to update.`,
+        `The function must be called with a (string) argument 
+        "postId" which is the post to update.`,
       );
     }
 
@@ -123,7 +133,8 @@ export const statsLike = functions
     if (!postSnap || !postSnap.exists || !postData) {
       throw new functions.https.HttpsError(
         'not-found', 
-        `The post to update doesn't exist anymore. It may have been deleted.`,
+        `The post to update doesn't exist anymore. 
+        It may have been deleted.`,
       );
     }
 
@@ -156,7 +167,8 @@ export const statsShare = functions
     if (!postId) {
       throw new functions.https.HttpsError(
         'invalid-argument', 
-        `The function must be called with a (string) argument "postId" which is the post to update.`,
+        `The function must be called with a (string) argument 
+        "postId" which is the post to update.`,
       );
     }
 
@@ -170,7 +182,8 @@ export const statsShare = functions
     if (!postSnap || !postSnap.exists || !postData) {
       throw new functions.https.HttpsError(
         'not-found', 
-        `The post to update doesn't exist anymore. It may have been deleted.`,
+        `The post to update doesn't exist anymore. 
+        It may have been deleted.`,
       );
     }
 
@@ -196,45 +209,57 @@ async function checkAccessControl({postId, jwt}: {postId: string, jwt: string}) 
       .get();
 
     if (!postSnapshot.exists) {
-      throw new functions.https.HttpsError('not-found', 'The post asked does not exist anymore.' +
-        ' You may be asking a deleted post.');
+      throw new functions.https.HttpsError(
+        'not-found', 
+        `The post asked does not exist anymore. 
+        You may be asking a deleted post.`,
+      );
     }
 
     const postData = postSnapshot.data();
 
     if (!postData) {
-      throw new functions.https.HttpsError('data-loss', 'The post data is null, which is weird.' +
-        ' Please contact us.');
+      throw new functions.https.HttpsError(
+        'data-loss',
+        `The post data is null, which is weird. Please contact us.`,
+      );
     }
 
-    if (!postData['published']) {
+    if (!postData.published) {
       if (!jwt) {
-        throw new functions.https.HttpsError('unauthenticated', 'The post asked is a draft' +
-          ' and you do not have the right to get its content.');
+        throw new functions.https.HttpsError(
+          'unauthenticated',
+          `The post asked is a draft and you do not have the right to get its content.`,
+        );
       }
 
       const decodedToken = await auth.verifyIdToken(jwt, true);
 
       let hasAuthorAccess = false;
 
-      if (postData['author']['id'] === decodedToken.uid) {
+      if (postData.author.id === decodedToken.uid) {
         hasAuthorAccess = true;
 
-      } else if (postData['coauthors'].indexOf(decodedToken.uid) > -1) {
+      } else if (postData.coauthors.indexOf(decodedToken.uid) > -1) {
         hasAuthorAccess = true;
       }
 
       if (!hasAuthorAccess) {
-        throw new functions.https.HttpsError('permission-denied', 'You do not have the right' +
-          " to view this post's content.");
+        throw new functions.https.HttpsError(
+          'permission-denied',
+          `You do not have the right to view this post's content.`,
+        );
       }
-    } else if (postData['restrictedTo'].premium) {
+    } else if (postData.restrictedTo.premium) {
       // TODO: Handle premium users.
     }
 
   } catch (error) {
-    throw new functions.https.HttpsError('internal', 'There was an internal error' +
-      ' while retrieving the post content. Your JWT may be outdated.');
+    throw new functions.https.HttpsError(
+      'internal', 
+      `There was an internal error while retrieving the post content. 
+      Your JWT may be outdated.`,
+    );
   }
 }
 
@@ -251,8 +276,11 @@ export const save = functions
     const content: string = data.content;
 
     if (!content || !postId) {
-      throw new functions.https.HttpsError('invalid-argument', 'The function must be called with ' +
-        'two (string) arguments "postId": the post to save, "content": the post\'s content.');
+      throw new functions.https.HttpsError(
+        'invalid-argument', 
+        `The function must be called with two (string) arguments 
+        "postId": the post to save, "content": the post\'s content.`,
+      );
     }
 
     await checkAccessControl({postId, jwt});

@@ -19,8 +19,8 @@ export const onIndexPost = functions
     const data = snapshot.data();
     const objectID = snapshot.id;
 
-    const published = data['published'];
-    const referenced = data['referenced'];
+    const published = data.published;
+    const referenced = data.referenced;
 
     if (!published || !referenced) {
       return;
@@ -41,11 +41,11 @@ export const onReIndexPost = functions
     const afterData = snapshot.after.data();
     const objectID = snapshot.after.id;
 
-    const beforePublished = beforeData['published'];
-    const beforeReferenced = beforeData['referenced'];
+    const beforePublished = beforeData.published;
+    const beforeReferenced = beforeData.referenced;
 
-    const afterPublished = afterData['published'];
-    const afterReferenced = afterData['referenced'];
+    const afterPublished = afterData.published;
+    const afterReferenced = afterData.referenced;
 
     if (((beforePublished !== afterPublished) && !afterPublished) || 
       ((beforeReferenced !== afterReferenced) && !afterReferenced)) {
@@ -77,8 +77,8 @@ export const onIndexProject = functions
     const data = snapshot.data();
     const objectID = snapshot.id;
 
-    const published = data['published'];
-    const referenced = data['referenced'];
+    const published = data.published;
+    const referenced = data.referenced;
 
     if (!published || !referenced) {
       return;
@@ -112,11 +112,11 @@ export const onReIndexProject = functions
       return;
     }
 
-    const beforePublished = beforeData['published'];
-    const beforeReferenced = beforeData['referenced'];
+    const beforePublished = beforeData.published;
+    const beforeReferenced = beforeData.referenced;
 
-    const afterPublished = afterData['published'];
-    const afterReferenced = afterData['referenced'];
+    const afterPublished = afterData.published;
+    const afterReferenced = afterData.referenced;
 
     if (((beforePublished !== afterPublished) && !afterPublished) ||
       ((beforeReferenced !== afterReferenced) && !afterReferenced)) {

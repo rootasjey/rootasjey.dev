@@ -44,8 +44,11 @@ export const fetch = functions
     const jwt: string = data.jwt;
 
     if (!projectId) {
-      throw new functions.https.HttpsError('invalid-argument', 'The function must be called with ' +
-        'one (string) argument "projectId" which is the project to fetch.');
+      throw new functions.https.HttpsError(
+        'invalid-argument',
+        `The function must be called with one (string) argument 
+        "projectId" which is the project to fetch.`,
+      );
     }
 
     await checkAccessControl({projectId, jwt});
@@ -76,8 +79,11 @@ export const fetchAuthorName = functions
     const authorId = data.authorId;
 
     if (!authorId) {
-      throw new functions.https.HttpsError('invalid-argument', 'The function must be called with ' +
-        'one (string) argument "authorId" which is the author to fetch.');
+      throw new functions.https.HttpsError(
+        'invalid-argument', 
+        `The function must be called with one (string) argument 
+        "authorId" which is the author to fetch.`,
+      );
     }
 
     const author = await firestore
@@ -88,8 +94,11 @@ export const fetchAuthorName = functions
     const authorData = author.data();
 
     if (!authorData) {
-      throw new functions.https.HttpsError('data-loss', 'No data found for author ' +
-        `${authorId}. They may have been an issue while creating or deleting this author.`);
+      throw new functions.https.HttpsError(
+        'data-loss', 
+        `No data found for author ${authorId}. 
+        They may have been an issue while creating or deleting this author.`,
+      );
     }
 
     return { authorName: authorData.name };
@@ -103,21 +112,27 @@ async function checkAccessControl({ projectId, jwt }: { projectId: string, jwt: 
       .get();
 
     if (!projectSnapshot.exists) {
-      throw new functions.https.HttpsError('not-found', 'The project asked does not exist anymore.' +
-        ' You may be asking a deleted project.');
+      throw new functions.https.HttpsError(
+        'not-found', 
+        `The project asked does not exist anymore. You may be asking a deleted project.`,
+      );
     }
 
     const projectData = projectSnapshot.data();
 
     if (!projectData) {
-      throw new functions.https.HttpsError('data-loss', 'The project data is null, which is weird.' +
-        ' Please contact us.');
+      throw new functions.https.HttpsError(
+        'data-loss', 
+        `The project data is null, which is weird. Please contact us.`,
+      );
     }
 
-    if (!projectData['published']) {
+    if (!projectData.published) {
       if (!jwt) {
-        throw new functions.https.HttpsError('unauthenticated', 'The project asked is a draft' +
-          ' and you do not have the right to get its content.');
+        throw new functions.https.HttpsError(
+          'unauthenticated', 
+          `The project asked is a draft and you do not have the right to get its content.`,
+        );
       }
 
       const decodedToken = await auth.verifyIdToken(jwt, true);
@@ -127,21 +142,26 @@ async function checkAccessControl({ projectId, jwt }: { projectId: string, jwt: 
       if (projectData.author.id === decodedToken.uid) {
         hasAuthorAccess = true;
 
-      } else if (projectData['coauthors'].indexOf(decodedToken.uid) > -1) {
+      } else if (projectData.coauthors.indexOf(decodedToken.uid) > -1) {
         hasAuthorAccess = true;
       }
 
       if (!hasAuthorAccess) {
-        throw new functions.https.HttpsError('permission-denied', 'You do not have the right' +
-          " to view this project's content.");
+        throw new functions.https.HttpsError(
+          'permission-denied', 
+          `You do not have the right to view this project's content.`,
+        );
       }
-    } else if (projectData['restrictedTo'].premium) {
+    } else if (projectData.restrictedTo.premium) {
       // TODO: Handle premium users.
     }
 
   } catch (error) {
-    throw new functions.https.HttpsError('internal', 'There was an internal error' +
-      ' while retrieving the project content. Your JWT may be outdated.');
+    throw new functions.https.HttpsError(
+      'internal',
+      `There was an internal error while retrieving the project content. 
+      Your JWT may be outdated.`,
+    );
   }
 }
 
@@ -158,8 +178,11 @@ export const save = functions
     const content: string = data.content;
 
     if (!content || !projectId) {
-      throw new functions.https.HttpsError('invalid-argument', 'The function must be called with ' +
-        'two (string) arguments "projecId": the project to save, "content": the project\'s content.');
+      throw new functions.https.HttpsError(
+        'invalid-argument', 
+        `The function must be called with two (string) arguments "projecId": 
+        the project to save, "content": the project\'s content.`,
+      );
     }
 
     await checkAccessControl({ projectId, jwt });

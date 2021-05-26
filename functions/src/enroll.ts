@@ -12,8 +12,11 @@ export const domainCheck = functions
     const domainName: string = data.domain;
 
     if (!domainName) {
-      throw new functions.https.HttpsError('invalid-argument', 'The function must be called with ' +
-        'one (string) argument "domain" which is the domain to check.');
+      throw new functions.https.HttpsError(
+        'invalid-argument', 
+        `The function must be called with one (string) argument 
+        "domain" which is the domain to check.`,
+      );
     }
 
     const isFree = await Domain.isFree(domainName);

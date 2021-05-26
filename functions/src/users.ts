@@ -258,7 +258,8 @@ export const deleteAccount = functions
     if (!userSnap.exists || !userData) {
       throw new functions.https.HttpsError(
         'not-found',
-        `This user document doesn't exist. It may have been deleted.`,
+        `This user document doesn't exist. 
+        It may have been deleted.`,
       );
     }
 
@@ -293,7 +294,8 @@ export const fetchUser = functions
     if (!userId) {
       throw new functions.https.HttpsError(
         'invalid-argument', 
-        `'fetchUser' must be called with one (1) argument representing the author's id to fetch.`,
+        `'fetchUser' must be called with one (1) argument 
+        representing the author's id to fetch.`,
       );
     }
 
@@ -307,12 +309,17 @@ export const fetchUser = functions
     if (!userSnap.exists || ! userData) {
       throw new functions.https.HttpsError(
         'not-found',
-        `The specified user does not exist. It may have been deleted.`,
+        `The specified user does not exist. 
+        It may have been deleted.`,
       );
     }
 
 
-    const userDataWithId = { ...userData, ...{ id: userSnap.id } };
+    const userDataWithId = {
+      ...userData, 
+      ...{ id: userSnap.id },
+    };
+
     return formatUserData(userDataWithId);
   });
 
@@ -344,7 +351,8 @@ export const updateUser = functions
     if (!updatePayload) {
       throw new functions.https.HttpsError(
         'invalid-argument',
-        `'updateUserData' must be called with a valid "updatePayload" argument reprensenting new data.`,
+        `'updateUserData' must be called with a valid 
+        "updatePayload" argument reprensenting new data.`,
       );
     }
 
@@ -363,7 +371,8 @@ export const updateUser = functions
     if (!userSnap.exists) {
       throw new functions.https.HttpsError(
         'not-found',
-        `The specified user does not exist. It may have been deleted.`,
+        `The specified user does not exist. 
+        It may have been deleted.`,
       );
     }
 
@@ -378,7 +387,8 @@ export const updateUser = functions
     if (!userData) {
       throw new functions.https.HttpsError(
         'data-loss',
-        `Something went wrong while fetching updated user's data. Please try again.`,
+        `Something went wrong while fetching 
+        updated user's data. Please try again.`,
       );
     }
 
