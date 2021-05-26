@@ -8,6 +8,7 @@ import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/state/user.dart';
 import 'package:rootasjey/types/post.dart';
 import 'package:rootasjey/utils/app_logger.dart';
+import 'package:rootasjey/utils/flash_helper.dart';
 import 'package:rootasjey/utils/fonts.dart';
 import 'package:unicons/unicons.dart';
 
@@ -132,7 +133,7 @@ class _PublishedPostsPageState extends State<PublishedPostsPage> {
               onSelected: (value) {
                 switch (value) {
                   case 'delete':
-                    showDeleteDialog(index);
+                    confirmDeletePost(index);
                     break;
                   case 'edit':
                     goToEditPostPage(post);
@@ -188,42 +189,14 @@ class _PublishedPostsPageState extends State<PublishedPostsPage> {
     );
   }
 
-  void showDeleteDialog(int index) {
-    showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text("are_you_sure".tr()),
-            content: SingleChildScrollView(
-              child: Opacity(
-                opacity: 0.6,
-                child: Text("action_irreversible".tr()),
-              ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: context.router.pop,
-                child: Text(
-                  "canel".tr().toUpperCase(),
-                  textAlign: TextAlign.end,
-                ),
-              ),
-              TextButton(
-                onPressed: () {
-                  context.router.pop();
-                  delete(index);
-                },
-                child: Text(
-                  "delete".tr().toUpperCase(),
-                  textAlign: TextAlign.end,
-                  style: TextStyle(
-                    color: Colors.pink,
-                  ),
-                ),
-              ),
-            ],
-          );
-        });
+  void confirmDeletePost(int index) {
+    FlashHelper.deleteDialog(
+      context,
+      message: "post_delete_description".tr(),
+      onConfirm: () async {
+        deletePost(index);
+      },
+    );
   }
 
   void fetch() async {
@@ -316,7 +289,7 @@ class _PublishedPostsPageState extends State<PublishedPostsPage> {
     }
   }
 
-  void delete(int index) async {
+  void deletePost(int index) async {
     setState(() => _isLoading = true);
 
     final removedPost = _posts.removeAt(index);
@@ -326,14 +299,14 @@ class _PublishedPostsPageState extends State<PublishedPostsPage> {
           .collection('posts')
           .doc(removedPost.id)
           .delete();
-
-      setState(() => _isLoading = false);
     } catch (error) {
       appLogger.e(error);
 
       setState(() {
         _posts.insert(index, removedPost);
       });
+    } finally {
+      setState(() => _isLoading = false);
     }
   }
 
