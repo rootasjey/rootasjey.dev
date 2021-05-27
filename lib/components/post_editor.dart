@@ -510,10 +510,14 @@ class _PostEditorState extends State<PostEditor> {
       if (!success) {
         throw ErrorDescription(resp.data['error']);
       }
-
-      setState(() => _isSaving = false);
     } catch (error) {
       appLogger.e(error);
+
+      Snack.e(
+        context: context,
+        message: "post_update_content_fail".tr(),
+      );
+    } finally {
       setState(() => _isSaving = false);
     }
   }
@@ -523,10 +527,14 @@ class _PostEditorState extends State<PostEditor> {
 
     try {
       await _postSnapshot.reference.update({'lang': _lang});
-
-      setState(() => _isSaving = false);
     } catch (error) {
       appLogger.e(error);
+
+      Snack.e(
+        context: context,
+        message: "post_update_lang_fail".tr(),
+      );
+    } finally {
       setState(() => _isSaving = false);
     }
   }
@@ -541,25 +549,31 @@ class _PostEditorState extends State<PostEditor> {
 
     try {
       await _postSnapshot.reference.update({'published': status == PUBLISHED});
-
-      setState(() => _isSaving = false);
     } catch (error) {
       appLogger.e(error);
 
-      setState(() {
-        _publicationStatus = prevValue;
-        _isSaving = false;
-      });
+      _publicationStatus = prevValue;
+
+      Snack.e(
+        context: context,
+        message: "post_update_pub_fail".tr(),
+      );
+    } finally {
+      setState(() => _isSaving = false);
     }
   }
 
   void updateTitle() async {
     try {
       await _postSnapshot.reference.update({'title': _title});
-
-      setState(() => _isSaving = false);
     } catch (error) {
       appLogger.e(error);
+
+      Snack.e(
+        context: context,
+        message: "post_update_title_fail".tr(),
+      );
+    } finally {
       setState(() => _isSaving = false);
     }
   }
