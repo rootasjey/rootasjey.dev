@@ -66,6 +66,66 @@ class _PublishedProjectsPageState extends State<PublishedProjectsPage> {
     );
   }
 
+  PopupMenuButton buildPopupMenuButton(Project project, int index) {
+    return PopupMenuButton<String>(
+      icon: Opacity(
+        opacity: 0.6,
+        child: Icon(UniconsLine.ellipsis_h),
+      ),
+      onSelected: (value) {
+        switch (value) {
+          case 'delete':
+            showDeleteDialog(index);
+            break;
+          case 'edit':
+            goToEditPage(project);
+            break;
+          case 'unpublish':
+            unpublish(index);
+            break;
+          case 'view_online':
+            viewOnline(project);
+            break;
+          default:
+        }
+      },
+      itemBuilder: (context) => [
+        PopupMenuItem(
+          value: 'edit',
+          child: ListTile(
+            leading: Icon(UniconsLine.edit),
+            title: Text("edit".tr()),
+          ),
+        ),
+        PopupMenuItem(
+          value: 'view_online',
+          child: ListTile(
+            leading: Icon(UniconsLine.eye),
+            title: Text(
+              "view_online".tr(),
+            ),
+          ),
+        ),
+        PopupMenuItem(
+          value: 'unpublish',
+          child: ListTile(
+            leading: Icon(UniconsLine.eye_slash),
+            title: Text(
+              "unpublish".tr(),
+            ),
+          ),
+        ),
+        PopupMenuItem(
+          value: 'delete',
+          child: ListTile(
+            leading: Icon(UniconsLine.trash),
+            title: Text("delete".tr()),
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget header(TabsRouter tabsRouter) {
     return SliverList(
       delegate: SliverChildListDelegate.fixed([
@@ -143,59 +203,7 @@ class _PublishedProjectsPageState extends State<PublishedProjectsPage> {
                 ),
               );
             },
-            popupMenuButton: PopupMenuButton<String>(
-              onSelected: (value) {
-                switch (value) {
-                  case 'delete':
-                    showDeleteDialog(index);
-                    break;
-                  case 'edit':
-                    goToEditPage(project);
-                    break;
-                  case 'unpublish':
-                    unpublish(index);
-                    break;
-                  case 'view_online':
-                    viewOnline(project);
-                    break;
-                  default:
-                }
-              },
-              itemBuilder: (context) => [
-                PopupMenuItem(
-                  value: 'edit',
-                  child: ListTile(
-                    leading: Icon(UniconsLine.edit),
-                    title: Text("edit".tr()),
-                  ),
-                ),
-                PopupMenuItem(
-                  value: 'view_online',
-                  child: ListTile(
-                    leading: Icon(UniconsLine.eye),
-                    title: Text(
-                      "view_online".tr(),
-                    ),
-                  ),
-                ),
-                PopupMenuItem(
-                  value: 'unpublish',
-                  child: ListTile(
-                    leading: Icon(UniconsLine.eye_slash),
-                    title: Text(
-                      "unpublish".tr(),
-                    ),
-                  ),
-                ),
-                PopupMenuItem(
-                  value: 'delete',
-                  child: ListTile(
-                    leading: Icon(UniconsLine.trash),
-                    title: Text("delete".tr()),
-                  ),
-                ),
-              ],
-            ),
+            popupMenuButton: buildPopupMenuButton(project, index),
             project: project,
           );
         },
