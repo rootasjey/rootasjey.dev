@@ -224,11 +224,8 @@ class _ProjectEditorState extends State<ProjectEditor> {
           onChanged: (newValue) {
             _content = newValue;
 
-            if (_saveContentTimer != null) {
-              _saveContentTimer.cancel();
-            }
-
-            _saveContentTimer = Timer(1.seconds, () => saveContent());
+            _saveContentTimer?.cancel();
+            _saveContentTimer = Timer(1.seconds, updateProjectContent);
           },
         ),
       ),
@@ -606,7 +603,7 @@ class _ProjectEditorState extends State<ProjectEditor> {
       ),
       onPressed: () {
         updateTitle();
-        saveContent();
+        updateProjectContent();
       },
     );
   }
@@ -632,10 +629,7 @@ class _ProjectEditorState extends State<ProjectEditor> {
         onChanged: (newValue) {
           _summary = newValue;
 
-          if (_saveTitleTimer != null) {
-            _saveSummaryTimer.cancel();
-          }
-
+          _saveSummaryTimer?.cancel();
           _saveSummaryTimer = Timer(1.seconds, () => updateSummary());
         },
       ),
@@ -1004,25 +998,29 @@ class _ProjectEditorState extends State<ProjectEditor> {
     }
   }
 
-  void saveContent() async {
+  void updateProjectContent() async {
     setState(() => _isSaving = true);
 
     try {
-      final resp = await Cloud.fun('projects-save').call({
+      final response = await Cloud.fun('projects-save').call({
         'projectId': _projectSnapshot.id,
         'jwt': _jwt,
         'content': _content,
       });
 
-      bool success = resp.data['success'];
+      bool success = response.data['success'];
 
       if (!success) {
-        throw ErrorDescription(resp.data['error']);
+        throw ErrorDescription(response.data['error']);
       }
-
-      setState(() => _isSaving = false);
     } catch (error) {
       appLogger.e(error);
+
+      Snack.e(
+        context: context,
+        message: "project_update_content_fail".tr(),
+      );
+    } finally {
       setState(() => _isSaving = false);
     }
   }
@@ -1114,10 +1112,14 @@ class _ProjectEditorState extends State<ProjectEditor> {
 
     try {
       await _projectSnapshot.reference.update({'lang': _lang});
-
-      setState(() => _isSaving = false);
     } catch (error) {
       appLogger.e(error);
+
+      Snack.e(
+        context: context,
+        message: "project_update_lang_fail".tr(),
+      );
+    } finally {
       setState(() => _isSaving = false);
     }
   }
@@ -1127,10 +1129,14 @@ class _ProjectEditorState extends State<ProjectEditor> {
 
     try {
       await _projectSnapshot.reference.update({'platforms': _platforms});
-
-      setState(() => _isSaving = false);
     } catch (error) {
       appLogger.e(error);
+
+      Snack.e(
+        context: context,
+        message: "project_update_platforms_fail".tr(),
+      );
+    } finally {
       setState(() => _isSaving = false);
     }
   }
@@ -1141,10 +1147,14 @@ class _ProjectEditorState extends State<ProjectEditor> {
     try {
       await _projectSnapshot.reference
           .update({'programmingLanguages': _programmingLanguages});
-
-      setState(() => _isSaving = false);
     } catch (error) {
       appLogger.e(error);
+
+      Snack.e(
+        context: context,
+        message: "project_update_prog_fail".tr(),
+      );
+    } finally {
       setState(() => _isSaving = false);
     }
   }
@@ -1154,10 +1164,14 @@ class _ProjectEditorState extends State<ProjectEditor> {
 
     try {
       await _projectSnapshot.reference.update({'summary': _summary});
-
-      setState(() => _isSaving = false);
     } catch (error) {
       appLogger.e(error);
+
+      Snack.e(
+        context: context,
+        message: "summary_update_fail".tr(),
+      );
+    } finally {
       setState(() => _isSaving = false);
     }
   }
@@ -1167,10 +1181,14 @@ class _ProjectEditorState extends State<ProjectEditor> {
 
     try {
       await _projectSnapshot.reference.update({'tags': _tags});
-
-      setState(() => _isSaving = false);
     } catch (error) {
       appLogger.e(error);
+
+      Snack.e(
+        context: context,
+        message: "project_update_tags_fail".tr(),
+      );
+    } finally {
       setState(() => _isSaving = false);
     }
   }
@@ -1180,10 +1198,14 @@ class _ProjectEditorState extends State<ProjectEditor> {
 
     try {
       await _projectSnapshot.reference.update({'title': _title});
-
-      setState(() => _isSaving = false);
     } catch (error) {
       appLogger.e(error);
+
+      Snack.e(
+        context: context,
+        message: "project_update_title_fail".tr(),
+      );
+    } finally {
       setState(() => _isSaving = false);
     }
   }
@@ -1193,10 +1215,14 @@ class _ProjectEditorState extends State<ProjectEditor> {
 
     try {
       await _projectSnapshot.reference.update({'urls': _urls});
-
-      setState(() => _isSaving = false);
     } catch (error) {
       appLogger.e(error);
+
+      Snack.e(
+        context: context,
+        message: "project_update_urls_fail".tr(),
+      );
+    } finally {
       setState(() => _isSaving = false);
     }
   }
@@ -1212,15 +1238,17 @@ class _ProjectEditorState extends State<ProjectEditor> {
     try {
       await _projectSnapshot.reference
           .update({'published': status == PUBLISHED});
-
-      setState(() => _isSaving = false);
     } catch (error) {
       appLogger.e(error);
 
-      setState(() {
-        _publicationStatus = prevValue;
-        _isSaving = false;
-      });
+      Snack.e(
+        context: context,
+        message: "project_update_pub_fail".tr(),
+      );
+
+      _publicationStatus = prevValue;
+    } finally {
+      setState(() => _isSaving = false);
     }
   }
 }
