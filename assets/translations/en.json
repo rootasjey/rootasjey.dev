@@ -449,6 +449,7 @@
   "starting": "Starting",
   "subscribe": "Subscribe",
   "summary": "Summary",
+  "summary_update_fail": "Sorry, there was an issue while updating the project summary. Try again later.",
   "summary_edit": "Edit summary",
   "summary_label_text": "I'm a great person...",
   "summary_subtitle": "Enter your summary",
