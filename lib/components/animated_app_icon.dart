@@ -25,13 +25,13 @@ class _AnimatedAppIconState extends State<AnimatedAppIcon> {
           width: widget.size,
         ),
         SizedBox(
-          width: 200.0,
+          width: 150.0,
           child: LinearProgressIndicator(),
         ),
         if (widget.textTitle != null)
           Padding(
             padding: const EdgeInsets.only(
-              top: 8.0,
+              top: 16.0,
             ),
             child: Opacity(
               opacity: 0.6,
