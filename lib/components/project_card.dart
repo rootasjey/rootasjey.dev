@@ -4,6 +4,7 @@ import 'package:jiffy/jiffy.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/types/project.dart';
 import 'package:rootasjey/types/user_firestore.dart';
+import 'package:rootasjey/utils/app_logger.dart';
 import 'package:rootasjey/utils/fonts.dart';
 
 class ProjectCard extends StatefulWidget {
@@ -191,7 +192,7 @@ class _ProjectCardState extends State<ProjectCard> {
         _authorName = user.name;
       });
     } catch (error) {
-      debugPrint(error.toString());
+      appLogger.e(error);
     }
   }
 }
