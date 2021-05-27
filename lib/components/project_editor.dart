@@ -5,9 +5,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:rootasjey/components/lang_popup_menu_button.dart';
 import 'package:rootasjey/components/main_app_bar.dart';
 import 'package:rootasjey/components/pub_popup_menu_button.dart';
+import 'package:rootasjey/components/sheet_header.dart';
 import 'package:rootasjey/components/sliver_edge_padding.dart';
 import 'package:rootasjey/components/sliver_error_view.dart';
 import 'package:rootasjey/components/sliver_loading_view.dart';
@@ -130,6 +132,7 @@ class _ProjectEditorState extends State<ProjectEditor> {
             pubPopupMenuButton(),
             vDivider(),
             saveButton(),
+            metaDataButton(),
             if (_publicationStatus == PUBLISHED) viewOnlineButton(),
             deleteButton(),
           ],
@@ -268,6 +271,35 @@ class _ProjectEditorState extends State<ProjectEditor> {
     );
   }
 
+  Widget headerTitle(String textValue) {
+    return Opacity(
+      opacity: 0.8,
+      child: Text(
+        textValue,
+        style: FontsUtils.mainStyle(
+          fontSize: 20.0,
+          fontWeight: FontWeight.w700,
+        ),
+      ),
+    );
+  }
+
+  Widget headerDescription(String textValue) {
+    return Padding(
+      padding: const EdgeInsets.only(
+        top: 4.0,
+        bottom: 8.0,
+      ),
+      child: Opacity(
+        opacity: 0.6,
+        child: Text(
+          textValue,
+          style: FontsUtils.mainStyle(),
+        ),
+      ),
+    );
+  }
+
   Widget idleView() {
     return SliverList(
       delegate: SliverChildListDelegate.fixed([
@@ -282,15 +314,6 @@ class _ProjectEditorState extends State<ProjectEditor> {
               summaryInput(),
               contentInput(),
               buttonToggleMetaView(),
-              if (_isMetaVisible)
-                Column(
-                  children: [
-                    progLangsSelection(),
-                    platformsSelection(),
-                    tagsSelection(),
-                    urlsSections(),
-                  ],
-                ),
             ],
           ),
         ),
@@ -313,7 +336,71 @@ class _ProjectEditorState extends State<ProjectEditor> {
     );
   }
 
-  Widget platformsSelection() {
+  Widget metaDataButton() {
+    return IconButton(
+      tooltip: "project_metadata_edit".tr(),
+      onPressed: showMetaDataSheet,
+      icon: Opacity(
+        opacity: 0.6,
+        child: Icon(UniconsLine.file_info_alt),
+      ),
+    );
+  }
+
+  Widget metaDataContainer(StateSetter sheetSetState) {
+    return Scaffold(
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(60.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SheetHeader(
+                title: "project_metadata".tr(),
+                tooltip: "close".tr(),
+                subtitle: "project_metadata_description".tr(),
+              ),
+              Padding(
+                padding: EdgeInsets.only(top: 60.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    programmingSection(sheetSetState),
+                    platformsSection(sheetSetState),
+                    tagsSection(sheetSetState),
+                    urlsSection(sheetSetState),
+                    metaValidationButton(),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget metaValidationButton() {
+    return Container(
+      width: 200.0,
+      padding: const EdgeInsets.only(top: 70.0),
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          primary: Colors.black87,
+        ),
+        onPressed: context.router.pop,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 16.0,
+            vertical: 12.0,
+          ),
+          child: Text("done".tr()),
+        ),
+      ),
+    );
+  }
+
+  Widget platformsSection(StateSetter childSetState) {
     return Container(
       width: 600.0,
       padding: const EdgeInsets.only(
@@ -322,86 +409,73 @@ class _ProjectEditorState extends State<ProjectEditor> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          platformsSelectionHeader(),
-          platformsSelectionContent(),
-          platformsSelectionInput(),
+          platformsHeader(),
+          platformsContent(childSetState),
+          platformsInput(childSetState),
         ],
       ),
     );
   }
 
-  Widget platformsSelectionHeader() {
-    return Padding(
-      padding: const EdgeInsets.only(
-        bottom: 20.0,
-      ),
-      child: Opacity(
-        opacity: 0.6,
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(right: 16.0),
-              child: Icon(Icons.device_unknown),
-            ),
-            Text(
-              "platforms".tr().toUpperCase(),
-              style: TextStyle(
-                fontSize: 20.0,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
-        ),
-      ),
+  Widget platformsHeader() {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        headerTitle("platforms".tr()),
+        headerDescription("platforms_description".tr()),
+      ],
     );
   }
 
-  Widget platformsSelectionContent() {
-    return Wrap(
-        spacing: 10.0,
-        runSpacing: 10.0,
-        children: _platforms.entries.map((entry) {
-          return InputChip(
-            label: Text(
-              getPlatformName(entry.key),
-            ),
-            labelStyle: TextStyle(
-              color: entry.value ? Colors.white : stateColors.foreground,
-            ),
-            selectedColor: stateColors.primary,
-            selected: entry.value,
-            checkmarkColor: Colors.white,
-            deleteIconColor:
-                entry.value ? Colors.white : stateColors.foreground,
-            onDeleted: () {
-              _platforms.remove(entry.key);
-              updatePlatforms();
-            },
-            onSelected: (isSelected) {
-              _platforms[entry.key] = isSelected;
-              updatePlatforms();
-            },
-          );
-        }).toList());
+  Widget platformsContent(StateSetter childSetState) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 16.0),
+      child: Wrap(
+          spacing: 12.0,
+          runSpacing: 12.0,
+          children: _platforms.entries.map((entry) {
+            return InputChip(
+              label: Opacity(
+                opacity: 0.8,
+                child: Text(getPlatformName(entry.key)),
+              ),
+              labelStyle: FontsUtils.mainStyle(fontWeight: FontWeight.w700),
+              elevation: entry.value ? 2.0 : 0.0,
+              selected: entry.value,
+              deleteIconColor: entry.value
+                  ? stateColors.secondary.withOpacity(0.8)
+                  : Colors.black26,
+              labelPadding: const EdgeInsets.symmetric(horizontal: 12.0),
+              checkmarkColor: Colors.black26,
+              onDeleted: () {
+                removePlatformAndUpdate(childSetState, entry);
+              },
+              onSelected: (isSelected) {
+                togglePlatformAndUpdate(
+                  childSetState,
+                  entry,
+                  isSelected,
+                );
+              },
+            );
+          }).toList()),
+    );
   }
 
-  Widget platformsSelectionInput() {
+  Widget platformsInput(StateSetter childSetState) {
     return Padding(
-      padding: const EdgeInsets.only(
-        top: 20.0,
-      ),
+      padding: const EdgeInsets.only(top: 20.0),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           SizedBox(
-            height: 50.0,
-            width: 250.0,
+            width: 300.0,
             child: TextFormField(
               controller: _platformController,
               decoration: InputDecoration(
                 labelText: "platform_new".tr(),
-                border: OutlineInputBorder(),
+                border: UnderlineInputBorder(),
               ),
               onChanged: (value) {
                 _platformInputValue = value.toLowerCase();
@@ -410,14 +484,15 @@ class _ProjectEditorState extends State<ProjectEditor> {
           ),
           Padding(
             padding: const EdgeInsets.only(left: 8.0),
-            child: TextButton.icon(
-              onPressed: () {
-                _platforms[_platformInputValue] = true;
-                _platformController.clear();
-                updatePlatforms();
-              },
-              icon: Icon(Icons.add),
-              label: Text("platform_add".tr()),
+            child: Opacity(
+              opacity: 0.6,
+              child: IconButton(
+                tooltip: "platform_add".tr(),
+                icon: Icon(UniconsLine.check),
+                onPressed: () {
+                  addPlatformAndUpdate(childSetState);
+                },
+              ),
             ),
           ),
         ],
@@ -478,99 +553,94 @@ class _ProjectEditorState extends State<ProjectEditor> {
     );
   }
 
-  Widget progLangsSelection() {
-    return Container(
+  Widget programmingSection(StateSetter childSetState) {
+    return SizedBox(
       width: 600.0,
-      padding: const EdgeInsets.only(
-        top: 100.0,
-      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          progLangsSelectionHeader(),
-          progLangsSelectionContent(),
-          progLangsSelectionInput(),
+          programmnigHeader(),
+          programmnigContent(childSetState),
+          programmnigInput(childSetState),
         ],
       ),
     );
   }
 
-  Widget progLangsSelectionHeader() {
+  Widget programmnigHeader() {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        headerTitle("programming_languages".tr()),
+        headerDescription("programming_languages_description".tr()),
+      ],
+    );
+  }
+
+  Widget programmnigContent(StateSetter childSetState) {
     return Padding(
-      padding: const EdgeInsets.only(
-        bottom: 20.0,
-      ),
-      child: Opacity(
-        opacity: 0.6,
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(right: 16.0),
-              child: Icon(Icons.code),
-            ),
-            Text(
-              "programming_languages".tr().toUpperCase(),
-              style: FontsUtils.mainStyle(
-                fontSize: 20.0,
-                fontWeight: FontWeight.w600,
+      padding: const EdgeInsets.only(top: 16.0),
+      child: Wrap(
+        spacing: 12.0,
+        runSpacing: 12.0,
+        children: _programmingLanguages.entries.map((entry) {
+          return InputChip(
+            label: Opacity(
+              opacity: 0.8,
+              child: Text(
+                entry.key,
+                style: FontsUtils.mainStyle(
+                  fontWeight: FontWeight.w700,
+                ),
               ),
             ),
-          ],
-        ),
+            deleteIconColor: stateColors.secondary.withOpacity(0.8),
+            labelPadding: const EdgeInsets.symmetric(horizontal: 12.0),
+            onDeleted: () {
+              removeProLangAndUpdate(childSetState, entry.key);
+            },
+          );
+        }).toList(),
       ),
     );
   }
 
-  Widget progLangsSelectionContent() {
-    return Wrap(
-        spacing: 10.0,
-        runSpacing: 10.0,
-        children: _programmingLanguages.entries.map((entry) {
-          return InputChip(
-            label: Text(
-              entry.key,
-            ),
-            onDeleted: () {
-              _programmingLanguages.remove(entry.key);
-              updateProgLanguages();
-            },
-          );
-        }).toList());
-  }
-
-  Widget progLangsSelectionInput() {
+  Widget programmnigInput(StateSetter childSetState) {
     return Padding(
-      padding: const EdgeInsets.only(
-        top: 20.0,
-      ),
+      padding: const EdgeInsets.only(top: 20.0),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           SizedBox(
-            height: 50.0,
             width: 300.0,
             child: TextFormField(
               controller: _pLangController,
               decoration: InputDecoration(
                 labelText: "programming_language_new_dot".tr(),
-                border: OutlineInputBorder(),
+                border: UnderlineInputBorder(),
+                fillColor: Colors.white,
+                focusColor: stateColors.clairPink,
               ),
               onChanged: (value) {
                 _pLangInputValue = value;
+              },
+              onFieldSubmitted: (value) {
+                addProLangAndUpdate(childSetState);
               },
             ),
           ),
           Padding(
             padding: const EdgeInsets.only(left: 8.0),
-            child: TextButton.icon(
+            child: IconButton(
+              tooltip: "add".tr(),
+              icon: Opacity(
+                opacity: 0.6,
+                child: Icon(UniconsLine.check),
+              ),
               onPressed: () {
-                _programmingLanguages[_pLangInputValue] = true;
-                _pLangController.clear();
-                updateProgLanguages();
+                addProLangAndUpdate(childSetState);
               },
-              icon: Icon(Icons.add),
-              label: Text("add".tr()),
             ),
           ),
         ],
@@ -636,7 +706,7 @@ class _ProjectEditorState extends State<ProjectEditor> {
     );
   }
 
-  Widget tagsSelection() {
+  Widget tagsSection(StateSetter childSetState) {
     return Container(
       width: 600.0,
       padding: const EdgeInsets.only(
@@ -645,102 +715,87 @@ class _ProjectEditorState extends State<ProjectEditor> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          tagsSelectionHeader(),
-          tagsSelectionContent(),
-          tagsSelectionInput(),
+          tagsHeader(),
+          tagsContent(childSetState),
+          tagsInput(childSetState),
         ],
       ),
     );
   }
 
-  Widget tagsSelectionHeader() {
-    return Padding(
-      padding: const EdgeInsets.only(
-        bottom: 20.0,
-      ),
-      child: Opacity(
-        opacity: 0.6,
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(right: 16.0),
-              child: Icon(Icons.tag),
-            ),
-            Text(
-              "tags".tr().toUpperCase(),
-              style: FontsUtils.mainStyle(
-                fontSize: 20.0,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
-        ),
-      ),
+  Widget tagsHeader() {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        headerTitle("tags".tr()),
+        headerDescription("tags_description".tr()),
+      ],
     );
   }
 
-  Widget tagsSelectionContent() {
-    return Wrap(
+  Widget tagsContent(StateSetter sheetSetState) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 16.0),
+      child: Wrap(
         spacing: 10.0,
         runSpacing: 10.0,
         children: _tags.entries.map((entry) {
           return InputChip(
-            label: Text(
-              '${entry.key.substring(0, 1).toUpperCase()}${entry.key.substring(1)}',
-              style: TextStyle(
-                color: entry.value ? Colors.white : stateColors.foreground,
+            label: Opacity(
+              opacity: 0.8,
+              child: Text(
+                "${entry.key.substring(0, 1).toUpperCase()}"
+                "${entry.key.substring(1)}",
               ),
             ),
-            selectedColor: stateColors.primary,
-            selected: entry.value,
-            checkmarkColor: Colors.white,
-            deleteIconColor:
-                entry.value ? Colors.white : stateColors.foreground,
+            labelStyle: FontsUtils.mainStyle(
+              fontWeight: FontWeight.w600,
+            ),
+            labelPadding: const EdgeInsets.symmetric(horizontal: 12.0),
+            deleteIconColor: stateColors.secondary.withOpacity(0.8),
             onDeleted: () {
-              _tags.remove(entry.key);
-              updateTags();
+              removeTagAndUpdate(sheetSetState, entry);
             },
-            onSelected: (isSelected) {
-              _tags[entry.key] = isSelected;
-              updateTags();
-            },
+            onSelected: (isSelected) {},
           );
-        }).toList());
+        }).toList(),
+      ),
+    );
   }
 
-  Widget tagsSelectionInput() {
+  Widget tagsInput(StateSetter sheetSetState) {
     return Padding(
-      padding: const EdgeInsets.only(
-        top: 20.0,
-      ),
+      padding: const EdgeInsets.only(top: 20.0),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           SizedBox(
-            height: 50.0,
-            width: 250.0,
+            width: 300.0,
             child: TextFormField(
-              controller: _tagController,
-              decoration: InputDecoration(
-                labelText: "tag_new_dot".tr(),
-                border: OutlineInputBorder(),
-              ),
-              onChanged: (value) {
-                _tagInputValue = value.toLowerCase();
-              },
-            ),
+                controller: _tagController,
+                decoration: InputDecoration(
+                  labelText: "tag_new_dot".tr(),
+                  border: UnderlineInputBorder(),
+                ),
+                onChanged: (value) {
+                  _tagInputValue = value.toLowerCase();
+                },
+                onFieldSubmitted: (value) {
+                  addTagAndUpdate(sheetSetState);
+                }),
           ),
           Padding(
             padding: const EdgeInsets.only(left: 8.0),
-            child: TextButton.icon(
+            child: IconButton(
+              tooltip: "tag_add".tr(),
+              icon: Opacity(
+                opacity: 0.6,
+                child: Icon(UniconsLine.check),
+              ),
               onPressed: () {
-                _tags[_tagInputValue] = true;
-                _tagController.clear();
-                updateTags();
+                addTagAndUpdate(sheetSetState);
               },
-              icon: Icon(Icons.add),
-              label: Text("tag_add".tr()),
             ),
           ),
         ],
@@ -782,78 +837,124 @@ class _ProjectEditorState extends State<ProjectEditor> {
     );
   }
 
-  Widget urlsSections() {
+  Widget urlsContent(StateSetter sheetSetState) {
+    return Wrap(
+      spacing: 12.0,
+      runSpacing: 12.0,
+      children: _urls.entries.map((entry) {
+        return InputChip(
+          label: Opacity(
+            opacity: 0.8,
+            child: Text(entry.key),
+          ),
+          labelPadding: const EdgeInsets.symmetric(horizontal: 12.0),
+          labelStyle: FontsUtils.mainStyle(
+            fontWeight: FontWeight.w600,
+          ),
+          selected: entry.value.isNotEmpty,
+          checkmarkColor: Colors.black26,
+          deleteIconColor: entry.value.isNotEmpty
+              ? stateColors.secondary.withOpacity(0.8)
+              : Colors.black26,
+          onDeleted: () {
+            deleteUrlAndUpdate(sheetSetState, entry);
+          },
+          onPressed: () {
+            sheetSetState(() {
+              _urlName = entry.key;
+              _urlValue = entry.value;
+            });
+          },
+        );
+      }).toList(),
+    );
+  }
+
+  Widget urlsHeader() {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 20.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          headerTitle("urls_ext".tr()),
+          headerDescription("urls_ext_description".tr()),
+        ],
+      ),
+    );
+  }
+
+  Widget urlsSection(StateSetter sheetSetState) {
     return Container(
       width: 600.0,
       padding: const EdgeInsets.only(
         top: 100.0,
       ),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Padding(
-          padding: const EdgeInsets.only(
-            bottom: 20.0,
-          ),
-          child: Opacity(
-            opacity: 0.6,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(right: 16.0),
-                  child: Icon(Icons.link),
-                ),
-                Text(
-                  "urls_ext".tr(),
-                  style: FontsUtils.mainStyle(
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          urlsHeader(),
+          urlsContent(sheetSetState),
+          editLinkInput(sheetSetState),
+        ],
+      ),
+    );
+  }
+
+  Widget editLinkInput(StateSetter sheetSetState) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 36.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 260.0,
+            padding: const EdgeInsets.only(bottom: 12.0),
+            child: TextFormField(
+              decoration: InputDecoration(
+                border: UnderlineInputBorder(),
+                labelText: _urlName.isNotEmpty ? _urlName : "url_name".tr(),
+              ),
+              onChanged: (value) {
+                _urlName = value;
+              },
+              onFieldSubmitted: (value) {
+                addNewUrlAndUpdate(sheetSetState);
+              },
             ),
           ),
-        ),
-        Wrap(
-          spacing: 10.0,
-          runSpacing: 10.0,
-          children: _urls.entries.map((entry) {
-            return InputChip(
-              label: Text(entry.key),
-              labelStyle: TextStyle(
-                color: entry.value != null && entry.value.isNotEmpty
-                    ? Colors.white
-                    : stateColors.foreground,
+          Wrap(
+            spacing: 24.0,
+            runSpacing: 24.0,
+            crossAxisAlignment: WrapCrossAlignment.end,
+            children: [
+              SizedBox(
+                width: 260.0,
+                child: TextFormField(
+                  decoration: InputDecoration(
+                    border: UnderlineInputBorder(),
+                    labelText: 'https://$_urlName...',
+                  ),
+                  keyboardType: TextInputType.url,
+                  onChanged: (value) {
+                    _urlValue = value;
+                  },
+                ),
               ),
-              selectedColor: stateColors.primary,
-              selected: entry.value?.isNotEmpty,
-              checkmarkColor: Colors.white,
-              deleteIconColor: entry.value.isNotEmpty
-                  ? Colors.white
-                  : stateColors.foreground,
-              onDeleted: () {
-                _urls.remove(entry.key);
-                updateUrls();
-              },
-              onPressed: () {
-                _urlName = entry.key;
-                _urlValue = entry.value;
-
-                showAddUrlSheet();
-              },
-            );
-          }).toList(),
-        ),
-        TextButton.icon(
-          onPressed: () {
-            _urlName = '';
-            _urlValue = '';
-
-            showAddUrlSheet();
-          },
-          icon: Icon(Icons.add),
-          label: Text("url_add".tr()),
-        ),
-      ]),
+              IconButton(
+                tooltip: "url_add".tr(),
+                icon: Opacity(
+                  opacity: 0.6,
+                  child: Icon(UniconsLine.check),
+                ),
+                onPressed: () {
+                  addNewUrlAndUpdate(sheetSetState);
+                },
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 
@@ -888,6 +989,99 @@ class _ProjectEditorState extends State<ProjectEditor> {
     );
   }
 
+  void addPlatformAndUpdate(
+    StateSetter childSetState,
+  ) async {
+    setState(() => _isSaving = true);
+
+    childSetState(() {
+      _platforms[_platformInputValue] = true;
+      _platformController.clear();
+    });
+
+    try {
+      await _projectSnapshot.reference.update({
+        'platforms': _platforms,
+      });
+    } catch (error) {
+      appLogger.e(error);
+
+      childSetState(() {
+        _platforms.remove(_platformInputValue);
+      });
+
+      Snack.e(
+        context: context,
+        message: "project_update_platforms_fail".tr(),
+      );
+    } finally {
+      setState(() => _isSaving = false);
+    }
+  }
+
+  void addProLangAndUpdate(StateSetter childSetState) async {
+    if (_pLangInputValue.isEmpty) {
+      Snack.e(
+        context: context,
+        message: "input_empty_invalid".tr(),
+      );
+
+      return;
+    }
+
+    _programmingLanguages[_pLangInputValue] = true;
+    _pLangController.clear();
+
+    childSetState(() {});
+    setState(() => _isSaving = true);
+
+    try {
+      await _projectSnapshot.reference
+          .update({'programmingLanguages': _programmingLanguages});
+    } catch (error) {
+      _programmingLanguages.remove(_pLangInputValue);
+      appLogger.e(error);
+
+      Snack.e(
+        context: context,
+        message: "project_update_prog_fail".tr(),
+      );
+    } finally {
+      setState(() => _isSaving = false);
+    }
+  }
+
+  void addTagAndUpdate(StateSetter sheetSetState) async {
+    if (_tagInputValue.isEmpty) {
+      Snack.e(
+        context: context,
+        message: "input_empty_invalid".tr(),
+      );
+
+      return;
+    }
+
+    sheetSetState(() {
+      _tags[_tagInputValue] = true;
+      _tagController.clear();
+      _isSaving = true;
+    });
+
+    try {
+      await _projectSnapshot.reference.update({'tags': _tags});
+    } catch (error) {
+      appLogger.e(error);
+      _tags.remove(_tagInputValue);
+
+      Snack.e(
+        context: context,
+        message: "project_update_tags_fail".tr(),
+      );
+    } finally {
+      sheetSetState(() => _isSaving = false);
+    }
+  }
+
   void fetch() async {
     setState(() => _isLoading = true);
 
@@ -907,6 +1101,8 @@ class _ProjectEditorState extends State<ProjectEditor> {
       _jwt = await FirebaseAuth.instance.currentUser.getIdToken();
 
       final Map<String, dynamic> data = _projectSnapshot.data();
+      data['id'] = _projectSnapshot.id;
+
       final Project project = Project.fromJSON(data);
 
       setState(() {
@@ -920,11 +1116,11 @@ class _ProjectEditorState extends State<ProjectEditor> {
         }
 
         for (String tag in project.tags) {
-          _platforms[tag] = true;
+          _tags[tag] = true;
         }
 
         for (String pLang in project.programmingLanguages) {
-          _platforms[pLang] = true;
+          _programmingLanguages[pLang] = true;
         }
 
         project.urls.map.forEach((key, value) {
@@ -1124,38 +1320,111 @@ class _ProjectEditorState extends State<ProjectEditor> {
     }
   }
 
-  void updatePlatforms() async {
-    setState(() => _isSaving = true);
+  void removePlatformAndUpdate(
+    StateSetter sheetSetState,
+    MapEntry<String, bool> entry,
+  ) async {
+    sheetSetState(() {
+      _isSaving = true;
+      _platforms.remove(entry.key);
+    });
 
     try {
-      await _projectSnapshot.reference.update({'platforms': _platforms});
+      await _projectSnapshot.reference.update({
+        'platforms': _platforms,
+      });
     } catch (error) {
       appLogger.e(error);
+      _platforms.putIfAbsent(entry.key, () => entry.value);
 
       Snack.e(
         context: context,
         message: "project_update_platforms_fail".tr(),
       );
     } finally {
-      setState(() => _isSaving = false);
+      sheetSetState(() => _isSaving = false);
     }
   }
 
-  void updateProgLanguages() async {
-    setState(() => _isSaving = true);
+  void removeProLangAndUpdate(StateSetter sheetSetState, String key) async {
+    _programmingLanguages.remove(key);
+    sheetSetState(() => _isSaving = true);
 
     try {
       await _projectSnapshot.reference
           .update({'programmingLanguages': _programmingLanguages});
     } catch (error) {
       appLogger.e(error);
+      _programmingLanguages.putIfAbsent(key, () => true);
 
       Snack.e(
         context: context,
         message: "project_update_prog_fail".tr(),
       );
     } finally {
-      setState(() => _isSaving = false);
+      sheetSetState(() => _isSaving = false);
+    }
+  }
+
+  void removeTagAndUpdate(
+    StateSetter sheetSetState,
+    MapEntry<String, bool> entry,
+  ) async {
+    sheetSetState(() {
+      _tags.remove(entry.key);
+      _isSaving = true;
+    });
+
+    try {
+      await _projectSnapshot.reference.update({'tags': _tags});
+    } catch (error) {
+      appLogger.e(error);
+      _tags.putIfAbsent(entry.key, () => entry.value);
+
+      Snack.e(
+        context: context,
+        message: "project_update_tags_fail".tr(),
+      );
+    } finally {
+      sheetSetState(() => _isSaving = false);
+    }
+  }
+
+  void showMetaDataSheet() {
+    showCupertinoModalBottomSheet(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, childSetState) {
+          return metaDataContainer(childSetState);
+        },
+      ),
+    );
+  }
+
+  void togglePlatformAndUpdate(
+    StateSetter sheetSetState,
+    MapEntry<String, bool> entry,
+    bool isSelected,
+  ) async {
+    sheetSetState(() {
+      _platforms[entry.key] = isSelected;
+      _isSaving = true;
+    });
+
+    try {
+      await _projectSnapshot.reference.update({
+        'platforms': _platforms,
+      });
+    } catch (error) {
+      appLogger.e(error);
+      _platforms[entry.key] = !isSelected;
+
+      Snack.e(
+        context: context,
+        message: "project_update_platforms_fail".tr(),
+      );
+    } finally {
+      sheetSetState(() => _isSaving = false);
     }
   }
 
@@ -1176,23 +1445,6 @@ class _ProjectEditorState extends State<ProjectEditor> {
     }
   }
 
-  void updateTags() async {
-    setState(() => _isSaving = true);
-
-    try {
-      await _projectSnapshot.reference.update({'tags': _tags});
-    } catch (error) {
-      appLogger.e(error);
-
-      Snack.e(
-        context: context,
-        message: "project_update_tags_fail".tr(),
-      );
-    } finally {
-      setState(() => _isSaving = false);
-    }
-  }
-
   void updateTitle() async {
     setState(() => _isSaving = true);
 
@@ -1207,6 +1459,53 @@ class _ProjectEditorState extends State<ProjectEditor> {
       );
     } finally {
       setState(() => _isSaving = false);
+    }
+  }
+
+  void addNewUrlAndUpdate(StateSetter sheetSetState) async {
+    sheetSetState(() {
+      _urls[_urlName] = _urlValue;
+      _isSaving = true;
+    });
+
+    try {
+      await _projectSnapshot.reference.update({'urls': _urls});
+    } catch (error) {
+      appLogger.e(error);
+
+      _urls.remove(_urlName);
+
+      Snack.e(
+        context: context,
+        message: "project_update_urls_fail".tr(),
+      );
+    } finally {
+      sheetSetState(() => _isSaving = false);
+    }
+  }
+
+  void deleteUrlAndUpdate(
+    StateSetter sheetSetState,
+    MapEntry<String, String> entry,
+  ) async {
+    sheetSetState(() {
+      _urls.remove(entry.key);
+      _isSaving = true;
+    });
+
+    try {
+      await _projectSnapshot.reference.update({'urls': _urls});
+    } catch (error) {
+      appLogger.e(error);
+
+      _urls.putIfAbsent(entry.key, () => entry.value);
+
+      Snack.e(
+        context: context,
+        message: "project_update_urls_fail".tr(),
+      );
+    } finally {
+      sheetSetState(() => _isSaving = false);
     }
   }
 
