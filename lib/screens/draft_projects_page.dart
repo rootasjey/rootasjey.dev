@@ -2,7 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:rootasjey/components/project_card.dart';
+import 'package:rootasjey/components/min_project_card.dart';
 import 'package:rootasjey/components/sliver_edge_padding.dart';
 import 'package:rootasjey/components/sliver_empty_view.dart';
 import 'package:rootasjey/router/app_router.gr.dart';
@@ -68,6 +68,42 @@ class _DraftProjectsPageState extends State<DraftProjectsPage> {
         horizontal: 80.0,
       ),
       sliver: child,
+    );
+  }
+
+  PopupMenuButton buildPopupMenuButton(Project project, int index) {
+    return PopupMenuButton<String>(
+      icon: Opacity(
+        opacity: 0.6,
+        child: Icon(UniconsLine.ellipsis_h),
+      ),
+      onSelected: (value) {
+        switch (value) {
+          case 'delete':
+            confirmDeleteProject(index);
+            break;
+          case 'publish':
+            publish(index);
+            break;
+          default:
+        }
+      },
+      itemBuilder: (context) => [
+        PopupMenuItem(
+          value: 'publish',
+          child: ListTile(
+            leading: Icon(UniconsLine.cloud_upload),
+            title: Text("publish".tr()),
+          ),
+        ),
+        PopupMenuItem(
+          value: 'delete',
+          child: ListTile(
+            leading: Icon(UniconsLine.trash),
+            title: Text("delete".tr()),
+          ),
+        ),
+      ],
     );
   }
 
@@ -137,39 +173,14 @@ class _DraftProjectsPageState extends State<DraftProjectsPage> {
       delegate: SliverChildBuilderDelegate(
         (context, index) {
           final project = _projects.elementAt(index);
+          final popupButton = buildPopupMenuButton(project, index);
 
-          return ProjectCard(
-            onTap: () => goToEditPage(project),
-            popupMenuButton: PopupMenuButton<String>(
-              onSelected: (value) {
-                switch (value) {
-                  case 'delete':
-                    confirmDeleteProject(index);
-                    break;
-                  case 'publish':
-                    publish(index);
-                    break;
-                  default:
-                }
-              },
-              itemBuilder: (context) => [
-                PopupMenuItem(
-                  value: 'publish',
-                  child: ListTile(
-                    leading: Icon(UniconsLine.cloud_upload),
-                    title: Text("publish".tr()),
-                  ),
-                ),
-                PopupMenuItem(
-                  value: 'delete',
-                  child: ListTile(
-                    leading: Icon(UniconsLine.trash),
-                    title: Text("delete".tr()),
-                  ),
-                ),
-              ],
-            ),
+          return MinProjectCard(
             project: project,
+            width: 400.0,
+            onTap: () => goToEditPage(project),
+            contentPadding: const EdgeInsets.all(24.0),
+            popupMenuButton: popupButton,
           );
         },
         childCount: _projects.length,
