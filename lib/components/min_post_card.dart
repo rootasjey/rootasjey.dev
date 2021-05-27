@@ -1,8 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/types/post.dart';
-import 'package:rootasjey/utils/cloud.dart';
+import 'package:rootasjey/types/user_firestore.dart';
+import 'package:rootasjey/utils/app_logger.dart';
 import 'package:unicons/unicons.dart';
 
 /// Minimal post card.
@@ -137,13 +139,26 @@ class _MinPostCardState extends State<MinPostCard> {
   }
 
   void fetchAuthorName() async {
-    if (widget.post.author.id.isEmpty) {
+    final author = widget.post.author;
+
+    if (author.id.isEmpty) {
       return;
     }
 
     try {
-      final resp = await Cloud.fun('posts-fetchAuthorName')
-          .call({'authorId': widget.post.author.id});
+      final docSnap = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(author.id)
+          .get();
+
+      if (!docSnap.exists) {
+        return;
+      }
+
+      final data = docSnap.data();
+      data['id'] = docSnap.id;
+
+      final user = UserFirestore.fromJSON(data);
 
       // ?NOTE: Prevent setState if not mounted.
       // This is due to each card having its own fetch & state,
@@ -155,11 +170,9 @@ class _MinPostCardState extends State<MinPostCard> {
         return;
       }
 
-      setState(() {
-        _authorName = resp.data['authorName'];
-      });
+      setState(() => _authorName = user.name);
     } catch (error) {
-      debugPrint(error.toString());
+      appLogger.e(error);
     }
   }
 }
