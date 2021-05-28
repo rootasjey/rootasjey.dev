@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:expansion_tile_card/expansion_tile_card.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
@@ -349,9 +350,19 @@ class _ProjectEditorState extends State<ProjectEditor> {
                 title: "project_metadata".tr(),
                 tooltip: "close".tr(),
                 subtitle: "project_metadata_description".tr(),
+                bottom: Opacity(
+                  opacity: 0.7,
+                  child: Text(
+                    "card_click_to_expand".tr(),
+                    style: FontsUtils.mainStyle(
+                      color: stateColors.secondary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
               ),
               Padding(
-                padding: EdgeInsets.only(top: 60.0),
+                padding: EdgeInsets.only(top: 90.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -393,13 +404,14 @@ class _ProjectEditorState extends State<ProjectEditor> {
   Widget platformsSection(StateSetter childSetState) {
     return Container(
       width: 600.0,
-      padding: const EdgeInsets.only(
-        top: 100.0,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      padding: const EdgeInsets.only(top: 100.0),
+      child: ExpansionTileCard(
+        elevation: 0.0,
+        expandedTextColor: Colors.black,
+        baseColor: stateColors.lightBackground,
+        expandedColor: stateColors.lightBackground,
+        title: platformsHeader(),
         children: [
-          platformsHeader(),
           platformsContent(childSetState),
           platformsInput(childSetState),
         ],
@@ -419,73 +431,79 @@ class _ProjectEditorState extends State<ProjectEditor> {
   }
 
   Widget platformsContent(StateSetter childSetState) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 16.0),
-      child: Wrap(
-          spacing: 12.0,
-          runSpacing: 12.0,
-          children: _platforms.entries.map((entry) {
-            return InputChip(
-              label: Opacity(
-                opacity: 0.8,
-                child: Text(getPlatformName(entry.key)),
-              ),
-              labelStyle: FontsUtils.mainStyle(fontWeight: FontWeight.w700),
-              elevation: entry.value ? 2.0 : 0.0,
-              selected: entry.value,
-              deleteIconColor: entry.value
-                  ? stateColors.secondary.withOpacity(0.8)
-                  : Colors.black26,
-              labelPadding: const EdgeInsets.symmetric(horizontal: 12.0),
-              checkmarkColor: Colors.black26,
-              onDeleted: () {
-                removePlatformAndUpdate(childSetState, entry);
-              },
-              onSelected: (isSelected) {
-                togglePlatformAndUpdate(
-                  childSetState,
-                  entry,
-                  isSelected,
-                );
-              },
-            );
-          }).toList()),
+    return Align(
+      alignment: Alignment.topLeft,
+      child: Padding(
+        padding: const EdgeInsets.only(top: 16.0, left: 16.0),
+        child: Wrap(
+            spacing: 12.0,
+            runSpacing: 12.0,
+            children: _platforms.entries.map((entry) {
+              return InputChip(
+                label: Opacity(
+                  opacity: 0.8,
+                  child: Text(getPlatformName(entry.key)),
+                ),
+                labelStyle: FontsUtils.mainStyle(fontWeight: FontWeight.w700),
+                elevation: entry.value ? 2.0 : 0.0,
+                selected: entry.value,
+                deleteIconColor: entry.value
+                    ? stateColors.secondary.withOpacity(0.8)
+                    : Colors.black26,
+                labelPadding: const EdgeInsets.symmetric(horizontal: 12.0),
+                checkmarkColor: Colors.black26,
+                onDeleted: () {
+                  removePlatformAndUpdate(childSetState, entry);
+                },
+                onSelected: (isSelected) {
+                  togglePlatformAndUpdate(
+                    childSetState,
+                    entry,
+                    isSelected,
+                  );
+                },
+              );
+            }).toList()),
+      ),
     );
   }
 
   Widget platformsInput(StateSetter childSetState) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 20.0),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          SizedBox(
-            width: 300.0,
-            child: TextFormField(
-              controller: _platformController,
-              decoration: InputDecoration(
-                labelText: "platform_new".tr(),
-                border: UnderlineInputBorder(),
-              ),
-              onChanged: (value) {
-                _platformInputValue = value.toLowerCase();
-              },
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(left: 8.0),
-            child: Opacity(
-              opacity: 0.6,
-              child: IconButton(
-                tooltip: "platform_add".tr(),
-                icon: Icon(UniconsLine.check),
-                onPressed: () {
-                  addPlatformAndUpdate(childSetState);
+    return Align(
+      alignment: Alignment.topLeft,
+      child: Padding(
+        padding: const EdgeInsets.only(top: 20.0, left: 16.0),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(
+              width: 300.0,
+              child: TextFormField(
+                controller: _platformController,
+                decoration: InputDecoration(
+                  labelText: "platform_new".tr(),
+                  border: UnderlineInputBorder(),
+                ),
+                onChanged: (value) {
+                  _platformInputValue = value.toLowerCase();
                 },
               ),
             ),
-          ),
-        ],
+            Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: Opacity(
+                opacity: 0.6,
+                child: IconButton(
+                  tooltip: "platform_add".tr(),
+                  icon: Icon(UniconsLine.check),
+                  onPressed: () {
+                    addPlatformAndUpdate(childSetState);
+                  },
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -546,10 +564,13 @@ class _ProjectEditorState extends State<ProjectEditor> {
   Widget programmingSection(StateSetter childSetState) {
     return SizedBox(
       width: 600.0,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: ExpansionTileCard(
+        elevation: 0.0,
+        expandedTextColor: Colors.black,
+        baseColor: stateColors.lightBackground,
+        expandedColor: stateColors.lightBackground,
+        title: programmnigHeader(),
         children: [
-          programmnigHeader(),
           programmnigContent(childSetState),
           programmnigInput(childSetState),
         ],
@@ -569,72 +590,78 @@ class _ProjectEditorState extends State<ProjectEditor> {
   }
 
   Widget programmnigContent(StateSetter childSetState) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 16.0),
-      child: Wrap(
-        spacing: 12.0,
-        runSpacing: 12.0,
-        children: _programmingLanguages.entries.map((entry) {
-          return InputChip(
-            label: Opacity(
-              opacity: 0.8,
-              child: Text(
-                entry.key,
-                style: FontsUtils.mainStyle(
-                  fontWeight: FontWeight.w700,
+    return Align(
+      alignment: Alignment.topLeft,
+      child: Padding(
+        padding: const EdgeInsets.only(top: 16.0, left: 16.0),
+        child: Wrap(
+          spacing: 12.0,
+          runSpacing: 12.0,
+          children: _programmingLanguages.entries.map((entry) {
+            return InputChip(
+              label: Opacity(
+                opacity: 0.8,
+                child: Text(
+                  entry.key,
+                  style: FontsUtils.mainStyle(
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ),
-            ),
-            deleteIconColor: stateColors.secondary.withOpacity(0.8),
-            labelPadding: const EdgeInsets.symmetric(horizontal: 12.0),
-            onPressed: () {}, // keep cursor pointer & interaction visual effect
-            onDeleted: () {
-              removeProLangAndUpdate(childSetState, entry.key);
-            },
-          );
-        }).toList(),
+              deleteIconColor: stateColors.secondary.withOpacity(0.8),
+              labelPadding: const EdgeInsets.symmetric(horizontal: 12.0),
+              onPressed: () {}, // cursor pointer & interaction visual effect
+              onDeleted: () {
+                removeProLangAndUpdate(childSetState, entry.key);
+              },
+            );
+          }).toList(),
+        ),
       ),
     );
   }
 
   Widget programmnigInput(StateSetter childSetState) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 20.0),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          SizedBox(
-            width: 300.0,
-            child: TextFormField(
-              controller: _progLangController,
-              decoration: InputDecoration(
-                labelText: "programming_language_new_dot".tr(),
-                border: UnderlineInputBorder(),
-                fillColor: Colors.white,
-                focusColor: stateColors.clairPink,
+    return Align(
+      alignment: Alignment.topLeft,
+      child: Padding(
+        padding: const EdgeInsets.only(top: 20.0, left: 16.0),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(
+              width: 300.0,
+              child: TextFormField(
+                controller: _progLangController,
+                decoration: InputDecoration(
+                  labelText: "programming_language_new_dot".tr(),
+                  border: UnderlineInputBorder(),
+                  fillColor: Colors.white,
+                  focusColor: stateColors.clairPink,
+                ),
+                onChanged: (value) {
+                  _progLangInputValue = value;
+                },
+                onFieldSubmitted: (value) {
+                  addProLangAndUpdate(childSetState);
+                },
               ),
-              onChanged: (value) {
-                _progLangInputValue = value;
-              },
-              onFieldSubmitted: (value) {
-                addProLangAndUpdate(childSetState);
-              },
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(left: 8.0),
-            child: IconButton(
-              tooltip: "add".tr(),
-              icon: Opacity(
-                opacity: 0.6,
-                child: Icon(UniconsLine.check),
+            Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: IconButton(
+                tooltip: "add".tr(),
+                icon: Opacity(
+                  opacity: 0.6,
+                  child: Icon(UniconsLine.check),
+                ),
+                onPressed: () {
+                  addProLangAndUpdate(childSetState);
+                },
               ),
-              onPressed: () {
-                addProLangAndUpdate(childSetState);
-              },
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -702,10 +729,13 @@ class _ProjectEditorState extends State<ProjectEditor> {
       padding: const EdgeInsets.only(
         top: 100.0,
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: ExpansionTileCard(
+        elevation: 0.0,
+        expandedTextColor: Colors.black,
+        baseColor: stateColors.lightBackground,
+        expandedColor: stateColors.lightBackground,
+        title: tagsHeader(),
         children: [
-          tagsHeader(),
           tagsContent(childSetState),
           tagsInput(childSetState),
         ],
@@ -725,70 +755,76 @@ class _ProjectEditorState extends State<ProjectEditor> {
   }
 
   Widget tagsContent(StateSetter sheetSetState) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 16.0),
-      child: Wrap(
-        spacing: 10.0,
-        runSpacing: 10.0,
-        children: _tags.entries.map((entry) {
-          return InputChip(
-            label: Opacity(
-              opacity: 0.8,
-              child: Text(
-                "${entry.key.substring(0, 1).toUpperCase()}"
-                "${entry.key.substring(1)}",
+    return Align(
+      alignment: Alignment.topLeft,
+      child: Padding(
+        padding: const EdgeInsets.only(top: 16.0, left: 16.0),
+        child: Wrap(
+          spacing: 10.0,
+          runSpacing: 10.0,
+          children: _tags.entries.map((entry) {
+            return InputChip(
+              label: Opacity(
+                opacity: 0.8,
+                child: Text(
+                  "${entry.key.substring(0, 1).toUpperCase()}"
+                  "${entry.key.substring(1)}",
+                ),
               ),
-            ),
-            labelStyle: FontsUtils.mainStyle(
-              fontWeight: FontWeight.w600,
-            ),
-            labelPadding: const EdgeInsets.symmetric(horizontal: 12.0),
-            deleteIconColor: stateColors.secondary.withOpacity(0.8),
-            onDeleted: () {
-              removeTagAndUpdate(sheetSetState, entry);
-            },
-            onSelected: (isSelected) {},
-          );
-        }).toList(),
+              labelStyle: FontsUtils.mainStyle(
+                fontWeight: FontWeight.w600,
+              ),
+              labelPadding: const EdgeInsets.symmetric(horizontal: 12.0),
+              deleteIconColor: stateColors.secondary.withOpacity(0.8),
+              onDeleted: () {
+                removeTagAndUpdate(sheetSetState, entry);
+              },
+              onSelected: (isSelected) {},
+            );
+          }).toList(),
+        ),
       ),
     );
   }
 
   Widget tagsInput(StateSetter sheetSetState) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 20.0),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          SizedBox(
-            width: 300.0,
-            child: TextFormField(
-                controller: _tagController,
-                decoration: InputDecoration(
-                  labelText: "tag_new_dot".tr(),
-                  border: UnderlineInputBorder(),
-                ),
-                onChanged: (value) {
-                  _tagInputValue = value.toLowerCase();
-                },
-                onFieldSubmitted: (value) {
-                  addTagAndUpdate(sheetSetState);
-                }),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(left: 8.0),
-            child: IconButton(
-              tooltip: "tag_add".tr(),
-              icon: Opacity(
-                opacity: 0.6,
-                child: Icon(UniconsLine.check),
-              ),
-              onPressed: () {
-                addTagAndUpdate(sheetSetState);
-              },
+    return Align(
+      alignment: Alignment.topLeft,
+      child: Padding(
+        padding: const EdgeInsets.only(top: 20.0, left: 16.0),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(
+              width: 300.0,
+              child: TextFormField(
+                  controller: _tagController,
+                  decoration: InputDecoration(
+                    labelText: "tag_new_dot".tr(),
+                    border: UnderlineInputBorder(),
+                  ),
+                  onChanged: (value) {
+                    _tagInputValue = value.toLowerCase();
+                  },
+                  onFieldSubmitted: (value) {
+                    addTagAndUpdate(sheetSetState);
+                  }),
             ),
-          ),
-        ],
+            Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: IconButton(
+                tooltip: "tag_add".tr(),
+                icon: Opacity(
+                  opacity: 0.6,
+                  child: Icon(UniconsLine.check),
+                ),
+                onPressed: () {
+                  addTagAndUpdate(sheetSetState);
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -827,45 +863,51 @@ class _ProjectEditorState extends State<ProjectEditor> {
   }
 
   Widget linksContent(StateSetter sheetSetState) {
-    return Wrap(
-      spacing: 12.0,
-      runSpacing: 12.0,
-      children: _links.entries.map((entry) {
-        return InputChip(
-          label: Opacity(
-            opacity: 0.8,
-            child: Text(entry.key),
-          ),
-          labelPadding: const EdgeInsets.symmetric(
-            horizontal: 12.0,
-            vertical: 2.0,
-          ),
-          labelStyle: FontsUtils.mainStyle(
-            fontWeight: FontWeight.w600,
-          ),
-          elevation: entry.value.isEmpty ? 0.0 : 2.0,
-          selected: entry.value.isNotEmpty,
-          checkmarkColor: Colors.black26,
-          deleteIconColor: entry.value.isEmpty
-              ? Colors.black26
-              : stateColors.secondary.withOpacity(0.8),
-          onDeleted: () {
-            deleteUrlAndUpdate(sheetSetState, entry);
-          },
-          onPressed: () {
-            sheetSetState(() {
-              _linkName = entry.key;
-              _linkValue = entry.value;
-              _editingExistingLinkName = entry.key;
-              _isEditingExistingLink = true;
-              _linkNameInputController.text = '';
-              _linkValueInputController.text = entry.value;
-            });
+    return Align(
+      alignment: Alignment.topLeft,
+      child: Padding(
+        padding: const EdgeInsets.only(left: 16.0),
+        child: Wrap(
+          spacing: 12.0,
+          runSpacing: 12.0,
+          children: _links.entries.map((entry) {
+            return InputChip(
+              label: Opacity(
+                opacity: 0.8,
+                child: Text(entry.key),
+              ),
+              labelPadding: const EdgeInsets.symmetric(
+                horizontal: 12.0,
+                vertical: 2.0,
+              ),
+              labelStyle: FontsUtils.mainStyle(
+                fontWeight: FontWeight.w600,
+              ),
+              elevation: entry.value.isEmpty ? 0.0 : 2.0,
+              selected: entry.value.isNotEmpty,
+              checkmarkColor: Colors.black26,
+              deleteIconColor: entry.value.isEmpty
+                  ? Colors.black26
+                  : stateColors.secondary.withOpacity(0.8),
+              onDeleted: () {
+                deleteUrlAndUpdate(sheetSetState, entry);
+              },
+              onPressed: () {
+                sheetSetState(() {
+                  _linkName = entry.key;
+                  _linkValue = entry.value;
+                  _editingExistingLinkName = entry.key;
+                  _isEditingExistingLink = true;
+                  _linkNameInputController.text = '';
+                  _linkValueInputController.text = entry.value;
+                });
 
-            _linkValueFocusNode.requestFocus();
-          },
-        );
-      }).toList(),
+                _linkValueFocusNode.requestFocus();
+              },
+            );
+          }).toList(),
+        ),
+      ),
     );
   }
 
@@ -889,10 +931,13 @@ class _ProjectEditorState extends State<ProjectEditor> {
       padding: const EdgeInsets.only(
         top: 100.0,
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: ExpansionTileCard(
+        elevation: 0.0,
+        expandedTextColor: Colors.black,
+        baseColor: stateColors.lightBackground,
+        expandedColor: stateColors.lightBackground,
+        title: linksHeader(),
         children: [
-          linksHeader(),
           linksContent(sheetSetState),
           linksInput(sheetSetState),
         ],
@@ -964,69 +1009,72 @@ class _ProjectEditorState extends State<ProjectEditor> {
   }
 
   Widget linksInput(StateSetter sheetSetState) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 36.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          editingExistingLinkContainer(sheetSetState),
-          Container(
-            width: 260.0,
-            padding: const EdgeInsets.only(bottom: 12.0),
-            child: TextFormField(
-              focusNode: _linkNameFocusNode,
-              controller: _linkNameInputController,
-              textInputAction: TextInputAction.next,
-              decoration: InputDecoration(
-                border: UnderlineInputBorder(),
-                labelText: _linkName.isNotEmpty ? _linkName : "url_name".tr(),
-              ),
-              onChanged: (value) {
-                _linkName = value;
+    return Align(
+      alignment: Alignment.topLeft,
+      child: Padding(
+        padding: const EdgeInsets.only(top: 36.0, left: 16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            editingExistingLinkContainer(sheetSetState),
+            Container(
+              width: 260.0,
+              padding: const EdgeInsets.only(bottom: 12.0),
+              child: TextFormField(
+                focusNode: _linkNameFocusNode,
+                controller: _linkNameInputController,
+                textInputAction: TextInputAction.next,
+                decoration: InputDecoration(
+                  border: UnderlineInputBorder(),
+                  labelText: _linkName.isNotEmpty ? _linkName : "url_name".tr(),
+                ),
+                onChanged: (value) {
+                  _linkName = value;
 
-                sheetSetState(() {
-                  _isEditingExistingLink = _links.containsKey(_linkName);
-                });
-              },
+                  sheetSetState(() {
+                    _isEditingExistingLink = _links.containsKey(_linkName);
+                  });
+                },
+              ),
             ),
-          ),
-          Wrap(
-            spacing: 24.0,
-            runSpacing: 24.0,
-            crossAxisAlignment: WrapCrossAlignment.end,
-            children: [
-              SizedBox(
-                width: 260.0,
-                child: TextFormField(
-                  focusNode: _linkValueFocusNode,
-                  controller: _linkValueInputController,
-                  textInputAction: TextInputAction.go,
-                  decoration: InputDecoration(
-                    border: UnderlineInputBorder(),
-                    labelText: 'https://$_linkName...',
+            Wrap(
+              spacing: 24.0,
+              runSpacing: 24.0,
+              crossAxisAlignment: WrapCrossAlignment.end,
+              children: [
+                SizedBox(
+                  width: 260.0,
+                  child: TextFormField(
+                    focusNode: _linkValueFocusNode,
+                    controller: _linkValueInputController,
+                    textInputAction: TextInputAction.go,
+                    decoration: InputDecoration(
+                      border: UnderlineInputBorder(),
+                      labelText: 'https://$_linkName...',
+                    ),
+                    keyboardType: TextInputType.url,
+                    onChanged: (value) {
+                      _linkValue = value;
+                    },
+                    onFieldSubmitted: (value) {
+                      addLinkAndUpdate(sheetSetState);
+                    },
                   ),
-                  keyboardType: TextInputType.url,
-                  onChanged: (value) {
-                    _linkValue = value;
-                  },
-                  onFieldSubmitted: (value) {
+                ),
+                IconButton(
+                  tooltip: "url_add".tr(),
+                  icon: Opacity(
+                    opacity: 0.6,
+                    child: Icon(UniconsLine.check),
+                  ),
+                  onPressed: () {
                     addLinkAndUpdate(sheetSetState);
                   },
                 ),
-              ),
-              IconButton(
-                tooltip: "url_add".tr(),
-                icon: Opacity(
-                  opacity: 0.6,
-                  child: Icon(UniconsLine.check),
-                ),
-                onPressed: () {
-                  addLinkAndUpdate(sheetSetState);
-                },
-              ),
-            ],
-          ),
-        ],
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
