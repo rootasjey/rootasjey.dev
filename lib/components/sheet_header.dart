@@ -9,11 +9,13 @@ class SheetHeader extends StatelessWidget {
   final String title;
   final String subtitle;
   final String tooltip;
+  final Widget bottom;
 
   SheetHeader({
     @required this.title,
     this.subtitle,
     this.tooltip,
+    this.bottom,
   });
 
   @override
@@ -55,6 +57,7 @@ class SheetHeader extends StatelessWidget {
                     fontWeight: FontWeight.w500,
                   ),
                 ),
+              if (bottom != null) bottom,
             ],
           ),
         ),
