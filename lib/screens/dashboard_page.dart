@@ -20,25 +20,25 @@ class _DashboardPageState extends State<DashboardPage> {
       index: 0,
       iconData: UniconsLine.newspaper,
       label: "posts_my".tr(),
-      hoverColor: Colors.green,
+      hoverColor: stateColors.primary,
     ),
     SideMenuItem(
       index: 1,
       iconData: UniconsLine.apps,
       label: "projects_my".tr(),
-      hoverColor: Colors.yellow.shade800,
+      hoverColor: stateColors.primary,
     ),
     SideMenuItem(
       index: 2,
       iconData: UniconsLine.user,
       label: "profile_my".tr(),
-      hoverColor: Colors.green,
+      hoverColor: stateColors.primary,
     ),
     SideMenuItem(
       index: 3,
       iconData: UniconsLine.setting,
       label: "settings".tr(),
-      hoverColor: Colors.blueGrey,
+      hoverColor: stateColors.primary,
     ),
   ];
 
