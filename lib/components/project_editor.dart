@@ -40,22 +40,21 @@ class _ProjectEditorState extends State<ProjectEditor> {
   bool _isLoading = false;
   bool _isSaving = false;
   bool _hasError = false;
-  bool _isMetaVisible = false;
+  bool _isEditingExistingLink = false;
 
   DocumentSnapshot _projectSnapshot;
 
-  final _projectFocusNode = FocusNode();
-  final _contentController = TextEditingController();
+  final _linkNameFocusNode = FocusNode();
+  final _linkValueFocusNode = FocusNode();
 
-  final _titleFocusNode = FocusNode();
-  final _titleController = TextEditingController();
-
-  final _summaryFocusNode = FocusNode();
-  final _summaryController = TextEditingController();
-
+  final _progLangController = TextEditingController();
   final _platformController = TextEditingController();
+  final _projectBodyInputController = TextEditingController();
   final _tagController = TextEditingController();
-  final _pLangController = TextEditingController();
+  final _summaryController = TextEditingController();
+  final _titleController = TextEditingController();
+  final _linkNameInputController = TextEditingController();
+  final _linkValueInputController = TextEditingController();
 
   final _platforms = {
     'android': false,
@@ -70,23 +69,23 @@ class _ProjectEditorState extends State<ProjectEditor> {
 
   final _programmingLanguages = Map<String, bool>();
   final _tags = Map<String, bool>();
-  final _urls = Map<String, String>();
+  final _links = Map<String, String>();
 
   static const PUBLISHED = 'published';
   static const DRAFT = 'draft';
 
-  String _publicationStatus = DRAFT;
-
-  String _title = '';
-  String _content = '';
-  String _summary = '';
-  String _platformInputValue = '';
-  String _pLangInputValue = '';
-  String _tagInputValue = '';
-  String _lang = 'en';
+  String _editingExistingLinkName = '';
   String _jwt = '';
-  String _urlName = '';
-  String _urlValue = '';
+  String _linkName = '';
+  String _linkValue = '';
+  String _platformInputValue = '';
+  String _progLangInputValue = '';
+  String _projectBody = '';
+  String _projectLang = 'en';
+  String _projectPubStatus = DRAFT;
+  String _projectSummary = '';
+  String _projectTitle = '';
+  String _tagInputValue = '';
 
   Timer _saveTitleTimer;
   Timer _saveSummaryTimer;
@@ -96,6 +95,23 @@ class _ProjectEditorState extends State<ProjectEditor> {
   void initState() {
     super.initState();
     fetch();
+  }
+
+  @override
+  dispose() {
+    _linkNameFocusNode.dispose();
+    _linkValueFocusNode.dispose();
+
+    _projectBodyInputController.dispose();
+    _titleController.dispose();
+    _progLangController.dispose();
+    _platformController.dispose();
+    _summaryController.dispose();
+    _tagController.dispose();
+    _linkNameInputController.dispose();
+    _linkValueInputController.dispose();
+
+    super.dispose();
   }
 
   @override
@@ -133,7 +149,7 @@ class _ProjectEditorState extends State<ProjectEditor> {
             vDivider(),
             saveButton(),
             metaDataButton(),
-            if (_publicationStatus == PUBLISHED) viewOnlineButton(),
+            if (_projectPubStatus == PUBLISHED) viewOnlineButton(),
             deleteButton(),
           ],
         ),
@@ -180,30 +196,6 @@ class _ProjectEditorState extends State<ProjectEditor> {
     return idleView();
   }
 
-  Widget buttonToggleMetaView() {
-    return Align(
-      alignment: Alignment.topLeft,
-      child: Padding(
-        padding: const EdgeInsets.only(
-          top: 80.0,
-          left: 120.0,
-        ),
-        child: ElevatedButton.icon(
-          onPressed: () => setState(() => _isMetaVisible = !_isMetaVisible),
-          icon: _isMetaVisible
-              ? Icon(Icons.visibility_off)
-              : Icon(Icons.visibility),
-          label: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              _isMetaVisible ? "meta_data_hide".tr() : "meta_data_show".tr(),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget contentInput() {
     return SizedBox(
       width: 700.0,
@@ -212,8 +204,7 @@ class _ProjectEditorState extends State<ProjectEditor> {
         child: TextField(
           maxLines: null,
           autofocus: false,
-          focusNode: _projectFocusNode,
-          controller: _contentController,
+          controller: _projectBodyInputController,
           keyboardType: TextInputType.multiline,
           textCapitalization: TextCapitalization.sentences,
           style: FontsUtils.mainStyle(
@@ -225,7 +216,7 @@ class _ProjectEditorState extends State<ProjectEditor> {
             border: OutlineInputBorder(borderSide: BorderSide.none),
           ),
           onChanged: (newValue) {
-            _content = newValue;
+            _projectBody = newValue;
 
             _saveContentTimer?.cancel();
             _saveContentTimer = Timer(1.seconds, updateProjectContent);
@@ -313,7 +304,6 @@ class _ProjectEditorState extends State<ProjectEditor> {
               header(),
               summaryInput(),
               contentInput(),
-              buttonToggleMetaView(),
             ],
           ),
         ),
@@ -323,12 +313,12 @@ class _ProjectEditorState extends State<ProjectEditor> {
 
   Widget langButton() {
     return LangPopupMenuButton(
-      lang: _lang,
+      lang: _projectLang,
       opacity: 0.6,
       color: stateColors.lightBackground,
       onLangChanged: (newLang) {
         setState(() {
-          _lang = newLang;
+          _projectLang = newLang;
         });
 
         updateLang();
@@ -368,7 +358,7 @@ class _ProjectEditorState extends State<ProjectEditor> {
                     programmingSection(sheetSetState),
                     platformsSection(sheetSetState),
                     tagsSection(sheetSetState),
-                    urlsSection(sheetSetState),
+                    linksSection(sheetSetState),
                     metaValidationButton(),
                   ],
                 ),
@@ -383,7 +373,7 @@ class _ProjectEditorState extends State<ProjectEditor> {
   Widget metaValidationButton() {
     return Container(
       width: 200.0,
-      padding: const EdgeInsets.only(top: 70.0),
+      padding: const EdgeInsets.only(top: 100.0),
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           primary: Colors.black87,
@@ -597,6 +587,7 @@ class _ProjectEditorState extends State<ProjectEditor> {
             ),
             deleteIconColor: stateColors.secondary.withOpacity(0.8),
             labelPadding: const EdgeInsets.symmetric(horizontal: 12.0),
+            onPressed: () {}, // keep cursor pointer & interaction visual effect
             onDeleted: () {
               removeProLangAndUpdate(childSetState, entry.key);
             },
@@ -615,7 +606,7 @@ class _ProjectEditorState extends State<ProjectEditor> {
           SizedBox(
             width: 300.0,
             child: TextFormField(
-              controller: _pLangController,
+              controller: _progLangController,
               decoration: InputDecoration(
                 labelText: "programming_language_new_dot".tr(),
                 border: UnderlineInputBorder(),
@@ -623,7 +614,7 @@ class _ProjectEditorState extends State<ProjectEditor> {
                 focusColor: stateColors.clairPink,
               ),
               onChanged: (value) {
-                _pLangInputValue = value;
+                _progLangInputValue = value;
               },
               onFieldSubmitted: (value) {
                 addProLangAndUpdate(childSetState);
@@ -650,10 +641,10 @@ class _ProjectEditorState extends State<ProjectEditor> {
 
   Widget pubPopupMenuButton() {
     return PubPopupMenuButton(
-      status: _publicationStatus,
+      status: _projectPubStatus,
       onStatusChanged: (newStatus) {
         setState(() {
-          _publicationStatus = newStatus;
+          _projectPubStatus = newStatus;
         });
 
         updatePubStatus(newStatus);
@@ -663,7 +654,7 @@ class _ProjectEditorState extends State<ProjectEditor> {
 
   Widget saveButton() {
     final saveStr =
-        _publicationStatus == DRAFT ? "save_draft".tr() : "save".tr();
+        _projectPubStatus == DRAFT ? "save_draft".tr() : "save".tr();
 
     return IconButton(
       tooltip: saveStr,
@@ -683,7 +674,6 @@ class _ProjectEditorState extends State<ProjectEditor> {
       width: 700.0,
       child: TextField(
         maxLines: null,
-        focusNode: _summaryFocusNode,
         controller: _summaryController,
         keyboardType: TextInputType.multiline,
         textCapitalization: TextCapitalization.sentences,
@@ -697,7 +687,7 @@ class _ProjectEditorState extends State<ProjectEditor> {
           color: stateColors.foreground.withOpacity(0.4),
         ),
         onChanged: (newValue) {
-          _summary = newValue;
+          _projectSummary = newValue;
 
           _saveSummaryTimer?.cancel();
           _saveSummaryTimer = Timer(1.seconds, () => updateSummary());
@@ -812,7 +802,6 @@ class _ProjectEditorState extends State<ProjectEditor> {
       child: TextField(
         maxLines: null,
         autofocus: true,
-        focusNode: _titleFocusNode,
         controller: _titleController,
         keyboardType: TextInputType.multiline,
         textCapitalization: TextCapitalization.sentences,
@@ -825,7 +814,7 @@ class _ProjectEditorState extends State<ProjectEditor> {
           border: OutlineInputBorder(borderSide: BorderSide.none),
         ),
         onChanged: (newValue) {
-          _title = newValue;
+          _projectTitle = newValue;
 
           if (_saveTitleTimer != null) {
             _saveTitleTimer.cancel();
@@ -837,40 +826,50 @@ class _ProjectEditorState extends State<ProjectEditor> {
     );
   }
 
-  Widget urlsContent(StateSetter sheetSetState) {
+  Widget linksContent(StateSetter sheetSetState) {
     return Wrap(
       spacing: 12.0,
       runSpacing: 12.0,
-      children: _urls.entries.map((entry) {
+      children: _links.entries.map((entry) {
         return InputChip(
           label: Opacity(
             opacity: 0.8,
             child: Text(entry.key),
           ),
-          labelPadding: const EdgeInsets.symmetric(horizontal: 12.0),
+          labelPadding: const EdgeInsets.symmetric(
+            horizontal: 12.0,
+            vertical: 2.0,
+          ),
           labelStyle: FontsUtils.mainStyle(
             fontWeight: FontWeight.w600,
           ),
+          elevation: entry.value.isEmpty ? 0.0 : 2.0,
           selected: entry.value.isNotEmpty,
           checkmarkColor: Colors.black26,
-          deleteIconColor: entry.value.isNotEmpty
-              ? stateColors.secondary.withOpacity(0.8)
-              : Colors.black26,
+          deleteIconColor: entry.value.isEmpty
+              ? Colors.black26
+              : stateColors.secondary.withOpacity(0.8),
           onDeleted: () {
             deleteUrlAndUpdate(sheetSetState, entry);
           },
           onPressed: () {
             sheetSetState(() {
-              _urlName = entry.key;
-              _urlValue = entry.value;
+              _linkName = entry.key;
+              _linkValue = entry.value;
+              _editingExistingLinkName = entry.key;
+              _isEditingExistingLink = true;
+              _linkNameInputController.text = '';
+              _linkValueInputController.text = entry.value;
             });
+
+            _linkValueFocusNode.requestFocus();
           },
         );
       }).toList(),
     );
   }
 
-  Widget urlsHeader() {
+  Widget linksHeader() {
     return Padding(
       padding: const EdgeInsets.only(bottom: 20.0),
       child: Column(
@@ -884,7 +883,7 @@ class _ProjectEditorState extends State<ProjectEditor> {
     );
   }
 
-  Widget urlsSection(StateSetter sheetSetState) {
+  Widget linksSection(StateSetter sheetSetState) {
     return Container(
       width: 600.0,
       padding: const EdgeInsets.only(
@@ -893,33 +892,101 @@ class _ProjectEditorState extends State<ProjectEditor> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          urlsHeader(),
-          urlsContent(sheetSetState),
-          editLinkInput(sheetSetState),
+          linksHeader(),
+          linksContent(sheetSetState),
+          linksInput(sheetSetState),
         ],
       ),
     );
   }
 
-  Widget editLinkInput(StateSetter sheetSetState) {
+  Widget editingExistingLinkContainer(StateSetter sheetSetState) {
+    if (!_isEditingExistingLink) {
+      return Padding(padding: EdgeInsets.zero);
+    }
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 12.0, bottom: 24.0),
+      child: Wrap(
+        spacing: 12.0,
+        runSpacing: 12.0,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        children: [
+          Text(
+            "You are editing an existing link.",
+            style: FontsUtils.mainStyle(
+              color: stateColors.primary,
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              sheetSetState(() {
+                _linkName = '';
+                _linkValue = '';
+                _editingExistingLinkName = '';
+                _isEditingExistingLink = false;
+                _linkValueInputController.clear();
+              });
+
+              _linkNameFocusNode.requestFocus();
+            },
+            style: OutlinedButton.styleFrom(
+              primary: Colors.black54,
+              textStyle: FontsUtils.mainStyle(
+                fontSize: 14.0,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 12.0,
+                vertical: 8.0,
+              ),
+              child: Stack(
+                children: [
+                  Text("url_new".tr()),
+                  Positioned(
+                    left: 0.0,
+                    right: 0.0,
+                    bottom: 0.0,
+                    child: Container(
+                      color: Colors.black38,
+                      height: 1.5,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget linksInput(StateSetter sheetSetState) {
     return Padding(
       padding: const EdgeInsets.only(top: 36.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          editingExistingLinkContainer(sheetSetState),
           Container(
             width: 260.0,
             padding: const EdgeInsets.only(bottom: 12.0),
             child: TextFormField(
+              focusNode: _linkNameFocusNode,
+              controller: _linkNameInputController,
+              textInputAction: TextInputAction.next,
               decoration: InputDecoration(
                 border: UnderlineInputBorder(),
-                labelText: _urlName.isNotEmpty ? _urlName : "url_name".tr(),
+                labelText: _linkName.isNotEmpty ? _linkName : "url_name".tr(),
               ),
               onChanged: (value) {
-                _urlName = value;
-              },
-              onFieldSubmitted: (value) {
-                addNewUrlAndUpdate(sheetSetState);
+                _linkName = value;
+
+                sheetSetState(() {
+                  _isEditingExistingLink = _links.containsKey(_linkName);
+                });
               },
             ),
           ),
@@ -931,13 +998,19 @@ class _ProjectEditorState extends State<ProjectEditor> {
               SizedBox(
                 width: 260.0,
                 child: TextFormField(
+                  focusNode: _linkValueFocusNode,
+                  controller: _linkValueInputController,
+                  textInputAction: TextInputAction.go,
                   decoration: InputDecoration(
                     border: UnderlineInputBorder(),
-                    labelText: 'https://$_urlName...',
+                    labelText: 'https://$_linkName...',
                   ),
                   keyboardType: TextInputType.url,
                   onChanged: (value) {
-                    _urlValue = value;
+                    _linkValue = value;
+                  },
+                  onFieldSubmitted: (value) {
+                    addLinkAndUpdate(sheetSetState);
                   },
                 ),
               ),
@@ -948,7 +1021,7 @@ class _ProjectEditorState extends State<ProjectEditor> {
                   child: Icon(UniconsLine.check),
                 ),
                 onPressed: () {
-                  addNewUrlAndUpdate(sheetSetState);
+                  addLinkAndUpdate(sheetSetState);
                 },
               ),
             ],
@@ -1020,7 +1093,7 @@ class _ProjectEditorState extends State<ProjectEditor> {
   }
 
   void addProLangAndUpdate(StateSetter childSetState) async {
-    if (_pLangInputValue.isEmpty) {
+    if (_progLangInputValue.isEmpty) {
       Snack.e(
         context: context,
         message: "input_empty_invalid".tr(),
@@ -1029,8 +1102,8 @@ class _ProjectEditorState extends State<ProjectEditor> {
       return;
     }
 
-    _programmingLanguages[_pLangInputValue] = true;
-    _pLangController.clear();
+    _programmingLanguages[_progLangInputValue] = true;
+    _progLangController.clear();
 
     childSetState(() {});
     setState(() => _isSaving = true);
@@ -1039,7 +1112,7 @@ class _ProjectEditorState extends State<ProjectEditor> {
       await _projectSnapshot.reference
           .update({'programmingLanguages': _programmingLanguages});
     } catch (error) {
-      _programmingLanguages.remove(_pLangInputValue);
+      _programmingLanguages.remove(_progLangInputValue);
       appLogger.e(error);
 
       Snack.e(
@@ -1082,6 +1155,77 @@ class _ProjectEditorState extends State<ProjectEditor> {
     }
   }
 
+  void addLinkAndUpdate(StateSetter sheetSetState) async {
+    _linkNameInputController.text = '';
+    _linkValueInputController.text = '';
+
+    /// To clear input label text while keeping the last value
+    /// if request fails.
+    final savedName = _linkName;
+
+    final wasEditingExistingLink = _isEditingExistingLink;
+
+    if (_isEditingExistingLink) {
+      _links.remove(_editingExistingLinkName);
+    }
+
+    sheetSetState(() {
+      _links[savedName] = _linkValue;
+      _linkName = '';
+      _isSaving = true;
+      _isEditingExistingLink = false;
+    });
+
+    try {
+      await _projectSnapshot.reference.update({'urls': _links});
+    } catch (error) {
+      appLogger.e(error);
+
+      _links.remove(savedName);
+
+      if (wasEditingExistingLink) {
+        _links.putIfAbsent(_editingExistingLinkName, () => _linkValue);
+      }
+
+      Snack.e(
+        context: context,
+        message: "project_update_urls_fail".tr(),
+      );
+    } finally {
+      sheetSetState(() => _isSaving = false);
+    }
+  }
+
+  void deleteUrlAndUpdate(
+    StateSetter sheetSetState,
+    MapEntry<String, String> entry,
+  ) async {
+    sheetSetState(() {
+      _linkName = '';
+      _linkValue = '';
+      _linkNameInputController.clear();
+      _linkValueInputController.clear();
+
+      _links.remove(entry.key);
+      _isSaving = true;
+    });
+
+    try {
+      await _projectSnapshot.reference.update({'urls': _links});
+    } catch (error) {
+      appLogger.e(error);
+
+      _links.putIfAbsent(entry.key, () => entry.value);
+
+      Snack.e(
+        context: context,
+        message: "project_update_urls_fail".tr(),
+      );
+    } finally {
+      sheetSetState(() => _isSaving = false);
+    }
+  }
+
   void fetch() async {
     setState(() => _isLoading = true);
 
@@ -1106,10 +1250,10 @@ class _ProjectEditorState extends State<ProjectEditor> {
       final Project project = Project.fromJSON(data);
 
       setState(() {
-        _publicationStatus = project.published ? PUBLISHED : DRAFT;
+        _projectPubStatus = project.published ? PUBLISHED : DRAFT;
 
-        _title = project.title;
-        _summary = project.summary;
+        _projectTitle = project.title;
+        _projectSummary = project.summary;
 
         for (String platform in project.platforms) {
           _platforms[platform] = true;
@@ -1124,11 +1268,11 @@ class _ProjectEditorState extends State<ProjectEditor> {
         }
 
         project.urls.map.forEach((key, value) {
-          _urls[key] = value;
+          _links[key] = value;
         });
 
-        _titleController.text = _title;
-        _summaryController.text = _summary;
+        _titleController.text = _projectTitle;
+        _summaryController.text = _projectSummary;
       });
     } catch (error) {
       setState(() {
@@ -1153,8 +1297,8 @@ class _ProjectEditorState extends State<ProjectEditor> {
       });
 
       setState(() {
-        _content = response.data['project'];
-        _contentController.text = _content;
+        _projectBody = response.data['project'];
+        _projectBodyInputController.text = _projectBody;
       });
     } catch (error) {
       setState(() {
@@ -1201,7 +1345,7 @@ class _ProjectEditorState extends State<ProjectEditor> {
       final response = await Cloud.fun('projects-save').call({
         'projectId': _projectSnapshot.id,
         'jwt': _jwt,
-        'content': _content,
+        'content': _projectBody,
       });
 
       bool success = response.data['success'];
@@ -1258,10 +1402,10 @@ class _ProjectEditorState extends State<ProjectEditor> {
                           autofocus: true,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
-                            labelText: _urlName,
+                            labelText: _linkName,
                           ),
                           onChanged: (value) {
-                            _urlName = value;
+                            _linkName = value;
                           },
                         ),
                       ),
@@ -1270,11 +1414,11 @@ class _ProjectEditorState extends State<ProjectEditor> {
                         child: TextFormField(
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
-                            labelText: 'https://$_urlName...',
+                            labelText: 'https://$_linkName...',
                           ),
                           keyboardType: TextInputType.url,
                           onChanged: (value) {
-                            _urlValue = value;
+                            _linkValue = value;
                           },
                         ),
                       ),
@@ -1284,7 +1428,7 @@ class _ProjectEditorState extends State<ProjectEditor> {
                         ),
                         child: TextButton.icon(
                           onPressed: () {
-                            _urls[_urlName] = _urlValue;
+                            _links[_linkName] = _linkValue;
                             updateUrls();
                             context.router.pop();
                           },
@@ -1307,7 +1451,7 @@ class _ProjectEditorState extends State<ProjectEditor> {
     setState(() => _isSaving = true);
 
     try {
-      await _projectSnapshot.reference.update({'lang': _lang});
+      await _projectSnapshot.reference.update({'lang': _projectLang});
     } catch (error) {
       appLogger.e(error);
 
@@ -1432,7 +1576,7 @@ class _ProjectEditorState extends State<ProjectEditor> {
     setState(() => _isSaving = true);
 
     try {
-      await _projectSnapshot.reference.update({'summary': _summary});
+      await _projectSnapshot.reference.update({'summary': _projectSummary});
     } catch (error) {
       appLogger.e(error);
 
@@ -1449,7 +1593,7 @@ class _ProjectEditorState extends State<ProjectEditor> {
     setState(() => _isSaving = true);
 
     try {
-      await _projectSnapshot.reference.update({'title': _title});
+      await _projectSnapshot.reference.update({'title': _projectTitle});
     } catch (error) {
       appLogger.e(error);
 
@@ -1462,58 +1606,11 @@ class _ProjectEditorState extends State<ProjectEditor> {
     }
   }
 
-  void addNewUrlAndUpdate(StateSetter sheetSetState) async {
-    sheetSetState(() {
-      _urls[_urlName] = _urlValue;
-      _isSaving = true;
-    });
-
-    try {
-      await _projectSnapshot.reference.update({'urls': _urls});
-    } catch (error) {
-      appLogger.e(error);
-
-      _urls.remove(_urlName);
-
-      Snack.e(
-        context: context,
-        message: "project_update_urls_fail".tr(),
-      );
-    } finally {
-      sheetSetState(() => _isSaving = false);
-    }
-  }
-
-  void deleteUrlAndUpdate(
-    StateSetter sheetSetState,
-    MapEntry<String, String> entry,
-  ) async {
-    sheetSetState(() {
-      _urls.remove(entry.key);
-      _isSaving = true;
-    });
-
-    try {
-      await _projectSnapshot.reference.update({'urls': _urls});
-    } catch (error) {
-      appLogger.e(error);
-
-      _urls.putIfAbsent(entry.key, () => entry.value);
-
-      Snack.e(
-        context: context,
-        message: "project_update_urls_fail".tr(),
-      );
-    } finally {
-      sheetSetState(() => _isSaving = false);
-    }
-  }
-
   void updateUrls() async {
     setState(() => _isSaving = true);
 
     try {
-      await _projectSnapshot.reference.update({'urls': _urls});
+      await _projectSnapshot.reference.update({'urls': _links});
     } catch (error) {
       appLogger.e(error);
 
@@ -1527,10 +1624,10 @@ class _ProjectEditorState extends State<ProjectEditor> {
   }
 
   void updatePubStatus(String status) async {
-    final prevValue = _publicationStatus;
+    final prevValue = _projectPubStatus;
 
     setState(() {
-      _publicationStatus = status;
+      _projectPubStatus = status;
       _isSaving = true;
     });
 
@@ -1545,7 +1642,7 @@ class _ProjectEditorState extends State<ProjectEditor> {
         message: "project_update_pub_fail".tr(),
       );
 
-      _publicationStatus = prevValue;
+      _projectPubStatus = prevValue;
     } finally {
       setState(() => _isSaving = false);
     }
