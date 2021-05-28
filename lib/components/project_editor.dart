@@ -487,6 +487,9 @@ class _ProjectEditorState extends State<ProjectEditor> {
                 onChanged: (value) {
                   _platformInputValue = value.toLowerCase();
                 },
+                onFieldSubmitted: (value) {
+                  addPlatformAndUpdate(childSetState);
+                },
               ),
             ),
             Padding(
