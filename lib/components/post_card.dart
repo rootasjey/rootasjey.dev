@@ -116,7 +116,7 @@ class _PostCardState extends State<PostCard> {
               '$_authorName - ${Jiffy(post.createdAt).fromNow()}',
               style: FontsUtils.mainStyle(
                 fontSize: 15.0,
-                fontWeight: FontWeight.w300,
+                fontWeight: FontWeight.w600,
               ),
             ),
           ),
@@ -131,6 +131,7 @@ class _PostCardState extends State<PostCard> {
             overflow: TextOverflow.ellipsis,
             maxLines: 3,
             style: FontsUtils.mainStyle(
+              height: 1.0,
               fontSize: 26.0,
               fontWeight: FontWeight.w600,
             ),
