@@ -137,6 +137,8 @@ class _ImageViewerState extends State<ImageViewer> {
     return OpenContainer(
       closedElevation: 0.0,
       openElevation: 0.0,
+      closedColor: stateColors.lightBackground,
+      openColor: Colors.black,
       openBuilder: (context, closeAction) {
         _closeActionCopy = closeAction;
 
