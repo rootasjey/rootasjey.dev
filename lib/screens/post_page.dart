@@ -10,7 +10,7 @@ import 'package:markdown/markdown.dart' as markdown;
 import 'package:rootasjey/actions/posts.dart';
 import 'package:rootasjey/components/author_header.dart';
 import 'package:rootasjey/components/dates_header.dart';
-import 'package:rootasjey/components/home_app_bar.dart';
+import 'package:rootasjey/components/main_app_bar.dart';
 import 'package:rootasjey/components/markdown_viewer.dart';
 import 'package:rootasjey/components/sliver_loading_view.dart';
 import 'package:rootasjey/state/colors.dart';
@@ -40,7 +40,6 @@ class _PostPageState extends State<PostPage> {
   bool _isFabVisible = false;
   bool _isLiked = false;
   bool _isLoading = false;
-  bool _isTOCVisible = false;
 
   final double _textWidth = 750.0;
   final _scrollController = ScrollController();
@@ -99,13 +98,9 @@ class _PostPageState extends State<PostPage> {
                   CustomScrollView(
                     controller: _scrollController,
                     slivers: [
-                      appBar(),
+                      MainAppBar(),
+                      header(),
                       body(),
-                      SliverPadding(
-                        padding: const EdgeInsets.only(
-                          bottom: 400.0,
-                        ),
-                      ),
                     ],
                   ),
                   socialButtons(),
@@ -134,28 +129,10 @@ class _PostPageState extends State<PostPage> {
     );
   }
 
-  Widget appBar() {
-    return HomeAppBar(
-      automaticallyImplyLeading: true,
-      title: Opacity(
-        opacity: 0.6,
-        child: Text(
-          _post != null ? _post.title : "post".tr(),
-          overflow: TextOverflow.ellipsis,
-          style: TextStyle(
-            color: stateColors.foreground,
-          ),
-        ),
-      ),
-      trailing: [
-        IconButton(
-          color: stateColors.foreground,
-          icon: Icon(UniconsLine.bars),
-          onPressed: () {
-            setState(() => _isTOCVisible = !_isTOCVisible);
-          },
-        ),
-      ],
+  Widget backButton() {
+    return IconButton(
+      onPressed: context.router.pop,
+      icon: Icon(UniconsLine.arrow_left),
     );
   }
 
@@ -168,20 +145,23 @@ class _PostPageState extends State<PostPage> {
 
     final bool isNarrow = MediaQuery.of(context).size.width < 500.0;
 
-    return SliverList(
-      delegate: SliverChildListDelegate([
-        Row(
-          children: [
-            if (!isNarrow) Spacer(),
-            bodyCentered(),
-            if (!isNarrow) Spacer(),
-          ],
-        ),
-      ]),
+    return SliverPadding(
+      padding: const EdgeInsets.only(bottom: 400.0),
+      sliver: SliverList(
+        delegate: SliverChildListDelegate([
+          Row(
+            children: [
+              if (!isNarrow) Spacer(),
+              postBody(),
+              if (!isNarrow) Spacer(),
+            ],
+          ),
+        ]),
+      ),
     );
   }
 
-  Widget bodyCentered() {
+  Widget postBody() {
     return Expanded(
       flex: 3,
       child: Padding(
@@ -196,7 +176,6 @@ class _PostPageState extends State<PostPage> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              header(),
               MarkdownViewer(
                 data: _postData,
                 width: _textWidth,
@@ -210,6 +189,7 @@ class _PostPageState extends State<PostPage> {
 
   Widget dates() {
     return DatesHeader(
+      padding: const EdgeInsets.only(top: 12.0),
       createdAt: Jiffy(_post.createdAt).fromNow(),
       updatedAt: Jiffy(_post.updatedAt).fromNow(),
     );
@@ -220,7 +200,7 @@ class _PostPageState extends State<PostPage> {
       return Container();
     }
 
-    return FloatingActionButton(
+    return FloatingActionButton.extended(
       backgroundColor: stateColors.primary,
       foregroundColor: Colors.white,
       onPressed: () => _scrollController.animateTo(
@@ -228,22 +208,44 @@ class _PostPageState extends State<PostPage> {
         duration: 250.milliseconds,
         curve: Curves.bounceOut,
       ),
-      child: Icon(Icons.arrow_upward),
+      label: Text("scroll_to_top".tr()),
     );
   }
 
   Widget header() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        title(),
-        summary(),
-        dates(),
-        allChips(),
-        AuthorHeader(
-          authorId: _post?.author?.id ?? '',
+    if (_isLoading) {
+      return SliverList(
+        delegate: SliverChildListDelegate.fixed([]),
+      );
+    }
+
+    return SliverList(
+      delegate: SliverChildListDelegate.fixed([
+        Center(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: _textWidth,
+              minHeight: MediaQuery.of(context).size.height,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(60.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  backButton(),
+                  allChips(),
+                  title(),
+                  summary(),
+                  dates(),
+                  AuthorHeader(
+                    authorId: _post?.author?.id ?? '',
+                  ),
+                ],
+              ),
+            ),
+          ),
         ),
-      ],
+      ]),
     );
   }
 
@@ -346,11 +348,12 @@ class _PostPageState extends State<PostPage> {
     return Align(
       alignment: Alignment.topLeft,
       child: Opacity(
-        opacity: 0.7,
+        opacity: 0.6,
         child: Text(
           _post.summary,
-          style: TextStyle(
+          style: FontsUtils.mainStyle(
             fontSize: 16.0,
+            fontWeight: FontWeight.w600,
           ),
         ),
       ),
@@ -379,12 +382,13 @@ class _PostPageState extends State<PostPage> {
 
   Widget title() {
     return Padding(
-      padding: const EdgeInsets.only(top: 60.0),
+      padding: const EdgeInsets.only(top: 24.0),
       child: Text(
         _post.title,
         style: FontsUtils.mainStyle(
-          fontSize: 60.0,
-          fontWeight: FontWeight.w700,
+          height: 1.0,
+          fontSize: 80.0,
+          fontWeight: FontWeight.w800,
         ),
       ),
     );
