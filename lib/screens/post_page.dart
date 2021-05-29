@@ -131,8 +131,12 @@ class _PostPageState extends State<PostPage> {
 
   Widget backButton() {
     return IconButton(
+      tooltip: "back".tr(),
       onPressed: context.router.pop,
-      icon: Icon(UniconsLine.arrow_left),
+      icon: Opacity(
+        opacity: 0.6,
+        child: Icon(UniconsLine.arrow_left),
+      ),
     );
   }
 
@@ -282,6 +286,11 @@ class _PostPageState extends State<PostPage> {
       left: 60.0,
       child: Column(
         children: [
+          if (_isFabVisible)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 4.0),
+              child: backButton(),
+            ),
           IconButton(
             tooltip: "copy_link".tr(),
             onPressed: () {
