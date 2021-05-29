@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html/style.dart';
 import 'package:flutter_syntax_view/flutter_syntax_view.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:rootasjey/components/TextLink.dart';
 import 'package:rootasjey/components/image_viewer.dart';
@@ -134,8 +135,8 @@ class _MarkdownViewerState extends State<MarkdownViewer> {
     return {
       'p': Style(
         width: widget.width,
-        fontSize: FontSize(24.0),
-        fontWeight: FontWeight.w200,
+        color: Colors.black.withOpacity(0.7),
+        fontSize: FontSize(20.0),
         lineHeight: LineHeight.number(1.5),
         margin: EdgeInsets.only(
           top: 40.0,
@@ -143,8 +144,8 @@ class _MarkdownViewerState extends State<MarkdownViewer> {
         ),
       ),
       'ul': Style(
-        fontSize: FontSize(22.0),
-        fontWeight: FontWeight.w300,
+        color: Colors.black.withOpacity(0.7),
+        fontSize: FontSize(20.0),
         lineHeight: LineHeight.number(1.6),
       ),
       'img': Style(
@@ -156,24 +157,25 @@ class _MarkdownViewerState extends State<MarkdownViewer> {
       ),
       'h1': Style(
         width: widget.width,
+        fontFamily: GoogleFonts.nunito(fontWeight: FontWeight.w800).fontFamily,
         fontSize: FontSize(60.0),
-        fontWeight: FontWeight.w600,
         margin: EdgeInsets.only(
           top: 100.0,
-          bottom: 60.0,
+          bottom: 40.0,
         ),
       ),
       'h2': Style(
         width: widget.width,
+        fontFamily: GoogleFonts.nunito(fontWeight: FontWeight.w700).fontFamily,
         fontSize: FontSize(40.0),
-        fontWeight: FontWeight.w600,
         margin: EdgeInsets.only(
-          top: 80.0,
+          top: 90.0,
         ),
       ),
       'h3': Style(
+        fontFamily: GoogleFonts.nunito(fontWeight: FontWeight.w700).fontFamily,
         fontSize: FontSize(30.0),
-        fontWeight: FontWeight.w400,
+        lineHeight: LineHeight.number(0.7),
         margin: const EdgeInsets.only(
           top: 80.0,
         ),
