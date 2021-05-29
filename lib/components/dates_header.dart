@@ -5,17 +5,19 @@ import 'package:unicons/unicons.dart';
 class DatesHeader extends StatelessWidget {
   final String createdAt;
   final String updatedAt;
+  final EdgeInsets padding;
 
   const DatesHeader({
     Key key,
     @required this.createdAt,
+    this.padding = const EdgeInsets.only(top: 4.0),
     @required this.updatedAt,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(top: 4.0),
+      padding: padding,
       child: Wrap(
         spacing: 12.0,
         children: [
