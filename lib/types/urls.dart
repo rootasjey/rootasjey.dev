@@ -1,4 +1,10 @@
 class Urls {
+  /// All URLs in a map.
+  Map<String, String> map = Map<String, String>();
+
+  /// Only social URLs in a map (without [image] for example).
+  Map<String, String> socialMap = Map<String, String>();
+
   String artbooking;
   String behance;
   String bitbucket;
@@ -16,12 +22,6 @@ class Urls {
   String website;
   String wikipedia;
   String youtube;
-
-  /// All URLs in a map.
-  Map<String, String> map = Map<String, String>();
-
-  /// Only social URLs in a map (without [image] for example).
-  Map<String, String> socialMap = Map<String, String>();
 
   Urls({
     this.artbooking = '',

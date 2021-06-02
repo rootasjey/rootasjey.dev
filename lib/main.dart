@@ -44,15 +44,17 @@ void main() async {
 
   setPathUrlStrategy();
 
-  return runApp(EasyLocalization(
-    path: 'assets/translations',
-    supportedLocales: [Locale('en'), Locale('fr')],
-    fallbackLocale: Locale('en'),
-    child: App(
-      savedThemeMode: savedThemeMode,
-      brightness: brightness,
+  return runApp(
+    EasyLocalization(
+      path: 'assets/translations',
+      supportedLocales: [Locale('en'), Locale('fr')],
+      fallbackLocale: Locale('en'),
+      child: App(
+        savedThemeMode: savedThemeMode,
+        brightness: brightness,
+      ),
     ),
-  ));
+  );
 }
 
 /// Main app class.

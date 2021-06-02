@@ -27,37 +27,30 @@ class SignupPage extends StatefulWidget {
 }
 
 class _SignupPageState extends State<SignupPage> {
-  String email = '';
-  String password = '';
-  String confirmPassword = '';
-  String username = '';
+  bool _isCheckingEmail = false;
+  bool _isCheckingName = false;
+  bool _isSigningUp = false;
 
-  bool isEmailAvailable = true;
-  bool isNameAvailable = true;
+  final _confirmPasswordNode = FocusNode();
+  final _passwordNode = FocusNode();
+  final _usernameNode = FocusNode();
 
-  String emailErrorMessage = '';
-  String nameErrorMessage = '';
+  String _confirmPassword = '';
+  String _email = '';
+  String _emailErrorMessage = '';
+  String _nameErrorMessage = '';
+  String _password = '';
+  String _username = '';
 
-  bool isCheckingEmail = false;
-  bool isCheckingName = false;
-
-  Timer emailTimer;
-  Timer nameTimer;
-
-  bool isCheckingAuth = false;
-  bool isCompleted = false;
-  bool isSigningUp = false;
-
-  final usernameNode = FocusNode();
-  final passwordNode = FocusNode();
-  final confirmPasswordNode = FocusNode();
+  Timer _emailTimer;
+  Timer _nameTimer;
 
   @override
   void dispose() {
     super.dispose();
-    usernameNode.dispose();
-    passwordNode.dispose();
-    confirmPasswordNode.dispose();
+    _usernameNode.dispose();
+    _passwordNode.dispose();
+    _confirmPasswordNode.dispose();
   }
 
   @override
@@ -92,7 +85,7 @@ class _SignupPageState extends State<SignupPage> {
   }
 
   Widget body() {
-    if (isSigningUp) {
+    if (_isSigningUp) {
       return Padding(
         padding: const EdgeInsets.only(top: 80.0),
         child: LoadingAnimation(
@@ -119,47 +112,47 @@ class _SignupPageState extends State<SignupPage> {
           ),
           keyboardType: TextInputType.emailAddress,
           onChanged: (value) async {
-            email = value;
+            _email = value;
 
             setState(() {
-              isCheckingEmail = true;
+              _isCheckingEmail = true;
             });
 
-            final isWellFormatted = UsersActions.checkEmailFormat(email);
+            final isWellFormatted = UsersActions.checkEmailFormat(_email);
 
             if (!isWellFormatted) {
               setState(() {
-                isCheckingEmail = false;
-                emailErrorMessage = "email_not_valid".tr();
+                _isCheckingEmail = false;
+                _emailErrorMessage = "email_not_valid".tr();
               });
 
               return;
             }
 
-            if (emailTimer != null) {
-              emailTimer.cancel();
-              emailTimer = null;
+            if (_emailTimer != null) {
+              _emailTimer.cancel();
+              _emailTimer = null;
             }
 
-            emailTimer = Timer(1.seconds, () async {
+            _emailTimer = Timer(1.seconds, () async {
               final isAvailable =
-                  await UsersActions.checkEmailAvailability(email);
+                  await UsersActions.checkEmailAvailability(_email);
               if (!isAvailable) {
                 setState(() {
-                  isCheckingEmail = false;
-                  emailErrorMessage = "email_not_available".tr();
+                  _isCheckingEmail = false;
+                  _emailErrorMessage = "email_not_available".tr();
                 });
 
                 return;
               }
 
               setState(() {
-                isCheckingEmail = false;
-                emailErrorMessage = '';
+                _isCheckingEmail = false;
+                _emailErrorMessage = '';
               });
             });
           },
-          onFieldSubmitted: (_) => usernameNode.requestFocus(),
+          onFieldSubmitted: (_) => _usernameNode.requestFocus(),
           validator: (value) {
             if (value.isEmpty) {
               return "email_empty_forbidden".tr();
@@ -179,7 +172,7 @@ class _SignupPageState extends State<SignupPage> {
         left: 40.0,
       ),
       child: Text(
-        emailErrorMessage,
+        _emailErrorMessage,
         style: TextStyle(
           color: Colors.red.shade300,
         ),
@@ -243,11 +236,11 @@ class _SignupPageState extends State<SignupPage> {
       children: <Widget>[
         header(),
         emailInput(),
-        if (isCheckingEmail) emailProgress(),
-        if (emailErrorMessage.isNotEmpty) emailInputError(),
+        if (_isCheckingEmail) emailProgress(),
+        if (_emailErrorMessage.isNotEmpty) emailInputError(),
         nameInput(),
-        if (isCheckingName) nameProgress(),
-        if (nameErrorMessage.isNotEmpty) nameInputError(),
+        if (_isCheckingName) nameProgress(),
+        if (_nameErrorMessage.isNotEmpty) nameInputError(),
         passwordInput(),
         confirmPasswordInput(),
         validationButton(),
@@ -275,7 +268,7 @@ class _SignupPageState extends State<SignupPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             TextFormField(
-              focusNode: usernameNode,
+              focusNode: _usernameNode,
               decoration: InputDecoration(
                 icon: Icon(
                   Icons.person_outline,
@@ -285,17 +278,17 @@ class _SignupPageState extends State<SignupPage> {
               textInputAction: TextInputAction.next,
               onChanged: (value) async {
                 setState(() {
-                  username = value;
-                  isCheckingName = true;
+                  _username = value;
+                  _isCheckingName = true;
                 });
 
                 final isWellFormatted =
-                    UsersActions.checkUsernameFormat(username);
+                    UsersActions.checkUsernameFormat(_username);
 
                 if (!isWellFormatted) {
                   setState(() {
-                    isCheckingName = false;
-                    nameErrorMessage = username.length < 3
+                    _isCheckingName = false;
+                    _nameErrorMessage = _username.length < 3
                         ? "input_minimum_char".tr()
                         : "input_valid_format".tr();
                   });
@@ -303,31 +296,31 @@ class _SignupPageState extends State<SignupPage> {
                   return;
                 }
 
-                if (nameTimer != null) {
-                  nameTimer.cancel();
-                  nameTimer = null;
+                if (_nameTimer != null) {
+                  _nameTimer.cancel();
+                  _nameTimer = null;
                 }
 
-                nameTimer = Timer(1.seconds, () async {
+                _nameTimer = Timer(1.seconds, () async {
                   final isAvailable =
-                      await UsersActions.checkUsernameAvailability(username);
+                      await UsersActions.checkUsernameAvailability(_username);
 
                   if (!isAvailable) {
                     setState(() {
-                      isCheckingName = false;
-                      nameErrorMessage = "name_unavailable".tr();
+                      _isCheckingName = false;
+                      _nameErrorMessage = "name_unavailable".tr();
                     });
 
                     return;
                   }
 
                   setState(() {
-                    isCheckingName = false;
-                    nameErrorMessage = '';
+                    _isCheckingName = false;
+                    _nameErrorMessage = '';
                   });
                 });
               },
-              onFieldSubmitted: (_) => passwordNode.requestFocus(),
+              onFieldSubmitted: (_) => _passwordNode.requestFocus(),
               validator: (value) {
                 if (value.isEmpty) {
                   return "name_empty_forbidden".tr();
@@ -348,7 +341,7 @@ class _SignupPageState extends State<SignupPage> {
         top: 8.0,
         left: 40.0,
       ),
-      child: Text(nameErrorMessage,
+      child: Text(_nameErrorMessage,
           style: TextStyle(
             color: Colors.red.shade300,
           )),
@@ -374,7 +367,7 @@ class _SignupPageState extends State<SignupPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             TextFormField(
-              focusNode: passwordNode,
+              focusNode: _passwordNode,
               textInputAction: TextInputAction.next,
               decoration: InputDecoration(
                 icon: Icon(Icons.lock_outline),
@@ -385,9 +378,9 @@ class _SignupPageState extends State<SignupPage> {
                 if (value.length == 0) {
                   return;
                 }
-                password = value;
+                _password = value;
               },
-              onFieldSubmitted: (_) => confirmPasswordNode.requestFocus(),
+              onFieldSubmitted: (_) => _confirmPasswordNode.requestFocus(),
               validator: (value) {
                 if (value.isEmpty) {
                   return "password_empty_forbidden".tr();
@@ -412,7 +405,7 @@ class _SignupPageState extends State<SignupPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             TextFormField(
-              focusNode: confirmPasswordNode,
+              focusNode: _confirmPasswordNode,
               decoration: InputDecoration(
                 icon: Icon(Icons.lock_outline),
                 labelText: "password_confirm".tr(),
@@ -422,7 +415,7 @@ class _SignupPageState extends State<SignupPage> {
                 if (value.length == 0) {
                   return;
                 }
-                confirmPassword = value;
+                _confirmPassword = value;
               },
               onFieldSubmitted: (value) => signUpProcess(),
               validator: (value) {
@@ -430,7 +423,7 @@ class _SignupPageState extends State<SignupPage> {
                   return "password_confirm_empty_forbidden".tr();
                 }
 
-                if (confirmPassword != password) {
+                if (_confirmPassword != _password) {
                   return "passwords_dont_match".tr();
                 }
 
@@ -517,11 +510,11 @@ class _SignupPageState extends State<SignupPage> {
       return;
     }
 
-    setState(() => isSigningUp = true);
+    setState(() => _isSigningUp = true);
 
     if (!await valuesAvailabilityCheck()) {
       setState(() {
-        isSigningUp = false;
+        _isSigningUp = false;
       });
 
       Snack.e(
@@ -533,20 +526,20 @@ class _SignupPageState extends State<SignupPage> {
     }
 
     // ?NOTE: Triming because of TAB key on Desktop insert blank spaces.
-    email = email.trim();
-    password = password.trim();
+    _email = _email.trim();
+    _password = _password.trim();
 
     try {
       final respCreateAcc = await UsersActions.createAccount(
-        email: email,
-        username: username,
-        password: password,
+        email: _email,
+        username: _username,
+        password: _password,
       );
 
       if (!respCreateAcc.success) {
         final exception = respCreateAcc.error;
 
-        setState(() => isSigningUp = false);
+        setState(() => _isSigningUp = false);
 
         Snack.e(
           context: context,
@@ -557,14 +550,11 @@ class _SignupPageState extends State<SignupPage> {
       }
 
       final userCred = await stateUser.signin(
-        email: email,
-        password: password,
+        email: _email,
+        password: _password,
       );
 
-      setState(() {
-        isSigningUp = false;
-        isCompleted = true;
-      });
+      setState(() => _isSigningUp = false);
 
       if (userCred == null) {
         Snack.e(
@@ -586,7 +576,7 @@ class _SignupPageState extends State<SignupPage> {
     } catch (error) {
       appLogger.e(error);
 
-      setState(() => isSigningUp = false);
+      setState(() => _isSigningUp = false);
 
       Snack.e(
         context: context,
@@ -596,13 +586,13 @@ class _SignupPageState extends State<SignupPage> {
   }
 
   Future<bool> valuesAvailabilityCheck() async {
-    final isEmailOk = await UsersActions.checkEmailAvailability(email);
-    final isNameOk = await UsersActions.checkUsernameAvailability(username);
+    final isEmailOk = await UsersActions.checkEmailAvailability(_email);
+    final isNameOk = await UsersActions.checkUsernameAvailability(_username);
     return isEmailOk && isNameOk;
   }
 
   bool inputValuesOk() {
-    if (password.isEmpty || confirmPassword.isEmpty) {
+    if (_password.isEmpty || _confirmPassword.isEmpty) {
       Snack.e(
         context: context,
         message: "password_empty_forbidden".tr(),
@@ -611,7 +601,7 @@ class _SignupPageState extends State<SignupPage> {
       return false;
     }
 
-    if (confirmPassword != password) {
+    if (_confirmPassword != _password) {
       Snack.e(
         context: context,
         message: "passwords_dont_match".tr(),
@@ -620,7 +610,7 @@ class _SignupPageState extends State<SignupPage> {
       return false;
     }
 
-    if (username.isEmpty) {
+    if (_username.isEmpty) {
       Snack.e(
         context: context,
         message: "name_empty_forbidden".tr(),
@@ -629,7 +619,7 @@ class _SignupPageState extends State<SignupPage> {
       return false;
     }
 
-    if (!UsersActions.checkEmailFormat(email)) {
+    if (!UsersActions.checkEmailFormat(_email)) {
       Snack.e(
         context: context,
         message: "email_not_valid".tr(),
@@ -638,10 +628,10 @@ class _SignupPageState extends State<SignupPage> {
       return false;
     }
 
-    if (!UsersActions.checkUsernameFormat(username)) {
+    if (!UsersActions.checkUsernameFormat(_username)) {
       Snack.e(
         context: context,
-        message: username.length < 3
+        message: _username.length < 3
             ? "input_minimum_char".tr()
             : "input_valid_format".tr(),
       );

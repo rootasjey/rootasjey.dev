@@ -14,13 +14,13 @@ class UserFirestore {
   String location;
   final String name;
   final String nameLowerCase;
+  final UserPP pp;
   final String pricing;
   final String role;
   final UserStats stats;
   String summary;
   final DateTime updatedAt;
   final Urls urls;
-  final UserPP pp;
 
   UserFirestore({
     this.createdAt,

@@ -248,7 +248,7 @@ class _EditImagePageState extends State<EditImagePage> {
   }
 
   void uploadPicture({Uint8List imageData}) async {
-    final user = FirebaseAuth.instance.currentUser;
+    final User user = FirebaseAuth.instance.currentUser;
 
     if (user == null) {
       throw Exception("You're not connected.");
@@ -256,12 +256,12 @@ class _EditImagePageState extends State<EditImagePage> {
 
     setState(() => _isUpdating = true);
 
-    final ext = stateUser.userFirestore.pp.ext;
+    final String ext = stateUser.userFirestore.pp.ext;
 
     try {
-      final imagePath = "images/users/${user.uid}/pp/edited.$ext";
+      final String imagePath = "images/users/${user.uid}/pp/edited.$ext";
 
-      final task = FirebaseStorage.instance.ref(imagePath).putData(
+      final UploadTask task = FirebaseStorage.instance.ref(imagePath).putData(
           imageData,
           SettableMetadata(
             contentType: mimeFromExtension(ext),
@@ -271,7 +271,7 @@ class _EditImagePageState extends State<EditImagePage> {
             },
           ));
 
-      final snapshot = await task;
+      final TaskSnapshot snapshot = await task;
       final String downloadUrl = await snapshot.ref.getDownloadURL();
 
       setState(() {
