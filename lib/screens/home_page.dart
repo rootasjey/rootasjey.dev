@@ -22,27 +22,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return newUI();
-  }
-
-  Widget floattingActionButton() {
-    if (!_isFabVisible) {
-      return Container();
-    }
-
-    return FloatingActionButton.extended(
-      onPressed: () {
-        _scrollController.animateTo(
-          0.0,
-          duration: 500.milliseconds,
-          curve: Curves.bounceIn,
-        );
-      },
-      label: Text("scroll_to_top".tr()),
-    );
-  }
-
-  Widget newUI() {
     return Scaffold(
       floatingActionButton: floattingActionButton(),
       body: NotificationListener<ScrollNotification>(
@@ -66,6 +45,23 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget floattingActionButton() {
+    if (!_isFabVisible) {
+      return Container();
+    }
+
+    return FloatingActionButton.extended(
+      onPressed: () {
+        _scrollController.animateTo(
+          0.0,
+          duration: 500.milliseconds,
+          curve: Curves.bounceIn,
+        );
+      },
+      label: Text("scroll_to_top".tr()),
     );
   }
 
