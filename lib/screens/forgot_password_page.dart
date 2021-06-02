@@ -6,10 +6,11 @@ import 'package:rootasjey/actions/users.dart';
 import 'package:rootasjey/components/fade_in_x.dart';
 import 'package:rootasjey/components/fade_in_y.dart';
 import 'package:rootasjey/components/loading_animation.dart';
+import 'package:rootasjey/components/main_app_bar.dart';
 import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/state/colors.dart';
+import 'package:rootasjey/utils/app_logger.dart';
 import 'package:rootasjey/utils/snack.dart';
-import 'package:rootasjey/components/home_app_bar.dart';
 import 'package:supercharged/supercharged.dart';
 import 'package:unicons/unicons.dart';
 
@@ -31,10 +32,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     return Scaffold(
       body: CustomScrollView(
         slivers: <Widget>[
-          HomeAppBar(
-            title: Text("account_recover".tr()),
-            automaticallyImplyLeading: true,
-          ),
+          MainAppBar(),
           SliverList(
             delegate: SliverChildListDelegate.fixed([
               Column(
@@ -252,7 +250,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 Text("link_send".tr().toUpperCase()),
                 Padding(
                   padding: const EdgeInsets.only(left: 20.0),
-                  child: Icon(Icons.send),
+                  child: Icon(UniconsLine.envelope),
                 )
               ],
             ),
@@ -301,7 +299,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         isCompleted = true;
       });
     } catch (error) {
-      debugPrint(error.toString());
+      appLogger.e(error);
 
       setState(() {
         isLoading = false;
