@@ -18,6 +18,7 @@ import 'package:rootasjey/utils/search.dart';
 import 'package:rootasjey/utils/snack.dart';
 import 'package:share/share.dart';
 import 'package:supercharged/supercharged.dart';
+import 'package:unicons/unicons.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SearchPage extends StatefulWidget {
@@ -74,7 +75,7 @@ class _SearchPageState extends State<SearchPage> {
               },
               backgroundColor: stateColors.primary,
               foregroundColor: Colors.white,
-              child: Icon(Icons.arrow_upward),
+              child: Icon(UniconsLine.arrow_up),
             )
           : null,
       body: body(),
@@ -261,7 +262,7 @@ class _SearchPageState extends State<SearchPage> {
               default:
             }
           },
-          icon: Icon(Icons.refresh),
+          icon: Icon(UniconsLine.refresh),
           label: Text("retry".tr()),
         ),
       ]),
@@ -278,7 +279,7 @@ class _SearchPageState extends State<SearchPage> {
 
           setState(() {});
         },
-        icon: Opacity(opacity: 0.6, child: Icon(Icons.clear)),
+        icon: Opacity(opacity: 0.6, child: Icon(UniconsLine.times)),
         label: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Opacity(
@@ -344,7 +345,7 @@ class _SearchPageState extends State<SearchPage> {
               fontSize: 36.0,
             ),
             decoration: InputDecoration(
-              icon: Icon(Icons.search),
+              icon: Icon(UniconsLine.search),
               hintText: "search_hint_text".tr(),
               border: OutlineInputBorder(borderSide: BorderSide.none),
             ),
