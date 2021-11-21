@@ -32,26 +32,42 @@ class _MarkdownViewerState extends State<MarkdownViewer> {
       key: widget.key,
       data: widget.data,
       customRender: {
-        'a': (context, child, attributes, element) {
+        'a': (RenderContext context, Widget child) {
+          final element = context.tree.element;
+          final attributes = context.tree.element.attributes;
+
           return TextLink(
-            attributes: attributes,
+            attributes: {
+              'href': attributes['href'],
+            },
             element: element,
           );
         },
-        'code': (context, child, attributes, element) {
+        'code': (RenderContext context, Widget child) {
+          final element = context.tree.element;
+          final attributes = context.tree.element.attributes;
+
           if (attributes.isEmpty) {
             return codeInline(element);
           }
 
           return codeBlock(attributes, element);
         },
-        'img': (context, child, attributes, element) {
+        'img': (RenderContext context, Widget child) {
+          final element = context.tree.element;
+          final attributes = context.tree.element.attributes;
+
           return ImageViewer(
-            attributes: attributes,
+            attributes: {
+              'src': attributes['src'],
+              'alt': attributes['alt'],
+              'width': attributes['width'],
+              'height': attributes['height'],
+            },
             element: element,
           );
         },
-        'li': (context, child, attributes, element) {
+        'li': (RenderContext context, Widget child) {
           return Row(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -99,7 +115,7 @@ class _MarkdownViewerState extends State<MarkdownViewer> {
     );
   }
 
-  Widget codeBlock(Map<String, String> attributes, dom.Element element) {
+  Widget codeBlock(Map<Object, String> attributes, dom.Element element) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,

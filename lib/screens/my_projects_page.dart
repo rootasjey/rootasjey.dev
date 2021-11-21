@@ -17,8 +17,11 @@ class _MyProjectsPageState extends State<MyProjectsPage> {
         PublishedProjectsPageRoute(),
       ],
       appBarBuilder: (context, tabsRouter) {
-        return MainAppBar(
-          renderSliver: false,
+        return PreferredSize(
+          child: MainAppBar(
+            renderSliver: false,
+          ),
+          preferredSize: Size.fromHeight(200.0),
         );
       },
       builder: (context, child, animation) {

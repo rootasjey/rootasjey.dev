@@ -17,8 +17,11 @@ class _MyPostsPageState extends State<MyPostsPage> {
         PublishedPostsPageRoute(),
       ],
       appBarBuilder: (context, tabsRouter) {
-        return MainAppBar(
-          renderSliver: false,
+        return PreferredSize(
+          preferredSize: Size.fromHeight(60.0),
+          child: MainAppBar(
+            renderSliver: false,
+          ),
         );
       },
       builder: (context, child, animation) {

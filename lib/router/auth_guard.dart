@@ -14,7 +14,7 @@ class AuthGuard extends AutoRouteGuard {
       SigninPageRoute(onSigninResult: (isAuthenticated) {
         if (isAuthenticated) {
           router.replaceAll(
-            resolver.pendingRoutes.map((route) => route.toRoute()).toList(),
+            resolver.pendingRoutes.map((route) => route.toPageRouteInfo()),
           );
         }
       }),
