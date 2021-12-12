@@ -343,7 +343,7 @@ class _MainAppBarState extends State<MainAppBar> {
       floating: true,
       snap: true,
       pinned: true,
-      backgroundColor: stateColors.lightBackground,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       automaticallyImplyLeading: false,
       title: Padding(
         padding: padding,
@@ -388,12 +388,14 @@ class _MainAppBarState extends State<MainAppBar> {
       padding: const EdgeInsets.only(right: 8.0),
       child: UnderlinedButton(
         onTap: onPressed,
+        underlineColor:
+            Theme.of(context).textTheme.bodyText1.color.withOpacity(0.8),
         child: Opacity(
           opacity: 0.8,
           child: Text(
             text,
             style: FontsUtils.mainStyle(
-              color: stateColors.foreground,
+              color: Theme.of(context).textTheme.bodyText1.color,
               fontWeight: FontWeight.w600,
             ),
           ),
