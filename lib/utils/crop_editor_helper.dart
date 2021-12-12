@@ -5,7 +5,6 @@ import 'dart:ui';
 import 'package:flutter/foundation.dart';
 
 // ignore: implementation_imports
-import 'package:http/src/response.dart';
 import 'package:http_client_helper/http_client_helper.dart';
 
 // import 'package:isolate/load_balancer.dart';

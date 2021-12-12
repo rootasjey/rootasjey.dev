@@ -1,4 +1,3 @@
-import 'package:auto_route/annotations.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:rootasjey/router/auth_guard.dart';
 import 'package:rootasjey/router/no_auth_guard.dart';

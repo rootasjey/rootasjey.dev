@@ -7,7 +7,6 @@ import 'package:rootasjey/components/animated_app_icon.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:flash/flash.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:rootasjey/utils/fonts.dart';
 import 'package:unicons/unicons.dart';
 
