@@ -1,4 +1,4 @@
-import 'package:auto_route/auto_route.dart';
+import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:rootasjey/actions/users.dart';
@@ -6,7 +6,9 @@ import 'package:rootasjey/components/fade_in_x.dart';
 import 'package:rootasjey/components/fade_in_y.dart';
 import 'package:rootasjey/components/home_app_bar.dart';
 import 'package:rootasjey/components/loading_animation.dart';
-import 'package:rootasjey/router/app_router.gr.dart';
+import 'package:rootasjey/router/locations/forgot_password_location.dart';
+import 'package:rootasjey/router/locations/home_location.dart';
+import 'package:rootasjey/router/locations/signup_location.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/state/user.dart';
 import 'package:rootasjey/utils/app_logger.dart';
@@ -143,7 +145,9 @@ class _SigninPageState extends State<SigninPage> {
       delay: 100.milliseconds,
       beginY: 50.0,
       child: TextButton(
-        onPressed: () => context.router.push(ForgotPasswordPageRoute()),
+        onPressed: () => Beamer.of(context).beamToNamed(
+          ForgotPasswordLocation.route,
+        ),
         child: Opacity(
           opacity: 0.6,
           child: Row(
@@ -166,7 +170,7 @@ class _SigninPageState extends State<SigninPage> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        if (context.router.stack.length > 1)
+        if (Beamer.of(context).beamingHistory.isNotEmpty)
           FadeInX(
             beginX: 10.0,
             delay: 200.milliseconds,
@@ -175,7 +179,7 @@ class _SigninPageState extends State<SigninPage> {
                 right: 20.0,
               ),
               child: IconButton(
-                onPressed: () => context.router.pop(),
+                onPressed: () => Beamer.of(context).beamBack,
                 icon: Icon(Icons.arrow_back),
               ),
             ),
@@ -222,8 +226,8 @@ class _SigninPageState extends State<SigninPage> {
         padding: const EdgeInsets.only(top: 8.0),
         child: TextButton(
             onPressed: () {
-              context.router.navigate(
-                SignupPageRoute(onSignupResult: widget.onSigninResult),
+              Beamer.of(context).beamToNamed(
+                SignupLocation.route,
               );
             },
             child: Opacity(
@@ -388,7 +392,9 @@ class _SigninPageState extends State<SigninPage> {
         return;
       }
 
-      context.router.navigate(HomePageRoute());
+      Beamer.of(context).beamToNamed(
+        HomeLocation.route,
+      );
     } catch (error) {
       appLogger.d(error);
 

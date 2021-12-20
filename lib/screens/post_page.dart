@@ -1,4 +1,4 @@
-import 'package:auto_route/auto_route.dart';
+import 'package:beamer/beamer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -29,7 +29,7 @@ class PostPage extends StatefulWidget {
   @required
   final String postId;
 
-  PostPage({@PathParam() this.postId});
+  PostPage({this.postId});
 
   @override
   _PostPageState createState() => _PostPageState();
@@ -66,7 +66,6 @@ class _PostPageState extends State<PostPage> {
       _keyBindings.init(
         scrollController: _scrollController,
         pageHeight: 100.0,
-        router: context.router,
       );
     });
   }
@@ -85,7 +84,7 @@ class _PostPageState extends State<PostPage> {
       body: RawKeyboardListener(
         autofocus: true,
         focusNode: _focusNode,
-        onKey: _keyBindings.onKey,
+        onKey: (RawKeyEvent key) => _keyBindings.onKey(key, context),
         child: NotificationListener<ScrollNotification>(
           onNotification: onNotification,
           child: Scrollbar(
@@ -131,7 +130,7 @@ class _PostPageState extends State<PostPage> {
   Widget backButton() {
     return IconButton(
       tooltip: "back".tr(),
-      onPressed: context.router.pop,
+      onPressed: Beamer.of(context).beamBack,
       icon: Opacity(
         opacity: 0.6,
         child: Icon(UniconsLine.arrow_left),

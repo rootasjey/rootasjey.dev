@@ -1,7 +1,8 @@
-import 'package:auto_route/auto_route.dart';
+import 'package:beamer/beamer.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:rootasjey/router/app_router.gr.dart';
+import 'package:rootasjey/router/locations/dashboard_location.dart';
+import 'package:rootasjey/router/locations/search_location.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/state/user.dart';
 import 'package:unicons/unicons.dart';
@@ -33,7 +34,7 @@ class AvatarMenu extends StatelessWidget {
 
     return Padding(
       padding: padding,
-      child: PopupMenuButton<PageRouteInfo>(
+      child: PopupMenuButton<String>(
         icon: Material(
           elevation: 4.0,
           shape: CircleBorder(),
@@ -45,33 +46,24 @@ class AvatarMenu extends StatelessWidget {
             ),
           ),
         ),
-        onSelected: (route) {
-          if (route.routeName == SignOutRoute.name) {
+        onSelected: (uri) {
+          if (uri == 'signout') {
             stateUser.signOut(context: context);
             return;
           }
 
-          context.router.root.push(route);
+          Beamer.of(context).beamToNamed(uri);
         },
         itemBuilder: itemBuilder,
       ),
     );
   }
 
-  List<PopupMenuEntry<PageRouteInfo<dynamic>>> itemBuilder(
-      BuildContext context) {
+  List<PopupMenuEntry<String>> itemBuilder(BuildContext context) {
     return [
       if (isSmall) ...[
         PopupMenuItem(
-          value: DashboardPageRoute(
-            children: [
-              DashPostsRouter(
-                children: [
-                  NewPostPageRoute(),
-                ],
-              ),
-            ],
-          ),
+          value: DashboardLocationContent.newPostsRoute,
           child: ListTile(
             leading: Icon(UniconsLine.plus),
             title: Text(
@@ -83,11 +75,7 @@ class AvatarMenu extends StatelessWidget {
           ),
         ),
         PopupMenuItem(
-          value: DashboardPageRoute(children: [
-            DashProjectsRouter(children: [
-              NewProjectPageRoute(),
-            ]),
-          ]),
+          value: DashboardLocationContent.newProjectsRoute,
           child: ListTile(
             leading: Icon(UniconsLine.plus),
             title: Text(
@@ -99,7 +87,7 @@ class AvatarMenu extends StatelessWidget {
           ),
         ),
         PopupMenuItem(
-          value: SearchPageRoute(),
+          value: SearchLocation.route,
           child: ListTile(
             leading: Icon(UniconsLine.search),
             title: Text(
@@ -112,13 +100,7 @@ class AvatarMenu extends StatelessWidget {
         ),
       ],
       PopupMenuItem(
-        value: DashboardPageRoute(children: [
-          DashPostsRouter(
-            children: [
-              MyPostsPageRoute(),
-            ],
-          )
-        ]),
+        value: DashboardLocationContent.postsRoute,
         child: ListTile(
           leading: Icon(UniconsLine.newspaper),
           title: Text(
@@ -130,13 +112,7 @@ class AvatarMenu extends StatelessWidget {
         ),
       ),
       PopupMenuItem(
-        value: DashboardPageRoute(children: [
-          DashProjectsRouter(
-            children: [
-              MyProjectsPageRoute(),
-            ],
-          )
-        ]),
+        value: DashboardLocationContent.projectsRoute,
         child: ListTile(
           leading: Icon(UniconsLine.apps),
           title: Text(
@@ -148,7 +124,7 @@ class AvatarMenu extends StatelessWidget {
         ),
       ),
       PopupMenuItem(
-        value: DashboardPageRoute(children: [DashProfileRouter()]),
+        value: DashboardLocationContent.profileRoute,
         child: ListTile(
           leading: Icon(UniconsLine.user),
           title: Text(
@@ -160,7 +136,7 @@ class AvatarMenu extends StatelessWidget {
         ),
       ),
       PopupMenuItem(
-        value: SignOutRoute(),
+        value: 'signout',
         child: ListTile(
           leading: Icon(UniconsLine.sign_left),
           title: Text(

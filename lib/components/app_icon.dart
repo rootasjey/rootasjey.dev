@@ -1,6 +1,6 @@
-import 'package:rootasjey/router/app_router.gr.dart';
-import 'package:auto_route/auto_route.dart';
+import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
+import 'package:rootasjey/router/locations/home_location.dart';
 
 class AppIcon extends StatefulWidget {
   final Function onTap;
@@ -38,6 +38,6 @@ class _AppIconState extends State<AppIcon> {
   }
 
   void defaultOnTap() {
-    context.router.root.navigate(HomePageRoute());
+    Beamer.of(context, root: true).beamToNamed(HomeLocation.route);
   }
 }

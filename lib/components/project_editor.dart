@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:auto_route/auto_route.dart';
+import 'package:beamer/beamer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:expansion_tile_card/expansion_tile_card.dart';
@@ -14,7 +14,8 @@ import 'package:rootasjey/components/sheet_header.dart';
 import 'package:rootasjey/components/sliver_edge_padding.dart';
 import 'package:rootasjey/components/sliver_error_view.dart';
 import 'package:rootasjey/components/sliver_loading_view.dart';
-import 'package:rootasjey/router/app_router.gr.dart';
+import 'package:rootasjey/router/locations/dashboard_location.dart';
+import 'package:rootasjey/router/locations/projects_location.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/types/project.dart';
 import 'package:rootasjey/utils/app_logger.dart';
@@ -163,7 +164,7 @@ class _ProjectEditorState extends State<ProjectEditor> {
   }
 
   Widget backButton() {
-    if (context.router.root.stack.length < 1) {
+    if (Beamer.of(context).beamingHistory.isEmpty) {
       return Container(width: 0.0, height: 0.0);
     }
 
@@ -171,7 +172,7 @@ class _ProjectEditorState extends State<ProjectEditor> {
       padding: const EdgeInsets.only(right: 15.0),
       child: IconButton(
         tooltip: "back".tr(),
-        onPressed: context.router.pop,
+        onPressed: Beamer.of(context).beamBack,
         icon: Opacity(
           opacity: 0.6,
           child: Icon(UniconsLine.arrow_left),
@@ -242,11 +243,8 @@ class _ProjectEditorState extends State<ProjectEditor> {
             final success = await deleteProject();
 
             if (success) {
-              context.router.navigate(
-                DashboardPageRoute(
-                  children: [DashProjectsRouter()],
-                ),
-              );
+              Beamer.of(context)
+                  .beamToNamed(DashboardLocationContent.projectsRoute);
             }
           },
         );
@@ -389,7 +387,7 @@ class _ProjectEditorState extends State<ProjectEditor> {
         style: ElevatedButton.styleFrom(
           primary: Colors.black87,
         ),
-        onPressed: context.router.pop,
+        onPressed: Beamer.of(context).beamBack,
         child: Padding(
           padding: const EdgeInsets.symmetric(
             horizontal: 16.0,
@@ -1096,14 +1094,9 @@ class _ProjectEditorState extends State<ProjectEditor> {
     return IconButton(
       tooltip: "view_online".tr(),
       onPressed: () {
-        context.router.root.push(
-          ProjectsRouter(
-            children: [
-              ProjectPageRoute(
-                projectId: widget.projectId,
-              ),
-            ],
-          ),
+        Beamer.of(context).beamToNamed(
+          '$ProjectsLocation.route/:projectId',
+          data: {'projectId': widget.projectId},
         );
       },
       icon: Opacity(
@@ -1481,7 +1474,7 @@ class _ProjectEditorState extends State<ProjectEditor> {
                           onPressed: () {
                             _links[_linkName] = _linkValue;
                             updateUrls();
-                            context.router.pop();
+                            Beamer.of(context).beamBack();
                           },
                           icon: Icon(Icons.check),
                           label: Text("url_add".tr()),

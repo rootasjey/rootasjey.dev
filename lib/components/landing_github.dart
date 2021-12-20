@@ -1,4 +1,4 @@
-import 'package:auto_route/auto_route.dart';
+import 'package:beamer/beamer.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:github/github.dart';
@@ -6,7 +6,7 @@ import 'package:rootasjey/components/activity_row.dart';
 import 'package:rootasjey/components/arrow_divider.dart';
 import 'package:rootasjey/components/better_avatar.dart';
 import 'package:rootasjey/components/underlined_button.dart';
-import 'package:rootasjey/router/app_router.gr.dart';
+import 'package:rootasjey/router/locations/activities_location.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/utils/app_logger.dart';
 import 'package:rootasjey/utils/constants.dart';
@@ -188,7 +188,7 @@ class _LandingGitHubState extends State<LandingGitHub> {
   Widget viewMoreButton() {
     return OutlinedButton(
       onPressed: () {
-        context.router.push(ActivitiesPageRoute());
+        Beamer.of(context).beamToNamed(ActivitiesLocation.route);
       },
       child: Padding(
         padding: const EdgeInsets.all(8.0),

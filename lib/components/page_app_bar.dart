@@ -1,4 +1,4 @@
-import 'package:auto_route/auto_route.dart';
+import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -218,7 +218,7 @@ class _PageAppBarState extends State<PageAppBar> {
               child: IconButton(
                 color: stateColors.foreground,
                 icon: Icon(Icons.close),
-                onPressed: context.router.pop,
+                onPressed: Beamer.of(context).beamBack,
               ),
             ),
           ],
@@ -234,7 +234,7 @@ class _PageAppBarState extends State<PageAppBar> {
             Padding(
               padding: const EdgeInsets.only(right: 8.0),
               child: CircleButton(
-                onTap: context.router.pop,
+                onTap: Beamer.of(context).beamBack,
                 icon: Icon(
                   UniconsLine.arrow_left,
                   color: stateColors.foreground,
@@ -327,7 +327,7 @@ class _PageAppBarState extends State<PageAppBar> {
         children: [
           if (widget.showNavBackIcon)
             CircleButton(
-                onTap: context.router.pop,
+                onTap: Beamer.of(context).beamBack,
                 icon: Icon(Icons.arrow_back, color: stateColors.foreground)),
           AppIcon(
             padding: const EdgeInsets.symmetric(horizontal: 10.0),
@@ -371,7 +371,7 @@ class _PageAppBarState extends State<PageAppBar> {
               child: IconButton(
                 color: stateColors.foreground,
                 icon: Icon(UniconsLine.times),
-                onPressed: context.router.pop,
+                onPressed: Beamer.of(context).beamBack,
               ),
             ),
         ],

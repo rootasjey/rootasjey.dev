@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:rootasjey/types/user_pp.dart';
 import 'package:rootasjey/types/user_stats.dart';
 import 'package:rootasjey/utils/date_helper.dart';
-
 import 'urls.dart';
 
 class UserFirestore {

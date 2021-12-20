@@ -1,10 +1,20 @@
-import 'package:auto_route/auto_route.dart';
+import 'package:beamer/beamer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/app_icon.dart';
-import 'package:rootasjey/router/app_router.gr.dart';
+import 'package:rootasjey/router/locations/about_location.dart';
+import 'package:rootasjey/router/locations/activities_location.dart';
+import 'package:rootasjey/router/locations/contact_location.dart';
+import 'package:rootasjey/router/locations/dashboard_location.dart';
+import 'package:rootasjey/router/locations/home_location.dart';
+import 'package:rootasjey/router/locations/posts_location.dart';
+import 'package:rootasjey/router/locations/projects_location.dart';
+import 'package:rootasjey/router/locations/settings_location.dart';
+import 'package:rootasjey/router/locations/signin_location.dart';
+import 'package:rootasjey/router/locations/signup_location.dart';
+import 'package:rootasjey/router/locations/tos_location.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/state/user.dart';
 import 'package:rootasjey/utils/fonts.dart';
@@ -78,13 +88,13 @@ class _FooterState extends State<Footer> {
         textLink(
           label: "about_us".tr(),
           onPressed: () {
-            context.router.push(AboutPageRoute());
+            Beamer.of(context).beamToNamed(AboutLocation.route);
           },
         ),
         textLink(
           label: "contact_us".tr(),
           onPressed: () {
-            context.router.push(ContactPageRoute());
+            Beamer.of(context).beamToNamed(ContactLocation.route);
           },
         ),
         textLink(
@@ -105,19 +115,19 @@ class _FooterState extends State<Footer> {
         textLink(
           label: "posts".tr(),
           onPressed: () {
-            context.router.push(PostsPageRoute());
+            Beamer.of(context).beamToNamed(PostsLocation.route);
           },
         ),
         textLink(
           label: "projects".tr(),
           onPressed: () {
-            context.router.push(ProjectsPageRoute());
+            Beamer.of(context).beamToNamed(ProjectsLocation.route);
           },
         ),
         textLink(
           label: "activity".tr(),
           onPressed: () {
-            context.router.push(ActivitiesPageRoute());
+            Beamer.of(context).beamToNamed(ActivitiesLocation.route);
           },
         ),
       ],
@@ -183,7 +193,7 @@ class _FooterState extends State<Footer> {
     return textLink(
       label: "privacy".tr(),
       onPressed: () {
-        context.router.push(TosPageRoute());
+        Beamer.of(context).beamToNamed(TosLocation.route);
       },
     );
   }
@@ -247,7 +257,7 @@ class _FooterState extends State<Footer> {
       label: "tos".tr(),
       heroTag: "tos_hero",
       onPressed: () {
-        context.router.push(TosPageRoute());
+        Beamer.of(context).beamToNamed(TosLocation.route);
       },
     );
   }
@@ -260,29 +270,24 @@ class _FooterState extends State<Footer> {
         textLink(
             label: "signin".tr(),
             onPressed: () {
-              context.router.push(SigninPageRoute());
+              Beamer.of(context).beamToNamed(SigninLocation.route);
             }),
         textLink(
           label: "signup".tr(),
           onPressed: () {
-            context.router.push(SignupPageRoute());
+            Beamer.of(context).beamToNamed(SignupLocation.route);
           },
         ),
         textLink(
           label: "settings".tr(),
           onPressed: () {
             if (stateUser.isUserConnected) {
-              context.router.push(
-                DashboardPageRoute(
-                  children: [DashSettingsRoute()],
-                ),
-              );
+              Beamer.of(context)
+                  .beamToNamed(DashboardLocationContent.settingsRoute);
               return;
             }
 
-            context.router.push(
-              SettingsPageRoute(),
-            );
+            Beamer.of(context).beamToNamed(SettingsLocation.route);
           },
         ),
       ],
@@ -297,7 +302,7 @@ class _FooterState extends State<Footer> {
         curve: Curves.easeOut,
       );
     } else if (widget.autoNavToHome) {
-      context.router.push(HomePageRoute());
+      Beamer.of(context).beamToNamed(HomeLocation.route);
     }
 
     Snack.s(

@@ -1,4 +1,4 @@
-import 'package:auto_route/auto_route.dart';
+import 'package:beamer/beamer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +8,7 @@ import 'package:rootasjey/components/main_app_bar.dart';
 import 'package:rootasjey/components/min_post_card.dart';
 import 'package:rootasjey/components/page_title.dart';
 import 'package:rootasjey/components/sliver_empty_view.dart';
-import 'package:rootasjey/router/app_router.gr.dart';
+import 'package:rootasjey/router/locations/posts_location.dart';
 import 'package:rootasjey/types/post.dart';
 import 'package:rootasjey/utils/app_logger.dart';
 import 'package:rootasjey/utils/constants.dart';
@@ -97,14 +97,9 @@ class _PostsPageState extends State<PostsPage> {
           return PostCard(
             post: post,
             onTap: () {
-              context.router.push(
-                PostsRouter(
-                  children: [
-                    PostPageRoute(
-                      postId: post.id,
-                    ),
-                  ],
-                ),
+              Beamer.of(context).beamToNamed(
+                "${PostsLocation.route}/${post.id}",
+                data: {'postId': post.id},
               );
             },
           );
@@ -128,14 +123,9 @@ class _PostsPageState extends State<PostsPage> {
                   post: post,
                   width: 420.0,
                   onTap: () {
-                    context.router.push(
-                      PostsRouter(
-                        children: [
-                          PostPageRoute(
-                            postId: post.id,
-                          ),
-                        ],
-                      ),
+                    Beamer.of(context).beamToNamed(
+                      "${PostsLocation.route}/${post.id}",
+                      data: {'postId': post.id},
                     );
                   }),
               Divider(height: 40.0),

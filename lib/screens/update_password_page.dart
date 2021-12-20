@@ -1,11 +1,11 @@
-import 'package:auto_route/auto_route.dart';
+import 'package:beamer/beamer.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/animated_app_icon.dart';
 import 'package:rootasjey/components/fade_in_y.dart';
 import 'package:rootasjey/components/main_app_bar.dart';
-import 'package:rootasjey/router/app_router.gr.dart';
+import 'package:rootasjey/router/locations/signin_location.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/state/user.dart';
 import 'package:rootasjey/utils/app_storage.dart';
@@ -146,7 +146,7 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
                     child: Opacity(
                       opacity: 0.8,
                       child: IconButton(
-                        onPressed: context.router.pop,
+                        onPressed: Beamer.of(context).beamBack,
                         icon: Icon(UniconsLine.arrow_left),
                       ),
                     ),
@@ -386,7 +386,7 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
 
       if (userAuth == null) {
         setState(() => isUpdating = false);
-        context.router.navigate(SigninPageRoute());
+        Beamer.of(context).beamToNamed(SigninLocation.route);
         return;
       }
 

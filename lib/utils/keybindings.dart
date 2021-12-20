@@ -1,4 +1,4 @@
-import 'package:auto_route/auto_route.dart';
+import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:supercharged/supercharged.dart';
@@ -14,20 +14,15 @@ class KeyBindings {
   /// Page scroll controller to move up or down inside the widget.
   ScrollController _scrollController;
 
-  /// (Autoroute) router to navigate back on backspace.
-  StackRouter _router;
-
   /// Initialize fields with non-null values.
   /// Can be called in WidgetsBinding.instance.addPostFrameCallback(...)
   /// inside a widget initState(...).
   void init({
     @required ScrollController scrollController,
     @required double pageHeight,
-    @required StackRouter router,
   }) {
     _scrollController = scrollController;
     _pageHeight = pageHeight;
-    _router = router;
   }
 
   /// Return next down offset to scroll.
@@ -53,12 +48,11 @@ class KeyBindings {
   }
 
   /// Watch keys events & react to them with scroll movement or page navigations.
-  void onKey(RawKeyEvent keyEvent) {
+  void onKey(RawKeyEvent keyEvent, BuildContext context) {
     final String errorMessage = "Have you called the init() method beforehand?";
 
     assert(_scrollController != null, errorMessage);
     assert(_pageHeight != null, errorMessage);
-    assert(_router != null, errorMessage);
 
     // ?NOTE: Keys combinations must stay on top
     // or other matching key events will override it.
@@ -146,11 +140,11 @@ class KeyBindings {
 
     // backspace
     if (keyEvent.isKeyPressed(LogicalKeyboardKey.backspace)) {
-      if (_router.root.stack.length < 2) {
+      if (Beamer.of(context).beamingHistory.isEmpty) {
         return;
       }
 
-      _router.pop();
+      Beamer.of(context).beamBack();
       return;
     }
 

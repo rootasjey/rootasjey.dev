@@ -1,11 +1,15 @@
-import 'package:auto_route/auto_route.dart';
+import 'package:beamer/beamer.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/app_icon.dart';
 import 'package:rootasjey/components/avatar_menu.dart';
 import 'package:rootasjey/components/lang_popup_menu_button.dart';
 import 'package:rootasjey/components/underlined_button.dart';
-import 'package:rootasjey/router/app_router.gr.dart';
+import 'package:rootasjey/router/locations/dashboard_location.dart';
+import 'package:rootasjey/router/locations/posts_location.dart';
+import 'package:rootasjey/router/locations/projects_location.dart';
+import 'package:rootasjey/router/locations/search_location.dart';
+import 'package:rootasjey/router/locations/settings_location.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/state/user.dart';
 import 'package:rootasjey/utils/app_storage.dart';
@@ -56,35 +60,19 @@ class _MainAppBarState extends State<MainAppBar> {
         UniconsLine.plus,
         color: stateColors.foreground.withOpacity(0.6),
       ),
-      onSelected: (PageRouteInfo pageRouteInfo) {
-        context.router.root.push(pageRouteInfo);
+      onSelected: (String path) {
+        Beamer.of(context).beamToNamed(path);
       },
-      itemBuilder: (_) => <PopupMenuEntry<PageRouteInfo>>[
+      itemBuilder: (_) => <PopupMenuEntry<String>>[
         PopupMenuItem(
-          value: DashboardPageRoute(
-            children: [
-              DashPostsRouter(
-                children: [
-                  NewPostPageRoute(),
-                ],
-              ),
-            ],
-          ),
+          value: DashboardLocationContent.newPostsRoute,
           child: ListTile(
             leading: Icon(UniconsLine.newspaper),
             title: Text("post_new".tr()),
           ),
         ),
         PopupMenuItem(
-          value: DashboardPageRoute(
-            children: [
-              DashProjectsRouter(
-                children: [
-                  NewProjectPageRoute(),
-                ],
-              ),
-            ],
-          ),
+          value: DashboardLocationContent.newProjectsRoute,
           child: ListTile(
             leading: Icon(UniconsLine.apps),
             title: Text("project_new".tr()),
@@ -222,31 +210,28 @@ class _MainAppBarState extends State<MainAppBar> {
       crossAxisAlignment: WrapCrossAlignment.center,
       children: [
         sectionButton(
-          onPressed: () => context.router.root.push(ProjectsRouter()),
+          onPressed: () => DashboardLocationContent.projectsRoute,
           text: "projects".tr().toUpperCase(),
         ),
         sectionButton(
-          onPressed: () => context.router.root.push(PostsRouter()),
+          onPressed: () => DashboardLocationContent.postsRoute,
           text: "posts".tr().toUpperCase(),
         ),
         sectionButton(
           onPressed: () {
             if (stateUser.isUserConnected) {
-              context.router.root.push(
-                DashboardPageRoute(
-                  children: [DashSettingsRouter()],
-                ),
-              );
+              Beamer.of(context)
+                  .beamToNamed(DashboardLocationContent.settingsRoute);
               return;
             }
 
-            context.router.root.push(SettingsPageRoute());
+            Beamer.of(context).beamToNamed(SettingsLocation.route);
           },
           text: "settings".tr().toUpperCase(),
         ),
         IconButton(
           onPressed: () {
-            context.router.root.push(SearchPageRoute());
+            Beamer.of(context).beamToNamed(SearchLocation.route);
           },
           color: stateColors.foreground.withOpacity(0.8),
           icon: Icon(UniconsLine.search),
@@ -305,7 +290,7 @@ class _MainAppBarState extends State<MainAppBar> {
         IconButton(
           tooltip: "search".tr(),
           onPressed: () {
-            context.router.root.push(SearchPageRoute());
+            Beamer.of(context).beamToNamed(SearchLocation.route);
           },
           color: stateColors.foreground.withOpacity(0.8),
           icon: Icon(UniconsLine.search),
@@ -371,7 +356,7 @@ class _MainAppBarState extends State<MainAppBar> {
         child: IconButton(
           tooltip: "search".tr(),
           onPressed: () {
-            context.router.root.push(SearchPageRoute());
+            Beamer.of(context).beamToNamed(SearchLocation.route);
           },
           color: stateColors.foreground,
           icon: Icon(UniconsLine.search),
@@ -413,46 +398,42 @@ class _MainAppBarState extends State<MainAppBar> {
           fontSize: 18.0,
         ),
       ),
-      itemBuilder: (context) => <PopupMenuItem<PageRouteInfo>>[
+      itemBuilder: (context) => <PopupMenuItem<String>>[
         PopupMenuItem(
-          value: PostsRouter(),
+          value: PostsLocation.route,
           child: ListTile(
             leading: Icon(UniconsLine.newspaper),
             title: Text("posts".tr()),
           ),
         ),
         PopupMenuItem(
-          value: ProjectsRouter(),
+          value: ProjectsLocation.route,
           child: ListTile(
             leading: Icon(UniconsLine.apps),
             title: Text("projects".tr()),
           ),
         ),
         PopupMenuItem(
-          value: SettingsPageRoute(),
+          value: SettingsLocation.route,
           child: ListTile(
             leading: Icon(UniconsLine.setting),
             title: Text("settings".tr()),
           ),
         ),
       ],
-      onSelected: (PageRouteInfo pageRouteInfo) {
-        if (pageRouteInfo.path != SettingsPageRoute().path) {
-          context.router.root.push(pageRouteInfo);
+      onSelected: (String uri) {
+        if (uri != SettingsLocation.route) {
+          Beamer.of(context).beamToNamed(uri);
           return;
         }
 
         if (stateUser.isUserConnected) {
-          context.router.root.push(
-            DashboardPageRoute(
-              children: [DashSettingsRouter()],
-            ),
-          );
-
+          Beamer.of(context)
+              .beamToNamed(DashboardLocationContent.settingsRoute);
           return;
         }
 
-        context.router.root.push(pageRouteInfo);
+        Beamer.of(context).beamToNamed(SettingsLocation.route);
       },
     );
   }

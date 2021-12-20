@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'package:beamer/beamer.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:file_picker_cross/file_picker_cross.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -8,6 +8,8 @@ import 'package:mime_type/mime_type.dart';
 import 'package:rootasjey/components/better_avatar.dart';
 import 'package:rootasjey/components/main_app_bar.dart';
 import 'package:rootasjey/components/page_title.dart';
+import 'package:rootasjey/router/locations/dashboard_location.dart';
+import 'package:rootasjey/router/navigation_state_helper.dart';
 import 'package:rootasjey/types/user_pp.dart';
 import 'package:rootasjey/types/user_pp_path.dart';
 import 'package:rootasjey/types/user_pp_url.dart';
@@ -15,7 +17,6 @@ import 'package:rootasjey/utils/app_logger.dart';
 import 'package:rootasjey/utils/cloud.dart';
 import 'package:rootasjey/utils/constants.dart';
 import 'package:rootasjey/utils/snack.dart';
-import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -23,7 +24,6 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rootasjey/components/fade_in_x.dart';
 import 'package:rootasjey/components/fade_in_y.dart';
-import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/state/user.dart';
 import 'package:rootasjey/utils/app_storage.dart';
@@ -38,7 +38,7 @@ class SettingsPage extends StatefulWidget {
 
   const SettingsPage({
     Key key,
-    @PathParam() this.showAppBar = true,
+    this.showAppBar = true,
   }) : super(key: key);
 
   @override
@@ -184,20 +184,15 @@ class _SettingsPageState extends State<SettingsPage> {
                     return;
                   }
 
-                  context.router.root.push(
-                    DashboardPageRoute(children: [
-                      DashProfileRouter(
-                        children: [
-                          EditImagePageRoute(
-                            image: ExtendedNetworkImageProvider(
-                              stateUser.userFirestore.pp.url.original,
-                              cache: true,
-                              cacheRawData: true,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ]),
+                  NavigationStateHelper.imageToEdit =
+                      ExtendedNetworkImageProvider(
+                    stateUser.userFirestore.pp.url.original,
+                    cache: true,
+                    cacheRawData: true,
+                  );
+
+                  Beamer.of(context).beamToNamed(
+                    DashboardLocationContent.editProfilePictureRoute,
                   );
                 },
               ),
@@ -250,8 +245,8 @@ class _SettingsPageState extends State<SettingsPage> {
           child: Card(
             elevation: 4.0,
             child: InkWell(
-              onTap: () => context.router.push(
-                DeleteAccountPageRoute(),
+              onTap: () => Beamer.of(context).beamToNamed(
+                DashboardLocationContent.deleteAccountRoute,
               ),
               child: Padding(
                 padding: const EdgeInsets.all(15.0),
@@ -293,10 +288,8 @@ class _SettingsPageState extends State<SettingsPage> {
   Widget emailButton() {
     return TextButton(
       onPressed: () async {
-        context.router.push(
-          DashAccountUpdateRouter(
-            children: [UpdateEmailPageRoute()],
-          ),
+        Beamer.of(context).beamToNamed(
+          DashboardLocationContent.updateEmailRoute,
         );
       },
       style: TextButton.styleFrom(
@@ -377,10 +370,8 @@ class _SettingsPageState extends State<SettingsPage> {
   Widget updateUsernameButton(bool isUserConnected) {
     return TextButton(
       onPressed: () {
-        context.router.push(
-          DashAccountUpdateRouter(
-            children: [UpdateUsernamePageRoute()],
-          ),
+        Beamer.of(context).beamToNamed(
+          DashboardLocationContent.updateUsernameRoute,
         );
       },
       style: TextButton.styleFrom(
@@ -616,10 +607,8 @@ class _SettingsPageState extends State<SettingsPage> {
             elevation: 4.0,
             child: InkWell(
               onTap: () {
-                context.router.push(
-                  DashAccountUpdateRouter(
-                    children: [UpdatePasswordPageRoute()],
-                  ),
+                Beamer.of(context).beamToNamed(
+                  DashboardLocationContent.updatePasswordRoute,
                 );
               },
               child: Padding(

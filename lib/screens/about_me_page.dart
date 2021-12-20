@@ -1,4 +1,4 @@
-import 'package:auto_route/auto_route.dart';
+import 'package:beamer/beamer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -213,7 +213,7 @@ class _AboutMePageState extends State<AboutMePage> {
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
             child: IconButton(
-              onPressed: context.router.pop,
+              onPressed: Beamer.of(context).beamBack,
               icon: Icon(UniconsLine.arrow_left),
             ),
           ),
@@ -570,7 +570,7 @@ class _AboutMePageState extends State<AboutMePage> {
                 return SimpleDialog(
                   children: [
                     InkWell(
-                      onTap: context.router.pop,
+                      onTap: Beamer.of(context).beamBack,
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Image.asset(

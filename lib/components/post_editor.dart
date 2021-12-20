@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:auto_route/auto_route.dart';
+import 'package:beamer/beamer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -11,7 +11,8 @@ import 'package:rootasjey/components/pub_popup_menu_button.dart';
 import 'package:rootasjey/components/sliver_edge_padding.dart';
 import 'package:rootasjey/components/sliver_error_view.dart';
 import 'package:rootasjey/components/sliver_loading_view.dart';
-import 'package:rootasjey/router/app_router.gr.dart';
+import 'package:rootasjey/router/locations/dashboard_location.dart';
+import 'package:rootasjey/router/locations/posts_location.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/types/post.dart';
 import 'package:rootasjey/utils/app_logger.dart';
@@ -113,7 +114,7 @@ class _PostEditorState extends State<PostEditor> {
   }
 
   Widget backButton() {
-    if (context.router.root.stack.length < 1) {
+    if (Beamer.of(context).beamingHistory.isEmpty) {
       return Container(width: 0.0, height: 0.0);
     }
 
@@ -121,7 +122,7 @@ class _PostEditorState extends State<PostEditor> {
       padding: const EdgeInsets.only(right: 15.0),
       child: IconButton(
         tooltip: "back".tr(),
-        onPressed: context.router.pop,
+        onPressed: Beamer.of(context).beamBack,
         icon: Opacity(
           opacity: 0.6,
           child: Icon(UniconsLine.arrow_left),
@@ -196,11 +197,8 @@ class _PostEditorState extends State<PostEditor> {
             final success = await deletePost();
 
             if (success) {
-              context.router.navigate(
-                DashboardPageRoute(
-                  children: [DashPostsRouter()],
-                ),
-              );
+              Beamer.of(context)
+                  .beamToNamed(DashboardLocationContent.postsRoute);
             }
           },
         );
@@ -382,14 +380,9 @@ class _PostEditorState extends State<PostEditor> {
     return IconButton(
       tooltip: "view_online".tr(),
       onPressed: () {
-        context.router.root.push(
-          PostsRouter(
-            children: [
-              PostPageRoute(
-                postId: widget.postId,
-              ),
-            ],
-          ),
+        Beamer.of(context).beamToNamed(
+          '${PostsLocation.route}/${widget.postId}',
+          data: {'postId', widget.postId},
         );
       },
       icon: Opacity(

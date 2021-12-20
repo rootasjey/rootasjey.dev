@@ -1,13 +1,12 @@
 import 'package:adaptive_theme/adaptive_theme.dart';
+import 'package:beamer/beamer.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:global_configuration/global_configuration.dart';
-import 'package:rootasjey/router/app_router.gr.dart';
-import 'package:rootasjey/router/auth_guard.dart';
-import 'package:rootasjey/router/no_auth_guard.dart';
+import 'package:rootasjey/router/app_routes.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/state/user.dart';
 import 'package:rootasjey/utils/app_logger.dart';
@@ -123,12 +122,6 @@ class AppWithTheme extends StatefulWidget {
 }
 
 class _AppWithThemeState extends State<AppWithTheme> {
-  final appRouter = AppRouter(
-    // adminAuthGuard: AdminAuthGuard(),
-    authGuard: AuthGuard(),
-    noAuthGuard: NoAuthGuard(),
-  );
-
   @override
   initState() {
     super.initState();
@@ -152,8 +145,8 @@ class _AppWithThemeState extends State<AppWithTheme> {
       locale: context.locale,
       supportedLocales: context.supportedLocales,
       localizationsDelegates: context.localizationDelegates,
-      routerDelegate: appRouter.delegate(),
-      routeInformationParser: appRouter.defaultRouteParser(),
+      routerDelegate: appLocationBuilder,
+      routeInformationParser: BeamerParser(),
     );
   }
 }

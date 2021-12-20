@@ -1,16 +1,17 @@
-import 'package:auto_route/auto_route.dart';
+import 'package:beamer/beamer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:rootasjey/components/header_section.dart';
 import 'package:rootasjey/components/min_post_card.dart';
 import 'package:rootasjey/components/sliver_edge_padding.dart';
 import 'package:rootasjey/components/sliver_empty_view.dart';
-import 'package:rootasjey/router/app_router.gr.dart';
+import 'package:rootasjey/router/locations/dashboard_location.dart';
 import 'package:rootasjey/state/user.dart';
+import 'package:rootasjey/types/header_section_data.dart';
 import 'package:rootasjey/types/post.dart';
 import 'package:rootasjey/utils/app_logger.dart';
 import 'package:rootasjey/utils/flash_helper.dart';
-import 'package:rootasjey/utils/fonts.dart';
 import 'package:rootasjey/utils/snack.dart';
 import 'package:unicons/unicons.dart';
 
@@ -40,7 +41,7 @@ class _DraftPostsPageState extends State<DraftPostsPage> {
       onNotification: onNotification,
       child: CustomScrollView(
         slivers: [
-          header(context.tabsRouter),
+          header(),
           body(),
           SliverEdgePadding(),
         ],
@@ -113,7 +114,20 @@ class _DraftPostsPageState extends State<DraftPostsPage> {
     );
   }
 
-  Widget header(TabsRouter tabsRouter) {
+  Widget header() {
+    final String currentPath = Beamer.of(context).currentPages.last.name;
+
+    final List<HeaderSectionData> headerSectionData = [
+      HeaderSectionData(
+        titleValue: "drafts".tr(),
+        path: DashboardLocationContent.draftPostsRoute,
+      ),
+      HeaderSectionData(
+        titleValue: "published".tr(),
+        path: DashboardLocationContent.publishedPostsRoute,
+      ),
+    ];
+
     return SliverList(
       delegate: SliverChildListDelegate.fixed([
         Padding(
@@ -123,51 +137,22 @@ class _DraftPostsPageState extends State<DraftPostsPage> {
               Padding(
                 padding: const EdgeInsets.only(right: 0.0),
                 child: IconButton(
-                  onPressed: context.router.pop,
+                  onPressed: Beamer.of(context).beamBack,
                   icon: Icon(UniconsLine.arrow_left),
                 ),
               ),
-              headerSection(
-                textTitle: "drafts".tr(),
-                index: 0,
-                tabsRouter: tabsRouter,
-              ),
-              headerSection(
-                textTitle: "published".tr(),
-                index: 1,
-                tabsRouter: tabsRouter,
+              ...headerSectionData.map(
+                (data) => HeaderSection(
+                  titleValue: data.titleValue,
+                  onTap: _onTapHeaderSection,
+                  path: data.path,
+                  isSelected: data.path == currentPath,
+                ),
               ),
             ],
           ),
         ),
       ]),
-    );
-  }
-
-  Widget headerSection({
-    @required String textTitle,
-    @required int index,
-    @required TabsRouter tabsRouter,
-  }) {
-    final isSelected = index == tabsRouter.activeIndex;
-
-    return InkWell(
-      onTap: () => tabsRouter.setActiveIndex(index),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 8.0,
-        ),
-        child: Opacity(
-          opacity: isSelected ? 1.0 : 0.5,
-          child: Text(
-            textTitle,
-            style: FontsUtils.mainStyle(
-              fontSize: 40.0,
-              fontWeight: isSelected ? FontWeight.bold : FontWeight.w300,
-            ),
-          ),
-        ),
-      ),
     );
   }
 
@@ -325,10 +310,12 @@ class _DraftPostsPageState extends State<DraftPostsPage> {
   }
 
   void goToEditPostPage(Post post) async {
-    await context.router.push(
-      EditPostPageRoute(postId: post.id),
+    Beamer.of(context).beamToNamed(
+      "${DashboardLocationContent.editPostsRoute}/${post.id}",
+      data: {"postId": post.id},
     );
 
+    // TODO: check this fetch is correctly run on pop.
     fetch();
   }
 
@@ -365,5 +352,9 @@ class _DraftPostsPageState extends State<DraftPostsPage> {
         _posts.insert(index, removedPost);
       });
     }
+  }
+
+  void _onTapHeaderSection(String path) {
+    Beamer.of(context).beamToNamed(path);
   }
 }

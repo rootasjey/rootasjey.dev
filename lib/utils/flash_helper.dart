@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:collection';
 
-import 'package:auto_route/auto_route.dart';
+import 'package:beamer/beamer.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:rootasjey/components/animated_app_icon.dart';
 import 'package:rootasjey/state/colors.dart';
@@ -388,7 +388,7 @@ class FlashHelper {
         alignment: WrapAlignment.end,
         children: [
           OutlinedButton(
-            onPressed: context.router.pop,
+            onPressed: Beamer.of(context).beamBack,
             style: OutlinedButton.styleFrom(
               primary: stateColors.secondary,
             ),
@@ -414,7 +414,7 @@ class FlashHelper {
               }
 
               _isLoading = false;
-              context.router.pop();
+              Beamer.of(context).beamBack();
             },
             style: ElevatedButton.styleFrom(
               primary: Colors.black87,

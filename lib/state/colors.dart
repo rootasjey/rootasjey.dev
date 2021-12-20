@@ -27,6 +27,21 @@ abstract class StateColorsBase with Store {
   final Color validation = Color(0xff38d589);
   final Color clairPink = Color(0xFFf5eaf9);
 
+  /// Color for statistics.
+  final Color activity = Colors.red;
+
+  /// Color for posts.
+  final Color posts = Colors.blue.shade700;
+
+  /// Color for projects.
+  final Color projects = Colors.amber;
+
+  /// Color for profile.
+  final Color profile = Colors.indigo;
+
+  /// Color for settings.
+  final Color settings = Colors.lime;
+
   ThemeData themeData;
 
   @action

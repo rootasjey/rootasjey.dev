@@ -1,14 +1,15 @@
 import 'dart:async';
 
-import 'package:auto_route/auto_route.dart';
+import 'package:beamer/beamer.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:rootasjey/router/app_router.gr.dart';
 import 'package:rootasjey/actions/users.dart';
 import 'package:rootasjey/components/fade_in_x.dart';
 import 'package:rootasjey/components/fade_in_y.dart';
 import 'package:rootasjey/components/home_app_bar.dart';
 import 'package:rootasjey/components/loading_animation.dart';
+import 'package:rootasjey/router/locations/home_location.dart';
+import 'package:rootasjey/router/locations/signin_location.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/state/user.dart';
 import 'package:rootasjey/utils/app_logger.dart';
@@ -184,7 +185,7 @@ class _SignupPageState extends State<SignupPage> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        if (context.router.stack.length > 1)
+        if (Beamer.of(context).beamingHistory.isNotEmpty)
           FadeInX(
             beginX: 10.0,
             delay: 100.milliseconds,
@@ -193,7 +194,7 @@ class _SignupPageState extends State<SignupPage> {
                 right: 20.0,
               ),
               child: IconButton(
-                onPressed: context.router.pop,
+                onPressed: Beamer.of(context).beamBack,
                 icon: Icon(UniconsLine.arrow_left),
               ),
             ),
@@ -490,7 +491,7 @@ class _SignupPageState extends State<SignupPage> {
       child: Padding(
         padding: const EdgeInsets.only(top: 8.0),
         child: ElevatedButton(
-          onPressed: () => context.router.navigate(SigninPageRoute()),
+          onPressed: () => Beamer.of(context).beamToNamed(SigninLocation.route),
           child: Opacity(
             opacity: 0.6,
             child: Text(
@@ -572,7 +573,7 @@ class _SignupPageState extends State<SignupPage> {
         return;
       }
 
-      context.router.navigate(HomePageRoute());
+      Beamer.of(context).beamToNamed(HomeLocation.route);
     } catch (error) {
       appLogger.e(error);
 

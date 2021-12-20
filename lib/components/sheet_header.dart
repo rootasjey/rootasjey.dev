@@ -1,4 +1,4 @@
-import 'package:auto_route/auto_route.dart';
+import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/circle_button.dart';
 import 'package:rootasjey/state/colors.dart';
@@ -26,7 +26,7 @@ class SheetHeader extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.only(right: 16.0),
           child: CircleButton(
-            onTap: context.router.pop,
+            onTap: Beamer.of(context).beamBack,
             tooltip: tooltip,
             icon: Icon(
               UniconsLine.times,

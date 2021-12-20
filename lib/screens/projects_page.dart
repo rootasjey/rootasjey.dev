@@ -1,4 +1,4 @@
-import 'package:auto_route/auto_route.dart';
+import 'package:beamer/beamer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +7,7 @@ import 'package:rootasjey/components/main_app_bar.dart';
 import 'package:rootasjey/components/page_title.dart';
 import 'package:rootasjey/components/project_card.dart';
 import 'package:rootasjey/components/sliver_empty_view.dart';
-import 'package:rootasjey/router/app_router.gr.dart';
+import 'package:rootasjey/router/locations/projects_location.dart';
 import 'package:rootasjey/types/project.dart';
 import 'package:rootasjey/utils/app_logger.dart';
 import 'package:rootasjey/utils/constants.dart';
@@ -117,8 +117,9 @@ class _ProjectsPageState extends State<ProjectsPage> {
           return ProjectCard(
             project: project,
             onTap: () {
-              context.router.push(
-                ProjectPageRoute(projectId: project.id),
+              Beamer.of(context).beamToNamed(
+                "${ProjectsLocation.route}/${project.id}",
+                data: {"projectId": project.id},
               );
             },
           );

@@ -1,4 +1,3 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -23,7 +22,7 @@ import 'package:url_launcher/url_launcher.dart';
 class ProjectPage extends StatefulWidget {
   final String projectId;
 
-  ProjectPage({@required @PathParam() this.projectId});
+  ProjectPage({@required this.projectId});
 
   @override
   _ProjectPageState createState() => _ProjectPageState();
@@ -54,7 +53,6 @@ class _ProjectPageState extends State<ProjectPage> {
       _keyBindings.init(
         scrollController: _scrollController,
         pageHeight: 100.0,
-        router: context.router,
       );
     });
   }
@@ -72,7 +70,7 @@ class _ProjectPageState extends State<ProjectPage> {
       body: RawKeyboardListener(
         autofocus: true,
         focusNode: _focusNode,
-        onKey: _keyBindings.onKey,
+        onKey: (RawKeyEvent key) => _keyBindings.onKey(key, context),
         child: NotificationListener<ScrollNotification>(
           onNotification: onNotification,
           child: Scrollbar(

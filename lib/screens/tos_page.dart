@@ -1,4 +1,4 @@
-import 'package:auto_route/auto_route.dart';
+import 'package:beamer/beamer.dart';
 import 'package:rootasjey/components/footer.dart';
 import 'package:rootasjey/components/main_app_bar.dart';
 import 'package:rootasjey/state/colors.dart';
@@ -67,7 +67,7 @@ class _TosPageState extends State<TosPage> {
   Widget backButton() {
     return IconButton(
       tooltip: "back".tr(),
-      onPressed: context.router.pop,
+      onPressed: Beamer.of(context).beamBack,
       icon: Icon(UniconsLine.arrow_left),
     );
   }

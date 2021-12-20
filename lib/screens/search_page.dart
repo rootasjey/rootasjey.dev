@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:auto_route/auto_route.dart';
+import 'package:beamer/beamer.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +8,9 @@ import 'package:flutter/services.dart';
 import 'package:rootasjey/components/home_app_bar.dart';
 import 'package:rootasjey/components/post_card.dart';
 import 'package:rootasjey/components/project_card.dart';
-import 'package:rootasjey/router/app_router.gr.dart';
+import 'package:rootasjey/router/locations/posts_location.dart';
+import 'package:rootasjey/router/locations/projects_location.dart';
+
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/types/post.dart';
 import 'package:rootasjey/types/project.dart';
@@ -163,9 +165,12 @@ class _SearchPageState extends State<SearchPage> {
       children: _postsSuggestions.map((post) {
         return PostCard(
           post: post,
-          onTap: () => context.router.push(
-            PostPageRoute(postId: post.id),
-          ),
+          onTap: () {
+            Beamer.of(context).beamToNamed(
+              "${PostsLocation.route}/${post.id}",
+              data: {"postId": post.id},
+            );
+          },
         );
       }).toList(),
     );
@@ -176,13 +181,12 @@ class _SearchPageState extends State<SearchPage> {
       children: _projectsSuggestions.map((project) {
         return ProjectCard(
           project: project,
-          onTap: () => context.router.push(
-            ProjectsRouter(children: [
-              ProjectPageRoute(
-                projectId: project.id,
-              ),
-            ]),
-          ),
+          onTap: () {
+            Beamer.of(context).beamToNamed(
+              "${ProjectsLocation.route}/${project.id}",
+              data: {"projectId": project.id},
+            );
+          },
         );
       }).toList(),
     );

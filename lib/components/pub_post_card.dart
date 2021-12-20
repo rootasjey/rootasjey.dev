@@ -1,7 +1,7 @@
-import 'package:auto_route/auto_route.dart';
+import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
-import 'package:rootasjey/router/app_router.gr.dart';
+import 'package:rootasjey/router/locations/posts_location.dart';
 import 'package:rootasjey/types/post_headline.dart';
 import 'package:rootasjey/utils/cloud.dart';
 
@@ -150,14 +150,11 @@ class _PubPostCardState extends State<PubPostCard> {
   }
 
   void navigateToPost() {
-    context.router.push(
-      PostsRouter(
-        children: [
-          PostPageRoute(
-            postId: widget.postHeadline.id,
-          ),
-        ],
-      ),
+    final String postId = widget.postHeadline.id;
+
+    Beamer.of(context).beamToNamed(
+      '$PostsLocation.route/$postId',
+      data: {'postId': postId},
     );
   }
 

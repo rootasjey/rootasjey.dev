@@ -1,10 +1,11 @@
-import 'package:auto_route/auto_route.dart';
+import 'package:beamer/beamer.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/footer.dart';
 import 'package:rootasjey/components/home_app_bar.dart';
 import 'package:rootasjey/components/page_title.dart';
-import 'package:rootasjey/router/app_router.gr.dart';
+import 'package:rootasjey/router/locations/pricing_location.dart';
+import 'package:rootasjey/router/locations/projects_location.dart';
 import 'package:rootasjey/utils/constants.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -227,7 +228,7 @@ class _AboutPageState extends State<AboutPage> {
               children: [
                 TextButton.icon(
                   onPressed: () {
-                    context.router.push(ProjectsRouter());
+                    Beamer.of(context).beamToNamed(ProjectsLocation.route);
                   },
                   icon: Icon(Icons.apps),
                   label: Text(
@@ -236,7 +237,7 @@ class _AboutPageState extends State<AboutPage> {
                 ),
                 TextButton.icon(
                   onPressed: () {
-                    context.router.push(PricingPageRoute());
+                    Beamer.of(context).beamToNamed(PricingLocation.route);
                   },
                   icon: Icon(Icons.work),
                   label: Text(

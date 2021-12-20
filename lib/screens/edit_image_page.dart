@@ -1,7 +1,7 @@
 import 'dart:collection';
 import 'dart:typed_data';
 
-import 'package:auto_route/auto_route.dart';
+import 'package:beamer/beamer.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:extended_image/extended_image.dart';
@@ -106,7 +106,7 @@ class _EditImagePageState extends State<EditImagePage> {
           bottom: 300.0,
         ),
         cancelTextString: "cancel".tr(),
-        onCancel: context.router.pop,
+        onCancel: Beamer.of(context).beamBack,
         onValidate: () {
           _cropImage(useNativeLib: false);
         },
@@ -166,7 +166,7 @@ class _EditImagePageState extends State<EditImagePage> {
                     child: Opacity(
                       opacity: 0.8,
                       child: IconButton(
-                        onPressed: context.router.pop,
+                        onPressed: Beamer.of(context).beamBack,
                         icon: Icon(UniconsLine.arrow_left),
                       ),
                     ),
@@ -309,7 +309,7 @@ class _EditImagePageState extends State<EditImagePage> {
       final Map<String, dynamic> data = Cloud.convertFromFun(hashMap);
 
       if (data != null) {
-        context.router.pop();
+        Beamer.of(context).beamBack();
       }
     } catch (error) {
       appLogger.e(error);

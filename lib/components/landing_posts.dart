@@ -1,10 +1,10 @@
-import 'package:auto_route/auto_route.dart';
+import 'package:beamer/beamer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/arrow_divider.dart';
 import 'package:rootasjey/components/post_card.dart';
 import 'package:rootasjey/components/min_post_card.dart';
-import 'package:rootasjey/router/app_router.gr.dart';
+import 'package:rootasjey/router/locations/posts_location.dart';
 import 'package:rootasjey/types/post.dart';
 import 'package:rootasjey/utils/app_logger.dart';
 import 'package:rootasjey/utils/constants.dart';
@@ -80,14 +80,9 @@ class _LandingPostsState extends State<LandingPosts> {
           return PostCard(
             post: post,
             onTap: () {
-              context.router.push(
-                PostsRouter(
-                  children: [
-                    PostPageRoute(
-                      postId: post.id,
-                    ),
-                  ],
-                ),
+              Beamer.of(context).beamToNamed(
+                '$PostsLocation.route/${post.id}',
+                data: {'postId': post.id},
               );
             },
           );
@@ -141,7 +136,7 @@ class _LandingPostsState extends State<LandingPosts> {
       padding: const EdgeInsets.only(top: 42.0),
       child: OutlinedButton(
         onPressed: () {
-          context.router.push(PostsRouter());
+          Beamer.of(context).beamToNamed(PostsLocation.route);
         },
         child: Padding(
           padding: const EdgeInsets.all(8.0),

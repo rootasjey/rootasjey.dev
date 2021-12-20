@@ -1,5 +1,4 @@
 import 'dart:collection';
-
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/better_avatar.dart';
 import 'package:rootasjey/types/user_firestore.dart';

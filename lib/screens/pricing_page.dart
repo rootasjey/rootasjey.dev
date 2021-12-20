@@ -1,10 +1,10 @@
-import 'package:auto_route/auto_route.dart';
+import 'package:beamer/beamer.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/features/web.dart';
 import 'package:rootasjey/components/footer.dart';
 import 'package:rootasjey/components/home_app_bar.dart';
-import 'package:rootasjey/router/app_router.gr.dart';
+import 'package:rootasjey/router/locations/enroll_location.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/utils/fonts.dart';
 import 'package:unicons/unicons.dart';
@@ -33,7 +33,7 @@ class _PricingPageState extends State<PricingPage> {
     return Scaffold(
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          context.router.push(EnrollPageRoute());
+          Beamer.of(context).beamToNamed(EnrollLocation.route);
         },
         backgroundColor: stateColors.primary,
         foregroundColor: Colors.white,
@@ -327,7 +327,7 @@ class _PricingPageState extends State<PricingPage> {
         Padding(
           padding: const EdgeInsets.only(right: 16.0),
           child: IconButton(
-            onPressed: context.router.pop,
+            onPressed: Beamer.of(context).beamBack,
             icon: Icon(UniconsLine.arrow_left),
           ),
         ),

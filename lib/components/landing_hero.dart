@@ -1,9 +1,10 @@
-import 'package:auto_route/auto_route.dart';
+import 'package:beamer/beamer.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:rootasjey/components/better_avatar.dart';
-import 'package:rootasjey/router/app_router.gr.dart';
+import 'package:rootasjey/router/locations/about_location.dart';
+import 'package:rootasjey/router/locations/cv_location.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/utils/constants.dart';
 import 'package:rootasjey/utils/fonts.dart';
@@ -229,7 +230,7 @@ class _LandingHeroState extends State<LandingHero> {
             'assets/images/jeje.jpg',
           ),
           onTap: () {
-            context.router.push(AboutMePageRoute());
+            Beamer.of(context).beamToNamed(AboutLocation.route);
           },
         ),
       ),
@@ -342,7 +343,7 @@ class _LandingHeroState extends State<LandingHero> {
           tooltip: "CV",
           color: stateColors.foreground.withOpacity(0.6),
           icon: Icon(UniconsLine.file_exclamation),
-          onPressed: () => context.router.push(CVPageRoute()),
+          onPressed: () => Beamer.of(context).beamToNamed(CVLocation.route),
         ),
       ],
     );

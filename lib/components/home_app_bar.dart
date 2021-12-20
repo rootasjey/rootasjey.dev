@@ -1,11 +1,14 @@
-import 'package:auto_route/auto_route.dart';
+import 'package:beamer/beamer.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:rootasjey/components/app_icon.dart';
 import 'package:rootasjey/components/avatar_menu.dart';
 import 'package:rootasjey/components/lang_popup_menu_button.dart';
-import 'package:rootasjey/router/app_router.gr.dart';
+import 'package:rootasjey/router/locations/dashboard_location.dart';
+import 'package:rootasjey/router/locations/search_location.dart';
+import 'package:rootasjey/router/locations/signin_location.dart';
+import 'package:rootasjey/router/locations/signup_location.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/state/user.dart';
 import 'package:rootasjey/utils/app_storage.dart';
@@ -44,7 +47,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
         return Observer(
           builder: (context) {
             final bool showNavBack = widget.automaticallyImplyLeading &&
-                context.router.root.stack.length > 1;
+                Beamer.of(context).beamingHistory.isEmpty;
 
             return SliverAppBar(
               floating: true,
@@ -66,7 +69,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
                             padding: const EdgeInsets.only(right: 16.0),
                             child: IconButton(
                               color: stateColors.foreground,
-                              onPressed: context.router.pop,
+                              onPressed: Beamer.of(context).beamBack,
                               icon: Icon(UniconsLine.arrow_left),
                             ),
                           ),
@@ -91,17 +94,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
   Widget addNewPostButton() {
     return ElevatedButton(
       onPressed: () {
-        context.router.root.push(
-          DashboardPageRoute(
-            children: [
-              DashPostsRouter(
-                children: [
-                  NewPostPageRoute(),
-                ],
-              ),
-            ],
-          ),
-        );
+        Beamer.of(context).beamToNamed(DashboardLocationContent.newPostsRoute);
       },
       style: ElevatedButton.styleFrom(
         primary: stateColors.primary,
@@ -318,7 +311,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
         opacity: 0.6,
         child: IconButton(
           onPressed: () {
-            context.router.root.push(SearchPageRoute());
+            Beamer.of(context).beamToNamed(SearchLocation.route);
           },
           tooltip: "search".tr(),
           color: stateColors.foreground,
@@ -339,32 +332,32 @@ class _HomeAppBarState extends State<HomeAppBar> {
   Widget userSigninMenu({bool showSearch = false}) {
     return PopupMenuButton(
       icon: Icon(UniconsLine.ellipsis_v, color: stateColors.foreground),
-      itemBuilder: (context) => <PopupMenuEntry<PageRouteInfo>>[
+      itemBuilder: (context) => <PopupMenuEntry<String>>[
         if (showSearch)
           PopupMenuItem(
-            value: SearchPageRoute(),
+            value: SearchLocation.route,
             child: ListTile(
               leading: Icon(UniconsLine.search),
               title: Text("search".tr()),
             ),
           ),
         PopupMenuItem(
-          value: SigninPageRoute(),
+          value: SigninLocation.route,
           child: ListTile(
             leading: Icon(UniconsLine.signout),
             title: Text("signin".tr()),
           ),
         ),
         PopupMenuItem(
-          value: SignupPageRoute(),
+          value: SignupLocation.route,
           child: ListTile(
             leading: Icon(UniconsLine.user_plus),
             title: Text("signup".tr()),
           ),
         ),
       ],
-      onSelected: (routeInfo) {
-        context.router.push(routeInfo);
+      onSelected: (String uri) {
+        Beamer.of(context).beamToNamed(uri);
       },
     );
   }

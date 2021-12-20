@@ -1,18 +1,18 @@
 import 'dart:async';
 
+import 'package:beamer/beamer.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:rootasjey/actions/users.dart';
 import 'package:rootasjey/components/animated_app_icon.dart';
 import 'package:rootasjey/components/fade_in_y.dart';
 import 'package:rootasjey/components/main_app_bar.dart';
 import 'package:rootasjey/components/sliver_edge_padding.dart';
-import 'package:rootasjey/router/app_router.gr.dart';
+import 'package:rootasjey/router/locations/signin_location.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/state/user.dart';
 import 'package:rootasjey/utils/app_logger.dart';
 import 'package:rootasjey/utils/fonts.dart';
 import 'package:rootasjey/utils/snack.dart';
-import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:supercharged/supercharged.dart';
@@ -108,7 +108,7 @@ class _UpdateUsernamePageState extends State<UpdateUsernamePage> {
                 ),
               ),
               OutlinedButton(
-                onPressed: context.router.pop,
+                onPressed: Beamer.of(context).beamBack,
                 child: Text("back".tr()),
               ),
             ],
@@ -134,7 +134,7 @@ class _UpdateUsernamePageState extends State<UpdateUsernamePage> {
                     child: Opacity(
                       opacity: 0.8,
                       child: IconButton(
-                        onPressed: context.router.pop,
+                        onPressed: Beamer.of(context).beamBack,
                         icon: Icon(UniconsLine.arrow_left),
                       ),
                     ),
@@ -491,7 +491,7 @@ class _UpdateUsernamePageState extends State<UpdateUsernamePage> {
           isUpdating = false;
         });
 
-        context.router.navigate(SigninPageRoute());
+        Beamer.of(context).beamToNamed(SigninLocation.route);
         return;
       }
 

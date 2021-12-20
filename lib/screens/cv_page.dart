@@ -1,13 +1,12 @@
 import 'dart:typed_data';
-
-import 'package:auto_route/auto_route.dart';
+import 'package:beamer/beamer.dart';
 import 'package:file_saver/file_saver.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:rootasjey/components/better_avatar.dart';
 import 'package:rootasjey/components/home_app_bar.dart';
-import 'package:rootasjey/router/app_router.gr.dart';
+import 'package:rootasjey/router/locations/home_location.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/types/exp.dart';
 import 'package:rootasjey/types/exp_date.dart';
@@ -174,7 +173,7 @@ class _CVPageState extends State<CVPage> {
           HomeAppBar(
             automaticallyImplyLeading: true,
             onTapIconHeader: () {
-              context.router.navigate(HomePageRoute());
+              Beamer.of(context).beamToNamed(HomeLocation.route);
             },
             trailing: [
               Observer(builder: (_) {
@@ -256,7 +255,7 @@ class _CVPageState extends State<CVPage> {
                 return SimpleDialog(
                   children: [
                     InkWell(
-                      onTap: context.router.pop,
+                      onTap: Beamer.of(context).beamBack,
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Image.asset(
