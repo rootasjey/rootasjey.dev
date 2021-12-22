@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:github/github.dart';
 import 'package:rootasjey/components/activity_row.dart';
 import 'package:rootasjey/components/arrow_divider.dart';
-import 'package:rootasjey/components/better_avatar.dart';
 import 'package:rootasjey/components/underlined_button.dart';
 import 'package:rootasjey/router/locations/activities_location.dart';
 import 'package:rootasjey/state/colors.dart';
@@ -137,13 +136,6 @@ class _LandingGitHubState extends State<LandingGitHub> {
           launch(Constants.githubProfileUrl);
         },
         underlineColor: stateColors.foreground.withOpacity(0.6),
-        leading: BetterAvatar(
-          size: 30.0,
-          elevation: 0.0,
-          image: AssetImage(
-            'assets/images/jeje.jpg',
-          ),
-        ),
         trailing: Icon(
           UniconsLine.arrow_right,
           color: stateColors.primary,

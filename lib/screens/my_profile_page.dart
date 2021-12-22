@@ -9,7 +9,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mime_type/mime_type.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
-import 'package:rootasjey/components/better_avatar.dart';
+import 'package:rootasjey/components/avatar/better_avatar.dart';
 import 'package:rootasjey/components/form_actions_inputs.dart';
 import 'package:rootasjey/components/main_app_bar.dart';
 import 'package:rootasjey/components/sheet_header.dart';

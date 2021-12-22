@@ -369,6 +369,34 @@ abstract class StateUserBase with Store {
       );
     }
   }
+
+  String getPPUrl() {
+    if (userFirestore == null) return '';
+
+    final editedURL = userFirestore.pp?.url?.edited;
+    if (editedURL != null) return editedURL;
+
+    final originalURL = userFirestore.pp?.url?.original;
+    if (originalURL != null) return originalURL;
+
+    return '';
+  }
+
+  String getInitialsUsername() {
+    final splittedUsernameArray = stateUser.username.split(' ');
+    if (splittedUsernameArray.isEmpty) return '';
+
+    String initials = splittedUsernameArray.length > 1
+        ? splittedUsernameArray
+            .reduce((value, element) => value + element.substring(1))
+        : splittedUsernameArray.first;
+
+    if (initials.isNotEmpty) {
+      initials = initials.substring(0, 1);
+    }
+
+    return initials;
+  }
 }
 
 final stateUser = StateUser();

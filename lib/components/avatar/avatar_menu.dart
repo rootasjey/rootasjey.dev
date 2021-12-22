@@ -1,9 +1,9 @@
 import 'package:beamer/beamer.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:rootasjey/components/avatar/adaptive_user_avatar.dart';
 import 'package:rootasjey/router/locations/dashboard_location.dart';
 import 'package:rootasjey/router/locations/search_location.dart';
-import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/state/user.dart';
 import 'package:unicons/unicons.dart';
 
@@ -19,32 +19,13 @@ class AvatarMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final arrStr = stateUser.username.split(' ');
-    String initials = '';
-
-    if (arrStr.length > 0) {
-      initials = arrStr.length > 1
-          ? arrStr.reduce((value, element) => value + element.substring(1))
-          : arrStr.first;
-
-      if (initials != null && initials.isNotEmpty) {
-        initials = initials.substring(0, 1);
-      }
-    }
-
     return Padding(
       padding: padding,
       child: PopupMenuButton<String>(
         icon: Material(
           elevation: 4.0,
           shape: CircleBorder(),
-          child: CircleAvatar(
-            backgroundColor: stateColors.lightBackground,
-            radius: 20.0,
-            backgroundImage: NetworkImage(
-              stateUser.userFirestore.pp.url.edited,
-            ),
-          ),
+          child: AdaptiveUserAvatar(),
         ),
         onSelected: (uri) {
           if (uri == 'signout') {

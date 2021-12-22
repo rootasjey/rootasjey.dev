@@ -5,7 +5,7 @@ import 'package:file_picker_cross/file_picker_cross.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:mime_type/mime_type.dart';
-import 'package:rootasjey/components/better_avatar.dart';
+import 'package:rootasjey/components/avatar/better_avatar.dart';
 import 'package:rootasjey/components/main_app_bar.dart';
 import 'package:rootasjey/components/page_title.dart';
 import 'package:rootasjey/router/locations/dashboard_location.dart';

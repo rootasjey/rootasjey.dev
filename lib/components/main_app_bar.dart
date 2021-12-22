@@ -2,7 +2,7 @@ import 'package:beamer/beamer.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/app_icon.dart';
-import 'package:rootasjey/components/avatar_menu.dart';
+import 'package:rootasjey/components/avatar/avatar_menu.dart';
 import 'package:rootasjey/components/lang_popup_menu_button.dart';
 import 'package:rootasjey/components/underlined_button.dart';
 import 'package:rootasjey/router/locations/dashboard_location.dart';

@@ -2,7 +2,7 @@ import 'package:beamer/beamer.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
-import 'package:rootasjey/components/better_avatar.dart';
+import 'package:rootasjey/components/avatar/better_avatar.dart';
 import 'package:rootasjey/router/locations/about_location.dart';
 import 'package:rootasjey/router/locations/cv_location.dart';
 import 'package:rootasjey/state/colors.dart';
@@ -228,6 +228,10 @@ class _LandingHeroState extends State<LandingHero> {
           elevation: 0.0,
           image: AssetImage(
             'assets/images/jeje.jpg',
+          ),
+          colorFilter: ColorFilter.mode(
+            Colors.grey,
+            BlendMode.saturation,
           ),
           onTap: () {
             Beamer.of(context).beamToNamed(AboutLocation.route);
