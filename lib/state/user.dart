@@ -113,6 +113,7 @@ abstract class StateUserBase with Store {
     try {
       if (_userAuth == null || _userAuth.uid == null) {
         setAllRightsToFalse();
+        return;
       }
 
       final userSnap = await FirebaseFirestore.instance
