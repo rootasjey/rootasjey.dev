@@ -179,7 +179,7 @@ class _SigninPageState extends State<SigninPage> {
                 right: 20.0,
               ),
               child: IconButton(
-                onPressed: () => Beamer.of(context).beamBack,
+                onPressed: Beamer.of(context).beamBack,
                 icon: Icon(Icons.arrow_back),
               ),
             ),

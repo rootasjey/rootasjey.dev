@@ -10,6 +10,8 @@ import 'package:rootasjey/router/locations/posts_location.dart';
 import 'package:rootasjey/router/locations/projects_location.dart';
 import 'package:rootasjey/router/locations/search_location.dart';
 import 'package:rootasjey/router/locations/settings_location.dart';
+import 'package:rootasjey/router/locations/signin_location.dart';
+import 'package:rootasjey/router/locations/signup_location.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/state/user.dart';
 import 'package:rootasjey/utils/app_storage.dart';
@@ -210,11 +212,15 @@ class _MainAppBarState extends State<MainAppBar> {
       crossAxisAlignment: WrapCrossAlignment.center,
       children: [
         sectionButton(
-          onPressed: () => DashboardLocationContent.projectsRoute,
+          onPressed: () => Beamer.of(context).beamToNamed(
+            ProjectsLocation.route,
+          ),
           text: "projects".tr().toUpperCase(),
         ),
         sectionButton(
-          onPressed: () => DashboardLocationContent.postsRoute,
+          onPressed: () => Beamer.of(context).beamToNamed(
+            PostsLocation.route,
+          ),
           text: "posts".tr().toUpperCase(),
         ),
         sectionButton(
@@ -249,16 +255,24 @@ class _MainAppBarState extends State<MainAppBar> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          TextButton(
-            onPressed: () {},
-            child: Text("Login"),
+          ElevatedButton(
+            onPressed: () => Beamer.of(context).beamToNamed(
+              SigninLocation.route,
+            ),
+            child: Text("signin".tr().toUpperCase()),
+            style: ElevatedButton.styleFrom(
+              primary: stateColors.primary,
+            ),
           ),
           TextButton(
-            onPressed: () {},
-            child: Text("Register"),
-            style: TextButton.styleFrom(
-              primary: Colors.white,
-              backgroundColor: Colors.deepPurple.shade900,
+            onPressed: () => Beamer.of(context).beamToNamed(
+              SignupLocation.route,
+            ),
+            child: Text(
+              "signup".tr().toUpperCase(),
+              style: TextStyle(
+                color: stateColors.primary,
+              ),
             ),
           ),
         ],

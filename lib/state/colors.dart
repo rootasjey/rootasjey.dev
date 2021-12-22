@@ -1,3 +1,4 @@
+import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:mobx/mobx.dart';
 
@@ -64,6 +65,13 @@ abstract class StateColorsBase with Store {
   @action
   void setSecondaryColor(Color color) {
     secondary = color;
+  }
+
+  Color getCurrentBackground(BuildContext context) {
+    final currentThemeMode = AdaptiveTheme.of(context).mode;
+    return currentThemeMode.isDark
+        ? stateColors.dark
+        : stateColors.lightBackground;
   }
 }
 

@@ -9,6 +9,7 @@ import 'package:rootasjey/components/landing_quote.dart';
 import 'package:rootasjey/components/landing_work_us.dart';
 import 'package:rootasjey/components/main_app_bar.dart';
 import 'package:rootasjey/components/footer.dart';
+import 'package:rootasjey/state/colors.dart';
 import 'package:supercharged/supercharged.dart';
 
 class HomePage extends StatefulWidget {
@@ -61,6 +62,8 @@ class _HomePageState extends State<HomePage> {
           curve: Curves.bounceIn,
         );
       },
+      foregroundColor: Colors.white,
+      backgroundColor: stateColors.secondary,
       label: Text("scroll_to_top".tr()),
     );
   }

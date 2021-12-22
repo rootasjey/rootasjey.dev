@@ -136,6 +136,7 @@ class _LandingGitHubState extends State<LandingGitHub> {
         onTap: () {
           launch(Constants.githubProfileUrl);
         },
+        underlineColor: stateColors.foreground.withOpacity(0.6),
         leading: BetterAvatar(
           size: 30.0,
           elevation: 0.0,
