@@ -247,7 +247,7 @@ class _MainAppBarState extends State<MainAppBar> {
     );
   }
 
-  Widget guestRow(bool isNarrow) {
+  Widget guestRow(bool isSmall) {
     return Container(
       padding: const EdgeInsets.only(
         top: 5.0,
@@ -256,6 +256,16 @@ class _MainAppBarState extends State<MainAppBar> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
+          Padding(
+            padding: const EdgeInsets.only(right: 16.0),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                brightnessButton(),
+                langButton(),
+              ],
+            ),
+          ),
           ElevatedButton(
             onPressed: () => Beamer.of(context).beamToNamed(
               SigninLocation.route,
