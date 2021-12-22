@@ -29,7 +29,7 @@ class LangPopupMenuButton extends StatelessWidget {
     return Padding(
       padding: margin,
       child: Material(
-        color: color,
+        color: color ?? Colors.transparent,
         elevation: elevation,
         borderRadius: BorderRadius.circular(4.0),
         child: Opacity(

@@ -283,7 +283,6 @@ class _MainAppBarState extends State<MainAppBar> {
 
   Widget langButton() {
     return LangPopupMenuButton(
-      color: stateColors.getCurrentBackground(context),
       onLangChanged: (newLang) async {
         await context.setLocale(Locale(newLang));
 
