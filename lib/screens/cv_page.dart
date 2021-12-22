@@ -5,8 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:rootasjey/components/better_avatar.dart';
-import 'package:rootasjey/components/home_app_bar.dart';
-import 'package:rootasjey/router/locations/home_location.dart';
+import 'package:rootasjey/components/main_app_bar.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/types/exp.dart';
 import 'package:rootasjey/types/exp_date.dart';
@@ -170,11 +169,7 @@ class _CVPageState extends State<CVPage> {
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          HomeAppBar(
-            automaticallyImplyLeading: true,
-            onTapIconHeader: () {
-              Beamer.of(context).beamToNamed(HomeLocation.route);
-            },
+          MainAppBar(
             trailing: [
               Observer(builder: (_) {
                 return IconButton(

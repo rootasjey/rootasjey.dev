@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:github/github.dart';
 import 'package:rootasjey/components/activity_row.dart';
 import 'package:rootasjey/components/footer.dart';
-import 'package:rootasjey/components/home_app_bar.dart';
+import 'package:rootasjey/components/main_app_bar.dart';
 import 'package:rootasjey/components/sliver_empty_view.dart';
 import 'package:rootasjey/utils/app_logger.dart';
 import 'package:rootasjey/utils/fonts.dart';
@@ -42,7 +42,7 @@ class _ActivitiesPageState extends State<ActivitiesPage> {
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          HomeAppBar(),
+          MainAppBar(),
           SliverLayoutBuilder(
             builder: (context, constraints) {
               final padding = constraints.crossAxisExtent < 700.0

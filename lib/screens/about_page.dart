@@ -2,7 +2,7 @@ import 'package:beamer/beamer.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/footer.dart';
-import 'package:rootasjey/components/home_app_bar.dart';
+import 'package:rootasjey/components/main_app_bar.dart';
 import 'package:rootasjey/components/page_title.dart';
 import 'package:rootasjey/router/locations/pricing_location.dart';
 import 'package:rootasjey/router/locations/projects_location.dart';
@@ -38,7 +38,7 @@ class _AboutPageState extends State<AboutPage> {
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          HomeAppBar(),
+          MainAppBar(),
           SliverLayoutBuilder(
             builder: (_, constraints) {
               final padding = constraints.crossAxisExtent < narrowWidthLimit

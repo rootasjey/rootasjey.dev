@@ -5,7 +5,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:rootasjey/components/home_app_bar.dart';
+import 'package:rootasjey/components/main_app_bar.dart';
 import 'package:rootasjey/components/post_card.dart';
 import 'package:rootasjey/components/project_card.dart';
 import 'package:rootasjey/router/locations/posts_location.dart';
@@ -103,19 +103,7 @@ class _SearchPageState extends State<SearchPage> {
       child: CustomScrollView(
         controller: _scrollController,
         slivers: <Widget>[
-          HomeAppBar(
-            title: Opacity(
-              opacity: 0.6,
-              child: Text(
-                "search".tr(),
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  color: stateColors.foreground,
-                ),
-              ),
-            ),
-            automaticallyImplyLeading: true,
-          ),
+          MainAppBar(),
           SliverPadding(
             padding: const EdgeInsets.symmetric(
               horizontal: 100.0,

@@ -5,7 +5,7 @@ import 'package:jiffy/jiffy.dart';
 import 'package:markdown/markdown.dart' as markdown;
 import 'package:rootasjey/components/author_header.dart';
 import 'package:rootasjey/components/dates_header.dart';
-import 'package:rootasjey/components/home_app_bar.dart';
+import 'package:rootasjey/components/main_app_bar.dart';
 import 'package:rootasjey/components/markdown_viewer.dart';
 import 'package:rootasjey/components/sliver_loading_view.dart';
 import 'package:rootasjey/state/colors.dart';
@@ -80,7 +80,7 @@ class _ProjectPageState extends State<ProjectPage> {
               child: CustomScrollView(
                 controller: _scrollController,
                 slivers: [
-                  appBar(),
+                  MainAppBar(),
                   body(),
                   SliverPadding(
                     padding: const EdgeInsets.only(
@@ -108,22 +108,6 @@ class _ProjectPageState extends State<ProjectPage> {
             links(),
             programmingLang(),
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget appBar() {
-    return HomeAppBar(
-      automaticallyImplyLeading: true,
-      title: Opacity(
-        opacity: 0.6,
-        child: Text(
-          _project != null ? _project.title : "project".tr(),
-          overflow: TextOverflow.ellipsis,
-          style: TextStyle(
-            color: stateColors.foreground,
-          ),
         ),
       ),
     );

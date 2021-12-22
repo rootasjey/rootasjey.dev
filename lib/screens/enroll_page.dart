@@ -7,9 +7,8 @@ import 'package:rootasjey/actions/users.dart';
 import 'package:rootasjey/components/features/additional_web.dart';
 import 'package:rootasjey/components/features/web.dart';
 import 'package:rootasjey/components/footer.dart';
-import 'package:rootasjey/components/home_app_bar.dart';
+import 'package:rootasjey/components/main_app_bar.dart';
 import 'package:rootasjey/components/outline_toggle_button.dart';
-import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/types/enums.dart';
 import 'package:rootasjey/utils/app_logger.dart';
 import 'package:rootasjey/utils/cloud.dart';
@@ -167,22 +166,7 @@ class _EnrollPageState extends State<EnrollPage> {
             ),
       body: CustomScrollView(
         slivers: [
-          HomeAppBar(
-            title: isCompleted
-                ? null
-                : Opacity(
-                    opacity: 0.6,
-                    child: Text(
-                      "cost_args".tr(args: [
-                        (mainCost + additionalCost).toString()
-                      ]).toUpperCase(),
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: stateColors.foreground,
-                      ),
-                    ),
-                  ),
-          ),
+          MainAppBar(),
           SliverLayoutBuilder(
             builder: (_, constraints) {
               final padding = constraints.crossAxisExtent < narrowWidthLimit
@@ -1530,6 +1514,18 @@ class _EnrollPageState extends State<EnrollPage> {
   }
 
   Widget pageTitle() {
+    // final costTextWidget = Opacity(
+    //   opacity: 0.6,
+    //   child: Text(
+    //     "cost_args"
+    //         .tr(args: [(mainCost + additionalCost).toString()]).toUpperCase(),
+    //     overflow: TextOverflow.ellipsis,
+    //     style: TextStyle(
+    //       color: stateColors.foreground,
+    //     ),
+    //   ),
+    // );
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

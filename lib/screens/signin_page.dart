@@ -4,8 +4,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:rootasjey/actions/users.dart';
 import 'package:rootasjey/components/fade_in_x.dart';
 import 'package:rootasjey/components/fade_in_y.dart';
-import 'package:rootasjey/components/home_app_bar.dart';
 import 'package:rootasjey/components/loading_animation.dart';
+import 'package:rootasjey/components/main_app_bar.dart';
 import 'package:rootasjey/router/locations/forgot_password_location.dart';
 import 'package:rootasjey/router/locations/home_location.dart';
 import 'package:rootasjey/router/locations/signup_location.dart';
@@ -52,9 +52,7 @@ class _SigninPageState extends State<SigninPage> {
     return Scaffold(
       body: CustomScrollView(
         slivers: <Widget>[
-          HomeAppBar(
-            automaticallyImplyLeading: true,
-          ),
+          MainAppBar(),
           SliverPadding(
             padding: const EdgeInsets.only(
               top: 100.0,

@@ -22,10 +22,12 @@ import 'package:unicons/unicons.dart';
 
 class MainAppBar extends StatefulWidget {
   final bool renderSliver;
+  final List<Widget> trailing;
 
   const MainAppBar({
     Key key,
     this.renderSliver = true,
+    this.trailing = const [],
   }) : super(key: key);
 
   @override
@@ -94,6 +96,9 @@ class _MainAppBarState extends State<MainAppBar> {
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           addButton(),
+          brightnessButton(),
+          if (!isSmall) langButton(),
+          ...widget.trailing,
           AvatarMenu(
             isSmall: isSmall,
             padding: const EdgeInsets.only(

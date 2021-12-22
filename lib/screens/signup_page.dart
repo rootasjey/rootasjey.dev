@@ -6,8 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:rootasjey/actions/users.dart';
 import 'package:rootasjey/components/fade_in_x.dart';
 import 'package:rootasjey/components/fade_in_y.dart';
-import 'package:rootasjey/components/home_app_bar.dart';
 import 'package:rootasjey/components/loading_animation.dart';
+import 'package:rootasjey/components/main_app_bar.dart';
 import 'package:rootasjey/router/locations/home_location.dart';
 import 'package:rootasjey/router/locations/signin_location.dart';
 import 'package:rootasjey/state/colors.dart';
@@ -59,9 +59,7 @@ class _SignupPageState extends State<SignupPage> {
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          HomeAppBar(
-            automaticallyImplyLeading: true,
-          ),
+          MainAppBar(),
           SliverPadding(
             padding: const EdgeInsets.only(
               top: 100.0,
