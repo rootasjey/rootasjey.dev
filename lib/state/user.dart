@@ -398,6 +398,21 @@ abstract class StateUserBase with Store {
 
     return initials;
   }
+
+  /// Automatically sign in the user
+  /// according to the last saved credentials.
+  Future<void> signInOnAppStart() async {
+    try {
+      final userCred = await signin();
+
+      if (userCred == null) {
+        signOut();
+      }
+    } catch (error) {
+      appLogger.e(error);
+      signOut();
+    }
+  }
 }
 
 final stateUser = StateUser();

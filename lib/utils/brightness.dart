@@ -4,6 +4,14 @@ import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/utils/app_storage.dart';
 
 class BrightnessUtils {
+  static AdaptiveThemeMode getSavedThemeMode() {
+    final brightness = getCurrentBrightness();
+
+    return brightness == Brightness.dark
+        ? AdaptiveThemeMode.dark
+        : AdaptiveThemeMode.light;
+  }
+
   /// Refresh current theme with auto brightness.
   static void setAutoBrightness(BuildContext context) {
     final now = DateTime.now();
@@ -37,7 +45,7 @@ class BrightnessUtils {
     appStorage.setBrightness(brightness);
   }
 
-  static Brightness getCurrent() {
+  static Brightness getCurrentBrightness() {
     final autoBrightness = appStorage.getAutoBrightness();
 
     if (!autoBrightness) {

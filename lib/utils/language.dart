@@ -67,4 +67,9 @@ class Language {
     stateUser.setLang(lang);
     appStorage.setLang(lang);
   }
+
+  static Future loadSavedLanguage() async {
+    final savedLang = appStorage.getLang();
+    stateUser.setLang(savedLang);
+  }
 }
