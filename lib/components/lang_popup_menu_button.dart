@@ -52,7 +52,7 @@ class LangPopupMenuButton extends StatelessWidget {
                 .map(
                   (value) => PopupMenuItem(
                     value: value,
-                    child: Text(value.toUpperCase()),
+                    child: Text(Language.frontend(value)),
                   ),
                 )
                 .toList(),

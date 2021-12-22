@@ -124,90 +124,86 @@ class _MainAppBarState extends State<MainAppBar> {
           : UniconsLine.bright;
     }
 
-    return Padding(
-      padding: const EdgeInsets.only(right: 20.0),
-      child: PopupMenuButton<String>(
-        icon: Icon(
-          iconBrightness,
-          color: stateColors.foreground.withOpacity(0.6),
-        ),
-        tooltip: "brightness".tr(),
-        onSelected: (value) {
-          if (value == 'auto') {
-            BrightnessUtils.setAutoBrightness(context);
-            return;
-          }
-
-          final brightness =
-              value == 'dark' ? Brightness.dark : Brightness.light;
-
-          BrightnessUtils.setBrightness(context, brightness);
-        },
-        itemBuilder: (context) {
-          final autoBrightness = appStorage.getAutoBrightness();
-          final brightness = autoBrightness ? null : appStorage.getBrightness();
-
-          final primary = stateColors.primary;
-          final basic = stateColors.foreground;
-
-          return [
-            PopupMenuItem(
-              value: 'auto',
-              child: ListTile(
-                leading: Icon(UniconsLine.brightness),
-                title: Text(
-                  "brightness_auto".tr(),
-                  style: TextStyle(
-                    color: autoBrightness ? primary : basic,
-                  ),
-                ),
-                trailing: autoBrightness
-                    ? Icon(
-                        UniconsLine.check,
-                        color: primary,
-                      )
-                    : null,
-              ),
-            ),
-            PopupMenuItem(
-              value: 'dark',
-              child: ListTile(
-                leading: Icon(UniconsLine.adjust_half),
-                title: Text(
-                  "dark".tr(),
-                  style: TextStyle(
-                    color: brightness == Brightness.dark ? primary : basic,
-                  ),
-                ),
-                trailing: brightness == Brightness.dark
-                    ? Icon(
-                        UniconsLine.check,
-                        color: primary,
-                      )
-                    : null,
-              ),
-            ),
-            PopupMenuItem(
-              value: 'light',
-              child: ListTile(
-                leading: Icon(UniconsLine.bright),
-                title: Text(
-                  "light".tr(),
-                  style: TextStyle(
-                    color: brightness == Brightness.light ? primary : basic,
-                  ),
-                ),
-                trailing: brightness == Brightness.light
-                    ? Icon(
-                        UniconsLine.check,
-                        color: primary,
-                      )
-                    : null,
-              ),
-            ),
-          ];
-        },
+    return PopupMenuButton<String>(
+      icon: Icon(
+        iconBrightness,
+        color: stateColors.foreground.withOpacity(0.6),
       ),
+      tooltip: "brightness".tr(),
+      onSelected: (value) {
+        if (value == 'auto') {
+          BrightnessUtils.setAutoBrightness(context);
+          return;
+        }
+
+        final brightness = value == 'dark' ? Brightness.dark : Brightness.light;
+
+        BrightnessUtils.setBrightness(context, brightness);
+      },
+      itemBuilder: (context) {
+        final autoBrightness = appStorage.getAutoBrightness();
+        final brightness = autoBrightness ? null : appStorage.getBrightness();
+
+        final primary = stateColors.primary;
+        final basic = stateColors.foreground;
+
+        return [
+          PopupMenuItem(
+            value: 'auto',
+            child: ListTile(
+              leading: Icon(UniconsLine.brightness),
+              title: Text(
+                "brightness_auto".tr(),
+                style: TextStyle(
+                  color: autoBrightness ? primary : basic,
+                ),
+              ),
+              trailing: autoBrightness
+                  ? Icon(
+                      UniconsLine.check,
+                      color: primary,
+                    )
+                  : null,
+            ),
+          ),
+          PopupMenuItem(
+            value: 'dark',
+            child: ListTile(
+              leading: Icon(UniconsLine.adjust_half),
+              title: Text(
+                "dark".tr(),
+                style: TextStyle(
+                  color: brightness == Brightness.dark ? primary : basic,
+                ),
+              ),
+              trailing: brightness == Brightness.dark
+                  ? Icon(
+                      UniconsLine.check,
+                      color: primary,
+                    )
+                  : null,
+            ),
+          ),
+          PopupMenuItem(
+            value: 'light',
+            child: ListTile(
+              leading: Icon(UniconsLine.bright),
+              title: Text(
+                "light".tr(),
+                style: TextStyle(
+                  color: brightness == Brightness.light ? primary : basic,
+                ),
+              ),
+              trailing: brightness == Brightness.light
+                  ? Icon(
+                      UniconsLine.check,
+                      color: primary,
+                    )
+                  : null,
+            ),
+          ),
+        ];
+      },
     );
   }
 
@@ -287,6 +283,7 @@ class _MainAppBarState extends State<MainAppBar> {
 
   Widget langButton() {
     return LangPopupMenuButton(
+      color: stateColors.getCurrentBackground(context),
       onLangChanged: (newLang) async {
         await context.setLocale(Locale(newLang));
 
