@@ -1,6 +1,4 @@
 import 'package:cloud_functions/cloud_functions.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:rootasjey/types/cloud_func_error.dart';
 import 'package:rootasjey/types/create_account_resp.dart';
 import 'package:rootasjey/utils/app_logger.dart';
@@ -9,12 +7,12 @@ import 'package:rootasjey/utils/cloud.dart';
 /// Network interface for user's actions.
 class UsersActions {
   /// Check email availability accross the app.
-  static Future<bool> checkEmailAvailability(String email) async {
+  static Future<bool?> checkEmailAvailability(String email) async {
     try {
       final resp = await Cloud.fun('users-checkEmailAvailability')
           .call({'email': email});
 
-      return resp.data['isAvailable'] as bool;
+      return resp.data['isAvailable'] as bool?;
     } on FirebaseFunctionsException catch (exception) {
       appLogger.e("[code: ${exception.code}] - ${exception.message}");
       return false;
@@ -26,9 +24,9 @@ class UsersActions {
 
   /// Create a new account.
   static Future<CreateAccountResp> createAccount({
-    @required String email,
-    @required String username,
-    @required String password,
+    required String email,
+    required String username,
+    required String password,
   }) async {
     try {
       final response = await Cloud.fun('users-createAccount').call({
@@ -66,11 +64,11 @@ class UsersActions {
   }
 
   /// Check username availability.
-  static Future<bool> checkUsernameAvailability(String username) async {
+  static Future<bool?> checkUsernameAvailability(String username) async {
     try {
       final resp = await Cloud.fun('users-checkUsernameAvailability')
           .call({'name': username});
-      return resp.data['isAvailable'] as bool;
+      return resp.data['isAvailable'] as bool?;
     } on FirebaseFunctionsException catch (exception) {
       appLogger.e("[code: ${exception.code}] - ${exception.message}");
       return false;

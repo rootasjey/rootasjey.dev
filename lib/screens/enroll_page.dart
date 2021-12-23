@@ -25,12 +25,12 @@ class EnrollPage extends StatefulWidget {
 class _EnrollPageState extends State<EnrollPage> {
   bool isCheckingDomain = false;
   bool isCompleted = false;
-  bool isDomainFree = false;
+  bool? isDomainFree = false;
   bool isLoading = false;
-  bool meetInPerson = false;
+  bool? meetInPerson = false;
 
-  DateTime selectedStartDate;
-  DateTime selectedEndDate;
+  DateTime? selectedStartDate;
+  DateTime? selectedEndDate;
 
   double mainCost = 0;
   double additionalCost = 0;
@@ -82,28 +82,28 @@ class _EnrollPageState extends State<EnrollPage> {
   String projectType = PROJECT_PORTFOLIO;
   String domainNameType = DOMAIN_NEW;
   String domainName = '';
-  String domainErrorText;
+  String? domainErrorText;
 
   String planningMode = PLANNING_START;
 
   String callingCode = '';
-  String callingCodeErrorMessage;
+  String? callingCodeErrorMessage;
   String country = '';
   String city = '';
-  String countryErrorMessage;
-  String cityErrorMessage;
+  String? countryErrorMessage;
+  String? cityErrorMessage;
   String paymentMethod = PAYMENT_ONETIME;
   String contactType = CONTACT_EMAIL;
   String email = '';
-  String emailErrorMessage;
+  String? emailErrorMessage;
   String phone = '';
-  String phoneErrorMessage;
+  String? phoneErrorMessage;
 
-  Timer domainCheckTimer;
+  Timer? domainCheckTimer;
 
-  VerbalExpression regexDomain;
-  VerbalExpression regexLocalPhone;
-  VerbalExpression regexCallingCode;
+  late VerbalExpression regexDomain;
+  late VerbalExpression regexLocalPhone;
+  late VerbalExpression regexCallingCode;
 
   final Map<String, String> projectHint = {
     PROJECT_PORTFOLIO: "hint_portfolio".tr(),
@@ -299,16 +299,16 @@ class _EnrollPageState extends State<EnrollPage> {
     ]));
   }
 
-  StepState computeStepState({
-    int stepIndex,
-    Function compute,
+  StepState? computeStepState({
+    int? stepIndex,
+    Function? compute,
   }) {
     if (currentStep == stepIndex) {
       return StepState.editing;
     }
 
     if (compute != null) {
-      StepState computed = compute();
+      StepState? computed = compute();
       return computed;
     }
 
@@ -329,7 +329,7 @@ class _EnrollPageState extends State<EnrollPage> {
           content: dynamicStepContent(num: 0),
           state: computeStepState(
             stepIndex: 0,
-          ),
+          )!,
         ),
         Step(
           isActive: currentStep == 1,
@@ -338,7 +338,7 @@ class _EnrollPageState extends State<EnrollPage> {
           content: dynamicStepContent(num: 1),
           state: computeStepState(
             stepIndex: 1,
-          ),
+          )!,
         ),
         Step(
           isActive: currentStep == 2,
@@ -347,7 +347,7 @@ class _EnrollPageState extends State<EnrollPage> {
           content: dynamicStepContent(num: 2),
           state: computeStepState(
             stepIndex: 2,
-          ),
+          )!,
         ),
         Step(
           isActive: currentStep == 3,
@@ -356,7 +356,7 @@ class _EnrollPageState extends State<EnrollPage> {
           content: dynamicStepContent(num: 3),
           state: computeStepState(
             stepIndex: 3,
-          ),
+          )!,
         ),
         Step(
           isActive: currentStep == 4,
@@ -365,7 +365,7 @@ class _EnrollPageState extends State<EnrollPage> {
           content: dynamicStepContent(num: 4),
           state: computeStepState(
             stepIndex: 4,
-          ),
+          )!,
         ),
         Step(
           isActive: currentStep == 5,
@@ -374,7 +374,7 @@ class _EnrollPageState extends State<EnrollPage> {
           content: dynamicStepContent(num: 5),
           state: computeStepState(
             stepIndex: 5,
-          ),
+          )!,
         ),
         Step(
           isActive: currentStep == 6,
@@ -383,7 +383,7 @@ class _EnrollPageState extends State<EnrollPage> {
           content: dynamicStepContent(num: 6),
           state: computeStepState(
             stepIndex: 6,
-          ),
+          )!,
         ),
         Step(
           isActive: currentStep == 7,
@@ -392,7 +392,7 @@ class _EnrollPageState extends State<EnrollPage> {
           content: dynamicStepContent(num: 7),
           state: computeStepState(
             stepIndex: 7,
-          ),
+          )!,
         ),
         Step(
           isActive: currentStep == 8,
@@ -401,7 +401,7 @@ class _EnrollPageState extends State<EnrollPage> {
           content: dynamicStepContent(num: 8),
           state: computeStepState(
             stepIndex: 8,
-          ),
+          )!,
         ),
         Step(
           isActive: currentStep == 9,
@@ -410,7 +410,7 @@ class _EnrollPageState extends State<EnrollPage> {
           content: dynamicStepContent(num: 9),
           state: computeStepState(
             stepIndex: 9,
-          ),
+          )!,
         ),
       ],
     );
@@ -420,7 +420,7 @@ class _EnrollPageState extends State<EnrollPage> {
     return stepper;
   }
 
-  Widget dynamicStepContent({@required num}) {
+  Widget dynamicStepContent({required num}) {
     if (currentStep != num) {
       return Padding(
         padding: EdgeInsets.zero,
@@ -502,7 +502,7 @@ class _EnrollPageState extends State<EnrollPage> {
               child: Opacity(
                 opacity: 0.6,
                 child: Text(
-                  afterProjectHint[afterProject],
+                  afterProjectHint[afterProject]!,
                   style: FontsUtils.mainStyle(
                     fontSize: 20.0,
                     fontWeight: FontWeight.w300,
@@ -716,7 +716,7 @@ class _EnrollPageState extends State<EnrollPage> {
   }
 
   Widget contactLocation() {
-    if (!meetInPerson) {
+    if (!meetInPerson!) {
       return Padding(padding: EdgeInsets.zero);
     }
 
@@ -1037,11 +1037,11 @@ class _EnrollPageState extends State<EnrollPage> {
     String textDate = "date_select".tr().toUpperCase();
 
     if (planningMode == PLANNING_START && selectedStartDate != null) {
-      textDate = selectedStartDate.toLocal().toString().split(' ')[0];
+      textDate = selectedStartDate!.toLocal().toString().split(' ')[0];
     }
 
     if (planningMode == PLANNING_END && selectedEndDate != null) {
-      textDate = selectedEndDate.toLocal().toString().split(' ')[0];
+      textDate = selectedEndDate!.toLocal().toString().split(' ')[0];
     }
 
     DateTime initialDate;
@@ -1133,7 +1133,7 @@ class _EnrollPageState extends State<EnrollPage> {
 
                 OutlineToggleButton(
                   child: Text("platforms_soon_availale".tr().toUpperCase()),
-                  // onTap: () => setState(() => projectType = 'WEB'),
+                  onPressed: () => setState(() => projectType = 'WEB'),
                   selected: platform == PLATFORM_MOBILE,
                 ),
 
@@ -1223,7 +1223,7 @@ class _EnrollPageState extends State<EnrollPage> {
               child: Opacity(
                 opacity: 0.6,
                 child: Text(
-                  projectHint[projectType],
+                  projectHint[projectType]!,
                   style: TextStyle(
                     fontSize: 20.0,
                     fontWeight: FontWeight.w300,
@@ -1343,13 +1343,13 @@ class _EnrollPageState extends State<EnrollPage> {
                       border: OutlineInputBorder(),
                       icon: Icon(Icons.search),
                       suffixIcon:
-                          isDomainFree ? Icon(Icons.check_circle) : null,
+                          isDomainFree! ? Icon(Icons.check_circle) : null,
                     ),
                     onChanged: (value) {
                       domainName = value;
 
                       if (domainCheckTimer != null) {
-                        domainCheckTimer.cancel();
+                        domainCheckTimer!.cancel();
                         domainCheckTimer = null;
                       }
 
@@ -1485,7 +1485,7 @@ class _EnrollPageState extends State<EnrollPage> {
               child: Opacity(
                 opacity: 0.6,
                 child: Text(
-                  sizeHint[audienceSize],
+                  sizeHint[audienceSize]!,
                   style: TextStyle(
                     fontSize: 24.0,
                     fontWeight: FontWeight.w300,
@@ -1613,9 +1613,9 @@ class _EnrollPageState extends State<EnrollPage> {
           await Cloud.fun('enroll-domainCheck').call({'domain': domainName});
 
       setState(() {
-        isDomainFree = resp.data['isFree'] as bool;
+        isDomainFree = resp.data['isFree'] as bool?;
 
-        domainErrorText = isDomainFree ? null : "domain_name_taken".tr();
+        domainErrorText = isDomainFree! ? null : "domain_name_taken".tr();
       });
 
       setState(() => isCheckingDomain = false);
@@ -1639,7 +1639,7 @@ class _EnrollPageState extends State<EnrollPage> {
       return false;
     }
 
-    if ((email == null || email.isEmpty) && (phone == null || phone.isEmpty)) {
+    if (email.isEmpty && phone.isEmpty) {
       Snack.e(
         context: context,
         message: "contact_please_fill".tr(),
@@ -1648,8 +1648,7 @@ class _EnrollPageState extends State<EnrollPage> {
       return false;
     }
 
-    if (meetInPerson &&
-        (country == null || country.isEmpty || city == null || city.isEmpty)) {
+    if (meetInPerson! && country.isEmpty || city.isEmpty) {
       Snack.e(
         context: context,
         message: "contry_please_fill".tr(),

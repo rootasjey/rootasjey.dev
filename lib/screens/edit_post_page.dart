@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:rootasjey/components/post_editor.dart';
 
 class EditPostPage extends StatefulWidget {
-  final String postId;
+  final String? postId;
 
-  EditPostPage({@required this.postId});
+  EditPostPage({required this.postId});
 
   @override
   _EditPostPageState createState() => _EditPostPageState();

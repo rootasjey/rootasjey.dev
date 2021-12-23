@@ -12,7 +12,7 @@ import 'package:rootasjey/utils/fonts.dart';
 import 'package:unicons/unicons.dart';
 
 class MainSectionMobile extends StatelessWidget {
-  const MainSectionMobile({Key key}) : super(key: key);
+  const MainSectionMobile({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

@@ -8,7 +8,7 @@ import 'package:rootasjey/router/locations/signup_location.dart';
 import 'package:rootasjey/state/colors.dart';
 
 class UserGuestSection extends StatelessWidget {
-  const UserGuestSection({Key key}) : super(key: key);
+  const UserGuestSection({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

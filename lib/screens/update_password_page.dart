@@ -118,7 +118,7 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
             onFieldSubmitted: (_) => newPasswordNode.requestFocus(),
             obscureText: true,
             validator: (value) {
-              if (value.isEmpty) {
+              if (value!.isEmpty) {
                 return "password_empty_forbidden".tr();
               }
 
@@ -302,7 +302,7 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
             },
             onFieldSubmitted: (value) => updatePassword(),
             validator: (value) {
-              if (value.isEmpty) {
+              if (value!.isEmpty) {
                 return "password_empty_forbidden".tr();
               }
 
@@ -391,14 +391,14 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
       }
 
       final credentials = EmailAuthProvider.credential(
-        email: userAuth.email,
+        email: userAuth.email!,
         password: password,
       );
 
       final authResult =
           await userAuth.reauthenticateWithCredential(credentials);
 
-      await authResult.user.updatePassword(newPassword);
+      await authResult.user!.updatePassword(newPassword);
       appStorage.setPassword(newPassword);
 
       setState(() {

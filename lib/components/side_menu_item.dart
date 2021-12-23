@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 /// It must also have a defined hover color and a route path.
 class SideMenuItem {
   const SideMenuItem({
-    @required this.iconData,
-    @required this.label,
-    @required this.hoverColor,
-    @required this.routePath,
+    required this.iconData,
+    required this.label,
+    required this.hoverColor,
+    required this.routePath,
   });
 
   /// Icon to use as leading.

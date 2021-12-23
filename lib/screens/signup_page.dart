@@ -19,9 +19,9 @@ import 'package:supercharged/supercharged.dart';
 import 'package:unicons/unicons.dart';
 
 class SignupPage extends StatefulWidget {
-  final void Function(bool isAuthenticated) onSignupResult;
+  final void Function(bool isAuthenticated)? onSignupResult;
 
-  const SignupPage({Key key, this.onSignupResult}) : super(key: key);
+  const SignupPage({Key? key, this.onSignupResult}) : super(key: key);
 
   @override
   _SignupPageState createState() => _SignupPageState();
@@ -43,8 +43,8 @@ class _SignupPageState extends State<SignupPage> {
   String _password = '';
   String _username = '';
 
-  Timer _emailTimer;
-  Timer _nameTimer;
+  Timer? _emailTimer;
+  Timer? _nameTimer;
 
   @override
   void dispose() {
@@ -129,13 +129,13 @@ class _SignupPageState extends State<SignupPage> {
             }
 
             if (_emailTimer != null) {
-              _emailTimer.cancel();
+              _emailTimer!.cancel();
               _emailTimer = null;
             }
 
             _emailTimer = Timer(1.seconds, () async {
               final isAvailable =
-                  await UsersActions.checkEmailAvailability(_email);
+                  await (UsersActions.checkEmailAvailability(_email) as FutureOr<bool>);
               if (!isAvailable) {
                 setState(() {
                   _isCheckingEmail = false;
@@ -153,7 +153,7 @@ class _SignupPageState extends State<SignupPage> {
           },
           onFieldSubmitted: (_) => _usernameNode.requestFocus(),
           validator: (value) {
-            if (value.isEmpty) {
+            if (value!.isEmpty) {
               return "email_empty_forbidden".tr();
             }
 
@@ -296,13 +296,13 @@ class _SignupPageState extends State<SignupPage> {
                 }
 
                 if (_nameTimer != null) {
-                  _nameTimer.cancel();
+                  _nameTimer!.cancel();
                   _nameTimer = null;
                 }
 
                 _nameTimer = Timer(1.seconds, () async {
                   final isAvailable =
-                      await UsersActions.checkUsernameAvailability(_username);
+                      await (UsersActions.checkUsernameAvailability(_username) as FutureOr<bool>);
 
                   if (!isAvailable) {
                     setState(() {
@@ -321,7 +321,7 @@ class _SignupPageState extends State<SignupPage> {
               },
               onFieldSubmitted: (_) => _passwordNode.requestFocus(),
               validator: (value) {
-                if (value.isEmpty) {
+                if (value!.isEmpty) {
                   return "name_empty_forbidden".tr();
                 }
 
@@ -381,7 +381,7 @@ class _SignupPageState extends State<SignupPage> {
               },
               onFieldSubmitted: (_) => _confirmPasswordNode.requestFocus(),
               validator: (value) {
-                if (value.isEmpty) {
+                if (value!.isEmpty) {
                   return "password_empty_forbidden".tr();
                 }
 
@@ -418,7 +418,7 @@ class _SignupPageState extends State<SignupPage> {
               },
               onFieldSubmitted: (value) => signUpProcess(),
               validator: (value) {
-                if (value.isEmpty) {
+                if (value!.isEmpty) {
                   return "password_confirm_empty_forbidden".tr();
                 }
 
@@ -536,7 +536,7 @@ class _SignupPageState extends State<SignupPage> {
       );
 
       if (!respCreateAcc.success) {
-        final exception = respCreateAcc.error;
+        final exception = respCreateAcc.error!;
 
         setState(() => _isSigningUp = false);
 
@@ -567,7 +567,7 @@ class _SignupPageState extends State<SignupPage> {
       // PushNotifications.linkAuthUser(respCreateAcc.user.id);
 
       if (widget.onSignupResult != null) {
-        widget.onSignupResult(true);
+        widget.onSignupResult!(true);
         return;
       }
 
@@ -585,9 +585,9 @@ class _SignupPageState extends State<SignupPage> {
   }
 
   Future<bool> valuesAvailabilityCheck() async {
-    final isEmailOk = await UsersActions.checkEmailAvailability(_email);
+    final isEmailOk = await (UsersActions.checkEmailAvailability(_email) as FutureOr<bool>);
     final isNameOk = await UsersActions.checkUsernameAvailability(_username);
-    return isEmailOk && isNameOk;
+    return isEmailOk && isNameOk!;
   }
 
   bool inputValuesOk() {

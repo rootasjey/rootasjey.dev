@@ -8,11 +8,11 @@ class HeaderSection extends StatelessWidget {
   final String path;
 
   const HeaderSection({
-    Key key,
+    Key? key,
     this.isSelected = false,
-    @required this.titleValue,
-    @required this.onTap,
-    @required this.path,
+    required this.titleValue,
+    required this.onTap,
+    required this.path,
   }) : super(key: key);
 
   @override

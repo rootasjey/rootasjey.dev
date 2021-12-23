@@ -18,10 +18,10 @@ part 'user.g.dart';
 class StateUser = StateUserBase with _$StateUser;
 
 abstract class StateUserBase with Store {
-  User _userAuth;
+  User? _userAuth;
 
   @observable
-  UserFirestore userFirestore;
+  UserFirestore? userFirestore;
 
   @observable
   String avatarUrl = '';
@@ -42,7 +42,7 @@ abstract class StateUserBase with Store {
   bool isUserConnected = false;
 
   @observable
-  String username = '';
+  String? username = '';
 
   /// Used to sync fav. status between views,
   /// e.g. re-fetch on nav. back from quote page -> quotes list.
@@ -53,7 +53,7 @@ abstract class StateUserBase with Store {
   @observable
   DateTime updatedFavAt = DateTime.now();
 
-  User get userAuth {
+  User? get userAuth {
     return _userAuth;
   }
 
@@ -111,19 +111,19 @@ abstract class StateUserBase with Store {
 
   Future refreshUserRights() async {
     try {
-      if (_userAuth == null || _userAuth.uid == null) {
+      if (_userAuth == null) {
         setAllRightsToFalse();
         return;
       }
 
       final userSnap = await FirebaseFirestore.instance
           .collection('users')
-          .doc(_userAuth.uid)
+          .doc(_userAuth!.uid)
           .get();
 
-      final userData = userSnap.data();
+      final userData = userSnap.data()!;
 
-      if (!userSnap.exists || userData == null) {
+      if (!userSnap.exists) {
         setAllRightsToFalse();
       }
 
@@ -139,7 +139,7 @@ abstract class StateUserBase with Store {
   }
 
   /// Signin user with credentials if FirebaseAuth is null.
-  Future<User> signin({String email, String password}) async {
+  Future<User?> signin({String? email, String? password}) async {
     try {
       final credentialsMap = appStorage.getCredentials();
 
@@ -164,7 +164,7 @@ abstract class StateUserBase with Store {
         password: password,
       );
 
-      appStorage.setUserName(_userAuth.displayName);
+      appStorage.setUserName(_userAuth!.displayName!);
       // PushNotifications.linkAuthUser(_userAuth.uid);
       setEmail(email);
 
@@ -193,7 +193,7 @@ abstract class StateUserBase with Store {
   void startRealTimeUserUpdates() async {
     FirebaseFirestore.instance
         .collection('users')
-        .doc(_userAuth.uid)
+        .doc(_userAuth!.uid)
         .snapshots()
         .listen((docSnap) {
       setUserData(docSnap);
@@ -231,7 +231,7 @@ abstract class StateUserBase with Store {
   }
 
   @action
-  void setUsername(String name) {
+  void setUsername(String? name) {
     username = name;
   }
 
@@ -252,7 +252,7 @@ abstract class StateUserBase with Store {
 
   @action
   Future signOut({
-    BuildContext context,
+    BuildContext? context,
     bool redirectOnComplete = false,
   }) async {
     _userAuth = null;
@@ -374,17 +374,17 @@ abstract class StateUserBase with Store {
   String getPPUrl() {
     if (userFirestore == null) return '';
 
-    final editedURL = userFirestore.pp?.url?.edited;
+    final editedURL = userFirestore!.pp?.url?.edited;
     if (editedURL != null) return editedURL;
 
-    final originalURL = userFirestore.pp?.url?.original;
+    final originalURL = userFirestore!.pp?.url?.original;
     if (originalURL != null) return originalURL;
 
     return '';
   }
 
   String getInitialsUsername() {
-    final splittedUsernameArray = stateUser.username.split(' ');
+    final splittedUsernameArray = stateUser.username!.split(' ');
     if (splittedUsernameArray.isEmpty) return '';
 
     String initials = splittedUsernameArray.length > 1

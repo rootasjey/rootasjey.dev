@@ -5,7 +5,7 @@ import 'package:rootasjey/screens/home_page.dart';
 import 'package:rootasjey/state/colors.dart';
 
 class AppIconHeader extends StatefulWidget {
-  final Function onTap;
+  final Function? onTap;
   final EdgeInsetsGeometry padding;
   final double size;
 
@@ -20,8 +20,8 @@ class AppIconHeader extends StatefulWidget {
 }
 
 class _AppIconHeaderState extends State<AppIconHeader> {
-  Color foreground;
-  ReactionDisposer colorDisposer;
+  Color? foreground;
+  ReactionDisposer? colorDisposer;
 
   @override
   initState() {
@@ -35,7 +35,7 @@ class _AppIconHeaderState extends State<AppIconHeader> {
   @override
   void dispose() {
     if (colorDisposer != null) {
-      colorDisposer();
+      colorDisposer!();
     }
 
     super.dispose();
@@ -50,7 +50,7 @@ class _AppIconHeaderState extends State<AppIconHeader> {
         clipBehavior: Clip.hardEdge,
         color: Colors.transparent,
         child: InkWell(
-          onTap: widget.onTap ??
+          onTap: widget.onTap as void Function()? ??
               () => Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) {

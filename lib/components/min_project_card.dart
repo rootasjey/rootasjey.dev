@@ -10,13 +10,13 @@ import 'package:rootasjey/utils/fonts.dart';
 /// Minimal post card.
 class MinProjectCard extends StatefulWidget {
   final Project project;
-  final double width;
+  final double? width;
   final EdgeInsets contentPadding;
-  final VoidCallback onTap;
-  final PopupMenuButton<dynamic> popupMenuButton;
+  final VoidCallback? onTap;
+  final PopupMenuButton<dynamic>? popupMenuButton;
 
   MinProjectCard({
-    @required this.project,
+    required this.project,
     this.contentPadding = const EdgeInsets.all(8.0),
     this.width,
     this.onTap,
@@ -28,9 +28,9 @@ class MinProjectCard extends StatefulWidget {
 }
 
 class _MinProjectCardState extends State<MinProjectCard> {
-  double _elevation;
+  double? _elevation;
 
-  String _authorName = '';
+  String? _authorName = '';
 
   @override
   void initState() {
@@ -66,7 +66,7 @@ class _MinProjectCardState extends State<MinProjectCard> {
                   Positioned(
                     bottom: 0.0,
                     left: 0.0,
-                    child: widget.popupMenuButton,
+                    child: widget.popupMenuButton!,
                   ),
               ],
             ),
@@ -90,7 +90,7 @@ class _MinProjectCardState extends State<MinProjectCard> {
           Opacity(
             opacity: 0.8,
             child: Text(
-              postHeadline.title,
+              postHeadline.title!,
               style: FontsUtils.mainStyle(
                 fontSize: 24.0,
                 fontWeight: FontWeight.w700,
@@ -102,7 +102,7 @@ class _MinProjectCardState extends State<MinProjectCard> {
             child: Opacity(
               opacity: 0.6,
               child: Text(
-                _authorName,
+                _authorName!,
                 style: FontsUtils.mainStyle(
                   fontSize: 16.0,
                   fontWeight: FontWeight.w600,
@@ -119,7 +119,7 @@ class _MinProjectCardState extends State<MinProjectCard> {
             child: Wrap(
               spacing: 10.0,
               runSpacing: 10.0,
-              children: postHeadline.tags.take(2).map((tag) {
+              children: postHeadline.tags!.take(2).map((tag) {
                 return Opacity(
                   opacity: 0.6,
                   child: Chip(
@@ -138,9 +138,9 @@ class _MinProjectCardState extends State<MinProjectCard> {
   }
 
   void fetchAuthorName() async {
-    final author = widget.project.author;
+    final author = widget.project.author!;
 
-    if (author.id.isEmpty) {
+    if (author.id!.isEmpty) {
       return;
     }
 
@@ -154,7 +154,7 @@ class _MinProjectCardState extends State<MinProjectCard> {
         return;
       }
 
-      final data = docSnap.data();
+      final data = docSnap.data()!;
       data['id'] = docSnap.id;
 
       final user = UserFirestore.fromJSON(data);

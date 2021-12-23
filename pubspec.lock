@@ -36,13 +36,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.2"
-  ansicolor:
-    dependency: transitive
-    description:
-      name: ansicolor
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.1.1"
   archive:
     dependency: transitive
     description:
@@ -288,13 +281,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.2.0"
-  data_connection_checker:
-    dependency: "direct main"
-    description:
-      name: data_connection_checker
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.3.4"
   disk_space:
     dependency: transitive
     description:
@@ -526,13 +512,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.3"
-  flushbar:
-    dependency: "direct main"
-    description:
-      name: flushbar
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.10.4"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -592,15 +571,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.4"
-  flutter_rename_app:
-    dependency: "direct dev"
-    description:
-      path: "."
-      ref: HEAD
-      resolved-ref: "1cc536390923729ecb5681488dfe4cc4ae719099"
-      url: "https://github.com/rootasjey/flutter_rename_app.git"
-    source: git
-    version: "1.0.0"
   flutter_sticky_header:
     dependency: "direct main"
     description:
@@ -996,13 +966,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "4.1.1"
-  process_run:
-    dependency: transitive
-    description:
-      name: process_run
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.10.12+3"
   provider:
     dependency: transitive
     description:

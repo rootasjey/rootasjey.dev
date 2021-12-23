@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -19,7 +21,7 @@ class _NewProjectPageState extends State<NewProjectPage> {
   bool _isPostCreated = false;
   bool _isLoading = false;
 
-  DocumentReference _projectSnapshot;
+  DocumentReference? _projectSnapshot;
 
   String _jwt = '';
 
@@ -32,7 +34,7 @@ class _NewProjectPageState extends State<NewProjectPage> {
   @override
   Widget build(BuildContext context) {
     if (!_isLoading && _isPostCreated && _projectSnapshot != null) {
-      return ProjectEditor(projectId: _projectSnapshot.id);
+      return ProjectEditor(projectId: _projectSnapshot!.id);
     }
 
     if (_isLoading) {
@@ -50,7 +52,7 @@ class _NewProjectPageState extends State<NewProjectPage> {
     setState(() => _isLoading = true);
 
     try {
-      final userAuth = stateUser.userAuth;
+      final userAuth = stateUser.userAuth!;
 
       _projectSnapshot =
           await FirebaseFirestore.instance.collection('projects').add({
@@ -100,8 +102,8 @@ class _NewProjectPageState extends State<NewProjectPage> {
         },
       });
 
-      _jwt = await FirebaseAuth.instance.currentUser.getIdToken();
-      final success = await createContent();
+      _jwt = await FirebaseAuth.instance.currentUser!.getIdToken();
+      final success = await (createContent() as FutureOr<bool>);
 
       if (!success) {
         throw ErrorDescription("post_create_error_storage".tr());
@@ -118,20 +120,20 @@ class _NewProjectPageState extends State<NewProjectPage> {
     }
   }
 
-  Future<bool> createContent() async {
-    bool success = true;
+  Future<bool?> createContent() async {
+    bool? success = true;
     setState(() => _isLoading = true);
 
     try {
       final resp = await Cloud.fun('projects-save').call({
-        'projectId': _projectSnapshot.id,
+        'projectId': _projectSnapshot!.id,
         'jwt': _jwt,
         'content': "Hi ",
       });
 
       success = resp.data['success'];
 
-      if (!success) {
+      if (!success!) {
         throw ErrorDescription(resp.data['error']);
       }
     } catch (error) {

@@ -26,7 +26,7 @@ class _PublishedPostsPageState extends State<PublishedPostsPage> {
   bool _hasNext = true;
   bool _isLoading = false;
 
-  DocumentSnapshot _lastDocumentSnapshot;
+  DocumentSnapshot? _lastDocumentSnapshot;
 
   @override
   void initState() {
@@ -67,7 +67,7 @@ class _PublishedPostsPageState extends State<PublishedPostsPage> {
   }
 
   Widget header() {
-    final String currentPath = Beamer.of(context).currentPages.last.name;
+    final String? currentPath = Beamer.of(context).currentPages.last.name;
 
     final List<HeaderSectionData> headerSectionData = [
       HeaderSectionData(
@@ -213,7 +213,7 @@ class _PublishedPostsPageState extends State<PublishedPostsPage> {
     });
 
     try {
-      final userAuth = stateUser.userAuth;
+      final userAuth = stateUser.userAuth!;
       final uid = userAuth.uid;
 
       final snapshot = await FirebaseFirestore.instance
@@ -258,7 +258,7 @@ class _PublishedPostsPageState extends State<PublishedPostsPage> {
     setState(() => _isLoading = true);
 
     try {
-      final userAuth = stateUser.userAuth;
+      final userAuth = stateUser.userAuth!;
       final uid = userAuth.uid;
 
       final snapshot = await FirebaseFirestore.instance
@@ -266,7 +266,7 @@ class _PublishedPostsPageState extends State<PublishedPostsPage> {
           .where('published', isEqualTo: true)
           .where('author.id', isEqualTo: uid)
           .limit(_limit)
-          .startAfterDocument(_lastDocumentSnapshot)
+          .startAfterDocument(_lastDocumentSnapshot!)
           .get();
 
       if (snapshot.size == 0) {

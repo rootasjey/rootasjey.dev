@@ -3,10 +3,10 @@ import 'package:unicons/unicons.dart';
 
 class SliverErrorView extends StatelessWidget {
   final String textTitle;
-  final VoidCallback onRefresh;
+  final VoidCallback? onRefresh;
 
   const SliverErrorView({
-    Key key,
+    Key? key,
     this.textTitle = '',
     this.onRefresh,
   }) : super(key: key);

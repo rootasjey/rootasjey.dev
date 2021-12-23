@@ -3,7 +3,7 @@ import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/state/user.dart';
 
 class AdaptiveUserAvatar extends StatelessWidget {
-  const AdaptiveUserAvatar({Key key}) : super(key: key);
+  const AdaptiveUserAvatar({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

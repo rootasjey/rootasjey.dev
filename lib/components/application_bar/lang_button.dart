@@ -4,7 +4,7 @@ import 'package:rootasjey/components/lang_popup_menu_button.dart';
 import 'package:rootasjey/state/user.dart';
 
 class LangButton extends StatelessWidget {
-  const LangButton({Key key}) : super(key: key);
+  const LangButton({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

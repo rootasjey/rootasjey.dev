@@ -24,11 +24,11 @@ import 'package:supercharged/supercharged.dart';
 import 'package:unicons/unicons.dart';
 
 class PostEditor extends StatefulWidget {
-  final String postId;
+  final String? postId;
 
   const PostEditor({
-    Key key,
-    @required this.postId,
+    Key? key,
+    required this.postId,
   }) : super(key: key);
 
   @override
@@ -41,7 +41,7 @@ class _PostEditorState extends State<PostEditor> {
   bool _isSaving = false;
   bool _hasError = false;
 
-  DocumentSnapshot _postSnapshot;
+  late DocumentSnapshot _postSnapshot;
 
   final _postFocusNode = FocusNode();
   final _contentController = TextEditingController();
@@ -54,12 +54,12 @@ class _PostEditorState extends State<PostEditor> {
   String _publicationStatus = DRAFT;
 
   String _title = '';
-  String _postContent = '';
+  String? _postContent = '';
   String _lang = 'en';
   String _jwt = '';
 
-  Timer _saveTitleTimer;
-  Timer _saveContentTimer;
+  Timer? _saveTitleTimer;
+  Timer? _saveContentTimer;
 
   @override
   void initState() {
@@ -172,7 +172,7 @@ class _PostEditorState extends State<PostEditor> {
             _postContent = newValue;
 
             if (_saveContentTimer != null) {
-              _saveContentTimer.cancel();
+              _saveContentTimer!.cancel();
             }
 
             _saveContentTimer = Timer(1.seconds, () => updateContent());
@@ -357,7 +357,7 @@ class _PostEditorState extends State<PostEditor> {
           _title = newValue;
 
           if (_saveTitleTimer != null) {
-            _saveTitleTimer.cancel();
+            _saveTitleTimer!.cancel();
           }
 
           _saveTitleTimer = Timer(1.seconds, () => updateTitle());
@@ -430,7 +430,7 @@ class _PostEditorState extends State<PostEditor> {
 
       setState(() {
         _postContent = response.data['post'];
-        _contentController.text = _postContent;
+        _contentController.text = _postContent!;
       });
     } catch (error) {
       setState(() {
@@ -462,9 +462,9 @@ class _PostEditorState extends State<PostEditor> {
           .doc(widget.postId)
           .get();
 
-      _jwt = await FirebaseAuth.instance.currentUser.getIdToken();
+      _jwt = await FirebaseAuth.instance.currentUser!.getIdToken();
 
-      final Map<String, dynamic> data = _postSnapshot.data();
+      final Map<String, dynamic>? data = _postSnapshot.data() as Map<String, dynamic>?;
       final Post post = Post.fromJSON(data);
 
       setState(() {

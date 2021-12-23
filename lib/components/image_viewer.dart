@@ -18,13 +18,13 @@ class CopyLinkIntent extends Intent {
 }
 
 class ImageViewer extends StatefulWidget {
-  final Map<String, String> attributes;
-  final dom.Element element;
+  final Map<String, String?> attributes;
+  final dom.Element? element;
 
   const ImageViewer({
-    Key key,
-    @required this.attributes,
-    @required this.element,
+    Key? key,
+    required this.attributes,
+    required this.element,
   }) : super(key: key);
 
   @override
@@ -34,8 +34,8 @@ class ImageViewer extends StatefulWidget {
 class _ImageViewerState extends State<ImageViewer> {
   bool _triggeredCloseAction = false;
 
-  double _height = 300.0;
-  double _width = 300.0;
+  double? _height = 300.0;
+  double? _width = 300.0;
 
   final Map<Type, Action<Intent>> _actions = {};
 
@@ -54,9 +54,9 @@ class _ImageViewerState extends State<ImageViewer> {
     ): const CopyLinkIntent(),
   };
 
-  Function _closeActionCopy;
+  Function? _closeActionCopy;
 
-  ScrollController _scrollController;
+  ScrollController? _scrollController;
 
   String _src = '';
   String _alt = '';
@@ -66,15 +66,15 @@ class _ImageViewerState extends State<ImageViewer> {
     super.initState();
 
     _scrollController = ScrollController(initialScrollOffset: 12.0);
-    _scrollController.addListener(scrollListener);
+    _scrollController!.addListener(scrollListener);
 
     setState(() {
       final attributes = widget.attributes;
       _src = attributes['src'] ?? '';
       _alt = attributes['alt'] ?? '';
 
-      final String attrW = attributes['width'];
-      final String attrH = attributes['height'];
+      final String? attrW = attributes['width'];
+      final String? attrH = attributes['height'];
 
       _width = attrW != null ? double.tryParse(attrW) : _width;
       _height = attrH != null ? double.tryParse(attrH) : _height;
@@ -90,8 +90,8 @@ class _ImageViewerState extends State<ImageViewer> {
 
   @override
   dispose() {
-    _scrollController.removeListener(scrollListener);
-    _scrollController.dispose();
+    _scrollController!.removeListener(scrollListener);
+    _scrollController!.dispose();
     super.dispose();
   }
 
@@ -106,7 +106,7 @@ class _ImageViewerState extends State<ImageViewer> {
   }
 
   Widget caption() {
-    if (_alt == null || _alt.isEmpty) {
+    if (_alt.isEmpty) {
       return Container();
     }
 
@@ -203,7 +203,7 @@ class _ImageViewerState extends State<ImageViewer> {
       },
       closedBuilder: (context, openAction) {
         return SizedBox(
-          height: _height > 500.0 ? 500.0 : _height,
+          height: _height! > 500.0 ? 500.0 : _height,
           child: Ink.image(
             image: NetworkImage(_src),
             width: _width,
@@ -220,7 +220,7 @@ class _ImageViewerState extends State<ImageViewer> {
   }
 
   void scrollListener() {
-    final position = _scrollController.position;
+    final position = _scrollController!.position;
 
     if (_triggeredCloseAction) {
       return;

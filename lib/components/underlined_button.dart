@@ -5,10 +5,10 @@ import 'package:supercharged/supercharged.dart';
 
 class UnderlinedButton extends StatefulWidget {
   const UnderlinedButton({
-    Key key,
+    Key? key,
     this.hoverColor,
     this.underlineColor = Colors.black45,
-    @required this.child,
+    required this.child,
     this.leading,
     this.trailing,
     this.onTap,
@@ -20,19 +20,19 @@ class UnderlinedButton extends StatefulWidget {
   /// Else show a [Widget] similar to a [TextButton] with a [leading] icon.
   final bool compact;
 
-  final Color hoverColor;
+  final Color? hoverColor;
   final Color underlineColor;
 
   /// Text that describes the action that will occur when the button is pressed.
   /// This text is displayed when the user long-presses on the button
   /// and is used for accessibility.
-  final String tooltip;
+  final String? tooltip;
 
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
 
   final Widget child;
-  final Widget leading;
-  final Widget trailing;
+  final Widget? leading;
+  final Widget? trailing;
 
   @override
   _UnderlinedButtonState createState() => _UnderlinedButtonState();
@@ -40,11 +40,11 @@ class UnderlinedButton extends StatefulWidget {
 
 class _UnderlinedButtonState extends State<UnderlinedButton>
     with AnimationMixin {
-  Animation<Offset> _slideAnimation;
-  Animation<double> _underlineAnimation;
+  late Animation<Offset> _slideAnimation;
+  late Animation<double> _underlineAnimation;
 
-  double right;
-  double width = 0.0;
+  double? right;
+  double? width = 0.0;
 
   @override
   void initState() {
@@ -79,7 +79,7 @@ class _UnderlinedButtonState extends State<UnderlinedButton>
     return IconButton(
       tooltip: widget.tooltip,
       onPressed: widget.onTap,
-      icon: widget.leading,
+      icon: widget.leading!,
     );
   }
 
@@ -105,7 +105,7 @@ class _UnderlinedButtonState extends State<UnderlinedButton>
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (widget.leading != null) widget.leading,
+          if (widget.leading != null) widget.leading!,
           Padding(
             padding: const EdgeInsets.only(
               left: 8.0,

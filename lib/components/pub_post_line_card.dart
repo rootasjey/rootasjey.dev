@@ -8,7 +8,7 @@ import 'package:rootasjey/utils/cloud.dart';
 
 class PubPostLineCard extends StatefulWidget {
   @required
-  final PostHeadline postHeadline;
+  final PostHeadline? postHeadline;
 
   PubPostLineCard({
     this.postHeadline,
@@ -20,7 +20,7 @@ class PubPostLineCard extends StatefulWidget {
 
 class _PubPostLineCardState extends State<PubPostLineCard> {
   double elevation = 2.0;
-  String authorName = '';
+  String? authorName = '';
 
   @override
   void initState() {
@@ -30,7 +30,7 @@ class _PubPostLineCardState extends State<PubPostLineCard> {
 
   @override
   Widget build(BuildContext context) {
-    final postHeadline = widget.postHeadline;
+    final postHeadline = widget.postHeadline!;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -62,14 +62,14 @@ class _PubPostLineCardState extends State<PubPostLineCard> {
   }
 
   Widget background(PostHeadline postHeadline) {
-    if (postHeadline.urls.image.isEmpty) {
+    if (postHeadline.urls!.image.isEmpty) {
       return Padding(
         padding: EdgeInsets.zero,
       );
     }
 
     return Image.network(
-      postHeadline.urls.image,
+      postHeadline.urls!.image,
       fit: BoxFit.cover,
       color: Color.fromRGBO(0, 0, 0, 0.5),
       colorBlendMode: BlendMode.darken,
@@ -92,7 +92,7 @@ class _PubPostLineCardState extends State<PubPostLineCard> {
             child: Opacity(
               opacity: 0.8,
               child: Text(
-                postHeadline.title,
+                postHeadline.title!,
                 style: TextStyle(
                   fontSize: 28.0,
                   fontWeight: FontWeight.w500,
@@ -141,7 +141,7 @@ class _PubPostLineCardState extends State<PubPostLineCard> {
   }
 
   void navigateToPost() {
-    final String postId = widget.postHeadline.id;
+    final String? postId = widget.postHeadline!.id;
 
     Beamer.of(context).beamToNamed(
       '$PostsLocation.route/$postId',
@@ -152,7 +152,7 @@ class _PubPostLineCardState extends State<PubPostLineCard> {
   void fetchAuthorName() async {
     try {
       final resp = await Cloud.fun('posts-fetchAuthorName')
-          .call({'authorId': widget.postHeadline.author});
+          .call({'authorId': widget.postHeadline!.author});
 
       // ?NOTE: Prevent setState if not mounted.
       // This is due to each card having its own fetch & state,

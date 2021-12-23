@@ -25,7 +25,7 @@ class Cloud {
     return converted;
   }
 
-  static HttpsCallable fun(String name, {HttpsCallableOptions options}) {
+  static HttpsCallable fun(String name, {HttpsCallableOptions? options}) {
     return FirebaseFunctions.instanceFor(
       app: Firebase.app(),
       region: 'europe-west3',

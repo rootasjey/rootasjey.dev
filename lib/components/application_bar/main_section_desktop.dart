@@ -13,11 +13,11 @@ import 'package:rootasjey/utils/fonts.dart';
 
 /// AppBar main section displayed for desktops.
 class MainSectionDesktop extends StatelessWidget {
-  const MainSectionDesktop({Key key}) : super(key: key);
+  const MainSectionDesktop({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final bodyTextColor = Theme.of(context).textTheme.bodyText1.color;
+    final bodyTextColor = Theme.of(context).textTheme.bodyText1!.color!;
     final underlineColor = bodyTextColor.withOpacity(0.8);
 
     return Wrap(

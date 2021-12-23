@@ -25,7 +25,7 @@ class _PublishedProjectsPageState extends State<PublishedProjectsPage> {
   bool _hasNext = true;
   bool _isLoading = false;
 
-  DocumentSnapshot _lastDocumentSnapshot;
+  DocumentSnapshot? _lastDocumentSnapshot;
 
   @override
   void initState() {
@@ -129,7 +129,7 @@ class _PublishedProjectsPageState extends State<PublishedProjectsPage> {
   }
 
   Widget header() {
-    final String currentPath = Beamer.of(context).currentPages.last.name;
+    final String? currentPath = Beamer.of(context).currentPages.last.name;
 
     final List<HeaderSectionData> headerSectionData = [
       HeaderSectionData(
@@ -289,7 +289,7 @@ class _PublishedProjectsPageState extends State<PublishedProjectsPage> {
           .collection('projects')
           .where('published', isEqualTo: true)
           .limit(_limit)
-          .startAfterDocument(_lastDocumentSnapshot)
+          .startAfterDocument(_lastDocumentSnapshot!)
           .get();
 
       if (snapshot.size == 0) {

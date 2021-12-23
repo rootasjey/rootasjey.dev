@@ -9,8 +9,8 @@ class AuthorHeader extends StatefulWidget {
   final String authorId;
 
   const AuthorHeader({
-    Key key,
-    @required this.authorId,
+    Key? key,
+    required this.authorId,
   }) : super(key: key);
 
   @override
@@ -28,8 +28,8 @@ class _AuthorHeaderState extends State<AuthorHeader> {
 
   @override
   Widget build(BuildContext context) {
-    final avatarUrl = _user.urls.image.isNotEmpty
-        ? _user.urls.image
+    final avatarUrl = _user.urls!.image.isNotEmpty
+        ? _user.urls!.image
         : "https://img.icons8.com/plasticine/100/000000/flower.png";
 
     return Padding(
@@ -57,8 +57,8 @@ class _AuthorHeaderState extends State<AuthorHeader> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Opacity(opacity: 0.8, child: Text(_user.name)),
-                Opacity(opacity: 0.4, child: Text(_user.job)),
+                Opacity(opacity: 0.8, child: Text(_user.name!)),
+                Opacity(opacity: 0.4, child: Text(_user.job!)),
               ],
             ),
           ),

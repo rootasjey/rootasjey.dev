@@ -1,6 +1,6 @@
 class PostImageMap {
-  final String cover;
-  final String thumbnail;
+  final String? cover;
+  final String? thumbnail;
 
   PostImageMap({this.cover, this.thumbnail});
 
@@ -11,7 +11,7 @@ class PostImageMap {
     );
   }
 
-  factory PostImageMap.fromJSON(Map<String, dynamic> data) {
+  factory PostImageMap.fromJSON(Map<String, dynamic>? data) {
     if (data == null) {
       return PostImageMap.empty();
     }

@@ -12,9 +12,9 @@ class PubPopupMenuButton extends StatelessWidget {
   final double elevation;
 
   const PubPopupMenuButton({
-    Key key,
-    @required this.status,
-    @required this.onStatusChanged,
+    Key? key,
+    required this.status,
+    required this.onStatusChanged,
     this.elevation = 0.0,
     this.opacity = 1.0,
     this.margin = EdgeInsets.zero,

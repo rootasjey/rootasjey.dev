@@ -5,13 +5,13 @@ import 'package:rootasjey/utils/fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class TextLink extends StatefulWidget {
-  final Map<String, String> attributes;
-  final dom.Element element;
+  final Map<String, String?> attributes;
+  final dom.Element? element;
 
   const TextLink({
-    Key key,
-    @required this.attributes,
-    @required this.element,
+    Key? key,
+    required this.attributes,
+    required this.element,
   }) : super(key: key);
 
   @override
@@ -22,7 +22,7 @@ class _TextLinkState extends State<TextLink> {
   double opacity = 0.6;
 
   Color backgroundColor = Colors.transparent;
-  Color textColor;
+  Color? textColor;
 
   @override
   Widget build(BuildContext context) {
@@ -35,12 +35,12 @@ class _TextLinkState extends State<TextLink> {
       ),
       child: InkWell(
         onTap: () {
-          final String href = widget.attributes['href'];
+          final String? href = widget.attributes['href'];
           if (href == null || href.isEmpty) {
             return;
           }
 
-          launch(widget.attributes['href']);
+          launch(widget.attributes['href']!);
         },
         onHover: (isHit) {
           setState(() {
@@ -54,7 +54,7 @@ class _TextLinkState extends State<TextLink> {
           child: Opacity(
             opacity: opacity,
             child: Text(
-              widget.element.innerHtml,
+              widget.element!.innerHtml,
               style: TextStyle(
                 fontSize: 22.0,
                 backgroundColor: backgroundColor,

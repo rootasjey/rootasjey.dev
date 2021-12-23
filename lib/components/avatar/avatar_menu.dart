@@ -12,7 +12,7 @@ class AvatarMenu extends StatelessWidget {
   final EdgeInsets padding;
 
   const AvatarMenu({
-    Key key,
+    Key? key,
     this.isSmall = false,
     this.padding = EdgeInsets.zero,
   }) : super(key: key);

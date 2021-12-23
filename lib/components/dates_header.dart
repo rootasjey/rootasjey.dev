@@ -8,10 +8,10 @@ class DatesHeader extends StatelessWidget {
   final EdgeInsets padding;
 
   const DatesHeader({
-    Key key,
-    @required this.createdAt,
+    Key? key,
+    required this.createdAt,
     this.padding = const EdgeInsets.only(top: 4.0),
-    @required this.updatedAt,
+    required this.updatedAt,
   }) : super(key: key);
 
   @override

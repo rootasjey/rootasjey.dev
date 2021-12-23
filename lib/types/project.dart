@@ -4,19 +4,19 @@ import 'package:rootasjey/types/urls.dart';
 import 'package:rootasjey/utils/date_helper.dart';
 
 class Project {
-  final Author author;
-  final DateTime createdAt;
-  final String id;
-  final String lang;
-  final List<String> platforms;
-  final List<String> programmingLanguages;
-  final bool published;
-  final Stats stats;
-  final String summary;
-  final List<String> tags;
-  final String title;
-  final DateTime updatedAt;
-  final Urls urls;
+  final Author? author;
+  final DateTime? createdAt;
+  final String? id;
+  final String? lang;
+  final List<String>? platforms;
+  final List<String>? programmingLanguages;
+  final bool? published;
+  final Stats? stats;
+  final String? summary;
+  final List<String>? tags;
+  final String? title;
+  final DateTime? updatedAt;
+  final Urls? urls;
 
   Project({
     this.author,
@@ -53,10 +53,6 @@ class Project {
   }
 
   factory Project.fromJSON(Map<String, dynamic> data) {
-    if (data == null) {
-      return Project.empty();
-    }
-
     return Project(
       author: Author.fromJSON(data['author']),
       createdAt: DateHelper.fromFirestore(data['createdAt']),
@@ -77,7 +73,7 @@ class Project {
   static List<String> parsePlatforms(Map<String, dynamic> data) {
     final platformEntries = <String>[];
 
-    if (data == null || data['platforms'] == null) {
+    if (data['platforms'] == null) {
       return platformEntries;
     }
 
@@ -95,7 +91,7 @@ class Project {
   static List<String> parseProgrammingLangs(Map<String, dynamic> data) {
     final languages = <String>[];
 
-    if (data == null || data['programmingLanguages'] == null) {
+    if (data['programmingLanguages'] == null) {
       return languages;
     }
 
@@ -113,7 +109,7 @@ class Project {
   static List<String> parseTags(Map<String, dynamic> data) {
     final tags = <String>[];
 
-    if (data == null || data['tags'] == null) {
+    if (data['tags'] == null) {
       return tags;
     }
 

@@ -4,17 +4,17 @@ import 'package:rootasjey/types/urls.dart';
 import 'package:rootasjey/utils/date_helper.dart';
 
 class PostHeadline {
-  final Author author;
+  final Author? author;
   final List<String> coauthors;
-  final DateTime createdAt;
-  final String id;
-  final PostImageMap image;
-  final String summary;
+  final DateTime? createdAt;
+  final String? id;
+  final PostImageMap? image;
+  final String? summary;
   final List<String> tags;
-  final String timeToRead;
-  final String title;
-  final DateTime updatedAt;
-  Urls urls;
+  final String? timeToRead;
+  final String? title;
+  final DateTime? updatedAt;
+  Urls? urls;
 
   PostHeadline({
     this.author,

@@ -207,13 +207,13 @@ class _PricingPageState extends State<PricingPage> {
     );
   }
 
-  ExpansionPanel faqExpPanel({int index, String title, String description}) {
+  ExpansionPanel faqExpPanel({int? index, String? title, required String description}) {
     return ExpansionPanel(
       isExpanded: expandedIndex == index,
       canTapOnHeader: true,
       headerBuilder: (context, isExpanded) {
         return ListTile(
-          title: Text(title),
+          title: Text(title!),
           leading: Icon(UniconsLine.question),
           // onTap: () {
           //   setState(() {
@@ -287,25 +287,25 @@ class _PricingPageState extends State<PricingPage> {
   }
 
   Widget headerButton({
-    String label,
-    Function onTap,
+    String? label,
+    Function? onTap,
     bool selected = false,
   }) {
     if (selected) {
       return ElevatedButton(
-        onPressed: onTap,
+        onPressed: onTap as void Function()?,
         style: ElevatedButton.styleFrom(
           primary: orangeColor,
           textStyle: TextStyle(
             color: Colors.white,
           ),
         ),
-        child: Text(label),
+        child: Text(label!),
       );
     }
 
     return OutlinedButton(
-      onPressed: onTap,
+      onPressed: onTap as void Function()?,
       style: OutlinedButton.styleFrom(
         textStyle: TextStyle(
           color: orangeColor,
@@ -317,7 +317,7 @@ class _PricingPageState extends State<PricingPage> {
           ),
         ),
       ),
-      child: Text(label),
+      child: Text(label!),
     );
   }
 

@@ -14,8 +14,8 @@ import 'package:unicons/unicons.dart';
 /// User's dashboard side menu.
 class DashboardSideMenu extends StatefulWidget {
   const DashboardSideMenu({
-    Key key,
-    @required this.beamerKey,
+    Key? key,
+    required this.beamerKey,
   }) : super(key: key);
 
   final GlobalKey<BeamerState> beamerKey;
@@ -25,7 +25,7 @@ class DashboardSideMenu extends StatefulWidget {
 }
 
 class _DashboardSideMenuState extends State<DashboardSideMenu> {
-  BeamerDelegate _beamerDelegate;
+  late BeamerDelegate _beamerDelegate;
 
   /// True if the side menu is expanded showing icons and labels.
   /// If false, the side menu shows only icon.
@@ -78,7 +78,7 @@ class _DashboardSideMenuState extends State<DashboardSideMenu> {
     // So we use [addPostFrameCallback] to access the state in the next frame.
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
       if (widget.beamerKey.currentState != null) {
-        _beamerDelegate = widget.beamerKey.currentState.routerDelegate;
+        _beamerDelegate = widget.beamerKey.currentState!.routerDelegate;
         _beamerDelegate.addListener(_setStateListener);
       }
     });

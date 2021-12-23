@@ -23,7 +23,7 @@ class _PostsPageState extends State<PostsPage> {
   bool _hasNext = true;
   bool _isLoading = false;
 
-  DocumentSnapshot _lastDoc;
+  DocumentSnapshot? _lastDoc;
 
   final _posts = <Post>[];
 
@@ -205,7 +205,7 @@ class _PostsPageState extends State<PostsPage> {
       final snapshot = await FirebaseFirestore.instance
           .collection('posts')
           .where('published', isEqualTo: true)
-          .startAfterDocument(_lastDoc)
+          .startAfterDocument(_lastDoc!)
           .limit(_limit)
           .get();
 

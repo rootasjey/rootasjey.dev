@@ -1,6 +1,6 @@
 class Stats {
-  final int likes;
-  final int shares;
+  final int? likes;
+  final int? shares;
 
   Stats({this.likes = 0, this.shares = 0});
 
@@ -11,7 +11,7 @@ class Stats {
     );
   }
 
-  factory Stats.fromJSON(Map<String, dynamic> data) {
+  factory Stats.fromJSON(Map<String, dynamic>? data) {
     if (data == null) {
       return Stats.empty();
     }

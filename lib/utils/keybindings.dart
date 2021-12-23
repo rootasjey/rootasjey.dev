@@ -6,31 +6,31 @@ import 'package:supercharged/supercharged.dart';
 /// Utility for keyboard events.
 class KeyBindings {
   /// Total page's height to limit max scroll down.
-  double _pageHeight;
+  double? _pageHeight;
 
   /// Value to scroll on move up or down.
   final _incrOffset = 80.0;
 
   /// Page scroll controller to move up or down inside the widget.
-  ScrollController _scrollController;
+  ScrollController? _scrollController;
 
   /// Initialize fields with non-null values.
   /// Can be called in WidgetsBinding.instance.addPostFrameCallback(...)
   /// inside a widget initState(...).
   void init({
-    @required ScrollController scrollController,
-    @required double pageHeight,
+    required ScrollController scrollController,
+    required double pageHeight,
   }) {
     _scrollController = scrollController;
     _pageHeight = pageHeight;
   }
 
   /// Return next down offset to scroll.
-  double _getOffsetDown({bool altPressed = false}) {
+  double? _getOffsetDown({bool altPressed = false}) {
     double factor = altPressed ? 3 : 1;
 
-    final offset = _scrollController.offset + _incrOffset < _pageHeight
-        ? _scrollController.offset + (_incrOffset * factor)
+    final offset = _scrollController!.offset + _incrOffset < _pageHeight!
+        ? _scrollController!.offset + (_incrOffset * factor)
         : _pageHeight;
 
     return offset;
@@ -40,8 +40,8 @@ class KeyBindings {
   double _getOffsetUp({bool altPressed = false}) {
     double factor = altPressed ? 3 : 1;
 
-    final offset = _scrollController.offset - _incrOffset > 90.0
-        ? _scrollController.offset - (_incrOffset * factor)
+    final offset = _scrollController!.offset - _incrOffset > 90.0
+        ? _scrollController!.offset - (_incrOffset * factor)
         : 0.0;
 
     return offset;
@@ -60,7 +60,7 @@ class KeyBindings {
     // home
     if (keyEvent.isMetaPressed &&
         keyEvent.isKeyPressed(LogicalKeyboardKey.arrowUp)) {
-      _scrollController.animateTo(
+      _scrollController!.animateTo(
         0,
         duration: 100.milliseconds,
         curve: Curves.ease,
@@ -72,8 +72,8 @@ class KeyBindings {
     // end
     if (keyEvent.isMetaPressed &&
         keyEvent.isKeyPressed(LogicalKeyboardKey.arrowDown)) {
-      _scrollController.animateTo(
-        _pageHeight,
+      _scrollController!.animateTo(
+        _pageHeight!,
         duration: 100.milliseconds,
         curve: Curves.ease,
       );
@@ -84,7 +84,7 @@ class KeyBindings {
     // up + alt
     if (keyEvent.isAltPressed &&
         keyEvent.isKeyPressed(LogicalKeyboardKey.arrowUp)) {
-      _scrollController.animateTo(
+      _scrollController!.animateTo(
         _getOffsetUp(altPressed: true),
         duration: 100.milliseconds,
         curve: Curves.ease,
@@ -96,8 +96,8 @@ class KeyBindings {
     // down + alt
     if (keyEvent.isAltPressed &&
         keyEvent.isKeyPressed(LogicalKeyboardKey.arrowDown)) {
-      _scrollController.animateTo(
-        _getOffsetDown(altPressed: true),
+      _scrollController!.animateTo(
+        _getOffsetDown(altPressed: true)!,
         duration: 100.milliseconds,
         curve: Curves.ease,
       );
@@ -107,7 +107,7 @@ class KeyBindings {
 
     // up
     if (keyEvent.isKeyPressed(LogicalKeyboardKey.arrowUp)) {
-      _scrollController.animateTo(
+      _scrollController!.animateTo(
         _getOffsetUp(),
         duration: 100.milliseconds,
         curve: Curves.ease,
@@ -118,8 +118,8 @@ class KeyBindings {
 
     // down
     if (keyEvent.isKeyPressed(LogicalKeyboardKey.arrowDown)) {
-      _scrollController.animateTo(
-        _getOffsetDown(),
+      _scrollController!.animateTo(
+        _getOffsetDown()!,
         duration: 100.milliseconds,
         curve: Curves.ease,
       );
@@ -129,8 +129,8 @@ class KeyBindings {
 
     // space
     if (keyEvent.isKeyPressed(LogicalKeyboardKey.space)) {
-      _scrollController.animateTo(
-        _getOffsetDown(altPressed: true),
+      _scrollController!.animateTo(
+        _getOffsetDown(altPressed: true)!,
         duration: 100.milliseconds,
         curve: Curves.ease,
       );
@@ -150,7 +150,7 @@ class KeyBindings {
 
     // home
     if (keyEvent.isKeyPressed(LogicalKeyboardKey.home)) {
-      _scrollController.animateTo(
+      _scrollController!.animateTo(
         0,
         duration: 100.milliseconds,
         curve: Curves.ease,
@@ -161,8 +161,8 @@ class KeyBindings {
 
     // end
     if (keyEvent.isKeyPressed(LogicalKeyboardKey.end)) {
-      _scrollController.animateTo(
-        _pageHeight,
+      _scrollController!.animateTo(
+        _pageHeight!,
         duration: 100.milliseconds,
         curve: Curves.ease,
       );

@@ -24,7 +24,7 @@ class _ContactPageState extends State<ContactPage> {
   String email = '';
   String messageBody = '';
   String messageTitle = '';
-  String subject = "website".tr();
+  String? subject = "website".tr();
   String subjectHintPrefix = '';
 
   bool isLoading = false;
@@ -259,7 +259,7 @@ class _ContactPageState extends State<ContactPage> {
         maxLines: null,
         minLines: 5,
         validator: (value) {
-          if (value.isEmpty) {
+          if (value!.isEmpty) {
             return errorMessages['emptyBoy'];
           }
 
@@ -316,7 +316,7 @@ class _ContactPageState extends State<ContactPage> {
                   ),
                 ),
                 Text(
-                  subject.toLowerCase(),
+                  subject!.toLowerCase(),
                   style: TextStyle(
                     color: stateColors.primary,
                   ),
@@ -339,7 +339,7 @@ class _ContactPageState extends State<ContactPage> {
       ),
       keyboardType: TextInputType.emailAddress,
       validator: (value) {
-        if (value.isEmpty) {
+        if (value!.isEmpty) {
           return errorMessages['emptyEmail'];
         }
 
@@ -387,7 +387,7 @@ class _ContactPageState extends State<ContactPage> {
           errorText: getTitleErrorText(),
         ),
         validator: (value) {
-          if (value.isEmpty) {
+          if (value!.isEmpty) {
             return errorMessages['emptyTitle'];
           }
 
@@ -521,7 +521,7 @@ class _ContactPageState extends State<ContactPage> {
     );
   }
 
-  String getEmailErrorText() {
+  String? getEmailErrorText() {
     if (emailNeverEdited) {
       return null;
     }
@@ -537,7 +537,7 @@ class _ContactPageState extends State<ContactPage> {
     return null;
   }
 
-  String getTitleErrorText() {
+  String? getTitleErrorText() {
     if (titleNeverEdited) {
       return null;
     }
@@ -553,7 +553,7 @@ class _ContactPageState extends State<ContactPage> {
     return null;
   }
 
-  String getBodyErrorText() {
+  String? getBodyErrorText() {
     if (bodyNeverEdited) {
       return null;
     }
@@ -570,7 +570,7 @@ class _ContactPageState extends State<ContactPage> {
   }
 
   void sendMessage() async {
-    if (!formKey.currentState.validate()) {
+    if (!formKey.currentState!.validate()) {
       Snack.e(
         context: context,
         message: "form_invalid".tr(),

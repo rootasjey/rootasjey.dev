@@ -9,12 +9,12 @@ import 'package:rootasjey/utils/fonts.dart';
 
 class PostCard extends StatefulWidget {
   final Post post;
-  final VoidCallback onTap;
-  final PopupMenuButton popupMenuButton;
+  final VoidCallback? onTap;
+  final PopupMenuButton? popupMenuButton;
   final EdgeInsets padding;
 
   PostCard({
-    @required this.post,
+    required this.post,
     this.onTap,
     this.popupMenuButton,
     this.padding = EdgeInsets.zero,
@@ -25,9 +25,9 @@ class PostCard extends StatefulWidget {
 }
 
 class _PostCardState extends State<PostCard> {
-  double _elevation;
+  double? _elevation;
 
-  String _authorName = '';
+  String? _authorName = '';
 
   @override
   void initState() {
@@ -37,7 +37,7 @@ class _PostCardState extends State<PostCard> {
       _elevation = 0.0;
     });
 
-    if (widget.post.author.id.isNotEmpty) {
+    if (widget.post.author!.id!.isNotEmpty) {
       fetchAuthorName();
     }
   }
@@ -68,7 +68,7 @@ class _PostCardState extends State<PostCard> {
   Widget background() {
     final post = widget.post;
 
-    if (post.image.thumbnail.isEmpty) {
+    if (post.image!.thumbnail!.isEmpty) {
       return Padding(
         padding: EdgeInsets.zero,
       );
@@ -83,7 +83,7 @@ class _PostCardState extends State<PostCard> {
       child: Stack(
         children: [
           Image.network(
-            post.image.thumbnail,
+            post.image!.thumbnail!,
             fit: BoxFit.cover,
             width: 300.0,
             height: 300.0,
@@ -92,7 +92,7 @@ class _PostCardState extends State<PostCard> {
             Positioned(
               bottom: 12.0,
               right: 12.0,
-              child: widget.popupMenuButton,
+              child: widget.popupMenuButton!,
             ),
         ],
       ),
@@ -162,9 +162,9 @@ class _PostCardState extends State<PostCard> {
   }
 
   void fetchAuthorName() async {
-    final author = widget.post.author;
+    final author = widget.post.author!;
 
-    if (author.id.isEmpty) {
+    if (author.id!.isEmpty) {
       return;
     }
 
@@ -178,7 +178,7 @@ class _PostCardState extends State<PostCard> {
         return;
       }
 
-      final data = docSnap.data();
+      final data = docSnap.data()!;
       data['id'] = docSnap.id;
 
       final user = UserFirestore.fromJSON(data);

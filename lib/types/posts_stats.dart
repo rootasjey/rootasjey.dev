@@ -1,8 +1,8 @@
 /// User posts statistics.
 class PostsStats {
-  final int contributed;
-  final int drafts;
-  final int published;
+  final int? contributed;
+  final int? drafts;
+  final int? published;
 
   PostsStats({
     this.contributed = 0,
@@ -18,7 +18,7 @@ class PostsStats {
     );
   }
 
-  factory PostsStats.fromJSON(Map<String, dynamic> data) {
+  factory PostsStats.fromJSON(Map<String, dynamic>? data) {
     if (data == null) {
       return PostsStats.empty();
     }

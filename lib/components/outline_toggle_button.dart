@@ -2,21 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:rootasjey/state/colors.dart';
 
 class OutlineToggleButton extends StatelessWidget {
-  @required
   final Widget child;
-  @required
   final VoidCallback onPressed;
-  final bool selected;
+  final bool? selected;
 
   OutlineToggleButton({
-    this.child,
-    this.onPressed,
+    required this.child,
+    required this.onPressed,
     this.selected = false,
   });
 
   @override
   Widget build(BuildContext context) {
-    if (selected) {
+    if (selected!) {
       return ElevatedButton(
           onPressed: onPressed,
           style: ElevatedButton.styleFrom(
@@ -38,20 +36,20 @@ class OutlineToggleButton extends StatelessWidget {
   }
 
   factory OutlineToggleButton.icon({
-    @required Widget label,
-    @required VoidCallback onPressed,
+    required Widget label,
+    required VoidCallback onPressed,
     bool selected,
-    @required Widget icon,
+    required Widget icon,
   }) = _OutlineToogleButtonWithIcon;
 }
 
 class _OutlineToogleButtonWithIcon extends OutlineToggleButton
     with MaterialButtonWithIconMixin {
   _OutlineToogleButtonWithIcon({
-    @required Widget icon,
-    @required Widget label,
-    @required VoidCallback onPressed,
-    bool selected,
+    required Widget icon,
+    required Widget label,
+    required VoidCallback onPressed,
+    bool? selected,
   }) : super(
           onPressed: onPressed,
           selected: selected,

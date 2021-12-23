@@ -69,9 +69,9 @@ class _LandingWorkUsState extends State<LandingWorkUs> {
   }
 
   Widget appCard({
-    @required String textTitle,
-    @required List<Color> colors,
-    @required Widget icon,
+    required String textTitle,
+    required List<Color> colors,
+    required Widget icon,
   }) {
     double width = 260.0;
     double height = 150.0;

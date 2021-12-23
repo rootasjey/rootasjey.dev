@@ -6,7 +6,7 @@ import 'package:rootasjey/state/colors.dart';
 import 'package:supercharged/supercharged.dart';
 
 class WebAdditionalFeatures extends StatefulWidget {
-  final Function onSelectionChanged;
+  final Function? onSelectionChanged;
   final EdgeInsets padding;
 
   WebAdditionalFeatures({
@@ -20,8 +20,8 @@ class WebAdditionalFeatures extends StatefulWidget {
 
 class _WebAdditionalFeaturesState extends State<WebAdditionalFeatures> {
   int countSelected = 0;
-  double additionalCost = 0;
-  double maxCost;
+  double? additionalCost = 0;
+  double? maxCost;
 
   final featuresDataList = [
     {
@@ -59,7 +59,7 @@ class _WebAdditionalFeaturesState extends State<WebAdditionalFeatures> {
   @override
   void initState() {
     super.initState();
-    maxCost = featuresDataList.sumByDouble((feature) => feature['cost']);
+    maxCost = featuresDataList.sumByDouble((feature) => feature['cost'] as num);
   }
 
   @override
@@ -124,10 +124,10 @@ class _WebAdditionalFeaturesState extends State<WebAdditionalFeatures> {
             children: featuresDataList.mapIndexed((index, data) {
               return featureCard(
                 index: index,
-                label: data['label'],
-                description: data['description'],
-                selected: data['selected'],
-                cost: data['cost'],
+                label: data['label'] as String?,
+                description: data['description'] as String?,
+                selected: data['selected'] as bool?,
+                cost: data['cost'] as double?,
               );
             }).toList(),
           ),
@@ -137,10 +137,10 @@ class _WebAdditionalFeaturesState extends State<WebAdditionalFeatures> {
   }
 
   Widget featureCard({
-    String label,
-    String description,
-    bool selected = false,
-    double cost = 0,
+    String? label,
+    String? description,
+    bool? selected = false,
+    double? cost = 0,
     int index = 0,
   }) {
     return Observer(
@@ -150,7 +150,7 @@ class _WebAdditionalFeaturesState extends State<WebAdditionalFeatures> {
             bottom: 16.0,
           ),
           child: Card(
-            elevation: selected ? 4.0 : 0.0,
+            elevation: selected! ? 4.0 : 0.0,
             color: selected
                 ? stateColors.primary
                 : stateColors.themeData.cardColor,
@@ -160,14 +160,14 @@ class _WebAdditionalFeaturesState extends State<WebAdditionalFeatures> {
                   countSelected = countSelected == 0 ? 0 : countSelected - 1;
 
                   additionalCost =
-                      additionalCost > 0 ? additionalCost - cost : 0;
+                      additionalCost! > 0 ? additionalCost! - cost! : 0;
                 } else {
                   countSelected = countSelected == featuresDataList.length
                       ? featuresDataList.length
                       : countSelected + 1;
 
-                  additionalCost = additionalCost < maxCost
-                      ? additionalCost + cost
+                  additionalCost = additionalCost! < maxCost!
+                      ? additionalCost! + cost!
                       : maxCost;
                 }
 
@@ -177,10 +177,10 @@ class _WebAdditionalFeaturesState extends State<WebAdditionalFeatures> {
 
                 if (widget.onSelectionChanged != null) {
                   final allSelected = featuresDataList
-                      .filter((feature) => feature['selected'])
+                      .filter((feature) => feature['selected'] as bool)
                       .toList();
 
-                  widget.onSelectionChanged(additionalCost, allSelected);
+                  widget.onSelectionChanged!(additionalCost, allSelected);
                 }
               },
               child: Container(
@@ -196,7 +196,7 @@ class _WebAdditionalFeaturesState extends State<WebAdditionalFeatures> {
                           Opacity(
                             opacity: 1,
                             child: Text(
-                              label,
+                              label!,
                               style: TextStyle(
                                 color: selected
                                     ? Colors.white
@@ -213,7 +213,7 @@ class _WebAdditionalFeaturesState extends State<WebAdditionalFeatures> {
                             child: Opacity(
                               opacity: 0.6,
                               child: Text(
-                                description,
+                                description!,
                                 style: TextStyle(
                                   color: selected
                                       ? Colors.white

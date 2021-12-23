@@ -8,8 +8,8 @@ import 'package:rootasjey/utils/app_logger.dart';
 import 'package:rootasjey/utils/fonts.dart';
 
 class ProjectCard extends StatefulWidget {
-  final VoidCallback onTap;
-  final Widget popupMenuButton;
+  final VoidCallback? onTap;
+  final Widget? popupMenuButton;
   final Project project;
   final double width;
   final double height;
@@ -17,7 +17,7 @@ class ProjectCard extends StatefulWidget {
   ProjectCard({
     this.onTap,
     this.popupMenuButton,
-    @required this.project,
+    required this.project,
     this.width = 300.0,
     this.height = 300.0,
   });
@@ -30,7 +30,7 @@ class _ProjectCardState extends State<ProjectCard> {
   Color textColor = Colors.black;
   double elevation = 2.0;
 
-  String _authorName = '';
+  String? _authorName = '';
 
   @override
   void initState() {
@@ -64,7 +64,7 @@ class _ProjectCardState extends State<ProjectCard> {
                 Positioned(
                   right: 20.0,
                   bottom: 16.0,
-                  child: widget.popupMenuButton,
+                  child: widget.popupMenuButton!,
                 ),
             ],
           ),
@@ -92,7 +92,7 @@ class _ProjectCardState extends State<ProjectCard> {
             child: Opacity(
               opacity: 0.6,
               child: Text(
-                project.summary,
+                project.summary!,
                 maxLines: 3,
                 overflow: TextOverflow.ellipsis,
                 style: FontsUtils.mainStyle(
@@ -106,7 +106,7 @@ class _ProjectCardState extends State<ProjectCard> {
             child: Opacity(
               opacity: 0.6,
               child: Text(
-                _authorName,
+                _authorName!,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: FontsUtils.mainStyle(
@@ -135,7 +135,7 @@ class _ProjectCardState extends State<ProjectCard> {
     final textChild = Opacity(
       opacity: 1.0,
       child: Text(
-        project.title,
+        project.title!,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
         style: FontsUtils.mainStyle(
@@ -146,7 +146,7 @@ class _ProjectCardState extends State<ProjectCard> {
       ),
     );
 
-    if (project.title.length > 14) {
+    if (project.title!.length > 14) {
       return Tooltip(
         message: project.title,
         child: textChild,
@@ -157,9 +157,9 @@ class _ProjectCardState extends State<ProjectCard> {
   }
 
   void fetchAuthorName() async {
-    final author = widget.project.author;
+    final author = widget.project.author!;
 
-    if (author.id.isEmpty) {
+    if (author.id!.isEmpty) {
       return;
     }
 
@@ -173,7 +173,7 @@ class _ProjectCardState extends State<ProjectCard> {
         return;
       }
 
-      final data = docSnap.data();
+      final data = docSnap.data()!;
       data['id'] = docSnap.id;
 
       final user = UserFirestore.fromJSON(data);

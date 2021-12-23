@@ -10,13 +10,13 @@ import 'package:unicons/unicons.dart';
 /// Minimal post card.
 class MinPostCard extends StatefulWidget {
   final Post post;
-  final double width;
+  final double? width;
   final EdgeInsets contentPadding;
-  final VoidCallback onTap;
-  final PopupMenuButton<dynamic> popupMenuButton;
+  final VoidCallback? onTap;
+  final PopupMenuButton<dynamic>? popupMenuButton;
 
   MinPostCard({
-    @required this.post,
+    required this.post,
     this.contentPadding = const EdgeInsets.all(8.0),
     this.width,
     this.onTap,
@@ -28,9 +28,9 @@ class MinPostCard extends StatefulWidget {
 }
 
 class _MinPostCardState extends State<MinPostCard> {
-  double _elevation;
+  double? _elevation;
 
-  String _authorName = '';
+  String? _authorName = '';
 
   @override
   void initState() {
@@ -133,15 +133,15 @@ class _MinPostCardState extends State<MinPostCard> {
             }).toList(),
           ),
         ),
-        if (widget.popupMenuButton != null) widget.popupMenuButton,
+        if (widget.popupMenuButton != null) widget.popupMenuButton!,
       ],
     );
   }
 
   void fetchAuthorName() async {
-    final author = widget.post.author;
+    final author = widget.post.author!;
 
-    if (author.id.isEmpty) {
+    if (author.id!.isEmpty) {
       return;
     }
 
@@ -155,7 +155,7 @@ class _MinPostCardState extends State<MinPostCard> {
         return;
       }
 
-      final data = docSnap.data();
+      final data = docSnap.data()!;
       data['id'] = docSnap.id;
 
       final user = UserFirestore.fromJSON(data);

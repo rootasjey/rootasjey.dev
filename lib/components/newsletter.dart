@@ -21,7 +21,7 @@ class _NewsletterState extends State<Newsletter> {
   bool isLoading = false;
 
   String email = '';
-  String errorText;
+  String? errorText;
 
   final newsreaderController = TextEditingController();
 
@@ -111,7 +111,7 @@ class _NewsletterState extends State<Newsletter> {
                   setState(() {});
                 },
                 validator: (value) {
-                  if (value.isEmpty) {
+                  if (value!.isEmpty) {
                     return "email_empty_forbidden".tr();
                   }
 

@@ -1,8 +1,8 @@
 /// User projects statistics.
 class ProjectsStats {
-  final int contributed;
-  final int drafts;
-  final int published;
+  final int? contributed;
+  final int? drafts;
+  final int? published;
 
   ProjectsStats({
     this.contributed = 0,
@@ -18,7 +18,7 @@ class ProjectsStats {
     );
   }
 
-  factory ProjectsStats.fromJSON(Map<String, dynamic> data) {
+  factory ProjectsStats.fromJSON(Map<String, dynamic>? data) {
     if (data == null) {
       return ProjectsStats.empty();
     }

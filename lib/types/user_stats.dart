@@ -3,8 +3,8 @@ import 'package:rootasjey/types/projects_stats.dart';
 
 /// User's statistics.
 class UserStats {
-  final PostsStats posts;
-  final ProjectsStats projects;
+  final PostsStats? posts;
+  final ProjectsStats? projects;
 
   UserStats({this.posts, this.projects});
 
@@ -15,7 +15,7 @@ class UserStats {
     );
   }
 
-  factory UserStats.fromJSON(Map<String, dynamic> data) {
+  factory UserStats.fromJSON(Map<String, dynamic>? data) {
     if (data == null) {
       return UserStats.empty();
     }

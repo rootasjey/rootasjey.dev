@@ -22,7 +22,7 @@ class _NewPostPageState extends State<NewPostPage> {
   bool _isPostCreated = false;
   bool _isLoading = true;
 
-  DocumentReference _postSnapshot;
+  DocumentReference? _postSnapshot;
 
   String _jwt = '';
 
@@ -35,7 +35,7 @@ class _NewPostPageState extends State<NewPostPage> {
   @override
   Widget build(BuildContext context) {
     if (!_isLoading && _isPostCreated && _postSnapshot != null) {
-      return PostEditor(postId: _postSnapshot.id);
+      return PostEditor(postId: _postSnapshot!.id);
     }
 
     if (_isLoading) {
@@ -53,7 +53,7 @@ class _NewPostPageState extends State<NewPostPage> {
     setState(() => _isLoading = true);
 
     try {
-      final userAuth = stateUser.userAuth;
+      final userAuth = stateUser.userAuth!;
 
       _postSnapshot = await FirebaseFirestore.instance.collection('posts').add({
         'author': {
@@ -87,7 +87,7 @@ class _NewPostPageState extends State<NewPostPage> {
         },
       });
 
-      _jwt = await FirebaseAuth.instance.currentUser.getIdToken();
+      _jwt = await FirebaseAuth.instance.currentUser!.getIdToken();
       
       final success = await createContent();
 
@@ -111,7 +111,7 @@ class _NewPostPageState extends State<NewPostPage> {
 
     try {
       final resp = await Cloud.fun('posts-save').call({
-        'postId': _postSnapshot.id,
+        'postId': _postSnapshot!.id,
         'jwt': _jwt,
         'content': "Hi, ",
       });

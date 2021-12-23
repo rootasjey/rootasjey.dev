@@ -25,11 +25,11 @@ import 'package:unicons/unicons.dart';
 class EditImagePage extends StatefulWidget {
   /// Image object. Should be defined is navigating from another page.
   /// It's null when reloading the page for example.
-  final ImageProvider<Object> image;
+  final ImageProvider<Object>? image;
 
   const EditImagePage({
-    Key key,
-    @required this.image,
+    Key? key,
+    required this.image,
   }) : super(key: key);
 
   @override
@@ -88,7 +88,7 @@ class _EditImagePageState extends State<EditImagePage> {
       ExtendedImage(
         width: 600.0,
         height: 400.0,
-        image: widget.image,
+        image: widget.image!,
         fit: BoxFit.contain,
         mode: ExtendedImageMode.editor,
         extendedImageEditorKey: _editorKey,
@@ -124,25 +124,25 @@ class _EditImagePageState extends State<EditImagePage> {
           IconButton(
             icon: Icon(UniconsLine.crop_alt_rotate_left),
             onPressed: () {
-              _editorKey.currentState.rotate(right: false);
+              _editorKey.currentState!.rotate(right: false);
             },
           ),
           IconButton(
             icon: Icon(UniconsLine.crop_alt_rotate_right),
             onPressed: () {
-              _editorKey.currentState.rotate(right: true);
+              _editorKey.currentState!.rotate(right: true);
             },
           ),
           IconButton(
             icon: Icon(UniconsLine.flip_v),
             onPressed: () {
-              _editorKey.currentState.flip();
+              _editorKey.currentState!.flip();
             },
           ),
           IconButton(
             icon: Icon(UniconsLine.history),
             onPressed: () {
-              _editorKey.currentState.reset();
+              _editorKey.currentState!.reset();
             },
           ),
         ],
@@ -218,15 +218,15 @@ class _EditImagePageState extends State<EditImagePage> {
     );
   }
 
-  Future<void> _cropImage({bool useNativeLib}) async {
+  Future<void> _cropImage({required bool useNativeLib}) async {
     setState(() => _isCropping = true);
 
     try {
-      Uint8List fileData;
+      Uint8List? fileData;
 
       if (useNativeLib) {
         fileData = await cropImageDataWithNativeLibrary(
-          state: _editorKey.currentState,
+          state: _editorKey.currentState!,
         );
       } else {
         // Delay due to cropImageDataWithDartLibrary is time consuming on main thread
@@ -236,18 +236,18 @@ class _EditImagePageState extends State<EditImagePage> {
 
         // If you don't want to block ui, use compute/isolate,but it costs more time.
         fileData = await cropImageDataWithDartLibrary(
-          state: _editorKey.currentState,
+          state: _editorKey.currentState!,
         );
       }
 
-      uploadPicture(imageData: fileData);
+      uploadPicture(imageData: fileData!);
     } catch (error) {
       appLogger.e(error);
     }
   }
 
-  void uploadPicture({Uint8List imageData}) async {
-    final User user = FirebaseAuth.instance.currentUser;
+  void uploadPicture({required Uint8List imageData}) async {
+    final User? user = FirebaseAuth.instance.currentUser;
 
     if (user == null) {
       throw Exception("You're not connected.");
@@ -255,7 +255,7 @@ class _EditImagePageState extends State<EditImagePage> {
 
     setState(() => _isUpdating = true);
 
-    final String ext = stateUser.userFirestore.pp.ext;
+    final String ext = stateUser.userFirestore!.pp!.ext!;
 
     try {
       final String imagePath = "images/users/${user.uid}/pp/edited.$ext";
@@ -274,9 +274,9 @@ class _EditImagePageState extends State<EditImagePage> {
       final String downloadUrl = await snapshot.ref.getDownloadURL();
 
       setState(() {
-        stateUser.userFirestore.urls.setUrl('image', downloadUrl);
+        stateUser.userFirestore!.urls!.setUrl('image', downloadUrl);
 
-        stateUser.userFirestore.pp.merge(
+        stateUser.userFirestore!.pp!.merge(
           path: UserPPPath(edited: imagePath),
           url: UserPPUrl(edited: downloadUrl),
         );
@@ -300,17 +300,14 @@ class _EditImagePageState extends State<EditImagePage> {
       final HttpsCallableResult<dynamic> resp =
           await Cloud.fun('users-updateUser').call({
         'userId': uid,
-        'updatePayload': stateUser.userFirestore.toJSON(),
+        'updatePayload': stateUser.userFirestore!.toJSON(),
       });
 
       final LinkedHashMap<dynamic, dynamic> hashMap =
           LinkedHashMap.from(resp.data);
 
-      final Map<String, dynamic> data = Cloud.convertFromFun(hashMap);
-
-      if (data != null) {
-        Beamer.of(context).beamBack();
-      }
+      Cloud.convertFromFun(hashMap);
+      Beamer.of(context).beamBack();
     } catch (error) {
       appLogger.e(error);
     } finally {

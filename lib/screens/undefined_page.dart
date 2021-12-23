@@ -27,7 +27,7 @@ class _UndefinedPageState extends State<UndefinedPage> {
           opacity: .6,
           child: Text(
             "route_undefined".tr(
-              args: [Beamer.of(context).currentPages.last.name],
+              args: [Beamer.of(context).currentPages.last.name!],
             ),
           ),
         ),

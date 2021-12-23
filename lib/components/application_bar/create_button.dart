@@ -7,7 +7,7 @@ import 'package:unicons/unicons.dart';
 
 /// Button to create new posts a-or projects.
 class CreateButton extends StatelessWidget {
-  const CreateButton({Key key}) : super(key: key);
+  const CreateButton({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

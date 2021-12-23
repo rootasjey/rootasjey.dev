@@ -12,13 +12,13 @@ mixin _$StateUser on StateUserBase, Store {
   final _$userFirestoreAtom = Atom(name: 'StateUserBase.userFirestore');
 
   @override
-  UserFirestore get userFirestore {
+  UserFirestore? get userFirestore {
     _$userFirestoreAtom.reportRead();
     return super.userFirestore;
   }
 
   @override
-  set userFirestore(UserFirestore value) {
+  set userFirestore(UserFirestore? value) {
     _$userFirestoreAtom.reportWrite(value, super.userFirestore, () {
       super.userFirestore = value;
     });
@@ -117,13 +117,13 @@ mixin _$StateUser on StateUserBase, Store {
   final _$usernameAtom = Atom(name: 'StateUserBase.username');
 
   @override
-  String get username {
+  String? get username {
     _$usernameAtom.reportRead();
     return super.username;
   }
 
   @override
-  set username(String value) {
+  set username(String? value) {
     _$usernameAtom.reportWrite(value, super.username, () {
       super.username = value;
     });
@@ -148,7 +148,7 @@ mixin _$StateUser on StateUserBase, Store {
 
   @override
   Future<dynamic> signOut(
-      {BuildContext context, bool redirectOnComplete = false}) {
+      {BuildContext? context, bool redirectOnComplete = false}) {
     return _$signOutAsyncAction.run(() => super
         .signOut(context: context, redirectOnComplete: redirectOnComplete));
   }
@@ -212,7 +212,7 @@ mixin _$StateUser on StateUserBase, Store {
   }
 
   @override
-  void setUsername(String name) {
+  void setUsername(String? name) {
     final _$actionInfo = _$StateUserBaseActionController.startAction(
         name: 'StateUserBase.setUsername');
     try {

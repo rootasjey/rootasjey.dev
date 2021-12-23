@@ -28,11 +28,11 @@ import 'package:supercharged/supercharged.dart';
 import 'package:unicons/unicons.dart';
 
 class ProjectEditor extends StatefulWidget {
-  final String projectId;
+  final String? projectId;
 
   const ProjectEditor({
-    Key key,
-    @required this.projectId,
+    Key? key,
+    required this.projectId,
   }) : super(key: key);
   @override
   _ProjectEditorState createState() => _ProjectEditorState();
@@ -44,7 +44,7 @@ class _ProjectEditorState extends State<ProjectEditor> {
   bool _hasError = false;
   bool _isEditingExistingLink = false;
 
-  DocumentSnapshot _projectSnapshot;
+  late DocumentSnapshot _projectSnapshot;
 
   final _linkNameFocusNode = FocusNode();
   final _linkValueFocusNode = FocusNode();
@@ -82,16 +82,16 @@ class _ProjectEditorState extends State<ProjectEditor> {
   String _linkValue = '';
   String _platformInputValue = '';
   String _progLangInputValue = '';
-  String _projectBody = '';
+  String? _projectBody = '';
   String _projectLang = 'en';
   String _projectPubStatus = DRAFT;
-  String _projectSummary = '';
-  String _projectTitle = '';
+  String? _projectSummary = '';
+  String? _projectTitle = '';
   String _tagInputValue = '';
 
-  Timer _saveTitleTimer;
-  Timer _saveSummaryTimer;
-  Timer _saveContentTimer;
+  Timer? _saveTitleTimer;
+  Timer? _saveSummaryTimer;
+  Timer? _saveContentTimer;
 
   @override
   void initState() {
@@ -854,7 +854,7 @@ class _ProjectEditorState extends State<ProjectEditor> {
           _projectTitle = newValue;
 
           if (_saveTitleTimer != null) {
-            _saveTitleTimer.cancel();
+            _saveTitleTimer!.cancel();
           }
 
           _saveTitleTimer = Timer(1.seconds, () => updateTitle());
@@ -1286,37 +1286,37 @@ class _ProjectEditorState extends State<ProjectEditor> {
           .doc(widget.projectId)
           .get();
 
-      _jwt = await FirebaseAuth.instance.currentUser.getIdToken();
+      _jwt = await FirebaseAuth.instance.currentUser!.getIdToken();
 
-      final Map<String, dynamic> data = _projectSnapshot.data();
+      final Map<String, dynamic> data = _projectSnapshot.data() as Map<String, dynamic>;
       data['id'] = _projectSnapshot.id;
 
       final Project project = Project.fromJSON(data);
 
       setState(() {
-        _projectPubStatus = project.published ? PUBLISHED : DRAFT;
+        _projectPubStatus = project.published! ? PUBLISHED : DRAFT;
 
         _projectTitle = project.title;
         _projectSummary = project.summary;
 
-        for (String platform in project.platforms) {
+        for (String platform in project.platforms!) {
           _platforms[platform] = true;
         }
 
-        for (String tag in project.tags) {
+        for (String tag in project.tags!) {
           _tags[tag] = true;
         }
 
-        for (String pLang in project.programmingLanguages) {
+        for (String pLang in project.programmingLanguages!) {
           _programmingLanguages[pLang] = true;
         }
 
-        project.urls.map.forEach((key, value) {
+        project.urls!.map!.forEach((key, value) {
           _links[key] = value;
         });
 
-        _titleController.text = _projectTitle;
-        _summaryController.text = _projectSummary;
+        _titleController.text = _projectTitle!;
+        _summaryController.text = _projectSummary!;
       });
     } catch (error) {
       setState(() {
@@ -1342,7 +1342,7 @@ class _ProjectEditorState extends State<ProjectEditor> {
 
       setState(() {
         _projectBody = response.data['project'];
-        _projectBodyInputController.text = _projectBody;
+        _projectBodyInputController.text = _projectBody!;
       });
     } catch (error) {
       setState(() {

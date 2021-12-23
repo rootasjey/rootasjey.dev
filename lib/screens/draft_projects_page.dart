@@ -16,7 +16,7 @@ import 'package:rootasjey/utils/snack.dart';
 import 'package:unicons/unicons.dart';
 
 class DraftProjectsPage extends StatefulWidget {
-  const DraftProjectsPage({Key key}) : super(key: key);
+  const DraftProjectsPage({Key? key}) : super(key: key);
 
   @override
   _DraftProjectsPageState createState() => _DraftProjectsPageState();
@@ -29,7 +29,7 @@ class _DraftProjectsPageState extends State<DraftProjectsPage> {
   bool _hasNext = true;
   bool _isLoading = false;
 
-  DocumentSnapshot _lastDocumentSnapshot;
+  DocumentSnapshot? _lastDocumentSnapshot;
 
   @override
   void initState() {
@@ -109,7 +109,7 @@ class _DraftProjectsPageState extends State<DraftProjectsPage> {
   }
 
   Widget header() {
-    final String currentPath = Beamer.of(context).currentPages.last.name;
+    final String? currentPath = Beamer.of(context).currentPages.last.name;
 
     final List<HeaderSectionData> headerSectionData = [
       HeaderSectionData(
@@ -215,7 +215,7 @@ class _DraftProjectsPageState extends State<DraftProjectsPage> {
     });
 
     try {
-      final userAuth = stateUser.userAuth;
+      final userAuth = stateUser.userAuth!;
       final uid = userAuth.uid;
 
       final snapshot = await FirebaseFirestore.instance
@@ -261,14 +261,14 @@ class _DraftProjectsPageState extends State<DraftProjectsPage> {
     });
 
     try {
-      final userAuth = stateUser.userAuth;
+      final userAuth = stateUser.userAuth!;
       final uid = userAuth.uid;
 
       final snapshot = await FirebaseFirestore.instance
           .collection('projects')
           .where('published', isEqualTo: false)
           .where('author.id', isEqualTo: uid)
-          .startAfterDocument(_lastDocumentSnapshot)
+          .startAfterDocument(_lastDocumentSnapshot!)
           .limit(_limit)
           .get();
 

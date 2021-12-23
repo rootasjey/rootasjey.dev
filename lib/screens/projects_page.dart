@@ -26,7 +26,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
   final _limit = 10;
   bool _hasNext = true;
   bool _isLoading = false;
-  DocumentSnapshot _lastDoc;
+  DocumentSnapshot? _lastDoc;
 
   @override
   void initState() {
@@ -179,7 +179,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
       final snapshot = await FirebaseFirestore.instance
           .collection('projects')
           .where('published', isEqualTo: true)
-          .startAfterDocument(_lastDoc)
+          .startAfterDocument(_lastDoc!)
           .limit(_limit)
           .get();
 

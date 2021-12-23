@@ -10,11 +10,11 @@ import 'package:rootasjey/utils/fonts.dart';
 
 /// Main app class.
 class App extends StatefulWidget {
-  final AdaptiveThemeMode savedThemeMode;
-  final Brightness brightness;
+  final AdaptiveThemeMode? savedThemeMode;
+  final Brightness? brightness;
 
   const App({
-    Key key,
+    Key? key,
     this.savedThemeMode,
     this.brightness,
   }) : super(key: key);

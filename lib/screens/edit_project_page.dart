@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:rootasjey/components/project_editor.dart';
 
 class EditProjectPage extends StatefulWidget {
-  final String projectId;
+  final String? projectId;
 
-  EditProjectPage({@required this.projectId});
+  EditProjectPage({required this.projectId});
 
   @override
   _EditProjectPageState createState() => _EditProjectPageState();

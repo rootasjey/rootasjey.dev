@@ -1,30 +1,29 @@
-import 'package:flutter/foundation.dart';
 import 'package:rootasjey/types/user_pp.dart';
 import 'package:rootasjey/types/user_stats.dart';
 import 'package:rootasjey/utils/date_helper.dart';
 import 'urls.dart';
 
 class UserFirestore {
-  final DateTime createdAt;
-  final String email;
-  final String id;
-  String job;
-  final String lang;
-  String location;
-  final String name;
-  final String nameLowerCase;
-  final UserPP pp;
-  final String pricing;
-  final String role;
-  final UserStats stats;
-  String summary;
-  final DateTime updatedAt;
-  final Urls urls;
+  final DateTime? createdAt;
+  final String? email;
+  final String? id;
+  String? job;
+  final String? lang;
+  String? location;
+  final String? name;
+  final String? nameLowerCase;
+  final UserPP? pp;
+  final String? pricing;
+  final String? role;
+  final UserStats? stats;
+  String? summary;
+  final DateTime? updatedAt;
+  final Urls? urls;
 
   UserFirestore({
     this.createdAt,
     this.email = 'anonymous@rootasjey.dev',
-    @required this.id,
+    required this.id,
     this.job = 'Ghosting',
     this.lang = 'en',
     this.location = 'Nowhere',
@@ -59,7 +58,7 @@ class UserFirestore {
     );
   }
 
-  factory UserFirestore.fromJSON(Map<String, dynamic> data) {
+  factory UserFirestore.fromJSON(Map<String, dynamic>? data) {
     if (data == null) {
       return UserFirestore.empty();
     }
@@ -95,12 +94,12 @@ class UserFirestore {
     data['job'] = job;
     data['lang'] = lang;
     data['location'] = location;
-    data['pp'] = pp.toJSON();
+    data['pp'] = pp!.toJSON();
     data['pricing'] = pricing;
     data['role'] = role;
     data['summary'] = summary;
     data['updatedAt'] = DateTime.now().millisecondsSinceEpoch;
-    data['urls'] = urls.toJSON();
+    data['urls'] = urls!.toJSON();
 
     return data;
   }

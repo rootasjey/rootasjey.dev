@@ -43,10 +43,10 @@ abstract class StateColorsBase with Store {
   /// Color for settings.
   final Color settings = Colors.lime;
 
-  ThemeData themeData;
+  late ThemeData themeData;
 
   @action
-  void refreshTheme(Brightness brightness) {
+  void refreshTheme(Brightness? brightness) {
     if (brightness == Brightness.dark) {
       foreground = Colors.white;
       background = Colors.black;

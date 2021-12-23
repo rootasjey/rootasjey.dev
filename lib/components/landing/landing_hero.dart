@@ -254,10 +254,10 @@ class _LandingHeroState extends State<LandingHero> {
   }
 
   Widget projectCard({
-    String backgroundUrl,
+    required String backgroundUrl,
     double width = 150.0,
     double height = 150.0,
-    String textTitle,
+    required String textTitle,
   }) {
     return SizedBox(
       width: width,

@@ -5,24 +5,24 @@ import 'package:rootasjey/types/urls.dart';
 import 'package:rootasjey/utils/date_helper.dart';
 
 class Post {
-  final Author author;
+  final Author? author;
   final List<String> coauthors;
-  final DateTime createdAt;
+  final DateTime? createdAt;
   final bool featured;
   final String id;
-  final PostImageMap image;
+  final PostImageMap? image;
   final String lang;
   final String path;
-  final List<String> programmingLanguages;
+  final List<String>? programmingLanguages;
   final bool published;
   final bool referenced;
   final String summary;
-  final Stats stats;
+  final Stats? stats;
   final List<String> tags;
   final String title;
   final String timeToRead;
-  final DateTime updatedAt;
-  final Urls urls;
+  final DateTime? updatedAt;
+  final Urls? urls;
 
   Post({
     this.author,
@@ -68,7 +68,7 @@ class Post {
     );
   }
 
-  factory Post.fromJSON(Map<String, dynamic> data) {
+  factory Post.fromJSON(Map<String, dynamic>? data) {
     if (data == null) {
       return Post.empty();
     }
@@ -98,7 +98,7 @@ class Post {
   static List<String> parseCoAuthors(Map<String, dynamic> data) {
     final coAuthors = <String>[];
 
-    if (data == null || data['coauthors'] == null) {
+    if (data['coauthors'] == null) {
       return coAuthors;
     }
 
@@ -114,7 +114,7 @@ class Post {
   static List<String> parseProgrammingLangs(Map<String, dynamic> data) {
     final languages = <String>[];
 
-    if (data == null || data['programmingLanguages'] == null) {
+    if (data['programmingLanguages'] == null) {
       return languages;
     }
 
@@ -132,7 +132,7 @@ class Post {
   static List<String> parseTags(Map<String, dynamic> data) {
     final tags = <String>[];
 
-    if (data == null || data['tags'] == null) {
+    if (data['tags'] == null) {
       return tags;
     }
     final dataTags = data['tags'] as Map<String, dynamic>;

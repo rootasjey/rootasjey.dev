@@ -11,7 +11,7 @@ class MainAppBar extends StatefulWidget {
   final List<Widget> trailing;
 
   const MainAppBar({
-    Key key,
+    Key? key,
     this.trailing = const [],
   }) : super(key: key);
 

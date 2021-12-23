@@ -13,7 +13,7 @@ class ContactForm extends StatefulWidget {
   final bool autoFocus;
 
   const ContactForm({
-    Key key,
+    Key? key,
     this.autoFocus = false,
   }) : super(key: key);
 
@@ -25,7 +25,7 @@ class _ContactFormState extends State<ContactForm> {
   String _email = '';
   String _messageBody = '';
   String _messageTitle = '';
-  String _subject = "other".tr();
+  String? _subject = "other".tr();
   String _subjectHintPrefix = '';
 
   bool _isLoading = false;
@@ -112,7 +112,7 @@ class _ContactFormState extends State<ContactForm> {
         maxLines: null,
         minLines: 7,
         validator: (value) {
-          if (value.isEmpty) {
+          if (value!.isEmpty) {
             return _errorMessages['emptyBoy'];
           }
 
@@ -169,7 +169,7 @@ class _ContactFormState extends State<ContactForm> {
                   ),
                 ),
                 Text(
-                  _subject.toLowerCase(),
+                  _subject!.toLowerCase(),
                   style: TextStyle(
                     color: stateColors.primary,
                   ),
@@ -200,7 +200,7 @@ class _ContactFormState extends State<ContactForm> {
         ),
         keyboardType: TextInputType.emailAddress,
         validator: (value) {
-          if (value.isEmpty) {
+          if (value!.isEmpty) {
             return _errorMessages['emptyEmail'];
           }
 
@@ -249,7 +249,7 @@ class _ContactFormState extends State<ContactForm> {
           errorText: getTitleErrorText(),
         ),
         validator: (value) {
-          if (value.isEmpty) {
+          if (value!.isEmpty) {
             return _errorMessages['emptyTitle'];
           }
 
@@ -439,7 +439,7 @@ class _ContactFormState extends State<ContactForm> {
     return true;
   }
 
-  String getEmailErrorText({bool beforeSending = false}) {
+  String? getEmailErrorText({bool beforeSending = false}) {
     if (beforeSending) {
       _emailNeverEdited = false;
     }
@@ -459,7 +459,7 @@ class _ContactFormState extends State<ContactForm> {
     return null;
   }
 
-  String getTitleErrorText() {
+  String? getTitleErrorText() {
     if (_titleNeverEdited) {
       return null;
     }
@@ -475,7 +475,7 @@ class _ContactFormState extends State<ContactForm> {
     return null;
   }
 
-  String getBodyErrorText({bool beforeSending = false}) {
+  String? getBodyErrorText({bool beforeSending = false}) {
     if (beforeSending) {
       _bodyNeverEdited = false;
     }

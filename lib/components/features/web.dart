@@ -120,8 +120,8 @@ class _WebFeaturesState extends State<WebFeatures> {
         ],
         rows: featuresDataList.map((data) {
           return featureRow(
-            label: data['label'],
-            description: data['description'],
+            label: data['label'] as String,
+            description: data['description'] as String?,
           );
         }).toList(),
       ),
@@ -136,9 +136,9 @@ class _WebFeaturesState extends State<WebFeatures> {
         runSpacing: 10.0,
         children: featuresDataList.map((data) {
           return featureButton(
-            label: data['label'],
-            description: data['description'],
-            icon: data.containsKey('icon') ? data['icon'] : null,
+            label: data['label'] as String?,
+            description: data['description'] as String?,
+            icon: data.containsKey('icon') ? data['icon'] as Widget? : null,
           );
         }).toList(),
       ),
@@ -146,9 +146,9 @@ class _WebFeaturesState extends State<WebFeatures> {
   }
 
   Widget featureButton({
-    String label,
-    String description,
-    Widget icon,
+    String? label,
+    String? description,
+    Widget? icon,
   }) {
     return Tooltip(
       message: description,
@@ -164,7 +164,7 @@ class _WebFeaturesState extends State<WebFeatures> {
               label: Opacity(
                 opacity: 0.6,
                 child: Text(
-                  label,
+                  label!,
                   style: TextStyle(
                     fontSize: 18.0,
                   ),
@@ -181,7 +181,7 @@ class _WebFeaturesState extends State<WebFeatures> {
               child: Opacity(
                 opacity: 0.6,
                 child: Text(
-                  label,
+                  label!,
                   style: TextStyle(
                     fontSize: 18.0,
                   ),
@@ -191,7 +191,7 @@ class _WebFeaturesState extends State<WebFeatures> {
     );
   }
 
-  DataRow featureRow({String label, String description}) {
+  DataRow featureRow({required String label, String? description}) {
     return DataRow(cells: [
       DataCell(
           Tooltip(
@@ -221,7 +221,7 @@ class _WebFeaturesState extends State<WebFeatures> {
     ]);
   }
 
-  void showDescriptionDialog({String label, String description}) {
+  void showDescriptionDialog({String? label, String? description}) {
     showDialog(
       context: context,
       builder: (context) {
@@ -229,7 +229,7 @@ class _WebFeaturesState extends State<WebFeatures> {
           title: Opacity(
             opacity: 0.8,
             child: Text(
-              label,
+              label!,
             ),
           ),
           children: <Widget>[
@@ -242,7 +242,7 @@ class _WebFeaturesState extends State<WebFeatures> {
               child: Opacity(
                 opacity: 0.6,
                 child: Text(
-                  description,
+                  description!,
                 ),
               ),
             ),

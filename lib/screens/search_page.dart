@@ -38,14 +38,14 @@ class _SearchPageState extends State<SearchPage> {
 
   int _limit = 30;
 
-  FocusNode _searchFocusNode;
-  ScrollController _scrollController;
+  FocusNode? _searchFocusNode;
+  ScrollController? _scrollController;
 
   String _searchInputValue = '';
 
-  TextEditingController _searchInputController;
+  TextEditingController? _searchInputController;
 
-  Timer _searchTimer;
+  Timer? _searchTimer;
 
   @override
   initState() {
@@ -57,9 +57,9 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   dispose() {
-    _searchFocusNode.dispose();
-    _scrollController.dispose();
-    _searchInputController.dispose();
+    _searchFocusNode!.dispose();
+    _scrollController!.dispose();
+    _searchInputController!.dispose();
     super.dispose();
   }
 
@@ -69,7 +69,7 @@ class _SearchPageState extends State<SearchPage> {
       floatingActionButton: _isFabVisible
           ? FloatingActionButton(
               onPressed: () {
-                _scrollController.animateTo(
+                _scrollController!.animateTo(
                   0.0,
                   duration: Duration(seconds: 1),
                   curve: Curves.easeOut,
@@ -204,7 +204,7 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 
-  Widget titleSection({String text}) {
+  Widget titleSection({required String text}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 15.0),
       child: Text(
@@ -266,8 +266,8 @@ class _SearchPageState extends State<SearchPage> {
       OutlinedButton.icon(
         onPressed: () {
           _searchInputValue = '';
-          _searchInputController.clear();
-          _searchFocusNode.requestFocus();
+          _searchInputController!.clear();
+          _searchFocusNode!.requestFocus();
 
           setState(() {});
         },
@@ -325,7 +325,7 @@ class _SearchPageState extends State<SearchPage> {
               }
 
               if (_searchTimer != null) {
-                _searchTimer.cancel();
+                _searchTimer!.cancel();
               }
 
               _searchTimer = Timer(
@@ -479,7 +479,7 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   void sharePostMobile(Post post) {
-    final RenderBox box = context.findRenderObject();
+    final RenderBox box = context.findRenderObject() as RenderBox;
     String sharingText = post.title;
     final url = '${Constants.basePostUrl}${post.id}';
 

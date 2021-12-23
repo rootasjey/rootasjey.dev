@@ -22,7 +22,7 @@ class _AboutMePageState extends State<AboutMePage> {
   bool hasNext = true;
   bool isLoading = false;
 
-  DocumentSnapshot doc;
+  DocumentSnapshot? doc;
 
   @override
   Widget build(BuildContext context) {
@@ -49,14 +49,14 @@ class _AboutMePageState extends State<AboutMePage> {
     );
   }
 
-  Widget artistAvatar({String imageUrl, String name, String url}) {
+  Widget artistAvatar({required String imageUrl, required String name, String? url}) {
     return Column(
       children: [
         BetterAvatar(
           elevation: 0,
           size: 130.0,
           image: NetworkImage(imageUrl),
-          onTap: () => launch(url),
+          onTap: () => launch(url!),
         ),
         Padding(
           padding: const EdgeInsets.only(top: 12.0),
@@ -178,7 +178,7 @@ class _AboutMePageState extends State<AboutMePage> {
     );
   }
 
-  Widget header({String title, Widget icon}) {
+  Widget header({required String title, Widget? icon}) {
     return Padding(
       padding: const EdgeInsets.only(
         top: 120.0,
@@ -244,7 +244,7 @@ class _AboutMePageState extends State<AboutMePage> {
     );
   }
 
-  Widget subHeader({String title, Widget icon}) {
+  Widget subHeader({required String title, Widget? icon}) {
     return Padding(
       padding: const EdgeInsets.only(
         top: 30.0,
@@ -414,9 +414,9 @@ class _AboutMePageState extends State<AboutMePage> {
     );
   }
 
-  Widget musicGenderButton({String name, String url}) {
+  Widget musicGenderButton({required String name, String? url}) {
     return OutlinedButton(
-      onPressed: () => launch(url),
+      onPressed: () => launch(url!),
       child: Opacity(
         opacity: 0.6,
         child: Text(name,
@@ -466,7 +466,7 @@ class _AboutMePageState extends State<AboutMePage> {
     );
   }
 
-  Widget textBlock({String text}) {
+  Widget textBlock({required String text}) {
     return Padding(
       padding: const EdgeInsets.only(
         bottom: 40.0,

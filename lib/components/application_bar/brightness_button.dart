@@ -7,7 +7,7 @@ import 'package:unicons/unicons.dart';
 
 /// Button contrloing dark/light theme.
 class BrightnessButton extends StatelessWidget {
-  const BrightnessButton({Key key}) : super(key: key);
+  const BrightnessButton({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

@@ -32,7 +32,7 @@ class _DashboardPageState extends State<DashboardPage> {
                       routerDelegate: BeamerDelegate(
                         locationBuilder: BeamerLocationBuilder(beamLocations: [
                           DashboardLocationContent(),
-                        ]),
+                        ]) as BeamLocation<RouteInformationSerializable<dynamic>> Function(RouteInformation, BeamParameters?),
                       ),
                     ),
                   ),

@@ -27,7 +27,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 class PostPage extends StatefulWidget {
   @required
-  final String postId;
+  final String? postId;
 
   PostPage({this.postId});
 
@@ -47,7 +47,7 @@ class _PostPageState extends State<PostPage> {
 
   KeyBindings _keyBindings = KeyBindings();
 
-  Post _post;
+  Post? _post;
 
   String _postData = '';
   String _postShareUrl = '';
@@ -62,7 +62,7 @@ class _PostPageState extends State<PostPage> {
     _postShareUrl = "https://rootasjey.dev/posts/${widget.postId}";
 
     // Delay initialization.
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
       _keyBindings.init(
         scrollController: _scrollController,
         pageHeight: 100.0,
@@ -192,8 +192,8 @@ class _PostPageState extends State<PostPage> {
   Widget dates() {
     return DatesHeader(
       padding: const EdgeInsets.only(top: 12.0),
-      createdAt: Jiffy(_post.createdAt).fromNow(),
-      updatedAt: Jiffy(_post.updatedAt).fromNow(),
+      createdAt: Jiffy(_post!.createdAt).fromNow(),
+      updatedAt: Jiffy(_post!.updatedAt).fromNow(),
     );
   }
 
@@ -252,13 +252,13 @@ class _PostPageState extends State<PostPage> {
   }
 
   Widget programmingLang() {
-    if (_post.programmingLanguages.isEmpty) {
+    if (_post!.programmingLanguages!.isEmpty) {
       return Container();
     }
 
     return Wrap(
       spacing: 8.0,
-      children: _post.programmingLanguages
+      children: _post!.programmingLanguages!
           .map(
             (pLang) => Tooltip(
               message: "Programming language",
@@ -296,7 +296,7 @@ class _PostPageState extends State<PostPage> {
                 ClipboardData(text: _postShareUrl),
               );
 
-              PostsActions.share(postId: _post.id);
+              PostsActions.share(postId: _post!.id);
 
               Snack.s(
                 context: context,
@@ -311,13 +311,13 @@ class _PostPageState extends State<PostPage> {
           IconButton(
             tooltip: "share_on_twitter".tr(),
             onPressed: () {
-              final shareTags = _post.tags.join(",");
+              final shareTags = _post!.tags.join(",");
               final baseShare = Constants.baseTwitterShareUrl;
               final hashTags = Constants.twitterShareHashtags;
 
               launch("$baseShare$_postShareUrl$hashTags$shareTags");
 
-              PostsActions.share(postId: _post.id);
+              PostsActions.share(postId: _post!.id);
             },
             icon: Opacity(
               opacity: 0.6,
@@ -341,7 +341,7 @@ class _PostPageState extends State<PostPage> {
                 );
               },
               onTap: (bool isLiked) async {
-                PostsActions.like(postId: _post.id, like: !isLiked);
+                PostsActions.like(postId: _post!.id, like: !isLiked);
                 return !isLiked;
               },
             ),
@@ -357,7 +357,7 @@ class _PostPageState extends State<PostPage> {
       child: Opacity(
         opacity: 0.6,
         child: Text(
-          _post.summary,
+          _post!.summary,
           style: FontsUtils.mainStyle(
             fontSize: 16.0,
             fontWeight: FontWeight.w600,
@@ -368,13 +368,13 @@ class _PostPageState extends State<PostPage> {
   }
 
   Widget tags() {
-    if (_post.tags.isEmpty) {
+    if (_post!.tags.isEmpty) {
       return Container();
     }
 
     return Wrap(
       spacing: 8.0,
-      children: _post.tags
+      children: _post!.tags
           .map(
             (tag) => Tooltip(
               message: "Tag",
@@ -391,7 +391,7 @@ class _PostPageState extends State<PostPage> {
     return Padding(
       padding: const EdgeInsets.only(top: 24.0),
       child: Text(
-        _post.title,
+        _post!.title,
         style: FontsUtils.mainStyle(
           height: 1.0,
           fontSize: 80.0,
@@ -412,7 +412,7 @@ class _PostPageState extends State<PostPage> {
         return;
       }
 
-      final data = doc.data();
+      final data = doc.data()!;
       data['id'] = doc.id;
 
       setState(() {

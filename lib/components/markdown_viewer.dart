@@ -15,8 +15,8 @@ class MarkdownViewer extends StatefulWidget {
   final double width;
 
   const MarkdownViewer({
-    Key key,
-    @required this.data,
+    Key? key,
+    required this.data,
     this.width = 500.0,
   }) : super(key: key);
 
@@ -33,7 +33,7 @@ class _MarkdownViewerState extends State<MarkdownViewer> {
       customRender: {
         'a': (RenderContext context, Widget child) {
           final element = context.tree.element;
-          final attributes = context.tree.element.attributes;
+          final attributes = context.tree.element!.attributes;
 
           return TextLink(
             attributes: {
@@ -44,17 +44,17 @@ class _MarkdownViewerState extends State<MarkdownViewer> {
         },
         'code': (RenderContext context, Widget child) {
           final element = context.tree.element;
-          final attributes = context.tree.element.attributes;
+          final attributes = context.tree.element!.attributes;
 
           if (attributes.isEmpty) {
-            return codeInline(element);
+            return codeInline(element!);
           }
 
-          return codeBlock(attributes, element);
+          return codeBlock(attributes, element!);
         },
         'img': (RenderContext context, Widget child) {
           final element = context.tree.element;
-          final attributes = context.tree.element.attributes;
+          final attributes = context.tree.element!.attributes;
 
           return ImageViewer(
             attributes: {
@@ -198,7 +198,7 @@ class _MarkdownViewerState extends State<MarkdownViewer> {
     };
   }
 
-  Syntax getSyntax(String langClass) {
+  Syntax getSyntax(String? langClass) {
     switch (langClass) {
       case "language-csharp":
         return Syntax.CPP;

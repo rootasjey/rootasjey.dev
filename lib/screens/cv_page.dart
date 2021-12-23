@@ -85,7 +85,7 @@ class _CVPageState extends State<CVPage> {
     ),
   ];
 
-  Uint8List _imageFile;
+  Uint8List? _imageFile;
   final screenshotController = ScreenshotController();
 
   final projects = [
@@ -175,7 +175,7 @@ class _CVPageState extends State<CVPage> {
                 return IconButton(
                   onPressed: () async {
                     _imageFile = await screenshotController.capture();
-                    await FileSaver.instance.saveFile("cv", _imageFile, "png");
+                    await FileSaver.instance.saveFile("cv", _imageFile!, "png");
                   },
                   icon: Icon(UniconsLine.camera, color: stateColors.foreground),
                 );
@@ -367,10 +367,10 @@ class _CVPageState extends State<CVPage> {
   }
 
   Widget skillItem({
-    @required String label,
-    String url,
-    String assetPath,
-    IconData iconData,
+    required String label,
+    String? url,
+    String? assetPath,
+    IconData? iconData,
     bool blend = false,
   }) {
     return InkWell(
@@ -454,7 +454,7 @@ class _CVPageState extends State<CVPage> {
                 opacity: 0.8,
                 child: InkWell(
                   onTap: () {
-                    if (exp.url == null || exp.url.isEmpty) {
+                    if (exp.url.isEmpty) {
                       return;
                     }
 
@@ -603,14 +603,14 @@ class _CVPageState extends State<CVPage> {
                   children: [
                     InkWell(
                       onTap: () {
-                        if (project.urls.github.isEmpty) {
+                        if (project.urls!.github.isEmpty) {
                           return;
                         }
 
-                        launch(project.urls.github);
+                        launch(project.urls!.github);
                       },
                       child: Text(
-                        project.title,
+                        project.title!,
                         style: FontsUtils.mainStyle(
                           fontSize: 20.0,
                           fontWeight: FontWeight.w500,
@@ -623,7 +623,7 @@ class _CVPageState extends State<CVPage> {
                         opacity: 0.5,
                         child: Wrap(
                           spacing: 8.0,
-                          children: project.platforms
+                          children: project.platforms!
                               .map((platform) => Text(platform))
                               .toList(),
                         ),
@@ -633,14 +633,14 @@ class _CVPageState extends State<CVPage> {
                       width: 400.0,
                       child: Opacity(
                         opacity: 0.8,
-                        child: Text(project.summary),
+                        child: Text(project.summary!),
                       ),
                     ),
                   ],
                 ),
-                if (project.urls.image.isNotEmpty)
+                if (project.urls!.image.isNotEmpty)
                   Image.asset(
-                    project.urls.image,
+                    project.urls!.image,
                     width: 60.0,
                     height: 60.0,
                   ),

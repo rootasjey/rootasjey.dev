@@ -3,10 +3,10 @@ import 'package:unicons/unicons.dart';
 
 class ErrorView extends StatelessWidget {
   final String textTitle;
-  final VoidCallback onRefresh;
+  final VoidCallback? onRefresh;
 
   const ErrorView({
-    Key key,
+    Key? key,
     this.textTitle = '',
     this.onRefresh,
   }) : super(key: key);

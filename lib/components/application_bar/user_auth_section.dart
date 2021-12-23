@@ -6,7 +6,7 @@ import 'package:rootasjey/components/avatar/avatar_menu.dart';
 
 class UserAuthSection extends StatelessWidget {
   const UserAuthSection({
-    Key key,
+    Key? key,
     this.compact = false,
     this.trailing = const [],
   }) : super(key: key);

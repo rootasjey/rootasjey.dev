@@ -3,11 +3,11 @@ import 'package:flutter/widgets.dart';
 class ButtonData {
   final String textValue;
   final String routePath;
-  final IconData iconData;
+  final IconData? iconData;
 
   ButtonData({
-    @required this.textValue,
-    @required this.routePath,
+    required this.textValue,
+    required this.routePath,
     this.iconData,
   });
 }

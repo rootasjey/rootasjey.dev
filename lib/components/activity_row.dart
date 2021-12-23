@@ -10,7 +10,7 @@ class ActivityRow extends StatefulWidget {
   final Event activity;
 
   ActivityRow({
-    @required this.activity,
+    required this.activity,
   });
 
   @override
@@ -28,7 +28,7 @@ class _ActivityRowState extends State<ActivityRow> {
       elevation: elevation,
       color: stateColors.getCurrentBackground(context),
       child: InkWell(
-        onTap: () => launch('https://github.com/${activity.repo.name}'),
+        onTap: () => launch('https://github.com/${activity.repo!.name}'),
         onHover: (isHit) {
           setState(() => elevation = isHit ? 2.0 : 0.0);
         },
@@ -90,7 +90,7 @@ class _ActivityRowState extends State<ActivityRow> {
       child: Opacity(
         opacity: 0.6,
         child: Text(
-          '${activity.repo.name}',
+          '${activity.repo!.name}',
           style: FontsUtils.mainStyle(
             fontWeight: FontWeight.w500,
             fontSize: 16.0,
@@ -110,7 +110,7 @@ class _ActivityRowState extends State<ActivityRow> {
     );
   }
 
-  IconData getEventIcon(String type) {
+  IconData getEventIcon(String? type) {
     switch (type) {
       case 'PushEvent':
         return UniconsLine.upload;
@@ -125,14 +125,14 @@ class _ActivityRowState extends State<ActivityRow> {
     }
   }
 
-  String getEventType(String type, Map<String, dynamic> payload) {
+  String? getEventType(String? type, Map<String, dynamic>? payload) {
     switch (type) {
       case 'PushEvent':
         return 'Push';
       case 'WatchEvent':
         return 'Watch';
       case 'PullRequestEvent':
-        return getPRAction(payload['action']);
+        return getPRAction(payload!['action']);
       case 'DeleteEvent':
         var verb = 'Delete';
 
@@ -142,20 +142,20 @@ class _ActivityRowState extends State<ActivityRow> {
 
         return verb;
       case 'IssuesEvent':
-        return getIssueString(type, payload);
+        return getIssueString(type, payload!);
       default:
         return type;
     }
   }
 
-  String getIssueString(String type, Map<String, dynamic> payload) {
+  String getIssueString(String? type, Map<String, dynamic> payload) {
     String action = payload['action'];
     action = '${action.substring(0, 1).toUpperCase()}${action.substring(1)}';
 
     return '$action issue';
   }
 
-  String getPRAction(String action) {
+  String? getPRAction(String? action) {
     final pr = 'PR';
     switch (action) {
       case 'opened':

@@ -6,7 +6,7 @@ import 'package:rootasjey/state/colors.dart';
 import 'package:unicons/unicons.dart';
 
 class SearchButton extends StatelessWidget {
-  const SearchButton({Key key}) : super(key: key);
+  const SearchButton({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
