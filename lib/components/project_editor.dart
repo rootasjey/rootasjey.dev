@@ -8,7 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:rootasjey/components/lang_popup_menu_button.dart';
-import 'package:rootasjey/components/main_app_bar.dart';
+import 'package:rootasjey/components/application_bar/main_app_bar.dart';
 import 'package:rootasjey/components/pub_popup_menu_button.dart';
 import 'package:rootasjey/components/sheet_header.dart';
 import 'package:rootasjey/components/sliver_edge_padding.dart';

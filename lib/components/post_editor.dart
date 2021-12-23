@@ -6,7 +6,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/lang_popup_menu_button.dart';
-import 'package:rootasjey/components/main_app_bar.dart';
+import 'package:rootasjey/components/application_bar/main_app_bar.dart';
 import 'package:rootasjey/components/pub_popup_menu_button.dart';
 import 'package:rootasjey/components/sliver_edge_padding.dart';
 import 'package:rootasjey/components/sliver_error_view.dart';

@@ -5,7 +5,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:rootasjey/actions/users.dart';
 import 'package:rootasjey/components/animated_app_icon.dart';
 import 'package:rootasjey/components/fade_in_y.dart';
-import 'package:rootasjey/components/main_app_bar.dart';
+import 'package:rootasjey/components/application_bar/main_app_bar.dart';
 import 'package:rootasjey/components/sliver_edge_padding.dart';
 import 'package:rootasjey/router/locations/signin_location.dart';
 import 'package:rootasjey/state/colors.dart';

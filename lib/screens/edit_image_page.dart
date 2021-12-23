@@ -11,7 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:mime_type/mime_type.dart';
 import 'package:rootasjey/components/form_actions_inputs.dart';
 import 'package:rootasjey/components/loading_view.dart';
-import 'package:rootasjey/components/main_app_bar.dart';
+import 'package:rootasjey/components/application_bar/main_app_bar.dart';
 import 'package:rootasjey/state/user.dart';
 import 'package:rootasjey/types/user_pp_path.dart';
 import 'package:rootasjey/types/user_pp_url.dart';

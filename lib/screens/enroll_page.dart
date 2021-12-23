@@ -7,7 +7,7 @@ import 'package:rootasjey/actions/users.dart';
 import 'package:rootasjey/components/features/additional_web.dart';
 import 'package:rootasjey/components/features/web.dart';
 import 'package:rootasjey/components/footer.dart';
-import 'package:rootasjey/components/main_app_bar.dart';
+import 'package:rootasjey/components/application_bar/main_app_bar.dart';
 import 'package:rootasjey/components/outline_toggle_button.dart';
 import 'package:rootasjey/types/enums.dart';
 import 'package:rootasjey/utils/app_logger.dart';

@@ -7,7 +7,7 @@ import 'package:rootasjey/components/landing/landing_inside.dart';
 import 'package:rootasjey/components/landing/landing_posts.dart';
 import 'package:rootasjey/components/landing/landing_quote.dart';
 import 'package:rootasjey/components/landing/landing_work_us.dart';
-import 'package:rootasjey/components/main_app_bar.dart';
+import 'package:rootasjey/components/application_bar/main_app_bar.dart';
 import 'package:rootasjey/components/footer.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:supercharged/supercharged.dart';

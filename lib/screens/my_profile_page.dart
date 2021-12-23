@@ -11,7 +11,7 @@ import 'package:mime_type/mime_type.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:rootasjey/components/avatar/better_avatar.dart';
 import 'package:rootasjey/components/form_actions_inputs.dart';
-import 'package:rootasjey/components/main_app_bar.dart';
+import 'package:rootasjey/components/application_bar/main_app_bar.dart';
 import 'package:rootasjey/components/sheet_header.dart';
 import 'package:rootasjey/router/locations/dashboard_location.dart';
 import 'package:rootasjey/router/navigation_state_helper.dart';

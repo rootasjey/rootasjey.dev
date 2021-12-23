@@ -4,7 +4,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/post_card.dart';
 import 'package:rootasjey/components/footer.dart';
-import 'package:rootasjey/components/main_app_bar.dart';
+import 'package:rootasjey/components/application_bar/main_app_bar.dart';
 import 'package:rootasjey/components/min_post_card.dart';
 import 'package:rootasjey/components/page_title.dart';
 import 'package:rootasjey/components/sliver_empty_view.dart';

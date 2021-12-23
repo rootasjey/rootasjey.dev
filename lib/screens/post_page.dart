@@ -9,7 +9,7 @@ import 'package:markdown/markdown.dart' as markdown;
 import 'package:rootasjey/actions/posts.dart';
 import 'package:rootasjey/components/author_header.dart';
 import 'package:rootasjey/components/dates_header.dart';
-import 'package:rootasjey/components/main_app_bar.dart';
+import 'package:rootasjey/components/application_bar/main_app_bar.dart';
 import 'package:rootasjey/components/markdown_viewer.dart';
 import 'package:rootasjey/components/sliver_loading_view.dart';
 import 'package:rootasjey/state/colors.dart';
