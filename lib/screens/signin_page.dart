@@ -1,6 +1,7 @@
 import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:rootasjey/actions/users.dart';
 import 'package:rootasjey/components/fade_in_x.dart';
 import 'package:rootasjey/components/fade_in_y.dart';
@@ -10,18 +11,14 @@ import 'package:rootasjey/router/locations/forgot_password_location.dart';
 import 'package:rootasjey/router/locations/home_location.dart';
 import 'package:rootasjey/router/locations/signup_location.dart';
 import 'package:rootasjey/state/colors.dart';
-import 'package:rootasjey/state/user.dart';
-import 'package:rootasjey/utils/app_logger.dart';
-import 'package:rootasjey/utils/app_storage.dart';
+import 'package:rootasjey/types/globals/globals.dart';
 import 'package:rootasjey/utils/fonts.dart';
 import 'package:rootasjey/utils/snack.dart';
 import 'package:supercharged/supercharged.dart';
 import 'package:unicons/unicons.dart';
 
 class SigninPage extends StatefulWidget {
-  final void Function(bool isAuthenticated)? onSigninResult;
-
-  const SigninPage({Key? key, this.onSigninResult}) : super(key: key);
+  const SigninPage({Key? key}) : super(key: key);
 
   @override
   _SigninPageState createState() => _SigninPageState();
@@ -356,13 +353,14 @@ class _SigninPageState extends State<SigninPage> {
     });
 
     try {
-      final userCred = await stateUser.signin(
+      final containerProvider = ProviderContainer();
+      final userNotifier = containerProvider.read(Globals.state.user.notifier);
+      final userCred = await userNotifier.signIn(
         email: email,
         password: password,
       );
 
       if (userCred == null) {
-        appLogger.d("empty user");
         setState(() {
           isConnecting = false;
         });
@@ -375,27 +373,13 @@ class _SigninPageState extends State<SigninPage> {
         return;
       }
 
-      appStorage.setCredentials(
-        email: email,
-        password: password,
-      );
-
       isConnecting = false;
       isCompleted = true;
-
-      // If this callback is defined,
-      // this page is call from AuthGuard.
-      if (widget.onSigninResult != null) {
-        widget.onSigninResult!(true);
-        return;
-      }
 
       Beamer.of(context).beamToNamed(
         HomeLocation.route,
       );
     } catch (error) {
-      appLogger.d(error);
-
       Snack.e(
         context: context,
         message: "password_incorrect".tr(),

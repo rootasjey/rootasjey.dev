@@ -3,9 +3,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:rootasjey/app.dart';
-import 'package:rootasjey/state/user.dart';
 import 'package:rootasjey/utils/app_storage.dart';
 import 'package:rootasjey/utils/brightness.dart';
 import 'package:rootasjey/utils/language.dart';
@@ -21,10 +21,11 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   await appStorage.initialize();
+
   await Future.wait([
     Language.loadSavedLanguage(),
-    stateUser.signInOnAppStart(),
   ]);
+
   await EasyLocalization.ensureInitialized();
   await GlobalConfiguration().loadFromAsset('app_settings');
 
@@ -36,13 +37,15 @@ void main() async {
   setPathUrlStrategy();
 
   return runApp(
-    EasyLocalization(
-      path: 'assets/translations',
-      supportedLocales: [Locale('en'), Locale('fr')],
-      fallbackLocale: Locale('en'),
-      child: App(
-        savedThemeMode: BrightnessUtils.getSavedThemeMode(),
-        brightness: BrightnessUtils.getCurrentBrightness(),
+    ProviderScope(
+      child: EasyLocalization(
+        path: 'assets/translations',
+        supportedLocales: [Locale('en'), Locale('fr')],
+        fallbackLocale: Locale('en'),
+        child: App(
+          savedThemeMode: BrightnessUtils.getSavedThemeMode(),
+          brightness: BrightnessUtils.getCurrentBrightness(),
+        ),
       ),
     ),
   );

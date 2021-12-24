@@ -9,10 +9,21 @@ class UserAuthSection extends StatelessWidget {
     Key? key,
     this.compact = false,
     this.trailing = const [],
+    this.avatarInitials = '',
+    this.avatarURL = '',
+    required this.onSignOut,
   }) : super(key: key);
 
   final bool compact;
   final List<Widget> trailing;
+
+  /// If set, this will take priority over [avatarInitials] property.
+  final String avatarURL;
+
+  /// Show initials letters if [avatarURL] is empty.
+  final String avatarInitials;
+
+  final VoidCallback onSignOut;
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +40,10 @@ class UserAuthSection extends StatelessWidget {
           if (!compact) LangButton(),
           ...trailing,
           AvatarMenu(
-            isSmall: compact,
+            compact: compact,
+            onSignOut: onSignOut,
+            avatarInitials: avatarInitials,
+            avatarURL: avatarURL,
             padding: const EdgeInsets.only(
               left: 12.0,
               right: 20.0,

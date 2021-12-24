@@ -1,35 +1,49 @@
 import 'package:beamer/beamer.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:rootasjey/components/avatar/adaptive_user_avatar.dart';
 import 'package:rootasjey/router/locations/dashboard_location.dart';
 import 'package:rootasjey/router/locations/search_location.dart';
-import 'package:rootasjey/state/user.dart';
 import 'package:unicons/unicons.dart';
 
-class AvatarMenu extends StatelessWidget {
-  final bool isSmall;
-  final EdgeInsets padding;
-
+class AvatarMenu extends ConsumerWidget {
   const AvatarMenu({
     Key? key,
-    this.isSmall = false,
+    this.compact = false,
     this.padding = EdgeInsets.zero,
+    this.avatarInitials = '',
+    this.avatarURL = '',
+    required this.onSignOut,
   }) : super(key: key);
 
+  final bool compact;
+  final EdgeInsets padding;
+
+  /// If set, this will take priority over [avatarInitials] property.
+  final String avatarURL;
+
+  /// Show initials letters if [avatarURL] is empty.
+  final String avatarInitials;
+
+  final VoidCallback onSignOut;
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Padding(
       padding: padding,
       child: PopupMenuButton<String>(
         icon: Material(
           elevation: 4.0,
           shape: CircleBorder(),
-          child: AdaptiveUserAvatar(),
+          child: AdaptiveUserAvatar(
+            avatarURL: avatarURL,
+            initials: avatarInitials,
+          ),
         ),
-        onSelected: (uri) {
+        onSelected: (uri) async {
           if (uri == 'signout') {
-            stateUser.signOut(context: context);
+            onSignOut();
             return;
           }
 
@@ -42,7 +56,7 @@ class AvatarMenu extends StatelessWidget {
 
   List<PopupMenuEntry<String>> itemBuilder(BuildContext context) {
     return [
-      if (isSmall) ...[
+      if (compact) ...[
         PopupMenuItem(
           value: DashboardLocationContent.newPostsRoute,
           child: ListTile(

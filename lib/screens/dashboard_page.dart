@@ -28,11 +28,10 @@ class _DashboardPageState extends State<DashboardPage> {
                     elevation: 6.0,
                     child: Beamer(
                       key: _beamerKey,
-                      // TODO: chcks
                       routerDelegate: BeamerDelegate(
                         locationBuilder: BeamerLocationBuilder(beamLocations: [
                           DashboardLocationContent(),
-                        ]) as BeamLocation<RouteInformationSerializable<dynamic>> Function(RouteInformation, BeamParameters?),
+                        ]),
                       ),
                     ),
                   ),
