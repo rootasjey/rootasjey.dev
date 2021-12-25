@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
+import 'package:rootasjey/actions/users.dart';
 import 'package:rootasjey/types/cloud_func_error.dart';
+import 'package:rootasjey/types/create_account_resp.dart';
 import 'package:rootasjey/types/user/user.dart';
 import 'package:rootasjey/types/update_email_resp.dart';
 import 'package:rootasjey/types/user_firestore.dart';
@@ -178,6 +180,28 @@ class UserNotifier extends StateNotifier<User> {
       appLogger.e(error);
       return false;
     }
+  }
+
+  Future<CreateAccountResp> signUp({
+    required email,
+    required username,
+    required password,
+  }) async {
+    final createAccountResponse = await UsersActions.createAccount(
+      email: email,
+      username: username,
+      password: password,
+    );
+
+    if (!createAccountResponse.success) {
+      return createAccountResponse;
+    }
+
+    final userAuth = await signIn(email: email, password: password);
+    createAccountResponse.userAuth = userAuth;
+    createAccountResponse.success = userAuth != null;
+
+    return createAccountResponse;
   }
 
   Future<UpdateEmailResp> updateEmail(String email, String idToken) async {

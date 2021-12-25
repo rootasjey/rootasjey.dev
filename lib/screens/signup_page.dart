@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:beamer/beamer.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:rootasjey/actions/users.dart';
 import 'package:rootasjey/components/fade_in_x.dart';
 import 'package:rootasjey/components/fade_in_y.dart';
@@ -11,8 +12,7 @@ import 'package:rootasjey/components/application_bar/main_app_bar.dart';
 import 'package:rootasjey/router/locations/home_location.dart';
 import 'package:rootasjey/router/locations/signin_location.dart';
 import 'package:rootasjey/state/colors.dart';
-import 'package:rootasjey/state/user.dart';
-import 'package:rootasjey/utils/app_logger.dart';
+import 'package:rootasjey/types/globals/globals.dart';
 import 'package:rootasjey/utils/fonts.dart';
 import 'package:rootasjey/utils/snack.dart';
 import 'package:supercharged/supercharged.dart';
@@ -135,7 +135,8 @@ class _SignupPageState extends State<SignupPage> {
 
             _emailTimer = Timer(1.seconds, () async {
               final isAvailable =
-                  await (UsersActions.checkEmailAvailability(_email) as FutureOr<bool>);
+                  await (UsersActions.checkEmailAvailability(_email)
+                      as FutureOr<bool>);
               if (!isAvailable) {
                 setState(() {
                   _isCheckingEmail = false;
@@ -302,7 +303,8 @@ class _SignupPageState extends State<SignupPage> {
 
                 _nameTimer = Timer(1.seconds, () async {
                   final isAvailable =
-                      await (UsersActions.checkUsernameAvailability(_username) as FutureOr<bool>);
+                      await (UsersActions.checkUsernameAvailability(_username)
+                          as FutureOr<bool>);
 
                   if (!isAvailable) {
                     setState(() {
@@ -504,93 +506,75 @@ class _SignupPageState extends State<SignupPage> {
     );
   }
 
-  void signUpProcess() async {
-    if (!inputValuesOk()) {
-      return;
+  Future<bool> checkInputs() async {
+    if (!checkInputsFormat()) {
+      return false;
     }
 
+    if (!await checkInputsAvailability()) {
+      return false;
+    }
+
+    return true;
+  }
+
+  void signUpProcess() async {
     setState(() => _isSigningUp = true);
 
-    if (!await valuesAvailabilityCheck()) {
-      setState(() {
-        _isSigningUp = false;
-      });
-
-      Snack.e(
-        context: context,
-        message: "email_not_available".tr(),
-      );
-
+    if (!await checkInputs()) {
+      setState(() => _isSigningUp = false);
       return;
     }
 
-    // ?NOTE: Triming because of TAB key on Desktop insert blank spaces.
-    _email = _email.trim();
-    _password = _password.trim();
-
     try {
-      final respCreateAcc = await UsersActions.createAccount(
+      final containerProvider = ProviderContainer();
+      final userNotifier = containerProvider.read(Globals.state.user.notifier);
+      final createAccountResponse = await userNotifier.signUp(
         email: _email,
         username: _username,
         password: _password,
       );
 
-      if (!respCreateAcc.success) {
-        final exception = respCreateAcc.error!;
-
-        setState(() => _isSigningUp = false);
-
-        Snack.e(
-          context: context,
-          message: "[code: ${exception.code}] - ${exception.message}",
-        );
-
-        return;
-      }
-
-      final userCred = await stateUser.signin(
-        email: _email,
-        password: _password,
-      );
-
       setState(() => _isSigningUp = false);
 
-      if (userCred == null) {
-        Snack.e(
-          context: context,
-          message: "account_create_error".tr(),
-        );
-
+      if (createAccountResponse.success) {
+        Beamer.of(context).beamToNamed(HomeLocation.route);
         return;
       }
 
-      // PushNotifications.linkAuthUser(respCreateAcc.user.id);
+      String message = "account_create_error".tr();
+      final error = createAccountResponse.error;
 
-      if (widget.onSignupResult != null) {
-        widget.onSignupResult!(true);
-        return;
+      if (error != null && error.code != null && error.message != null) {
+        message = "[code: ${error.code}] - ${error.message}";
       }
 
-      Beamer.of(context).beamToNamed(HomeLocation.route);
+      Snack.e(context: context, message: message);
     } catch (error) {
-      appLogger.e(error);
-
       setState(() => _isSigningUp = false);
-
-      Snack.e(
-        context: context,
-        message: "account_create_error".tr(),
-      );
+      Snack.e(context: context, message: "account_create_error".tr());
     }
   }
 
-  Future<bool> valuesAvailabilityCheck() async {
-    final isEmailOk = await (UsersActions.checkEmailAvailability(_email) as FutureOr<bool>);
-    final isNameOk = await UsersActions.checkUsernameAvailability(_username);
-    return isEmailOk && isNameOk!;
+  Future<bool> checkInputsAvailability() async {
+    final checkResults = await Future.wait([
+      UsersActions.checkEmailAvailability(_email),
+      UsersActions.checkUsernameAvailability(_username),
+    ]);
+
+    final foldedResult = checkResults.firstWhere(
+      (result) => result == false,
+      orElse: () => true,
+    );
+
+    return foldedResult ?? false;
   }
 
-  bool inputValuesOk() {
+  bool checkInputsFormat() {
+    // ?NOTE: Triming because of TAB key on Desktop insert blank spaces.
+    _email = _email.trim();
+    _password = _password.trim();
+
     if (_password.isEmpty || _confirmPassword.isEmpty) {
       Snack.e(
         context: context,

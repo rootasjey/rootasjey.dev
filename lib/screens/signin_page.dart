@@ -25,22 +25,20 @@ class SigninPage extends StatefulWidget {
 }
 
 class _SigninPageState extends State<SigninPage> {
-  String email = '';
-  String password = '';
+  String _email = '';
+  String _password = '';
 
-  bool isCheckingAuth = false;
-  bool isCompleted = false;
-  bool isConnecting = false;
+  bool _isConnecting = false;
 
-  final passwordNode = FocusNode();
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
+  final _passwordNode = FocusNode();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
 
   @override
   void dispose() {
-    passwordController.dispose();
-    emailController.dispose();
-    passwordNode.dispose();
+    _passwordController.dispose();
+    _emailController.dispose();
+    _passwordNode.dispose();
     super.dispose();
   }
 
@@ -74,7 +72,7 @@ class _SigninPageState extends State<SigninPage> {
   }
 
   Widget body() {
-    if (isConnecting) {
+    if (_isConnecting) {
       return LoadingAnimation(
         textTitle: "signin_dot".tr(),
       );
@@ -110,7 +108,7 @@ class _SigninPageState extends State<SigninPage> {
           children: <Widget>[
             TextFormField(
               autofocus: true,
-              controller: emailController,
+              controller: _emailController,
               textInputAction: TextInputAction.next,
               decoration: InputDecoration(
                 icon: Icon(Icons.email),
@@ -118,9 +116,9 @@ class _SigninPageState extends State<SigninPage> {
               ),
               keyboardType: TextInputType.emailAddress,
               onChanged: (value) {
-                email = value;
+                _email = value;
               },
-              onFieldSubmitted: (value) => passwordNode.requestFocus(),
+              onFieldSubmitted: (value) => _passwordNode.requestFocus(),
               validator: (value) {
                 if (value!.isEmpty) {
                   return "email_empty_forbidden".tr();
@@ -251,15 +249,15 @@ class _SigninPageState extends State<SigninPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             TextFormField(
-              focusNode: passwordNode,
-              controller: passwordController,
+              focusNode: _passwordNode,
+              controller: _passwordController,
               decoration: InputDecoration(
                 icon: Icon(Icons.lock_outline),
                 labelText: 'Password',
               ),
               obscureText: true,
               onChanged: (value) {
-                password = value;
+                _password = value;
               },
               onFieldSubmitted: (value) => signInProcess(),
               validator: (value) {
@@ -322,7 +320,7 @@ class _SigninPageState extends State<SigninPage> {
   }
 
   bool inputValuesOk() {
-    if (!UsersActions.checkEmailFormat(email)) {
+    if (!UsersActions.checkEmailFormat(_email)) {
       Snack.e(
         context: context,
         message: "email_not_valid".tr(),
@@ -331,7 +329,7 @@ class _SigninPageState extends State<SigninPage> {
       return false;
     }
 
-    if (password.isEmpty) {
+    if (_password.isEmpty) {
       Snack.e(
         context: context,
         message: "password_empty_forbidden".tr(),
@@ -348,22 +346,18 @@ class _SigninPageState extends State<SigninPage> {
       return;
     }
 
-    setState(() {
-      isConnecting = true;
-    });
+    setState(() => _isConnecting = true);
 
     try {
       final containerProvider = ProviderContainer();
       final userNotifier = containerProvider.read(Globals.state.user.notifier);
       final userCred = await userNotifier.signIn(
-        email: email,
-        password: password,
+        email: _email,
+        password: _password,
       );
 
       if (userCred == null) {
-        setState(() {
-          isConnecting = false;
-        });
+        setState(() => _isConnecting = false);
 
         Snack.e(
           context: context,
@@ -373,12 +367,9 @@ class _SigninPageState extends State<SigninPage> {
         return;
       }
 
-      isConnecting = false;
-      isCompleted = true;
+      _isConnecting = false;
 
-      Beamer.of(context).beamToNamed(
-        HomeLocation.route,
-      );
+      Beamer.of(context).beamToNamed(HomeLocation.route);
     } catch (error) {
       Snack.e(
         context: context,
@@ -386,7 +377,7 @@ class _SigninPageState extends State<SigninPage> {
       );
 
       setState(() {
-        isConnecting = false;
+        _isConnecting = false;
       });
     }
   }
