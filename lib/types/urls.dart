@@ -1,9 +1,9 @@
 class Urls {
   /// All URLs in a map.
-  Map<String, String>? map = Map<String, String>();
+  Map<String, String> map = Map<String, String>();
 
   /// Only social URLs in a map (without [image] for example).
-  Map<String, String>? socialMap = Map<String, String>();
+  Map<String, String> socialMap = Map<String, String>();
 
   String artbooking;
   String behance;
@@ -34,9 +34,9 @@ class Urls {
     this.image = '',
     this.instagram = '',
     this.linkedin = '',
-    this.map,
+    this.map = const {},
     this.other = '',
-    this.socialMap,
+    this.socialMap = const {},
     this.tiktok = '',
     this.twitch = '',
     this.twitter = '',
@@ -167,14 +167,14 @@ class Urls {
   }
 
   Map<String, String> getAvailableLinks() {
-    return Map.from(socialMap!)..removeWhere((key, value) => value.isEmpty);
+    return Map.from(socialMap)..removeWhere((key, value) => value.isEmpty);
   }
 
   /// Update the URL specified by [key] with the new [value].
   /// This function will propagate update to [map] and [socialMap].
   void setUrl(String key, String value) {
-    map![key] = value;
-    socialMap![key] = value;
+    map[key] = value;
+    socialMap[key] = value;
 
     switch (key) {
       case "artbooking":

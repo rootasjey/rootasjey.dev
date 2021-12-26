@@ -1,14 +1,12 @@
 import 'package:beamer/beamer.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:rootasjey/components/app_icon.dart';
 import 'package:rootasjey/router/locations/about_location.dart';
 import 'package:rootasjey/router/locations/activities_location.dart';
 import 'package:rootasjey/router/locations/contact_location.dart';
 import 'package:rootasjey/router/locations/dashboard_location.dart';
-import 'package:rootasjey/router/locations/home_location.dart';
 import 'package:rootasjey/router/locations/posts_location.dart';
 import 'package:rootasjey/router/locations/projects_location.dart';
 import 'package:rootasjey/router/locations/settings_location.dart';
@@ -16,13 +14,12 @@ import 'package:rootasjey/router/locations/signin_location.dart';
 import 'package:rootasjey/router/locations/signup_location.dart';
 import 'package:rootasjey/router/locations/tos_location.dart';
 import 'package:rootasjey/state/colors.dart';
-import 'package:rootasjey/state/user.dart';
+import 'package:rootasjey/types/globals/globals.dart';
 import 'package:rootasjey/utils/fonts.dart';
-import 'package:rootasjey/utils/snack.dart';
 import 'package:unicons/unicons.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class Footer extends StatefulWidget {
+class Footer extends ConsumerWidget {
   final ScrollController? pageScrollController;
   final bool closeModalOnNav;
   final bool autoNavToHome;
@@ -34,12 +31,7 @@ class Footer extends StatefulWidget {
   });
 
   @override
-  _FooterState createState() => _FooterState();
-}
-
-class _FooterState extends State<Footer> {
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final width = MediaQuery.of(context).size.width;
 
     final WrapAlignment alignment =
@@ -59,28 +51,28 @@ class _FooterState extends State<Footer> {
             thickness: 1.0,
             color: Colors.black38,
           ),
-          copyright(),
-          editorial(),
-          user(),
-          aboutUs(),
+          copyright(context),
+          editorialSection(context),
+          userSection(context, ref),
+          aboutUsSection(context),
         ],
       ),
     );
   }
 
-  Widget copyright() {
+  Widget copyright(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         AppIcon(),
-        companyName(),
-        tos(),
-        privacyPolicy(),
+        companyNameSection(),
+        tosSection(context),
+        privacyPolicySection(context),
       ],
     );
   }
 
-  Widget aboutUs() {
+  Widget aboutUsSection(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -107,7 +99,7 @@ class _FooterState extends State<Footer> {
     );
   }
 
-  Widget editorial() {
+  Widget editorialSection(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -134,7 +126,7 @@ class _FooterState extends State<Footer> {
     );
   }
 
-  Widget companyName() {
+  Widget companyNameSection() {
     return Padding(
       padding: const EdgeInsets.only(
         left: 8.0,
@@ -168,28 +160,7 @@ class _FooterState extends State<Footer> {
     );
   }
 
-  Widget languages() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        titleSection(title: "language".tr().toUpperCase()),
-        textLink(
-          label: 'English',
-          onPressed: () async {
-            updateUserAccountLang();
-          },
-        ),
-        textLink(
-          label: 'Français',
-          onPressed: () async {
-            updateUserAccountLang();
-          },
-        ),
-      ],
-    );
-  }
-
-  Widget privacyPolicy() {
+  Widget privacyPolicySection(BuildContext context) {
     return textLink(
       label: "privacy".tr(),
       onPressed: () {
@@ -252,7 +223,7 @@ class _FooterState extends State<Footer> {
     );
   }
 
-  Widget tos() {
+  Widget tosSection(BuildContext context) {
     return textLink(
       label: "tos".tr(),
       heroTag: "tos_hero",
@@ -262,28 +233,32 @@ class _FooterState extends State<Footer> {
     );
   }
 
-  Widget user() {
+  Widget userSection(BuildContext context, WidgetRef ref) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         titleSection(title: "user".tr().toUpperCase()),
         textLink(
-            label: "signin".tr(),
-            onPressed: () {
-              Beamer.of(context).beamToNamed(SigninLocation.route);
-            }),
+          label: "signin".tr(),
+          onPressed: () => Beamer.of(context).beamToNamed(
+            SigninLocation.route,
+          ),
+        ),
         textLink(
           label: "signup".tr(),
-          onPressed: () {
-            Beamer.of(context).beamToNamed(SignupLocation.route);
-          },
+          onPressed: () => Beamer.of(context).beamToNamed(
+            SignupLocation.route,
+          ),
         ),
         textLink(
           label: "settings".tr(),
           onPressed: () {
-            if (stateUser.isUserConnected) {
-              Beamer.of(context)
-                  .beamToNamed(DashboardLocationContent.settingsRoute);
+            final user = ref.read(Globals.state.user.notifier);
+
+            if (user.isAuthenticated) {
+              Beamer.of(context).beamToNamed(
+                DashboardLocationContent.settingsRoute,
+              );
               return;
             }
 
@@ -292,49 +267,5 @@ class _FooterState extends State<Footer> {
         ),
       ],
     );
-  }
-
-  void notifyLangSuccess() {
-    if (widget.pageScrollController != null) {
-      widget.pageScrollController!.animateTo(
-        0.0,
-        duration: Duration(seconds: 1),
-        curve: Curves.easeOut,
-      );
-    } else if (widget.autoNavToHome) {
-      Beamer.of(context).beamToNamed(HomeLocation.route);
-    }
-
-    Snack.s(
-      context: context,
-      message: "language_update_success".tr(),
-    );
-  }
-
-  void updateUserAccountLang() async {
-    final userAuth = FirebaseAuth.instance.currentUser;
-
-    if (userAuth == null) {
-      notifyLangSuccess();
-      return;
-    }
-
-    try {
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(userAuth.uid)
-          .update({
-        'lang': stateUser.lang,
-      });
-
-      notifyLangSuccess();
-    } catch (error) {
-      debugPrint(error.toString());
-
-      Snack.e(
-        context: context,
-        message: "language_update_error".tr(),
-      );
-    }
   }
 }

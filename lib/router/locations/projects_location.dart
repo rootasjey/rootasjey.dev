@@ -24,7 +24,7 @@ class ProjectsLocation extends BeamLocation<BeamState> {
       if (state.pathPatternSegments.contains(':projectId'))
         BeamPage(
           child: ProjectPage(
-            projectId: state.pathParameters['projectId'],
+            projectId: state.pathParameters['projectId'] ?? '',
           ),
           key: ValueKey("$route-${state.pathParameters['projectId']}"),
           title: 'Project',

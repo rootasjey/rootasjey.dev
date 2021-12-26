@@ -1,6 +1,6 @@
 import 'package:beamer/beamer.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:rootasjey/screens/settings_page.dart';
+import 'package:rootasjey/screens/settings/settings_page.dart';
 
 class SettingsLocation extends BeamLocation<BeamState> {
   static const String route = '/settings';

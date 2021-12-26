@@ -20,7 +20,7 @@ import 'package:supercharged/supercharged.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ProjectPage extends StatefulWidget {
-  final String? projectId;
+  final String projectId;
 
   ProjectPage({required this.projectId});
 
@@ -37,10 +37,9 @@ class _ProjectPageState extends State<ProjectPage> {
 
   final _focusNode = FocusNode();
 
-  KeyBindings _keyBindings = KeyBindings();
-
-  Project? _project;
-  String _projectData = '';
+  var _keyBindings = KeyBindings();
+  var _project = Project.empty();
+  var _projectData = '';
 
   @override
   initState() {
@@ -165,8 +164,8 @@ class _ProjectPageState extends State<ProjectPage> {
 
   Widget dates() {
     return DatesHeader(
-      createdAt: Jiffy(_project!.createdAt).fromNow(),
-      updatedAt: Jiffy(_project!.updatedAt).fromNow(),
+      createdAt: Jiffy(_project.createdAt).fromNow(),
+      updatedAt: Jiffy(_project.updatedAt).fromNow(),
     );
   }
 
@@ -196,20 +195,20 @@ class _ProjectPageState extends State<ProjectPage> {
         dates(),
         allChips(),
         AuthorHeader(
-          authorId: _project?.author?.id ?? '',
+          authorId: _project.author.id,
         ),
       ],
     );
   }
 
   Widget links() {
-    if (_project!.urls!.map!.isEmpty) {
+    if (_project.urls!.map.isEmpty) {
       return Container();
     }
 
     final chips = <InputChip>[];
 
-    _project!.urls!.map!.forEach((name, value) {
+    _project.urls!.map.forEach((name, value) {
       if (value.isNotEmpty) {
         chips.add(
           InputChip(
@@ -235,13 +234,13 @@ class _ProjectPageState extends State<ProjectPage> {
   }
 
   Widget programmingLang() {
-    if (_project!.programmingLanguages!.isEmpty) {
+    if (_project.programmingLanguages!.isEmpty) {
       return Container();
     }
 
     return Wrap(
       spacing: 8.0,
-      children: _project!.programmingLanguages!
+      children: _project.programmingLanguages!
           .map(
             (pLang) => Tooltip(
               message: "Programming language",
@@ -264,7 +263,7 @@ class _ProjectPageState extends State<ProjectPage> {
       child: Opacity(
         opacity: 0.7,
         child: Text(
-          _project!.summary!,
+          _project.summary!,
           style: TextStyle(
             fontSize: 16.0,
           ),
@@ -274,13 +273,13 @@ class _ProjectPageState extends State<ProjectPage> {
   }
 
   Widget tags() {
-    if (_project!.tags!.isEmpty) {
+    if (_project.tags!.isEmpty) {
       return Container();
     }
 
     return Wrap(
       spacing: 8.0,
-      children: _project!.tags!
+      children: _project.tags!
           .map(
             (tag) => Tooltip(
               message: "Tag",
@@ -297,7 +296,7 @@ class _ProjectPageState extends State<ProjectPage> {
     return Padding(
       padding: const EdgeInsets.only(top: 60.0),
       child: Text(
-        _project!.title!,
+        _project.title!,
         style: FontsUtils.mainStyle(
           fontSize: 60.0,
           fontWeight: FontWeight.w700,

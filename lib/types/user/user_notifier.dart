@@ -18,9 +18,9 @@ class UserNotifier extends StateNotifier<User> {
 
   String getInitialsUsername() {
     if (state.firestoreUser == null) return '';
-    if (state.firestoreUser!.name == null) return '';
+    if (state.firestoreUser?.name == null) return '';
 
-    final splittedUsernameArray = state.firestoreUser!.name!.split(' ');
+    final splittedUsernameArray = state.firestoreUser!.name.split(' ');
     if (splittedUsernameArray.isEmpty) return '';
 
     String initials = splittedUsernameArray.length > 1
@@ -35,16 +35,16 @@ class UserNotifier extends StateNotifier<User> {
     return initials;
   }
 
-  String getPPUrl() {
-    if (state.firestoreUser == null) return '';
+  String getPPUrl({String orElse = ''}) {
+    if (state.firestoreUser == null) return orElse;
 
-    final editedURL = state.firestoreUser!.pp?.url?.edited;
-    if (editedURL != null) return editedURL;
+    final editedURL = state.firestoreUser!.pp.url.edited;
+    if (editedURL.isNotEmpty) return editedURL;
 
-    final originalURL = state.firestoreUser!.pp?.url?.original;
-    if (originalURL != null) return originalURL;
+    final originalURL = state.firestoreUser!.pp.url.original;
+    if (originalURL.isNotEmpty) return originalURL;
 
-    return '';
+    return orElse;
   }
 
   /// Return true if an user is currently authenticated.

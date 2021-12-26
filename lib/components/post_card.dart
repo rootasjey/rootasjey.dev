@@ -37,7 +37,7 @@ class _PostCardState extends State<PostCard> {
       _elevation = 0.0;
     });
 
-    if (widget.post.author!.id!.isNotEmpty) {
+    if (widget.post.author.id.isNotEmpty) {
       fetchAuthorName();
     }
   }
@@ -162,16 +162,16 @@ class _PostCardState extends State<PostCard> {
   }
 
   void fetchAuthorName() async {
-    final author = widget.post.author!;
+    final authorId = widget.post.author.id;
 
-    if (author.id!.isEmpty) {
+    if (authorId.isEmpty) {
       return;
     }
 
     try {
       final docSnap = await FirebaseFirestore.instance
           .collection('users')
-          .doc(author.id)
+          .doc(authorId)
           .get();
 
       if (!docSnap.exists) {

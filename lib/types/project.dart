@@ -4,7 +4,7 @@ import 'package:rootasjey/types/urls.dart';
 import 'package:rootasjey/utils/date_helper.dart';
 
 class Project {
-  final Author? author;
+  final Author author;
   final DateTime? createdAt;
   final String? id;
   final String? lang;
@@ -19,7 +19,7 @@ class Project {
   final Urls? urls;
 
   Project({
-    this.author,
+    this.author = const Author(id: ''),
     this.createdAt,
     this.id,
     this.lang,

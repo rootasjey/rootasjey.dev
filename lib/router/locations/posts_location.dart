@@ -24,7 +24,7 @@ class PostsLocation extends BeamLocation<BeamState> {
       if (state.pathPatternSegments.contains(':postId'))
         BeamPage(
           child: PostPage(
-            postId: state.pathParameters['postId'],
+            postId: state.pathParameters['postId'] ?? '',
           ),
           key: ValueKey("$route-${state.pathParameters['postId']}"),
           title: 'Post',

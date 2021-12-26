@@ -374,11 +374,11 @@ abstract class StateUserBase with Store {
   String getPPUrl() {
     if (userFirestore == null) return '';
 
-    final editedURL = userFirestore!.pp?.url?.edited;
-    if (editedURL != null) return editedURL;
+    final editedURL = userFirestore!.pp.url.edited;
+    if (editedURL.isNotEmpty) return editedURL;
 
-    final originalURL = userFirestore!.pp?.url?.original;
-    if (originalURL != null) return originalURL;
+    final originalURL = userFirestore!.pp.url.original;
+    if (originalURL.isNotEmpty) return originalURL;
 
     return '';
   }

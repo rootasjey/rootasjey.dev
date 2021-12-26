@@ -8,7 +8,6 @@ import 'package:global_configuration/global_configuration.dart';
 import 'package:rootasjey/app.dart';
 import 'package:rootasjey/utils/app_storage.dart';
 import 'package:rootasjey/utils/brightness.dart';
-import 'package:rootasjey/utils/language.dart';
 import 'package:rootasjey/utils/search.dart';
 import 'package:url_strategy/url_strategy.dart';
 
@@ -21,10 +20,6 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   await appStorage.initialize();
-
-  await Future.wait([
-    Language.loadSavedLanguage(),
-  ]);
 
   await EasyLocalization.ensureInitialized();
   await GlobalConfiguration().loadFromAsset('app_settings');

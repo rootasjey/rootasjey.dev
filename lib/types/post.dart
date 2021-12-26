@@ -5,7 +5,7 @@ import 'package:rootasjey/types/urls.dart';
 import 'package:rootasjey/utils/date_helper.dart';
 
 class Post {
-  final Author? author;
+  final Author author;
   final List<String> coauthors;
   final DateTime? createdAt;
   final bool featured;
@@ -25,7 +25,7 @@ class Post {
   final Urls? urls;
 
   Post({
-    this.author,
+    this.author = const Author(id: ''),
     this.coauthors = const [],
     this.createdAt,
     this.featured = false,

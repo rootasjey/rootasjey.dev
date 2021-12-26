@@ -17,11 +17,11 @@ import 'package:rootasjey/screens/post_page.dart';
 import 'package:rootasjey/screens/project_page.dart';
 import 'package:rootasjey/screens/published_posts_page.dart';
 import 'package:rootasjey/screens/published_projects_page.dart';
-import 'package:rootasjey/screens/settings_page.dart';
+import 'package:rootasjey/screens/settings/settings_page.dart';
 import 'package:rootasjey/screens/update_email_page.dart';
 import 'package:rootasjey/screens/update_password_page.dart';
 import 'package:rootasjey/screens/update_username_page.dart';
-import 'package:rootasjey/state/user.dart';
+import 'package:rootasjey/types/globals/globals.dart';
 
 class DashboardLocation extends BeamLocation<BeamState> {
   static const String route = '/dashboard/*';
@@ -33,7 +33,10 @@ class DashboardLocation extends BeamLocation<BeamState> {
   List<BeamGuard> get guards => [
         BeamGuard(
           pathPatterns: [route],
-          check: (context, location) => stateUser.isUserConnected,
+          check: (context, location) {
+            final userNotifier = Globals.state.getUserNotifier();
+            return userNotifier.isAuthenticated;
+          },
           beamToNamed: (origin, target) => SigninLocation.route,
         ),
       ];
@@ -146,7 +149,7 @@ class DashboardLocationContent extends BeamLocation<BeamState> {
         ),
       if (isPreviewPostPage(state.pathPatternSegments))
         BeamPage(
-          child: PostPage(postId: state.pathParameters['postId']),
+          child: PostPage(postId: state.pathParameters['postId'] ?? ''),
           key: ValueKey('preview post page'),
           title: "Preview Post",
         ),
@@ -154,18 +157,18 @@ class DashboardLocationContent extends BeamLocation<BeamState> {
       // --------
       // Projects
       // --------
-      if (state.pathPatternSegments.contains('projects'))
-        // BeamPage(
-        //   child: MyProjectsPage(),
-        //   key: ValueKey(projectsRoute),
-        //   title: "Projects",
-        // ),
-        if (isMyPublishedProjectsPage(state.pathPatternSegments))
-          BeamPage(
-            child: PublishedProjectsPage(),
-            key: ValueKey('published projects page'),
-            title: "Published Projects",
-          ),
+      // if (state.pathPatternSegments.contains('projects'))
+      //   BeamPage(
+      //     child: MyProjectsPage(),
+      //     key: ValueKey(projectsRoute),
+      //     title: "Projects",
+      //   ),
+      if (isMyPublishedProjectsPage(state.pathPatternSegments))
+        BeamPage(
+          child: PublishedProjectsPage(),
+          key: ValueKey('published projects page'),
+          title: "Published Projects",
+        ),
       if (isMyDraftProjectsPage(state.pathPatternSegments))
         BeamPage(
           child: DraftProjectsPage(),
@@ -186,7 +189,9 @@ class DashboardLocationContent extends BeamLocation<BeamState> {
         ),
       if (isPreviewProjectPage(state.pathPatternSegments))
         BeamPage(
-          child: ProjectPage(projectId: state.pathParameters['projectId']),
+          child: ProjectPage(
+            projectId: state.pathParameters['projectId'] ?? '',
+          ),
           key: ValueKey('preview project page'),
           title: "Preview Project",
         ),

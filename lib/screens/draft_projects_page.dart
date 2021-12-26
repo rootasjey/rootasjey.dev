@@ -2,12 +2,13 @@ import 'package:beamer/beamer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:rootasjey/components/header_section.dart';
 import 'package:rootasjey/components/min_project_card.dart';
 import 'package:rootasjey/components/sliver_edge_padding.dart';
 import 'package:rootasjey/components/sliver_empty_view.dart';
 import 'package:rootasjey/router/locations/dashboard_location.dart';
-import 'package:rootasjey/state/user.dart';
+import 'package:rootasjey/types/globals/globals.dart';
 import 'package:rootasjey/types/header_section_data.dart';
 import 'package:rootasjey/types/project.dart';
 import 'package:rootasjey/utils/app_logger.dart';
@@ -215,13 +216,13 @@ class _DraftProjectsPageState extends State<DraftProjectsPage> {
     });
 
     try {
-      final userAuth = stateUser.userAuth!;
-      final uid = userAuth.uid;
+      final containerProvider = ProviderContainer();
+      final authUser = containerProvider.read(Globals.state.user).authUser;
 
       final snapshot = await FirebaseFirestore.instance
           .collection('projects')
           .where('published', isEqualTo: false)
-          .where('author.id', isEqualTo: uid)
+          .where('author.id', isEqualTo: authUser?.uid)
           .limit(_limit)
           .get();
 
@@ -256,18 +257,16 @@ class _DraftProjectsPageState extends State<DraftProjectsPage> {
       return;
     }
 
-    setState(() {
-      _isLoading = true;
-    });
+    setState(() => _isLoading = true);
 
     try {
-      final userAuth = stateUser.userAuth!;
-      final uid = userAuth.uid;
+      final containerProvider = ProviderContainer();
+      final userAuth = containerProvider.read(Globals.state.user).authUser;
 
       final snapshot = await FirebaseFirestore.instance
           .collection('projects')
           .where('published', isEqualTo: false)
-          .where('author.id', isEqualTo: uid)
+          .where('author.id', isEqualTo: userAuth?.uid)
           .startAfterDocument(_lastDocumentSnapshot!)
           .limit(_limit)
           .get();

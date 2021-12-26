@@ -3,20 +3,21 @@ import 'package:rootasjey/screens/post_page.dart';
 import 'package:rootasjey/state/colors.dart';
 
 class WidePostCard extends StatefulWidget {
-  @required final String? id;
-  final String? title;
-  final String? summary;
-  final String? metadata;
-  final String? imageUrl;
+  @required
+  final String id;
+  final String title;
+  final String summary;
+  final String metadata;
+  final String imageUrl;
   final List<String> tags;
 
   WidePostCard({
-    this.id,
-    this.imageUrl,
-    this.metadata,
-    this.summary,
+    required this.id,
+    required this.imageUrl,
+    required this.metadata,
+    required this.summary,
     this.tags = const [],
-    this.title,
+    required this.title,
   });
 
   @override
@@ -46,7 +47,7 @@ class _WidePostCardState extends State<WidePostCard> {
           child: Card(
             elevation: 6.0,
             child: Ink.image(
-              image: NetworkImage(widget.imageUrl!),
+              image: NetworkImage(widget.imageUrl),
               fit: BoxFit.cover,
               width: 700.0,
               height: 300.0,
@@ -54,14 +55,13 @@ class _WidePostCardState extends State<WidePostCard> {
                 onTap: navigateToPost,
                 onHover: (isHover) {
                   isHover
-                    ? setState(() => foreground = stateColors.primary)
-                    : setState(() => foreground = stateColors.foreground);
+                      ? setState(() => foreground = stateColors.primary)
+                      : setState(() => foreground = stateColors.foreground);
                 },
               ),
             ),
           ),
         ),
-
         Padding(
           padding: const EdgeInsets.only(
             top: 40.0,
@@ -81,7 +81,6 @@ class _WidePostCardState extends State<WidePostCard> {
             }).toList(),
           ),
         ),
-
         Padding(
           padding: const EdgeInsets.only(
             top: 10.0,
@@ -89,7 +88,7 @@ class _WidePostCardState extends State<WidePostCard> {
           ),
           child: postInkWell(
             child: Text(
-              widget.title!,
+              widget.title,
               style: TextStyle(
                 color: foreground,
                 fontSize: 30.0,
@@ -98,7 +97,6 @@ class _WidePostCardState extends State<WidePostCard> {
             ),
           ),
         ),
-
         Padding(
           padding: const EdgeInsets.only(
             top: 20.0,
@@ -108,7 +106,7 @@ class _WidePostCardState extends State<WidePostCard> {
             child: Opacity(
               opacity: 0.6,
               child: Text(
-                widget.summary!,
+                widget.summary,
                 style: TextStyle(
                   fontSize: 16.0,
                 ),
@@ -116,7 +114,6 @@ class _WidePostCardState extends State<WidePostCard> {
             ),
           ),
         ),
-
         Padding(
           padding: const EdgeInsets.only(
             top: 20.0,
@@ -126,7 +123,7 @@ class _WidePostCardState extends State<WidePostCard> {
             child: Opacity(
               opacity: 0.4,
               child: Text(
-                widget.metadata!,
+                widget.metadata,
                 style: TextStyle(
                   fontSize: 18.0,
                 ),
@@ -144,8 +141,8 @@ class _WidePostCardState extends State<WidePostCard> {
       hoverColor: Colors.transparent,
       onHover: (isHover) {
         isHover
-          ? setState(() => foreground = stateColors.primary)
-          : setState(() => foreground = stateColors.foreground);
+            ? setState(() => foreground = stateColors.primary)
+            : setState(() => foreground = stateColors.foreground);
       },
       child: child,
     );

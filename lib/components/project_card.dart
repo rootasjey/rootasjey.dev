@@ -157,16 +157,16 @@ class _ProjectCardState extends State<ProjectCard> {
   }
 
   void fetchAuthorName() async {
-    final author = widget.project.author!;
+    final authorId = widget.project.author.id;
 
-    if (author.id!.isEmpty) {
+    if (authorId.isEmpty) {
       return;
     }
 
     try {
       final docSnap = await FirebaseFirestore.instance
           .collection('users')
-          .doc(author.id)
+          .doc(authorId)
           .get();
 
       if (!docSnap.exists) {

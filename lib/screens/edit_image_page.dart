@@ -8,11 +8,12 @@ import 'package:extended_image/extended_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mime_type/mime_type.dart';
 import 'package:rootasjey/components/form_actions_inputs.dart';
 import 'package:rootasjey/components/loading_view.dart';
 import 'package:rootasjey/components/application_bar/main_app_bar.dart';
-import 'package:rootasjey/state/user.dart';
+import 'package:rootasjey/types/globals/globals.dart';
 import 'package:rootasjey/types/user_pp_path.dart';
 import 'package:rootasjey/types/user_pp_url.dart';
 import 'package:rootasjey/utils/app_logger.dart';
@@ -247,26 +248,27 @@ class _EditImagePageState extends State<EditImagePage> {
   }
 
   void uploadPicture({required Uint8List imageData}) async {
-    final User? user = FirebaseAuth.instance.currentUser;
+    final User? userAuth = FirebaseAuth.instance.currentUser;
 
-    if (user == null) {
+    if (userAuth == null) {
       throw Exception("You're not connected.");
     }
 
     setState(() => _isUpdating = true);
 
-    final String ext = stateUser.userFirestore!.pp!.ext!;
+    final String extension = Globals.state.getUserFirestore().pp.ext;
 
     try {
-      final String imagePath = "images/users/${user.uid}/pp/edited.$ext";
+      final String imagePath =
+          "images/users/${userAuth.uid}/pp/edited.$extension";
 
       final UploadTask task = FirebaseStorage.instance.ref(imagePath).putData(
           imageData,
           SettableMetadata(
-            contentType: mimeFromExtension(ext),
+            contentType: mimeFromExtension(extension),
             customMetadata: {
-              'extension': ext,
-              'userId': user.uid,
+              'extension': extension,
+              'userId': userAuth.uid,
             },
           ));
 
@@ -274,12 +276,12 @@ class _EditImagePageState extends State<EditImagePage> {
       final String downloadUrl = await snapshot.ref.getDownloadURL();
 
       setState(() {
-        stateUser.userFirestore!.urls!.setUrl('image', downloadUrl);
+        Globals.state.getUserFirestore().urls.setUrl('image', downloadUrl);
 
-        stateUser.userFirestore!.pp!.merge(
-          path: UserPPPath(edited: imagePath),
-          url: UserPPUrl(edited: downloadUrl),
-        );
+        Globals.state.getUserFirestore().pp.merge(
+              path: UserPPPath(edited: imagePath),
+              url: UserPPUrl(edited: downloadUrl),
+            );
 
         _isUpdating = false;
       });
@@ -292,6 +294,15 @@ class _EditImagePageState extends State<EditImagePage> {
   }
 
   void updateUser() async {
+    final containerProvider = ProviderContainer();
+    final user = containerProvider.read(Globals.state.user);
+    final userFirestore = user.firestoreUser;
+
+    if (userFirestore == null) {
+      appLogger.e("Error: user not connected.");
+      return;
+    }
+
     setState(() => _isUpdating = true);
 
     try {
@@ -300,7 +311,7 @@ class _EditImagePageState extends State<EditImagePage> {
       final HttpsCallableResult<dynamic> resp =
           await Cloud.fun('users-updateUser').call({
         'userId': uid,
-        'updatePayload': stateUser.userFirestore!.toJSON(),
+        'updatePayload': userFirestore.toJSON(),
       });
 
       final LinkedHashMap<dynamic, dynamic> hashMap =

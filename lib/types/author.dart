@@ -1,7 +1,7 @@
 class Author {
-  final String? id;
+  final String id;
 
-  Author({required this.id});
+  const Author({required this.id});
 
   factory Author.empty() {
     return Author(
@@ -15,7 +15,7 @@ class Author {
     }
 
     return Author(
-      id: data['id'],
+      id: data['id'] ?? '',
     );
   }
 }

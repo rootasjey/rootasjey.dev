@@ -1,14 +1,14 @@
 import 'package:beamer/beamer.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:rootasjey/components/animated_app_icon.dart';
 import 'package:rootasjey/components/fade_in_y.dart';
 import 'package:rootasjey/components/application_bar/main_app_bar.dart';
 import 'package:rootasjey/router/locations/home_location.dart';
-import 'package:rootasjey/router/locations/signin_location.dart';
-
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/state/user.dart';
-import 'package:rootasjey/utils/app_storage.dart';
+import 'package:rootasjey/types/globals/globals.dart';
+import 'package:rootasjey/types/update_email_resp.dart';
 import 'package:rootasjey/utils/fonts.dart';
 import 'package:rootasjey/utils/snack.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -23,12 +23,12 @@ class DeleteAccountPage extends StatefulWidget {
 }
 
 class DeleteAccountPageState extends State<DeleteAccountPage> {
-  bool isDeleting = false;
-  bool isCompleted = false;
+  bool _isDeleting = false;
+  bool _isCompleted = false;
 
-  double beginY = 10.0;
+  double _beginY = 10.0;
 
-  String password = '';
+  String _password = '';
 
   @override
   Widget build(BuildContext context) {
@@ -44,11 +44,11 @@ class DeleteAccountPageState extends State<DeleteAccountPage> {
   }
 
   Widget body() {
-    if (isCompleted) {
+    if (_isCompleted) {
       return completedView();
     }
 
-    if (isDeleting) {
+    if (_isDeleting) {
       return deletingView();
     }
 
@@ -277,17 +277,17 @@ class DeleteAccountPageState extends State<DeleteAccountPage> {
             children: <Widget>[
               FadeInY(
                 delay: 0.milliseconds,
-                beginY: beginY,
+                beginY: _beginY,
                 child: helperCard(),
               ),
               FadeInY(
                 delay: 100.milliseconds,
-                beginY: beginY,
+                beginY: _beginY,
                 child: passwordInput(),
               ),
               FadeInY(
                 delay: 200.milliseconds,
-                beginY: beginY,
+                beginY: _beginY,
                 child: Padding(
                   padding: const EdgeInsets.only(top: 60.0),
                   child: validationButton(),
@@ -332,7 +332,7 @@ class DeleteAccountPageState extends State<DeleteAccountPage> {
             autofocus: true,
             obscureText: true,
             onChanged: (value) {
-              password = value;
+              _password = value;
             },
             onFieldSubmitted: (value) => deleteAccountProcess(),
             validator: (value) {
@@ -376,37 +376,31 @@ class DeleteAccountPageState extends State<DeleteAccountPage> {
   }
 
   void deleteAccountProcess() async {
-    if (!inputValuesOk()) {
+    if (!checkInputsFormat()) {
       return;
     }
 
-    setState(() => isDeleting = true);
+    setState(() => _isDeleting = true);
 
     try {
-      final userAuth = stateUser.userAuth;
+      final containerProvider = ProviderContainer();
+      final User? userAuth =
+          containerProvider.read(Globals.state.user).authUser;
 
-      if (userAuth == null) {
-        setState(() => isDeleting = false);
-        Beamer.of(context).beamToNamed(SigninLocation.route);
-        return;
-      }
-
-      final credentials = EmailAuthProvider.credential(
-        email: userAuth.email!,
-        password: password,
+      final AuthCredential credentials = EmailAuthProvider.credential(
+        email: userAuth?.email ?? '',
+        password: _password,
       );
 
-      await userAuth.reauthenticateWithCredential(credentials);
-      final idToken = await userAuth.getIdToken();
+      await userAuth?.reauthenticateWithCredential(credentials);
+      final String idToken = await userAuth?.getIdToken() ?? '';
 
-      final respDelAcc = await stateUser.deleteAccount(idToken);
+      final UpdateEmailResp deleteAccountResponse =
+          await stateUser.deleteAccount(idToken);
 
-      if (!respDelAcc.success) {
-        final exception = respDelAcc.error!;
-
-        setState(() {
-          isDeleting = false;
-        });
+      if (!deleteAccountResponse.success) {
+        setState(() => _isDeleting = false);
+        final exception = deleteAccountResponse.error!;
 
         Snack.e(
           context: context,
@@ -416,22 +410,14 @@ class DeleteAccountPageState extends State<DeleteAccountPage> {
         return;
       }
 
-      await stateUser.signOut();
-      stateUser.setUsername('');
-      appStorage.clearUserAuthData();
-
-      // PushNotifications.unlinkAuthUser();
+      await containerProvider.read(Globals.state.user.notifier).signOut();
 
       setState(() {
-        isDeleting = false;
-        isCompleted = true;
+        _isDeleting = false;
+        _isCompleted = true;
       });
     } catch (error) {
-      debugPrint(error.toString());
-
-      setState(() {
-        isDeleting = false;
-      });
+      setState(() => _isDeleting = false);
 
       Snack.e(
         context: context,
@@ -440,8 +426,8 @@ class DeleteAccountPageState extends State<DeleteAccountPage> {
     }
   }
 
-  bool inputValuesOk() {
-    if (password.isEmpty) {
+  bool checkInputsFormat() {
+    if (_password.isEmpty) {
       Snack.e(
         context: context,
         message: "password_empty_forbidden".tr(),

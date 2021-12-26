@@ -5,20 +5,20 @@ import 'urls.dart';
 
 class UserFirestore {
   final DateTime? createdAt;
-  final String? email;
-  final String? id;
-  String? job;
-  final String? lang;
-  String? location;
-  final String? name;
-  final String? nameLowerCase;
-  final UserPP? pp;
-  final String? pricing;
-  final String? role;
+  final String email;
+  final String id;
+  String job;
+  final String lang;
+  String location;
+  final String name;
+  final String nameLowerCase;
+  final UserPP pp;
+  final String pricing;
+  final String role;
   final UserStats? stats;
-  String? summary;
+  String summary;
   final DateTime? updatedAt;
-  final Urls? urls;
+  Urls urls;
 
   UserFirestore({
     this.createdAt,
@@ -29,13 +29,13 @@ class UserFirestore {
     this.location = 'Nowhere',
     this.name = 'Anonymous',
     this.nameLowerCase = 'anonymous',
-    this.pp,
+    required this.pp,
     this.pricing = 'free',
     this.role = 'user',
     this.stats,
     this.summary = 'An anonymous user ghosting decent people.',
     this.updatedAt,
-    this.urls,
+    required this.urls,
   });
 
   factory UserFirestore.empty() {
@@ -94,12 +94,12 @@ class UserFirestore {
     data['job'] = job;
     data['lang'] = lang;
     data['location'] = location;
-    data['pp'] = pp!.toJSON();
+    data['pp'] = pp.toJSON();
     data['pricing'] = pricing;
     data['role'] = role;
     data['summary'] = summary;
     data['updatedAt'] = DateTime.now().millisecondsSinceEpoch;
-    data['urls'] = urls!.toJSON();
+    data['urls'] = urls.toJSON();
 
     return data;
   }

@@ -1288,7 +1288,8 @@ class _ProjectEditorState extends State<ProjectEditor> {
 
       _jwt = await FirebaseAuth.instance.currentUser!.getIdToken();
 
-      final Map<String, dynamic> data = _projectSnapshot.data() as Map<String, dynamic>;
+      final Map<String, dynamic> data =
+          _projectSnapshot.data() as Map<String, dynamic>;
       data['id'] = _projectSnapshot.id;
 
       final Project project = Project.fromJSON(data);
@@ -1311,7 +1312,7 @@ class _ProjectEditorState extends State<ProjectEditor> {
           _programmingLanguages[pLang] = true;
         }
 
-        project.urls!.map!.forEach((key, value) {
+        project.urls!.map.forEach((key, value) {
           _links[key] = value;
         });
 
