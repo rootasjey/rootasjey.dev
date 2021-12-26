@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:beamer/beamer.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:file_picker_cross/file_picker_cross.dart';
@@ -8,25 +7,24 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mime_type/mime_type.dart';
 import 'package:rootasjey/components/application_bar/main_app_bar.dart';
 import 'package:rootasjey/components/page_title.dart';
+import 'package:rootasjey/components/popup_progress_indicator.dart';
 import 'package:rootasjey/router/locations/dashboard_location.dart';
 import 'package:rootasjey/router/navigation_state_helper.dart';
 import 'package:rootasjey/screens/settings/account_settings.dart';
 import 'package:rootasjey/screens/settings/app_settings.dart';
 import 'package:rootasjey/types/globals/globals.dart';
+import 'package:rootasjey/types/user/user_notifier.dart';
+import 'package:rootasjey/types/user_firestore.dart';
 import 'package:rootasjey/types/user_pp.dart';
 import 'package:rootasjey/types/user_pp_path.dart';
 import 'package:rootasjey/types/user_pp_url.dart';
 import 'package:rootasjey/utils/app_logger.dart';
 import 'package:rootasjey/utils/brightness.dart';
 import 'package:rootasjey/utils/cloud.dart';
-import 'package:rootasjey/utils/constants.dart';
 import 'package:rootasjey/utils/snack.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/utils/app_storage.dart';
-import 'package:rootasjey/utils/fonts.dart';
-import 'package:unicons/unicons.dart';
 
 class SettingsPage extends ConsumerStatefulWidget {
   final bool showAppBar;
@@ -46,9 +44,6 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
   Brightness _brightness = Brightness.dark;
 
-  Timer? nameTimer;
-  Timer? quotidiansNotifTimer;
-
   ScrollController _pageScrollController = ScrollController();
 
   @override
@@ -59,23 +54,27 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
-    double paddingTop = 0.0;
-    bool showBigTitle = false;
+    final largeWidth = !Globals.utils.size.isMobileSize(context);
+    final bool showBigTitle = largeWidth ? true : false;
 
-    if (MediaQuery.of(context).size.width > Constants.maxMobileWidth) {
+    double paddingTop = 0.0;
+
+    if (largeWidth) {
       paddingTop = widget.showAppBar ? 60.0 : 20.0;
-      showBigTitle = true;
     }
 
     ref.watch(Globals.state.user);
 
-    final userNotifier = ref.read(Globals.state.user.notifier);
-    final isAuthenticated = userNotifier.isAuthenticated;
+    final UserFirestore userFirestore = Globals.state.getUserFirestore();
+    final UserNotifier userNotifier = ref.read(Globals.state.user.notifier);
 
-    final userFirestore = Globals.state.getUserFirestore();
     final String profilePicture = userNotifier.getPPUrl(
       orElse: "https://img.icons8.com/plasticine/100/000000/flower.png",
     );
+
+    final themeDescription = _isThemeAuto
+        ? "theme_auto_description".tr()
+        : "theme_manual_description".tr();
 
     return Scaffold(
       body: NotificationListener<ScrollNotification>(
@@ -92,136 +91,52 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                   ),
                   sliver: SliverList(
                     delegate: SliverChildListDelegate([
-                      if (showBigTitle) header(),
+                      if (showBigTitle)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 40.0),
+                          child: PageTitle(
+                            textTitle: "settings".tr(),
+                            mainAxisAlignment: MainAxisAlignment.center,
+                          ),
+                        ),
                       AccountSettings(
-                        isAuthenticated: isAuthenticated,
+                        isAuthenticated: userNotifier.isAuthenticated,
                         profilePicture: profilePicture,
                         email: userFirestore.email,
                         username: userFirestore.name,
-                        onGoToUpdateEmail: () async {
-                          Beamer.of(context).beamToNamed(
-                            DashboardLocationContent.updateEmailRoute,
-                          );
-                        },
+                        onGoToUpdateEmail: onGoToUpdateEmail,
                         onUploadProfilePicture: onUploadProfilePicture,
-                        onTapProfilePicture: () {
-                          if (userFirestore.pp.url.edited.isEmpty) {
-                            return;
-                          }
-
-                          NavigationStateHelper.imageToEdit =
-                              ExtendedNetworkImageProvider(
-                            Globals.state.getUserFirestore().pp.url.original,
-                            cache: true,
-                            cacheRawData: true,
-                          );
-
-                          Beamer.of(context).beamToNamed(
-                            DashboardLocationContent.editProfilePictureRoute,
-                          );
-                        },
+                        onTapProfilePicture: onTapProfilePicture,
                       ),
                       AppSettings(
                         brightness: _brightness,
-                        onChangeBrightness: (newValue) {
-                          _brightness =
-                              newValue ? Brightness.light : Brightness.dark;
-
-                          BrightnessUtils.setBrightness(context, _brightness);
-                          setState(() {});
-                        },
-                        onChangeThemeAuto: (newValue) {
-                          setState(() => _isThemeAuto = newValue);
-
-                          if (newValue) {
-                            BrightnessUtils.setAutoBrightness(context);
-                            return;
-                          }
-
-                          _brightness = appStorage.getBrightness();
-                          BrightnessUtils.setBrightness(context, _brightness);
-                        },
+                        themeDescription: themeDescription,
+                        onChangeBrightness: onChangeBrightness,
+                        onChangeThemeAuto: onChangeThemeAuto,
                       ),
                     ]),
                   ),
                 ),
               ],
             ),
-            popupProgressIndicator(),
+            Positioned(
+              top: 100.0,
+              right: 24.0,
+              child: PopupProgressIndicator(
+                show: _isUpdating,
+                message: "user_updating".tr(),
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget header() {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 40.0),
-      child: PageTitle(
-        textTitle: "settings".tr(),
-        mainAxisAlignment: MainAxisAlignment.center,
-      ),
-    );
-  }
-
-  Widget popupProgressIndicator() {
-    if (!_isUpdating) {
-      return Container();
-    }
-
-    return Positioned(
-      top: 100.0,
-      right: 24.0,
-      child: SizedBox(
-        width: 240.0,
-        child: Card(
-          elevation: 4.0,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              SizedBox(
-                height: 4.0,
-                child: LinearProgressIndicator(),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      UniconsLine.circle,
-                      color: stateColors.secondary,
-                    ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 8.0),
-                        child: Opacity(
-                          opacity: 0.6,
-                          child: Text(
-                            "user_updating".tr(),
-                            style: FontsUtils.mainStyle(
-                              fontSize: 14.0,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
   void initBrightness() {
-    final autoBrightness = appStorage.getAutoBrightness();
-    _isThemeAuto = autoBrightness;
+    _isThemeAuto = appStorage.getAutoBrightness();
 
-    if (!autoBrightness) {
+    if (!_isThemeAuto) {
       _brightness = appStorage.getBrightness();
     } else {
       Brightness brightness = Brightness.light;
@@ -235,28 +150,47 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     }
   }
 
-  String themeDescription() {
-    return _isThemeAuto
-        ? "theme_auto_description".tr()
-        : "theme_manual_description".tr();
+  void onChangeBrightness(newValue) {
+    _brightness = newValue ? Brightness.light : Brightness.dark;
+
+    BrightnessUtils.setBrightness(context, _brightness);
+    setState(() {});
   }
 
-  void updateUser() async {
-    setState(() => _isUpdating = true);
+  void onChangeThemeAuto(newValue) {
+    setState(() => _isThemeAuto = newValue);
 
-    try {
-      final String uid = FirebaseAuth.instance.currentUser?.uid ?? '';
-
-      await Cloud.fun('users-updateUser').call({
-        'userId': uid,
-        'updatePayload': Globals.state.getUserFirestore().toJSON(),
-      });
-
-      setState(() => _isUpdating = false);
-    } catch (error) {
-      setState(() => _isUpdating = false);
-      appLogger.e(error);
+    if (newValue) {
+      BrightnessUtils.setAutoBrightness(context);
+      return;
     }
+
+    _brightness = appStorage.getBrightness();
+    BrightnessUtils.setBrightness(context, _brightness);
+  }
+
+  void onGoToUpdateEmail() async {
+    Beamer.of(context).beamToNamed(
+      DashboardLocationContent.updateEmailRoute,
+    );
+  }
+
+  void onTapProfilePicture() {
+    final UserFirestore userFirestore = Globals.state.getUserFirestore();
+
+    if (userFirestore.pp.url.edited.isEmpty) {
+      return;
+    }
+
+    NavigationStateHelper.imageToEdit = ExtendedNetworkImageProvider(
+      Globals.state.getUserFirestore().pp.url.original,
+      cache: true,
+      cacheRawData: true,
+    );
+
+    Beamer.of(context).beamToNamed(
+      DashboardLocationContent.editProfilePictureRoute,
+    );
   }
 
   void onUploadProfilePicture() async {
@@ -284,8 +218,6 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
       return;
     }
 
-    setState(() => _isUpdating = true);
-
     final ext = fileName.substring(fileName.lastIndexOf('.'));
 
     final metadata = SettableMetadata(
@@ -295,6 +227,8 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
         'userId': user.uid,
       },
     );
+
+    setState(() => _isUpdating = true);
 
     try {
       final response = await Cloud.fun('users-clearProfilePicture').call();
@@ -334,6 +268,24 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     } catch (error) {
       appLogger.e(error);
       setState(() => _isUpdating = false);
+    }
+  }
+
+  void updateUser() async {
+    setState(() => _isUpdating = true);
+
+    try {
+      final String uid = FirebaseAuth.instance.currentUser?.uid ?? '';
+
+      await Cloud.fun('users-updateUser').call({
+        'userId': uid,
+        'updatePayload': Globals.state.getUserFirestore().toJSON(),
+      });
+
+      setState(() => _isUpdating = false);
+    } catch (error) {
+      setState(() => _isUpdating = false);
+      appLogger.e(error);
     }
   }
 }

@@ -6,12 +6,14 @@ class AppSettings extends StatelessWidget {
   final Brightness brightness;
   final Function(bool) onChangeThemeAuto;
   final Function(bool) onChangeBrightness;
+  final String themeDescription;
 
   const AppSettings({
     Key? key,
     required this.brightness,
     required this.onChangeThemeAuto,
     required this.onChangeBrightness,
+    this.themeDescription = '',
   }) : super(key: key);
 
   @override
@@ -22,6 +24,7 @@ class AppSettings extends StatelessWidget {
         children: <Widget>[
           ThemeSwitcher(
             brightness: brightness,
+            themeDescription: themeDescription,
             onChangeThemeAuto: onChangeThemeAuto,
             onChangeBrightness: onChangeBrightness,
           ),
