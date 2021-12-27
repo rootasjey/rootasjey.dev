@@ -2,13 +2,12 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:rootasjey/components/error_view.dart';
 import 'package:rootasjey/components/loading_view.dart';
 import 'package:rootasjey/components/post_editor.dart';
-import 'package:rootasjey/state/user.dart';
+import 'package:rootasjey/types/globals/globals.dart';
 import 'package:rootasjey/utils/app_logger.dart';
 import 'package:rootasjey/utils/cloud.dart';
 import 'package:rootasjey/utils/snack.dart';
@@ -23,8 +22,6 @@ class _NewPostPageState extends State<NewPostPage> {
   bool _isLoading = true;
 
   DocumentReference? _postSnapshot;
-
-  String _jwt = '';
 
   @override
   void initState() {
@@ -50,10 +47,13 @@ class _NewPostPageState extends State<NewPostPage> {
   }
 
   void createPost() async {
-    setState(() => _isLoading = true);
-
     try {
-      final userAuth = stateUser.userAuth!;
+      final userAuth = Globals.state.getUserAuth();
+      if (userAuth == null) {
+        throw ErrorDescription("You're not authenticated");
+      }
+
+      setState(() => _isLoading = true);
 
       _postSnapshot = await FirebaseFirestore.instance.collection('posts').add({
         'author': {
@@ -87,9 +87,8 @@ class _NewPostPageState extends State<NewPostPage> {
         },
       });
 
-      _jwt = await FirebaseAuth.instance.currentUser!.getIdToken();
-      
-      final success = await createContent();
+      final String jwt = await userAuth.getIdToken();
+      final bool success = await createContent(jwt);
 
       if (!success) {
         throw ErrorDescription("post_create_error_storage".tr());
@@ -106,13 +105,13 @@ class _NewPostPageState extends State<NewPostPage> {
     }
   }
 
-  Future<bool> createContent() async {
+  Future<bool> createContent(String jwt) async {
     bool success = true;
 
     try {
       final resp = await Cloud.fun('posts-save').call({
         'postId': _postSnapshot!.id,
-        'jwt': _jwt,
+        'jwt': jwt,
         'content': "Hi, ",
       });
 
@@ -125,6 +124,7 @@ class _NewPostPageState extends State<NewPostPage> {
       _isPostCreated = true;
     } catch (error) {
       appLogger.e(error);
+
       Snack.e(
         context: context,
         message: "post_create_error_storage".tr(),

@@ -5,9 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:rootasjey/components/animated_app_icon.dart';
 import 'package:rootasjey/components/fade_in_y.dart';
 import 'package:rootasjey/components/application_bar/main_app_bar.dart';
-import 'package:rootasjey/router/locations/signin_location.dart';
 import 'package:rootasjey/state/colors.dart';
-import 'package:rootasjey/state/user.dart';
+import 'package:rootasjey/types/globals/globals.dart';
 import 'package:rootasjey/utils/app_storage.dart';
 import 'package:rootasjey/utils/fonts.dart';
 import 'package:rootasjey/utils/snack.dart';
@@ -375,30 +374,32 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
   }
 
   void updatePassword() async {
-    if (!inputValuesOk()) {
+    if (!checkInputsFormat()) {
       return;
     }
 
+    final userAuth = Globals.state.getUserAuth();
+    if (userAuth == null) {
+      return;
+    }
+
+    final credentials = EmailAuthProvider.credential(
+      email: userAuth.email ?? '',
+      password: password,
+    );
+
     setState(() => isUpdating = true);
-
     try {
-      final userAuth = stateUser.userAuth;
-
-      if (userAuth == null) {
-        setState(() => isUpdating = false);
-        Beamer.of(context).beamToNamed(SigninLocation.route);
-        return;
-      }
-
-      final credentials = EmailAuthProvider.credential(
-        email: userAuth.email!,
-        password: password,
-      );
-
       final authResult =
           await userAuth.reauthenticateWithCredential(credentials);
 
-      await authResult.user!.updatePassword(newPassword);
+      final authUserResult = authResult.user;
+
+      if (authUserResult == null) {
+        throw ErrorDescription("Wrong email or password");
+      }
+
+      await authUserResult.updatePassword(newPassword);
       appStorage.setPassword(newPassword);
 
       setState(() {
@@ -406,8 +407,6 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
         isCompleted = true;
       });
     } catch (error) {
-      debugPrint(error.toString());
-
       setState(() => isUpdating = false);
 
       Snack.e(
@@ -417,7 +416,7 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
     }
   }
 
-  bool inputValuesOk() {
+  bool checkInputsFormat() {
     if (password.isEmpty) {
       Snack.e(
         context: context,

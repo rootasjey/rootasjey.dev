@@ -62,7 +62,7 @@ abstract class StateUserBase with Store {
     _userAuth = null;
   }
 
-  Future<UpdateEmailResp> deleteAccount(String idToken) async {
+  Future<CloudFunctionsResponse> deleteAccount(String idToken) async {
     try {
       final callable = FirebaseFunctions.instanceFor(
         app: Firebase.app(),
@@ -75,11 +75,11 @@ abstract class StateUserBase with Store {
 
       signOut();
 
-      return UpdateEmailResp.fromJSON(response.data);
+      return CloudFunctionsResponse.fromJSON(response.data);
     } on FirebaseFunctionsException catch (exception) {
       appLogger.e("[code: ${exception.code}] - ${exception.message}");
 
-      return UpdateEmailResp(
+      return CloudFunctionsResponse(
         success: false,
         error: CloudFuncError(
           code: exception.details['code'],
@@ -89,7 +89,7 @@ abstract class StateUserBase with Store {
     } on PlatformException catch (exception) {
       appLogger.e(exception.toString());
 
-      return UpdateEmailResp(
+      return CloudFunctionsResponse(
         success: false,
         error: CloudFuncError(
           code: exception.details['code'],
@@ -99,7 +99,7 @@ abstract class StateUserBase with Store {
     } catch (error) {
       appLogger.e(error.toString());
 
-      return UpdateEmailResp(
+      return CloudFunctionsResponse(
         success: false,
         error: CloudFuncError(
           code: '',
@@ -278,7 +278,8 @@ abstract class StateUserBase with Store {
     updatedFavAt = DateTime.now();
   }
 
-  Future<UpdateEmailResp> updateEmail(String email, String idToken) async {
+  Future<CloudFunctionsResponse> updateEmail(
+      String email, String idToken) async {
     try {
       final callable = FirebaseFunctions.instanceFor(
         app: Firebase.app(),
@@ -293,10 +294,10 @@ abstract class StateUserBase with Store {
       appStorage.setEmail(email);
       await stateUser.signin(email: email);
 
-      return UpdateEmailResp.fromJSON(response.data);
+      return CloudFunctionsResponse.fromJSON(response.data);
     } on FirebaseFunctionsException catch (exception) {
       appLogger.e("[code: ${exception.code}] - ${exception.message}");
-      return UpdateEmailResp(
+      return CloudFunctionsResponse(
         success: false,
         error: CloudFuncError(
           code: exception.details['code'],
@@ -305,7 +306,7 @@ abstract class StateUserBase with Store {
       );
     } on PlatformException catch (exception) {
       appLogger.e(exception.toString());
-      return UpdateEmailResp(
+      return CloudFunctionsResponse(
         success: false,
         error: CloudFuncError(
           code: exception.details['code'],
@@ -315,7 +316,7 @@ abstract class StateUserBase with Store {
     } catch (error) {
       appLogger.e(error.toString());
 
-      return UpdateEmailResp(
+      return CloudFunctionsResponse(
         success: false,
         error: CloudFuncError(
           code: '',
@@ -325,7 +326,7 @@ abstract class StateUserBase with Store {
     }
   }
 
-  Future<UpdateEmailResp> updateUsername(String newUsername) async {
+  Future<CloudFunctionsResponse> updateUsername(String newUsername) async {
     try {
       final callable = FirebaseFunctions.instanceFor(
         app: Firebase.app(),
@@ -338,10 +339,10 @@ abstract class StateUserBase with Store {
 
       appStorage.setUserName(newUsername);
 
-      return UpdateEmailResp.fromJSON(response.data);
+      return CloudFunctionsResponse.fromJSON(response.data);
     } on FirebaseFunctionsException catch (exception) {
       appLogger.e("[code: ${exception.code}] - ${exception.message}");
-      return UpdateEmailResp(
+      return CloudFunctionsResponse(
         success: false,
         error: CloudFuncError(
           code: exception.details['code'],
@@ -351,7 +352,7 @@ abstract class StateUserBase with Store {
     } on PlatformException catch (exception) {
       appLogger.e(exception.toString());
 
-      return UpdateEmailResp(
+      return CloudFunctionsResponse(
         success: false,
         error: CloudFuncError(
           code: exception.details['code'],
@@ -361,7 +362,7 @@ abstract class StateUserBase with Store {
     } catch (error) {
       appLogger.e(error.toString());
 
-      return UpdateEmailResp(
+      return CloudFunctionsResponse(
         success: false,
         error: CloudFuncError(
           code: '',

@@ -1,4 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:rootasjey/actions/users.dart';
@@ -14,6 +16,43 @@ import 'package:rootasjey/utils/cloud.dart';
 class UserNotifier extends StateNotifier<User> {
   UserNotifier(User state) : super(state) {
     signInOnAppStart();
+  }
+
+  Future<CloudFunctionsResponse> deleteAccount(String idToken) async {
+    try {
+      final callable = FirebaseFunctions.instanceFor(
+        app: Firebase.app(),
+        region: 'europe-west3',
+      ).httpsCallable('users-deleteAccount');
+
+      final response = await callable.call({
+        'idToken': idToken,
+      });
+
+      signOut();
+
+      return CloudFunctionsResponse.fromJSON(response.data);
+    } on FirebaseFunctionsException catch (exception) {
+      appLogger.e("[code: ${exception.code}] - ${exception.message}");
+
+      return CloudFunctionsResponse(
+        success: false,
+        error: CloudFuncError(
+          code: exception.details['code'],
+          message: exception.details['message'],
+        ),
+      );
+    } catch (error) {
+      appLogger.e(error.toString());
+
+      return CloudFunctionsResponse(
+        success: false,
+        error: CloudFuncError(
+          code: '',
+          message: error.toString(),
+        ),
+      );
+    }
   }
 
   String getInitialsUsername() {
@@ -130,7 +169,6 @@ class UserNotifier extends StateNotifier<User> {
       final bool passwordNullOrEmpty = password == null || password.isEmpty;
 
       if (emailNullOrEmpty || passwordNullOrEmpty) {
-        appLogger.d("user_notifier empty cred");
         return null;
       }
 
@@ -204,7 +242,8 @@ class UserNotifier extends StateNotifier<User> {
     return createAccountResponse;
   }
 
-  Future<UpdateEmailResp> updateEmail(String email, String idToken) async {
+  Future<CloudFunctionsResponse> updateEmail(
+      String email, String idToken) async {
     try {
       final response = await Cloud.fun('users-updateEmail').call({
         'newEmail': email,
@@ -213,9 +252,9 @@ class UserNotifier extends StateNotifier<User> {
 
       await signIn(email: email);
 
-      return UpdateEmailResp.fromJSON(response.data);
+      return CloudFunctionsResponse.fromJSON(response.data);
     } catch (error) {
-      return UpdateEmailResp(
+      return CloudFunctionsResponse(
         success: false,
         error: CloudFuncError(
           code: '',
@@ -225,15 +264,15 @@ class UserNotifier extends StateNotifier<User> {
     }
   }
 
-  Future<UpdateEmailResp> updateUsername(String newUsername) async {
+  Future<CloudFunctionsResponse> updateUsername(String newUsername) async {
     try {
       final response = await Cloud.fun('users-updateUsername').call({
         'newUsername': newUsername,
       });
 
-      return UpdateEmailResp.fromJSON(response.data);
+      return CloudFunctionsResponse.fromJSON(response.data);
     } catch (error) {
-      return UpdateEmailResp(
+      return CloudFunctionsResponse(
         success: false,
         error: CloudFuncError(
           code: '',

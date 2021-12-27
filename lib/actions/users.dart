@@ -64,11 +64,11 @@ class UsersActions {
   }
 
   /// Check username availability.
-  static Future<bool?> checkUsernameAvailability(String username) async {
+  static Future<bool> checkUsernameAvailability(String username) async {
     try {
       final resp = await Cloud.fun('users-checkUsernameAvailability')
           .call({'name': username});
-      return resp.data['isAvailable'] as bool?;
+      return resp.data['isAvailable'] ?? false;
     } on FirebaseFunctionsException catch (exception) {
       appLogger.e("[code: ${exception.code}] - ${exception.message}");
       return false;

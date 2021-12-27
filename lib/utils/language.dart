@@ -1,4 +1,3 @@
-import 'package:rootasjey/state/user.dart';
 import 'package:rootasjey/utils/app_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -55,20 +54,5 @@ class Language {
     }
 
     return current;
-  }
-
-  static Future fetchAndPopulate(User userAuth) async {
-    String lang = await fetch(userAuth) ?? 'en';
-    setLang(lang);
-  }
-
-  static void setLang(String lang) {
-    stateUser.setLang(lang);
-    appStorage.setLang(lang);
-  }
-
-  static Future loadSavedLanguage() async {
-    final savedLang = appStorage.getLang();
-    stateUser.setLang(savedLang);
   }
 }

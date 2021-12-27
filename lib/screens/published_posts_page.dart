@@ -7,7 +7,7 @@ import 'package:rootasjey/components/post_card.dart';
 import 'package:rootasjey/components/sliver_empty_view.dart';
 import 'package:rootasjey/router/locations/dashboard_location.dart';
 import 'package:rootasjey/router/locations/posts_location.dart';
-import 'package:rootasjey/state/user.dart';
+import 'package:rootasjey/types/globals/globals.dart';
 import 'package:rootasjey/types/header_section_data.dart';
 import 'package:rootasjey/types/post.dart';
 import 'package:rootasjey/utils/app_logger.dart';
@@ -213,7 +213,11 @@ class _PublishedPostsPageState extends State<PublishedPostsPage> {
     });
 
     try {
-      final userAuth = stateUser.userAuth!;
+      final userAuth = Globals.state.getUserAuth();
+      if (userAuth == null) {
+        throw ErrorDescription("You're not authenticated");
+      }
+
       final uid = userAuth.uid;
 
       final snapshot = await FirebaseFirestore.instance
@@ -258,7 +262,11 @@ class _PublishedPostsPageState extends State<PublishedPostsPage> {
     setState(() => _isLoading = true);
 
     try {
-      final userAuth = stateUser.userAuth!;
+      final userAuth = Globals.state.getUserAuth();
+      if (userAuth == null) {
+        throw ErrorDescription("You're not authenticated");
+      }
+
       final uid = userAuth.uid;
 
       final snapshot = await FirebaseFirestore.instance

@@ -2,12 +2,11 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/error_view.dart';
 import 'package:rootasjey/components/loading_view.dart';
 import 'package:rootasjey/components/project_editor.dart';
-import 'package:rootasjey/state/user.dart';
+import 'package:rootasjey/types/globals/globals.dart';
 import 'package:rootasjey/utils/app_logger.dart';
 import 'package:rootasjey/utils/cloud.dart';
 import 'package:rootasjey/utils/snack.dart';
@@ -22,8 +21,6 @@ class _NewProjectPageState extends State<NewProjectPage> {
   bool _isLoading = false;
 
   DocumentReference? _projectSnapshot;
-
-  String _jwt = '';
 
   @override
   void initState() {
@@ -49,10 +46,13 @@ class _NewProjectPageState extends State<NewProjectPage> {
   }
 
   void createProject() async {
-    setState(() => _isLoading = true);
-
     try {
-      final userAuth = stateUser.userAuth!;
+      final userAuth = Globals.state.getUserAuth();
+      if (userAuth == null) {
+        throw ErrorDescription("You're not authenticated");
+      }
+
+      setState(() => _isLoading = true);
 
       _projectSnapshot =
           await FirebaseFirestore.instance.collection('projects').add({
@@ -102,8 +102,8 @@ class _NewProjectPageState extends State<NewProjectPage> {
         },
       });
 
-      _jwt = await FirebaseAuth.instance.currentUser!.getIdToken();
-      final success = await (createContent() as FutureOr<bool>);
+      String jwt = await userAuth.getIdToken();
+      final bool success = await createContent(jwt);
 
       if (!success) {
         throw ErrorDescription("post_create_error_storage".tr());
@@ -120,20 +120,20 @@ class _NewProjectPageState extends State<NewProjectPage> {
     }
   }
 
-  Future<bool?> createContent() async {
-    bool? success = true;
+  Future<bool> createContent(String jwt) async {
+    bool success = true;
     setState(() => _isLoading = true);
 
     try {
       final resp = await Cloud.fun('projects-save').call({
         'projectId': _projectSnapshot!.id,
-        'jwt': _jwt,
+        'jwt': jwt,
         'content': "Hi ",
       });
 
       success = resp.data['success'];
 
-      if (!success!) {
+      if (!success) {
         throw ErrorDescription(resp.data['error']);
       }
     } catch (error) {

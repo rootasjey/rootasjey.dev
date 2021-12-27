@@ -1,12 +1,10 @@
 import 'package:beamer/beamer.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:rootasjey/components/animated_app_icon.dart';
 import 'package:rootasjey/components/fade_in_y.dart';
 import 'package:rootasjey/components/application_bar/main_app_bar.dart';
 import 'package:rootasjey/router/locations/home_location.dart';
 import 'package:rootasjey/state/colors.dart';
-import 'package:rootasjey/state/user.dart';
 import 'package:rootasjey/types/globals/globals.dart';
 import 'package:rootasjey/types/update_email_resp.dart';
 import 'package:rootasjey/utils/fonts.dart';
@@ -380,37 +378,32 @@ class DeleteAccountPageState extends State<DeleteAccountPage> {
       return;
     }
 
-    setState(() => _isDeleting = true);
-
     try {
-      final containerProvider = ProviderContainer();
-      final User? userAuth =
-          containerProvider.read(Globals.state.user).authUser;
+      setState(() => _isDeleting = true);
+
+      final User? userAuth = Globals.state.getUserAuth();
+      if (userAuth == null) {
+        throw ErrorDescription("User is not authenticated");
+      }
 
       final AuthCredential credentials = EmailAuthProvider.credential(
-        email: userAuth?.email ?? '',
+        email: userAuth.email ?? '',
         password: _password,
       );
 
-      await userAuth?.reauthenticateWithCredential(credentials);
-      final String idToken = await userAuth?.getIdToken() ?? '';
+      await userAuth.reauthenticateWithCredential(credentials);
 
-      final UpdateEmailResp deleteAccountResponse =
-          await stateUser.deleteAccount(idToken);
+      final String idToken = await userAuth.getIdToken();
+      final userNotifier = Globals.state.getUserNotifier();
+      final CloudFunctionsResponse response = await userNotifier.deleteAccount(
+        idToken,
+      );
 
-      if (!deleteAccountResponse.success) {
-        setState(() => _isDeleting = false);
-        final exception = deleteAccountResponse.error!;
-
-        Snack.e(
-          context: context,
-          message: "[code: ${exception.code}] - ${exception.message}",
+      if (!response.success) {
+        throw ErrorDescription(
+          "We cannot delete your account right now. Try again later.",
         );
-
-        return;
       }
-
-      await containerProvider.read(Globals.state.user.notifier).signOut();
 
       setState(() {
         _isDeleting = false;

@@ -303,8 +303,7 @@ class _SignupPageState extends State<SignupPage> {
 
                 _nameTimer = Timer(1.seconds, () async {
                   final isAvailable =
-                      await (UsersActions.checkUsernameAvailability(_username)
-                          as FutureOr<bool>);
+                      await UsersActions.checkUsernameAvailability(_username);
 
                   if (!isAvailable) {
                     setState(() {
@@ -323,7 +322,7 @@ class _SignupPageState extends State<SignupPage> {
               },
               onFieldSubmitted: (_) => _passwordNode.requestFocus(),
               validator: (value) {
-                if (value!.isEmpty) {
+                if (value != null && value.isEmpty) {
                   return "name_empty_forbidden".tr();
                 }
 
@@ -342,10 +341,12 @@ class _SignupPageState extends State<SignupPage> {
         top: 8.0,
         left: 40.0,
       ),
-      child: Text(_nameErrorMessage,
-          style: TextStyle(
-            color: Colors.red.shade300,
-          )),
+      child: Text(
+        _nameErrorMessage,
+        style: TextStyle(
+          color: Colors.red.shade300,
+        ),
+      ),
     );
   }
 

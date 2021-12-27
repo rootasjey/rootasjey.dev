@@ -1,19 +1,19 @@
 import 'package:rootasjey/types/cloud_func_error.dart';
 import 'package:rootasjey/types/partial_user.dart';
 
-class UpdateEmailResp {
+class CloudFunctionsResponse {
   bool success;
   final CloudFuncError? error;
   final PartialUser? user;
 
-  UpdateEmailResp({
+  CloudFunctionsResponse({
     this.success = true,
     this.error,
     this.user,
   });
 
-  factory UpdateEmailResp.fromJSON(Map<dynamic, dynamic> data) {
-    return UpdateEmailResp(
+  factory CloudFunctionsResponse.fromJSON(Map<dynamic, dynamic> data) {
+    return CloudFunctionsResponse(
       success: data['success'] ?? true,
       user: PartialUser.fromJSON(data['user']),
       error: CloudFuncError.fromJSON(data['error']),

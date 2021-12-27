@@ -9,9 +9,8 @@ import 'package:rootasjey/components/animated_app_icon.dart';
 import 'package:rootasjey/components/fade_in_y.dart';
 import 'package:rootasjey/components/application_bar/main_app_bar.dart';
 import 'package:rootasjey/components/sliver_edge_padding.dart';
-import 'package:rootasjey/router/locations/signin_location.dart';
 import 'package:rootasjey/state/colors.dart';
-import 'package:rootasjey/state/user.dart';
+import 'package:rootasjey/types/globals/globals.dart';
 import 'package:rootasjey/utils/app_logger.dart';
 import 'package:rootasjey/utils/fonts.dart';
 import 'package:rootasjey/utils/snack.dart';
@@ -252,7 +251,7 @@ class _UpdateEmailPageState extends State<UpdateEmailPage> {
                           ),
                         ),
                         Text(
-                          stateUser.email,
+                          Globals.state.getUserFirestore().email,
                           style: FontsUtils.mainStyle(
                             fontWeight: FontWeight.bold,
                           ),
@@ -318,7 +317,8 @@ class _UpdateEmailPageState extends State<UpdateEmailPage> {
 
               _emailTimer = Timer(1.seconds, () async {
                 final isAvailable =
-                    await (UsersActions.checkEmailAvailability(_emailInputValue) as FutureOr<bool>);
+                    await (UsersActions.checkEmailAvailability(_emailInputValue)
+                        as FutureOr<bool>);
 
                 if (!isAvailable) {
                   setState(() {
@@ -486,12 +486,9 @@ class _UpdateEmailPageState extends State<UpdateEmailPage> {
         return;
       }
 
-      final userAuth = stateUser.userAuth;
-
+      final userAuth = Globals.state.getUserAuth();
       if (userAuth == null) {
-        setState(() => _isUpdating = false);
-        Beamer.of(context).beamToNamed(SigninLocation.route);
-        return;
+        throw ErrorDescription("You're not authenticated");
       }
 
       final credentials = EmailAuthProvider.credential(
@@ -501,26 +498,24 @@ class _UpdateEmailPageState extends State<UpdateEmailPage> {
 
       await userAuth.reauthenticateWithCredential(credentials);
       final idToken = await userAuth.getIdToken();
+      final userNotifier = Globals.state.getUserNotifier();
 
-      final respUpdateEmail =
-          await stateUser.updateEmail(_emailInputValue, idToken);
+      final response = await userNotifier.updateEmail(
+        _emailInputValue,
+        idToken,
+      );
 
-      if (!respUpdateEmail.success) {
-        final exception = respUpdateEmail.error!;
-
-        setState(() {
-          _isUpdating = false;
-        });
+      if (!response.success) {
+        final exception = response.error;
+        setState(() => _isUpdating = false);
 
         Snack.e(
           context: context,
-          message: "[code: ${exception.code}] - ${exception.message}",
+          message: "[code: ${exception?.code}] - ${exception?.message}",
         );
 
         return;
       }
-
-      stateUser.clearAuthCache();
 
       setState(() {
         _isUpdating = false;
@@ -528,10 +523,7 @@ class _UpdateEmailPageState extends State<UpdateEmailPage> {
       });
     } catch (error) {
       appLogger.e(error);
-
-      setState(() {
-        _isUpdating = false;
-      });
+      setState(() => _isUpdating = false);
 
       Snack.e(
         context: context,
@@ -600,7 +592,7 @@ class _UpdateEmailPageState extends State<UpdateEmailPage> {
               child: Opacity(
                 opacity: 0.6,
                 child: Text(
-                  stateUser.email,
+                  Globals.state.getUserFirestore().email,
                   style: FontsUtils.mainStyle(
                     fontWeight: FontWeight.bold,
                   ),

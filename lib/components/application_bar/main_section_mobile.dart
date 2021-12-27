@@ -6,8 +6,8 @@ import 'package:rootasjey/router/locations/dashboard_location.dart';
 import 'package:rootasjey/router/locations/posts_location.dart';
 import 'package:rootasjey/router/locations/projects_location.dart';
 import 'package:rootasjey/router/locations/settings_location.dart';
-import 'package:rootasjey/state/user.dart';
 import 'package:rootasjey/types/button_data.dart';
+import 'package:rootasjey/types/globals/globals.dart';
 import 'package:rootasjey/utils/fonts.dart';
 import 'package:unicons/unicons.dart';
 
@@ -77,7 +77,7 @@ class MainSectionMobile extends StatelessWidget {
       return;
     }
 
-    if (stateUser.isUserConnected) {
+    if (Globals.state.getUserNotifier().isAuthenticated) {
       Beamer.of(context).beamToNamed(DashboardLocationContent.settingsRoute);
       return;
     }

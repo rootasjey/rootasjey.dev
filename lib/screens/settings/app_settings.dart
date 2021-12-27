@@ -19,7 +19,12 @@ class AppSettings extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(20.0),
+      padding: const EdgeInsets.only(
+        left: 20.0,
+        top: 20.0,
+        right: 20.0,
+        bottom: 120.0,
+      ),
       child: Column(
         children: <Widget>[
           ThemeSwitcher(
@@ -29,11 +34,6 @@ class AppSettings extends StatelessWidget {
             onChangeBrightness: onChangeBrightness,
           ),
           LangButton(),
-          Padding(
-            padding: const EdgeInsets.only(
-              bottom: 100.0,
-            ),
-          ),
         ],
       ),
     );
