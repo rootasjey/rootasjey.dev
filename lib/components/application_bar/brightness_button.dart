@@ -1,107 +1,116 @@
+import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:rootasjey/state/colors.dart';
-import 'package:rootasjey/utils/app_storage.dart';
-import 'package:rootasjey/utils/brightness.dart';
+import 'package:rootasjey/components/popup_menu_list_tile.dart';
+import 'package:rootasjey/types/globals/globals.dart';
+import 'package:rootasjey/types/theme_mode_menu_item.dart';
 import 'package:unicons/unicons.dart';
 
-/// Button contrloing dark/light theme.
+/// Button to control theme mode (dark/light/system).
 class BrightnessButton extends StatelessWidget {
   const BrightnessButton({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    IconData iconBrightness = UniconsLine.brightness;
-    final autoBrightness = appStorage.getAutoBrightness();
-
-    if (!autoBrightness) {
-      final currentBrightness = appStorage.getBrightness();
-
-      iconBrightness = currentBrightness == Brightness.dark
-          ? UniconsLine.adjust_half
-          : UniconsLine.bright;
-    }
-
-    return PopupMenuButton<String>(
-      icon: Icon(
-        iconBrightness,
-        color: stateColors.foreground.withOpacity(0.6),
+    final List<ThemeModeMenuItem> items = [
+      ThemeModeMenuItem(
+        themeMode: AdaptiveThemeMode.system,
+        leading: UniconsLine.brightness_half,
+        title: "system".tr(),
       ),
-      tooltip: "brightness".tr(),
-      onSelected: (value) {
-        if (value == 'auto') {
-          BrightnessUtils.setAutoBrightness(context);
-          return;
-        }
+      ThemeModeMenuItem(
+        themeMode: AdaptiveThemeMode.dark,
+        leading: UniconsLine.adjust_half,
+        title: "dark".tr(),
+      ),
+      ThemeModeMenuItem(
+        themeMode: AdaptiveThemeMode.light,
+        leading: UniconsLine.bright,
+        title: "light".tr(),
+      ),
+    ];
 
-        final brightness = value == 'dark' ? Brightness.dark : Brightness.light;
+    final colors = Globals.constants.colors;
+    final foregroundColor = colors.getForeground(context).withOpacity(0.6);
 
-        BrightnessUtils.setBrightness(context, brightness);
-      },
-      itemBuilder: (context) {
-        final autoBrightness = appStorage.getAutoBrightness();
-        final brightness = autoBrightness ? null : appStorage.getBrightness();
-
-        final primary = stateColors.primary;
-        final basic = stateColors.foreground;
-
-        return [
-          PopupMenuItem(
-            value: 'auto',
-            child: ListTile(
-              leading: Icon(UniconsLine.brightness),
-              title: Text(
-                "brightness_auto".tr(),
-                style: TextStyle(
-                  color: autoBrightness ? primary : basic,
-                ),
-              ),
-              trailing: autoBrightness
-                  ? Icon(
-                      UniconsLine.check,
-                      color: primary,
-                    )
-                  : null,
-            ),
+    return ValueListenableBuilder(
+      valueListenable: AdaptiveTheme.of(context).modeChangeNotifier,
+      builder: (context, AdaptiveThemeMode mode, child) {
+        return PopupMenuButton<AdaptiveThemeMode>(
+          icon: Icon(
+            getIconThemeMode(mode),
+            color: foregroundColor,
           ),
-          PopupMenuItem(
-            value: 'dark',
-            child: ListTile(
-              leading: Icon(UniconsLine.adjust_half),
-              title: Text(
-                "dark".tr(),
-                style: TextStyle(
-                  color: brightness == Brightness.dark ? primary : basic,
+          tooltip: "brightness".tr(),
+          onSelected: (AdaptiveThemeMode selectedThemeMode) {
+            AdaptiveTheme.of(context).setThemeMode(selectedThemeMode);
+          },
+          itemBuilder: (context) {
+            final primary = Globals.constants.colors.primary;
+
+            return items.map((item) {
+              final selected = mode == item.themeMode;
+
+              return PopupMenuItem(
+                value: item.themeMode,
+                child: PopupMenuListTile(
+                  leading: getLeading(
+                    iconData: item.leading,
+                    selected: selected,
+                    defaultColor: foregroundColor,
+                  ),
+                  trailing: getTrailing(selected),
+                  title: Text(
+                    item.title,
+                    style: TextStyle(
+                      color: selected ? primary : foregroundColor,
+                    ),
+                  ),
                 ),
-              ),
-              trailing: brightness == Brightness.dark
-                  ? Icon(
-                      UniconsLine.check,
-                      color: primary,
-                    )
-                  : null,
-            ),
-          ),
-          PopupMenuItem(
-            value: 'light',
-            child: ListTile(
-              leading: Icon(UniconsLine.bright),
-              title: Text(
-                "light".tr(),
-                style: TextStyle(
-                  color: brightness == Brightness.light ? primary : basic,
-                ),
-              ),
-              trailing: brightness == Brightness.light
-                  ? Icon(
-                      UniconsLine.check,
-                      color: primary,
-                    )
-                  : null,
-            ),
-          ),
-        ];
+              );
+            }).toList();
+          },
+        );
       },
     );
+    // final AdaptiveThemeMode themeMode = AdaptiveTheme.of(context).mode;
+  }
+
+  Icon getLeading({
+    required IconData iconData,
+    required bool selected,
+    required Color defaultColor,
+  }) {
+    final primary = Globals.constants.colors.primary;
+    return Icon(
+      iconData,
+      color: selected ? primary : defaultColor,
+    );
+  }
+
+  Icon? getTrailing(bool selected) {
+    final primary = Globals.constants.colors.primary;
+
+    if (selected) {
+      return Icon(
+        UniconsLine.check,
+        color: primary,
+      );
+    }
+
+    return null;
+  }
+
+  IconData getIconThemeMode(AdaptiveThemeMode themeMode) {
+    switch (themeMode) {
+      case AdaptiveThemeMode.system:
+        return UniconsLine.brightness_half;
+      case AdaptiveThemeMode.dark:
+        return UniconsLine.adjust_half;
+      case AdaptiveThemeMode.light:
+        return UniconsLine.bright;
+      default:
+        return UniconsLine.brightness;
+    }
   }
 }

@@ -2,7 +2,7 @@ import 'package:beamer/beamer.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/router/locations/dashboard_location.dart';
-import 'package:rootasjey/state/colors.dart';
+import 'package:rootasjey/types/globals/globals.dart';
 import 'package:unicons/unicons.dart';
 
 /// Button to create new posts a-or projects.
@@ -11,12 +11,12 @@ class CreateButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Globals.constants.colors;
+    final foregroundColor = colors.getForeground(context).withOpacity(0.6);
+
     return PopupMenuButton(
       tooltip: "new".tr(),
-      icon: Icon(
-        UniconsLine.plus,
-        color: stateColors.foreground.withOpacity(0.6),
-      ),
+      icon: Icon(UniconsLine.plus, color: foregroundColor),
       onSelected: (String path) {
         Beamer.of(context).beamToNamed(path);
       },

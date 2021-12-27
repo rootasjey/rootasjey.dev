@@ -1,3 +1,4 @@
+import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
@@ -7,7 +8,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:rootasjey/app.dart';
 import 'package:rootasjey/utils/app_storage.dart';
-import 'package:rootasjey/utils/brightness.dart';
 import 'package:rootasjey/utils/search.dart';
 import 'package:url_strategy/url_strategy.dart';
 
@@ -23,6 +23,7 @@ void main() async {
 
   await EasyLocalization.ensureInitialized();
   await GlobalConfiguration().loadFromAsset('app_settings');
+  final savedThemeMode = await AdaptiveTheme.getThemeMode();
 
   AlgoliaHelper.init(
     applicationId: GlobalConfiguration().getValue('algolia_app_id'),
@@ -37,10 +38,7 @@ void main() async {
         path: 'assets/translations',
         supportedLocales: [Locale('en'), Locale('fr')],
         fallbackLocale: Locale('en'),
-        child: App(
-          savedThemeMode: BrightnessUtils.getSavedThemeMode(),
-          brightness: BrightnessUtils.getCurrentBrightness(),
-        ),
+        child: App(savedThemeMode: savedThemeMode),
       ),
     ),
   );

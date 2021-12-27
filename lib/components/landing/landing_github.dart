@@ -118,7 +118,9 @@ class _LandingGitHubState extends State<LandingGitHub> {
             children: _userActivities.map((activity) {
               return Padding(
                 padding: const EdgeInsets.only(bottom: 42.0),
-                child: ActivityRow(activity: activity),
+                child: ActivityRow(
+                  activity: activity,
+                ),
               );
             }).toList(),
           ),

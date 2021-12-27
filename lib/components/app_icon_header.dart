@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:mobx/mobx.dart';
-import 'package:rootasjey/components/footer.dart';
+import 'package:rootasjey/components/footer/footer.dart';
 import 'package:rootasjey/screens/home_page.dart';
-import 'package:rootasjey/state/colors.dart';
+import 'package:rootasjey/types/globals/globals.dart';
 
 class AppIconHeader extends StatefulWidget {
   final Function? onTap;
@@ -22,15 +22,6 @@ class AppIconHeader extends StatefulWidget {
 class _AppIconHeaderState extends State<AppIconHeader> {
   Color? foreground;
   ReactionDisposer? colorDisposer;
-
-  @override
-  initState() {
-    super.initState();
-
-    colorDisposer = autorun((reaction) {
-      setState(() => foreground = stateColors.foreground);
-    });
-  }
 
   @override
   void dispose() {
@@ -60,9 +51,15 @@ class _AppIconHeaderState extends State<AppIconHeader> {
                   ),
           onLongPress: () => showFooter(),
           onHover: (isHover) {
-            isHover
-                ? setState(() => foreground = stateColors.primary)
-                : setState(() => foreground = stateColors.foreground);
+            final colors = Globals.constants.colors;
+
+            setState(() {
+              foreground = isHover
+                  ? colors.primary
+                  : colors.getForeground(
+                      context,
+                    );
+            });
           },
           child: Text(
             '>r.',

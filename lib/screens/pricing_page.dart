@@ -2,7 +2,7 @@ import 'package:beamer/beamer.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/features/web.dart';
-import 'package:rootasjey/components/footer.dart';
+import 'package:rootasjey/components/footer/footer.dart';
 import 'package:rootasjey/components/application_bar/main_app_bar.dart';
 import 'package:rootasjey/router/locations/enroll_location.dart';
 import 'package:rootasjey/state/colors.dart';
@@ -207,7 +207,8 @@ class _PricingPageState extends State<PricingPage> {
     );
   }
 
-  ExpansionPanel faqExpPanel({int? index, String? title, required String description}) {
+  ExpansionPanel faqExpPanel(
+      {int? index, String? title, required String description}) {
     return ExpansionPanel(
       isExpanded: expandedIndex == index,
       canTapOnHeader: true,

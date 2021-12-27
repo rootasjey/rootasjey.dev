@@ -5,7 +5,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_syntax_view/flutter_syntax_view.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:html/dom.dart' as dom;
-import 'package:rootasjey/components/TextLink.dart';
+import 'package:rootasjey/components/text_link.dart';
 import 'package:rootasjey/components/image_viewer.dart';
 import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/utils/snack.dart';

@@ -1,6 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/utils/fonts.dart';
 import 'package:rootasjey/utils/language.dart';
 
@@ -43,7 +42,6 @@ class LangPopupMenuButton extends StatelessWidget {
                 style: FontsUtils.mainStyle(
                   fontSize: 16.0,
                   fontWeight: FontWeight.w700,
-                  color: stateColors.foreground,
                 ),
               ),
             ),

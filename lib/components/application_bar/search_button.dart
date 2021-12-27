@@ -2,7 +2,7 @@ import 'package:beamer/beamer.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/router/locations/search_location.dart';
-import 'package:rootasjey/state/colors.dart';
+import 'package:rootasjey/types/globals/globals.dart';
 import 'package:unicons/unicons.dart';
 
 class SearchButton extends StatelessWidget {
@@ -10,6 +10,9 @@ class SearchButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Globals.constants.colors;
+    final foregroundColor = colors.getForeground(context).withOpacity(0.6);
+
     return Padding(
       padding: const EdgeInsets.only(
         left: 16.0,
@@ -19,10 +22,8 @@ class SearchButton extends StatelessWidget {
         opacity: 0.6,
         child: IconButton(
           tooltip: "search".tr(),
-          onPressed: () {
-            Beamer.of(context).beamToNamed(SearchLocation.route);
-          },
-          color: stateColors.foreground,
+          onPressed: () => Beamer.of(context).beamToNamed(SearchLocation.route),
+          color: foregroundColor,
           icon: Icon(UniconsLine.search),
         ),
       ),

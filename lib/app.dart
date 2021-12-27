@@ -3,18 +3,16 @@ import 'package:beamer/beamer.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/router/app_routes.dart';
-import 'package:rootasjey/state/colors.dart';
+import 'package:rootasjey/types/globals/globals.dart';
 import 'package:rootasjey/utils/fonts.dart';
 
 /// Main app class.
 class App extends StatefulWidget {
   final AdaptiveThemeMode? savedThemeMode;
-  final Brightness? brightness;
 
   const App({
     Key? key,
     this.savedThemeMode,
-    this.brightness,
   }) : super(key: key);
 
   AppState createState() => AppState();
@@ -24,25 +22,21 @@ class App extends StatefulWidget {
 class AppState extends State<App> {
   @override
   Widget build(BuildContext context) {
-    stateColors.refreshTheme(widget.brightness);
-
     return AdaptiveTheme(
       light: ThemeData(
         brightness: Brightness.light,
         fontFamily: FontsUtils.fontFamily,
-        backgroundColor: stateColors.lightBackground,
-        scaffoldBackgroundColor: stateColors.lightBackground,
+        backgroundColor: Globals.constants.colors.lightBackground,
+        scaffoldBackgroundColor: Globals.constants.colors.lightBackground,
       ),
       dark: ThemeData(
         brightness: Brightness.dark,
         fontFamily: FontsUtils.fontFamily,
+        backgroundColor: Globals.constants.colors.dark,
+        scaffoldBackgroundColor: Globals.constants.colors.dark,
       ),
-      initial: widget.brightness == Brightness.light
-          ? AdaptiveThemeMode.light
-          : AdaptiveThemeMode.dark,
+      initial: widget.savedThemeMode ?? AdaptiveThemeMode.light,
       builder: (theme, darkTheme) {
-        stateColors.themeData = theme;
-
         return MaterialApp.router(
           title: 'rootasjey',
           theme: theme,

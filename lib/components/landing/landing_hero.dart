@@ -5,7 +5,7 @@ import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:rootasjey/components/avatar/better_avatar.dart';
 import 'package:rootasjey/router/locations/about_location.dart';
 import 'package:rootasjey/router/locations/cv_location.dart';
-import 'package:rootasjey/state/colors.dart';
+import 'package:rootasjey/types/globals/globals.dart';
 import 'package:rootasjey/utils/constants.dart';
 import 'package:rootasjey/utils/fonts.dart';
 import 'package:unicons/unicons.dart';
@@ -199,7 +199,7 @@ class _LandingHeroState extends State<LandingHero> {
                       Text(
                         "rootasjey",
                         style: FontsUtils.mainStyle(
-                          color: stateColors.primary,
+                          color: Globals.constants.colors.primary,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -263,7 +263,6 @@ class _LandingHeroState extends State<LandingHero> {
       width: width,
       height: height,
       child: Card(
-        color: stateColors.lightBackground,
         elevation: 2.0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(6.0),
@@ -315,37 +314,31 @@ class _LandingHeroState extends State<LandingHero> {
       children: [
         IconButton(
           tooltip: "GitHub",
-          color: stateColors.foreground.withOpacity(0.6),
           icon: Icon(LineAwesomeIcons.github),
           onPressed: () => launch('https://github.com/rootasjey'),
         ),
         IconButton(
           tooltip: "Twitter",
-          color: stateColors.foreground.withOpacity(0.6),
           icon: Icon(LineAwesomeIcons.twitter),
           onPressed: () => launch('https://twitter.com/rootasjey'),
         ),
         IconButton(
           tooltip: "Instagram",
-          color: stateColors.foreground.withOpacity(0.6),
           icon: Icon(LineAwesomeIcons.instagram),
           onPressed: () => launch('https://instagram.com/rootasjey'),
         ),
         IconButton(
           tooltip: "Medium",
-          color: stateColors.foreground.withOpacity(0.6),
           icon: Icon(LineAwesomeIcons.medium),
           onPressed: () => launch('https://medium.com/@rootasjey'),
         ),
         IconButton(
           tooltip: "Hashnode",
-          color: stateColors.foreground.withOpacity(0.6),
           icon: Icon(LineAwesomeIcons.hashtag),
           onPressed: () => launch('https://hashnode.com/@rootasjey'),
         ),
         IconButton(
           tooltip: "CV",
-          color: stateColors.foreground.withOpacity(0.6),
           icon: Icon(UniconsLine.file_exclamation),
           onPressed: () => Beamer.of(context).beamToNamed(CVLocation.route),
         ),

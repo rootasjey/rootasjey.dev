@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:github/github.dart';
 import 'package:jiffy/jiffy.dart';
-import 'package:rootasjey/state/colors.dart';
+import 'package:rootasjey/types/globals/globals.dart';
 import 'package:rootasjey/utils/fonts.dart';
 import 'package:unicons/unicons.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -26,7 +26,7 @@ class _ActivityRowState extends State<ActivityRow> {
 
     return Card(
       elevation: elevation,
-      color: stateColors.getCurrentBackground(context),
+      color: Theme.of(context).backgroundColor,
       child: InkWell(
         onTap: () => launch('https://github.com/${activity.repo!.name}'),
         onHover: (isHit) {
@@ -64,7 +64,7 @@ class _ActivityRowState extends State<ActivityRow> {
     return Text(
       Jiffy(activity.createdAt).fromNow(),
       style: FontsUtils.mainStyle(
-        color: stateColors.primary,
+        color: Globals.constants.colors.primary,
         fontSize: 14.0,
         fontWeight: FontWeight.w600,
       ),
@@ -77,7 +77,7 @@ class _ActivityRowState extends State<ActivityRow> {
       child: Icon(
         getEventIcon(activity.type),
         size: 32.0,
-        color: stateColors.primary,
+        color: Globals.constants.colors.primary,
       ),
     );
   }

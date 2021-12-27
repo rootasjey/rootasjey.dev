@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:html/dom.dart' as dom;
-import 'package:rootasjey/state/colors.dart';
+import 'package:rootasjey/types/globals/globals.dart';
 import 'package:rootasjey/utils/fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -20,18 +20,21 @@ class TextLink extends StatefulWidget {
 
 class _TextLinkState extends State<TextLink> {
   double opacity = 0.6;
-
   Color backgroundColor = Colors.transparent;
   Color? textColor;
 
   @override
   Widget build(BuildContext context) {
+    final primaryColor = Globals.constants.colors.primary;
+
     return Tooltip(
       message: widget.attributes['href'],
       textStyle: FontsUtils.mainStyle(
         fontSize: 14.0,
         fontWeight: FontWeight.w600,
-        color: stateColors.background.withOpacity(0.7),
+        color: Globals.constants.colors
+            .getBackgroundColor(context)
+            .withOpacity(0.7),
       ),
       child: InkWell(
         onTap: () {
@@ -45,7 +48,7 @@ class _TextLinkState extends State<TextLink> {
         onHover: (isHit) {
           setState(() {
             textColor = isHit ? Colors.white : null;
-            backgroundColor = isHit ? stateColors.primary : Colors.transparent;
+            backgroundColor = isHit ? primaryColor : Colors.transparent;
             opacity = isHit ? 1.0 : 0.6;
           });
         },
@@ -60,7 +63,7 @@ class _TextLinkState extends State<TextLink> {
                 backgroundColor: backgroundColor,
                 color: textColor,
                 decoration: TextDecoration.underline,
-                decorationColor: stateColors.primary,
+                decorationColor: primaryColor,
                 decorationStyle: TextDecorationStyle.dotted,
                 decorationThickness: 1.5,
               ),
