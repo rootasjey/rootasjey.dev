@@ -72,7 +72,7 @@ class _MarkdownViewerState extends State<MarkdownViewer> {
             children: [
               Padding(
                 padding: const EdgeInsets.only(
-                  top: 18.0,
+                  top: 12.0,
                   right: 8.0,
                 ),
                 child: ClipOval(
@@ -153,7 +153,6 @@ class _MarkdownViewerState extends State<MarkdownViewer> {
     return {
       'p': Style(
         width: widget.width,
-        color: Colors.black.withOpacity(0.7),
         fontSize: FontSize(20.0),
         lineHeight: LineHeight.number(1.5),
         margin: EdgeInsets.only(
@@ -162,9 +161,8 @@ class _MarkdownViewerState extends State<MarkdownViewer> {
         ),
       ),
       'ul': Style(
-        color: Colors.black.withOpacity(0.7),
-        fontSize: FontSize(20.0),
-        lineHeight: LineHeight.number(1.6),
+        fontSize: FontSize(18.0),
+        lineHeight: LineHeight.number(1.5),
       ),
       'img': Style(
         alignment: Alignment.center,

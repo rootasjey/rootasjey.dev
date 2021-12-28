@@ -18,7 +18,7 @@ class EmailButton extends StatelessWidget {
     return TextButton(
       onPressed: onPressed,
       style: TextButton.styleFrom(
-        primary: Colors.black,
+        primary: Theme.of(context).textTheme.bodyText1?.color,
       ),
       onLongPress: () {
         showDialog(

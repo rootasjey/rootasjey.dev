@@ -5,12 +5,12 @@ import 'package:rootasjey/screens/posts_page.dart';
 
 class PostsLocation extends BeamLocation<BeamState> {
   static const String route = '/posts';
-  static const String singleProjectRoute = '${route}/:id';
+  static const String singlePostRoute = '${route}/:postId';
 
   @override
   List<Pattern> get pathPatterns => [
         route,
-        singleProjectRoute,
+        singlePostRoute,
       ];
 
   List<BeamPage> buildPages(BuildContext context, BeamState state) {

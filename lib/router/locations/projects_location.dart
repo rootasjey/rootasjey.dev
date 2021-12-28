@@ -5,7 +5,7 @@ import 'package:rootasjey/screens/projects_page.dart';
 
 class ProjectsLocation extends BeamLocation<BeamState> {
   static const String route = '/projects';
-  static const String singleProjectRoute = '${route}/:id';
+  static const String singleProjectRoute = '${route}/:projectId';
 
   @override
   List<Pattern> get pathPatterns => [

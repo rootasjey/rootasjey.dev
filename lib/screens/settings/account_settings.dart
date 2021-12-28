@@ -58,6 +58,7 @@ class AccountSettings extends StatelessWidget {
           UpdateUsernameButton(
             username: username,
           ),
+          Padding(padding: const EdgeInsets.only(bottom: 24.0)),
           EmailButton(
             email: email,
             onPressed: onGoToUpdateEmail,

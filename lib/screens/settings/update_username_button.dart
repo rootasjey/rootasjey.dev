@@ -19,7 +19,7 @@ class UpdateUsernameButton extends StatelessWidget {
         );
       },
       style: TextButton.styleFrom(
-        primary: Colors.black,
+        primary: Theme.of(context).textTheme.bodyText1?.color,
       ),
       child: Container(
         width: 250.0,
