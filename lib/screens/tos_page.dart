@@ -1,7 +1,7 @@
 import 'package:beamer/beamer.dart';
 import 'package:rootasjey/components/footer/footer.dart';
 import 'package:rootasjey/components/application_bar/main_app_bar.dart';
-import 'package:rootasjey/state/colors.dart';
+import 'package:rootasjey/types/globals/globals.dart';
 import 'package:rootasjey/utils/constants.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/gestures.dart';
@@ -24,7 +24,6 @@ class _TosPageState extends State<TosPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: stateColors.lightBackground,
       floatingActionButton: floatingActionButton(),
       body: NotificationListener<ScrollNotification>(
         onNotification: onNotification,
@@ -132,7 +131,7 @@ class _TosPageState extends State<TosPage> {
           curve: Curves.easeOut,
         );
       },
-      backgroundColor: stateColors.primary,
+      backgroundColor: Globals.constants.colors.primary,
       foregroundColor: Colors.white,
       child: Icon(Icons.arrow_upward),
     );
@@ -157,7 +156,7 @@ class _TosPageState extends State<TosPage> {
           "tos".tr(),
           style: TextStyle(
             fontSize: 50.0,
-            color: stateColors.primary,
+            color: Globals.constants.colors.primary,
           ),
         ),
       ),
@@ -205,7 +204,7 @@ class _TosPageState extends State<TosPage> {
           style: TextStyle(
             fontSize: 16.0,
             fontWeight: FontWeight.bold,
-            color: stateColors.primary,
+            color: Globals.constants.colors.primary,
           ),
         ),
       ),

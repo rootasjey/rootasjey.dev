@@ -2,7 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:rootasjey/state/colors.dart';
+import 'package:rootasjey/types/globals/globals.dart';
 import 'package:supercharged/supercharged.dart';
 
 class WebAdditionalFeatures extends StatefulWidget {
@@ -143,6 +143,9 @@ class _WebAdditionalFeaturesState extends State<WebAdditionalFeatures> {
     double? cost = 0,
     int index = 0,
   }) {
+    final Color foregroundColor =
+        Theme.of(context).textTheme.bodyText1?.color ?? Colors.black;
+
     return Observer(
       builder: (context) {
         return Padding(
@@ -152,8 +155,8 @@ class _WebAdditionalFeaturesState extends State<WebAdditionalFeatures> {
           child: Card(
             elevation: selected! ? 4.0 : 0.0,
             color: selected
-                ? stateColors.primary
-                : stateColors.themeData.cardColor,
+                ? Globals.constants.colors.primary
+                : Theme.of(context).cardTheme.color,
             child: InkWell(
               onTap: () {
                 if (selected) {
@@ -200,7 +203,7 @@ class _WebAdditionalFeaturesState extends State<WebAdditionalFeatures> {
                               style: TextStyle(
                                 color: selected
                                     ? Colors.white
-                                    : stateColors.foreground.withOpacity(0.6),
+                                    : foregroundColor.withOpacity(0.6),
                                 fontSize: 22.0,
                                 fontWeight: FontWeight.w500,
                               ),
@@ -215,9 +218,8 @@ class _WebAdditionalFeaturesState extends State<WebAdditionalFeatures> {
                               child: Text(
                                 description!,
                                 style: TextStyle(
-                                  color: selected
-                                      ? Colors.white
-                                      : stateColors.foreground,
+                                  color:
+                                      selected ? Colors.white : foregroundColor,
                                   fontSize: 16.0,
                                   fontWeight: FontWeight.w300,
                                 ),
@@ -234,8 +236,7 @@ class _WebAdditionalFeaturesState extends State<WebAdditionalFeatures> {
                         child: Icon(
                           Icons.check_circle_outline,
                           size: 30.0,
-                          color:
-                              selected ? Colors.white : stateColors.foreground,
+                          color: selected ? Colors.white : foregroundColor,
                         ),
                       ),
                     ),

@@ -16,7 +16,6 @@ import 'package:rootasjey/components/application_bar/main_app_bar.dart';
 import 'package:rootasjey/components/sheet_header.dart';
 import 'package:rootasjey/router/locations/dashboard_location.dart';
 import 'package:rootasjey/router/navigation_state_helper.dart';
-import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/types/globals/globals.dart';
 import 'package:rootasjey/types/json_alias.dart';
 import 'package:rootasjey/types/urls.dart';
@@ -77,7 +76,6 @@ class _MyProfilePageState extends State<MyProfilePage> {
       height: 54.0,
       child: Card(
         elevation: 1.0,
-        color: stateColors.lightBackground,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(6.0),
           side: BorderSide(color: Colors.black26, width: 1.5),
@@ -303,7 +301,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
               child: Text("clear".tr()),
             ),
             style: TextButton.styleFrom(
-              primary: stateColors.foreground,
+              primary: Theme.of(context).textTheme.bodyText1?.color,
             ),
           ),
         ),
@@ -333,7 +331,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                 side: BorderSide(
                   width: 2.0,
                   color: _selectedLink == entry.key
-                      ? stateColors.primary
+                      ? Globals.constants.colors.primary
                       : Colors.transparent,
                 ),
               ),
@@ -461,7 +459,6 @@ class _MyProfilePageState extends State<MyProfilePage> {
 
     return Card(
       elevation: 1.0,
-      color: stateColors.lightBackground,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(4.0),
         side: BorderSide(color: Colors.black26, width: 1.5),
@@ -542,7 +539,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                   children: [
                     Icon(
                       UniconsLine.circle,
-                      color: stateColors.secondary,
+                      color: Globals.constants.colors.secondary,
                     ),
                     Expanded(
                       child: Padding(
@@ -599,7 +596,6 @@ class _MyProfilePageState extends State<MyProfilePage> {
   Widget summaryEditButton() {
     return Card(
       elevation: 1.0,
-      color: stateColors.lightBackground,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(4.0),
         side: BorderSide(color: Colors.black26, width: 1.5),
@@ -753,7 +749,10 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                   child: Text("clear".tr()),
                                 ),
                                 style: TextButton.styleFrom(
-                                  primary: stateColors.foreground,
+                                  primary: Theme.of(context)
+                                      .textTheme
+                                      .bodyText1
+                                      ?.color,
                                 ),
                               ),
                             ),
@@ -856,7 +855,10 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                   child: Text("clear".tr()),
                                 ),
                                 style: TextButton.styleFrom(
-                                  primary: stateColors.foreground,
+                                  primary: Theme.of(context)
+                                      .textTheme
+                                      .bodyText1
+                                      ?.color,
                                 ),
                               ),
                             ),
@@ -960,7 +962,10 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                   child: Text("clear".tr()),
                                 ),
                                 style: TextButton.styleFrom(
-                                  primary: stateColors.foreground,
+                                  primary: Theme.of(context)
+                                      .textTheme
+                                      .bodyText1
+                                      ?.color,
                                 ),
                               ),
                             ),

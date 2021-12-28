@@ -9,7 +9,7 @@ import 'package:rootasjey/components/landing/landing_quote.dart';
 import 'package:rootasjey/components/landing/landing_work_us.dart';
 import 'package:rootasjey/components/application_bar/main_app_bar.dart';
 import 'package:rootasjey/components/footer/footer.dart';
-import 'package:rootasjey/state/colors.dart';
+import 'package:rootasjey/types/globals/globals.dart';
 import 'package:supercharged/supercharged.dart';
 
 class HomePage extends StatefulWidget {
@@ -63,7 +63,7 @@ class _HomePageState extends State<HomePage> {
         );
       },
       foregroundColor: Colors.white,
-      backgroundColor: stateColors.secondary,
+      backgroundColor: Globals.constants.colors.secondary,
       label: Text("scroll_to_top".tr()),
     );
   }

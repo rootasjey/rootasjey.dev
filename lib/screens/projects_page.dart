@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:rootasjey/components/footer/footer.dart';
 import 'package:rootasjey/components/application_bar/main_app_bar.dart';
 import 'package:rootasjey/components/page_title.dart';
-import 'package:rootasjey/components/project_card.dart';
+import 'package:rootasjey/components/project_card/project_card.dart';
 import 'package:rootasjey/components/sliver_empty_view.dart';
 import 'package:rootasjey/router/locations/projects_location.dart';
 import 'package:rootasjey/types/project.dart';

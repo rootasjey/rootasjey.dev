@@ -44,7 +44,7 @@ class PageTitle extends StatelessWidget {
         ),
         if (isLoading)
           Padding(
-            padding: const EdgeInsets.only(top: 12.0, left: 22.0),
+            padding: const EdgeInsets.only(top: 52.0, left: 22.0),
             child: CircularProgressIndicator(),
           ),
       ],

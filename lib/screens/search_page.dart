@@ -7,11 +7,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:rootasjey/components/application_bar/main_app_bar.dart';
 import 'package:rootasjey/components/post_card.dart';
-import 'package:rootasjey/components/project_card.dart';
+import 'package:rootasjey/components/project_card/project_card.dart';
 import 'package:rootasjey/router/locations/posts_location.dart';
 import 'package:rootasjey/router/locations/projects_location.dart';
 
-import 'package:rootasjey/state/colors.dart';
+import 'package:rootasjey/types/globals/globals.dart';
 import 'package:rootasjey/types/post.dart';
 import 'package:rootasjey/types/project.dart';
 import 'package:rootasjey/utils/app_logger.dart';
@@ -75,7 +75,7 @@ class _SearchPageState extends State<SearchPage> {
                   curve: Curves.easeOut,
                 );
               },
-              backgroundColor: stateColors.primary,
+              backgroundColor: Globals.constants.colors.primary,
               foregroundColor: Colors.white,
               child: Icon(UniconsLine.arrow_up),
             )
@@ -211,7 +211,7 @@ class _SearchPageState extends State<SearchPage> {
         text,
         style: TextStyle(
           fontSize: 26.0,
-          color: stateColors.primary,
+          color: Globals.constants.colors.primary,
         ),
       ),
     );

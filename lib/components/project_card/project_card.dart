@@ -1,11 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:jiffy/jiffy.dart';
-import 'package:rootasjey/state/colors.dart';
+import 'package:rootasjey/components/project_card/card_author_pub.dart';
+import 'package:rootasjey/components/project_card/card_header.dart';
+import 'package:rootasjey/types/globals/globals.dart';
 import 'package:rootasjey/types/project.dart';
 import 'package:rootasjey/types/user_firestore.dart';
 import 'package:rootasjey/utils/app_logger.dart';
-import 'package:rootasjey/utils/fonts.dart';
 
 class ProjectCard extends StatefulWidget {
   final VoidCallback? onTap;
@@ -27,10 +27,9 @@ class ProjectCard extends StatefulWidget {
 }
 
 class _ProjectCardState extends State<ProjectCard> {
-  Color textColor = Colors.black;
-  double elevation = 2.0;
-
-  String? _authorName = '';
+  Color? _textColor;
+  double _elevation = 2.0;
+  String _authorName = '';
 
   @override
   void initState() {
@@ -44,8 +43,7 @@ class _ProjectCardState extends State<ProjectCard> {
       width: widget.width,
       height: widget.height,
       child: Card(
-        elevation: elevation,
-        color: stateColors.lightBackground,
+        elevation: _elevation,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8.0),
         ),
@@ -53,107 +51,31 @@ class _ProjectCardState extends State<ProjectCard> {
           onTap: widget.onTap,
           onHover: (isHover) {
             setState(() {
-              elevation = isHover ? 3.0 : 2.0;
-              textColor = isHover ? stateColors.secondary : Colors.black;
+              _elevation = isHover ? 6.0 : 2.0;
+              _textColor = isHover ? Globals.constants.colors.secondary : null;
             });
           },
           child: Stack(
             children: [
-              texts(),
+              CardHeader(
+                project: widget.project,
+                textColor: _textColor,
+              ),
               if (widget.popupMenuButton != null)
                 Positioned(
                   right: 20.0,
                   bottom: 16.0,
                   child: widget.popupMenuButton!,
                 ),
+              CardAuthorAndPub(
+                date: widget.project.createdAt,
+                authorName: _authorName,
+              ),
             ],
           ),
         ),
       ),
     );
-  }
-
-  Widget texts() {
-    final project = widget.project;
-
-    return Padding(
-      padding: const EdgeInsets.only(
-        top: 40.0,
-        left: 40.0,
-        right: 40.0,
-        bottom: 20.0,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          title(),
-          Padding(
-            padding: const EdgeInsets.only(top: 16.0),
-            child: Opacity(
-              opacity: 0.6,
-              child: Text(
-                project.summary!,
-                maxLines: 3,
-                overflow: TextOverflow.ellipsis,
-                style: FontsUtils.mainStyle(
-                  fontSize: 16.0,
-                ),
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 24.0),
-            child: Opacity(
-              opacity: 0.6,
-              child: Text(
-                _authorName!,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: FontsUtils.mainStyle(
-                  fontSize: 16.0,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-          ),
-          Opacity(
-            opacity: 0.6,
-            child: Text(
-              Jiffy(project.createdAt).fromNow(),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget title() {
-    final project = widget.project;
-
-    final textChild = Opacity(
-      opacity: 1.0,
-      child: Text(
-        project.title!,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-        style: FontsUtils.mainStyle(
-          color: textColor,
-          fontSize: 24.0,
-          fontWeight: FontWeight.w700,
-        ),
-      ),
-    );
-
-    if (project.title!.length > 14) {
-      return Tooltip(
-        message: project.title,
-        child: textChild,
-      );
-    }
-
-    return textChild;
   }
 
   void fetchAuthorName() async {

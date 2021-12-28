@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:rootasjey/components/animated_app_icon.dart';
 import 'package:rootasjey/components/fade_in_y.dart';
 import 'package:rootasjey/components/application_bar/main_app_bar.dart';
-import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/types/globals/globals.dart';
 import 'package:rootasjey/utils/app_storage.dart';
 import 'package:rootasjey/utils/fonts.dart';
@@ -71,7 +70,7 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
                 padding: const EdgeInsets.only(top: 80.0),
                 child: Icon(
                   UniconsLine.check,
-                  color: stateColors.validation,
+                  color: Globals.constants.colors.validation,
                   size: 80.0,
                 ),
               ),
@@ -104,7 +103,7 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
             textInputAction: TextInputAction.next,
             decoration: InputDecoration(
               fillColor: Colors.white,
-              focusColor: stateColors.clairPink,
+              focusColor: Globals.constants.colors.clairPink,
               labelText: "password_current".tr(),
               border: OutlineInputBorder(),
               contentPadding: const EdgeInsets.symmetric(
@@ -208,7 +207,7 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
       ),
       width: 378.0,
       child: Card(
-        color: stateColors.clairPink,
+        color: Globals.constants.colors.clairPink,
         child: ListTile(
           contentPadding: const EdgeInsets.all(16.0),
           leading: Icon(UniconsLine.question),
@@ -284,7 +283,7 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
             focusNode: newPasswordNode,
             decoration: InputDecoration(
               fillColor: Colors.white,
-              focusColor: stateColors.clairPink,
+              focusColor: Globals.constants.colors.clairPink,
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 8.0,
               ),
@@ -443,7 +442,7 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
       context: context,
       builder: (context) {
         return SimpleDialog(
-          backgroundColor: stateColors.clairPink,
+          backgroundColor: Globals.constants.colors.clairPink,
           title: Text(
             "password_tips".tr(),
             style: FontsUtils.mainStyle(
@@ -453,7 +452,7 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
           ),
           children: <Widget>[
             Divider(
-              color: stateColors.secondary,
+              color: Globals.constants.colors.secondary,
               thickness: 1.0,
             ),
             Padding(

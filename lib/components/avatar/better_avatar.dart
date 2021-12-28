@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:rootasjey/state/colors.dart';
+import 'package:rootasjey/types/globals/globals.dart';
 import 'package:supercharged/supercharged.dart';
 
 class BetterAvatar extends StatefulWidget {
@@ -73,11 +73,11 @@ class _BetterAvatarState extends State<BetterAvatar>
       scale: scaleAnimation,
       child: Material(
         elevation: elevation,
-        color: stateColors.lightBackground,
+        color: Theme.of(context).backgroundColor,
         clipBehavior: Clip.antiAlias,
         shape: CircleBorder(
           side: BorderSide(
-            color: stateColors.primary,
+            color: Globals.constants.colors.primary,
             width: 3.0,
           ),
         ),
@@ -123,11 +123,11 @@ class _BetterAvatarState extends State<BetterAvatar>
 
     return Material(
       elevation: elevation,
-      color: stateColors.lightBackground,
+      color: Theme.of(context).backgroundColor,
       clipBehavior: Clip.antiAlias,
       shape: CircleBorder(
         side: BorderSide(
-          color: stateColors.primary,
+          color: Globals.constants.colors.primary,
           width: 3.0,
         ),
       ),

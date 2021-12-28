@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
-import 'package:rootasjey/state/colors.dart';
+import 'package:rootasjey/types/globals/globals.dart';
 import 'package:rootasjey/types/post.dart';
 import 'package:rootasjey/types/user_firestore.dart';
 import 'package:rootasjey/utils/app_logger.dart';
@@ -48,7 +48,6 @@ class _MinPostCardState extends State<MinPostCard> {
     return SizedBox(
       width: widget.width,
       child: Card(
-        color: stateColors.lightBackground,
         elevation: _elevation,
         child: InkWell(
           onTap: widget.onTap,
@@ -67,7 +66,7 @@ class _MinPostCardState extends State<MinPostCard> {
                   padding: const EdgeInsets.only(left: 24.0),
                   child: Icon(
                     UniconsLine.arrow_right,
-                    color: stateColors.primary,
+                    color: Globals.constants.colors.primary,
                   ),
                 ),
               ],

@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:rootasjey/components/circle_button.dart';
-import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/utils/snack.dart';
 import 'package:unicons/unicons.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -127,7 +126,7 @@ class _ImageViewerState extends State<ImageViewer> {
           ),
         ),
         style: TextButton.styleFrom(
-          primary: stateColors.foreground,
+          primary: Theme.of(context).textTheme.bodyText1?.color,
         ),
       ),
     );
@@ -137,7 +136,6 @@ class _ImageViewerState extends State<ImageViewer> {
     return OpenContainer(
       closedElevation: 0.0,
       openElevation: 0.0,
-      closedColor: stateColors.lightBackground,
       openColor: Colors.black,
       openBuilder: (context, closeAction) {
         _closeActionCopy = closeAction;
@@ -187,7 +185,7 @@ class _ImageViewerState extends State<ImageViewer> {
                             },
                             icon: Icon(
                               UniconsLine.times,
-                              color: stateColors.background,
+                              color: Theme.of(context).backgroundColor,
                             ),
                           ),
                         ),

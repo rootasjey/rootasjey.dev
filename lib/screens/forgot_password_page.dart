@@ -8,7 +8,7 @@ import 'package:rootasjey/components/fade_in_y.dart';
 import 'package:rootasjey/components/loading_animation.dart';
 import 'package:rootasjey/components/application_bar/main_app_bar.dart';
 import 'package:rootasjey/router/locations/home_location.dart';
-import 'package:rootasjey/state/colors.dart';
+import 'package:rootasjey/types/globals/globals.dart';
 import 'package:rootasjey/utils/app_logger.dart';
 import 'package:rootasjey/utils/snack.dart';
 import 'package:supercharged/supercharged.dart';
@@ -234,7 +234,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         child: ElevatedButton(
           onPressed: sendResetLink,
           style: ElevatedButton.styleFrom(
-            primary: stateColors.primary,
+            primary: Globals.constants.colors.primary,
             textStyle: TextStyle(
               color: Colors.white,
             ),

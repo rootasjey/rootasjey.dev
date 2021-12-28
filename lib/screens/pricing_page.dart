@@ -5,7 +5,7 @@ import 'package:rootasjey/components/features/web.dart';
 import 'package:rootasjey/components/footer/footer.dart';
 import 'package:rootasjey/components/application_bar/main_app_bar.dart';
 import 'package:rootasjey/router/locations/enroll_location.dart';
-import 'package:rootasjey/state/colors.dart';
+import 'package:rootasjey/types/globals/globals.dart';
 import 'package:rootasjey/utils/fonts.dart';
 import 'package:unicons/unicons.dart';
 
@@ -35,7 +35,7 @@ class _PricingPageState extends State<PricingPage> {
         onPressed: () {
           Beamer.of(context).beamToNamed(EnrollLocation.route);
         },
-        backgroundColor: stateColors.primary,
+        backgroundColor: Globals.constants.colors.primary,
         foregroundColor: Colors.white,
         icon: Icon(Icons.payment),
         label: Text("enroll".tr()),
@@ -473,7 +473,7 @@ class _PricingPageState extends State<PricingPage> {
             style: FontsUtils.mainStyle(
               fontSize: 120.0,
               fontWeight: FontWeight.w600,
-              color: stateColors.primary,
+              color: Globals.constants.colors.primary,
             ),
           ),
         ],

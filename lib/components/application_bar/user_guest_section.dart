@@ -5,13 +5,15 @@ import 'package:rootasjey/components/application_bar/brightness_button.dart';
 import 'package:rootasjey/components/application_bar/lang_button.dart';
 import 'package:rootasjey/router/locations/signin_location.dart';
 import 'package:rootasjey/router/locations/signup_location.dart';
-import 'package:rootasjey/state/colors.dart';
+import 'package:rootasjey/types/globals/globals.dart';
 
 class UserGuestSection extends StatelessWidget {
   const UserGuestSection({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final primaryColor = Globals.constants.colors.primary;
+
     return Container(
       padding: const EdgeInsets.only(
         top: 5.0,
@@ -36,7 +38,7 @@ class UserGuestSection extends StatelessWidget {
             ),
             child: Text("signin".tr().toUpperCase()),
             style: ElevatedButton.styleFrom(
-              primary: stateColors.primary,
+              primary: primaryColor,
             ),
           ),
           TextButton(
@@ -46,7 +48,7 @@ class UserGuestSection extends StatelessWidget {
             child: Text(
               "signup".tr().toUpperCase(),
               style: TextStyle(
-                color: stateColors.primary,
+                color: primaryColor,
               ),
             ),
           ),

@@ -9,7 +9,6 @@ import 'package:rootasjey/components/fade_in_y.dart';
 import 'package:rootasjey/components/application_bar/main_app_bar.dart';
 import 'package:rootasjey/components/sliver_edge_padding.dart';
 import 'package:rootasjey/router/locations/signin_location.dart';
-import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/types/globals/globals.dart';
 import 'package:rootasjey/types/user/user_notifier.dart';
 import 'package:rootasjey/utils/app_logger.dart';
@@ -187,7 +186,7 @@ class _UpdateUsernamePageState extends State<UpdateUsernamePage> {
         bottom: 40.0,
       ),
       child: Card(
-        color: stateColors.clairPink,
+        color: Globals.constants.colors.clairPink,
         elevation: 2.0,
         child: InkWell(
           child: Container(
@@ -201,7 +200,7 @@ class _UpdateUsernamePageState extends State<UpdateUsernamePage> {
                       padding: const EdgeInsets.only(right: 10.0),
                       child: Icon(
                         UniconsLine.envelope,
-                        color: stateColors.secondary,
+                        color: Globals.constants.colors.secondary,
                       ),
                     ),
                     Column(
@@ -299,7 +298,7 @@ class _UpdateUsernamePageState extends State<UpdateUsernamePage> {
             controller: _usernameController,
             decoration: InputDecoration(
               fillColor: Colors.white,
-              focusColor: stateColors.clairPink,
+              focusColor: Globals.constants.colors.clairPink,
               labelText: "username_new".tr(),
               border: OutlineInputBorder(),
               contentPadding: const EdgeInsets.symmetric(
@@ -509,7 +508,7 @@ class _UpdateUsernamePageState extends State<UpdateUsernamePage> {
       context: context,
       builder: (context) {
         return SimpleDialog(
-          backgroundColor: stateColors.clairPink,
+          backgroundColor: Globals.constants.colors.clairPink,
           title: Text(
             "username_current".tr(),
             style: TextStyle(
@@ -518,7 +517,7 @@ class _UpdateUsernamePageState extends State<UpdateUsernamePage> {
           ),
           children: <Widget>[
             Divider(
-              color: stateColors.secondary,
+              color: Globals.constants.colors.secondary,
               thickness: 1.0,
             ),
             Padding(

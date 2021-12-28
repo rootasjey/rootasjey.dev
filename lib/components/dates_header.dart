@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:rootasjey/state/colors.dart';
+import 'package:rootasjey/types/globals/globals.dart';
 import 'package:unicons/unicons.dart';
 
 class DatesHeader extends StatelessWidget {
@@ -47,7 +47,7 @@ class DatesHeader extends StatelessWidget {
             height: 24.0,
             child: VerticalDivider(
               thickness: 2.0,
-              color: stateColors.primary,
+              color: Globals.constants.colors.primary,
             ),
           ),
           Opacity(

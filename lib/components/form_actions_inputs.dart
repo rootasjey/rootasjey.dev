@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:rootasjey/state/colors.dart';
+import 'package:rootasjey/types/globals/globals.dart';
 import 'package:rootasjey/utils/constants.dart';
 import 'package:unicons/unicons.dart';
 
@@ -76,7 +76,7 @@ class FormActionInputs extends StatelessWidget {
                 ),
               ),
               style: OutlinedButton.styleFrom(
-                primary: stateColors.foreground,
+                primary: Theme.of(context).textTheme.bodyText1?.color,
               ),
             ),
           ),
@@ -91,7 +91,7 @@ class FormActionInputs extends StatelessWidget {
               child: Text(saveTextString),
             ),
             style: ElevatedButton.styleFrom(
-              primary: stateColors.validation,
+              primary: Globals.constants.colors.validation,
             ),
           ),
         ],

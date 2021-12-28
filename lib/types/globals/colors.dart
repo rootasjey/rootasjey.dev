@@ -5,6 +5,8 @@ class ColorsConstants {
   /// Color for statistics.
   final Color activity = Colors.red;
 
+  final Color clairPink = Color(0xFFf5eaf9);
+
   final Color dark = Color(0xFF303030);
   final Color lightBackground = Color(0xFfe3e6ec);
 
@@ -25,6 +27,8 @@ class ColorsConstants {
 
   /// Color for settings.
   final Color settings = Colors.lime;
+
+  final Color validation = Colors.green;
 
   Color getBackgroundColor(BuildContext context) {
     if (AdaptiveTheme.of(context).brightness == Brightness.dark) {

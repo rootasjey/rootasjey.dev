@@ -1,7 +1,7 @@
 import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/circle_button.dart';
-import 'package:rootasjey/state/colors.dart';
+import 'package:rootasjey/types/globals/globals.dart';
 import 'package:rootasjey/utils/fonts.dart';
 import 'package:unicons/unicons.dart';
 
@@ -31,7 +31,7 @@ class SheetHeader extends StatelessWidget {
             icon: Icon(
               UniconsLine.times,
               size: 20.0,
-              color: stateColors.primary,
+              color: Globals.constants.colors.primary,
             ),
           ),
         ),

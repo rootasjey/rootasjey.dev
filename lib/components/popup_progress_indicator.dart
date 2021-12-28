@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:rootasjey/state/colors.dart';
+import 'package:rootasjey/types/globals/globals.dart';
 import 'package:rootasjey/utils/fonts.dart';
 import 'package:unicons/unicons.dart';
 
@@ -37,7 +37,7 @@ class PopupProgressIndicator extends StatelessWidget {
                 children: [
                   Icon(
                     UniconsLine.circle,
-                    color: stateColors.secondary,
+                    color: Globals.constants.colors.secondary,
                   ),
                   Expanded(
                     child: Padding(

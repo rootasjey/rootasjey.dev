@@ -7,7 +7,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:rootasjey/components/text_link.dart';
 import 'package:rootasjey/components/image_viewer.dart';
-import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/utils/snack.dart';
 
 class MarkdownViewer extends StatefulWidget {
@@ -66,7 +65,7 @@ class _MarkdownViewerState extends State<MarkdownViewer> {
             element: element,
           );
         },
-        'li': (RenderContext context, Widget child) {
+        'li': (_, Widget child) {
           return Row(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -80,7 +79,11 @@ class _MarkdownViewerState extends State<MarkdownViewer> {
                   child: Container(
                     width: 10.0,
                     height: 10.0,
-                    color: stateColors.foreground.withOpacity(0.8),
+                    color: Theme.of(context)
+                        .textTheme
+                        .bodyText1
+                        ?.color
+                        ?.withOpacity(0.8),
                   ),
                 ),
               ),

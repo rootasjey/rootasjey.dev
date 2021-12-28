@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:github/github.dart';
 import 'package:rootasjey/components/arrow_divider.dart';
-import 'package:rootasjey/state/colors.dart';
+import 'package:rootasjey/types/globals/globals.dart';
 import 'package:rootasjey/utils/constants.dart';
 import 'package:rootasjey/utils/fonts.dart';
 import 'package:unicons/unicons.dart';
@@ -278,8 +278,8 @@ class _LandingWorkUsState extends State<LandingWorkUs> {
       textTitle: "Starting at 5000€ for a website "
           "and two mobile app on iOS and Android",
       colors: [
-        stateColors.primary,
-        stateColors.primary.withAlpha(255),
+        Globals.constants.colors.primary,
+        Globals.constants.colors.primary.withAlpha(255),
       ],
     );
   }

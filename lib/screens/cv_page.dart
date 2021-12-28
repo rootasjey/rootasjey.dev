@@ -6,7 +6,6 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:rootasjey/components/avatar/better_avatar.dart';
 import 'package:rootasjey/components/application_bar/main_app_bar.dart';
-import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/types/exp.dart';
 import 'package:rootasjey/types/exp_date.dart';
 import 'package:rootasjey/types/formation.dart';
@@ -24,7 +23,7 @@ class CVPage extends StatefulWidget {
 }
 
 class _CVPageState extends State<CVPage> {
-  final exps = [
+  final _exps = [
     Exp(
       job: "Entrepreneur",
       company: "Jeremie Codes",
@@ -69,7 +68,7 @@ class _CVPageState extends State<CVPage> {
     ),
   ];
 
-  final formations = [
+  final _formations = [
     Formation(
       degree: "Licence & Master d'informatique",
       school: "Université de Versailles",
@@ -86,9 +85,9 @@ class _CVPageState extends State<CVPage> {
   ];
 
   Uint8List? _imageFile;
-  final screenshotController = ScreenshotController();
+  final _screenshotController = ScreenshotController();
 
-  final projects = [
+  final _projects = [
     Project(
       id: "fig.style",
       title: "fig.style",
@@ -125,7 +124,7 @@ class _CVPageState extends State<CVPage> {
     ),
   ];
 
-  final skills = [
+  final List<Skill> _skills = [
     Skill(
       label: "Firebase",
       assetPath: "assets/images/firebase.png",
@@ -167,25 +166,20 @@ class _CVPageState extends State<CVPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          _imageFile = await _screenshotController.capture();
+          await FileSaver.instance.saveFile("cv", _imageFile!, "png");
+        },
+        child: Icon(UniconsLine.camera),
+      ),
       body: CustomScrollView(
         slivers: [
-          MainAppBar(
-            trailing: [
-              Observer(builder: (_) {
-                return IconButton(
-                  onPressed: () async {
-                    _imageFile = await screenshotController.capture();
-                    await FileSaver.instance.saveFile("cv", _imageFile!, "png");
-                  },
-                  icon: Icon(UniconsLine.camera, color: stateColors.foreground),
-                );
-              }),
-            ],
-          ),
+          MainAppBar(),
           SliverList(
             delegate: SliverChildListDelegate.fixed([
               Screenshot(
-                controller: screenshotController,
+                controller: _screenshotController,
                 child: body(),
               ),
             ]),
@@ -353,7 +347,7 @@ class _CVPageState extends State<CVPage> {
       padding: const EdgeInsets.only(top: 32.0),
       child: Wrap(
         spacing: 32.0,
-        children: skills.map((skill) {
+        children: _skills.map((skill) {
           return skillItem(
             label: skill.label,
             assetPath: skill.assetPath,
@@ -373,6 +367,8 @@ class _CVPageState extends State<CVPage> {
     IconData? iconData,
     bool blend = false,
   }) {
+    final Color? foregroundColor = Theme.of(context).textTheme.bodyText1?.color;
+
     return InkWell(
       key: Key(label),
       onTap: () {
@@ -391,7 +387,7 @@ class _CVPageState extends State<CVPage> {
                 assetPath,
                 width: 30.0,
                 height: 30.0,
-                color: blend ? stateColors.foreground : null,
+                color: blend ? foregroundColor : null,
               ),
             if (iconData != null) Icon(iconData, size: 32.0),
             Padding(
@@ -437,7 +433,7 @@ class _CVPageState extends State<CVPage> {
   Widget expsListView() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: exps.map((exp) {
+      children: _exps.map((exp) {
         return Padding(
           padding: const EdgeInsets.only(bottom: 32.0),
           child: Column(
@@ -522,7 +518,7 @@ class _CVPageState extends State<CVPage> {
           padding: const EdgeInsets.only(top: 16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: formations.map((formation) {
+            children: _formations.map((formation) {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -591,7 +587,7 @@ class _CVPageState extends State<CVPage> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: projects.map((project) {
+        children: _projects.map((project) {
           return Padding(
             padding: const EdgeInsets.only(top: 12.0),
             child: Row(
@@ -610,7 +606,7 @@ class _CVPageState extends State<CVPage> {
                         launch(project.urls!.github);
                       },
                       child: Text(
-                        project.title!,
+                        project.title,
                         style: FontsUtils.mainStyle(
                           fontSize: 20.0,
                           fontWeight: FontWeight.w500,
@@ -623,7 +619,7 @@ class _CVPageState extends State<CVPage> {
                         opacity: 0.5,
                         child: Wrap(
                           spacing: 8.0,
-                          children: project.platforms!
+                          children: project.platforms
                               .map((platform) => Text(platform))
                               .toList(),
                         ),
@@ -633,7 +629,7 @@ class _CVPageState extends State<CVPage> {
                       width: 400.0,
                       child: Opacity(
                         opacity: 0.8,
-                        child: Text(project.summary!),
+                        child: Text(project.summary),
                       ),
                     ),
                   ],

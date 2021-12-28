@@ -1,6 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/utils/fonts.dart';
 
 class PubPopupMenuButton extends StatelessWidget {
@@ -27,7 +26,6 @@ class PubPopupMenuButton extends StatelessWidget {
       padding: margin,
       child: Material(
         elevation: elevation,
-        color: stateColors.lightBackground,
         borderRadius: BorderRadius.circular(4.0),
         child: Opacity(
           opacity: opacity,

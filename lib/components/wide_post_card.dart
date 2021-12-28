@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rootasjey/screens/post_page.dart';
-import 'package:rootasjey/state/colors.dart';
+import 'package:rootasjey/types/globals/globals.dart';
 
 class WidePostCard extends StatefulWidget {
   @required
@@ -25,16 +25,7 @@ class WidePostCard extends StatefulWidget {
 }
 
 class _WidePostCardState extends State<WidePostCard> {
-  Color? foreground;
-
-  @override
-  initState() {
-    super.initState();
-
-    setState(() {
-      foreground = stateColors.foreground;
-    });
-  }
+  Color? _foreground = Colors.white;
 
   @override
   Widget build(BuildContext context) {
@@ -54,9 +45,11 @@ class _WidePostCardState extends State<WidePostCard> {
               child: InkWell(
                 onTap: navigateToPost,
                 onHover: (isHover) {
-                  isHover
-                      ? setState(() => foreground = stateColors.primary)
-                      : setState(() => foreground = stateColors.foreground);
+                  setState(() {
+                    _foreground = isHover
+                        ? Globals.constants.colors.primary
+                        : Theme.of(context).textTheme.bodyText1?.color;
+                  });
                 },
               ),
             ),
@@ -90,7 +83,7 @@ class _WidePostCardState extends State<WidePostCard> {
             child: Text(
               widget.title,
               style: TextStyle(
-                color: foreground,
+                color: _foreground,
                 fontSize: 30.0,
                 fontWeight: FontWeight.bold,
               ),
@@ -136,13 +129,15 @@ class _WidePostCardState extends State<WidePostCard> {
   }
 
   Widget postInkWell({Widget? child}) {
+    final Color? foregroundColor = Theme.of(context).textTheme.bodyText1?.color;
+
     return InkWell(
       onTap: navigateToPost,
       hoverColor: Colors.transparent,
       onHover: (isHover) {
         isHover
-            ? setState(() => foreground = stateColors.primary)
-            : setState(() => foreground = stateColors.foreground);
+            ? setState(() => _foreground = Globals.constants.colors.primary)
+            : setState(() => _foreground = foregroundColor);
       },
       child: child,
     );

@@ -6,30 +6,30 @@ import 'package:rootasjey/utils/date_helper.dart';
 class Project {
   final Author author;
   final DateTime? createdAt;
-  final String? id;
-  final String? lang;
-  final List<String>? platforms;
-  final List<String>? programmingLanguages;
-  final bool? published;
+  final String id;
+  final String lang;
+  final List<String> platforms;
+  final List<String> programmingLanguages;
+  final bool published;
   final Stats? stats;
-  final String? summary;
-  final List<String>? tags;
-  final String? title;
+  final String summary;
+  final List<String> tags;
+  final String title;
   final DateTime? updatedAt;
   final Urls? urls;
 
   Project({
     this.author = const Author(id: ''),
     this.createdAt,
-    this.id,
-    this.lang,
-    this.platforms,
-    this.programmingLanguages,
-    this.published,
+    this.id = '',
+    this.lang = 'en',
+    this.platforms = const [],
+    this.programmingLanguages = const [],
+    this.published = false,
     this.stats,
-    this.summary,
-    this.tags,
-    this.title,
+    this.summary = '',
+    this.tags = const [],
+    this.title = '',
     this.updatedAt,
     this.urls,
   });

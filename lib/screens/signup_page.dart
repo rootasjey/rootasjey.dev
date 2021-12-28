@@ -11,7 +11,6 @@ import 'package:rootasjey/components/loading_animation.dart';
 import 'package:rootasjey/components/application_bar/main_app_bar.dart';
 import 'package:rootasjey/router/locations/home_location.dart';
 import 'package:rootasjey/router/locations/signin_location.dart';
-import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/types/globals/globals.dart';
 import 'package:rootasjey/utils/fonts.dart';
 import 'package:rootasjey/utils/snack.dart';
@@ -448,7 +447,7 @@ class _SignupPageState extends State<SignupPage> {
           child: ElevatedButton(
             onPressed: () => signUpProcess(),
             style: ElevatedButton.styleFrom(
-              primary: stateColors.primary,
+              primary: Globals.constants.colors.primary,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(
                   Radius.circular(7.0),

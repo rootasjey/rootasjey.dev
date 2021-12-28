@@ -13,7 +13,7 @@ import 'package:rootasjey/components/sliver_error_view.dart';
 import 'package:rootasjey/components/sliver_loading_view.dart';
 import 'package:rootasjey/router/locations/dashboard_location.dart';
 import 'package:rootasjey/router/locations/posts_location.dart';
-import 'package:rootasjey/state/colors.dart';
+import 'package:rootasjey/types/globals/globals.dart';
 import 'package:rootasjey/types/post.dart';
 import 'package:rootasjey/utils/app_logger.dart';
 import 'package:rootasjey/utils/cloud.dart';
@@ -238,7 +238,6 @@ class _PostEditorState extends State<PostEditor> {
     return LangPopupMenuButton(
       lang: _lang,
       opacity: 0.6,
-      color: stateColors.lightBackground,
       onLangChanged: (newLang) {
         setState(() {
           _lang = newLang;
@@ -275,7 +274,7 @@ class _PostEditorState extends State<PostEditor> {
                   children: [
                     Icon(
                       UniconsLine.circle,
-                      color: stateColors.secondary,
+                      color: Globals.constants.colors.secondary,
                     ),
                     Expanded(
                       child: Padding(
@@ -464,7 +463,8 @@ class _PostEditorState extends State<PostEditor> {
 
       _jwt = await FirebaseAuth.instance.currentUser!.getIdToken();
 
-      final Map<String, dynamic>? data = _postSnapshot.data() as Map<String, dynamic>?;
+      final Map<String, dynamic>? data =
+          _postSnapshot.data() as Map<String, dynamic>?;
       final Post post = Post.fromJSON(data);
 
       setState(() {

@@ -16,7 +16,7 @@ import 'package:rootasjey/components/sliver_error_view.dart';
 import 'package:rootasjey/components/sliver_loading_view.dart';
 import 'package:rootasjey/router/locations/dashboard_location.dart';
 import 'package:rootasjey/router/locations/projects_location.dart';
-import 'package:rootasjey/state/colors.dart';
+import 'package:rootasjey/types/globals/globals.dart';
 import 'package:rootasjey/types/project.dart';
 import 'package:rootasjey/utils/app_logger.dart';
 import 'package:rootasjey/utils/cloud.dart';
@@ -314,7 +314,6 @@ class _ProjectEditorState extends State<ProjectEditor> {
     return LangPopupMenuButton(
       lang: _projectLang,
       opacity: 0.6,
-      color: stateColors.lightBackground,
       onLangChanged: (newLang) {
         setState(() {
           _projectLang = newLang;
@@ -353,7 +352,7 @@ class _ProjectEditorState extends State<ProjectEditor> {
                   child: Text(
                     "card_click_to_expand".tr(),
                     style: FontsUtils.mainStyle(
-                      color: stateColors.secondary,
+                      color: Globals.constants.colors.secondary,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -406,8 +405,6 @@ class _ProjectEditorState extends State<ProjectEditor> {
       child: ExpansionTileCard(
         elevation: 0.0,
         expandedTextColor: Colors.black,
-        baseColor: stateColors.lightBackground,
-        expandedColor: stateColors.lightBackground,
         title: platformsHeader(),
         children: [
           platformsContent(childSetState),
@@ -446,7 +443,7 @@ class _ProjectEditorState extends State<ProjectEditor> {
                 elevation: entry.value ? 2.0 : 0.0,
                 selected: entry.value,
                 deleteIconColor: entry.value
-                    ? stateColors.secondary.withOpacity(0.8)
+                    ? Globals.constants.colors.secondary.withOpacity(0.8)
                     : Colors.black26,
                 labelPadding: const EdgeInsets.symmetric(horizontal: 12.0),
                 checkmarkColor: Colors.black26,
@@ -535,7 +532,7 @@ class _ProjectEditorState extends State<ProjectEditor> {
                   children: [
                     Icon(
                       UniconsLine.circle,
-                      color: stateColors.secondary,
+                      color: Globals.constants.colors.secondary,
                     ),
                     Expanded(
                       child: Padding(
@@ -568,8 +565,6 @@ class _ProjectEditorState extends State<ProjectEditor> {
       child: ExpansionTileCard(
         elevation: 0.0,
         expandedTextColor: Colors.black,
-        baseColor: stateColors.lightBackground,
-        expandedColor: stateColors.lightBackground,
         title: programmnigHeader(),
         children: [
           programmnigContent(childSetState),
@@ -609,7 +604,8 @@ class _ProjectEditorState extends State<ProjectEditor> {
                   ),
                 ),
               ),
-              deleteIconColor: stateColors.secondary.withOpacity(0.8),
+              deleteIconColor:
+                  Globals.constants.colors.secondary.withOpacity(0.8),
               labelPadding: const EdgeInsets.symmetric(horizontal: 12.0),
               onPressed: () {}, // cursor pointer & interaction visual effect
               onDeleted: () {
@@ -638,7 +634,7 @@ class _ProjectEditorState extends State<ProjectEditor> {
                   labelText: "programming_language_new_dot".tr(),
                   border: UnderlineInputBorder(),
                   fillColor: Colors.white,
-                  focusColor: stateColors.clairPink,
+                  focusColor: Globals.constants.colors.clairPink,
                 ),
                 onChanged: (value) {
                   _progLangInputValue = value;
@@ -712,7 +708,7 @@ class _ProjectEditorState extends State<ProjectEditor> {
         ),
         style: TextStyle(
           fontSize: 20.0,
-          color: stateColors.foreground.withOpacity(0.4),
+          color: Theme.of(context).textTheme.bodyText1?.color?.withOpacity(0.4),
         ),
         onChanged: (newValue) {
           _projectSummary = newValue;
@@ -733,8 +729,6 @@ class _ProjectEditorState extends State<ProjectEditor> {
       child: ExpansionTileCard(
         elevation: 0.0,
         expandedTextColor: Colors.black,
-        baseColor: stateColors.lightBackground,
-        expandedColor: stateColors.lightBackground,
         title: tagsHeader(),
         children: [
           tagsContent(childSetState),
@@ -776,7 +770,8 @@ class _ProjectEditorState extends State<ProjectEditor> {
                 fontWeight: FontWeight.w600,
               ),
               labelPadding: const EdgeInsets.symmetric(horizontal: 12.0),
-              deleteIconColor: stateColors.secondary.withOpacity(0.8),
+              deleteIconColor:
+                  Globals.constants.colors.secondary.withOpacity(0.8),
               onDeleted: () {
                 removeTagAndUpdate(sheetSetState, entry);
               },
@@ -889,7 +884,7 @@ class _ProjectEditorState extends State<ProjectEditor> {
               checkmarkColor: Colors.black26,
               deleteIconColor: entry.value.isEmpty
                   ? Colors.black26
-                  : stateColors.secondary.withOpacity(0.8),
+                  : Globals.constants.colors.secondary.withOpacity(0.8),
               onDeleted: () {
                 deleteUrlAndUpdate(sheetSetState, entry);
               },
@@ -935,8 +930,6 @@ class _ProjectEditorState extends State<ProjectEditor> {
       child: ExpansionTileCard(
         elevation: 0.0,
         expandedTextColor: Colors.black,
-        baseColor: stateColors.lightBackground,
-        expandedColor: stateColors.lightBackground,
         title: linksHeader(),
         children: [
           linksContent(sheetSetState),
@@ -961,7 +954,7 @@ class _ProjectEditorState extends State<ProjectEditor> {
           Text(
             "You are editing an existing link.",
             style: FontsUtils.mainStyle(
-              color: stateColors.primary,
+              color: Globals.constants.colors.primary,
             ),
           ),
           TextButton(
@@ -1295,20 +1288,20 @@ class _ProjectEditorState extends State<ProjectEditor> {
       final Project project = Project.fromJSON(data);
 
       setState(() {
-        _projectPubStatus = project.published! ? PUBLISHED : DRAFT;
+        _projectPubStatus = project.published ? PUBLISHED : DRAFT;
 
         _projectTitle = project.title;
         _projectSummary = project.summary;
 
-        for (String platform in project.platforms!) {
+        for (String platform in project.platforms) {
           _platforms[platform] = true;
         }
 
-        for (String tag in project.tags!) {
+        for (String tag in project.tags) {
           _tags[tag] = true;
         }
 
-        for (String pLang in project.programmingLanguages!) {
+        for (String pLang in project.programmingLanguages) {
           _programmingLanguages[pLang] = true;
         }
 

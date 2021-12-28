@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:rootasjey/components/avatar/better_avatar.dart';
 import 'package:rootasjey/components/footer/footer.dart';
 import 'package:rootasjey/components/application_bar/main_app_bar.dart';
-import 'package:rootasjey/state/colors.dart';
+import 'package:rootasjey/types/globals/globals.dart';
 import 'package:rootasjey/types/post.dart';
 import 'package:unicons/unicons.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -162,7 +162,7 @@ class _AboutMePageState extends State<AboutMePage> {
                   style: TextStyle(
                     fontSize: 40.0,
                     fontWeight: FontWeight.w300,
-                    color: stateColors.primary,
+                    color: Globals.constants.colors.primary,
                   ),
                 ),
               ],
@@ -198,7 +198,7 @@ class _AboutMePageState extends State<AboutMePage> {
             style: TextStyle(
               fontSize: 40.0,
               fontWeight: FontWeight.w300,
-              color: stateColors.primary,
+              color: Globals.constants.colors.primary,
             ),
           ),
         ],
@@ -452,7 +452,7 @@ class _AboutMePageState extends State<AboutMePage> {
                   style: TextStyle(
                     fontSize: 40.0,
                     fontWeight: FontWeight.w300,
-                    color: stateColors.primary,
+                    color: Globals.constants.colors.primary,
                   ),
                 ),
               ],

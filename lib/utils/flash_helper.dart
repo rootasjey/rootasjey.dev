@@ -4,9 +4,9 @@ import 'dart:collection';
 import 'package:beamer/beamer.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:rootasjey/components/animated_app_icon.dart';
-import 'package:rootasjey/state/colors.dart';
 import 'package:flash/flash.dart';
 import 'package:flutter/material.dart';
+import 'package:rootasjey/types/globals/globals.dart';
 import 'package:rootasjey/utils/fonts.dart';
 import 'package:unicons/unicons.dart';
 
@@ -135,7 +135,7 @@ class FlashHelper {
 
         return Flash(
           controller: controller,
-          backgroundColor: stateColors.background,
+          backgroundColor: Theme.of(context).backgroundColor,
           boxShadows: [BoxShadow(blurRadius: 4)],
           barrierBlur: 1.0,
           barrierColor: Colors.black38,
@@ -306,7 +306,7 @@ class FlashHelper {
         return StatefulBuilder(
           builder: (context, dialogSetState) {
             return SimpleDialog(
-              backgroundColor: stateColors.clairPink,
+              backgroundColor: Globals.constants.colors.clairPink,
               title: Opacity(
                 opacity: 0.8,
                 child: Text(
@@ -390,7 +390,7 @@ class FlashHelper {
           OutlinedButton(
             onPressed: Beamer.of(context).beamBack,
             style: OutlinedButton.styleFrom(
-              primary: stateColors.secondary,
+              primary: Globals.constants.colors.secondary,
             ),
             child: Padding(
               padding: const EdgeInsets.symmetric(
@@ -643,7 +643,7 @@ class FlashHelper {
 
         return Flash(
           controller: controller,
-          backgroundColor: stateColors.background,
+          backgroundColor: Theme.of(context).backgroundColor,
           boxShadows: [BoxShadow(blurRadius: 4)],
           barrierBlur: 3.0,
           barrierColor: Colors.black38,
@@ -675,7 +675,7 @@ class FlashHelper {
                 IconButton(
                   icon: Icon(
                     UniconsLine.times,
-                    color: stateColors.secondary,
+                    color: Globals.constants.colors.secondary,
                   ),
                   onPressed: () => controller.dismiss(),
                 ),

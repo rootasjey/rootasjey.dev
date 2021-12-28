@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:rootasjey/state/colors.dart';
+import 'package:rootasjey/types/globals/globals.dart';
 
 class OutlineToggleButton extends StatelessWidget {
   final Widget child;
@@ -18,7 +18,7 @@ class OutlineToggleButton extends StatelessWidget {
       return ElevatedButton(
           onPressed: onPressed,
           style: ElevatedButton.styleFrom(
-            primary: stateColors.primary,
+            primary: Globals.constants.colors.primary,
             textStyle: TextStyle(
               color: Colors.white,
             ),
@@ -29,7 +29,7 @@ class OutlineToggleButton extends StatelessWidget {
     return OutlinedButton(
       onPressed: onPressed,
       style: OutlinedButton.styleFrom(
-        primary: stateColors.primary,
+        primary: Globals.constants.colors.primary,
       ),
       child: child,
     );

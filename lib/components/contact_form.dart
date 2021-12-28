@@ -3,7 +3,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/actions/users.dart';
 import 'package:rootasjey/components/animated_app_icon.dart';
-import 'package:rootasjey/state/colors.dart';
+import 'package:rootasjey/types/globals/globals.dart';
 import 'package:rootasjey/utils/app_logger.dart';
 import 'package:rootasjey/utils/fonts.dart';
 import 'package:rootasjey/utils/snack.dart';
@@ -171,7 +171,7 @@ class _ContactFormState extends State<ContactForm> {
                 Text(
                   _subject!.toLowerCase(),
                   style: TextStyle(
-                    color: stateColors.primary,
+                    color: Globals.constants.colors.primary,
                   ),
                 ),
               ],
@@ -284,7 +284,7 @@ class _ContactFormState extends State<ContactForm> {
                 TextSpan(
                   text: "work@rootasjey.dev",
                   style: FontsUtils.mainStyle(
-                    color: stateColors.primary,
+                    color: Globals.constants.colors.primary,
                     fontWeight: FontWeight.w600,
                   ),
                 )

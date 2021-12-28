@@ -19,12 +19,10 @@ import 'package:rootasjey/types/user_pp.dart';
 import 'package:rootasjey/types/user_pp_path.dart';
 import 'package:rootasjey/types/user_pp_url.dart';
 import 'package:rootasjey/utils/app_logger.dart';
-import 'package:rootasjey/utils/brightness.dart';
 import 'package:rootasjey/utils/cloud.dart';
 import 'package:rootasjey/utils/snack.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:rootasjey/utils/app_storage.dart';
 
 class SettingsPage extends ConsumerStatefulWidget {
   final bool showAppBar;
@@ -39,18 +37,9 @@ class SettingsPage extends ConsumerStatefulWidget {
 }
 
 class _SettingsPageState extends ConsumerState<SettingsPage> {
-  bool _isThemeAuto = true;
   bool _isUpdating = false;
 
-  Brightness _brightness = Brightness.dark;
-
   ScrollController _pageScrollController = ScrollController();
-
-  @override
-  initState() {
-    super.initState();
-    initBrightness();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -71,10 +60,6 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     final String profilePicture = userNotifier.getPPUrl(
       orElse: "https://img.icons8.com/plasticine/100/000000/flower.png",
     );
-
-    final themeDescription = _isThemeAuto
-        ? "theme_auto_description".tr()
-        : "theme_manual_description".tr();
 
     return Scaffold(
       body: NotificationListener<ScrollNotification>(
@@ -108,12 +93,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                         onUploadProfilePicture: onUploadProfilePicture,
                         onTapProfilePicture: onTapProfilePicture,
                       ),
-                      AppSettings(
-                        brightness: _brightness,
-                        themeDescription: themeDescription,
-                        onChangeBrightness: onChangeBrightness,
-                        onChangeThemeAuto: onChangeThemeAuto,
-                      ),
+                      AppSettings(),
                     ]),
                   ),
                 ),
@@ -131,42 +111,6 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
         ),
       ),
     );
-  }
-
-  void initBrightness() {
-    _isThemeAuto = appStorage.getAutoBrightness();
-
-    if (!_isThemeAuto) {
-      _brightness = appStorage.getBrightness();
-    } else {
-      Brightness brightness = Brightness.light;
-      final now = DateTime.now();
-
-      if (now.hour < 6 || now.hour > 17) {
-        brightness = Brightness.dark;
-      }
-
-      _brightness = brightness;
-    }
-  }
-
-  void onChangeBrightness(newValue) {
-    _brightness = newValue ? Brightness.light : Brightness.dark;
-
-    BrightnessUtils.setBrightness(context, _brightness);
-    setState(() {});
-  }
-
-  void onChangeThemeAuto(newValue) {
-    setState(() => _isThemeAuto = newValue);
-
-    if (newValue) {
-      BrightnessUtils.setAutoBrightness(context);
-      return;
-    }
-
-    _brightness = appStorage.getBrightness();
-    BrightnessUtils.setBrightness(context, _brightness);
   }
 
   void onGoToUpdateEmail() async {

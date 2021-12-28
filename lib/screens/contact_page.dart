@@ -5,7 +5,7 @@ import 'package:rootasjey/actions/users.dart';
 import 'package:rootasjey/components/footer/footer.dart';
 import 'package:rootasjey/components/application_bar/main_app_bar.dart';
 import 'package:rootasjey/components/page_title.dart';
-import 'package:rootasjey/state/colors.dart';
+import 'package:rootasjey/types/globals/globals.dart';
 import 'package:rootasjey/utils/app_logger.dart';
 import 'package:rootasjey/utils/fonts.dart';
 import 'package:rootasjey/utils/snack.dart';
@@ -189,7 +189,7 @@ class _ContactPageState extends State<ContactPage> {
             "form_below".tr(),
             style: FontsUtils.mainStyle(
               fontSize: 20.0,
-              color: stateColors.primary,
+              color: Globals.constants.colors.primary,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -318,7 +318,7 @@ class _ContactPageState extends State<ContactPage> {
                 Text(
                   subject!.toLowerCase(),
                   style: TextStyle(
-                    color: stateColors.primary,
+                    color: Globals.constants.colors.primary,
                   ),
                 ),
               ],
@@ -486,7 +486,7 @@ class _ContactPageState extends State<ContactPage> {
           sendMessage();
         },
         style: ElevatedButton.styleFrom(
-          primary: stateColors.primary,
+          primary: Globals.constants.colors.primary,
           textStyle: TextStyle(
             color: Colors.white,
           ),

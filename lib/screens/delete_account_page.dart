@@ -4,7 +4,6 @@ import 'package:rootasjey/components/animated_app_icon.dart';
 import 'package:rootasjey/components/fade_in_y.dart';
 import 'package:rootasjey/components/application_bar/main_app_bar.dart';
 import 'package:rootasjey/router/locations/home_location.dart';
-import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/types/globals/globals.dart';
 import 'package:rootasjey/types/update_email_resp.dart';
 import 'package:rootasjey/utils/fonts.dart';
@@ -216,7 +215,7 @@ class DeleteAccountPageState extends State<DeleteAccountPage> {
         bottom: 40.0,
       ),
       child: Card(
-        color: stateColors.clairPink,
+        color: Globals.constants.colors.clairPink,
         child: ListTile(
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 32.0,
@@ -228,7 +227,7 @@ class DeleteAccountPageState extends State<DeleteAccountPage> {
                 padding: const EdgeInsets.only(right: 30.0),
                 child: Icon(
                   UniconsLine.exclamation_triangle,
-                  color: stateColors.secondary,
+                  color: Globals.constants.colors.secondary,
                 ),
               ),
               Expanded(
@@ -320,7 +319,7 @@ class DeleteAccountPageState extends State<DeleteAccountPage> {
           TextFormField(
             decoration: InputDecoration(
               fillColor: Colors.white,
-              focusColor: stateColors.clairPink,
+              focusColor: Globals.constants.colors.clairPink,
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 8.0,
               ),
@@ -437,7 +436,7 @@ class DeleteAccountPageState extends State<DeleteAccountPage> {
       context: context,
       builder: (context) {
         return SimpleDialog(
-          backgroundColor: stateColors.clairPink,
+          backgroundColor: Globals.constants.colors.clairPink,
           title: Text(
             "account_deletion_after".tr(),
             style: FontsUtils.mainStyle(
@@ -447,7 +446,7 @@ class DeleteAccountPageState extends State<DeleteAccountPage> {
           ),
           children: <Widget>[
             Divider(
-              color: stateColors.secondary,
+              color: Globals.constants.colors.secondary,
               thickness: 1.0,
             ),
             Padding(

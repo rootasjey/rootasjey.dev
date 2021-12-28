@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:rootasjey/state/colors.dart';
 
 class AdaptiveUserAvatar extends ConsumerWidget {
   const AdaptiveUserAvatar({
@@ -19,7 +18,7 @@ class AdaptiveUserAvatar extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     if (avatarURL.isNotEmpty) {
       return CircleAvatar(
-        backgroundColor: stateColors.lightBackground,
+        backgroundColor: Theme.of(context).backgroundColor,
         radius: 20.0,
         backgroundImage: NetworkImage(avatarURL),
       );
@@ -27,7 +26,7 @@ class AdaptiveUserAvatar extends ConsumerWidget {
 
     if (initials.isNotEmpty) {
       return CircleAvatar(
-        backgroundColor: stateColors.lightBackground,
+        backgroundColor: Theme.of(context).backgroundColor,
         radius: 20.0,
         child: Text(initials),
       );

@@ -1,6 +1,6 @@
 import 'package:easy_localization/src/public_ext.dart';
 import 'package:flutter/material.dart';
-import 'package:rootasjey/state/colors.dart';
+import 'package:rootasjey/types/globals/globals.dart';
 import 'package:rootasjey/utils/fonts.dart';
 import 'package:unicons/unicons.dart';
 
@@ -40,7 +40,7 @@ class EmailButton extends StatelessWidget {
                     child: Text(
                       email,
                       style: TextStyle(
-                        color: stateColors.primary,
+                        color: Globals.constants.colors.primary,
                       ),
                     ),
                   ),

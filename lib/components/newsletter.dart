@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/actions/users.dart';
-import 'package:rootasjey/state/colors.dart';
+import 'package:rootasjey/types/globals/globals.dart';
 import 'package:rootasjey/utils/app_logger.dart';
 import 'package:rootasjey/utils/fonts.dart';
 import 'package:rootasjey/utils/snack.dart';
@@ -128,7 +128,7 @@ class _NewsletterState extends State<Newsletter> {
               onPressed: subscribe,
               style: ElevatedButton.styleFrom(
                 textStyle: FontsUtils.mainStyle(
-                  color: stateColors.primary,
+                  color: Globals.constants.colors.primary,
                 ),
                 padding: const EdgeInsets.symmetric(
                   horizontal: 20.0,

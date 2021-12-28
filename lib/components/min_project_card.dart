@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
-import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/types/project.dart';
 import 'package:rootasjey/types/user_firestore.dart';
 import 'package:rootasjey/utils/app_logger.dart';
@@ -48,7 +47,6 @@ class _MinProjectCardState extends State<MinProjectCard> {
     return SizedBox(
       width: widget.width,
       child: Card(
-        color: stateColors.lightBackground,
         elevation: _elevation,
         child: InkWell(
           onTap: widget.onTap,
@@ -90,7 +88,7 @@ class _MinProjectCardState extends State<MinProjectCard> {
           Opacity(
             opacity: 0.8,
             child: Text(
-              postHeadline.title!,
+              postHeadline.title,
               style: FontsUtils.mainStyle(
                 fontSize: 24.0,
                 fontWeight: FontWeight.w700,
@@ -119,7 +117,7 @@ class _MinProjectCardState extends State<MinProjectCard> {
             child: Wrap(
               spacing: 10.0,
               runSpacing: 10.0,
-              children: postHeadline.tags!.take(2).map((tag) {
+              children: postHeadline.tags.take(2).map((tag) {
                 return Opacity(
                   opacity: 0.6,
                   child: Chip(

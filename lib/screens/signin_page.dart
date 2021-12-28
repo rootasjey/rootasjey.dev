@@ -10,7 +10,6 @@ import 'package:rootasjey/components/application_bar/main_app_bar.dart';
 import 'package:rootasjey/router/locations/forgot_password_location.dart';
 import 'package:rootasjey/router/locations/home_location.dart';
 import 'package:rootasjey/router/locations/signup_location.dart';
-import 'package:rootasjey/state/colors.dart';
 import 'package:rootasjey/types/globals/globals.dart';
 import 'package:rootasjey/utils/fonts.dart';
 import 'package:rootasjey/utils/snack.dart';
@@ -283,7 +282,7 @@ class _SigninPageState extends State<SigninPage> {
         child: ElevatedButton(
           onPressed: () => signInProcess(),
           style: ElevatedButton.styleFrom(
-            primary: stateColors.primary,
+            primary: Globals.constants.colors.primary,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.all(
                 Radius.circular(7.0),

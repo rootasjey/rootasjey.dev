@@ -12,7 +12,7 @@ import 'package:rootasjey/components/dates_header.dart';
 import 'package:rootasjey/components/application_bar/main_app_bar.dart';
 import 'package:rootasjey/components/markdown_viewer.dart';
 import 'package:rootasjey/components/sliver_loading_view.dart';
-import 'package:rootasjey/state/colors.dart';
+import 'package:rootasjey/types/globals/globals.dart';
 import 'package:rootasjey/types/post.dart';
 import 'package:rootasjey/utils/app_logger.dart';
 import 'package:rootasjey/utils/cloud.dart';
@@ -203,7 +203,7 @@ class _PostPageState extends State<PostPage> {
     }
 
     return FloatingActionButton.extended(
-      backgroundColor: stateColors.primary,
+      backgroundColor: Globals.constants.colors.primary,
       foregroundColor: Colors.white,
       onPressed: () => _scrollController.animateTo(
         0,
@@ -337,7 +337,11 @@ class _PostPageState extends State<PostPage> {
                   isLiked ? UniconsLine.heart_break : UniconsLine.heart,
                   color: isLiked
                       ? Colors.pink
-                      : stateColors.foreground.withOpacity(0.6),
+                      : Theme.of(context)
+                          .textTheme
+                          .bodyText1
+                          ?.color
+                          ?.withOpacity(0.6),
                 );
               },
               onTap: (bool isLiked) async {

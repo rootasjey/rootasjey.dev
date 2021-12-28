@@ -5,7 +5,7 @@ import 'package:rootasjey/components/side_menu_item.dart';
 import 'package:rootasjey/components/underlined_button.dart';
 import 'package:rootasjey/router/locations/dashboard_location.dart';
 import 'package:rootasjey/router/locations/home_location.dart';
-import 'package:rootasjey/state/colors.dart';
+import 'package:rootasjey/types/globals/globals.dart';
 import 'package:rootasjey/utils/constants.dart';
 import 'package:rootasjey/utils/fonts.dart';
 import 'package:supercharged/supercharged.dart';
@@ -36,31 +36,31 @@ class _DashboardSideMenuState extends State<DashboardSideMenu> {
     SideMenuItem(
       iconData: UniconsLine.chart_pie,
       label: "statistics".tr(),
-      hoverColor: stateColors.activity,
+      hoverColor: Globals.constants.colors.activity,
       routePath: DashboardLocationContent.statisticsRoute,
     ),
     SideMenuItem(
       iconData: UniconsLine.picture,
       label: "posts".tr(),
-      hoverColor: stateColors.posts,
+      hoverColor: Globals.constants.colors.posts,
       routePath: DashboardLocationContent.postsRoute,
     ),
     SideMenuItem(
       iconData: UniconsLine.book_alt,
       label: "projects".tr(),
-      hoverColor: stateColors.projects,
+      hoverColor: Globals.constants.colors.projects,
       routePath: DashboardLocationContent.projectsRoute,
     ),
     SideMenuItem(
       iconData: UniconsLine.book_alt,
       label: "profile".tr(),
-      hoverColor: stateColors.profile,
+      hoverColor: Globals.constants.colors.profile,
       routePath: DashboardLocationContent.profileRoute,
     ),
     SideMenuItem(
       iconData: UniconsLine.setting,
       label: "settings".tr(),
-      hoverColor: stateColors.settings,
+      hoverColor: Globals.constants.colors.settings,
       routePath: DashboardLocationContent.settingsRoute,
     ),
   ];
@@ -97,7 +97,6 @@ class _DashboardSideMenuState extends State<DashboardSideMenu> {
     }
 
     return Material(
-      color: stateColors.lightBackground,
       child: AnimatedContainer(
         duration: 500.milliseconds,
         curve: Curves.easeOutExpo,
@@ -131,8 +130,11 @@ class _DashboardSideMenuState extends State<DashboardSideMenu> {
       sliver: SliverList(
           delegate: SliverChildListDelegate.fixed(
         _sidePanelItems.map((sidePanelItem) {
-          Color color = stateColors.foreground.withOpacity(0.6);
-          Color textColor = stateColors.foreground.withOpacity(0.4);
+          final Color foregroundColor =
+              Theme.of(context).textTheme.bodyText1?.color ?? Colors.black;
+
+          Color color = foregroundColor.withOpacity(0.6);
+          Color textColor = foregroundColor.withOpacity(0.4);
           FontWeight fontWeight = FontWeight.w600;
 
           final bool isCurrentItemSelected = context
@@ -141,7 +143,7 @@ class _DashboardSideMenuState extends State<DashboardSideMenu> {
 
           if (isCurrentItemSelected) {
             color = sidePanelItem.hoverColor;
-            textColor = stateColors.foreground.withOpacity(0.6);
+            textColor = foregroundColor.withOpacity(0.6);
             fontWeight = FontWeight.w700;
           }
 

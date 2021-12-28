@@ -316,7 +316,6 @@ class _DraftPostsPageState extends State<DraftPostsPage> {
       data: {"postId": post.id},
     );
 
-    // TODO: check this fetch is correctly run on pop.
     fetch();
   }
 

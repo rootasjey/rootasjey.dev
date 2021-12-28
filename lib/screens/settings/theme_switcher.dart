@@ -1,7 +1,7 @@
 import 'package:easy_localization/src/public_ext.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/fade_in_y.dart';
-import 'package:rootasjey/state/colors.dart';
+import 'package:rootasjey/types/globals/globals.dart';
 import 'package:rootasjey/utils/fonts.dart';
 import 'package:supercharged_dart/supercharged_dart.dart';
 
@@ -43,7 +43,7 @@ class ThemeSwitcher extends StatelessWidget {
                     style: FontsUtils.mainStyle(
                       fontSize: 20.0,
                       fontWeight: FontWeight.bold,
-                      color: stateColors.primary,
+                      color: Globals.constants.colors.primary,
                     ),
                   ),
                 ],

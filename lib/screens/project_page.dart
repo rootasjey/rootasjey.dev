@@ -8,7 +8,7 @@ import 'package:rootasjey/components/dates_header.dart';
 import 'package:rootasjey/components/application_bar/main_app_bar.dart';
 import 'package:rootasjey/components/markdown_viewer.dart';
 import 'package:rootasjey/components/sliver_loading_view.dart';
-import 'package:rootasjey/state/colors.dart';
+import 'package:rootasjey/types/globals/globals.dart';
 import 'package:rootasjey/types/project.dart';
 import 'package:rootasjey/utils/app_logger.dart';
 import 'package:rootasjey/utils/cloud.dart';
@@ -175,7 +175,7 @@ class _ProjectPageState extends State<ProjectPage> {
     }
 
     return FloatingActionButton(
-      backgroundColor: stateColors.primary,
+      backgroundColor: Globals.constants.colors.primary,
       foregroundColor: Colors.white,
       onPressed: () => _scrollController.animateTo(
         0,
@@ -215,7 +215,7 @@ class _ProjectPageState extends State<ProjectPage> {
             label: Text(name),
             tooltip: "Link",
             side: BorderSide(
-              color: stateColors.secondary,
+              color: Globals.constants.colors.secondary,
               width: 1.5,
             ),
             onPressed: () {
@@ -234,13 +234,13 @@ class _ProjectPageState extends State<ProjectPage> {
   }
 
   Widget programmingLang() {
-    if (_project.programmingLanguages!.isEmpty) {
+    if (_project.programmingLanguages.isEmpty) {
       return Container();
     }
 
     return Wrap(
       spacing: 8.0,
-      children: _project.programmingLanguages!
+      children: _project.programmingLanguages
           .map(
             (pLang) => Tooltip(
               message: "Programming language",
@@ -263,7 +263,7 @@ class _ProjectPageState extends State<ProjectPage> {
       child: Opacity(
         opacity: 0.7,
         child: Text(
-          _project.summary!,
+          _project.summary,
           style: TextStyle(
             fontSize: 16.0,
           ),
@@ -273,13 +273,13 @@ class _ProjectPageState extends State<ProjectPage> {
   }
 
   Widget tags() {
-    if (_project.tags!.isEmpty) {
+    if (_project.tags.isEmpty) {
       return Container();
     }
 
     return Wrap(
       spacing: 8.0,
-      children: _project.tags!
+      children: _project.tags
           .map(
             (tag) => Tooltip(
               message: "Tag",
@@ -296,7 +296,7 @@ class _ProjectPageState extends State<ProjectPage> {
     return Padding(
       padding: const EdgeInsets.only(top: 60.0),
       child: Text(
-        _project.title!,
+        _project.title,
         style: FontsUtils.mainStyle(
           fontSize: 60.0,
           fontWeight: FontWeight.w700,

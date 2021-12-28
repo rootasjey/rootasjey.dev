@@ -6,7 +6,7 @@ import 'package:rootasjey/components/activity_row.dart';
 import 'package:rootasjey/components/arrow_divider.dart';
 import 'package:rootasjey/components/underlined_button.dart';
 import 'package:rootasjey/router/locations/activities_location.dart';
-import 'package:rootasjey/state/colors.dart';
+import 'package:rootasjey/types/globals/globals.dart';
 import 'package:rootasjey/utils/app_logger.dart';
 import 'package:rootasjey/utils/constants.dart';
 import 'package:rootasjey/utils/fonts.dart';
@@ -131,16 +131,19 @@ class _LandingGitHubState extends State<LandingGitHub> {
   }
 
   Widget ppGitHubButton() {
+    final Color? textColor = Theme.of(context).textTheme.bodyText1?.color;
+    final underlineColor = textColor?.withOpacity(0.6) ?? Colors.black45;
+
     return Padding(
       padding: const EdgeInsets.only(top: 30.0),
       child: UnderlinedButton(
         onTap: () {
           launch(Constants.githubProfileUrl);
         },
-        underlineColor: stateColors.foreground.withOpacity(0.6),
+        underlineColor: underlineColor,
         trailing: Icon(
           UniconsLine.arrow_right,
-          color: stateColors.primary,
+          color: Globals.constants.colors.primary,
         ),
         child: Opacity(
           opacity: 0.6,
