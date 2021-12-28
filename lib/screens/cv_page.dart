@@ -2,7 +2,6 @@ import 'dart:typed_data';
 import 'package:beamer/beamer.dart';
 import 'package:file_saver/file_saver.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:rootasjey/components/avatar/better_avatar.dart';
 import 'package:rootasjey/components/application_bar/main_app_bar.dart';
@@ -190,21 +189,17 @@ class _CVPageState extends State<CVPage> {
   }
 
   Widget body() {
-    return Observer(
-      builder: (context) {
-        return Padding(
-          padding: const EdgeInsets.all(80.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              header(),
-              aboutMeSummary(),
-              skillsBlock(),
-              allExperiences(),
-            ],
-          ),
-        );
-      },
+    return Padding(
+      padding: const EdgeInsets.all(80.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          header(),
+          aboutMeSummary(),
+          skillsBlock(),
+          allExperiences(),
+        ],
+      ),
     );
   }
 

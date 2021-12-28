@@ -5,7 +5,6 @@ import 'package:file_picker_cross/file_picker_cross.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mime_type/mime_type.dart';
@@ -188,66 +187,64 @@ class _MyProfilePageState extends State<MyProfilePage> {
   }
 
   Widget avatar() {
-    return Observer(builder: (context) {
-      final String avatarUrl = getAvatarUrl();
+    final String avatarUrl = getAvatarUrl();
 
-      return Padding(
-        padding: const EdgeInsets.only(top: 120.0),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Opacity(
-              opacity: 0.6,
-              child: IconButton(
-                tooltip: "back".tr(),
-                onPressed: Beamer.of(context).beamBack,
-                icon: Icon(UniconsLine.arrow_left),
-              ),
+    return Padding(
+      padding: const EdgeInsets.only(top: 120.0),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Opacity(
+            opacity: 0.6,
+            child: IconButton(
+              tooltip: "back".tr(),
+              onPressed: Beamer.of(context).beamBack,
+              icon: Icon(UniconsLine.arrow_left),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 8.0,
-              ),
-              child: BetterAvatar(
-                size: 160.0,
-                image: NetworkImage(avatarUrl),
-                colorFilter: ColorFilter.mode(
-                  Colors.grey,
-                  BlendMode.saturation,
-                ),
-                onTap: () {
-                  final String originalUrl =
-                      Globals.state.getUserFirestore().pp.url.original;
-
-                  if (originalUrl.isEmpty) {
-                    return;
-                  }
-
-                  NavigationStateHelper.imageToEdit =
-                      ExtendedNetworkImageProvider(
-                    originalUrl,
-                    cache: true,
-                    cacheRawData: true,
-                  );
-
-                  Beamer.of(context).beamToNamed(
-                    DashboardLocationContent.editProfilePictureRoute,
-                  );
-                },
-              ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 8.0,
             ),
-            Opacity(
-              opacity: 0.6,
-              child: IconButton(
-                tooltip: "pp_upload".tr(),
-                onPressed: uploadPicture,
-                icon: Icon(UniconsLine.upload),
+            child: BetterAvatar(
+              size: 160.0,
+              image: NetworkImage(avatarUrl),
+              colorFilter: ColorFilter.mode(
+                Colors.grey,
+                BlendMode.saturation,
               ),
+              onTap: () {
+                final String originalUrl =
+                    Globals.state.getUserFirestore().pp.url.original;
+
+                if (originalUrl.isEmpty) {
+                  return;
+                }
+
+                NavigationStateHelper.imageToEdit =
+                    ExtendedNetworkImageProvider(
+                  originalUrl,
+                  cache: true,
+                  cacheRawData: true,
+                );
+
+                Beamer.of(context).beamToNamed(
+                  DashboardLocationContent.editProfilePictureRoute,
+                );
+              },
             ),
-          ],
-        ),
-      );
-    });
+          ),
+          Opacity(
+            opacity: 0.6,
+            child: IconButton(
+              tooltip: "pp_upload".tr(),
+              onPressed: uploadPicture,
+              icon: Icon(UniconsLine.upload),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget body() {

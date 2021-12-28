@@ -1,7 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:rootasjey/types/globals/globals.dart';
 import 'package:supercharged/supercharged.dart';
 
@@ -146,107 +145,102 @@ class _WebAdditionalFeaturesState extends State<WebAdditionalFeatures> {
     final Color foregroundColor =
         Theme.of(context).textTheme.bodyText1?.color ?? Colors.black;
 
-    return Observer(
-      builder: (context) {
-        return Padding(
-          padding: const EdgeInsets.only(
-            bottom: 16.0,
-          ),
-          child: Card(
-            elevation: selected! ? 4.0 : 0.0,
-            color: selected
-                ? Globals.constants.colors.primary
-                : Theme.of(context).cardTheme.color,
-            child: InkWell(
-              onTap: () {
-                if (selected) {
-                  countSelected = countSelected == 0 ? 0 : countSelected - 1;
+    return Padding(
+      padding: const EdgeInsets.only(
+        bottom: 16.0,
+      ),
+      child: Card(
+        elevation: selected! ? 4.0 : 0.0,
+        color: selected
+            ? Globals.constants.colors.primary
+            : Theme.of(context).cardTheme.color,
+        child: InkWell(
+          onTap: () {
+            if (selected) {
+              countSelected = countSelected == 0 ? 0 : countSelected - 1;
 
-                  additionalCost =
-                      additionalCost! > 0 ? additionalCost! - cost! : 0;
-                } else {
-                  countSelected = countSelected == featuresDataList.length
-                      ? featuresDataList.length
-                      : countSelected + 1;
+              additionalCost =
+                  additionalCost! > 0 ? additionalCost! - cost! : 0;
+            } else {
+              countSelected = countSelected == featuresDataList.length
+                  ? featuresDataList.length
+                  : countSelected + 1;
 
-                  additionalCost = additionalCost! < maxCost!
-                      ? additionalCost! + cost!
-                      : maxCost;
-                }
+              additionalCost = additionalCost! < maxCost!
+                  ? additionalCost! + cost!
+                  : maxCost;
+            }
 
-                setState(() {
-                  featuresDataList[index]['selected'] = !selected;
-                });
+            setState(() {
+              featuresDataList[index]['selected'] = !selected;
+            });
 
-                if (widget.onSelectionChanged != null) {
-                  final allSelected = featuresDataList
-                      .filter((feature) => feature['selected'] as bool)
-                      .toList();
+            if (widget.onSelectionChanged != null) {
+              final allSelected = featuresDataList
+                  .filter((feature) => feature['selected'] as bool)
+                  .toList();
 
-                  widget.onSelectionChanged!(additionalCost, allSelected);
-                }
-              },
-              child: Container(
-                width: 600.0,
-                padding: const EdgeInsets.all(20.0),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Opacity(
-                            opacity: 1,
-                            child: Text(
-                              label!,
-                              style: TextStyle(
-                                color: selected
-                                    ? Colors.white
-                                    : foregroundColor.withOpacity(0.6),
-                                fontSize: 22.0,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
+              widget.onSelectionChanged!(additionalCost, allSelected);
+            }
+          },
+          child: Container(
+            width: 600.0,
+            padding: const EdgeInsets.all(20.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Opacity(
+                        opacity: 1,
+                        child: Text(
+                          label!,
+                          style: TextStyle(
+                            color: selected
+                                ? Colors.white
+                                : foregroundColor.withOpacity(0.6),
+                            fontSize: 22.0,
+                            fontWeight: FontWeight.w500,
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              top: 8.0,
-                            ),
-                            child: Opacity(
-                              opacity: 0.6,
-                              child: Text(
-                                description!,
-                                style: TextStyle(
-                                  color:
-                                      selected ? Colors.white : foregroundColor,
-                                  fontSize: 16.0,
-                                  fontWeight: FontWeight.w300,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Opacity(
-                        opacity: 0.6,
-                        child: Icon(
-                          Icons.check_circle_outline,
-                          size: 30.0,
-                          color: selected ? Colors.white : foregroundColor,
                         ),
                       ),
-                    ),
-                  ],
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          top: 8.0,
+                        ),
+                        child: Opacity(
+                          opacity: 0.6,
+                          child: Text(
+                            description!,
+                            style: TextStyle(
+                              color: selected ? Colors.white : foregroundColor,
+                              fontSize: 16.0,
+                              fontWeight: FontWeight.w300,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Opacity(
+                    opacity: 0.6,
+                    child: Icon(
+                      Icons.check_circle_outline,
+                      size: 30.0,
+                      color: selected ? Colors.white : foregroundColor,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 }

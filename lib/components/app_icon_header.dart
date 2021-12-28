@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mobx/mobx.dart';
 import 'package:rootasjey/components/footer/footer.dart';
 import 'package:rootasjey/screens/home_page.dart';
 import 'package:rootasjey/types/globals/globals.dart';
@@ -20,17 +19,7 @@ class AppIconHeader extends StatefulWidget {
 }
 
 class _AppIconHeaderState extends State<AppIconHeader> {
-  Color? foreground;
-  ReactionDisposer? colorDisposer;
-
-  @override
-  void dispose() {
-    if (colorDisposer != null) {
-      colorDisposer!();
-    }
-
-    super.dispose();
-  }
+  Color? _foregroundColor;
 
   @override
   Widget build(BuildContext context) {
@@ -54,18 +43,16 @@ class _AppIconHeaderState extends State<AppIconHeader> {
             final colors = Globals.constants.colors;
 
             setState(() {
-              foreground = isHover
+              _foregroundColor = isHover
                   ? colors.primary
-                  : colors.getForeground(
-                      context,
-                    );
+                  : Theme.of(context).textTheme.bodyText1?.color;
             });
           },
           child: Text(
             '>r.',
             style: TextStyle(
               fontSize: 30.0,
-              color: foreground,
+              color: _foregroundColor,
             ),
           ),
         ),
