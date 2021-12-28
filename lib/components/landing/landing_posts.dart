@@ -79,12 +79,7 @@ class _LandingPostsState extends State<LandingPosts> {
         children: _posts.map((post) {
           return PostCard(
             post: post,
-            onTap: () {
-              Beamer.of(context).beamToNamed(
-                '$PostsLocation.route/${post.id}',
-                data: {'postId': post.id},
-              );
-            },
+            onTap: () => onGoToPost(post.id),
           );
         }).toList(),
       ),
@@ -100,7 +95,10 @@ class _LandingPostsState extends State<LandingPosts> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              MinPostCard(post: post),
+              MinPostCard(
+                post: post,
+                onTap: () => onGoToPost(post.id),
+              ),
               Divider(height: 40.0),
             ],
           );
@@ -197,5 +195,12 @@ class _LandingPostsState extends State<LandingPosts> {
     } catch (error) {
       appLogger.e(error);
     }
+  }
+
+  void onGoToPost(String postId) {
+    Beamer.of(context).beamToNamed(
+      '${PostsLocation.route}/${postId}',
+      data: {'postId': postId},
+    );
   }
 }

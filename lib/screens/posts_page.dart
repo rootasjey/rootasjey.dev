@@ -96,12 +96,7 @@ class _PostsPageState extends State<PostsPage> {
 
           return PostCard(
             post: post,
-            onTap: () {
-              Beamer.of(context).beamToNamed(
-                "${PostsLocation.route}/${post.id}",
-                data: {'postId': post.id},
-              );
-            },
+            onTap: () => onGoToPost(post.id),
           );
         },
         childCount: _posts.length,
@@ -120,14 +115,10 @@ class _PostsPageState extends State<PostsPage> {
             mainAxisSize: MainAxisSize.min,
             children: [
               MinPostCard(
-                  post: post,
-                  width: 420.0,
-                  onTap: () {
-                    Beamer.of(context).beamToNamed(
-                      "${PostsLocation.route}/${post.id}",
-                      data: {'postId': post.id},
-                    );
-                  }),
+                post: post,
+                width: 420.0,
+                onTap: () => onGoToPost(post.id),
+              ),
               Divider(height: 40.0),
             ],
           );
@@ -233,6 +224,13 @@ class _PostsPageState extends State<PostsPage> {
     } catch (error) {
       appLogger.e(error);
     }
+  }
+
+  void onGoToPost(String postId) {
+    Beamer.of(context).beamToNamed(
+      "${PostsLocation.route}/${postId}",
+      data: {'postId': postId},
+    );
   }
 
   bool onNotification(ScrollNotification notification) {
