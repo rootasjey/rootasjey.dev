@@ -3,7 +3,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:rootasjey/components/avatar/better_avatar.dart';
-import 'package:rootasjey/router/locations/about_location.dart';
+import 'package:rootasjey/router/locations/about_me_location.dart';
 import 'package:rootasjey/router/locations/cv_location.dart';
 import 'package:rootasjey/types/globals/globals.dart';
 import 'package:rootasjey/utils/constants.dart';
@@ -233,9 +233,9 @@ class _LandingHeroState extends State<LandingHero> {
             Colors.grey,
             BlendMode.saturation,
           ),
-          onTap: () {
-            Beamer.of(context).beamToNamed(AboutLocation.route);
-          },
+          onTap: () => Beamer.of(context).beamToNamed(
+            AboutMeLocation.route,
+          ),
         ),
       ),
     );
