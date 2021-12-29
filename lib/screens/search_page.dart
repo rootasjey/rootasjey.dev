@@ -168,7 +168,10 @@ class _SearchPageState extends State<SearchPage> {
     return Column(
       children: _projectsSuggestions.map((project) {
         return ProjectCard(
-          project: project,
+          titleValue: project.title,
+          summaryValue: project.summary,
+          authorId: project.author.id,
+          createdAt: project.createdAt,
           onTap: () {
             Beamer.of(context).beamToNamed(
               "${ProjectsLocation.route}/${project.id}",

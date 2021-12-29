@@ -115,7 +115,10 @@ class _ProjectsPageState extends State<ProjectsPage> {
           final project = _projects.elementAt(index);
 
           return ProjectCard(
-            project: project,
+            titleValue: project.title,
+            summaryValue: project.summary,
+            authorId: project.author.id,
+            createdAt: project.createdAt,
             onTap: () {
               Beamer.of(context).beamToNamed(
                 "${ProjectsLocation.route}/${project.id}",

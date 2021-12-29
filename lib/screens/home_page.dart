@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/landing/landing_contact.dart';
 import 'package:rootasjey/components/landing/landing_github.dart';
-import 'package:rootasjey/components/landing/landing_hero.dart';
+import 'package:rootasjey/components/landing/hero/landing_hero.dart';
 import 'package:rootasjey/components/landing/landing_inside.dart';
 import 'package:rootasjey/components/landing/landing_posts.dart';
 import 'package:rootasjey/components/landing/landing_quote.dart';

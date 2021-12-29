@@ -3,24 +3,34 @@ import 'package:flutter/material.dart';
 import 'package:rootasjey/components/project_card/card_author_pub.dart';
 import 'package:rootasjey/components/project_card/card_header.dart';
 import 'package:rootasjey/types/globals/globals.dart';
-import 'package:rootasjey/types/project.dart';
 import 'package:rootasjey/types/user_firestore.dart';
 import 'package:rootasjey/utils/app_logger.dart';
+import 'package:rootasjey/utils/fonts.dart';
 
 class ProjectCard extends StatefulWidget {
-  final VoidCallback? onTap;
-  final Widget? popupMenuButton;
-  final Project project;
-  final double width;
-  final double height;
-
   ProjectCard({
     this.onTap,
     this.popupMenuButton,
-    required this.project,
     this.width = 300.0,
     this.height = 300.0,
+    required this.titleValue,
+    this.backgroundUri,
+    this.authorId,
+    this.createdAt,
+    this.summaryValue,
+    this.bottomTitle = false,
   });
+
+  final VoidCallback? onTap;
+  final Widget? popupMenuButton;
+  final String? backgroundUri;
+  final String? authorId;
+  final double width;
+  final double height;
+  final DateTime? createdAt;
+  final String titleValue;
+  final String? summaryValue;
+  final bool bottomTitle;
 
   @override
   _ProjectCardState createState() => _ProjectCardState();
@@ -47,48 +57,81 @@ class _ProjectCardState extends State<ProjectCard> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8.0),
         ),
-        child: InkWell(
-          onTap: widget.onTap,
-          onHover: (isHover) {
-            setState(() {
-              _elevation = isHover ? 6.0 : 2.0;
-              _textColor = isHover ? Globals.constants.colors.secondary : null;
-            });
-          },
-          child: Stack(
-            children: [
-              CardHeader(
-                project: widget.project,
-                textColor: _textColor,
-              ),
-              if (widget.popupMenuButton != null)
-                Positioned(
-                  right: 20.0,
-                  bottom: 16.0,
-                  child: widget.popupMenuButton!,
+        clipBehavior: Clip.antiAlias,
+        child: Stack(
+          children: [
+            if (widget.backgroundUri?.isNotEmpty ?? false)
+              Positioned.fill(
+                child: Image.network(
+                  widget.backgroundUri!,
+                  fit: BoxFit.cover,
                 ),
-              CardAuthorAndPub(
-                date: widget.project.createdAt,
-                authorName: _authorName,
               ),
-            ],
-          ),
+            InkWell(
+              onTap: widget.onTap,
+              onHover: (isHover) {
+                setState(() {
+                  _elevation = isHover ? 6.0 : 2.0;
+                  _textColor =
+                      isHover ? Globals.constants.colors.secondary : null;
+                });
+              },
+              child: Stack(
+                children: [
+                  if (!widget.bottomTitle)
+                    CardHeader(
+                      titleValue: widget.titleValue,
+                      summaryValue: widget.summaryValue,
+                      textColor: _textColor,
+                    ),
+                  if (widget.popupMenuButton != null)
+                    Positioned(
+                      right: 20.0,
+                      bottom: 16.0,
+                      child: widget.popupMenuButton!,
+                    ),
+                  CardAuthorAndPub(
+                    date: widget.createdAt,
+                    authorName: _authorName,
+                  ),
+                  if (widget.bottomTitle)
+                    Align(
+                      alignment: Alignment.bottomLeft,
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                          left: 12.0,
+                          bottom: 8.0,
+                        ),
+                        child: Opacity(
+                          opacity: 0.6,
+                          child: Text(
+                            widget.titleValue,
+                            style: FontsUtils.mainStyle(
+                              fontSize: 18.0,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 
   void fetchAuthorName() async {
-    final authorId = widget.project.author.id;
-
-    if (authorId.isEmpty) {
+    if (widget.authorId?.isEmpty ?? false) {
       return;
     }
 
     try {
       final docSnap = await FirebaseFirestore.instance
           .collection('users')
-          .doc(authorId)
+          .doc(widget.authorId)
           .get();
 
       if (!docSnap.exists) {

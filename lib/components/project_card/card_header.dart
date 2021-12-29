@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/project_card/title_card.dart';
-import 'package:rootasjey/types/project.dart';
 import 'package:rootasjey/utils/fonts.dart';
 
 class CardHeader extends StatelessWidget {
   const CardHeader({
     Key? key,
-    required this.project,
     this.textColor,
+    required this.titleValue,
+    this.summaryValue,
   }) : super(key: key);
 
-  final Project project;
+  final String titleValue;
+  final String? summaryValue;
   final Color? textColor;
 
   @override
@@ -26,23 +27,24 @@ class CardHeader extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           TitleCard(
-            titleValue: project.title,
+            titleValue: titleValue,
             textColor: textColor,
           ),
-          Padding(
-            padding: const EdgeInsets.only(top: 16.0),
-            child: Opacity(
-              opacity: 0.6,
-              child: Text(
-                project.summary,
-                maxLines: 3,
-                overflow: TextOverflow.ellipsis,
-                style: FontsUtils.mainStyle(
-                  fontSize: 16.0,
+          if (summaryValue?.isNotEmpty ?? false)
+            Padding(
+              padding: const EdgeInsets.only(top: 16.0),
+              child: Opacity(
+                opacity: 0.6,
+                child: Text(
+                  summaryValue!,
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                  style: FontsUtils.mainStyle(
+                    fontSize: 16.0,
+                  ),
                 ),
               ),
             ),
-          ),
         ],
       ),
     );

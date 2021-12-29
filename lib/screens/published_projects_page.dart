@@ -189,7 +189,10 @@ class _PublishedProjectsPageState extends State<PublishedProjectsPage> {
               );
             },
             popupMenuButton: buildPopupMenuButton(project, index),
-            project: project,
+            titleValue: project.title,
+            summaryValue: project.summary,
+            authorId: project.author.id,
+            createdAt: project.createdAt,
           );
         },
         childCount: _projects.length,
