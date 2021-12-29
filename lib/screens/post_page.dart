@@ -4,7 +4,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:jiffy/jiffy.dart';
-import 'package:like_button/like_button.dart';
 import 'package:markdown/markdown.dart' as markdown;
 import 'package:rootasjey/actions/posts.dart';
 import 'package:rootasjey/components/author_header.dart';
@@ -12,6 +11,7 @@ import 'package:rootasjey/components/dates_header.dart';
 import 'package:rootasjey/components/application_bar/main_app_bar.dart';
 import 'package:rootasjey/components/markdown_viewer.dart';
 import 'package:rootasjey/components/sliver_loading_view.dart';
+import 'package:rootasjey/components/social_buttons_page.dart';
 import 'package:rootasjey/types/globals/globals.dart';
 import 'package:rootasjey/types/post.dart';
 import 'package:rootasjey/utils/app_logger.dart';
@@ -37,7 +37,7 @@ class PostPage extends StatefulWidget {
 
 class _PostPageState extends State<PostPage> {
   bool _isFabVisible = false;
-  bool _isLiked = false;
+  bool _isFav = false;
   bool _isLoading = false;
 
   final double _textWidth = 750.0;
@@ -50,7 +50,6 @@ class _PostPageState extends State<PostPage> {
   var _post = Post.empty();
 
   String _postData = '';
-  String _postShareUrl = '';
 
   @override
   initState() {
@@ -58,8 +57,6 @@ class _PostPageState extends State<PostPage> {
 
     fetchMeta();
     fetchContent();
-
-    _postShareUrl = "https://rootasjey.dev/posts/${widget.postId}";
 
     // Delay initialization.
     WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
@@ -276,82 +273,46 @@ class _PostPageState extends State<PostPage> {
   }
 
   Widget socialButtons() {
+    if (_isLoading) {
+      return Container();
+    }
+
     final size = MediaQuery.of(context).size;
     final top = size.height / 2 - 80.0;
 
-    return Positioned(
+    return SocialButtonsPage(
       top: top,
       left: 60.0,
-      child: Column(
-        children: [
-          if (_isFabVisible)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 4.0),
-              child: backButton(),
-            ),
-          IconButton(
-            tooltip: "copy_link".tr(),
-            onPressed: () {
-              Clipboard.setData(
-                ClipboardData(text: _postShareUrl),
-              );
+      showBackButton: _isFabVisible,
+      isFav: _isFav,
+      onCopyLink: () {
+        Clipboard.setData(
+          ClipboardData(text: "https://rootasjey.dev/posts/${widget.postId}"),
+        );
 
-              PostsActions.share(postId: _post.id);
+        PostsActions.share(postId: _post.id);
 
-              Snack.s(
-                context: context,
-                message: "copy_link_success".tr(),
-              );
-            },
-            icon: Opacity(
-              opacity: 0.6,
-              child: Icon(UniconsLine.link),
-            ),
-          ),
-          IconButton(
-            tooltip: "share_on_twitter".tr(),
-            onPressed: () {
-              final shareTags = _post.tags.join(",");
-              final baseShare = Constants.baseTwitterShareUrl;
-              final hashTags = Constants.twitterShareHashtags;
+        Snack.s(
+          context: context,
+          message: "copy_link_success".tr(),
+        );
+      },
+      onShareOnTwitter: () {
+        final shareTags = _post.tags.join(",");
+        final baseShare = Constants.baseTwitterShareUrl;
+        final hashTags = Constants.twitterShareHashtags;
 
-              launch("$baseShare$_postShareUrl$hashTags$shareTags");
+        final String postShareUrl =
+            "https://rootasjey.dev/posts/${widget.postId}";
 
-              PostsActions.share(postId: _post.id);
-            },
-            icon: Opacity(
-              opacity: 0.6,
-              child: Icon(UniconsLine.twitter),
-            ),
-          ),
-          IconButton(
-            onPressed: () {},
-            tooltip: "like".tr(),
-            padding: EdgeInsets.zero,
-            icon: LikeButton(
-              size: 24.0,
-              padding: EdgeInsets.zero,
-              isLiked: _isLiked,
-              likeBuilder: (bool isLiked) {
-                return Icon(
-                  isLiked ? UniconsLine.heart_break : UniconsLine.heart,
-                  color: isLiked
-                      ? Colors.pink
-                      : Theme.of(context)
-                          .textTheme
-                          .bodyText1
-                          ?.color
-                          ?.withOpacity(0.6),
-                );
-              },
-              onTap: (bool isLiked) async {
-                PostsActions.like(postId: _post.id, like: !isLiked);
-                return !isLiked;
-              },
-            ),
-          ),
-        ],
-      ),
+        launch("$baseShare$postShareUrl$hashTags$shareTags");
+
+        PostsActions.share(postId: _post.id);
+      },
+      onFav: (bool isFav) async {
+        PostsActions.like(postId: _post.id, like: !isFav);
+        return !isFav;
+      },
     );
   }
 

@@ -1,6 +1,8 @@
+import 'package:beamer/beamer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:markdown/markdown.dart' as markdown;
 import 'package:rootasjey/components/author_header.dart';
@@ -8,15 +10,18 @@ import 'package:rootasjey/components/dates_header.dart';
 import 'package:rootasjey/components/application_bar/main_app_bar.dart';
 import 'package:rootasjey/components/markdown_viewer.dart';
 import 'package:rootasjey/components/sliver_loading_view.dart';
+import 'package:rootasjey/components/social_buttons_page.dart';
 import 'package:rootasjey/types/globals/globals.dart';
 import 'package:rootasjey/types/project.dart';
 import 'package:rootasjey/utils/app_logger.dart';
 import 'package:rootasjey/utils/cloud.dart';
+import 'package:rootasjey/utils/constants.dart';
 import 'package:rootasjey/utils/fonts.dart';
 import 'package:rootasjey/utils/keybindings.dart';
 import 'package:rootasjey/utils/mesure_size.dart';
 import 'package:rootasjey/utils/snack.dart';
 import 'package:supercharged/supercharged.dart';
+import 'package:unicons/unicons.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ProjectPage extends StatefulWidget {
@@ -48,7 +53,7 @@ class _ProjectPageState extends State<ProjectPage> {
     fetchContent();
 
     // Delay initialization.
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
       _keyBindings.init(
         scrollController: _scrollController,
         pageHeight: 100.0,
@@ -76,18 +81,21 @@ class _ProjectPageState extends State<ProjectPage> {
             controller: _scrollController,
             child: Focus(
               descendantsAreFocusable: false,
-              child: CustomScrollView(
-                controller: _scrollController,
-                slivers: [
-                  MainAppBar(),
-                  body(),
-                  SliverPadding(
-                    padding: const EdgeInsets.only(
-                      bottom: 400.0,
+              child: Stack(children: [
+                CustomScrollView(
+                  controller: _scrollController,
+                  slivers: [
+                    MainAppBar(),
+                    body(),
+                    SliverPadding(
+                      padding: const EdgeInsets.only(
+                        bottom: 400.0,
+                      ),
                     ),
-                  ),
-                ],
-              ),
+                  ],
+                ),
+                socialButtons(),
+              ]),
             ),
           ),
         ),
@@ -108,6 +116,17 @@ class _ProjectPageState extends State<ProjectPage> {
             programmingLang(),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget backButton() {
+    return IconButton(
+      tooltip: "back".tr(),
+      onPressed: Beamer.of(context).beamBack,
+      icon: Opacity(
+        opacity: 0.6,
+        child: Icon(UniconsLine.arrow_left),
       ),
     );
   }
@@ -187,17 +206,21 @@ class _ProjectPageState extends State<ProjectPage> {
   }
 
   Widget header() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        title(),
-        summary(),
-        dates(),
-        allChips(),
-        AuthorHeader(
-          authorId: _project.author.id,
-        ),
-      ],
+    return Padding(
+      padding: const EdgeInsets.only(top: 60.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          backButton(),
+          title(),
+          summary(),
+          dates(),
+          allChips(),
+          AuthorHeader(
+            authorId: _project.author.id,
+          ),
+        ],
+      ),
     );
   }
 
@@ -257,6 +280,42 @@ class _ProjectPageState extends State<ProjectPage> {
     );
   }
 
+  Widget socialButtons() {
+    if (_isLoading) {
+      return Container();
+    }
+
+    final size = MediaQuery.of(context).size;
+    final top = size.height / 2 - 80.0;
+
+    return SocialButtonsPage(
+      top: top,
+      left: 60.0,
+      showBackButton: _isFabVisible,
+      onCopyLink: () {
+        Clipboard.setData(
+          ClipboardData(
+              text: "https://rootasjey.dev/posts/${widget.projectId}"),
+        );
+
+        Snack.s(
+          context: context,
+          message: "copy_link_success".tr(),
+        );
+      },
+      onShareOnTwitter: () {
+        final shareTags = _project.tags.join(",");
+        final baseShare = Constants.baseTwitterShareUrl;
+        final hashTags = Constants.twitterShareHashtags;
+
+        final String projectShareUri =
+            "https://rootasjey.dev/posts/${widget.projectId}";
+
+        launch("$baseShare$projectShareUri$hashTags$shareTags");
+      },
+    );
+  }
+
   Widget summary() {
     return Align(
       alignment: Alignment.topLeft,
@@ -293,14 +352,11 @@ class _ProjectPageState extends State<ProjectPage> {
   }
 
   Widget title() {
-    return Padding(
-      padding: const EdgeInsets.only(top: 60.0),
-      child: Text(
-        _project.title,
-        style: FontsUtils.mainStyle(
-          fontSize: 60.0,
-          fontWeight: FontWeight.w700,
-        ),
+    return Text(
+      _project.title,
+      style: FontsUtils.mainStyle(
+        fontSize: 60.0,
+        fontWeight: FontWeight.w700,
       ),
     );
   }
