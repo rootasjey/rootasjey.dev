@@ -6,6 +6,8 @@ import 'package:rootasjey/types/globals/globals.dart';
 import 'package:rootasjey/types/user_firestore.dart';
 import 'package:rootasjey/utils/app_logger.dart';
 import 'package:rootasjey/utils/fonts.dart';
+import 'package:simple_animations/simple_animations.dart';
+import 'package:supercharged/supercharged.dart';
 
 class ProjectCard extends StatefulWidget {
   ProjectCard({
@@ -36,14 +38,22 @@ class ProjectCard extends StatefulWidget {
   _ProjectCardState createState() => _ProjectCardState();
 }
 
-class _ProjectCardState extends State<ProjectCard> {
+class _ProjectCardState extends State<ProjectCard> with AnimationMixin {
   Color? _textColor;
   double _elevation = 2.0;
   String _authorName = '';
 
+  late Animation<double> _scaleAnimation;
+  late AnimationController _scaleController;
+
   @override
   void initState() {
     super.initState();
+
+    _scaleController = createController()..duration = 250.milliseconds;
+    _scaleAnimation =
+        0.6.tweenTo(1.0).animatedBy(_scaleController).curve(Curves.elasticOut);
+
     fetchAuthorName();
   }
 
@@ -52,72 +62,78 @@ class _ProjectCardState extends State<ProjectCard> {
     return SizedBox(
       width: widget.width,
       height: widget.height,
-      child: Card(
-        elevation: _elevation,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8.0),
-        ),
-        clipBehavior: Clip.antiAlias,
-        child: Stack(
-          children: [
-            if (widget.backgroundUri?.isNotEmpty ?? false)
-              Positioned.fill(
-                child: Image.network(
-                  widget.backgroundUri!,
-                  fit: BoxFit.cover,
-                ),
-              ),
-            InkWell(
-              onTap: widget.onTap,
-              onHover: (isHover) {
-                setState(() {
-                  _elevation = isHover ? 6.0 : 2.0;
-                  _textColor =
-                      isHover ? Globals.constants.colors.secondary : null;
-                });
-              },
-              child: Stack(
-                children: [
-                  if (!widget.bottomTitle)
-                    CardHeader(
-                      titleValue: widget.titleValue,
-                      summaryValue: widget.summaryValue,
-                      textColor: _textColor,
-                    ),
-                  if (widget.popupMenuButton != null)
-                    Positioned(
-                      right: 20.0,
-                      bottom: 16.0,
-                      child: widget.popupMenuButton!,
-                    ),
-                  CardAuthorAndPub(
-                    date: widget.createdAt,
-                    authorName: _authorName,
+      child: ScaleTransition(
+        scale: _scaleAnimation,
+        child: Card(
+          elevation: _elevation,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8.0),
+          ),
+          clipBehavior: Clip.antiAlias,
+          child: Stack(
+            children: [
+              if (widget.backgroundUri?.isNotEmpty ?? false)
+                Positioned.fill(
+                  child: Image.network(
+                    widget.backgroundUri!,
+                    fit: BoxFit.cover,
                   ),
-                  if (widget.bottomTitle)
-                    Align(
-                      alignment: Alignment.bottomLeft,
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                          left: 12.0,
-                          bottom: 8.0,
-                        ),
-                        child: Opacity(
-                          opacity: 0.6,
-                          child: Text(
-                            widget.titleValue,
-                            style: FontsUtils.mainStyle(
-                              fontSize: 18.0,
-                              fontWeight: FontWeight.w600,
+                ),
+              InkWell(
+                onTap: widget.onTap,
+                onHover: (isHover) {
+                  setState(() {
+                    _elevation = isHover ? 6.0 : 2.0;
+                    _textColor =
+                        isHover ? Globals.constants.colors.secondary : null;
+                    isHover
+                        ? _scaleController.forward()
+                        : _scaleController.reverse();
+                  });
+                },
+                child: Stack(
+                  children: [
+                    if (!widget.bottomTitle)
+                      CardHeader(
+                        titleValue: widget.titleValue,
+                        summaryValue: widget.summaryValue,
+                        textColor: _textColor,
+                      ),
+                    if (widget.popupMenuButton != null)
+                      Positioned(
+                        right: 20.0,
+                        bottom: 16.0,
+                        child: widget.popupMenuButton!,
+                      ),
+                    CardAuthorAndPub(
+                      date: widget.createdAt,
+                      authorName: _authorName,
+                    ),
+                    if (widget.bottomTitle)
+                      Align(
+                        alignment: Alignment.bottomLeft,
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                            left: 12.0,
+                            bottom: 8.0,
+                          ),
+                          child: Opacity(
+                            opacity: 0.6,
+                            child: Text(
+                              widget.titleValue,
+                              style: FontsUtils.mainStyle(
+                                fontSize: 18.0,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
