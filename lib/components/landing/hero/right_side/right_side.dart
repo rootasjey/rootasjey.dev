@@ -21,6 +21,9 @@ class RightSide extends StatelessWidget {
             alignment: WrapAlignment.start,
             children: getProjectsData().map((itemData) {
               return ProjectCard(
+                bottomTitle: true,
+                height: 150.0,
+                width: 150.0,
                 backgroundUri: itemData.backgroundUri,
                 titleValue: itemData.textValue,
                 onTap: () => Beamer.of(context).beamToNamed(itemData.routePath),
