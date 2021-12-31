@@ -1,19 +1,20 @@
 
 <p align="center">
-  <img src="./assets/images/app_icon/256.png" alt="rootasjey's website app icon"/>
+  <img src="./assets/images/app_icon/256.png" alt="rootasjey's universe app icon"/>
 </p>
 
 <p align="center">
-My personal & professional website.
+My personal universe.
 </p>
 
 <p align="center">
-  <img src="./screenshots/home.png" alt="rootasjey's wesite screenshot"/>
+  <img src="./screenshots/home.png" alt="rootasjey's universe"/>
 </p>
 
 ## Table of Contents
 
 - [Table of Contents](#table-of-contents)
+- [Quickstart](#quickstart)
 - [Presentation](#presentation)
 - [Blog](#blog)
 - [Projects](#projects)
@@ -21,6 +22,28 @@ My personal & professional website.
 - [Contact](#contact)
 - [Development](#development)
 - [Hire me](#hire-me)
+
+## Quickstart
+
+Follow these steps to run the project on your local environment.
+
+Prerequisites:
+Make sure you have Git & Flutter installed on your computer.
+* [Flutter](https://flutter.dev)
+* [Git](https://git-scm.com)
+* Create a [Firebase project](https://firebase.com) to obtain your own API keys
+
+Run the project:
+* Clone the project locally with `git clone https://github.com/rootasjey/rootasjey.dev.git`
+* `cd rootasjey.dev`
+
+Fill in the Firebase key values in
+* `web/index.html`
+* `lib/firebase_options.dart`
+
+Then run:
+* `flutter pub get`
+* `flutter run -d chrome`
 
 ## Presentation
 

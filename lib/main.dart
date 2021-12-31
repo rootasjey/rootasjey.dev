@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:rootasjey/app.dart';
+import 'package:rootasjey/firebase_options.dart';
 import 'package:rootasjey/utils/app_storage.dart';
 import 'package:rootasjey/utils/search.dart';
 import 'package:url_strategy/url_strategy.dart';
@@ -18,7 +19,9 @@ void main() async {
   });
 
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   await appStorage.initialize();
 
   await EasyLocalization.ensureInitialized();
