@@ -1,0 +1,1 @@
+enum EnumCoverWidth { full, center }

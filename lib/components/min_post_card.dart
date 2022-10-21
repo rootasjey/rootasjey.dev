@@ -1,21 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
-import 'package:rootasjey/types/globals/globals.dart';
+import 'package:loggy/loggy.dart';
+import 'package:rootasjey/globals/constants.dart';
 import 'package:rootasjey/types/post.dart';
-import 'package:rootasjey/types/user_firestore.dart';
-import 'package:rootasjey/utils/app_logger.dart';
+import 'package:rootasjey/types/user/user_firestore.dart';
 import 'package:unicons/unicons.dart';
 
 /// Minimal post card.
 class MinPostCard extends StatefulWidget {
-  final Post post;
-  final double? width;
-  final EdgeInsets contentPadding;
-  final VoidCallback? onTap;
-  final PopupMenuButton<dynamic>? popupMenuButton;
-
-  MinPostCard({
+  const MinPostCard({
+    super.key,
     required this.post,
     this.contentPadding = const EdgeInsets.all(8.0),
     this.width,
@@ -23,11 +18,16 @@ class MinPostCard extends StatefulWidget {
     this.popupMenuButton,
   });
 
+  final Post post;
+  final double? width;
+  final EdgeInsets contentPadding;
+  final VoidCallback? onTap;
+  final PopupMenuButton<dynamic>? popupMenuButton;
   @override
-  _MinPostCardState createState() => _MinPostCardState();
+  State<StatefulWidget> createState() => _MinPostCardState();
 }
 
-class _MinPostCardState extends State<MinPostCard> {
+class _MinPostCardState extends State<MinPostCard> with UiLoggy {
   double? _elevation;
 
   String? _authorName = '';
@@ -66,7 +66,7 @@ class _MinPostCardState extends State<MinPostCard> {
                   padding: const EdgeInsets.only(left: 24.0),
                   child: Icon(
                     UniconsLine.arrow_right,
-                    color: Globals.constants.colors.primary,
+                    color: Constants.colors.primary,
                   ),
                 ),
               ],
@@ -90,7 +90,7 @@ class _MinPostCardState extends State<MinPostCard> {
           ),
           child: Text(
             postHeadline.title,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 24.0,
               fontWeight: FontWeight.w700,
             ),
@@ -105,7 +105,7 @@ class _MinPostCardState extends State<MinPostCard> {
             opacity: 0.6,
             child: Text(
               '$_authorName - ${Jiffy(postHeadline.createdAt).fromNow()}',
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 15.0,
                 fontWeight: FontWeight.w300,
               ),
@@ -157,7 +157,7 @@ class _MinPostCardState extends State<MinPostCard> {
       final data = docSnap.data()!;
       data['id'] = docSnap.id;
 
-      final user = UserFirestore.fromJSON(data);
+      final user = UserFirestore.fromMap(data);
 
       // ?NOTE: Prevent setState if not mounted.
       // This is due to each card having its own fetch & state,
@@ -171,7 +171,7 @@ class _MinPostCardState extends State<MinPostCard> {
 
       setState(() => _authorName = user.name);
     } catch (error) {
-      appLogger.e(error);
+      loggy.error(error);
     }
   }
 }

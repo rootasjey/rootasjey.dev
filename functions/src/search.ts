@@ -1,179 +1,153 @@
-import * as functions from 'firebase-functions';
-import algolia from 'algoliasearch';
-import { cloudRegions } from './utils';
+import * as functions from "firebase-functions";
+import algolia from "algoliasearch";
+import {cloudRegions, USER_PUBLIC_FIELDS_BASE_DOC} from "./utils";
 
 const env = functions.config();
 
 const client = algolia(env.algolia.appid, env.algolia.apikey);
-const postsIndex = client.initIndex('posts');
-const projectsIndex = client.initIndex('projects');
-const usersIndex = client.initIndex('users');
+const postsIndex = client.initIndex("posts");
+const projectsIndex = client.initIndex("projects");
+const usersIndex = client.initIndex("users");
 
 // Post index
 // ----------
 export const onIndexPost = functions
-  .region(cloudRegions.eu)
-  .firestore
-  .document('posts/{postId}')
-  .onCreate(async (snapshot) => {
-    const data = snapshot.data();
-    const objectID = snapshot.id;
+    .region(cloudRegions.eu)
+    .firestore
+    .document("posts/{postId}")
+    .onCreate(async (snapshot) => {
+      const data = snapshot.data();
+      const objectID = snapshot.id;
 
-    const published = data.published;
-    const referenced = data.referenced;
+      if (!data.visibility || data.visibility !== "public") {
+        return;
+      }
 
-    if (!published || !referenced) {
-      return;
-    }
-
-    return postsIndex.saveObject({
-      objectID,
-      ...data,
-    })
-  });
+      return postsIndex.saveObject({
+        objectID,
+        ...data,
+      });
+    });
 
 export const onReIndexPost = functions
-  .region(cloudRegions.eu)
-  .firestore
-  .document('posts/{postId}')
-  .onUpdate(async (snapshot) => {
-    const beforeData = snapshot.before.data();
-    const afterData = snapshot.after.data();
-    const objectID = snapshot.after.id;
+    .region(cloudRegions.eu)
+    .firestore
+    .document("posts/{postId}")
+    .onUpdate(async (snapshot) => {
+      const beforeData = snapshot.before.data();
+      const afterData = snapshot.after.data();
+      const objectID = snapshot.after.id;
 
-    const beforePublished = beforeData.published;
-    const beforeReferenced = beforeData.referenced;
+      const beforeVisibility = beforeData.visibility;
+      const afterVisibility = afterData.visibility;
 
-    const afterPublished = afterData.published;
-    const afterReferenced = afterData.referenced;
+      if (beforeVisibility !== afterVisibility &&
+          afterVisibility !== "public") {
+        return postsIndex.deleteObject(objectID);
+      }
 
-    if (((beforePublished !== afterPublished) && !afterPublished) || 
-      ((beforeReferenced !== afterReferenced) && !afterReferenced)) {
-      return postsIndex.deleteObject(objectID);
-    }
-
-    return postsIndex.saveObject({
-      objectID,
-      ...afterData,
-    })
-  });
+      return postsIndex.saveObject({
+        objectID,
+        ...afterData,
+      });
+    });
 
 export const onUnIndexPost = functions
-  .region(cloudRegions.eu)
-  .firestore
-  .document('posts/{postId}')
-  .onDelete(async (snapshot) => {
-    const objectID = snapshot.id;
-    return postsIndex.deleteObject(objectID);
-  });
+    .region(cloudRegions.eu)
+    .firestore
+    .document("posts/{postId}")
+    .onDelete(async (snapshot) => {
+      const objectID = snapshot.id;
+      return postsIndex.deleteObject(objectID);
+    });
 
 // Projects index
 // --------------
 export const onIndexProject = functions
-  .region(cloudRegions.eu)
-  .firestore
-  .document('projects/{projectId}')
-  .onCreate(async (snapshot) => {
-    const data = snapshot.data();
-    const objectID = snapshot.id;
+    .region(cloudRegions.eu)
+    .firestore
+    .document("projects/{projectId}")
+    .onCreate(async (snapshot) => {
+      const data = snapshot.data();
+      const objectID = snapshot.id;
 
-    const published = data.published;
-    const referenced = data.referenced;
+      if (!data.visibility || data.visibility !== "public") {
+        return;
+      }
 
-    if (!published || !referenced) {
-      return;
-    }
-
-    return projectsIndex.saveObject({
-      objectID,
-      ...data,
-    })
-  });
+      return projectsIndex.saveObject({
+        objectID,
+        ...data,
+      });
+    });
 
 export const onReIndexProject = functions
-  .region(cloudRegions.eu)
-  .firestore
-  .document('projects/{projectId}')
-  .onUpdate(async (snapshot) => {
-    const beforeData = snapshot.before.data();
-    const afterData = snapshot.after.data();
-    const objectID = snapshot.after.id;
+    .region(cloudRegions.eu)
+    .firestore
+    .document("projects/{projectId}")
+    .onUpdate(async (snapshot) => {
+      const beforeData = snapshot.before.data();
+      const afterData = snapshot.after.data();
+      const objectID = snapshot.after.id;
 
-    // Prevent update index on stats changes
-    let statsChanged = false;
+      const beforeVisibility = beforeData.visibility;
+      const afterVisibility = afterData.visibility;
 
-    if ((beforeData.stats && afterData.stats)
-      && (beforeData.stats.likes !== afterData.stats.likes
-        || beforeData.stats.shares !== afterData.stats.shares)) {
-      statsChanged = true;
-    }
+      if (beforeVisibility !== afterVisibility &&
+          afterVisibility !== "public") {
+        return postsIndex.deleteObject(objectID);
+      }
 
-    if (statsChanged) {
-      return;
-    }
-
-    const beforePublished = beforeData.published;
-    const beforeReferenced = beforeData.referenced;
-
-    const afterPublished = afterData.published;
-    const afterReferenced = afterData.referenced;
-
-    if (((beforePublished !== afterPublished) && !afterPublished) ||
-      ((beforeReferenced !== afterReferenced) && !afterReferenced)) {
-      return postsIndex.deleteObject(objectID);
-    }
-
-
-    return projectsIndex.saveObject({
-      objectID,
-      ...afterData,
-    })
-  });
+      return projectsIndex.saveObject({
+        objectID,
+        ...afterData,
+      });
+    });
 
 export const onUnIndexProject = functions
-  .region(cloudRegions.eu)
-  .firestore
-  .document('projects/{projectId}')
-  .onDelete(async (snapshot) => {
-    const objectID = snapshot.id;
-    return projectsIndex.deleteObject(objectID);
-  });
+    .region(cloudRegions.eu)
+    .firestore
+    .document("projects/{projectId}")
+    .onDelete(async (snapshot) => {
+      const objectID = snapshot.id;
+      return projectsIndex.deleteObject(objectID);
+    });
 
 // Users index
 // --------------
 export const onIndexUser = functions
-  .region(cloudRegions.eu)
-  .firestore
-  .document('users/{userId}')
-  .onCreate(async (snapshot) => {
-    const data = snapshot.data();
-    const objectID = snapshot.id;
+    .region(cloudRegions.eu)
+    .firestore
+    .document(USER_PUBLIC_FIELDS_BASE_DOC)
+    .onCreate(async (snapshot) => {
+      const data = snapshot.data();
+      const objectID = snapshot.id;
 
-    return usersIndex.saveObject({
-      objectID,
-      ...data,
-    })
-  });
+      return usersIndex.saveObject({
+        objectID,
+        ...data,
+      });
+    });
 
 export const onReIndexUser = functions
-  .region(cloudRegions.eu)
-  .firestore
-  .document('users/{userId}')
-  .onUpdate(async (snapshot) => {
-    const afterData = snapshot.after.data();
-    const objectID = snapshot.after.id;
+    .region(cloudRegions.eu)
+    .firestore
+    .document(USER_PUBLIC_FIELDS_BASE_DOC)
+    .onUpdate(async (snapshot) => {
+      const afterData = snapshot.after.data();
+      const objectID = snapshot.after.id;
 
-    return usersIndex.saveObject({
-      objectID,
-      ...afterData,
-    })
-  });
+      return usersIndex.saveObject({
+        objectID,
+        ...afterData,
+      });
+    });
 
 export const onUnIndexUser = functions
-  .region(cloudRegions.eu)
-  .firestore
-  .document('users/{userId}')
-  .onDelete(async (snapshot) => {
-    const objectID = snapshot.id;
-    return usersIndex.deleteObject(objectID);
-  });
+    .region(cloudRegions.eu)
+    .firestore
+    .document(USER_PUBLIC_FIELDS_BASE_DOC)
+    .onDelete(async (snapshot) => {
+      const objectID = snapshot.id;
+      return usersIndex.deleteObject(objectID);
+    });

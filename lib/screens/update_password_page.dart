@@ -2,22 +2,24 @@ import 'package:beamer/beamer.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:rootasjey/components/animated_app_icon.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:rootasjey/components/fade_in_y.dart';
-import 'package:rootasjey/components/application_bar/main_app_bar.dart';
-import 'package:rootasjey/types/globals/globals.dart';
-import 'package:rootasjey/utils/app_storage.dart';
-import 'package:rootasjey/utils/fonts.dart';
+import 'package:rootasjey/globals/app_state.dart';
+import 'package:rootasjey/globals/constants.dart';
 import 'package:rootasjey/utils/snack.dart';
+import 'package:rootasjey/utils/storage_utils.dart';
 import 'package:supercharged/supercharged.dart';
 import 'package:unicons/unicons.dart';
 
-class UpdatePasswordPage extends StatefulWidget {
+class UpdatePasswordPage extends ConsumerStatefulWidget {
+  const UpdatePasswordPage({super.key});
+
   @override
-  _UpdatePasswordPageState createState() => _UpdatePasswordPageState();
+  ConsumerState<ConsumerStatefulWidget> createState() =>
+      _UpdatePasswordPageState();
 }
 
-class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
+class _UpdatePasswordPageState extends ConsumerState<UpdatePasswordPage> {
   bool isCompleted = false;
   bool isUpdating = false;
 
@@ -39,7 +41,6 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
     return Scaffold(
       body: CustomScrollView(
         slivers: <Widget>[
-          MainAppBar(),
           header(),
           body(),
         ],
@@ -70,7 +71,7 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
                 padding: const EdgeInsets.only(top: 80.0),
                 child: Icon(
                   UniconsLine.check,
-                  color: Globals.constants.colors.validation,
+                  color: Constants.colors.validation,
                   size: 80.0,
                 ),
               ),
@@ -79,7 +80,7 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
                 child: Text(
                   "password_update_success".tr(),
                   textAlign: TextAlign.center,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 20.0,
                   ),
                 ),
@@ -103,9 +104,9 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
             textInputAction: TextInputAction.next,
             decoration: InputDecoration(
               fillColor: Colors.white,
-              focusColor: Globals.constants.colors.clairPink,
+              focusColor: Constants.colors.clairPink,
               labelText: "password_current".tr(),
-              border: OutlineInputBorder(),
+              border: const OutlineInputBorder(),
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 8.0,
               ),
@@ -145,7 +146,7 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
                       opacity: 0.8,
                       child: IconButton(
                         onPressed: Beamer.of(context).beamBack,
-                        icon: Icon(UniconsLine.arrow_left),
+                        icon: const Icon(UniconsLine.arrow_left),
                       ),
                     ),
                   ),
@@ -156,7 +157,7 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
                         opacity: 0.4,
                         child: Text(
                           "settings".tr().toUpperCase(),
-                          style: FontsUtils.mainStyle(
+                          style: const TextStyle(
                             fontSize: 16.0,
                             fontWeight: FontWeight.w400,
                           ),
@@ -166,7 +167,7 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
                         opacity: 0.8,
                         child: Text(
                           "password_update".tr(),
-                          style: FontsUtils.mainStyle(
+                          style: const TextStyle(
                             fontSize: 50.0,
                             fontWeight: FontWeight.w500,
                           ),
@@ -179,7 +180,7 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
                           opacity: 0.5,
                           child: Text(
                             "password_update_description".tr(),
-                            style: FontsUtils.mainStyle(
+                            style: const TextStyle(
                               fontSize: 16.0,
                               fontWeight: FontWeight.w500,
                             ),
@@ -199,7 +200,7 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
 
   Widget helpCard() {
     return Container(
-      padding: EdgeInsets.only(
+      padding: const EdgeInsets.only(
         left: 25.0,
         right: 25.0,
         top: 80.0,
@@ -207,22 +208,22 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
       ),
       width: 378.0,
       child: Card(
-        color: Globals.constants.colors.clairPink,
+        color: Constants.colors.clairPink,
         child: ListTile(
           contentPadding: const EdgeInsets.all(16.0),
-          leading: Icon(UniconsLine.question),
+          leading: const Icon(UniconsLine.question),
           title: Opacity(
             opacity: 0.6,
             child: Text(
               "password_choosing_good".tr(),
-              style: FontsUtils.mainStyle(
+              style: const TextStyle(
                 fontWeight: FontWeight.w600,
               ),
             ),
           ),
           subtitle: Text(
             "password_choosing_good_desc".tr(),
-            style: FontsUtils.mainStyle(
+            style: const TextStyle(
               fontSize: 14.0,
               fontWeight: FontWeight.w500,
             ),
@@ -258,8 +259,8 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
               beginY: beginY,
               child: validationButton(),
             ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 200.0),
+            const Padding(
+              padding: EdgeInsets.only(bottom: 200.0),
             ),
           ],
         ),
@@ -283,12 +284,12 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
             focusNode: newPasswordNode,
             decoration: InputDecoration(
               fillColor: Colors.white,
-              focusColor: Globals.constants.colors.clairPink,
+              focusColor: Constants.colors.clairPink,
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 8.0,
               ),
               labelText: "password_new".tr(),
-              border: OutlineInputBorder(
+              border: const OutlineInputBorder(
                 borderSide: BorderSide(
                   width: 2.0,
                 ),
@@ -315,7 +316,7 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
   Widget textTitle() {
     return Text(
       "password_update".tr(),
-      style: TextStyle(
+      style: const TextStyle(
         fontSize: 35.0,
       ),
     );
@@ -328,12 +329,11 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            AnimatedAppIcon(),
             Padding(
               padding: const EdgeInsets.only(top: 40.0),
               child: Text(
                 "password_updating".tr(),
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 20.0,
                 ),
               ),
@@ -348,7 +348,7 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
     return ElevatedButton(
       onPressed: updatePassword,
       style: ElevatedButton.styleFrom(
-        primary: Colors.black87,
+        backgroundColor: Colors.black87,
       ),
       child: SizedBox(
         width: 300.0,
@@ -359,13 +359,13 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
               padding: const EdgeInsets.all(14.0),
               child: Text(
                 "password_update".tr().toUpperCase(),
-                style: FontsUtils.mainStyle(
+                style: const TextStyle(
                   fontSize: 15.0,
                   fontWeight: FontWeight.bold,
                 ),
               ),
             ),
-            Icon(UniconsLine.check),
+            const Icon(UniconsLine.check),
           ],
         ),
       ),
@@ -377,7 +377,7 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
       return;
     }
 
-    final userAuth = Globals.state.getUserAuth();
+    final userAuth = ref.read(AppState.userProvider).authUser;
     if (userAuth == null) {
       return;
     }
@@ -399,7 +399,7 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
       }
 
       await authUserResult.updatePassword(newPassword);
-      appStorage.setPassword(newPassword);
+      StorageUtils.setPassword(newPassword);
 
       setState(() {
         isUpdating = false;
@@ -408,8 +408,9 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
     } catch (error) {
       setState(() => isUpdating = false);
 
-      Snack.e(
-        context: context,
+      Snack.error(
+        context,
+        title: "password".tr(),
         message: "password_update_error".tr(),
       );
     }
@@ -417,8 +418,9 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
 
   bool checkInputsFormat() {
     if (password.isEmpty) {
-      Snack.e(
-        context: context,
+      Snack.error(
+        context,
+        title: "password".tr(),
         message: "password_empty_forbidden".tr(),
       );
 
@@ -426,8 +428,9 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
     }
 
     if (newPassword.isEmpty) {
-      Snack.e(
-        context: context,
+      Snack.error(
+        context,
+        title: "password".tr(),
         message: "password_empty_forbidden".tr(),
       );
 
@@ -442,17 +445,17 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
       context: context,
       builder: (context) {
         return SimpleDialog(
-          backgroundColor: Globals.constants.colors.clairPink,
+          backgroundColor: Constants.colors.clairPink,
           title: Text(
             "password_tips".tr(),
-            style: FontsUtils.mainStyle(
+            style: const TextStyle(
               fontSize: 14.0,
               fontWeight: FontWeight.w600,
             ),
           ),
           children: <Widget>[
             Divider(
-              color: Globals.constants.colors.secondary,
+              color: Constants.colors.secondary,
               thickness: 1.0,
             ),
             Padding(
@@ -461,9 +464,9 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text("password_tips_1".tr()),
-                  Padding(padding: const EdgeInsets.only(top: 15.0)),
+                  const Padding(padding: EdgeInsets.only(top: 15.0)),
                   Text("password_tips_2".tr()),
-                  Padding(padding: const EdgeInsets.only(top: 15.0)),
+                  const Padding(padding: EdgeInsets.only(top: 15.0)),
                   Text("password_tips_3".tr()),
                 ],
               ),

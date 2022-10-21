@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:rootasjey/utils/app_logger.dart';
+import 'package:loggy/loggy.dart';
 
 /// Helper for date and time conversions.
 class DateHelper {
@@ -24,7 +24,7 @@ class DateHelper {
         date = DateTime.fromMillisecondsSinceEpoch(data['_seconds'] * 1000);
       }
     } catch (error) {
-      appLogger.e(error);
+      GlobalLoggy().loggy.error(error);
     }
 
     return date;

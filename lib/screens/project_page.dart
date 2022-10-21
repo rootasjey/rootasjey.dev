@@ -1,419 +1,899 @@
+import 'dart:async';
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:beamer/beamer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:jiffy/jiffy.dart';
-import 'package:markdown/markdown.dart' as markdown;
-import 'package:rootasjey/components/author_header.dart';
-import 'package:rootasjey/components/dates_header.dart';
-import 'package:rootasjey/components/application_bar/main_app_bar.dart';
-import 'package:rootasjey/components/markdown_viewer.dart';
-import 'package:rootasjey/components/sliver_loading_view.dart';
-import 'package:rootasjey/components/social_buttons_page.dart';
-import 'package:rootasjey/types/globals/globals.dart';
+import 'package:flutter_improved_scrolling/flutter_improved_scrolling.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:loggy/loggy.dart';
+import 'package:lottie/lottie.dart';
+import 'package:rootasjey/components/buttons/circle_button.dart';
+import 'package:rootasjey/components/buttons/fab_to_top.dart';
+import 'package:rootasjey/components/dialogs/delete_dialog.dart';
+import 'package:rootasjey/components/loading_view.dart';
+import 'package:rootasjey/components/upload_panel/upload_panel.dart';
+import 'package:rootasjey/globals/app_state.dart';
+import 'package:rootasjey/globals/utilities.dart';
+import 'package:rootasjey/router/locations/home_location.dart';
+import 'package:rootasjey/screens/post/post_cover.dart';
+import 'package:rootasjey/screens/post/post_footer.dart';
+import 'package:rootasjey/screens/post/post_page_body.dart';
+import 'package:rootasjey/screens/post/post_page_header.dart';
+import 'package:rootasjey/screens/post/post_settings.dart';
+import 'package:rootasjey/types/alias/firestore/document_map.dart';
+import 'package:rootasjey/types/alias/firestore/document_snapshot_map.dart';
+import 'package:rootasjey/types/alias/json_alias.dart';
+import 'package:rootasjey/types/enums/enum_content_visibility.dart';
+import 'package:rootasjey/types/enums/enum_cover_corner.dart';
+import 'package:rootasjey/types/enums/enum_cover_width.dart';
 import 'package:rootasjey/types/project.dart';
-import 'package:rootasjey/utils/app_logger.dart';
-import 'package:rootasjey/utils/cloud.dart';
-import 'package:rootasjey/utils/constants.dart';
-import 'package:rootasjey/utils/fonts.dart';
-import 'package:rootasjey/utils/keybindings.dart';
-import 'package:rootasjey/utils/mesure_size.dart';
-import 'package:rootasjey/utils/snack.dart';
-import 'package:supercharged/supercharged.dart';
+import 'package:rootasjey/types/user/user_firestore.dart';
+import 'package:rootasjey/types/user/user_rights.dart';
+import 'package:simple_animations/simple_animations.dart';
+import 'package:super_editor/super_editor.dart';
+import 'package:super_editor_markdown/super_editor_markdown.dart';
 import 'package:unicons/unicons.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:verbal_expressions/verbal_expressions.dart';
 
-class ProjectPage extends StatefulWidget {
+class ProjectPage extends ConsumerStatefulWidget {
+  const ProjectPage({
+    super.key,
+    required this.projectId,
+  });
+
   final String projectId;
 
-  ProjectPage({required this.projectId});
-
   @override
-  _ProjectPageState createState() => _ProjectPageState();
+  ConsumerState<ProjectPage> createState() => _ProjectPageState();
 }
 
-class _ProjectPageState extends State<ProjectPage> {
-  bool _isFabVisible = false;
-  bool _isLoading = false;
+class _ProjectPageState extends ConsumerState<ProjectPage>
+    with UiLoggy, AnimationMixin {
+  late Animation<double> angle;
 
-  final _scrollController = ScrollController();
-  final double _textWidth = 800.0;
+  /// True if the project is loading.
+  bool _loading = false;
 
-  final _focusNode = FocusNode();
+  /// True if we're trying to save the project.
+  bool _saving = false;
 
-  var _keyBindings = KeyBindings();
-  var _project = Project.empty();
-  var _projectData = '';
+  /// True if we're trying to delete the project.
+  bool _deleting = false;
+
+  bool _showAddTag = false;
+
+  bool _hideFab = true;
+
+  bool _showSettings = false;
+
+  bool _confirmDeletePost = false;
+
+  final Duration _duration = const Duration(
+    milliseconds: 250,
+  );
+
+  String _content = "";
+
+  /// Firestore collection name.
+  final String _collectionName = "projects";
+
+  /// Visible if the authenticated user has the right to edit this post.
+  DocumentEditor _documentEditor = DocumentEditor(document: MutableDocument());
+
+  /// Post's content.
+  MutableDocument _document = MutableDocument();
+
+  /// Page project.
+  Project _project = Project.empty();
+
+  final RegExp _wordsRegex = RegExp(r"[\w-._]+");
+
+  /// Page scroll controller.
+  final ScrollController _pageScrollController = ScrollController();
+
+  /// Post's document subcription.
+  /// We use this stream to listen to document fields updates.
+  StreamSubscription<DocumentSnapshot<Map<String, dynamic>>>?
+      _projectSubscription;
+
+  /// Input controller for project's title (metadata).
+  final TextEditingController _nameController = TextEditingController();
+
+  /// Input controller for project's summary (metadata).
+  final TextEditingController _summaryController = TextEditingController();
+  final TextEditingController _tagInputController = TextEditingController();
+
+  /// Used to add delay to post's metadata update.
+  Timer? _metadataUpdateTimer;
+
+  /// Used to add delay to post's content update.
+  Timer? _contentUpdateTimer;
+
+  final VerbalExpression _verbalExp = VerbalExpression()..space();
 
   @override
-  initState() {
+  void initState() {
     super.initState();
-    fetchMeta();
-    fetchContent();
-
-    // Delay initialization.
-    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
-      _keyBindings.init(
-        scrollController: _scrollController,
-        pageHeight: 100.0,
-      );
-    });
+    angle = Tween(begin: 0.0, end: 60.0).animate(controller);
+    fetchMetadata();
   }
 
   @override
   void dispose() {
+    _metadataUpdateTimer?.cancel();
+    _contentUpdateTimer?.cancel();
+    _nameController.dispose();
+    _summaryController.dispose();
+    _document.removeListener(contentListener);
+    _document.dispose();
+    _projectSubscription?.cancel();
     super.dispose();
-    _focusNode.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      floatingActionButton: fab(),
-      body: RawKeyboardListener(
-        autofocus: true,
-        focusNode: _focusNode,
-        onKey: (RawKeyEvent key) => _keyBindings.onKey(key, context),
-        child: NotificationListener<ScrollNotification>(
-          onNotification: onNotification,
-          child: Scrollbar(
-            controller: _scrollController,
-            child: Focus(
-              descendantsAreFocusable: false,
-              child: Stack(children: [
-                CustomScrollView(
-                  controller: _scrollController,
-                  slivers: [
-                    MainAppBar(),
-                    body(),
-                    SliverPadding(
-                      padding: const EdgeInsets.only(
-                        bottom: 400.0,
-                      ),
-                    ),
-                  ],
-                ),
-                socialButtons(),
-              ]),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
+    final UserFirestore? userFirestore =
+        ref.watch(AppState.userProvider).firestoreUser;
 
-  Widget allChips() {
-    return Padding(
-      padding: const EdgeInsets.only(top: 12.0),
-      child: Align(
-        alignment: Alignment.topLeft,
-        child: Wrap(
-          spacing: 16.0,
-          children: [
-            tags(),
-            links(),
-            programmingLang(),
-          ],
-        ),
-      ),
-    );
-  }
+    final UserRights rights = userFirestore?.rights ?? const UserRights();
 
-  Widget backButton() {
-    return IconButton(
-      tooltip: "back".tr(),
-      onPressed: Beamer.of(context).beamBack,
-      icon: Opacity(
-        opacity: 0.6,
-        child: Icon(UniconsLine.arrow_left),
-      ),
-    );
-  }
+    final bool canManagePosts = rights.managePosts;
+    final bool isMobileSize = Utilities.size.isMobileSize(context);
 
-  Widget body() {
-    if (_isLoading) {
-      return SliverLoadingView(
-        title: "loading_project".tr(),
-        padding: const EdgeInsets.only(top: 200.0),
+    if (_deleting) {
+      return LoadingView.scaffold(
+        message: "Deleting ${_project.name}...",
       );
     }
 
-    final bool isNarrow = MediaQuery.of(context).size.width < 500.0;
+    const double maxWidth = 640.0;
 
-    return SliverList(
-      delegate: SliverChildListDelegate([
-        Row(
-          children: [
-            if (!isNarrow) Spacer(),
-            bodyCentered(),
-            if (!isNarrow) Spacer(),
-          ],
-        ),
-      ]),
-    );
-  }
-
-  Widget bodyCentered() {
-    return Expanded(
-      flex: 3,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 16.0,
-        ),
-        child: MeasureSize(
-          onChange: (size) {
-            _keyBindings.updatePageHeight(size.height);
-          },
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              header(),
-              MarkdownViewer(
-                data: _projectData,
-                width: _textWidth,
-              ),
-            ],
-          ),
-        ),
+    return Scaffold(
+      floatingActionButton: FabToTop(
+        hideIfAtTop: _hideFab,
+        fabIcon: const Icon(UniconsLine.arrow_up),
+        pageScrollController: _pageScrollController,
       ),
-    );
-  }
-
-  Widget dates() {
-    return DatesHeader(
-      createdAt: Jiffy(_project.createdAt).fromNow(),
-      updatedAt: Jiffy(_project.updatedAt).fromNow(),
-    );
-  }
-
-  Widget fab() {
-    if (!_isFabVisible) {
-      return Container();
-    }
-
-    return FloatingActionButton(
-      backgroundColor: Globals.constants.colors.primary,
-      foregroundColor: Colors.white,
-      onPressed: () => _scrollController.animateTo(
-        0,
-        duration: 250.milliseconds,
-        curve: Curves.bounceOut,
-      ),
-      child: Icon(Icons.arrow_upward),
-    );
-  }
-
-  Widget header() {
-    return Padding(
-      padding: const EdgeInsets.only(top: 60.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      body: Stack(
         children: [
-          backButton(),
-          title(),
-          summary(),
-          dates(),
-          allChips(),
-          AuthorHeader(
-            authorId: _project.author.id,
+          ImprovedScrolling(
+            scrollController: _pageScrollController,
+            onScroll: onScroll,
+            child: CustomScrollView(
+              controller: _pageScrollController,
+              slivers: [
+                PostSettings(
+                  confirmDelete: _confirmDeletePost,
+                  cover: _project.cover,
+                  hasCover: _project.cover.storagePath.isNotEmpty,
+                  language: _project.language,
+                  onCancelDeletePost: onCancelDeletePost,
+                  onLanguageChanged: tryUpdateLanguage,
+                  onCloseSetting: onCloseSetting,
+                  onConfirmDeletePost: onConfirmDeletePost,
+                  onCoverWidthTypeSelected: tryUpdateCoverWithType,
+                  onCoverCornerTypeSelected: tryUpdateCoverCornerType,
+                  onTryDeletePost: tryDeleteProject,
+                  onTryAddCoverImage: tryUploadCover,
+                  onVisibilitySelected: tryUpdateProjectVisibility,
+                  onTryRemoveCoverImage: tryRemoveCoverImage,
+                  show: _showSettings,
+                  visibility: _project.visibility,
+                ),
+                PostPageHeader(
+                  showAddTag: _showAddTag,
+                  canManagePosts: canManagePosts,
+                  createdAt: _project.createdAt,
+                  documentId: _project.id,
+                  summary: _project.summary,
+                  summaryController: _summaryController,
+                  language: _project.language,
+                  tags: _project.tags,
+                  publishedAt: _project.createdAt,
+                  isMobileSize: isMobileSize,
+                  name: _project.name,
+                  onNameChanged: onNameChanged,
+                  nameController: _nameController,
+                  userId: _project.userId,
+                  updatedAt: _project.updatedAt,
+                  visibility: _project.visibility,
+                  onToggleAddTagVisibility: onToggleAddTagVisibility,
+                  tagInputController: _tagInputController,
+                  onInputTagChanged: onInputTagChanged,
+                  onRemoveTag: onRemoveTag,
+                ),
+                PostCover(
+                  cover: _project.cover,
+                  onTryAddCoverImage: tryUploadCover,
+                  onTryRemoveCoverImage: tryRemoveCoverImage,
+                ),
+                PostPageBody(
+                  canManagePosts: canManagePosts,
+                  content: _content,
+                  document: _document,
+                  documentEditor: _documentEditor,
+                  isMobileSize: isMobileSize,
+                  loading: _loading,
+                  maxWidth: maxWidth,
+                ),
+                PostFooter(
+                  content: _content,
+                  maxWidth: maxWidth,
+                  wordCount: _project.wordCount,
+                  updatedAt: _project.updatedAt,
+                ),
+              ],
+            ),
+          ),
+          if (_saving)
+            Positioned(
+              bottom: 40.0,
+              left: 40.0,
+              child: Material(
+                elevation: 6.0,
+                borderRadius: BorderRadius.circular(28.0),
+                color: const Color(0xffeeeeee),
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(
+                    minWidth: 200.0,
+                  ),
+                  child: Row(
+                    children: [
+                      Lottie.asset(
+                        "assets/animations/dots.json",
+                        repeat: true,
+                        width: 100.0,
+                        height: 60.0,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(right: 12.0),
+                        child: Text(
+                          "updating".tr(),
+                          overflow: TextOverflow.ellipsis,
+                          style: Utilities.fonts.body(
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          Positioned(
+            top: 24.0,
+            left: 24.0,
+            child: CircleButton(
+              icon: const Icon(UniconsLine.box),
+              onTap: () => Beamer.of(context, root: true).beamToNamed(
+                HomeLocation.route,
+              ),
+            ),
+          ),
+          Positioned(
+            top: 24.0,
+            right: 24.0,
+            child: CircleButton(
+              tooltip: "settings".tr(),
+              icon: Transform.rotate(
+                angle: angle.value,
+                child: const Icon(UniconsLine.setting),
+              ),
+              onTap: () {
+                if (!_showSettings) {
+                  _pageScrollController.animateTo(
+                    0.0,
+                    curve: Curves.decelerate,
+                    duration: _duration,
+                  );
+                  controller.play(duration: _duration);
+                } else {
+                  controller.playReverse(duration: _duration);
+                }
+
+                setState(() {
+                  _showSettings = !_showSettings;
+                });
+              },
+            ),
+          ),
+          Positioned(
+            top: 24.0,
+            right: 70.0,
+            child: CircleButton(
+              icon: const Icon(UniconsLine.home_alt),
+              onTap: () => Beamer.of(context, root: true).beamToNamed(
+                HomeLocation.route,
+              ),
+            ),
+          ),
+          Positioned(
+            left: isMobileSize ? 0.0 : 16.0,
+            bottom: isMobileSize ? 0.0 : 16.0,
+            child: const UploadPanel(),
           ),
         ],
       ),
     );
   }
 
-  Widget links() {
-    if (_project.urls!.map.isEmpty) {
-      return Container();
+  Future<void> fetchMetadata() async {
+    final String userId = ref.read(AppState.userProvider).authUser?.uid ?? "";
+    if (userId.isEmpty) {
+      loggy.error("User id is emty :o");
+      return;
     }
 
-    final chips = <InputChip>[];
+    setState(() => _loading = true);
 
-    _project.urls!.map.forEach((name, value) {
-      if (value.isNotEmpty) {
-        chips.add(
-          InputChip(
-            label: Text(name),
-            tooltip: "Link",
-            side: BorderSide(
-              color: Globals.constants.colors.secondary,
-              width: 1.5,
-            ),
-            onPressed: () {
-              launch(value);
-            },
-          ),
-        );
-      }
-    });
-
-    return Wrap(
-      spacing: 8.0,
-      runSpacing: 8.0,
-      children: chips,
-    );
-  }
-
-  Widget programmingLang() {
-    if (_project.programmingLanguages.isEmpty) {
-      return Container();
-    }
-
-    return Wrap(
-      spacing: 8.0,
-      children: _project.programmingLanguages
-          .map(
-            (pLang) => Tooltip(
-              message: "Programming language",
-              child: Chip(
-                label: Text(pLang),
-                side: BorderSide(
-                  color: Colors.pink,
-                  width: 1.5,
-                ),
-              ),
-            ),
-          )
-          .toList(),
-    );
-  }
-
-  Widget socialButtons() {
-    if (_isLoading) {
-      return Container();
-    }
-
-    final size = MediaQuery.of(context).size;
-    final top = size.height / 2 - 80.0;
-
-    return SocialButtonsPage(
-      top: top,
-      left: 60.0,
-      showBackButton: _isFabVisible,
-      onCopyLink: () {
-        Clipboard.setData(
-          ClipboardData(
-              text: "https://rootasjey.dev/posts/${widget.projectId}"),
-        );
-
-        Snack.s(
-          context: context,
-          message: "copy_link_success".tr(),
-        );
-      },
-      onShareOnTwitter: () {
-        final shareTags = _project.tags.join(",");
-        final baseShare = Constants.baseTwitterShareUrl;
-        final hashTags = Constants.twitterShareHashtags;
-
-        final String projectShareUri =
-            "https://rootasjey.dev/posts/${widget.projectId}";
-
-        launch("$baseShare$projectShareUri$hashTags$shareTags");
-      },
-    );
-  }
-
-  Widget summary() {
-    return Align(
-      alignment: Alignment.topLeft,
-      child: Opacity(
-        opacity: 0.7,
-        child: Text(
-          _project.summary,
-          style: TextStyle(
-            fontSize: 16.0,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget tags() {
-    if (_project.tags.isEmpty) {
-      return Container();
-    }
-
-    return Wrap(
-      spacing: 8.0,
-      children: _project.tags
-          .map(
-            (tag) => Tooltip(
-              message: "Tag",
-              child: Chip(
-                label: Text(tag),
-              ),
-            ),
-          )
-          .toList(),
-    );
-  }
-
-  Widget title() {
-    return Text(
-      _project.title,
-      style: FontsUtils.mainStyle(
-        fontSize: 60.0,
-        fontWeight: FontWeight.w700,
-      ),
-    );
-  }
-
-  void fetchMeta() async {
     try {
-      final doc = await FirebaseFirestore.instance
-          .collection('projects')
-          .doc(widget.projectId)
-          .get();
+      final DocumentMap query = FirebaseFirestore.instance
+          .collection("projects")
+          .doc(widget.projectId);
 
-      if (!doc.exists) {
+      listenToDocument(query);
+
+      final DocumentSnapshotMap snapshot = await query.get();
+      final Json? map = snapshot.data();
+
+      if (!snapshot.exists || map == null) {
+        loggy.error("Project ${snapshot.id} does not seem to exist;");
         return;
       }
 
-      final data = doc.data()!;
-      data['id'] = doc.id;
+      setState(() {
+        map["id"] = snapshot.id;
+        _project = Project.fromMap(map);
+        _summaryController.text = _project.summary;
+        _nameController.text = _project.name;
+      });
+
+      if (_project.storagePath.isNotEmpty) {
+        fetchContent();
+      }
+    } on Exception catch (error) {
+      loggy.error(error);
+    }
+
+    setState(() => _loading = false);
+  }
+
+  /// Creates a document with multiple levels of headers with hint text, and a
+  /// regular paragraph for comparison.
+  MutableDocument _createDocument() {
+    return MutableDocument(
+      nodes: [
+        ParagraphNode(
+          id: DocumentEditor.createNodeId(),
+          text: AttributedText(text: ''),
+          metadata: {'blockType': header1Attribution},
+        ),
+        ParagraphNode(
+          id: DocumentEditor.createNodeId(),
+          text: AttributedText(text: ''),
+          metadata: {'blockType': header2Attribution},
+        ),
+        ParagraphNode(
+          id: DocumentEditor.createNodeId(),
+          text: AttributedText(text: ''),
+          metadata: {'blockType': header3Attribution},
+        ),
+        ParagraphNode(
+          id: DocumentEditor.createNodeId(),
+          text: AttributedText(
+            text: "there: https://google.com",
+            spans: AttributedSpans(
+              attributions: [
+                SpanMarker(
+                  attribution:
+                      LinkAttribution(url: Uri.parse('https://google.com')),
+                  offset: 7,
+                  markerType: SpanMarkerType.start,
+                ),
+                SpanMarker(
+                  attribution:
+                      LinkAttribution(url: Uri.parse('https://google.com')),
+                  offset: 24,
+                  markerType: SpanMarkerType.end,
+                ),
+              ],
+            ),
+          ),
+        ),
+        ParagraphNode(
+          id: DocumentEditor.createNodeId(),
+          text: AttributedText(
+            text:
+                'Nam hendrerit vitae elit ut placerat. Maecenas nec congue neque. Fusce eget tortor pulvinar, cursus neque vitae, sagittis lectus. Duis mollis libero eu scelerisque ullamcorper. Pellentesque eleifend arcu nec augue molestie, at iaculis dui rutrum. Etiam lobortis magna at magna pellentesque ornare. Sed accumsan, libero vel porta molestie, tortor lorem eleifend ante, at egestas leo felis sed nunc. Quisque mi neque, molestie vel dolor a, eleifend tempor odio.',
+          ),
+        ),
+      ],
+    );
+  }
+
+  Future<void> fetchContent() async {
+    try {
+      final Reference fileStorage = FirebaseStorage.instance
+          .ref()
+          .child("projects/${widget.projectId}/post.md");
+
+      final Uint8List? data = await fileStorage.getData();
+
+      if (data == null) {
+        _content = "Start typing here...";
+        return;
+      }
+
+      _content = utf8.decode(data, allowMalformed: true);
+
+      if (_content.isEmpty) {
+        _content = "Start typing here...";
+      }
 
       setState(() {
-        _project = Project.fromJSON(data);
+        // _document = deserializeMarkdownToDocument(_content)
+        //   ..addListener(contentListener);
+        _document = _createDocument();
+
+        _documentEditor = DocumentEditor(
+          document: _document,
+        );
       });
     } catch (error) {
-      appLogger.e(error);
+      loggy.error(error);
     }
   }
 
-  void fetchContent() async {
-    setState(() => _isLoading = true);
+  /// Save project's content.
+  Future<void> trySaveContent() async {
+    final Iterable<RegExpMatch> wordMatches = _wordsRegex.allMatches(_content);
+
+    // Optimistic update
+    _project = _project.copyWith(
+      characterCount: _content.length,
+      wordCount: wordMatches.length,
+    );
+
+    setState(() => _saving = true);
 
     try {
-      final response = await Cloud.fun('projects-fetch')
-          .call({'projectId': widget.projectId});
+      final Reference fileStorage = FirebaseStorage.instance.ref().child(
+            _project.storagePath,
+          );
 
-      final markdownData = response.data['project'];
+      final FullMetadata metadata = await fileStorage.getMetadata();
+      final Map<String, String>? customMetadata = metadata.customMetadata;
 
-      _projectData = markdown.markdownToHtml(markdownData);
+      if (customMetadata != null) {
+        customMetadata
+          ..update(
+            "character_count",
+            (String prevLength) => "${_content.length}",
+            ifAbsent: () => "${_content.length}",
+          )
+          ..update(
+            "word_count",
+            (String prevLength) => "${wordMatches.length}",
+            ifAbsent: () => "${wordMatches.length}",
+          );
+      }
 
-      setState(() => _isLoading = false);
-    } catch (error) {
-      setState(() => _isLoading = false);
-      appLogger.e(error);
-
-      Snack.e(
-        context: context,
-        message: "project_fetch_error".tr(),
+      await fileStorage.putString(
+        _content,
+        metadata: SettableMetadata(
+          cacheControl: metadata.cacheControl,
+          contentDisposition: metadata.contentDisposition,
+          contentEncoding: metadata.contentEncoding,
+          contentLanguage: metadata.contentLanguage,
+          contentType: "text/markdown; charset=UTF-8",
+          customMetadata: customMetadata,
+        ),
       );
+    } catch (error) {
+      loggy.error(error);
+    } finally {
+      setState(() => _saving = false);
     }
   }
 
-  bool onNotification(ScrollNotification notification) {
-    // FAB visibility
-    if (notification.metrics.pixels < 50 && _isFabVisible) {
-      setState(() => _isFabVisible = false);
-    } else if (notification.metrics.pixels > 50 && !_isFabVisible) {
-      setState(() => _isFabVisible = true);
+  void onPostContentChange() {
+    _content = serializeDocumentToMarkdown(_document);
+
+    trySaveContent();
+    // updateMetrics();
+  }
+
+  /// Update post's character & word count.
+  void updateMetrics() async {
+    final Iterable<RegExpMatch> wordMatches = _wordsRegex.allMatches(_content);
+
+    _project = _project.copyWith(
+      characterCount: _content.length,
+      wordCount: wordMatches.length,
+    );
+
+    setState(() => _saving = true);
+
+    try {
+      await FirebaseFirestore.instance
+          .collection(_collectionName)
+          .doc(_project.id)
+          .update({
+        "character_count": _project.characterCount,
+        "word_count": _project.wordCount,
+      });
+    } catch (error) {
+      loggy.error(error);
+    } finally {
+      setState(() => _saving = false);
+    }
+  }
+
+  void tryUpdateLanguage(String newLanguage) async {
+    final String prevLanguage = _project.language;
+    setState(() {
+      _saving = true;
+      _project = _project.copyWith(language: newLanguage);
+    });
+
+    try {
+      await FirebaseFirestore.instance
+          .collection(_collectionName)
+          .doc(_project.id)
+          .update({
+        "language": newLanguage,
+      });
+    } catch (error) {
+      loggy.error(error);
+
+      _project = _project.copyWith(language: prevLanguage);
+    } finally {
+      setState(() => _saving = false);
+    }
+  }
+
+  void tryUpdateProjectName() async {
+    setState(() => _saving = true);
+
+    try {
+      await FirebaseFirestore.instance
+          .collection(_collectionName)
+          .doc(_project.id)
+          .update({
+        "name": _nameController.text,
+        "summary": _summaryController.text,
+      });
+    } catch (error) {
+      loggy.error(error);
+    } finally {
+      setState(() => _saving = false);
+    }
+  }
+
+  void onNameChanged(String? value) {
+    _metadataUpdateTimer?.cancel();
+    _metadataUpdateTimer = Timer(
+      const Duration(seconds: 1),
+      tryUpdateProjectName,
+    );
+  }
+
+  void tryUpdateProjectVisibility(
+    EnumContentVisibility visibility,
+    bool selected,
+  ) async {
+    if (!selected) {
+      loggy.info("visibility: ${visibility.name} | selected: $selected");
+      return;
     }
 
-    return false;
+    setState(() {
+      _saving = true;
+      _project = _project.copyWith(
+        visibility: visibility,
+      );
+    });
+
+    try {
+      await FirebaseFirestore.instance
+          .collection(_collectionName)
+          .doc(_project.id)
+          .update({
+        "visibility": visibility.name,
+      });
+    } catch (error) {
+      loggy.error(error);
+    } finally {
+      setState(() => _saving = false);
+    }
+  }
+
+  void contentListener() {
+    _contentUpdateTimer?.cancel();
+    _contentUpdateTimer = Timer(
+      const Duration(seconds: 1),
+      onPostContentChange,
+    );
+  }
+
+  void confirmDeletePost() {
+    Utilities.ui.showAdaptiveDialog(
+      context,
+      builder: (BuildContext context) {
+        return DeleteDialog(
+          descriptionValue: "This action is irreversible",
+          titleValue: "Delete this project?",
+          onValidate: tryDeleteProject,
+        );
+      },
+    );
+  }
+
+  void tryDeleteProject() async {
+    setState((() => _deleting = true));
+
+    try {
+      await FirebaseFirestore.instance
+          .collection(_collectionName)
+          .doc(widget.projectId)
+          .delete();
+
+      if (!mounted) {
+        return;
+      }
+
+      Beamer.of(context).beamBack();
+    } catch (error) {
+      loggy.error(error);
+    } finally {
+      setState(() => _deleting = false);
+    }
+  }
+
+  void listenToDocument(DocumentReference<Map<String, dynamic>> query) {
+    _projectSubscription?.cancel();
+    _projectSubscription = query.snapshots().skip(1).listen((snapshot) {
+      if (!snapshot.exists) {
+        _projectSubscription?.cancel();
+        return;
+      }
+
+      final Json? data = snapshot.data();
+      if (data == null) {
+        return;
+      }
+
+      if (!mounted) {
+        return;
+      }
+
+      setState(() {
+        data["id"] = snapshot.id;
+        _project = Project.fromMap(data);
+
+        if (_loading && _project.storagePath.isNotEmpty) {
+          _loading = false;
+        }
+      });
+    }, onError: (error) {
+      loggy.error(error);
+    }, onDone: () {
+      _projectSubscription?.cancel();
+    });
+  }
+
+  void tryUploadCover() async {
+    ref
+        .read(AppState.uploadTaskListProvider.notifier)
+        .pickImage(targetId: _project.id);
+  }
+
+  void onScroll(double offset) {
+    if (offset <= 0) {
+      setState(() => _hideFab = true);
+      return;
+    }
+
+    if (!_hideFab) {
+      return;
+    }
+
+    setState(() => _hideFab = false);
+  }
+
+  void onToggleAddTagVisibility() {
+    setState(() => _showAddTag = !_showAddTag);
+  }
+
+  void onInputTagChanged(String tag) {
+    String editedTag = tag;
+
+    if (tag.contains(",") || tag.contains(";")) {
+      editedTag = tag.replaceAll(",", "").replaceAll(";", "").trim();
+
+      if (editedTag.isEmpty) {
+        return;
+      }
+
+      _tagInputController.clear();
+      tryUpdateTags(editedTag);
+    }
+
+    if (_verbalExp.hasMatch(tag)) {
+      editedTag = tag.trim();
+
+      _tagInputController.clear();
+      tryUpdateTags(editedTag);
+    }
+  }
+
+  void tryUpdateTags(String tag) async {
+    final List<String> initialTags = _project.tags;
+
+    _project = _project.copyWith(
+      tags: _project.tags..add(tag),
+    );
+
+    try {
+      await FirebaseFirestore.instance
+          .collection("projects")
+          .doc(_project.id)
+          .update({
+        "tags": _project.listToMapStringBool(),
+      });
+    } catch (error) {
+      loggy.error(error);
+      _project = _project.copyWith(tags: initialTags);
+    }
+  }
+
+  void onRemoveTag(String tag) async {
+    final List<String> initialTags = _project.tags;
+
+    _project = _project.copyWith(
+      tags: _project.tags..remove(tag),
+    );
+
+    try {
+      await FirebaseFirestore.instance
+          .collection("projects")
+          .doc(_project.id)
+          .update({
+        "tags": _project.listToMapStringBool(),
+      });
+    } catch (error) {
+      loggy.error(error);
+      _project = _project.copyWith(tags: initialTags);
+    }
+  }
+
+  /// Hide settings panel.
+  void onCloseSetting() {
+    setState(() => _showSettings = false);
+  }
+
+  /// Show delete confirmation UI.
+  void onConfirmDeletePost() {
+    setState(() => _confirmDeletePost = true);
+  }
+
+  /// Cancel delete confirmation about this project.
+  void onCancelDeletePost() {
+    setState(() => _confirmDeletePost = false);
+  }
+
+  /// Update cover's width.
+  void tryUpdateCoverWithType(
+    EnumCoverWidth coverWidthType,
+    bool selected,
+  ) async {
+    if (!selected) {
+      loggy.info("visibility: ${coverWidthType.name} | selected: $selected");
+      return;
+    }
+
+    final EnumCoverWidth prevWidthType = coverWidthType;
+
+    setState(() {
+      _saving = true;
+      _project = _project.copyWith(
+        cover: _project.cover.copyWith(
+          widthType: coverWidthType,
+        ),
+      );
+    });
+
+    try {
+      await FirebaseFirestore.instance
+          .collection(_collectionName)
+          .doc(_project.id)
+          .update({
+        "cover.width_type": coverWidthType.name,
+      });
+    } catch (error) {
+      loggy.error(error);
+      _project = _project.copyWith(
+        cover: _project.cover.copyWith(
+          widthType: prevWidthType,
+        ),
+      );
+    } finally {
+      setState(() => _saving = false);
+    }
+  }
+
+  /// Update cover corners;
+  void tryUpdateCoverCornerType(
+    EnumCoverCorner coverCornerType,
+    bool selected,
+  ) async {
+    if (!selected) {
+      loggy.info("visibility: ${coverCornerType.name} | selected: $selected");
+      return;
+    }
+
+    final EnumCoverCorner prevCornerType = coverCornerType;
+
+    setState(() {
+      _saving = true;
+      _project = _project.copyWith(
+        cover: _project.cover.copyWith(
+          cornerType: coverCornerType,
+        ),
+      );
+    });
+
+    try {
+      await FirebaseFirestore.instance
+          .collection(_collectionName)
+          .doc(_project.id)
+          .update({
+        "cover.corner_type": coverCornerType.name,
+      });
+    } catch (error) {
+      loggy.error(error);
+      _project = _project.copyWith(
+        cover: _project.cover.copyWith(
+          cornerType: prevCornerType,
+        ),
+      );
+    } finally {
+      setState(() => _saving = false);
+    }
+  }
+
+  /// Remove project's cover image and delete storage objects.
+  void tryRemoveCoverImage() async {
+    final String prevStoragePath = _project.storagePath;
+
+    setState(() {
+      _project = _project.copyWith(
+          cover: _project.cover.copyWith(
+        storagePath: "",
+      ));
+    });
+
+    try {
+      await FirebaseFirestore.instance
+          .collection(_collectionName)
+          .doc(_project.id)
+          .update({
+        "cover.storage_path": "",
+      });
+    } catch (error) {
+      loggy.error(error);
+      setState(() {
+        _project = _project.copyWith(
+            cover: _project.cover.copyWith(
+          storagePath: prevStoragePath,
+        ));
+      });
+    }
   }
 }

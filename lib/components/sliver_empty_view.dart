@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 class SliverEmptyView extends StatelessWidget {
   final String title;
 
-  SliverEmptyView({
-    this.title = 'This section is empty',
+  const SliverEmptyView({
+    super.key,
+    this.title = "This section is empty",
   });
 
   @override
@@ -15,18 +16,17 @@ class SliverEmptyView extends StatelessWidget {
         delegate: SliverChildListDelegate([
           Column(
             children: [
-              Icon(
+              const Icon(
                 Icons.do_not_disturb_alt,
                 size: 50.0,
               ),
-
               Padding(
                 padding: const EdgeInsets.only(top: 12.0),
                 child: Opacity(
                   opacity: 0.6,
                   child: Text(
                     title,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 30.0,
                     ),
                   ),

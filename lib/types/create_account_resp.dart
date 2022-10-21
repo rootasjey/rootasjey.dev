@@ -11,7 +11,7 @@ class CreateAccountResp {
 
   CreateAccountResp({
     this.success = true,
-    this.message = '',
+    this.message = "",
     this.error,
     this.user,
     this.userAuth,
@@ -27,9 +27,9 @@ class CreateAccountResp {
 
   factory CreateAccountResp.fromJSON(Map<dynamic, dynamic> data) {
     return CreateAccountResp(
-      success: data['success'] ?? true,
-      user: PartialUser.fromJSON(data['user']),
-      error: CloudFuncError.fromJSON(data['error']),
+      success: data["success"] ?? true,
+      user: PartialUser.fromJSON(data["user"]),
+      error: CloudFuncError.fromJSON(data["error"]),
     );
   }
 }

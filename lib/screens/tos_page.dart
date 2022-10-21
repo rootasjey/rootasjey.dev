@@ -1,19 +1,20 @@
 import 'package:beamer/beamer.dart';
-import 'package:rootasjey/components/footer/footer.dart';
-import 'package:rootasjey/components/application_bar/main_app_bar.dart';
-import 'package:rootasjey/types/globals/globals.dart';
-import 'package:rootasjey/utils/constants.dart';
+import 'package:rootasjey/components/footer.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:rootasjey/globals/constants.dart';
+import 'package:rootasjey/globals/utilities.dart';
 import 'package:unicons/unicons.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:supercharged/supercharged.dart';
 
 /// Terms Of Service.
 class TosPage extends StatefulWidget {
+  const TosPage({super.key});
+
   @override
-  _TosPageState createState() => _TosPageState();
+  State<StatefulWidget> createState() => _TosPageState();
 }
 
 class _TosPageState extends State<TosPage> {
@@ -30,13 +31,8 @@ class _TosPageState extends State<TosPage> {
         child: CustomScrollView(
           controller: _pageScrollController,
           slivers: [
-            MainAppBar(),
             body(),
-            SliverList(
-              delegate: SliverChildListDelegate.fixed([
-                Footer(),
-              ]),
-            ),
+            const Footer(),
           ],
         ),
       ),
@@ -67,7 +63,7 @@ class _TosPageState extends State<TosPage> {
     return IconButton(
       tooltip: "back".tr(),
       onPressed: Beamer.of(context).beamBack,
-      icon: Icon(UniconsLine.arrow_left),
+      icon: const Icon(UniconsLine.arrow_left),
     );
   }
 
@@ -76,7 +72,7 @@ class _TosPageState extends State<TosPage> {
 
     double horPadding = 80.0;
 
-    if (width < Constants.maxMobileWidth) {
+    if (width < Utilities.size.mobileWidthTreshold) {
       horPadding = 20.0;
     }
 
@@ -131,9 +127,9 @@ class _TosPageState extends State<TosPage> {
           curve: Curves.easeOut,
         );
       },
-      backgroundColor: Globals.constants.colors.primary,
+      backgroundColor: Constants.colors.primary,
       foregroundColor: Colors.white,
-      child: Icon(Icons.arrow_upward),
+      child: const Icon(Icons.arrow_upward),
     );
   }
 
@@ -156,7 +152,7 @@ class _TosPageState extends State<TosPage> {
           "tos".tr(),
           style: TextStyle(
             fontSize: 50.0,
-            color: Globals.constants.colors.primary,
+            color: Constants.colors.primary,
           ),
         ),
       ),
@@ -180,12 +176,12 @@ class _TosPageState extends State<TosPage> {
           Text.rich(
             TextSpan(
               text: "tos_created_with".tr(),
-              style: TextStyle(
+              style: const TextStyle(
                 decoration: TextDecoration.underline,
               ),
               recognizer: TapGestureRecognizer()
                 ..onTap = () {
-                  launch("https://getterms.io/");
+                  launchUrl(Uri.parse("https://getterms.io/"));
                 },
             ),
           ),
@@ -204,7 +200,7 @@ class _TosPageState extends State<TosPage> {
           style: TextStyle(
             fontSize: 16.0,
             fontWeight: FontWeight.bold,
-            color: Globals.constants.colors.primary,
+            color: Constants.colors.primary,
           ),
         ),
       ),
@@ -218,7 +214,7 @@ class _TosPageState extends State<TosPage> {
         opacity: 0.8,
         child: Text(
           text,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 18.0,
           ),
         ),

@@ -4,8 +4,8 @@ import 'package:rootasjey/screens/project_page.dart';
 import 'package:rootasjey/screens/projects_page.dart';
 
 class ProjectsLocation extends BeamLocation<BeamState> {
-  static const String route = '/projects';
-  static const String singleProjectRoute = '${route}/:projectId';
+  static const String route = "/projects";
+  static const String singleProjectRoute = "$route/:projectId";
 
   @override
   List<Pattern> get pathPatterns => [
@@ -13,21 +13,23 @@ class ProjectsLocation extends BeamLocation<BeamState> {
         singleProjectRoute,
       ];
 
+  @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) {
     return [
-      BeamPage(
+      const BeamPage(
         child: ProjectsPage(),
         key: ValueKey(route),
-        title: 'Projects',
+        title: "Projects",
         type: BeamPageType.fadeTransition,
       ),
-      if (state.pathPatternSegments.contains(':projectId'))
+      if (state.pathPatternSegments.contains(":projectId"))
         BeamPage(
           child: ProjectPage(
-            projectId: state.pathParameters['projectId'] ?? '',
+            projectId: state.pathParameters["projectId"] ?? "",
           ),
           key: ValueKey("$route-${state.pathParameters['projectId']}"),
-          title: 'Project',
+          title: "Project",
+          type: BeamPageType.fadeTransition,
         ),
     ];
   }

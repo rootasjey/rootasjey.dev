@@ -1,7 +1,7 @@
 import 'package:rootasjey/types/author.dart';
 import 'package:rootasjey/types/post_image_map.dart';
 import 'package:rootasjey/types/stats.dart';
-import 'package:rootasjey/types/urls.dart';
+import 'package:rootasjey/types/social_links.dart';
 import 'package:rootasjey/utils/date_helper.dart';
 
 class Post {
@@ -22,7 +22,7 @@ class Post {
   final String title;
   final String timeToRead;
   final DateTime? updatedAt;
-  final Urls? urls;
+  final SocialLinks? urls;
 
   Post({
     this.author = const Author(id: ''),
@@ -64,7 +64,7 @@ class Post {
       timeToRead: '',
       title: '',
       updatedAt: DateTime.now(),
-      urls: Urls.empty(),
+      urls: SocialLinks.empty(),
     );
   }
 
@@ -91,7 +91,7 @@ class Post {
       timeToRead: data['timeToRead'] ?? '',
       title: data['title'] ?? '',
       updatedAt: DateHelper.fromFirestore(data['updatedAt']),
-      urls: Urls.fromJSON(data['urls']),
+      urls: SocialLinks.fromMap(data["social_links"]),
     );
   }
 
@@ -104,9 +104,9 @@ class Post {
 
     final dataAuthors = data['coauthors'] as List<dynamic>;
 
-    dataAuthors.forEach((authorId) {
+    for (var authorId in dataAuthors) {
       coAuthors.add(authorId);
-    });
+    }
 
     return coAuthors;
   }

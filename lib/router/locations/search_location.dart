@@ -4,7 +4,7 @@ import 'package:rootasjey/screens/search_page.dart';
 
 class SearchLocation extends BeamLocation<BeamState> {
   /// Main root value for this location.
-  static const String route = '/search';
+  static const String route = "/search";
 
   @override
   List<String> get pathPatterns => [route];
@@ -12,7 +12,7 @@ class SearchLocation extends BeamLocation<BeamState> {
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) {
     return [
-      BeamPage(
+      const BeamPage(
         child: SearchPage(),
         key: ValueKey(route),
         title: "Search",

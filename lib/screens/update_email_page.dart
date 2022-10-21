@@ -4,24 +4,28 @@ import 'package:beamer/beamer.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:loggy/loggy.dart';
 import 'package:rootasjey/actions/users.dart';
-import 'package:rootasjey/components/animated_app_icon.dart';
 import 'package:rootasjey/components/fade_in_y.dart';
-import 'package:rootasjey/components/application_bar/main_app_bar.dart';
 import 'package:rootasjey/components/sliver_edge_padding.dart';
-import 'package:rootasjey/types/globals/globals.dart';
-import 'package:rootasjey/utils/app_logger.dart';
-import 'package:rootasjey/utils/fonts.dart';
+import 'package:rootasjey/globals/app_state.dart';
+import 'package:rootasjey/globals/constants.dart';
+import 'package:rootasjey/types/cloud_func_error.dart';
 import 'package:rootasjey/utils/snack.dart';
 import 'package:supercharged/supercharged.dart';
 import 'package:unicons/unicons.dart';
 
-class UpdateEmailPage extends StatefulWidget {
+class UpdateEmailPage extends ConsumerStatefulWidget {
+  const UpdateEmailPage({super.key});
+
   @override
-  _UpdateEmailPageState createState() => _UpdateEmailPageState();
+  ConsumerState<ConsumerStatefulWidget> createState() =>
+      _UpdateEmailPageState();
 }
 
-class _UpdateEmailPageState extends State<UpdateEmailPage> {
+class _UpdateEmailPageState extends ConsumerState<UpdateEmailPage>
+    with UiLoggy {
   bool _isCheckingEmail = false;
   bool _isUpdating = false;
   bool _isCompleted = false;
@@ -31,9 +35,9 @@ class _UpdateEmailPageState extends State<UpdateEmailPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
-  String _emailInputValue = '';
-  String _emailInputErrorMessage = '';
-  String _passwordInputValue = '';
+  String _emailInputValue = "";
+  String _emailInputErrorMessage = "";
+  String _passwordInputValue = "";
 
   Timer? _emailTimer;
 
@@ -50,8 +54,7 @@ class _UpdateEmailPageState extends State<UpdateEmailPage> {
     return Scaffold(
       body: CustomScrollView(
         slivers: <Widget>[
-          SliverEdgePadding(),
-          MainAppBar(),
+          const SliverEdgePadding(),
           header(),
           body(),
         ],
@@ -81,27 +84,27 @@ class _UpdateEmailPageState extends State<UpdateEmailPage> {
             child: Column(
               children: <Widget>[
                 FadeInY(
-                  delay: 0.milliseconds,
+                  delay: const Duration(milliseconds: 0),
                   beginY: _beginY,
                   child: helperCard(),
                 ),
                 FadeInY(
-                  delay: 100.milliseconds,
+                  delay: const Duration(milliseconds: 100),
                   beginY: _beginY,
                   child: emailInput(),
                 ),
                 FadeInY(
-                  delay: 200.milliseconds,
+                  delay: const Duration(milliseconds: 200),
                   beginY: _beginY,
                   child: passwordInput(),
                 ),
                 FadeInY(
-                  delay: 300.milliseconds,
+                  delay: const Duration(milliseconds: 300),
                   beginY: _beginY,
                   child: validationButton(),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 200.0),
+                const Padding(
+                  padding: EdgeInsets.only(bottom: 200.0),
                 ),
               ],
             ),
@@ -119,8 +122,8 @@ class _UpdateEmailPageState extends State<UpdateEmailPage> {
           padding: const EdgeInsets.all(40.0),
           child: Column(
             children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.only(top: 30.0),
+              const Padding(
+                padding: EdgeInsets.only(top: 30.0),
                 child: Icon(
                   Icons.check,
                   size: 80.0,
@@ -132,7 +135,7 @@ class _UpdateEmailPageState extends State<UpdateEmailPage> {
                 child: Text(
                   "email_update_successful".tr(),
                   textAlign: TextAlign.center,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 20.0,
                   ),
                 ),
@@ -165,7 +168,7 @@ class _UpdateEmailPageState extends State<UpdateEmailPage> {
                       opacity: 0.8,
                       child: IconButton(
                         onPressed: Beamer.of(context).beamBack,
-                        icon: Icon(UniconsLine.arrow_left),
+                        icon: const Icon(UniconsLine.arrow_left),
                       ),
                     ),
                   ),
@@ -176,7 +179,7 @@ class _UpdateEmailPageState extends State<UpdateEmailPage> {
                         opacity: 0.4,
                         child: Text(
                           "settings".tr().toUpperCase(),
-                          style: FontsUtils.mainStyle(
+                          style: const TextStyle(
                             fontSize: 16.0,
                             fontWeight: FontWeight.w400,
                           ),
@@ -186,7 +189,7 @@ class _UpdateEmailPageState extends State<UpdateEmailPage> {
                         opacity: 0.8,
                         child: Text(
                           "email_update".tr(),
-                          style: FontsUtils.mainStyle(
+                          style: const TextStyle(
                             fontSize: 50.0,
                             fontWeight: FontWeight.w500,
                           ),
@@ -199,7 +202,7 @@ class _UpdateEmailPageState extends State<UpdateEmailPage> {
                           opacity: 0.5,
                           child: Text(
                             "email_update_description".tr(),
-                            style: FontsUtils.mainStyle(
+                            style: const TextStyle(
                               fontSize: 16.0,
                               fontWeight: FontWeight.w500,
                             ),
@@ -218,14 +221,18 @@ class _UpdateEmailPageState extends State<UpdateEmailPage> {
   }
 
   Widget helperCard() {
+    final String email =
+        ref.watch(AppState.userProvider).firestoreUser?.email ?? "";
+
     return Padding(
       padding: const EdgeInsets.only(
         bottom: 40.0,
       ),
       child: Card(
-        color: Globals.constants.colors.clairPink,
+        color: Constants.colors.clairPink,
         elevation: 2.0,
         child: InkWell(
+          onTap: showTipsDialog,
           child: Container(
             width: 330.0,
             padding: const EdgeInsets.all(20.0),
@@ -237,7 +244,7 @@ class _UpdateEmailPageState extends State<UpdateEmailPage> {
                       padding: const EdgeInsets.only(right: 10.0),
                       child: Icon(
                         UniconsLine.envelope,
-                        color: Globals.constants.colors.secondary,
+                        color: Constants.colors.secondary,
                       ),
                     ),
                     Column(
@@ -250,8 +257,8 @@ class _UpdateEmailPageState extends State<UpdateEmailPage> {
                           ),
                         ),
                         Text(
-                          Globals.state.getUserFirestore().email,
-                          style: FontsUtils.mainStyle(
+                          email,
+                          style: const TextStyle(
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -262,7 +269,6 @@ class _UpdateEmailPageState extends State<UpdateEmailPage> {
               ],
             ),
           ),
-          onTap: showTipsDialog,
         ),
       ),
     );
@@ -281,9 +287,9 @@ class _UpdateEmailPageState extends State<UpdateEmailPage> {
             textInputAction: TextInputAction.next,
             onFieldSubmitted: (_) => _passwordNode.requestFocus(),
             decoration: InputDecoration(
-              border: OutlineInputBorder(),
+              border: const OutlineInputBorder(),
               fillColor: Colors.white,
-              focusColor: Globals.constants.colors.clairPink,
+              focusColor: Constants.colors.clairPink,
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 8.0,
               ),
@@ -367,14 +373,14 @@ class _UpdateEmailPageState extends State<UpdateEmailPage> {
       padding: const EdgeInsets.only(
         left: 40.0,
       ),
-      child: LinearProgressIndicator(),
+      child: const LinearProgressIndicator(),
     );
   }
 
   Widget passwordInput() {
     return Container(
       width: 390.0,
-      padding: EdgeInsets.only(
+      padding: const EdgeInsets.only(
         top: 20.0,
         bottom: 60.0,
         left: 30.0,
@@ -387,9 +393,9 @@ class _UpdateEmailPageState extends State<UpdateEmailPage> {
             focusNode: _passwordNode,
             controller: _passwordController,
             decoration: InputDecoration(
-              border: OutlineInputBorder(),
+              border: const OutlineInputBorder(),
               fillColor: Colors.white,
-              focusColor: Globals.constants.colors.clairPink,
+              focusColor: Constants.colors.clairPink,
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 8.0,
               ),
@@ -420,12 +426,11 @@ class _UpdateEmailPageState extends State<UpdateEmailPage> {
           width: 400.0,
           child: Column(
             children: <Widget>[
-              AnimatedAppIcon(),
               Padding(
                 padding: const EdgeInsets.only(top: 40.0),
                 child: Text(
                   "email_updating".tr(),
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 20.0,
                   ),
                 ),
@@ -441,7 +446,7 @@ class _UpdateEmailPageState extends State<UpdateEmailPage> {
     return ElevatedButton(
       onPressed: updateEmailProcess,
       style: ElevatedButton.styleFrom(
-        primary: Colors.black87,
+        backgroundColor: Colors.black87,
       ),
       child: SizedBox(
         width: 320.0,
@@ -452,7 +457,7 @@ class _UpdateEmailPageState extends State<UpdateEmailPage> {
               padding: const EdgeInsets.all(14.0),
               child: Text(
                 "email_update".tr().toUpperCase(),
-                style: FontsUtils.mainStyle(
+                style: const TextStyle(
                   fontSize: 15.0,
                   fontWeight: FontWeight.w600,
                 ),
@@ -477,15 +482,16 @@ class _UpdateEmailPageState extends State<UpdateEmailPage> {
       if (!await (valuesAvailabilityCheck() as FutureOr<bool>)) {
         setState(() => _isUpdating = false);
 
-        Snack.e(
-          context: context,
+        Snack.error(
+          context,
+          title: "email".tr(),
           message: "email_not_available".tr(),
         );
 
         return;
       }
 
-      final userAuth = Globals.state.getUserAuth();
+      final userAuth = ref.read(AppState.userProvider).authUser;
       if (userAuth == null) {
         throw ErrorDescription("You're not authenticated");
       }
@@ -497,7 +503,7 @@ class _UpdateEmailPageState extends State<UpdateEmailPage> {
 
       await userAuth.reauthenticateWithCredential(credentials);
       final idToken = await userAuth.getIdToken();
-      final userNotifier = Globals.state.getUserNotifier();
+      final userNotifier = ref.read(AppState.userProvider.notifier);
 
       final response = await userNotifier.updateEmail(
         _emailInputValue,
@@ -505,11 +511,13 @@ class _UpdateEmailPageState extends State<UpdateEmailPage> {
       );
 
       if (!response.success) {
-        final exception = response.error;
+        if (!mounted) return;
+        final CloudFuncError? exception = response.error;
         setState(() => _isUpdating = false);
 
-        Snack.e(
-          context: context,
+        Snack.error(
+          context,
+          title: "update".tr(),
           message: "[code: ${exception?.code}] - ${exception?.message}",
         );
 
@@ -521,11 +529,12 @@ class _UpdateEmailPageState extends State<UpdateEmailPage> {
         _isCompleted = true;
       });
     } catch (error) {
-      appLogger.e(error);
+      loggy.error(error);
       setState(() => _isUpdating = false);
 
-      Snack.e(
-        context: context,
+      Snack.error(
+        context,
+        title: "email".tr(),
         message: "email_update_error".tr(),
       );
     }
@@ -537,8 +546,9 @@ class _UpdateEmailPageState extends State<UpdateEmailPage> {
 
   bool inputValuesOk() {
     if (_emailInputValue.isEmpty) {
-      Snack.e(
-        context: context,
+      Snack.error(
+        context,
+        title: "email".tr(),
         message: "email_empty_forbidden".tr(),
       );
 
@@ -546,8 +556,9 @@ class _UpdateEmailPageState extends State<UpdateEmailPage> {
     }
 
     if (_passwordInputValue.isEmpty) {
-      Snack.e(
-        context: context,
+      Snack.error(
+        context,
+        title: "email".tr(),
         message: "password_empty_forbidden".tr(),
       );
 
@@ -555,8 +566,9 @@ class _UpdateEmailPageState extends State<UpdateEmailPage> {
     }
 
     if (!UsersActions.checkEmailFormat(_emailInputValue)) {
-      Snack.e(
-        context: context,
+      Snack.error(
+        context,
+        title: "email".tr(),
         message: "email_not_validd".tr(),
       );
 
@@ -567,21 +579,24 @@ class _UpdateEmailPageState extends State<UpdateEmailPage> {
   }
 
   void showTipsDialog() {
+    final String email =
+        ref.read(AppState.userProvider).firestoreUser?.email ?? "";
+
     showDialog(
       context: context,
       builder: (context) {
         return SimpleDialog(
-          backgroundColor: Globals.constants.colors.clairPink,
+          backgroundColor: Constants.colors.clairPink,
           title: Text(
             "email_current".tr(),
-            style: FontsUtils.mainStyle(
+            style: const TextStyle(
               fontSize: 14.0,
               fontWeight: FontWeight.w600,
             ),
           ),
           children: <Widget>[
             Divider(
-              color: Globals.constants.colors.secondary,
+              color: Constants.colors.secondary,
               thickness: 1.0,
             ),
             Padding(
@@ -591,8 +606,8 @@ class _UpdateEmailPageState extends State<UpdateEmailPage> {
               child: Opacity(
                 opacity: 0.6,
                 child: Text(
-                  Globals.state.getUserFirestore().email,
-                  style: FontsUtils.mainStyle(
+                  email,
+                  style: const TextStyle(
                     fontWeight: FontWeight.bold,
                   ),
                 ),

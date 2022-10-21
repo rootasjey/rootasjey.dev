@@ -2,26 +2,28 @@ import 'package:beamer/beamer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:loggy/loggy.dart';
+import 'package:rootasjey/components/footer.dart';
 import 'package:rootasjey/components/post_card.dart';
-import 'package:rootasjey/components/footer/footer.dart';
-import 'package:rootasjey/components/application_bar/main_app_bar.dart';
 import 'package:rootasjey/components/min_post_card.dart';
 import 'package:rootasjey/components/page_title.dart';
 import 'package:rootasjey/components/sliver_empty_view.dart';
+import 'package:rootasjey/globals/utilities.dart';
 import 'package:rootasjey/router/locations/posts_location.dart';
 import 'package:rootasjey/types/post.dart';
-import 'package:rootasjey/utils/app_logger.dart';
-import 'package:rootasjey/utils/constants.dart';
 
-class PostsPage extends StatefulWidget {
+class PostsPage extends ConsumerStatefulWidget {
+  const PostsPage({super.key});
+
   @override
-  _PostsPageState createState() => _PostsPageState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _PostsPageState();
 }
 
-class _PostsPageState extends State<PostsPage> {
+class _PostsPageState extends ConsumerState<PostsPage> with UiLoggy {
   bool _isSmallView = false;
   bool _hasNext = true;
-  bool _isLoading = false;
+  bool _loading = false;
 
   DocumentSnapshot? _lastDoc;
 
@@ -38,17 +40,16 @@ class _PostsPageState extends State<PostsPage> {
   @override
   Widget build(BuildContext context) {
     final viewWidth = MediaQuery.of(context).size.width;
-    _isSmallView = viewWidth < Constants.maxMobileWidth;
+    _isSmallView = viewWidth < Utilities.size.mobileWidthTreshold;
 
     return Scaffold(
       body: NotificationListener<ScrollNotification>(
         onNotification: onNotification,
         child: CustomScrollView(
           slivers: [
-            MainAppBar(),
             title(),
             body(),
-            footer(),
+            const Footer(),
           ],
         ),
       ),
@@ -58,8 +59,8 @@ class _PostsPageState extends State<PostsPage> {
   Widget body() {
     Widget child;
 
-    if (!_isLoading && _posts.isEmpty) {
-      child = SliverEmptyView();
+    if (!_loading && _posts.isEmpty) {
+      child = const SliverEmptyView();
     } else if (_isSmallView) {
       child = postsListView();
     } else {
@@ -76,17 +77,9 @@ class _PostsPageState extends State<PostsPage> {
     );
   }
 
-  Widget footer() {
-    return SliverList(
-      delegate: SliverChildListDelegate.fixed([
-        Footer(),
-      ]),
-    );
-  }
-
   Widget postsGridView() {
     return SliverGrid(
-      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+      gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
         maxCrossAxisExtent: 360.0,
         childAspectRatio: 0.6,
       ),
@@ -119,7 +112,7 @@ class _PostsPageState extends State<PostsPage> {
                 width: 420.0,
                 onTap: () => onGoToPost(post.id),
               ),
-              Divider(height: 40.0),
+              const Divider(height: 40.0),
             ],
           );
         },
@@ -139,7 +132,7 @@ class _PostsPageState extends State<PostsPage> {
           ),
           child: PageTitle(
             textTitle: "posts".tr(),
-            isLoading: _isLoading,
+            isLoading: _loading,
           ),
         ),
       ]),
@@ -149,7 +142,7 @@ class _PostsPageState extends State<PostsPage> {
   void fetch() async {
     setState(() {
       _posts.clear();
-      _isLoading = true;
+      _loading = true;
     });
 
     try {
@@ -162,35 +155,35 @@ class _PostsPageState extends State<PostsPage> {
       if (snapshot.size == 0) {
         setState(() {
           _hasNext = false;
-          _isLoading = false;
+          _loading = false;
         });
 
         return;
       }
 
-      snapshot.docs.forEach((doc) {
+      for (var doc in snapshot.docs) {
         final data = doc.data();
         data['id'] = doc.id;
 
         _posts.add(Post.fromJSON(data));
-      });
+      }
 
       setState(() {
-        _isLoading = false;
+        _loading = false;
         _lastDoc = snapshot.docs.last;
         _hasNext = _limit == snapshot.size;
       });
     } catch (error) {
-      appLogger.e(error);
+      loggy.error(error);
     }
   }
 
   void fetchMore() async {
-    if (!_hasNext || _isLoading || _lastDoc == null) {
+    if (!_hasNext || _loading || _lastDoc == null) {
       return;
     }
 
-    setState(() => _isLoading = true);
+    setState(() => _loading = true);
 
     try {
       final snapshot = await FirebaseFirestore.instance
@@ -203,32 +196,32 @@ class _PostsPageState extends State<PostsPage> {
       if (snapshot.size == 0) {
         setState(() {
           _hasNext = false;
-          _isLoading = false;
+          _loading = false;
         });
 
         return;
       }
 
-      snapshot.docs.forEach((doc) {
+      for (var doc in snapshot.docs) {
         final data = doc.data();
         data['id'] = doc.id;
 
         _posts.add(Post.fromJSON(data));
-      });
+      }
 
       setState(() {
-        _isLoading = false;
+        _loading = false;
         _lastDoc = snapshot.docs.last;
         _hasNext = _limit == snapshot.size;
       });
     } catch (error) {
-      appLogger.e(error);
+      loggy.error(error);
     }
   }
 
   void onGoToPost(String postId) {
     Beamer.of(context).beamToNamed(
-      "${PostsLocation.route}/${postId}",
+      "${PostsLocation.route}/$postId",
       data: {'postId': postId},
     );
   }

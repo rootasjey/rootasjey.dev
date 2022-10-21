@@ -4,7 +4,7 @@ import 'package:rootasjey/screens/tos_page.dart';
 
 class TosLocation extends BeamLocation<BeamState> {
   /// Main root value for this location.
-  static const String route = '/tos';
+  static const String route = "/tos";
 
   @override
   List<String> get pathPatterns => [route];
@@ -12,7 +12,7 @@ class TosLocation extends BeamLocation<BeamState> {
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) {
     return [
-      BeamPage(
+      const BeamPage(
         child: TosPage(),
         key: ValueKey(route),
         title: "Term of Services",

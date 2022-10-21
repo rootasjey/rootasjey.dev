@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_null_comparison
+
 import 'dart:async';
 
 import 'package:beamer/beamer.dart';
@@ -8,25 +10,24 @@ import 'package:rootasjey/actions/users.dart';
 import 'package:rootasjey/components/fade_in_x.dart';
 import 'package:rootasjey/components/fade_in_y.dart';
 import 'package:rootasjey/components/loading_animation.dart';
-import 'package:rootasjey/components/application_bar/main_app_bar.dart';
+import 'package:rootasjey/globals/app_state.dart';
+import 'package:rootasjey/globals/constants.dart';
 import 'package:rootasjey/router/locations/home_location.dart';
 import 'package:rootasjey/router/locations/signin_location.dart';
-import 'package:rootasjey/types/globals/globals.dart';
-import 'package:rootasjey/utils/fonts.dart';
 import 'package:rootasjey/utils/snack.dart';
 import 'package:supercharged/supercharged.dart';
 import 'package:unicons/unicons.dart';
 
-class SignupPage extends StatefulWidget {
+class SignupPage extends ConsumerStatefulWidget {
   final void Function(bool isAuthenticated)? onSignupResult;
 
   const SignupPage({Key? key, this.onSignupResult}) : super(key: key);
 
   @override
-  _SignupPageState createState() => _SignupPageState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _SignupPageState();
 }
 
-class _SignupPageState extends State<SignupPage> {
+class _SignupPageState extends ConsumerState<SignupPage> {
   bool _isCheckingEmail = false;
   bool _isCheckingName = false;
   bool _isSigningUp = false;
@@ -58,7 +59,6 @@ class _SignupPageState extends State<SignupPage> {
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          MainAppBar(),
           SliverPadding(
             padding: const EdgeInsets.only(
               top: 100.0,
@@ -87,7 +87,7 @@ class _SignupPageState extends State<SignupPage> {
       return Padding(
         padding: const EdgeInsets.only(top: 80.0),
         child: LoadingAnimation(
-          textTitle: "signup_dot".tr(),
+          message: "signup_dot".tr(),
         ),
       );
     }
@@ -100,12 +100,12 @@ class _SignupPageState extends State<SignupPage> {
       delay: 0.milliseconds,
       beginY: 50.0,
       child: Padding(
-        padding: EdgeInsets.only(top: 60.0),
+        padding: const EdgeInsets.only(top: 60.0),
         child: TextFormField(
           autofocus: true,
           textInputAction: TextInputAction.next,
           decoration: InputDecoration(
-            icon: Icon(Icons.email),
+            icon: const Icon(Icons.email),
             labelText: "email".tr(),
           ),
           keyboardType: TextInputType.emailAddress,
@@ -193,7 +193,7 @@ class _SignupPageState extends State<SignupPage> {
               ),
               child: IconButton(
                 onPressed: Beamer.of(context).beamBack,
-                icon: Icon(UniconsLine.arrow_left),
+                icon: const Icon(UniconsLine.arrow_left),
               ),
             ),
           ),
@@ -204,11 +204,11 @@ class _SignupPageState extends State<SignupPage> {
               FadeInY(
                 beginY: 50.0,
                 child: Padding(
-                  padding: EdgeInsets.only(bottom: 10.0),
+                  padding: const EdgeInsets.only(bottom: 10.0),
                   child: Text(
                     "signup".tr(),
                     textAlign: TextAlign.center,
-                    style: FontsUtils.mainStyle(
+                    style: const TextStyle(
                       fontSize: 25.0,
                       fontWeight: FontWeight.bold,
                     ),
@@ -253,7 +253,7 @@ class _SignupPageState extends State<SignupPage> {
       padding: const EdgeInsets.only(
         left: 40.0,
       ),
-      child: LinearProgressIndicator(),
+      child: const LinearProgressIndicator(),
     );
   }
 
@@ -262,14 +262,14 @@ class _SignupPageState extends State<SignupPage> {
       delay: 100.milliseconds,
       beginY: 50.0,
       child: Padding(
-        padding: EdgeInsets.only(top: 30.0),
+        padding: const EdgeInsets.only(top: 30.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             TextFormField(
               focusNode: _usernameNode,
               decoration: InputDecoration(
-                icon: Icon(
+                icon: const Icon(
                   Icons.person_outline,
                 ),
                 labelText: "username".tr(),
@@ -354,7 +354,7 @@ class _SignupPageState extends State<SignupPage> {
       padding: const EdgeInsets.only(
         left: 40.0,
       ),
-      child: LinearProgressIndicator(),
+      child: const LinearProgressIndicator(),
     );
   }
 
@@ -363,7 +363,7 @@ class _SignupPageState extends State<SignupPage> {
       delay: 200.milliseconds,
       beginY: 50.0,
       child: Padding(
-        padding: EdgeInsets.only(top: 30.0),
+        padding: const EdgeInsets.only(top: 30.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
@@ -371,12 +371,12 @@ class _SignupPageState extends State<SignupPage> {
               focusNode: _passwordNode,
               textInputAction: TextInputAction.next,
               decoration: InputDecoration(
-                icon: Icon(Icons.lock_outline),
+                icon: const Icon(Icons.lock_outline),
                 labelText: "password".tr(),
               ),
               obscureText: true,
               onChanged: (value) {
-                if (value.length == 0) {
+                if (value.isEmpty) {
                   return;
                 }
                 _password = value;
@@ -401,24 +401,24 @@ class _SignupPageState extends State<SignupPage> {
       delay: 400.milliseconds,
       beginY: 50.0,
       child: Padding(
-        padding: EdgeInsets.only(top: 30.0),
+        padding: const EdgeInsets.only(top: 30.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             TextFormField(
               focusNode: _confirmPasswordNode,
               decoration: InputDecoration(
-                icon: Icon(Icons.lock_outline),
+                icon: const Icon(Icons.lock_outline),
                 labelText: "password_confirm".tr(),
               ),
               obscureText: true,
               onChanged: (value) {
-                if (value.length == 0) {
+                if (value.isEmpty) {
                   return;
                 }
                 _confirmPassword = value;
               },
-              onFieldSubmitted: (value) => signUpProcess(),
+              onFieldSubmitted: (value) => trySignUp(),
               validator: (value) {
                 if (value!.isEmpty) {
                   return "password_confirm_empty_forbidden".tr();
@@ -445,10 +445,10 @@ class _SignupPageState extends State<SignupPage> {
         child: Padding(
           padding: const EdgeInsets.only(top: 60.0),
           child: ElevatedButton(
-            onPressed: () => signUpProcess(),
+            onPressed: () => trySignUp(),
             style: ElevatedButton.styleFrom(
-              primary: Globals.constants.colors.primary,
-              shape: RoundedRectangleBorder(
+              backgroundColor: Constants.colors.primary,
+              shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(
                   Radius.circular(7.0),
                 ),
@@ -462,14 +462,14 @@ class _SignupPageState extends State<SignupPage> {
                 children: <Widget>[
                   Text(
                     "signup".tr(),
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 15.0,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 20.0),
+                  const Padding(
+                    padding: EdgeInsets.only(left: 20.0),
                     child: Icon(
                       Icons.arrow_forward,
                       color: Colors.white,
@@ -496,7 +496,7 @@ class _SignupPageState extends State<SignupPage> {
             opacity: 0.6,
             child: Text(
               "account_already_own".tr(),
-              style: TextStyle(
+              style: const TextStyle(
                 decoration: TextDecoration.underline,
               ),
             ),
@@ -518,7 +518,7 @@ class _SignupPageState extends State<SignupPage> {
     return true;
   }
 
-  void signUpProcess() async {
+  void trySignUp() async {
     setState(() => _isSigningUp = true);
 
     if (!await checkInputs()) {
@@ -527,8 +527,7 @@ class _SignupPageState extends State<SignupPage> {
     }
 
     try {
-      final containerProvider = ProviderContainer();
-      final userNotifier = containerProvider.read(Globals.state.user.notifier);
+      final userNotifier = ref.read(AppState.userProvider.notifier);
       final createAccountResponse = await userNotifier.signUp(
         email: _email,
         username: _username,
@@ -538,6 +537,7 @@ class _SignupPageState extends State<SignupPage> {
       setState(() => _isSigningUp = false);
 
       if (createAccountResponse.success) {
+        if (!mounted) return;
         Beamer.of(context).beamToNamed(HomeLocation.route);
         return;
       }
@@ -549,10 +549,15 @@ class _SignupPageState extends State<SignupPage> {
         message = "[code: ${error.code}] - ${error.message}";
       }
 
-      Snack.e(context: context, message: message);
+      if (!mounted) return;
+      Snack.error(context, title: "", message: message);
+
+      setState(() => _isSigningUp = false);
+      Snack.error(context, title: "", message: "account_create_error".tr());
     } catch (error) {
       setState(() => _isSigningUp = false);
-      Snack.e(context: context, message: "account_create_error".tr());
+      Snack.error(context,
+          title: "account".tr(), message: "account_create_error".tr());
     }
   }
 
@@ -562,7 +567,7 @@ class _SignupPageState extends State<SignupPage> {
       UsersActions.checkUsernameAvailability(_username),
     ]);
 
-    final foldedResult = checkResults.firstWhere(
+    final bool? foldedResult = checkResults.firstWhere(
       (result) => result == false,
       orElse: () => true,
     );
@@ -576,8 +581,9 @@ class _SignupPageState extends State<SignupPage> {
     _password = _password.trim();
 
     if (_password.isEmpty || _confirmPassword.isEmpty) {
-      Snack.e(
-        context: context,
+      Snack.error(
+        context,
+        title: "password".tr(),
         message: "password_empty_forbidden".tr(),
       );
 
@@ -585,8 +591,9 @@ class _SignupPageState extends State<SignupPage> {
     }
 
     if (_confirmPassword != _password) {
-      Snack.e(
-        context: context,
+      Snack.error(
+        context,
+        title: "password".tr(),
         message: "passwords_dont_match".tr(),
       );
 
@@ -594,8 +601,9 @@ class _SignupPageState extends State<SignupPage> {
     }
 
     if (_username.isEmpty) {
-      Snack.e(
-        context: context,
+      Snack.error(
+        context,
+        title: "username".tr(),
         message: "name_empty_forbidden".tr(),
       );
 
@@ -603,8 +611,9 @@ class _SignupPageState extends State<SignupPage> {
     }
 
     if (!UsersActions.checkEmailFormat(_email)) {
-      Snack.e(
-        context: context,
+      Snack.error(
+        context,
+        title: "email".tr(),
         message: "email_not_valid".tr(),
       );
 
@@ -612,8 +621,9 @@ class _SignupPageState extends State<SignupPage> {
     }
 
     if (!UsersActions.checkUsernameFormat(_username)) {
-      Snack.e(
-        context: context,
+      Snack.error(
+        context,
+        title: "username".tr(),
         message: _username.length < 3
             ? "input_minimum_char".tr()
             : "input_valid_format".tr(),

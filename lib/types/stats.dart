@@ -1,8 +1,11 @@
 class Stats {
+  Stats({
+    this.likes = 0,
+    this.shares = 0,
+  });
+
   final int? likes;
   final int? shares;
-
-  Stats({this.likes = 0, this.shares = 0});
 
   factory Stats.empty() {
     return Stats(
@@ -17,8 +20,8 @@ class Stats {
     }
 
     return Stats(
-      likes: data['likes'],
-      shares: data['shares'],
+      likes: data["likes"],
+      shares: data["shares"],
     );
   }
 }

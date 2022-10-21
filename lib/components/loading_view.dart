@@ -1,38 +1,65 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:rootasjey/components/animated_app_icon.dart';
+import 'package:lottie/lottie.dart';
+import 'package:rootasjey/globals/utilities.dart';
 
+/// A sliver component to display when data is not ready yet.
 class LoadingView extends StatelessWidget {
-  final String title;
-  final EdgeInsets padding;
-
-  LoadingView({
-    this.title = 'Loading...',
-    this.padding = const EdgeInsets.all(60.0),
+  const LoadingView({
+    super.key,
+    this.message = "loading...",
   });
+
+  /// Message value to display as a loading message.
+  final String message;
 
   @override
   Widget build(BuildContext context) {
-    String loadingText = title.isNotEmpty ? title : "loading".tr();
-
-    return Padding(
-      padding: padding,
-      child: Column(
-        children: [
-          AnimatedAppIcon(),
-          Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Opacity(
-              opacity: 0.6,
-              child: Text(
-                loadingText,
-                style: TextStyle(
-                  fontSize: 25.0,
-                ),
+    return SliverToBoxAdapter(
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              child: Lottie.asset(
+                "assets/animations/box.json",
+                width: 300.0,
               ),
             ),
-          ),
-        ],
+            Text(
+              message,
+              style: Utilities.fonts.body2(
+                fontSize: 24.0,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Return a Scaffold widget displaying a loading animation.
+  static Widget scaffold({String message = "Loading..."}) {
+    return Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              child: Lottie.asset(
+                "assets/animations/box.json",
+                width: 300.0,
+              ),
+            ),
+            Text(
+              message,
+              style: Utilities.fonts.body2(
+                fontSize: 24.0,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -1,201 +1,253 @@
-import * as functions from 'firebase-functions';
-import { adminApp } from './adminApp';
-import { cloudRegions } from './utils';
+import * as functions from "firebase-functions";
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const firebaseTools = require("firebase-tools");
+
+import {adminApp} from "./adminApp";
+
+import {
+  BASE_DOCUMENT_NAME,
+  cloudRegions,
+  getNewPostFirestorePayload,
+  PROJECTS_COLLECTION_NAME,
+  PROJECT_STATISTICS_COLLECTION_NAME,
+} from "./utils";
 
 const firestore = adminApp.firestore();
 const storage = adminApp.storage();
-const auth = adminApp.auth();
-
-export const onCreateFile = functions
-  .region(cloudRegions.eu)
-  .firestore
-  .document('projects/{projectId}')
-  .onCreate(async (snapshot) => {
-    const projectFile = storage
-      .bucket()
-      .file(`blog/projects/${snapshot.id}/post.md`);
-
-    await projectFile.save('');
-  });
-
-export const onDeleteFile = functions
-  .region(cloudRegions.eu)
-  .firestore
-  .document('projects/{projectId}')
-  .onDelete(async (snapshot) => {
-    const projectFile = storage
-      .bucket()
-      .file(`blog/projects/${snapshot.id}/post.md`);
-
-    await projectFile.delete();
-  });
 
 /**
- * Retrieve a project's content in markdown format.
- * (With accessibility check).
+ * Event triggered when a project document is created in Firestore.
+ * Create associated storage file (post.md)
+ * and populate the Firestore document with all properties.
+ * Create collection statistics too.
  */
-export const fetch = functions
-  .region(cloudRegions.eu)
-  .https
-  .onCall(async (data) => {
-    const projectId: string = data.projectId;
+export const onCreate = functions
+    .region(cloudRegions.eu)
+    .firestore
+    .document("projects/{projectId}")
+    .onCreate(async (snapshot) => {
+      const data = snapshot.data();
+      const userId: string = data.user_id;
 
-    /** Used if the project is a draft or restricted to some members. */
-    const jwt: string = data.jwt;
+      const storagePath = `projects/${snapshot.id}/post.md`;
 
-    if (!projectId) {
-      throw new functions.https.HttpsError(
-        'invalid-argument',
-        `The function must be called with one (string) argument 
-        "projectId" which is the project to fetch.`,
-      );
-    }
+      const projectFile = storage
+          .bucket()
+          .file(storagePath);
 
-    await checkAccessControl({projectId, jwt});
+      const initialContent = "This is my awesome project...";
 
-    // Retrieve content (access control OK)
-    const projectFile = storage
-      .bucket()
-      .file(`blog/projects/${projectId}/post.md`);
+      // Save new file to firebase storage.
+      await projectFile.save(initialContent, {
+        metadata: {
+          contentType: "text/markdown; charset=UTF-8",
+          metadata: {
+            character_count: "0",
+            document_id: snapshot.id,
+            document_type: "post",
+            extension: "md",
+            related_document_type: "project",
+            user_id: userId,
+            visibility: "private",
+            word_count: "0",
+          },
+        },
+      });
 
-    let projectContent = '';
+      // Update firestore document.
+      await snapshot.ref.update(getNewPostFirestorePayload({
+        initialContent,
+        storagePath,
+      }));
 
-    const stream = projectFile.createReadStream();
-
-    stream.on('data', (chunck) => {
-      projectContent = projectContent.concat(chunck.toString());
+      await createStatsCollection(snapshot.id, userId);
     });
 
-    await new Promise(fulfill => stream.on('end', fulfill));
-    stream.destroy();
+/**
+ * Event triggered when a project document is deleted from Firestore.
+ * Delete associated storage files (e.g. post.md, covver images).
+ */
+export const onDelete = functions
+    .region(cloudRegions.eu)
+    .firestore
+    .document("projects/{projectId}")
+    .onDelete(async (snapshot) => {
+      // Try to clean firestore subcollections if any.
+      await firebaseTools.firestore
+          .delete(`projects/${snapshot.id}`, {
+            force: true,
+            project: process.env.GCLOUD_PROJECT,
+            recursive: true,
+            yes: true,
+          });
 
-    return { project: projectContent };
-  });
+      // Delete files from Cloud Storage
+      await deleteProjectFiles({
+        documentId: snapshot.id,
+        includePost: true,
+      });
 
-export const fetchAuthorName = functions
-  .region(cloudRegions.eu)
-  .https
-  .onCall(async (data) => {
-    const authorId = data.authorId;
+      return true;
+    });
 
-    if (!authorId) {
-      throw new functions.https.HttpsError(
-        'invalid-argument', 
-        `The function must be called with one (string) argument 
-        "authorId" which is the author to fetch.`,
-      );
-    }
+/**
+ * Event triggered when a document is updated in "projects" collection.
+ *
+ * • If the `updated_at` field has been updated,
+ * we exit the function as we probably just updated it (recursive call).
+ *
+ * • If `visibility` field has changed, update the associated
+ * file storage (post.md).
+ *
+ * • If `cover.storage_path` has changed and is empty, we deleted the cover.
+ * Thus, delete the associated storage images.
+ *
+ * Update `updated_at` field at least, and other cover fields if applicable.
+ */
+export const onUpdate = functions
+    .region(cloudRegions.eu)
+    .firestore
+    .document("projects/{projectId}")
+    .onUpdate(async (snapshot) => {
+      const beforeProjectData = snapshot.before.data();
+      const afterProjectData = snapshot.after.data();
 
-    const author = await firestore
-      .collection('users')
-      .doc(authorId)
-      .get();
+      const beforeUpdateAt: FirebaseFirestore.Timestamp =
+        beforeProjectData.updated_at;
 
-    const authorData = author.data();
+      const afterUpdateAt: FirebaseFirestore.Timestamp =
+          afterProjectData.updated_at;
 
-    if (!authorData) {
-      throw new functions.https.HttpsError(
-        'data-loss', 
-        `No data found for author ${authorId}. 
-        They may have been an issue while creating or deleting this author.`,
-      );
-    }
+      if (!beforeUpdateAt.isEqual(afterUpdateAt)) {
+        return true;
+      }
 
-    return { authorName: authorData.name };
-  });
+      let updatePayload = {
+        updated_at: adminApp.firestore.FieldValue.serverTimestamp(),
+      };
 
-async function checkAccessControl({ projectId, jwt }: { projectId: string, jwt: string}) {
-  try {
-    const projectSnapshot = await firestore
-      .collection('projects')
+      if (beforeProjectData.visibility !== afterProjectData.visibility) {
+        const postStoragePath: string = afterProjectData.storage_path;
+        const projectFile = storage
+            .bucket()
+            .file(postStoragePath);
+
+        const metadata = await projectFile.getMetadata();
+
+        await projectFile.setMetadata({
+          ...metadata,
+          ...{
+            customMetadata: {
+              visibility: afterProjectData.visibility,
+            },
+          },
+        });
+      }
+
+      const beforeStoragePath = beforeProjectData.cover.storage_path;
+      const afterStoragePath = afterProjectData.cover.storage_path;
+
+      // Handle remove project cover.
+      if (beforeStoragePath !== afterStoragePath && !afterStoragePath) {
+        await deleteProjectFiles({
+          documentId: snapshot.after.id,
+        });
+
+        updatePayload = {...updatePayload, ...{
+          cover: {
+            dimensions: {
+              width: 0,
+              height: 0,
+            },
+            extension: "",
+            original_url: "",
+            size: 0,
+            storage_path: "",
+            thumbnails: {
+              xs: "",
+              s: "",
+              m: "",
+              l: "",
+              xl: "",
+              xxl: "",
+            },
+          },
+        }};
+      }
+
+      await firestore.collection("projects")
+          .doc(snapshot.after.id)
+          .update(updatePayload);
+
+      return true;
+    });
+
+// -----------------
+// HELPER FUNCTIONS
+// -----------------
+
+/**
+ * Create project's stats sub-collection
+ * @param {string} projectId Project's id.
+ * @param {string} userId User's id.
+ * @return {void} void.
+ */
+async function createStatsCollection(projectId: string, userId: string) {
+  const snapshot = await firestore
+      .collection(PROJECTS_COLLECTION_NAME)
       .doc(projectId)
       .get();
 
-    if (!projectSnapshot.exists) {
-      throw new functions.https.HttpsError(
-        'not-found', 
-        `The project asked does not exist anymore. You may be asking a deleted project.`,
-      );
-    }
-
-    const projectData = projectSnapshot.data();
-
-    if (!projectData) {
-      throw new functions.https.HttpsError(
-        'data-loss', 
-        `The project data is null, which is weird. Please contact us.`,
-      );
-    }
-
-    if (!projectData.published) {
-      if (!jwt) {
-        throw new functions.https.HttpsError(
-          'unauthenticated', 
-          `The project asked is a draft and you do not have the right to get its content.`,
-        );
-      }
-
-      const decodedToken = await auth.verifyIdToken(jwt, true);
-
-      let hasAuthorAccess = false;
-
-      if (projectData.author.id === decodedToken.uid) {
-        hasAuthorAccess = true;
-
-      } else if (projectData.coauthors.indexOf(decodedToken.uid) > -1) {
-        hasAuthorAccess = true;
-      }
-
-      if (!hasAuthorAccess) {
-        throw new functions.https.HttpsError(
-          'permission-denied', 
-          `You do not have the right to view this project's content.`,
-        );
-      }
-    } else if (projectData.restrictedTo.premium) {
-      // TODO: Handle premium users.
-    }
-
-  } catch (error) {
-    throw new functions.https.HttpsError(
-      'internal',
-      `There was an internal error while retrieving the project content. 
-      Your JWT may be outdated.`,
-    );
+  if (!snapshot.exists) {
+    return;
   }
+
+  await snapshot.ref
+      .collection(PROJECT_STATISTICS_COLLECTION_NAME)
+      .doc(BASE_DOCUMENT_NAME)
+      .create({
+        created_at: adminApp.firestore.FieldValue.serverTimestamp(),
+        project_id: projectId,
+        likes: 0,
+        shares: 0,
+        views: 0,
+        user_id: userId,
+        updated_at: adminApp.firestore.FieldValue.serverTimestamp(),
+      });
 }
 
 /**
- * Save a project content.
- * (With accessibility check).
+ * Helper to delete a project's files from Storage (eg. cover, post).
+ * @param {string} param0 Id of the document.
+ * @return {boolean} Return true if everything went well.
  */
-export const save = functions
-  .region(cloudRegions.eu)
-  .https
-  .onCall(async (data) => {
-    const projectId: string = data.projectId;
-    const jwt: string = data.jwt;
-    const content: string = data.content;
+async function deleteProjectFiles({
+  documentId,
+  includePost,
+}: DeleteCoverFilesParams) {
+  // Delete files from Cloud Storage
+  const bucket = adminApp.storage().bucket();
 
-    if (!content || !projectId) {
-      throw new functions.https.HttpsError(
-        'invalid-argument', 
-        `The function must be called with two (string) arguments "projecId": 
-        the project to save, "content": the project\'s content.`,
-      );
-    }
-
-    await checkAccessControl({ projectId, jwt });
-
-    const projectFile = storage
-      .bucket()
-      .file(`blog/projects/${projectId}/post.md`);
-
-    try {
-      await projectFile.save(content);
-      return { success: true };
-
-    } catch (error) {
-      return { success: false, error: error.toString() };
-    }
+  // Delete /project/cover folder first if any.
+  await bucket.deleteFiles({
+    force: true,
+    prefix: `projects/${documentId}/cover`,
   });
+
+  // Delete /project/images folder first if any.
+  await bucket.deleteFiles({
+    force: true,
+    prefix: `projects/${documentId}/images`,
+  });
+
+  if (includePost) {
+    // Delete project's files (eg. posts).
+    await bucket.deleteFiles({
+      force: true,
+      prefix: `projects/${documentId}`,
+    });
+  }
+
+  return true;
+}

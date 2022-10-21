@@ -2,12 +2,12 @@ import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:beamer/beamer.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:rootasjey/globals/constants.dart';
 import 'package:rootasjey/router/app_routes.dart';
-import 'package:rootasjey/types/globals/globals.dart';
 import 'package:rootasjey/utils/fonts.dart';
 
 /// Main app class.
-class App extends StatefulWidget {
+class App extends StatelessWidget {
   final AdaptiveThemeMode? savedThemeMode;
 
   const App({
@@ -15,30 +15,29 @@ class App extends StatefulWidget {
     this.savedThemeMode,
   }) : super(key: key);
 
-  AppState createState() => AppState();
-}
-
-/// Main app class state.
-class AppState extends State<App> {
   @override
   Widget build(BuildContext context) {
     return AdaptiveTheme(
       light: ThemeData(
         brightness: Brightness.light,
         fontFamily: FontsUtils.fontFamily,
-        backgroundColor: Globals.constants.colors.lightBackground,
-        scaffoldBackgroundColor: Globals.constants.colors.lightBackground,
+        backgroundColor: Constants.colors.lightBackground,
+        scaffoldBackgroundColor: Constants.colors.lightBackground,
+        primaryColor: Constants.colors.primary,
+        secondaryHeaderColor: Constants.colors.secondary,
       ),
       dark: ThemeData(
         brightness: Brightness.dark,
         fontFamily: FontsUtils.fontFamily,
-        backgroundColor: Globals.constants.colors.dark,
-        scaffoldBackgroundColor: Globals.constants.colors.dark,
+        backgroundColor: Constants.colors.dark,
+        scaffoldBackgroundColor: Constants.colors.dark,
+        primaryColor: Constants.colors.primary,
+        secondaryHeaderColor: Constants.colors.secondary,
       ),
-      initial: widget.savedThemeMode ?? AdaptiveThemeMode.light,
-      builder: (theme, darkTheme) {
+      initial: savedThemeMode ?? AdaptiveThemeMode.dark,
+      builder: (ThemeData theme, ThemeData darkTheme) {
         return MaterialApp.router(
-          title: 'rootasjey',
+          title: "rootasjey",
           theme: theme,
           darkTheme: darkTheme,
           debugShowCheckedModeBanner: false,

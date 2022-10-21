@@ -1,299 +1,251 @@
-import * as functions from 'firebase-functions';
-import { adminApp } from './adminApp';
-import { cloudRegions } from './utils';
+import * as functions from "firebase-functions";
+import {adminApp} from "./adminApp";
+import {
+  BASE_DOCUMENT_NAME,
+  cloudRegions,
+  getNewPostFirestorePayload,
+  POSTS_COLLECTION_NAME,
+  POST_STATISTICS_COLLECTION_NAME,
+} from "./utils";
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const firebaseTools = require("firebase-tools");
 
 const firestore = adminApp.firestore();
 const storage = adminApp.storage();
-const auth = adminApp.auth();
-
-export const onCreateFile = functions
-  .region(cloudRegions.eu)
-  .firestore
-  .document('posts/{postId}')
-  .onCreate(async (snapshot) => {
-    const postFile = storage
-      .bucket()
-      .file(`blog/posts/${snapshot.id}/post.md`);
-
-    await postFile.save('');
-  });
-
-export const onDeleteFile = functions
-  .region(cloudRegions.eu)
-  .firestore
-  .document('posts/{postId}')
-  .onDelete(async (snapshot) => {
-    const postFile = storage
-      .bucket()
-      .file(`blog/posts/${snapshot.id}/post.md`);
-
-    await postFile.delete();
-  });
 
 /**
- * Retrieve a post's content in markdown format.
- * (With accessibility check).
+ * Event triggered when a post document is created in Firestore.
+ * Create associated storage file (post.md)
+ * and populate the Firestore document with all properties.
+ * Create collection statistics too.
  */
-export const fetch = functions
-  .region(cloudRegions.eu)
-  .https
-  .onCall(async (data) => {
-    const postId: string = data.postId;
+export const onCreate = functions
+    .region(cloudRegions.eu)
+    .firestore
+    .document("posts/{postId}")
+    .onCreate(async (snapshot) => {
+      const data = snapshot.data();
+      const userId: string = data.user_id;
 
-    /** Used if the post is a draft or restricted to some members. */
-    const jwt: string = data.jwt;
+      const storagePath = `posts/${snapshot.id}/post.md`;
 
-    if (!postId) {
-      throw new functions.https.HttpsError(
-        'invalid-argument', 
-        `The function must be called with one (string) argument 
-        "postId" which is the post to fetch.`,
-      );
-    }
+      const postFile = storage
+          .bucket()
+          .file(storagePath);
 
-    await checkAccessControl({postId, jwt});
+      const initialContent = "Once upon a time...";
 
-    // Retrieve content (access control OK)
-    const postFile = storage
-      .bucket()
-      .file(`blog/posts/${postId}/post.md`);
+      // Save new file to firebase storage.
+      await postFile.save(initialContent, {
+        metadata: {
+          contentType: "text/markdown; charset=UTF-8",
+          metadata: {
+            character_count: "0",
+            document_id: snapshot.id,
+            document_type: "post",
+            extension: "md",
+            related_document_type: "post",
+            user_id: userId,
+            visibility: "private",
+            word_count: "0",
+          },
+        },
+      });
 
-    let postContent = '';
+      // Update firestore document.
+      await snapshot.ref.update(getNewPostFirestorePayload({
+        initialContent,
+        storagePath,
+      }));
 
-    const stream = postFile.createReadStream();
-
-    stream.on('data', (chunck) => {
-      postContent = postContent.concat(chunck.toString());
+      await createStatsCollection(snapshot.id, userId);
     });
-
-    await new Promise(fulfill => stream.on('end', fulfill));
-    stream.destroy();
-
-    return { post: postContent };
-  });
-
-export const fetchAuthorName = functions
-  .region(cloudRegions.eu)
-  .https
-  .onCall(async (data) => {
-    const authorId = data.authorId;
-
-    if (!authorId) {
-      throw new functions.https.HttpsError(
-        'invalid-argument',
-        `The function must be called with one (string) argument 
-        "authorId" which is the author to fetch.`,
-      );
-    }
-
-    const author = await firestore
-      .collection('users')
-      .doc(authorId)
-      .get();
-
-    const authorData = author.data();
-
-    if (!authorData) {
-      throw new functions.https.HttpsError(
-        'data-loss',
-        `No data found for author ${authorId}. 
-        They may have been an issue while creating or deleting this author.`,
-      );
-    }
-
-    return { authorName: authorData.name };
-  });
-
-  /**
-   * Increase/Decrease [post.stats.likes] property by 1.
-   * Need a [postId] parameter.
-   */
-export const statsLike = functions
-  .region(cloudRegions.eu)
-  .https
-  .onCall(async (data) => {
-    const postId = data.postId;
-    const like: boolean = data.like ?? false;
-
-    if (!postId) {
-      throw new functions.https.HttpsError(
-        'invalid-argument', 
-        `The function must be called with a (string) argument 
-        "postId" which is the post to update.`,
-      );
-    }
-
-    const postSnap = await firestore
-      .collection('posts')
-      .doc(postId)
-      .get();
-
-    const postData = postSnap.data();
-
-    if (!postSnap || !postSnap.exists || !postData) {
-      throw new functions.https.HttpsError(
-        'not-found', 
-        `The post to update doesn't exist anymore. 
-        It may have been deleted.`,
-      );
-    }
-
-    let statsLikes: number = postData.stats?.likes ?? 0;
-
-    statsLikes = like ? statsLikes + 1 : statsLikes - 1;
-    statsLikes = statsLikes > 0 ? statsLikes : 0;
-
-    await postSnap.ref.update({
-      'stats.likes': statsLikes,
-    });
-
-    return {
-      post: { id: postId },
-      success: true,
-      likes: statsLikes,
-    }
-  });
 
 /**
- * Increase [post.stats.shares] property by 1.
- * Need [postId] parameter.
+ * Event triggered when a post document is deleted from Firestore.
+ * Delete associated storage files (e.g. post.md, covver images).
  */
-export const statsShare = functions
-  .region(cloudRegions.eu)
-  .https
-  .onCall(async (data) => {
-    const postId = data.postId;
+export const onDelete = functions
+    .region(cloudRegions.eu)
+    .firestore
+    .document("posts/{postId}")
+    .onDelete(async (snapshot) => {
+      // Try to clean firestore subcollections if any.
+      await firebaseTools.firestore
+          .delete(`posts/${snapshot.id}`, {
+            force: true,
+            project: process.env.GCLOUD_PROJECT,
+            recursive: true,
+            yes: true,
+          });
 
-    if (!postId) {
-      throw new functions.https.HttpsError(
-        'invalid-argument', 
-        `The function must be called with a (string) argument 
-        "postId" which is the post to update.`,
-      );
-    }
+      // Delete files from Cloud Storage
+      await deletePostFiles({
+        documentId: snapshot.id,
+        includePost: true,
+      });
 
-    const postSnap = await firestore
-      .collection('posts')
-      .doc(postId)
-      .get();
-
-    const postData = postSnap.data();
-
-    if (!postSnap || !postSnap.exists || !postData) {
-      throw new functions.https.HttpsError(
-        'not-found', 
-        `The post to update doesn't exist anymore. 
-        It may have been deleted.`,
-      );
-    }
-
-    let statsShares: number = postData.stats?.shares ?? 0;
-    statsShares += 1;
-
-    await postSnap.ref.update({
-      'stats.shares': statsShares,
+      return true;
     });
 
-    return {
-      post: { id: postId },
-      success: true,
-      shares: statsShares,
-    }
-  });
+/**
+ * Event triggered when a document is updated in "post" collection.
+ *
+ * • If the `updated_at` field has been updated,
+ * we exit the function as we probably just updated it (recursive call).
+ *
+ * • If `visibility` field has changed, update the associated
+ * file storage (post.md).
+ *
+ * • If `cover.storage_path` has changed and is empty, we deleted the cover.
+ * Thus, delete the associated storage images.
+ *
+ * Update `updated_at` field at least, and other cover fields if applicable.
+ */
+export const onUpdate = functions
+    .region(cloudRegions.eu)
+    .firestore
+    .document("posts/{postId}")
+    .onUpdate(async (snapshot) => {
+      const beforePostData = snapshot.before.data();
+      const afterPostData = snapshot.after.data();
 
-async function checkAccessControl({postId, jwt}: {postId: string, jwt: string}) {
-  try {
-    const postSnapshot = await firestore
-      .collection('posts')
+      const beforeUpdateAt: FirebaseFirestore.Timestamp =
+          beforePostData.updated_at;
+
+      const afterUpdateAt: FirebaseFirestore.Timestamp =
+          afterPostData.updated_at;
+
+      if (!beforeUpdateAt.isEqual(afterUpdateAt)) {
+        return true;
+      }
+
+      let updatePayload = {
+        updated_at: adminApp.firestore.FieldValue.serverTimestamp(),
+      };
+
+      if (beforePostData.visibility !== afterPostData.visibility) {
+        const postStoragePath: string = afterPostData.storage_path;
+        const postFile = storage
+            .bucket()
+            .file(postStoragePath);
+
+        const metadata = await postFile.getMetadata();
+
+        await postFile.setMetadata({
+          ...metadata,
+          ...{
+            customMetadata: {
+              visibility: afterPostData.visibility,
+            },
+          },
+        });
+      }
+
+      const beforeStoragePath = beforePostData.cover.storage_path;
+      const afterStoragePath = afterPostData.cover.storage_path;
+
+      // Handle remove post cover.
+      if (beforeStoragePath !== afterStoragePath && !afterStoragePath) {
+        await deletePostFiles({
+          documentId: snapshot.after.id,
+        });
+
+        updatePayload = {...updatePayload, ...{
+          cover: {
+            dimensions: {
+              width: 0,
+              height: 0,
+            },
+            extension: "",
+            original_url: "",
+            size: 0,
+            storage_path: "",
+            thumbnails: {
+              xs: "",
+              s: "",
+              m: "",
+              l: "",
+              xl: "",
+              xxl: "",
+            },
+          },
+        }};
+      }
+
+      await firestore.collection("posts")
+          .doc(snapshot.after.id)
+          .update(updatePayload);
+
+      return true;
+    });
+
+// -----------------
+// HELPER FUNCTIONS
+// -----------------
+
+/**
+ * Create post's stats sub-collection
+ * @param {string} postId Post's id.
+ * @param {string} userId User's id.
+ * @return {void} void.
+ */
+async function createStatsCollection(postId: string, userId: string) {
+  const snapshot = await firestore
+      .collection(POSTS_COLLECTION_NAME)
       .doc(postId)
       .get();
 
-    if (!postSnapshot.exists) {
-      throw new functions.https.HttpsError(
-        'not-found', 
-        `The post asked does not exist anymore. 
-        You may be asking a deleted post.`,
-      );
-    }
-
-    const postData = postSnapshot.data();
-
-    if (!postData) {
-      throw new functions.https.HttpsError(
-        'data-loss',
-        `The post data is null, which is weird. Please contact us.`,
-      );
-    }
-
-    if (!postData.published) {
-      if (!jwt) {
-        throw new functions.https.HttpsError(
-          'unauthenticated',
-          `The post asked is a draft and you do not have the right to get its content.`,
-        );
-      }
-
-      const decodedToken = await auth.verifyIdToken(jwt, true);
-
-      let hasAuthorAccess = false;
-
-      if (postData.author.id === decodedToken.uid) {
-        hasAuthorAccess = true;
-
-      } else if (postData.coauthors.indexOf(decodedToken.uid) > -1) {
-        hasAuthorAccess = true;
-      }
-
-      if (!hasAuthorAccess) {
-        throw new functions.https.HttpsError(
-          'permission-denied',
-          `You do not have the right to view this post's content.`,
-        );
-      }
-    } else if (postData.restrictedTo.premium) {
-      // TODO: Handle premium users.
-    }
-
-  } catch (error) {
-    throw new functions.https.HttpsError(
-      'internal', 
-      `There was an internal error while retrieving the post content. 
-      Your JWT may be outdated.`,
-    );
+  if (!snapshot.exists) {
+    return;
   }
+
+  await snapshot.ref
+      .collection(POST_STATISTICS_COLLECTION_NAME)
+      .doc(BASE_DOCUMENT_NAME)
+      .create({
+        created_at: adminApp.firestore.FieldValue.serverTimestamp(),
+        post_id: postId,
+        likes: 0,
+        shares: 0,
+        views: 0,
+        user_id: userId,
+        updated_at: adminApp.firestore.FieldValue.serverTimestamp(),
+      });
 }
 
 /**
- * Save a post content.
- * (With accessibility check).
+ * Helper to delete a post's files from Storage (eg. cover, post).
+ * @param {string} param0 Id of the document.
+ * @return {boolean} Return true if everything went well.
  */
-export const save = functions
-  .region(cloudRegions.eu)
-  .https
-  .onCall(async (data) => {
-    const postId: string = data.postId;
-    const jwt: string = data.jwt;
-    const content: string = data.content;
+async function deletePostFiles({
+  documentId,
+  includePost,
+}: DeleteCoverFilesParams) {
+  // Delete files from Cloud Storage
+  const bucket = adminApp.storage().bucket();
 
-    if (!content || !postId) {
-      throw new functions.https.HttpsError(
-        'invalid-argument', 
-        `The function must be called with two (string) arguments 
-        "postId": the post to save, "content": the post\'s content.`,
-      );
-    }
-
-    await checkAccessControl({postId, jwt});
-
-    const postFile = storage
-      .bucket()
-      .file(`blog/posts/${postId}/post.md`);
-
-    try {
-      await postFile.save(content);
-      return { success: true };
-
-    } catch (error) {
-      return { success: false, error: error.toString() };
-    }
+  // Delete /post/cover folder first if any.
+  await bucket.deleteFiles({
+    force: true,
+    prefix: `posts/${documentId}/cover`,
   });
+
+  // Delete /post/images folder first if any.
+  await bucket.deleteFiles({
+    force: true,
+    prefix: `posts/${documentId}/images`,
+  });
+
+  if (includePost) {
+    // Delete post's files (eg. posts).
+    await bucket.deleteFiles({
+      force: true,
+      prefix: `posts/${documentId}`,
+    });
+  }
+
+  return true;
+}

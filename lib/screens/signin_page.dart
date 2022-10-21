@@ -1,31 +1,32 @@
 import 'package:beamer/beamer.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:loggy/loggy.dart';
 import 'package:rootasjey/actions/users.dart';
 import 'package:rootasjey/components/fade_in_x.dart';
 import 'package:rootasjey/components/fade_in_y.dart';
 import 'package:rootasjey/components/loading_animation.dart';
-import 'package:rootasjey/components/application_bar/main_app_bar.dart';
+import 'package:rootasjey/globals/app_state.dart';
+import 'package:rootasjey/globals/constants.dart';
 import 'package:rootasjey/router/locations/forgot_password_location.dart';
 import 'package:rootasjey/router/locations/home_location.dart';
 import 'package:rootasjey/router/locations/signup_location.dart';
-import 'package:rootasjey/types/globals/globals.dart';
-import 'package:rootasjey/utils/fonts.dart';
-import 'package:rootasjey/utils/snack.dart';
+import 'package:rootasjey/globals/state/user_notifier.dart';
 import 'package:supercharged/supercharged.dart';
 import 'package:unicons/unicons.dart';
 
-class SigninPage extends StatefulWidget {
+class SigninPage extends ConsumerStatefulWidget {
   const SigninPage({Key? key}) : super(key: key);
 
   @override
-  _SigninPageState createState() => _SigninPageState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _SigninPageState();
 }
 
-class _SigninPageState extends State<SigninPage> {
-  String _email = '';
-  String _password = '';
+class _SigninPageState extends ConsumerState<SigninPage> with UiLoggy {
+  String _email = "";
+  String _password = "";
 
   bool _isConnecting = false;
 
@@ -46,7 +47,6 @@ class _SigninPageState extends State<SigninPage> {
     return Scaffold(
       body: CustomScrollView(
         slivers: <Widget>[
-          MainAppBar(),
           SliverPadding(
             padding: const EdgeInsets.only(
               top: 100.0,
@@ -73,7 +73,7 @@ class _SigninPageState extends State<SigninPage> {
   Widget body() {
     if (_isConnecting) {
       return LoadingAnimation(
-        textTitle: "signin_dot".tr(),
+        message: "signin_dot".tr(),
       );
     }
 
@@ -98,7 +98,7 @@ class _SigninPageState extends State<SigninPage> {
       delay: 100.milliseconds,
       beginY: 50.0,
       child: Padding(
-        padding: EdgeInsets.only(
+        padding: const EdgeInsets.only(
           top: 80.0,
           left: 15.0,
         ),
@@ -110,7 +110,7 @@ class _SigninPageState extends State<SigninPage> {
               controller: _emailController,
               textInputAction: TextInputAction.next,
               decoration: InputDecoration(
-                icon: Icon(Icons.email),
+                icon: const Icon(UniconsLine.envelope),
                 labelText: "email".tr(),
               ),
               keyboardType: TextInputType.emailAddress,
@@ -147,7 +147,7 @@ class _SigninPageState extends State<SigninPage> {
             children: <Widget>[
               Text(
                 "password_forgot".tr(),
-                style: TextStyle(
+                style: const TextStyle(
                   decoration: TextDecoration.underline,
                 ),
               ),
@@ -172,7 +172,7 @@ class _SigninPageState extends State<SigninPage> {
               ),
               child: IconButton(
                 onPressed: Beamer.of(context).beamBack,
-                icon: Icon(Icons.arrow_back),
+                icon: const Icon(Icons.arrow_back),
               ),
             ),
           ),
@@ -182,11 +182,11 @@ class _SigninPageState extends State<SigninPage> {
             FadeInY(
               beginY: 50.0,
               child: Padding(
-                padding: EdgeInsets.only(bottom: 10.0),
+                padding: const EdgeInsets.only(bottom: 10.0),
                 child: Text(
                   "signin".tr(),
                   textAlign: TextAlign.center,
-                  style: FontsUtils.mainStyle(
+                  style: const TextStyle(
                     fontSize: 25.0,
                     fontWeight: FontWeight.bold,
                   ),
@@ -226,7 +226,7 @@ class _SigninPageState extends State<SigninPage> {
               opacity: 0.6,
               child: Text(
                 "dont_own_account".tr(),
-                style: TextStyle(
+                style: const TextStyle(
                   decoration: TextDecoration.underline,
                 ),
               ),
@@ -240,7 +240,7 @@ class _SigninPageState extends State<SigninPage> {
       delay: 100.milliseconds,
       beginY: 50.0,
       child: Padding(
-        padding: EdgeInsets.only(
+        padding: const EdgeInsets.only(
           top: 30.0,
           left: 15.0,
         ),
@@ -250,7 +250,7 @@ class _SigninPageState extends State<SigninPage> {
             TextFormField(
               focusNode: _passwordNode,
               controller: _passwordController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 icon: Icon(Icons.lock_outline),
                 labelText: 'Password',
               ),
@@ -258,7 +258,7 @@ class _SigninPageState extends State<SigninPage> {
               onChanged: (value) {
                 _password = value;
               },
-              onFieldSubmitted: (value) => signInProcess(),
+              onFieldSubmitted: (value) => trySignin(),
               validator: (value) {
                 if (value!.isEmpty) {
                   return "password_empty_forbidden".tr();
@@ -280,10 +280,10 @@ class _SigninPageState extends State<SigninPage> {
       child: Padding(
         padding: const EdgeInsets.only(top: 80.0),
         child: ElevatedButton(
-          onPressed: () => signInProcess(),
+          onPressed: () => trySignin(),
           style: ElevatedButton.styleFrom(
-            primary: Globals.constants.colors.primary,
-            shape: RoundedRectangleBorder(
+            backgroundColor: Constants.colors.primary,
+            shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.all(
                 Radius.circular(7.0),
               ),
@@ -297,14 +297,14 @@ class _SigninPageState extends State<SigninPage> {
               children: <Widget>[
                 Text(
                   "signin".tr().toUpperCase(),
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 15.0,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 20.0),
+                const Padding(
+                  padding: EdgeInsets.only(left: 20.0),
                   child: Icon(
                     UniconsLine.arrow_right,
                     color: Colors.white,
@@ -320,19 +320,12 @@ class _SigninPageState extends State<SigninPage> {
 
   bool inputValuesOk() {
     if (!UsersActions.checkEmailFormat(_email)) {
-      Snack.e(
-        context: context,
-        message: "email_not_valid".tr(),
-      );
-
+      loggy.error("email_not_valid".tr());
       return false;
     }
 
     if (_password.isEmpty) {
-      Snack.e(
-        context: context,
-        message: "password_empty_forbidden".tr(),
-      );
+      loggy.error("password_empty_forbidden".tr());
 
       return false;
     }
@@ -340,7 +333,7 @@ class _SigninPageState extends State<SigninPage> {
     return true;
   }
 
-  void signInProcess() async {
+  void trySignin() async {
     if (!inputValuesOk()) {
       return;
     }
@@ -348,36 +341,25 @@ class _SigninPageState extends State<SigninPage> {
     setState(() => _isConnecting = true);
 
     try {
-      final containerProvider = ProviderContainer();
-      final userNotifier = containerProvider.read(Globals.state.user.notifier);
-      final userCred = await userNotifier.signIn(
+      final UserNotifier userNotifier =
+          ref.read(AppState.userProvider.notifier);
+
+      final User? userCred = await userNotifier.signIn(
         email: _email,
         password: _password,
       );
 
       if (userCred == null) {
-        setState(() => _isConnecting = false);
-
-        Snack.e(
-          context: context,
-          message: "account_doesnt_exist".tr(),
-        );
-
+        loggy.error("account_doesnt_exist".tr());
         return;
       }
 
-      _isConnecting = false;
-
+      if (!mounted) return;
       Beamer.of(context).beamToNamed(HomeLocation.route);
     } catch (error) {
-      Snack.e(
-        context: context,
-        message: "password_incorrect".tr(),
-      );
-
-      setState(() {
-        _isConnecting = false;
-      });
+      loggy.error("password_incorrect".tr());
+    } finally {
+      setState(() => _isConnecting = false);
     }
   }
 }

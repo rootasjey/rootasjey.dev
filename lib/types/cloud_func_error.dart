@@ -1,34 +1,34 @@
 import 'package:cloud_functions/cloud_functions.dart';
 
 class CloudFuncError {
-  final String? message;
-  final String? code;
-  final String? details;
-
   CloudFuncError({
-    this.message = '',
-    this.code = '',
-    this.details = '',
+    this.message = "",
+    this.code = "",
+    this.details = "",
   });
 
-  factory CloudFuncError.fromException(FirebaseFunctionsException exception) {
-    final _details = exception.details;
+  final String code;
+  final String details;
+  final String message;
 
-    final String? _code = _details != null ? exception.details['code'] : '';
-    final String? _message = _details != null ? _details['message'] : '';
+  factory CloudFuncError.fromException(FirebaseFunctionsException exception) {
+    final dynamic details = exception.details;
+
+    final String code = details != null ? exception.details["code"] : "";
+    final String message = details != null ? details["message"] : "";
 
     return CloudFuncError(
-      code: _code,
-      message: _message,
-      details: '',
+      code: code,
+      message: message,
+      details: "",
     );
   }
 
   factory CloudFuncError.empty() {
     return CloudFuncError(
-      message: '',
-      code: '',
-      details: '',
+      message: "",
+      code: "",
+      details: "",
     );
   }
 
@@ -47,8 +47,8 @@ class CloudFuncError {
   factory CloudFuncError.fromMessage(String message) {
     return CloudFuncError(
       message: message,
-      code: '',
-      details: '',
+      code: "",
+      details: "",
     );
   }
 }

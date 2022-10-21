@@ -3,27 +3,31 @@ import 'dart:async';
 import 'package:beamer/beamer.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:loggy/loggy.dart';
 import 'package:rootasjey/actions/users.dart';
-import 'package:rootasjey/components/animated_app_icon.dart';
 import 'package:rootasjey/components/fade_in_y.dart';
-import 'package:rootasjey/components/application_bar/main_app_bar.dart';
 import 'package:rootasjey/components/sliver_edge_padding.dart';
+import 'package:rootasjey/globals/app_state.dart';
+import 'package:rootasjey/globals/constants.dart';
 import 'package:rootasjey/router/locations/signin_location.dart';
-import 'package:rootasjey/types/globals/globals.dart';
-import 'package:rootasjey/types/user/user_notifier.dart';
-import 'package:rootasjey/utils/app_logger.dart';
-import 'package:rootasjey/utils/fonts.dart';
+import 'package:rootasjey/types/cloud_func_error.dart';
+import 'package:rootasjey/globals/state/user_notifier.dart';
 import 'package:rootasjey/utils/snack.dart';
 import 'package:flutter/material.dart';
 import 'package:supercharged/supercharged.dart';
 import 'package:unicons/unicons.dart';
 
-class UpdateUsernamePage extends StatefulWidget {
+class UpdateUsernamePage extends ConsumerStatefulWidget {
+  const UpdateUsernamePage({super.key});
+
   @override
-  _UpdateUsernamePageState createState() => _UpdateUsernamePageState();
+  ConsumerState<ConsumerStatefulWidget> createState() =>
+      _UpdateUsernamePageState();
 }
 
-class _UpdateUsernamePageState extends State<UpdateUsernamePage> {
+class _UpdateUsernamePageState extends ConsumerState<UpdateUsernamePage>
+    with UiLoggy {
   bool _isUpdating = false;
   bool _isCheckingName = false;
   bool _isCompleted = false;
@@ -33,9 +37,9 @@ class _UpdateUsernamePageState extends State<UpdateUsernamePage> {
   final _usernameController = TextEditingController();
   final _pageScrollController = ScrollController();
 
-  String _username = '';
-  String _nameErrorMessage = '';
-  String _newUsername = '';
+  String _nameErrorMessage = "";
+  String _newUsername = "";
+  final String _username = "";
 
   Timer? _nameTimer;
 
@@ -52,8 +56,7 @@ class _UpdateUsernamePageState extends State<UpdateUsernamePage> {
       body: CustomScrollView(
         controller: _pageScrollController,
         slivers: <Widget>[
-          SliverEdgePadding(),
-          MainAppBar(),
+          const SliverEdgePadding(),
           header(),
           body(),
         ],
@@ -81,8 +84,8 @@ class _UpdateUsernamePageState extends State<UpdateUsernamePage> {
           padding: const EdgeInsets.all(40.0),
           child: Column(
             children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.only(top: 30.0),
+              const Padding(
+                padding: EdgeInsets.only(top: 30.0),
                 child: Icon(
                   Icons.check_circle_outline_outlined,
                   size: 80.0,
@@ -94,7 +97,7 @@ class _UpdateUsernamePageState extends State<UpdateUsernamePage> {
                 child: Text(
                   "username_update_success".tr(),
                   textAlign: TextAlign.center,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 20.0,
                   ),
                 ),
@@ -127,7 +130,7 @@ class _UpdateUsernamePageState extends State<UpdateUsernamePage> {
                       opacity: 0.8,
                       child: IconButton(
                         onPressed: Beamer.of(context).beamBack,
-                        icon: Icon(UniconsLine.arrow_left),
+                        icon: const Icon(UniconsLine.arrow_left),
                       ),
                     ),
                   ),
@@ -138,7 +141,7 @@ class _UpdateUsernamePageState extends State<UpdateUsernamePage> {
                         opacity: 0.4,
                         child: Text(
                           "settings".tr().toUpperCase(),
-                          style: FontsUtils.mainStyle(
+                          style: const TextStyle(
                             fontSize: 16.0,
                             fontWeight: FontWeight.w400,
                           ),
@@ -148,7 +151,7 @@ class _UpdateUsernamePageState extends State<UpdateUsernamePage> {
                         opacity: 0.8,
                         child: Text(
                           "username_update".tr(),
-                          style: FontsUtils.mainStyle(
+                          style: const TextStyle(
                             fontSize: 50.0,
                             fontWeight: FontWeight.w500,
                           ),
@@ -161,7 +164,7 @@ class _UpdateUsernamePageState extends State<UpdateUsernamePage> {
                           opacity: 0.5,
                           child: Text(
                             "username_update_description".tr(),
-                            style: FontsUtils.mainStyle(
+                            style: const TextStyle(
                               fontSize: 16.0,
                               fontWeight: FontWeight.w500,
                             ),
@@ -186,9 +189,10 @@ class _UpdateUsernamePageState extends State<UpdateUsernamePage> {
         bottom: 40.0,
       ),
       child: Card(
-        color: Globals.constants.colors.clairPink,
+        color: Constants.colors.clairPink,
         elevation: 2.0,
         child: InkWell(
+          onTap: showTipsDialog,
           child: Container(
             width: 340.0,
             padding: const EdgeInsets.all(20.0),
@@ -200,7 +204,7 @@ class _UpdateUsernamePageState extends State<UpdateUsernamePage> {
                       padding: const EdgeInsets.only(right: 10.0),
                       child: Icon(
                         UniconsLine.envelope,
-                        color: Globals.constants.colors.secondary,
+                        color: Constants.colors.secondary,
                       ),
                     ),
                     Column(
@@ -210,14 +214,14 @@ class _UpdateUsernamePageState extends State<UpdateUsernamePage> {
                           opacity: 0.6,
                           child: Text(
                             "username_current".tr(),
-                            style: FontsUtils.mainStyle(
+                            style: const TextStyle(
                               fontWeight: FontWeight.w600,
                             ),
                           ),
                         ),
                         Text(
                           _username,
-                          style: FontsUtils.mainStyle(
+                          style: const TextStyle(
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -228,7 +232,6 @@ class _UpdateUsernamePageState extends State<UpdateUsernamePage> {
               ],
             ),
           ),
-          onTap: showTipsDialog,
         ),
       ),
     );
@@ -266,12 +269,11 @@ class _UpdateUsernamePageState extends State<UpdateUsernamePage> {
           width: 400.0,
           child: Column(
             children: <Widget>[
-              AnimatedAppIcon(),
               Padding(
                 padding: const EdgeInsets.only(top: 40.0),
                 child: Text(
                   "username_updating".tr(),
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 20.0,
                   ),
                 ),
@@ -298,9 +300,9 @@ class _UpdateUsernamePageState extends State<UpdateUsernamePage> {
             controller: _usernameController,
             decoration: InputDecoration(
               fillColor: Colors.white,
-              focusColor: Globals.constants.colors.clairPink,
+              focusColor: Constants.colors.clairPink,
               labelText: "username_new".tr(),
-              border: OutlineInputBorder(),
+              border: const OutlineInputBorder(),
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 8.0,
               ),
@@ -355,14 +357,14 @@ class _UpdateUsernamePageState extends State<UpdateUsernamePage> {
             Container(
               width: 230.0,
               padding: const EdgeInsets.only(left: 40.0),
-              child: LinearProgressIndicator(),
+              child: const LinearProgressIndicator(),
             ),
           if (_nameErrorMessage.isNotEmpty)
             Padding(
               padding: const EdgeInsets.only(left: 40.0, top: 5.0),
               child: Text(
                 _nameErrorMessage,
-                style: TextStyle(
+                style: const TextStyle(
                   color: Colors.red,
                   fontSize: 15.0,
                 ),
@@ -377,7 +379,7 @@ class _UpdateUsernamePageState extends State<UpdateUsernamePage> {
     return ElevatedButton(
       onPressed: tryUpdateUsername,
       style: ElevatedButton.styleFrom(
-        primary: Colors.black87,
+        backgroundColor: Colors.black87,
       ),
       child: SizedBox(
         width: 320.0,
@@ -388,7 +390,7 @@ class _UpdateUsernamePageState extends State<UpdateUsernamePage> {
               padding: const EdgeInsets.all(14.0),
               child: Text(
                 "username_update".tr().toUpperCase(),
-                style: FontsUtils.mainStyle(
+                style: const TextStyle(
                   fontSize: 15.0,
                   fontWeight: FontWeight.bold,
                 ),
@@ -427,17 +429,20 @@ class _UpdateUsernamePageState extends State<UpdateUsernamePage> {
     });
 
     try {
-      _isNameAvailable =
+      final bool isNameAvailable =
           await UsersActions.checkUsernameAvailability(_newUsername);
 
-      if (!_isNameAvailable) {
+      if (!isNameAvailable) {
+        if (!mounted) return;
+
         setState(() {
           _isCompleted = false;
           _isUpdating = false;
         });
 
-        Snack.e(
-          context: context,
+        Snack.error(
+          context,
+          title: "username".tr(),
           message: "username_not_available_args".tr(args: [_newUsername]),
         );
 
@@ -445,6 +450,7 @@ class _UpdateUsernamePageState extends State<UpdateUsernamePage> {
       }
 
       final userAuth = FirebaseAuth.instance.currentUser;
+      if (!mounted) return;
 
       if (userAuth == null) {
         setState(() {
@@ -456,48 +462,57 @@ class _UpdateUsernamePageState extends State<UpdateUsernamePage> {
         return;
       }
 
-      final UserNotifier userNotifier = Globals.state.getUserNotifier();
+      // final UserNotifier userNotifier = AppState.getUserNotifier();
+      final UserNotifier userNotifier =
+          ref.read(AppState.userProvider.notifier);
 
       final usernameUpdateResponse = await userNotifier.updateUsername(
         _newUsername,
       );
 
       if (!usernameUpdateResponse.success) {
+        if (!mounted) return;
+
         setState(() {
           _isCompleted = false;
           _isUpdating = false;
         });
 
-        final exception = usernameUpdateResponse.error;
+        final CloudFuncError? exception = usernameUpdateResponse.error;
         if (exception == null) return;
 
-        Snack.e(
-          context: context,
+        Snack.error(
+          context,
+          title: "username".tr(),
           message: "[code: ${exception.code}] - ${exception.message}",
         );
 
         return;
       }
 
+      if (!mounted) return;
+
       setState(() {
         _isCompleted = true;
         _isUpdating = false;
-        _newUsername = '';
+        _newUsername = "";
       });
 
-      Snack.s(
-        context: context,
+      Snack.success(
+        context,
+        title: "username".tr(),
         message: "username_update_success".tr(),
       );
     } catch (error) {
-      appLogger.e(error);
+      loggy.error(error);
       setState(() {
         _isCompleted = false;
         _isUpdating = false;
       });
 
-      Snack.e(
-        context: context,
+      Snack.error(
+        context,
+        title: "username".tr(),
         message: "username_update_error".tr(),
       );
     }
@@ -508,16 +523,16 @@ class _UpdateUsernamePageState extends State<UpdateUsernamePage> {
       context: context,
       builder: (context) {
         return SimpleDialog(
-          backgroundColor: Globals.constants.colors.clairPink,
+          backgroundColor: Constants.colors.clairPink,
           title: Text(
             "username_current".tr(),
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 15.0,
             ),
           ),
           children: <Widget>[
             Divider(
-              color: Globals.constants.colors.secondary,
+              color: Constants.colors.secondary,
               thickness: 1.0,
             ),
             Padding(
@@ -528,7 +543,7 @@ class _UpdateUsernamePageState extends State<UpdateUsernamePage> {
                 opacity: 0.6,
                 child: Text(
                   _username,
-                  style: FontsUtils.mainStyle(
+                  style: const TextStyle(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -542,7 +557,7 @@ class _UpdateUsernamePageState extends State<UpdateUsernamePage> {
                 opacity: 0.6,
                 child: Text(
                   "username_choose_description".tr(),
-                  style: FontsUtils.mainStyle(
+                  style: const TextStyle(
                     fontWeight: FontWeight.bold,
                   ),
                 ),

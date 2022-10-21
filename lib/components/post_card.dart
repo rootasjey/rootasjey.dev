@@ -2,32 +2,30 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:loggy/loggy.dart';
 import 'package:rootasjey/types/post.dart';
-import 'package:rootasjey/types/user_firestore.dart';
-import 'package:rootasjey/utils/app_logger.dart';
-import 'package:rootasjey/utils/fonts.dart';
+import 'package:rootasjey/types/user/user_firestore.dart';
 
 class PostCard extends StatefulWidget {
-  final Post post;
-  final VoidCallback? onTap;
-  final PopupMenuButton? popupMenuButton;
-  final EdgeInsets padding;
-
-  PostCard({
+  const PostCard({
+    super.key,
     required this.post,
     this.onTap,
     this.popupMenuButton,
     this.padding = EdgeInsets.zero,
   });
 
+  final Post post;
+  final VoidCallback? onTap;
+  final PopupMenuButton? popupMenuButton;
+  final EdgeInsets padding;
   @override
-  _PostCardState createState() => _PostCardState();
+  State<StatefulWidget> createState() => _PostCardState();
 }
 
-class _PostCardState extends State<PostCard> {
+class _PostCardState extends State<PostCard> with UiLoggy {
   double? _elevation;
-
-  String? _authorName = '';
+  String? _authorName = "";
 
   @override
   void initState() {
@@ -69,7 +67,7 @@ class _PostCardState extends State<PostCard> {
     final post = widget.post;
 
     if (post.image!.thumbnail!.isEmpty) {
-      return Padding(
+      return const Padding(
         padding: EdgeInsets.zero,
       );
     }
@@ -114,7 +112,7 @@ class _PostCardState extends State<PostCard> {
             opacity: 0.6,
             child: Text(
               '$_authorName - ${Jiffy(post.createdAt).fromNow()}',
-              style: FontsUtils.mainStyle(
+              style: const TextStyle(
                 fontSize: 15.0,
                 fontWeight: FontWeight.w600,
               ),
@@ -130,7 +128,7 @@ class _PostCardState extends State<PostCard> {
             post.title.isEmpty ? "no_title".tr() : post.title,
             overflow: TextOverflow.ellipsis,
             maxLines: 3,
-            style: FontsUtils.mainStyle(
+            style: const TextStyle(
               height: 1.0,
               fontSize: 26.0,
               fontWeight: FontWeight.w600,
@@ -181,7 +179,7 @@ class _PostCardState extends State<PostCard> {
       final data = docSnap.data()!;
       data['id'] = docSnap.id;
 
-      final user = UserFirestore.fromJSON(data);
+      final user = UserFirestore.fromMap(data);
 
       // ?NOTE: Prevent setState if not mounted.
       // This is due to each card having its own fetch & state,
@@ -195,7 +193,7 @@ class _PostCardState extends State<PostCard> {
 
       setState(() => _authorName = user.name);
     } catch (error) {
-      appLogger.e(error);
+      loggy.error(error);
     }
   }
 }

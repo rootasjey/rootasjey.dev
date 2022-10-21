@@ -28,7 +28,7 @@ class Cloud {
   static HttpsCallable fun(String name, {HttpsCallableOptions? options}) {
     return FirebaseFunctions.instanceFor(
       app: Firebase.app(),
-      region: 'europe-west3',
+      region: "europe-west3",
     ).httpsCallable(name);
   }
 }

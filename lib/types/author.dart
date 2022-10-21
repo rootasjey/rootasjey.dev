@@ -1,11 +1,13 @@
 class Author {
+  const Author({
+    required this.id,
+  });
+
   final String id;
 
-  const Author({required this.id});
-
   factory Author.empty() {
-    return Author(
-      id: '',
+    return const Author(
+      id: "",
     );
   }
 
@@ -15,7 +17,7 @@ class Author {
     }
 
     return Author(
-      id: data['id'] ?? '',
+      id: data["id"] ?? "",
     );
   }
 }

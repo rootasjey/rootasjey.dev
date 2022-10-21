@@ -1,7 +1,6 @@
 import 'package:beamer/beamer.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:rootasjey/utils/fonts.dart';
 import 'package:unicons/unicons.dart';
 
 class PageTitle extends StatelessWidget {
@@ -30,12 +29,12 @@ class PageTitle extends StatelessWidget {
               child: IconButton(
                 tooltip: "back".tr(),
                 onPressed: Beamer.of(context).beamBack,
-                icon: Icon(UniconsLine.arrow_left),
+                icon: const Icon(UniconsLine.arrow_left),
               ),
             ),
             Text(
               textTitle,
-              style: FontsUtils.mainStyle(
+              style: const TextStyle(
                 fontSize: 80.0,
                 fontWeight: FontWeight.w700,
               ),
@@ -43,8 +42,8 @@ class PageTitle extends StatelessWidget {
           ],
         ),
         if (isLoading)
-          Padding(
-            padding: const EdgeInsets.only(top: 52.0, left: 22.0),
+          const Padding(
+            padding: EdgeInsets.only(top: 52.0, left: 22.0),
             child: CircularProgressIndicator(),
           ),
       ],

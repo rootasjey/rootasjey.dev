@@ -1,36 +1,88 @@
-import 'dart:typed_data';
-import 'package:beamer/beamer.dart';
-import 'package:file_saver/file_saver.dart';
-import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:rootasjey/components/avatar/better_avatar.dart';
-import 'package:rootasjey/components/application_bar/main_app_bar.dart';
-import 'package:rootasjey/types/exp.dart';
-import 'package:rootasjey/types/exp_date.dart';
+import 'package:rootasjey/components/better_avatar.dart';
+import 'package:rootasjey/types/experience.dart';
+import 'package:rootasjey/types/experience_date.dart';
 import 'package:rootasjey/types/formation.dart';
 import 'package:rootasjey/types/project.dart';
 import 'package:rootasjey/types/skill.dart';
-import 'package:rootasjey/types/urls.dart';
-import 'package:rootasjey/utils/fonts.dart';
+import 'package:rootasjey/types/social_links.dart';
+import 'package:file_saver/file_saver.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:rootasjey/globals/utilities.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:unicons/unicons.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class CVPage extends StatefulWidget {
+  const CVPage({Key? key}) : super(key: key);
+
   @override
-  _CVPageState createState() => _CVPageState();
+  State<StatefulWidget> createState() => _CVPageState();
 }
 
 class _CVPageState extends State<CVPage> {
-  final _exps = [
-    Exp(
+  final List<Experience> _exps = [
+    Experience(
+      job: "Développeur Web Fullstack",
+      company: "Servier",
+      url: "https://myhealth-partner.com/",
+      date: const ExperienceDate(
+        end: "Mars 2022",
+        start: "Juillet 2021",
+      ),
+      objective: "Refonte du site web My Health Partner",
+      tasks: [
+        "• Unifier les développements des différents pays afin d'avoir une cohérence visuelle et fonctionnelle",
+        "• Développement du front avec Next.JS et React.JS",
+        "• Gestion de contenu avec Strapi",
+        "• Intégration de maquettes UI/UX",
+        "• Création d'un design system",
+        "• Analyse et développement d'un module de recherche",
+        "• Analyse de SEO",
+        "• Intégration de plugin dans Strapi",
+        "• Déploiement Vercel",
+        "• Déploiement Microsoft Azure"
+            "• DevOps, infrastructure et déploiement",
+        "• Refactoring de code et architecture",
+        "• Revue de code, pair programming"
+      ],
+    ),
+    Experience(
+      job: "Mentor Python & JS",
+      company: "Openclassrooms",
+      url: "https://openclassrooms.com",
+      date: const ExperienceDate(
+        end: "Février 2021",
+        start: "Mai 2022",
+      ),
+      objective:
+          "Accompagner des étudiants dans l'apprentissage de la programmation",
+      tasks: [
+        "• Dispensation de cours de JavaScript (front & back) et Python (front & back)",
+        "• Cours sur les frameworks et technologies composant le domaine de programmation",
+        "• Connaissance générale et contexte de développement (e.g. des faits sur la création d'un langage)"
+            "• Établissement de planning avec l'élève",
+        "• Assistance en dehors des sessions de travail pour répondre aux questions"
+            "• Accompagnement hebdomadaire avec explications, exos, et projets",
+        "• Pair programming/debugging avec les étudiants"
+            "• Évaluation des étudiants sur leur projets",
+        "• Perspectives professionnelles après la formation",
+        "• Conseils et perspectives professionnelles",
+        "• Revue de code, pair programming"
+      ],
+    ),
+    Experience(
       job: "Entrepreneur",
-      company: "Jeremie Codes",
+      company: "Coding box",
       url: "https://rootasjey.dev",
-      date: ExpDate(
+      date: const ExperienceDate(
         end: "Aujourd'hui",
         start: "Octobre 2019",
       ),
+      objective: "Développement d'une application de citations",
       tasks: [
         "- Développement d'applications multiplateforme (iOS, Android) avec Flutter",
         "- Gestion de base de données Firestore avec ses règles d'accès",
@@ -38,40 +90,61 @@ class _CVPageState extends State<CVPage> {
         "- Utilisation de CI/CD",
       ],
     ),
-    Exp(
+    Experience(
       job: "Architecte logiciel",
       company: "Fabernovel technologies",
       url: "https://www.fabernovel.com",
-      date: ExpDate(
+      date: const ExperienceDate(
         start: "Mai 2019",
         end: "Juin 2019",
       ),
+      objective:
+          "Développement d'une platforme pour le service client d'une grande banque",
       tasks: [
-        "- Programmation fonctionnelle avec Kaiju, Abyssa, Spacelift",
-        "- Méthode agile (scrum), Revue de code, Pair programming",
+        "• Programmation fonctionnelle avec Kaiju, Abyssa, Spacelift",
+        "• Développement de fonctionnalités (gestion de données d'utilisateur)",
+        "• Création de tests unitaires",
+        "• Participation aux réunions sur les dernières technologies",
+        "• Monté en compétence sur la méthode agile, scrum",
+        "• Revue de code, Pair programming",
       ],
     ),
-    Exp(
+    Experience(
       job: "Développeur frontend",
       company: "Dassault Systèmes",
       url: "https://3ds.com",
-      date: ExpDate(
+      date: const ExperienceDate(
         end: "2019",
         start: "2015",
       ),
+      objective:
+          "Développement d'une application de stockage de fichiers cloud. "
+          "Dassault Système a construit son propre système de stockage cloud. "
+          "Il était également question d'intégrer des services tiers tels que Dropbox, Google Drive OneDrive",
       tasks: [
-        "- Développement frontend en JavaScript vanilla (Object pattern)",
-        "- Tests unitaires, d'intégration, end-to-end (Karma.js, Intern.js)",
-        "- Ecriture de spécifications UX + Collaboration avec équipe UX",
+        "• Intégration UI/UX",
+        "• Développement frontend en JavaScript vanilla (Object pattern)",
+        "• Définition et réalisation de tests utilisateur (en condition)",
+        "• Gestion d'upload et téléchargement de données",
+        "• Intégration d'API externes: OneDrive, GoogleDrive, Dropbox",
+        "• Tests unitaires, d'intégration, end-to-end (Karma.js, Intern.js)",
+        "• Rédaction de spécifications techniques",
+        "• Ecriture de spécifications UX + Collaboration avec équipe UX",
+        "• Collaboration avec Q/A",
+        "• Création de tests unitaires, d'intégration end-to-end (jest, karma, jasmine, selenium, testharness)",
+        "• Présentation des dernières avancées technologiques en réunion",
+        "• Rythme: Cycle en V",
+        "• Passation de connaissances",
+        "• Revue de code, pair programming"
       ],
     ),
   ];
 
-  final _formations = [
+  final List<Formation> _formations = [
     Formation(
       degree: "Licence & Master d'informatique",
       school: "Université de Versailles",
-      date: ExpDate(start: "2010", end: "2015"),
+      date: const ExperienceDate(start: "2010", end: "2015"),
       tasks: [
         "- Design patterns (Observer, Composition, Factory)",
         "- Algorithmique (problème du voyageur, théorie des graphes)",
@@ -83,42 +156,103 @@ class _CVPageState extends State<CVPage> {
     ),
   ];
 
-  Uint8List? _imageFile;
-  final _screenshotController = ScreenshotController();
+  // Uint8List? _imageFile;
+  final ScreenshotController _screenshotController = ScreenshotController();
 
-  final _projects = [
+  final List<Project> _projects = [
     Project(
+      createdAt: DateTime.now(),
+      releasedAt: DateTime.now(),
+      updatedAt: DateTime.now(),
+      id: "mhp",
+      name: "my-health-partner",
+      summary:
+          "Une application web pour le groupe Servier permettant de trouver"
+          " des informations sur une maladie. Codé en JavaScript à l'aide de"
+          " Next.JS, React.JS. Déployé sur Vercel et Azure.",
+      platforms: ["Web"],
+      socialLinks: SocialLinks(
+        github: "https://myhealth-partner.com/",
+      ),
+    ),
+    Project(
+      createdAt: DateTime.now(),
+      releasedAt: DateTime.now(),
+      updatedAt: DateTime.now(),
+      id: "notapokedex",
+      name: "notapokedex",
+      summary: "Un Pokédex codé avec React.JS, TypeScript, MobX, GraphQL.",
+      platforms: ['Web'],
+      socialLinks: SocialLinks(
+        github: "https://github.com/rootasjey/notapokedex",
+      ),
+    ),
+    Project(
+      createdAt: DateTime.now(),
+      releasedAt: DateTime.now(),
+      updatedAt: DateTime.now(),
+      id: "artbooking",
+      name: "artbooking",
+      summary:
+          "Une plateforme d'illustrations avec un espace artistique virtuel,"
+          " bientôt des défis et des concours.",
+      platforms: ['iOS', 'Android', 'Web'],
+      socialLinks: SocialLinks(
+        github: "https://github.com/rootasjey/artbooking",
+      ),
+    ),
+    Project(
+      createdAt: DateTime.now(),
+      releasedAt: DateTime.now(),
+      updatedAt: DateTime.now(),
       id: "fig.style",
-      title: "fig.style",
+      name: "fig.style",
       summary: "App de citations open-source et communautaire."
           " Recevez une notification chaque jour sur votre téléphone."
           " Recherchez par mots-clés ou par catégories.",
       platforms: ["iOS", "Android", "Web", "API"],
-      urls: Urls(
+      socialLinks: SocialLinks(
         github: "https://github.com/rootasjey/fig.style",
-        image: "assets/images/figstyle.png",
       ),
     ),
     Project(
-      id: "Relines",
-      title: "Relines",
-      summary: "Mini-jeu de citations où vous devez devinder l'auteur"
-          " ou la référence d'une citation.",
-      platforms: ['iOS', 'Android', 'Web'],
-      urls: Urls(
-        github: "https://github.com/rootasjey/relines",
-        image: "assets/images/relines.png",
-      ),
-    ),
-    Project(
-      id: "Lumi",
-      title: "Lumi",
-      summary: "Contrôlez vos ampoules & capteurs Philips Hue.",
+      createdAt: DateTime.now(),
+      releasedAt: DateTime.now(),
+      updatedAt: DateTime.now(),
+      id: "conway",
+      name: "conway",
+      summary: "Le jeu de la vie codé avec électron en JavaScript.",
       platforms: [
-        'macOS',
+        "macOS",
       ],
-      urls: Urls(
-        github: "https://github.com/rootasjey/lumi",
+      socialLinks: SocialLinks(
+        github: "https://github.com/rootasjey/conway_electron",
+      ),
+    ),
+    Project(
+      createdAt: DateTime.now(),
+      releasedAt: DateTime.now(),
+      updatedAt: DateTime.now(),
+      id: "unsplasharp",
+      name: "unsplasharp",
+      summary: "Un wrapper C# des APIs d'Unsplash.",
+      platforms: ["C#", "Nuget", "UWA"],
+      socialLinks: SocialLinks(
+        github: "https://github.com/rootasjey/unsplasharp",
+      ),
+    ),
+    Project(
+      createdAt: DateTime.now(),
+      releasedAt: DateTime.now(),
+      updatedAt: DateTime.now(),
+      id: "metrix-fitbit",
+      name: "metrix-fitbit",
+      summary: "Une clock face pour les bracelets Fitbit.",
+      platforms: [
+        "Fitbit",
+      ],
+      socialLinks: SocialLinks(
+        github: "https://github.com/rootasjey/metrix-fitbit",
       ),
     ),
   ];
@@ -165,23 +299,19 @@ class _CVPageState extends State<CVPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          _imageFile = await _screenshotController.capture();
-          await FileSaver.instance.saveFile("cv", _imageFile!, "png");
-        },
-        child: Icon(UniconsLine.camera),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: tryDownloadCV,
+        backgroundColor: Colors.indigo,
+        icon: const Icon(UniconsLine.save),
+        label: const Text("Download"),
       ),
       body: CustomScrollView(
         slivers: [
-          MainAppBar(),
-          SliverList(
-            delegate: SliverChildListDelegate.fixed([
-              Screenshot(
-                controller: _screenshotController,
-                child: body(),
-              ),
-            ]),
+          SliverToBoxAdapter(
+            child: Screenshot(
+              controller: _screenshotController,
+              child: body(),
+            ),
           ),
         ],
       ),
@@ -189,8 +319,9 @@ class _CVPageState extends State<CVPage> {
   }
 
   Widget body() {
-    return Padding(
+    return Container(
       padding: const EdgeInsets.all(80.0),
+      color: Theme.of(context).scaffoldBackgroundColor,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -229,21 +360,25 @@ class _CVPageState extends State<CVPage> {
       spacing: 60.0,
       children: [
         BetterAvatar(
-          image: AssetImage(
-            'assets/images/jeje.jpg',
+          colorFilter: const ColorFilter.mode(
+            Colors.grey,
+            BlendMode.saturation,
+          ),
+          image: const AssetImage(
+            "assets/images/jeje.jpg",
           ),
           onTap: () {
             showDialog(
               context: context,
-              builder: (context) {
+              builder: (BuildContext context) {
                 return SimpleDialog(
                   children: [
                     InkWell(
-                      onTap: Beamer.of(context).beamBack,
+                      // onTap: Beamer.of(context).beamBack,
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Image.asset(
-                          'assets/images/jeje.jpg',
+                          "assets/images/jeje.jpg",
                         ),
                       ),
                     ),
@@ -256,58 +391,137 @@ class _CVPageState extends State<CVPage> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               "Jérémie CORPINOT",
-              style: FontsUtils.mainStyle(
+              style: TextStyle(
                 fontSize: 50.0,
                 fontWeight: FontWeight.w600,
+                height: 1.0,
               ),
             ),
-            Opacity(
-              opacity: 0.6,
+            const Opacity(
+              opacity: 0.3,
               child: Text(
                 "alias rootasjey",
-                style: FontsUtils.mainStyle(
-                  fontSize: 20.0,
+                style: TextStyle(
+                  fontSize: 14.0,
                 ),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(top: 12.0),
+              padding: const EdgeInsets.only(top: 12.0, bottom: 18.0),
               child: Opacity(
                 opacity: 0.8,
                 child: Text(
-                  "Développeur fullstack",
-                  style: FontsUtils.mainStyle(
+                  "Dev web fullstack",
+                  style: Utilities.fonts.body3(
+                    backgroundColor: Colors.amber,
                     fontSize: 28.0,
                   ),
                 ),
               ),
             ),
-            Opacity(
-              opacity: 0.6,
-              child: Text(
-                "Yvelines, France",
-                style: FontsUtils.mainStyle(
-                  fontSize: 20.0,
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8.0),
+              child: InkWell(
+                onTap: () {
+                  launchUrl(Uri.parse("https://goo.gl/maps/Kz8roDPe8brvLpDJ7"));
+                },
+                child: Opacity(
+                  opacity: 0.6,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.only(right: 12.0),
+                        child: Icon(UniconsLine.location_point),
+                      ),
+                      Text(
+                        "Yvelines, France",
+                        style: Utilities.fonts.body1(
+                          fontSize: 16.0,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-            Opacity(
-              opacity: 0.6,
-              child: Text(
-                "jeremie@rootasjey.dev",
-                style: FontsUtils.mainStyle(
-                  fontSize: 16.0,
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8.0),
+              child: InkWell(
+                onTap: () {
+                  launchUrl(Uri.parse("mailto:jerem.freelance@codingbox.fr"));
+                },
+                child: Opacity(
+                  opacity: 0.6,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.only(right: 12.0),
+                        child: Icon(UniconsLine.envelope),
+                      ),
+                      Text(
+                        "jerem.freelance@codingbox.fr",
+                        style: Utilities.fonts.body1(
+                          fontSize: 16.0,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-            Opacity(
-              opacity: 0.6,
-              child: Text(
-                "https://rootasjey.dev",
-                style: FontsUtils.mainStyle(
-                  fontSize: 16.0,
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8.0),
+              child: InkWell(
+                onTap: () {
+                  launchUrl(Uri.parse("https://rootasjey.dev"));
+                },
+                child: Opacity(
+                  opacity: 0.6,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.only(right: 12.0),
+                        child: Icon(UniconsLine.globe),
+                      ),
+                      Text(
+                        "https://rootasjey.dev",
+                        style: Utilities.fonts.body1(
+                          fontSize: 16.0,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8.0),
+              child: InkWell(
+                onTap: () {
+                  launchUrl(Uri.parse("https://github.com/rootasjey"));
+                },
+                child: Opacity(
+                  opacity: 0.6,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.only(right: 12.0),
+                        child: Icon(UniconsLine.github_alt),
+                      ),
+                      Text(
+                        "https://github.com/rootasjey.dev",
+                        style: Utilities.fonts.body1(
+                          fontSize: 16.0,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -329,7 +543,7 @@ class _CVPageState extends State<CVPage> {
           "Je sais m'adapter et je contribue régulièrement à des projets open-source. "
           "J'ai un tempérament curieux et un attrait pour l'art, "
           "la musique, et les jeux-vidéo. Entre autres.",
-          style: FontsUtils.mainStyle(
+          style: Utilities.fonts.body1(
             fontSize: 16.0,
           ),
         ),
@@ -371,7 +585,7 @@ class _CVPageState extends State<CVPage> {
           return;
         }
 
-        launch(url);
+        launchUrlString(url);
       },
       child: Padding(
         padding: const EdgeInsets.all(4.0),
@@ -406,13 +620,13 @@ class _CVPageState extends State<CVPage> {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(right: 12.0),
-                  child: Icon(UniconsLine.briefcase),
+                const Padding(
+                  padding: EdgeInsets.only(right: 12.0),
+                  child: Icon(UniconsLine.briefcase, color: Colors.blue),
                 ),
                 Text(
                   "Expériences Professionnelles",
-                  style: FontsUtils.mainStyle(
+                  style: Utilities.fonts.body1(
                     fontSize: 24.0,
                   ),
                 ),
@@ -436,7 +650,7 @@ class _CVPageState extends State<CVPage> {
             children: [
               Text(
                 exp.job,
-                style: FontsUtils.mainStyle(
+                style: Utilities.fonts.body1(
                   fontWeight: FontWeight.w600,
                   fontSize: 20.0,
                 ),
@@ -449,11 +663,11 @@ class _CVPageState extends State<CVPage> {
                       return;
                     }
 
-                    launch(exp.url);
+                    launchUrlString(exp.url);
                   },
                   child: Text(
                     exp.company,
-                    style: FontsUtils.mainStyle(
+                    style: Utilities.fonts.body1(
                       fontWeight: FontWeight.w400,
                       fontSize: 16.0,
                     ),
@@ -464,7 +678,7 @@ class _CVPageState extends State<CVPage> {
                 opacity: 0.5,
                 child: Text(
                   "${exp.date.start} - ${exp.date.end}",
-                  style: FontsUtils.mainStyle(
+                  style: Utilities.fonts.body1(
                     fontWeight: FontWeight.w400,
                     fontSize: 16.0,
                   ),
@@ -496,13 +710,13 @@ class _CVPageState extends State<CVPage> {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Padding(
-                padding: const EdgeInsets.only(right: 12.0),
-                child: Icon(UniconsLine.university),
+              const Padding(
+                padding: EdgeInsets.only(right: 12.0),
+                child: Icon(UniconsLine.university, color: Colors.green),
               ),
               Text(
                 "Formation",
-                style: FontsUtils.mainStyle(
+                style: Utilities.fonts.body1(
                   fontSize: 24.0,
                 ),
               ),
@@ -519,7 +733,7 @@ class _CVPageState extends State<CVPage> {
                 children: [
                   Text(
                     formation.degree,
-                    style: FontsUtils.mainStyle(
+                    style: Utilities.fonts.body1(
                       fontSize: 20.0,
                       fontWeight: FontWeight.w500,
                     ),
@@ -552,22 +766,25 @@ class _CVPageState extends State<CVPage> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Opacity(
-            opacity: 0.8,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(right: 12.0),
-                  child: Icon(UniconsLine.rocket),
-                ),
-                Text(
-                  "Projects",
-                  style: FontsUtils.mainStyle(
-                    fontSize: 24.0,
+          Padding(
+            padding: const EdgeInsets.only(bottom: 16.0),
+            child: Opacity(
+              opacity: 0.8,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.only(right: 12.0),
+                    child: Icon(UniconsLine.rocket, color: Colors.pink),
                   ),
-                ),
-              ],
+                  Text(
+                    "Projects",
+                    style: Utilities.fonts.body1(
+                      fontSize: 24.0,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
           projectsListView(),
@@ -582,9 +799,9 @@ class _CVPageState extends State<CVPage> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: _projects.map((project) {
+        children: _projects.map((final Project project) {
           return Padding(
-            padding: const EdgeInsets.only(top: 12.0),
+            padding: const EdgeInsets.only(bottom: 24.0),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -593,29 +810,35 @@ class _CVPageState extends State<CVPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     InkWell(
+                      child: Opacity(
+                        opacity: 0.6,
+                        child: Text(
+                          project.name,
+                          style: Utilities.fonts.body1(
+                            fontSize: 18.0,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
                       onTap: () {
-                        if (project.urls!.github.isEmpty) {
+                        if (project.socialLinks.github.isEmpty) {
                           return;
                         }
 
-                        launch(project.urls!.github);
+                        launchUrlString(project.socialLinks.github);
                       },
-                      child: Text(
-                        project.title,
-                        style: FontsUtils.mainStyle(
-                          fontSize: 20.0,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(top: 6.0),
+                      padding: const EdgeInsets.only(top: 6.0, bottom: 3.0),
                       child: Opacity(
-                        opacity: 0.5,
+                        opacity: 0.4,
                         child: Wrap(
                           spacing: 8.0,
                           children: project.platforms
-                              .map((platform) => Text(platform))
+                              .map((String platform) => Text(
+                                    platform,
+                                    style: GoogleFonts.firaCode(),
+                                  ))
                               .toList(),
                         ),
                       ),
@@ -623,23 +846,37 @@ class _CVPageState extends State<CVPage> {
                     SizedBox(
                       width: 400.0,
                       child: Opacity(
-                        opacity: 0.8,
-                        child: Text(project.summary),
+                        opacity: 0.6,
+                        child: Text(
+                          project.summary,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                       ),
                     ),
                   ],
                 ),
-                if (project.urls!.image.isNotEmpty)
-                  Image.asset(
-                    project.urls!.image,
-                    width: 60.0,
-                    height: 60.0,
-                  ),
+                // if (project.socialLinks.image.isNotEmpty)
+                //   Image.asset(
+                //     project.socialLinks.image,
+                //     width: 60.0,
+                //     height: 60.0,
+                //   ),
               ],
             ),
           );
         }).toList(),
       ),
     );
+  }
+
+  void tryDownloadCV() async {
+    final Uint8List? imageFile = await _screenshotController.capture();
+    if (imageFile == null) {
+      return;
+    }
+
+    await FileSaver.instance.saveFile("cv", imageFile, "png");
   }
 }

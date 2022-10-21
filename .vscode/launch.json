@@ -5,9 +5,21 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "rootasjey.dev",
+      "name": "rootasjey",
       "request": "launch",
       "type": "dart"
+    },
+    {
+      "name": "rootasjey (profile mode)",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "profile"
+    },
+    {
+      "name": "rootasjey (release mode)",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "release"
     }
   ]
 }

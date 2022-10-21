@@ -1,95 +1,42 @@
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/material.dart';
-import 'package:rootasjey/utils/flash_helper.dart';
-import 'package:unicons/unicons.dart';
 
-/// Snack bar class.
-/// Helper to quickly dispay different snacks types.
 class Snack {
-  /// Show a snack with an error message.
-  static Future e({
-    required BuildContext context,
-    Duration duration = const Duration(seconds: 5),
-    Widget? icon,
-    required String? message,
-    Widget? primaryAction,
-    String title = '',
+  static success(
+    BuildContext context, {
+    required String title,
+    required String message,
   }) {
-    Widget _icon;
-
-    if (icon != null) {
-      _icon = icon;
-    } else {
-      _icon = Icon(
-        UniconsLine.times,
-        color: Colors.pink,
-      );
-    }
-
-    return FlashHelper.groundedBottom(
-      context,
-      title: title,
-      message: message,
-      icon: _icon,
-      primaryAction: primaryAction,
+    final SnackBar snackBar = SnackBar(
+      elevation: 0,
+      behavior: SnackBarBehavior.floating,
+      backgroundColor: Colors.transparent,
+      content: AwesomeSnackbarContent(
+        title: title,
+        message: message,
+        contentType: ContentType.success,
+      ),
     );
+
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
-  /// Show a snack with an informative message.
-  static Future i({
-    required BuildContext context,
-    Duration duration = const Duration(seconds: 5),
-    Widget? icon,
+  static error(
+    BuildContext context, {
+    required String title,
     required String message,
-    Widget? primaryAction,
-    String title = '',
   }) {
-    Widget _icon;
-
-    if (icon != null) {
-      _icon = icon;
-    } else {
-      _icon = Icon(
-        UniconsLine.info,
-        color: Colors.blue,
-      );
-    }
-
-    return FlashHelper.groundedBottom(
-      context,
-      title: title,
-      message: message,
-      icon: _icon,
-      primaryAction: primaryAction,
+    final SnackBar snackBar = SnackBar(
+      elevation: 0,
+      behavior: SnackBarBehavior.floating,
+      backgroundColor: Colors.transparent,
+      content: AwesomeSnackbarContent(
+        title: title,
+        message: message,
+        contentType: ContentType.failure,
+      ),
     );
-  }
 
-  /// Show a snack with a success message.
-  static Future s({
-    required BuildContext context,
-    Duration duration = const Duration(seconds: 5),
-    Widget? icon,
-    required String message,
-    Widget? primaryAction,
-    String title = '',
-  }) {
-    Widget _icon;
-
-    if (icon != null) {
-      _icon = icon;
-    } else {
-      _icon = Icon(
-        UniconsLine.check,
-        color: Colors.green,
-      );
-    }
-
-    return FlashHelper.groundedBottom(
-      context,
-      title: title,
-      message: message,
-      icon: _icon,
-      duration: duration,
-      primaryAction: primaryAction,
-    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 }

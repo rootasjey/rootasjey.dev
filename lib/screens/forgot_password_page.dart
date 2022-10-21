@@ -2,37 +2,35 @@ import 'package:beamer/beamer.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:loggy/loggy.dart';
 import 'package:rootasjey/actions/users.dart';
 import 'package:rootasjey/components/fade_in_x.dart';
 import 'package:rootasjey/components/fade_in_y.dart';
-import 'package:rootasjey/components/loading_animation.dart';
-import 'package:rootasjey/components/application_bar/main_app_bar.dart';
+import 'package:rootasjey/globals/constants.dart';
 import 'package:rootasjey/router/locations/home_location.dart';
-import 'package:rootasjey/types/globals/globals.dart';
-import 'package:rootasjey/utils/app_logger.dart';
 import 'package:rootasjey/utils/snack.dart';
-import 'package:supercharged/supercharged.dart';
 import 'package:unicons/unicons.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
+  const ForgotPasswordPage({super.key});
+
   @override
-  _ForgotPasswordPageState createState() => _ForgotPasswordPageState();
+  State<StatefulWidget> createState() => _ForgotPasswordPageState();
 }
 
-class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
-  String email = '';
+class _ForgotPasswordPageState extends State<ForgotPasswordPage> with UiLoggy {
+  String email = "";
 
   bool isCompleted = false;
   bool isLoading = false;
 
-  final passwordNode = FocusNode();
+  final FocusNode passwordNode = FocusNode();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: CustomScrollView(
         slivers: <Widget>[
-          MainAppBar(),
           SliverList(
             delegate: SliverChildListDelegate.fixed([
               Column(
@@ -59,11 +57,9 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     }
 
     if (isLoading) {
-      return Padding(
-        padding: const EdgeInsets.only(top: 80.0),
-        child: LoadingAnimation(
-          textTitle: "email_sending".tr(),
-        ),
+      return const Padding(
+        padding: EdgeInsets.only(top: 80.0),
+        child: CircularProgressIndicator(),
       );
     }
 
@@ -75,15 +71,15 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
     return Column(
       children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.only(top: 30.0),
+        const Padding(
+          padding: EdgeInsets.only(top: 30.0),
           child: Icon(
             Icons.check_circle,
             size: 80.0,
             color: Colors.green,
           ),
         ),
-        Container(
+        SizedBox(
           width: width > 400.0 ? 320.0 : 280.0,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -92,7 +88,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 padding: const EdgeInsets.only(top: 30.0, bottom: 10.0),
                 child: Text(
                   "email_password_reset_link".tr(),
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 20.0,
                   ),
                 ),
@@ -112,7 +108,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
             onPressed: () {
               Beamer.of(context).beamToNamed(HomeLocation.route);
             },
-            child: Opacity(
+            child: const Opacity(
               opacity: .6,
               child: Text(
                 'Return to home',
@@ -136,10 +132,10 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
   Widget emailInput() {
     return FadeInY(
-      delay: 100.milliseconds,
+      delay: const Duration(milliseconds: 100),
       beginY: 50.0,
       child: Padding(
-        padding: EdgeInsets.only(
+        padding: const EdgeInsets.only(
           top: 40.0,
           left: 15.0,
         ),
@@ -149,7 +145,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
             TextFormField(
               autofocus: true,
               decoration: InputDecoration(
-                icon: Icon(Icons.email),
+                icon: const Icon(Icons.email),
                 labelText: "email".tr(),
               ),
               keyboardType: TextInputType.emailAddress,
@@ -178,14 +174,14 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         if (Beamer.of(context).beamingHistory.isNotEmpty)
           FadeInX(
             beginX: 10.0,
-            delay: 100.milliseconds,
+            delay: const Duration(milliseconds: 100),
             child: Padding(
               padding: const EdgeInsets.only(
                 right: 20.0,
               ),
               child: IconButton(
                 onPressed: Beamer.of(context).beamBack,
-                icon: Icon(UniconsLine.arrow_left),
+                icon: const Icon(UniconsLine.arrow_left),
               ),
             ),
           ),
@@ -196,11 +192,11 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
               FadeInY(
                 beginY: 50.0,
                 child: Padding(
-                  padding: EdgeInsets.only(top: 10.0),
+                  padding: const EdgeInsets.only(top: 10.0),
                   child: Text(
                     "password_forgot".tr(),
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 25.0,
                       fontWeight: FontWeight.bold,
                     ),
@@ -227,18 +223,18 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
   Widget validationButton() {
     return FadeInY(
-      delay: 200.milliseconds,
+      delay: const Duration(milliseconds: 200),
       beginY: 50.0,
       child: Padding(
         padding: const EdgeInsets.only(top: 80.0),
         child: ElevatedButton(
           onPressed: sendResetLink,
           style: ElevatedButton.styleFrom(
-            primary: Globals.constants.colors.primary,
-            textStyle: TextStyle(
+            backgroundColor: Constants.colors.primary,
+            textStyle: const TextStyle(
               color: Colors.white,
             ),
-            shape: RoundedRectangleBorder(
+            shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(5.0)),
             ),
           ),
@@ -248,8 +244,8 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 Text("link_send".tr().toUpperCase()),
-                Padding(
-                  padding: const EdgeInsets.only(left: 20.0),
+                const Padding(
+                  padding: EdgeInsets.only(left: 20.0),
                   child: Icon(UniconsLine.envelope),
                 )
               ],
@@ -262,8 +258,9 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
   bool inputValuesOk() {
     if (email.isEmpty) {
-      Snack.e(
-        context: context,
+      Snack.error(
+        context,
+        title: "email".tr(),
         message: "email_empty_no_valid".tr(),
       );
 
@@ -271,8 +268,9 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     }
 
     if (!UsersActions.checkEmailFormat(email)) {
-      Snack.e(
-        context: context,
+      Snack.error(
+        context,
+        title: "email".tr(),
         message: "email_not_valid".tr(),
       );
 
@@ -299,14 +297,15 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         isCompleted = true;
       });
     } catch (error) {
-      appLogger.e(error);
+      loggy.error(error);
 
       setState(() {
         isLoading = false;
       });
 
-      Snack.e(
-        context: context,
+      Snack.error(
+        context,
+        title: "email".tr(),
         message: "email_doesnt_exist".tr(),
       );
     }
