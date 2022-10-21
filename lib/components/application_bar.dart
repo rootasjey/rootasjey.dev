@@ -1,8 +1,12 @@
 import 'package:beamer/beamer.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:rootasjey/components/buttons/circle_button.dart';
 import 'package:rootasjey/components/icons/app_icon.dart';
+import 'package:rootasjey/components/popup_menu/popup_menu_icon.dart';
+import 'package:rootasjey/components/popup_menu/popup_menu_item_icon.dart';
+import 'package:rootasjey/globals/app_state.dart';
 import 'package:rootasjey/router/locations/home_location.dart';
 import 'package:rootasjey/globals/utilities.dart';
 import 'package:rootasjey/router/locations/signin_location.dart';
@@ -11,37 +15,23 @@ import 'package:unicons/unicons.dart';
 class ApplicationBar extends ConsumerWidget {
   const ApplicationBar({
     Key? key,
-    this.minimal = false,
     this.pinned = true,
-    this.showUserSection = true,
     this.bottom,
-    this.right,
   }) : super(key: key);
-
-  /// If true, will only display right section with search, language, & avatar.
-  final bool minimal;
 
   /// Whether the app bar should remain visible at the start of the scroll view.
   final bool pinned;
 
-  /// Display user's menu if authenticated or signin/up button is not.
-  /// If this property is false, the place will be empty.
-  final bool showUserSection;
-
   /// This widget appears across the bottom of the app bar.
   final PreferredSizeWidget? bottom;
-
-  final Widget? right;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final bool isMobileSize = Utilities.size.isMobileSize(context);
 
-    // final User userProvider = ref.watch(AppState.userProvider);
-    // final UserNotifier userNotifier = ref.read(AppState.userProvider.notifier);
-
-    // final String? avatarUrl = userProvider.firestoreUser?.getProfilePicture();
-    // final String initials = userNotifier.getInitialsUsername();
+    final userFirestore = ref.watch(AppState.userProvider).firestoreUser;
+    final bool isAuthenticated =
+        userFirestore != null && userFirestore.rights.manageData;
 
     final String? location = Beamer.of(context)
         .beamingHistory
@@ -52,7 +42,6 @@ class ApplicationBar extends ConsumerWidget {
         .location;
 
     final bool hasHistory = location != HomeLocation.route;
-    final Widget rightWidget = right ?? Container();
 
     return SliverPadding(
       padding:
@@ -109,38 +98,54 @@ class ApplicationBar extends ConsumerWidget {
               ),
               Padding(
                 padding: const EdgeInsets.only(right: 80.0),
-                child: OutlinedButton(
-                  onPressed: () {
-                    // GlobalLoggy().loggy.info("resume dark");
-                    // AdaptiveTheme.of(context).setDark();
-                  },
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: Colors.pink,
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      "resume",
-                      style: Utilities.fonts.body1(
-                        fontSize: 16.0,
-                        fontWeight: FontWeight.w600,
+                child: Wrap(
+                  spacing: 12.0,
+                  children: [
+                    OutlinedButton(
+                      onPressed: () {
+                        // GlobalLoggy().loggy.info("resume dark");
+                        // AdaptiveTheme.of(context).setDark();
+                      },
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: Colors.pink,
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          "resume".tr(),
+                          style: Utilities.fonts.body1(
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                       ),
                     ),
-                  ),
+                    if (isAuthenticated)
+                      PopupMenuButton(
+                        itemBuilder: (BuildContext context) {
+                          return [
+                            PopupMenuItemIcon(
+                              icon: const PopupMenuIcon(UniconsLine.signout),
+                              textLabel: "logout".tr(),
+                              newValue: "logout",
+                              selected: false,
+                            ),
+                          ];
+                        },
+                        onSelected: (String value) {
+                          if (value == "logout") {
+                            ref.read(AppState.userProvider.notifier).signOut();
+                            return;
+                          }
+                        },
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(6.0),
+                        ),
+                        icon: const Icon(UniconsLine.setting),
+                      ),
+                  ],
                 ),
               ),
-              // if (!minimal) mainSection(isMobileSize),
-              // if (showUserSection)
-              //   userSection(
-              //     context,
-              //     ref: ref,
-              //     isMobileSize: isMobileSize,
-              //     minimal: minimal,
-              //     isAuthenticated: userNotifier.isAuthenticated,
-              //     initials: initials,
-              //     avatarUrl: avatarUrl ?? "",
-              //   ),
-              if (right != null) rightWidget,
             ],
           ),
         ),

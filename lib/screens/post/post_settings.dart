@@ -103,7 +103,7 @@ class PostSettings extends StatelessWidget {
 
     return SliverToBoxAdapter(
       child: PlayAnimationBuilder<double>(
-        tween: Tween(begin: 0.0, end: 1000.0),
+        tween: Tween(begin: 0.0, end: 900.0),
         duration: const Duration(milliseconds: 400),
         curve: Curves.decelerate,
         builder: (BuildContext context, double value, Widget? child) {
@@ -119,7 +119,6 @@ class PostSettings extends StatelessWidget {
           child: Container(
             width: 800.0,
             padding: const EdgeInsets.only(
-              top: 60.0,
               left: 42.0,
               right: 42.0,
             ),

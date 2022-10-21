@@ -11,14 +11,13 @@ import 'package:flutter_improved_scrolling/flutter_improved_scrolling.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loggy/loggy.dart';
 import 'package:lottie/lottie.dart';
-import 'package:rootasjey/components/buttons/circle_button.dart';
 import 'package:rootasjey/components/buttons/fab_to_top.dart';
 import 'package:rootasjey/components/dialogs/delete_dialog.dart';
 import 'package:rootasjey/components/loading_view.dart';
 import 'package:rootasjey/components/upload_panel/upload_panel.dart';
 import 'package:rootasjey/globals/app_state.dart';
 import 'package:rootasjey/globals/utilities.dart';
-import 'package:rootasjey/router/locations/home_location.dart';
+import 'package:rootasjey/screens/post/post_app_bar.dart';
 import 'package:rootasjey/screens/post/post_cover.dart';
 import 'package:rootasjey/screens/post/post_footer.dart';
 import 'package:rootasjey/screens/post/post_page_body.dart';
@@ -33,9 +32,6 @@ import 'package:rootasjey/types/enums/enum_cover_width.dart';
 import 'package:rootasjey/types/project.dart';
 import 'package:rootasjey/types/user/user_firestore.dart';
 import 'package:rootasjey/types/user/user_rights.dart';
-import 'package:simple_animations/simple_animations.dart';
-import 'package:super_editor/super_editor.dart';
-import 'package:super_editor_markdown/super_editor_markdown.dart';
 import 'package:unicons/unicons.dart';
 import 'package:verbal_expressions/verbal_expressions.dart';
 
@@ -51,10 +47,7 @@ class ProjectPage extends ConsumerStatefulWidget {
   ConsumerState<ProjectPage> createState() => _ProjectPageState();
 }
 
-class _ProjectPageState extends ConsumerState<ProjectPage>
-    with UiLoggy, AnimationMixin {
-  late Animation<double> angle;
-
+class _ProjectPageState extends ConsumerState<ProjectPage> with UiLoggy {
   /// True if the project is loading.
   bool _loading = false;
 
@@ -67,25 +60,19 @@ class _ProjectPageState extends ConsumerState<ProjectPage>
   bool _showAddTag = false;
 
   bool _hideFab = true;
+  bool _showAppBarTitle = false;
 
   bool _showSettings = false;
 
   bool _confirmDeletePost = false;
 
-  final Duration _duration = const Duration(
-    milliseconds: 250,
-  );
+  bool _editing = false;
 
+  /// Post's content as String.
   String _content = "";
 
   /// Firestore collection name.
   final String _collectionName = "projects";
-
-  /// Visible if the authenticated user has the right to edit this post.
-  DocumentEditor _documentEditor = DocumentEditor(document: MutableDocument());
-
-  /// Post's content.
-  MutableDocument _document = MutableDocument();
 
   /// Page project.
   Project _project = Project.empty();
@@ -107,6 +94,9 @@ class _ProjectPageState extends ConsumerState<ProjectPage>
   final TextEditingController _summaryController = TextEditingController();
   final TextEditingController _tagInputController = TextEditingController();
 
+  /// Controller for post content.
+  final TextEditingController _contentController = TextEditingController();
+
   /// Used to add delay to post's metadata update.
   Timer? _metadataUpdateTimer;
 
@@ -118,7 +108,6 @@ class _ProjectPageState extends ConsumerState<ProjectPage>
   @override
   void initState() {
     super.initState();
-    angle = Tween(begin: 0.0, end: 60.0).animate(controller);
     fetchMetadata();
   }
 
@@ -128,8 +117,7 @@ class _ProjectPageState extends ConsumerState<ProjectPage>
     _contentUpdateTimer?.cancel();
     _nameController.dispose();
     _summaryController.dispose();
-    _document.removeListener(contentListener);
-    _document.dispose();
+    _contentController.dispose();
     _projectSubscription?.cancel();
     super.dispose();
   }
@@ -153,11 +141,32 @@ class _ProjectPageState extends ConsumerState<ProjectPage>
     const double maxWidth = 640.0;
 
     return Scaffold(
-      floatingActionButton: FabToTop(
-        hideIfAtTop: _hideFab,
-        fabIcon: const Icon(UniconsLine.arrow_up),
-        pageScrollController: _pageScrollController,
-      ),
+      floatingActionButton: canManagePosts
+          ? FloatingActionButton.extended(
+              onPressed: () {
+                setState(() => _editing = !_editing);
+              },
+              extendedPadding: const EdgeInsets.symmetric(
+                horizontal: 32.0,
+              ),
+              foregroundColor: Colors.white,
+              backgroundColor: Colors.pink,
+              label: Text(
+                _editing ? "render" : "edit".tr(),
+                style: Utilities.fonts.body(
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              icon: _editing
+                  ? const Icon(UniconsLine.eye)
+                  : const Icon(UniconsLine.edit_alt),
+            )
+          : FabToTop(
+              hideIfAtTop: _hideFab,
+              fabIcon: const Icon(UniconsLine.arrow_up),
+              pageScrollController: _pageScrollController,
+            ),
       body: Stack(
         children: [
           ImprovedScrolling(
@@ -165,7 +174,26 @@ class _ProjectPageState extends ConsumerState<ProjectPage>
             onScroll: onScroll,
             child: CustomScrollView(
               controller: _pageScrollController,
+              // shrinkWrap: true,
               slivers: [
+                PostAppBar(
+                  showTitle: _showAppBarTitle,
+                  textTitle: _project.name,
+                  showSettings: _showSettings,
+                  onTapSettings: () {
+                    if (!_showSettings) {
+                      _pageScrollController.animateTo(
+                        0.0,
+                        curve: Curves.decelerate,
+                        duration: const Duration(
+                          milliseconds: 250,
+                        ),
+                      );
+                    }
+
+                    setState(() => _showSettings = !_showSettings);
+                  },
+                ),
                 PostSettings(
                   confirmDelete: _confirmDeletePost,
                   cover: _project.cover,
@@ -214,11 +242,12 @@ class _ProjectPageState extends ConsumerState<ProjectPage>
                 PostPageBody(
                   canManagePosts: canManagePosts,
                   content: _content,
-                  document: _document,
-                  documentEditor: _documentEditor,
                   isMobileSize: isMobileSize,
                   loading: _loading,
                   maxWidth: maxWidth,
+                  editing: _editing,
+                  editingController: _contentController,
+                  onContentChanged: onContentChanged,
                 ),
                 PostFooter(
                   content: _content,
@@ -266,53 +295,6 @@ class _ProjectPageState extends ConsumerState<ProjectPage>
                 ),
               ),
             ),
-          Positioned(
-            top: 24.0,
-            left: 24.0,
-            child: CircleButton(
-              icon: const Icon(UniconsLine.box),
-              onTap: () => Beamer.of(context, root: true).beamToNamed(
-                HomeLocation.route,
-              ),
-            ),
-          ),
-          Positioned(
-            top: 24.0,
-            right: 24.0,
-            child: CircleButton(
-              tooltip: "settings".tr(),
-              icon: Transform.rotate(
-                angle: angle.value,
-                child: const Icon(UniconsLine.setting),
-              ),
-              onTap: () {
-                if (!_showSettings) {
-                  _pageScrollController.animateTo(
-                    0.0,
-                    curve: Curves.decelerate,
-                    duration: _duration,
-                  );
-                  controller.play(duration: _duration);
-                } else {
-                  controller.playReverse(duration: _duration);
-                }
-
-                setState(() {
-                  _showSettings = !_showSettings;
-                });
-              },
-            ),
-          ),
-          Positioned(
-            top: 24.0,
-            right: 70.0,
-            child: CircleButton(
-              icon: const Icon(UniconsLine.home_alt),
-              onTap: () => Beamer.of(context, root: true).beamToNamed(
-                HomeLocation.route,
-              ),
-            ),
-          ),
           Positioned(
             left: isMobileSize ? 0.0 : 16.0,
             bottom: isMobileSize ? 0.0 : 16.0,
@@ -364,59 +346,6 @@ class _ProjectPageState extends ConsumerState<ProjectPage>
     setState(() => _loading = false);
   }
 
-  /// Creates a document with multiple levels of headers with hint text, and a
-  /// regular paragraph for comparison.
-  MutableDocument _createDocument() {
-    return MutableDocument(
-      nodes: [
-        ParagraphNode(
-          id: DocumentEditor.createNodeId(),
-          text: AttributedText(text: ''),
-          metadata: {'blockType': header1Attribution},
-        ),
-        ParagraphNode(
-          id: DocumentEditor.createNodeId(),
-          text: AttributedText(text: ''),
-          metadata: {'blockType': header2Attribution},
-        ),
-        ParagraphNode(
-          id: DocumentEditor.createNodeId(),
-          text: AttributedText(text: ''),
-          metadata: {'blockType': header3Attribution},
-        ),
-        ParagraphNode(
-          id: DocumentEditor.createNodeId(),
-          text: AttributedText(
-            text: "there: https://google.com",
-            spans: AttributedSpans(
-              attributions: [
-                SpanMarker(
-                  attribution:
-                      LinkAttribution(url: Uri.parse('https://google.com')),
-                  offset: 7,
-                  markerType: SpanMarkerType.start,
-                ),
-                SpanMarker(
-                  attribution:
-                      LinkAttribution(url: Uri.parse('https://google.com')),
-                  offset: 24,
-                  markerType: SpanMarkerType.end,
-                ),
-              ],
-            ),
-          ),
-        ),
-        ParagraphNode(
-          id: DocumentEditor.createNodeId(),
-          text: AttributedText(
-            text:
-                'Nam hendrerit vitae elit ut placerat. Maecenas nec congue neque. Fusce eget tortor pulvinar, cursus neque vitae, sagittis lectus. Duis mollis libero eu scelerisque ullamcorper. Pellentesque eleifend arcu nec augue molestie, at iaculis dui rutrum. Etiam lobortis magna at magna pellentesque ornare. Sed accumsan, libero vel porta molestie, tortor lorem eleifend ante, at egestas leo felis sed nunc. Quisque mi neque, molestie vel dolor a, eleifend tempor odio.',
-          ),
-        ),
-      ],
-    );
-  }
-
   Future<void> fetchContent() async {
     try {
       final Reference fileStorage = FirebaseStorage.instance
@@ -437,13 +366,7 @@ class _ProjectPageState extends ConsumerState<ProjectPage>
       }
 
       setState(() {
-        // _document = deserializeMarkdownToDocument(_content)
-        //   ..addListener(contentListener);
-        _document = _createDocument();
-
-        _documentEditor = DocumentEditor(
-          document: _document,
-        );
+        _contentController.text = _content;
       });
     } catch (error) {
       loggy.error(error);
@@ -492,6 +415,7 @@ class _ProjectPageState extends ConsumerState<ProjectPage>
           contentEncoding: metadata.contentEncoding,
           contentLanguage: metadata.contentLanguage,
           contentType: "text/markdown; charset=UTF-8",
+          // contentType: "application/json; charset=UTF-8",
           customMetadata: customMetadata,
         ),
       );
@@ -500,13 +424,6 @@ class _ProjectPageState extends ConsumerState<ProjectPage>
     } finally {
       setState(() => _saving = false);
     }
-  }
-
-  void onPostContentChange() {
-    _content = serializeDocumentToMarkdown(_document);
-
-    trySaveContent();
-    // updateMetrics();
   }
 
   /// Update post's character & word count.
@@ -618,7 +535,7 @@ class _ProjectPageState extends ConsumerState<ProjectPage>
     _contentUpdateTimer?.cancel();
     _contentUpdateTimer = Timer(
       const Duration(seconds: 1),
-      onPostContentChange,
+      trySaveContent,
     );
   }
 
@@ -694,8 +611,46 @@ class _ProjectPageState extends ConsumerState<ProjectPage>
         .pickImage(targetId: _project.id);
   }
 
+  /// Show or hide app bar title based on the scroll Y offset.
+  void handleAppBarTitleVisibility(double offset) {
+    if (offset <= 60) {
+      if (!_showAppBarTitle) {
+        return;
+      }
+
+      setState(() {
+        _showAppBarTitle = false;
+      });
+
+      return;
+    }
+
+    if (_showAppBarTitle) {
+      return;
+    }
+
+    setState(() {
+      _showAppBarTitle = true;
+    });
+  }
+
+  /// React to scroll events.
   void onScroll(double offset) {
-    if (offset <= 0) {
+    handleAppBarTitleVisibility(offset);
+    handleFabVisibility(offset);
+  }
+
+  /// Show or hide the floating action button based on the scroll Y offset.
+  void handleFabVisibility(double offset) {
+    if (_editing) {
+      return;
+    }
+
+    if (offset <= 60) {
+      if (_hideFab) {
+        return;
+      }
+
       setState(() => _hideFab = true);
       return;
     }
@@ -895,5 +850,15 @@ class _ProjectPageState extends ConsumerState<ProjectPage>
         ));
       });
     }
+  }
+
+  void onContentChanged(String content) {
+    _content = content;
+
+    _contentUpdateTimer?.cancel();
+    _contentUpdateTimer = Timer(
+      const Duration(seconds: 1),
+      trySaveContent,
+    );
   }
 }

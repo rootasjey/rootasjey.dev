@@ -37,7 +37,11 @@ class _CreateProjectPageState extends ConsumerState<CreateProjectPage> {
     return Scaffold(
       body: Stack(
         children: [
-          const Positioned(top: 60.0, left: 60.0, child: AppIcon()),
+          const Positioned(
+            top: 60.0,
+            left: 60.0,
+            child: AppIcon(),
+          ),
           CustomScrollView(
             slivers: [
               SliverToBoxAdapter(

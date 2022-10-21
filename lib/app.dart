@@ -43,7 +43,9 @@ class App extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           locale: context.locale,
           supportedLocales: context.supportedLocales,
-          localizationsDelegates: context.localizationDelegates,
+          localizationsDelegates: [
+            ...context.localizationDelegates,
+          ],
           routerDelegate: appLocationBuilder,
           routeInformationParser: BeamerParser(),
         );

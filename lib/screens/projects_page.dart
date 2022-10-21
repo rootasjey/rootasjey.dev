@@ -66,13 +66,13 @@ class _ProjectsPageState extends ConsumerState<ProjectsPage> with UiLoggy {
   /// Listens to illustration's updates.
   QuerySnapshotStreamSubscription? _postSubscription;
 
+  /// Popup menu items for project card.
   final List<PopupMenuEntry<EnumProjectItemAction>> _projectPopupMenuItems = [
     PopupMenuItemIcon(
       icon: const PopupMenuIcon(UniconsLine.trash),
       textLabel: "delete".tr(),
       newValue: EnumProjectItemAction.delete,
       selected: false,
-      // selected: post.visibility == EnumProjectItemAction.private,
     ),
   ];
 

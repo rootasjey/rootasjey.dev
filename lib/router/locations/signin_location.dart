@@ -3,7 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:rootasjey/globals/app_state.dart';
 import 'package:rootasjey/router/locations/home_location.dart';
-import 'package:rootasjey/screens/signin_page.dart';
+import 'package:rootasjey/screens/signin_page/signin_page.dart';
 
 class SigninLocation extends BeamLocation<BeamState> {
   /// Main root value for this location.

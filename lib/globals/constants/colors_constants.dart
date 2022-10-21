@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 class ColorsConstants {
@@ -11,6 +13,10 @@ class ColorsConstants {
     Colors.deepPurple,
     Colors.pink,
   ];
+
+  Color getRandomFromPalette() {
+    return palette.elementAt(Random().nextInt(palette.length));
+  }
 
   /// Color for statistics.
   final Color activity = Colors.red;

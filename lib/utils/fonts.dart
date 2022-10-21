@@ -105,6 +105,20 @@ class FontsUtils {
     );
   }
 
+  TextStyle body5(TextStyle textStyle) {
+    return GoogleFonts.poppins(textStyle: textStyle);
+    // return GoogleFonts.poppins(
+    //   backgroundColor: backgroundColor,
+    //   color: color,
+    //   fontSize: fontSize,
+    //   fontStyle: fontStyle,
+    //   fontWeight: fontWeight,
+    //   height: height,
+    //   decoration: decoration,
+    //   decorationThickness: decorationThickness,
+    // );
+  }
+
   /// Can be used for blog post body.
   TextStyle title3({
     FontWeight fontWeight = FontWeight.w400,

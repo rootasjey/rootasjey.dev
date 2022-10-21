@@ -1,23 +1,31 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_prism/flutter_prism.dart';
 import 'package:loggy/loggy.dart';
+import 'package:markdown_viewer/markdown_viewer.dart';
 import 'package:rootasjey/components/loading_view.dart';
-import 'package:super_editor/super_editor.dart';
+import 'package:rootasjey/globals/constants.dart';
+import 'package:rootasjey/globals/utilities.dart';
+import 'package:rootasjey/screens/post/editor_plugins/markdown_line_return.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-class PostPageBody extends StatelessWidget {
+class PostPageBody extends StatelessWidget with UiLoggy {
   const PostPageBody({
     Key? key,
     required this.content,
-    required this.document,
-    required this.documentEditor,
     required this.maxWidth,
+    required this.editingController,
+    this.editing = false,
     this.canManagePosts = false,
     this.isMobileSize = false,
     this.loading = false,
+    this.onContentChanged,
   }) : super(key: key);
 
   /// The current authenticated user can edit & delete this post if true.
   final bool canManagePosts;
+
+  final bool editing;
 
   /// True if this post is being loaded.
   final bool loading;
@@ -25,16 +33,14 @@ class PostPageBody extends StatelessWidget {
   /// The UI adapts to small screen size if true.
   final bool isMobileSize;
 
-  /// Post's content.
-  final Document document;
-
-  /// Visible if the authenticated user has the right to edit this post.
-  final DocumentEditor documentEditor;
-
   final double maxWidth;
+
+  final void Function(String content)? onContentChanged;
 
   /// Post's content to display in an editor.
   final String content;
+
+  final TextEditingController editingController;
 
   @override
   Widget build(BuildContext context) {
@@ -50,189 +56,142 @@ class PostPageBody extends StatelessWidget {
       );
     }
 
-    if (!canManagePosts) {
+    if (editing && canManagePosts) {
       return SliverToBoxAdapter(
-        child: Padding(
-          padding: EdgeInsets.symmetric(
-            vertical: isMobileSize ? 0.0 : 56.0,
-            horizontal: isMobileSize ? 12.0 : 24.0,
-          ),
-          child: SingleColumnDocumentLayout(
-            presenter: SingleColumnLayoutPresenter(
-              document: document,
-              componentBuilders: defaultComponentBuilders,
-              pipeline: [
-                SingleColumnStylesheetStyler(stylesheet: defaultStylesheet),
-              ],
+        child: Center(
+          child: Container(
+            padding: const EdgeInsets.only(top: 42.0),
+            width: maxWidth,
+            child: TextField(
+              autofocus: true,
+              controller: editingController,
+              maxLines: null,
+              minLines: 12,
+              onChanged: onContentChanged,
+              decoration: InputDecoration(
+                hintText: "Once upon a time...",
+                border: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Constants.colors.palette.first,
+                    width: 2.0,
+                  ),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Theme.of(context)
+                            .textTheme
+                            .bodyText2
+                            ?.color
+                            ?.withOpacity(0.4) ??
+                        Colors.white12,
+                    width: 2.0,
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Constants.colors.getRandomFromPalette(),
+                    width: 4.0,
+                  ),
+                ),
+              ),
             ),
-            componentBuilders: defaultComponentBuilders,
           ),
         ),
       );
     }
 
     return SliverToBoxAdapter(
-      child: SuperEditor(
-        editor: documentEditor,
-        documentOverlayBuilders: [
-          DefaultCaretOverlayBuilder(
-            const CaretStyle().copyWith(color: Colors.amber),
-          ),
-        ],
-        selectionStyle: SelectionStyles(
-          selectionColor: Colors.amber.withOpacity(0.3),
-        ),
-        stylesheet: _createStylesheet(context),
-        // componentBuilders: [
-        //   const LinkComponentBuilder(),
-        //   ...defaultComponentBuilders,
-        // ],
-      ),
-    );
-  }
+      child: Center(
+        child: Container(
+          padding: const EdgeInsets.only(top: 42.0),
+          width: maxWidth,
+          child: MarkdownViewer(
+            content,
+            enableTaskList: true,
+            enableSuperscript: true,
+            enableSubscript: true,
+            enableFootnote: true,
+            enableImageSize: false,
+            enableKbd: false,
+            syntaxExtensions: [LineReturnSyntax()],
+            elementBuilders: [
+              LineReturnBuilder(),
+            ],
+            highlightBuilder: (text, language, infoString) {
+              final prism = Prism(
+                mouseCursor: SystemMouseCursors.text,
+                style: PrismStyle(
+                  keyword: const TextStyle(
+                    color: Colors.green,
+                  ),
+                  string: TextStyle(
+                    color: Colors.blue.shade200,
+                  ),
+                ),
+              );
+              return prism.render(text, language ?? "plain");
+            },
+            selectionColor: Colors.pink.withOpacity(0.2),
+            onTapLink: (href, title) async {
+              if (href == null) {
+                return;
+              }
 
-  Stylesheet _createStylesheet(BuildContext context) {
-    return defaultStylesheet.copyWith(
-      rules: [
-        StyleRule(
-          BlockSelector.all,
-          (Document doc, DocumentNode docNode) {
-            return {
-              "maxWidth": maxWidth,
-              "padding": const CascadingPadding.symmetric(horizontal: 24),
-              "textStyle": TextStyle(
-                color: Theme.of(context)
-                    .textTheme
-                    .bodyText2
-                    ?.color
-                    ?.withOpacity(0.8),
-                fontSize: 18,
-                height: 1.4,
+              final uri = Uri.parse(href);
+
+              if (!await canLaunchUrl(uri)) {
+                return;
+              }
+
+              launchUrl(uri);
+            },
+            styleSheet: MarkdownStyle(
+              link: Utilities.fonts.body5(
+                const TextStyle(
+                  color: Colors.amber,
+                  fontSize: 18.0,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
-            };
-          },
-        ),
-        StyleRule(
-          const BlockSelector("header1"),
-          (doc, docNode) {
-            return {
-              "padding": const CascadingPadding.only(top: 32, bottom: 8.0),
-              "textStyle": TextStyle(
-                color: Theme.of(context)
-                    .textTheme
-                    .bodyText2
-                    ?.color
-                    ?.withOpacity(0.8),
-                fontSize: 42,
-                fontWeight: FontWeight.bold,
+              list: const TextStyle(
+                height: 2.0,
               ),
-            };
-          },
-        ),
-        StyleRule(
-          const BlockSelector("header2"),
-          (doc, docNode) {
-            return {
-              "padding": const CascadingPadding.only(top: 32, bottom: 8.0),
-              "textStyle": TextStyle(
-                color: Theme.of(context).textTheme.bodyText2?.color,
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
+              paragraphPadding: const EdgeInsets.only(top: 0.0, bottom: 12.0),
+              textStyle: Utilities.fonts.body5(
+                TextStyle(
+                  color: Colors.white.withOpacity(0.8),
+                  fontSize: 18.0,
+                ),
               ),
-            };
-          },
-        ),
-        StyleRule(
-          const BlockSelector("header3"),
-          (doc, docNode) {
-            return {
-              "padding": const CascadingPadding.only(top: 28),
-              "textStyle": TextStyle(
-                color: Theme.of(context).textTheme.bodyText2?.color,
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
+              headline1: Utilities.fonts.body5(
+                const TextStyle(
+                  fontSize: 54.0,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
-            };
-          },
-        ),
-        StyleRule(
-          const BlockSelector("paragraph"),
-          (doc, docNode) {
-            return {
-              "padding": const CascadingPadding.only(top: 24),
-            };
-          },
-        ),
-        StyleRule(
-          const BlockSelector("paragraph").after("header1"),
-          (doc, docNode) {
-            return {
-              "padding": const CascadingPadding.only(top: 0),
-            };
-          },
-        ),
-        StyleRule(
-          const BlockSelector("paragraph").after("header2"),
-          (doc, docNode) {
-            return {
-              "padding": const CascadingPadding.only(top: 0),
-            };
-          },
-        ),
-        StyleRule(
-          const BlockSelector("paragraph").after("header3"),
-          (doc, docNode) {
-            return {
-              "padding": const CascadingPadding.only(top: 0),
-            };
-          },
-        ),
-        StyleRule(
-          const BlockSelector("link"),
-          (doc, docNode) {
-            GlobalLoggy().loggy.info("link?");
-            return {
-              "textStyle": const TextStyle(
-                color: Colors.pink,
-                // fontSize: 18,
-                // height: 1.4,
+              h1Padding: const EdgeInsets.only(top: 28.0),
+              headline2: Utilities.fonts.body5(
+                const TextStyle(
+                  fontSize: 38.0,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
-            };
-          },
-        ),
-        StyleRule(
-          const BlockSelector("a"),
-          (doc, docNode) {
-            GlobalLoggy().loggy.info("a?");
-            return {
-              "textStyle": const TextStyle(
-                color: Colors.pink,
-                // fontSize: 18,
-                // height: 1.4,
+              h2Padding: const EdgeInsets.only(top: 28.0),
+              listItemMarkerTrailingSpace: 12,
+              codeblockDecoration: BoxDecoration(
+                color: Colors.black54,
+                borderRadius: BorderRadius.circular(8.0),
               ),
-            };
-          },
+              codeblockPadding: const EdgeInsets.all(24.0),
+              codeSpan: Utilities.fonts.body4(
+                fontSize: 14,
+              ),
+              codeBlock: Utilities.fonts.body4(
+                fontSize: 14,
+              ),
+            ),
+          ),
         ),
-        StyleRule(
-          const BlockSelector("listItem"),
-          (doc, docNode) {
-            return {
-              "padding": const CascadingPadding.only(top: 24),
-            };
-          },
-        ),
-        // StyleRule(
-        //   BlockSelector.all.last(),
-        //   (doc, docNode) {
-        //     return {
-        //       "padding": const CascadingPadding.only(bottom: 300),
-        //     };
-        //   },
-        // ),
-      ],
-      inlineTextStyler: defaultInlineTextStyler,
-      documentPadding: EdgeInsets.symmetric(
-        horizontal: isMobileSize ? 0.0 : 24.0,
       ),
     );
   }

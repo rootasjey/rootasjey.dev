@@ -51,25 +51,7 @@ class _HomePageState extends State<HomePage> {
       body: ImprovedScrolling(
         enableKeyboardScrolling: true,
         enableMMBScrolling: true,
-        onScroll: (final double offset) {
-          if (offset == 0) {
-            setState(() {
-              _fabIcon = const Icon(UniconsLine.arrow_down);
-              _enumDirection = EnumDirection.down;
-            });
-
-            return;
-          }
-
-          if (_enumDirection == EnumDirection.up) {
-            return;
-          }
-
-          setState(() {
-            _fabIcon = const Icon(UniconsLine.arrow_up);
-            _enumDirection = EnumDirection.up;
-          });
-        },
+        onScroll: onScroll,
         scrollController: _pageScrollController,
         child: ScrollConfiguration(
           behavior: const CustomScrollBehaviour(),
@@ -239,5 +221,25 @@ class _HomePageState extends State<HomePage> {
       onPressed: () => launchUrl(Uri.parse(url)),
       icon: Icon(iconData),
     );
+  }
+
+  void onScroll(double offset) {
+    if (offset == 0) {
+      setState(() {
+        _fabIcon = const Icon(UniconsLine.arrow_down);
+        _enumDirection = EnumDirection.down;
+      });
+
+      return;
+    }
+
+    if (_enumDirection == EnumDirection.up) {
+      return;
+    }
+
+    setState(() {
+      _fabIcon = const Icon(UniconsLine.arrow_up);
+      _enumDirection = EnumDirection.up;
+    });
   }
 }

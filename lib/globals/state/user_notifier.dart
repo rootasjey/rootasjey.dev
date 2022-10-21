@@ -215,6 +215,7 @@ class UserNotifier extends StateNotifier<User> with UiLoggy {
     try {
       StorageUtils.clearCredentials();
       await firebase_auth.FirebaseAuth.instance.signOut();
+      state = User(authUser: null, firestoreUser: null);
       return true;
     } catch (error) {
       loggy.error(error);

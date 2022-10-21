@@ -101,7 +101,6 @@ class PostPageHeader extends StatelessWidget {
       child: Center(
         child: Container(
           padding: EdgeInsets.only(
-            top: 56,
             left: isMobileSize ? 12.0 : 24.0,
             right: isMobileSize ? 12.0 : 24.0,
           ),
