@@ -64,6 +64,7 @@ dependencies:
   markdown_viewer: ^0.4.2
   mime_type: ^1.0.0
   modal_bottom_sheet: ^2.1.2
+  particles_flutter: ^0.1.4
   screenshot: ^1.2.3
   simple_animations: ^5.0.0+2
   supercharged: ^2.1.1
