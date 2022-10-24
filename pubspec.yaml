@@ -104,7 +104,9 @@ flutter:
   assets:
   - assets/animations/box.json
   - assets/animations/dots.json
+  - assets/animations/geometry.json
   - assets/animations/particles.json
+  - assets/animations/skull_bats.json
   - assets/images/app_icon/32.png
   - assets/images/app_icon/64.png
   - assets/images/app_icon/128.png
