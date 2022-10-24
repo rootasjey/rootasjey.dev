@@ -133,16 +133,12 @@ export const onUpdate = functions
             .bucket()
             .file(postStoragePath);
 
-        const metadata = await projectFile.getMetadata();
-
-        await projectFile.setMetadata({
-          ...metadata,
-          ...{
-            customMetadata: {
-              visibility: afterProjectData.visibility,
-            },
-          },
-        });
+        const exists = await projectFile.exists();
+        if (exists) {
+          const [metadata] = await projectFile.getMetadata();
+          metadata.metadata.visibility = afterProjectData.visibility;
+          await projectFile.setMetadata(metadata);
+        }
       }
 
       const beforeStoragePath = beforeProjectData.cover.storage_path;
