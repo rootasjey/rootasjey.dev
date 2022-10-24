@@ -281,6 +281,8 @@ export const onCreatePublicInfo = functions
             id: userId,
             location: data.location ?? "",
             name: data.name ?? "",
+            name_lower_case: data.name_lower_case ??
+              data.name.toLowerCase() ?? "",
             profile_picture: data.profile_picture ?? "",
             social_links: data.social_links,
             type: "base",
