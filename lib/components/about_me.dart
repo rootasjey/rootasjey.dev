@@ -1,5 +1,7 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/better_avatar.dart';
+import 'package:rootasjey/globals/constants.dart';
 import 'package:rootasjey/globals/utilities.dart';
 import 'package:unicons/unicons.dart';
 
@@ -8,6 +10,23 @@ class AboutMe extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const double height = 1.2;
+    final TextStyle baseStyle = Utilities.fonts.body2(
+      textStyle: const TextStyle(
+        fontSize: 42.0,
+        fontWeight: FontWeight.w300,
+        height: height,
+      ),
+    );
+
+    final TextStyle boldTexStyle = Utilities.fonts.body2(
+      textStyle: const TextStyle(
+        fontSize: 42.0,
+        fontWeight: FontWeight.w600,
+        height: height,
+      ),
+    );
+
     return SliverList(
       delegate: SliverChildListDelegate.fixed([
         Container(
@@ -17,50 +36,71 @@ class AboutMe extends StatelessWidget {
           child: Column(
             children: [
               Padding(
+                padding: const EdgeInsets.only(bottom: 12.0),
+                child: Container(
+                  height: 8.0,
+                  width: 8.0,
+                  decoration: BoxDecoration(
+                    color: Constants.colors.palette.first,
+                    borderRadius: BorderRadius.circular(16.0),
+                  ),
+                ),
+              ),
+              Padding(
                 padding: const EdgeInsets.only(bottom: 24.0),
                 child: Container(
                   height: 90.0,
                   width: 4.0,
                   decoration: BoxDecoration(
-                    color: Colors.deepPurple.shade700,
+                    color: Constants.colors.palette.first,
                     borderRadius: BorderRadius.circular(16.0),
                   ),
                 ),
               ),
-              const BetterAvatar(
-                image: AssetImage("assets/images/jeje.jpg"),
+              BetterAvatar(
+                borderSide: BorderSide(
+                  color: Constants.colors.palette.first,
+                  width: 4.0,
+                ),
+                image: const AssetImage("assets/images/jeje.jpg"),
                 size: 140.0,
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 42.0),
                 child: Text.rich(
                   TextSpan(
-                    text: "Jeremie CORPINOT",
+                    text: "Jérémie Corpinot",
                     children: [
                       TextSpan(
                         text: "\nalias",
                         style: Utilities.fonts.body2(
-                          fontSize: 42.0,
-                          fontWeight: FontWeight.w100,
-                          color: Theme.of(context)
-                              .textTheme
-                              .bodyText2
-                              ?.color
-                              ?.withOpacity(0.6),
+                          textStyle: TextStyle(
+                            fontSize: 42.0,
+                            fontWeight: FontWeight.w100,
+                            color: Theme.of(context)
+                                .textTheme
+                                .bodyText2
+                                ?.color
+                                ?.withOpacity(0.6),
+                          ),
                         ),
                       ),
                       TextSpan(
                         text: " rootasjey",
                         style: Utilities.fonts.body2(
-                          fontSize: 42.0,
-                          fontWeight: FontWeight.w400,
-                          color: Colors.blue,
+                          textStyle: const TextStyle(
+                            fontSize: 42.0,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.blue,
+                          ),
                         ),
                       ),
                     ],
                     style: Utilities.fonts.body2(
-                      fontSize: 62.0,
-                      fontWeight: FontWeight.w600,
+                      textStyle: const TextStyle(
+                        fontSize: 62.0,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                 ),
@@ -72,102 +112,87 @@ class AboutMe extends StatelessWidget {
                   padding: const EdgeInsets.only(top: 42.0),
                   child: Text.rich(
                     TextSpan(
-                      text:
-                          "I'm a fullstack developer building application with ",
+                      text: "about_me.1".tr(),
                       children: [
                         TextSpan(
-                          text: "Flutter.",
-                          style: Utilities.fonts.body2(
-                            color: Colors.amber,
-                            fontSize: 42.0,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        const TextSpan(
-                          text: "\nBut I also code project with ",
-                        ),
-                        TextSpan(
-                          text: "React, ",
-                          style: Utilities.fonts.body2(
-                            color: Colors.blue,
-                            fontSize: 42.0,
-                            fontWeight: FontWeight.w600,
+                          text: "about_me.2".tr(),
+                          style: boldTexStyle.merge(
+                            const TextStyle(
+                              color: Colors.amber,
+                            ),
                           ),
                         ),
                         TextSpan(
-                          text: "Vue, ",
-                          style: Utilities.fonts.body2(
-                            color: Colors.green,
-                            fontSize: 42.0,
-                            fontWeight: FontWeight.w600,
+                          text: "about_me.3".tr(),
+                        ),
+                        TextSpan(
+                          text: "about_me.4".tr(),
+                          style: boldTexStyle.merge(
+                            const TextStyle(
+                              color: Colors.blue,
+                            ),
                           ),
                         ),
                         TextSpan(
-                          text: "Next.",
+                          text: "about_me.5".tr(),
                           style: Utilities.fonts.body2(
-                            fontSize: 42.0,
-                            fontWeight: FontWeight.w600,
+                            textStyle: boldTexStyle.merge(
+                              const TextStyle(
+                                color: Colors.green,
+                              ),
+                            ),
                           ),
-                        ),
-                        const TextSpan(
-                          text:
-                              "\n\nI teach programming in web & python sometimes, when I'm not playing ",
                         ),
                         TextSpan(
-                          text: "video games",
-                          style: Utilities.fonts.body2(
-                            fontSize: 42.0,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        const TextSpan(
-                          text: " or ",
+                          text: "about_me.6".tr(),
+                          style: boldTexStyle,
                         ),
                         TextSpan(
-                          text: "watching movies.",
-                          style: Utilities.fonts.body2(
-                            fontSize: 42.0,
-                            fontWeight: FontWeight.w600,
-                          ),
+                          text: "about_me.7".tr(),
                         ),
-                        const TextSpan(
-                          text: "\n\nI ",
+                        TextSpan(
+                          text: "about_me.8".tr(),
+                          style: boldTexStyle,
+                        ),
+                        TextSpan(
+                          text: "about_me.9".tr(),
+                        ),
+                        TextSpan(
+                          text: "about_me.10".tr(),
+                          style: boldTexStyle,
+                        ),
+                        TextSpan(
+                          text: "about_me.11".tr(),
                         ),
                         const WidgetSpan(
                           child: Icon(UniconsLine.heart, color: Colors.pink),
                           alignment: PlaceholderAlignment.middle,
                         ),
-                        const TextSpan(
-                          text:
-                              " learning new things, so I spend a lot of time reading ",
+                        TextSpan(
+                          text: "about_me.12".tr(),
                         ),
                         TextSpan(
-                          text: "books",
-                          style: Utilities.fonts.body2(
-                            fontSize: 42.0,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        const TextSpan(
-                          text: ", watching ",
+                          text: "about_me.13".tr(),
+                          style: boldTexStyle,
                         ),
                         TextSpan(
-                          text: "YouTube",
-                          style: Utilities.fonts.body2(
-                            color: Colors.red,
-                            fontSize: 42.0,
-                            fontWeight: FontWeight.w600,
+                          text: "about_me.14".tr(),
+                        ),
+                        TextSpan(
+                          text: "about_me.15".tr(),
+                          style: boldTexStyle.merge(
+                            const TextStyle(
+                              color: Colors.red,
+                            ),
                           ),
                         ),
-                        const TextSpan(
-                          text: ", or listenning to podcasts.",
+                        TextSpan(
+                          text: "about_me.16".tr(),
                         ),
                       ],
                     ),
-                    style: Utilities.fonts.body2(
-                      fontSize: 42.0,
-                      fontWeight: FontWeight.w200,
-                    ),
+                    textAlign: TextAlign.justify,
+                    style: baseStyle,
                   ),
                 ),
               ),
@@ -186,11 +211,13 @@ class AboutMe extends StatelessWidget {
                   child: Align(
                     alignment: Alignment.topRight,
                     child: Text(
-                      "– My whole life I have reacted to things. Rarely acted.",
+                      "- My whole life I have reacted to things. Rarely acted.",
                       style: Utilities.fonts.body2(
-                        fontSize: 42.0,
-                        fontWeight: FontWeight.w200,
-                        fontStyle: FontStyle.italic,
+                        textStyle: const TextStyle(
+                          fontSize: 42.0,
+                          fontWeight: FontWeight.w200,
+                          fontStyle: FontStyle.italic,
+                        ),
                       ),
                     ),
                   ),
@@ -205,9 +232,11 @@ class AboutMe extends StatelessWidget {
                     child: Text(
                       "Isaac – Castlevania (TV series)",
                       style: Utilities.fonts.body2(
-                        color: Theme.of(context).textTheme.bodyText2?.color,
-                        fontSize: 24.0,
-                        fontWeight: FontWeight.w400,
+                        textStyle: TextStyle(
+                          color: Theme.of(context).textTheme.bodyText2?.color,
+                          fontSize: 24.0,
+                          fontWeight: FontWeight.w400,
+                        ),
                       ),
                     ),
                   ),

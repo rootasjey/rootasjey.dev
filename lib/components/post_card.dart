@@ -24,8 +24,8 @@ class PostCard extends StatefulWidget {
 }
 
 class _PostCardState extends State<PostCard> with UiLoggy {
-  double? _elevation;
-  String? _authorName = "";
+  double _elevation = 0.0;
+  String _authorName = "";
 
   @override
   void initState() {
@@ -35,7 +35,7 @@ class _PostCardState extends State<PostCard> with UiLoggy {
       _elevation = 0.0;
     });
 
-    if (widget.post.author.id.isNotEmpty) {
+    if (widget.post.userId.isNotEmpty) {
       fetchAuthorName();
     }
   }
@@ -64,12 +64,11 @@ class _PostCardState extends State<PostCard> with UiLoggy {
   }
 
   Widget background() {
-    final post = widget.post;
+    final Post post = widget.post;
+    final String imageUrl = post.cover.thumbnails.s;
 
-    if (post.image!.thumbnail!.isEmpty) {
-      return const Padding(
-        padding: EdgeInsets.zero,
-      );
+    if (imageUrl.isEmpty) {
+      return Container();
     }
 
     return Card(
@@ -81,7 +80,7 @@ class _PostCardState extends State<PostCard> with UiLoggy {
       child: Stack(
         children: [
           Image.network(
-            post.image!.thumbnail!,
+            imageUrl,
             fit: BoxFit.cover,
             width: 300.0,
             height: 300.0,
@@ -125,7 +124,7 @@ class _PostCardState extends State<PostCard> with UiLoggy {
             left: 8.0,
           ),
           child: Text(
-            post.title.isEmpty ? "no_title".tr() : post.title,
+            post.name.isEmpty ? "no_title".tr() : post.name,
             overflow: TextOverflow.ellipsis,
             maxLines: 3,
             style: const TextStyle(
@@ -160,16 +159,16 @@ class _PostCardState extends State<PostCard> with UiLoggy {
   }
 
   void fetchAuthorName() async {
-    final authorId = widget.post.author.id;
+    final String userId = widget.post.userId;
 
-    if (authorId.isEmpty) {
+    if (userId.isEmpty) {
       return;
     }
 
     try {
       final docSnap = await FirebaseFirestore.instance
           .collection('users')
-          .doc(authorId)
+          .doc(userId)
           .get();
 
       if (!docSnap.exists) {

@@ -415,8 +415,10 @@ class _CVPageState extends State<CVPage> {
                 child: Text(
                   "Dev web fullstack",
                   style: Utilities.fonts.body3(
-                    backgroundColor: Colors.amber,
-                    fontSize: 28.0,
+                    textStyle: const TextStyle(
+                      backgroundColor: Colors.amber,
+                      fontSize: 28.0,
+                    ),
                   ),
                 ),
               ),
@@ -438,8 +440,10 @@ class _CVPageState extends State<CVPage> {
                       ),
                       Text(
                         "Yvelines, France",
-                        style: Utilities.fonts.body1(
-                          fontSize: 16.0,
+                        style: Utilities.fonts.body(
+                          textStyle: const TextStyle(
+                            fontSize: 16.0,
+                          ),
                         ),
                       ),
                     ],
@@ -464,8 +468,10 @@ class _CVPageState extends State<CVPage> {
                       ),
                       Text(
                         "jerem.freelance@codingbox.fr",
-                        style: Utilities.fonts.body1(
-                          fontSize: 16.0,
+                        style: Utilities.fonts.body(
+                          textStyle: const TextStyle(
+                            fontSize: 16.0,
+                          ),
                         ),
                       ),
                     ],
@@ -490,8 +496,10 @@ class _CVPageState extends State<CVPage> {
                       ),
                       Text(
                         "https://rootasjey.dev",
-                        style: Utilities.fonts.body1(
-                          fontSize: 16.0,
+                        style: Utilities.fonts.body(
+                          textStyle: const TextStyle(
+                            fontSize: 16.0,
+                          ),
                         ),
                       ),
                     ],
@@ -516,8 +524,10 @@ class _CVPageState extends State<CVPage> {
                       ),
                       Text(
                         "https://github.com/rootasjey.dev",
-                        style: Utilities.fonts.body1(
-                          fontSize: 16.0,
+                        style: Utilities.fonts.body(
+                          textStyle: const TextStyle(
+                            fontSize: 16.0,
+                          ),
                         ),
                       ),
                     ],
@@ -543,8 +553,10 @@ class _CVPageState extends State<CVPage> {
           "Je sais m'adapter et je contribue régulièrement à des projets open-source. "
           "J'ai un tempérament curieux et un attrait pour l'art, "
           "la musique, et les jeux-vidéo. Entre autres.",
-          style: Utilities.fonts.body1(
-            fontSize: 16.0,
+          style: Utilities.fonts.body(
+            textStyle: const TextStyle(
+              fontSize: 16.0,
+            ),
           ),
         ),
       ),
@@ -626,8 +638,10 @@ class _CVPageState extends State<CVPage> {
                 ),
                 Text(
                   "Expériences Professionnelles",
-                  style: Utilities.fonts.body1(
-                    fontSize: 24.0,
+                  style: Utilities.fonts.body(
+                    textStyle: const TextStyle(
+                      fontSize: 24.0,
+                    ),
                   ),
                 ),
               ],
@@ -650,9 +664,11 @@ class _CVPageState extends State<CVPage> {
             children: [
               Text(
                 exp.job,
-                style: Utilities.fonts.body1(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 20.0,
+                style: Utilities.fonts.body(
+                  textStyle: const TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 20.0,
+                  ),
                 ),
               ),
               Opacity(
@@ -667,9 +683,11 @@ class _CVPageState extends State<CVPage> {
                   },
                   child: Text(
                     exp.company,
-                    style: Utilities.fonts.body1(
-                      fontWeight: FontWeight.w400,
-                      fontSize: 16.0,
+                    style: Utilities.fonts.body(
+                      textStyle: const TextStyle(
+                        fontWeight: FontWeight.w400,
+                        fontSize: 16.0,
+                      ),
                     ),
                   ),
                 ),
@@ -678,9 +696,11 @@ class _CVPageState extends State<CVPage> {
                 opacity: 0.5,
                 child: Text(
                   "${exp.date.start} - ${exp.date.end}",
-                  style: Utilities.fonts.body1(
-                    fontWeight: FontWeight.w400,
-                    fontSize: 16.0,
+                  style: Utilities.fonts.body(
+                    textStyle: const TextStyle(
+                      fontWeight: FontWeight.w400,
+                      fontSize: 16.0,
+                    ),
                   ),
                 ),
               ),
@@ -716,8 +736,10 @@ class _CVPageState extends State<CVPage> {
               ),
               Text(
                 "Formation",
-                style: Utilities.fonts.body1(
-                  fontSize: 24.0,
+                style: Utilities.fonts.body(
+                  textStyle: const TextStyle(
+                    fontSize: 24.0,
+                  ),
                 ),
               ),
             ],
@@ -733,9 +755,11 @@ class _CVPageState extends State<CVPage> {
                 children: [
                   Text(
                     formation.degree,
-                    style: Utilities.fonts.body1(
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.w500,
+                    style: Utilities.fonts.body(
+                      textStyle: const TextStyle(
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ),
                   Opacity(opacity: 0.8, child: Text(formation.school)),
@@ -779,8 +803,10 @@ class _CVPageState extends State<CVPage> {
                   ),
                   Text(
                     "Projects",
-                    style: Utilities.fonts.body1(
-                      fontSize: 24.0,
+                    style: Utilities.fonts.body(
+                      textStyle: const TextStyle(
+                        fontSize: 24.0,
+                      ),
                     ),
                   ),
                 ],
@@ -814,9 +840,11 @@ class _CVPageState extends State<CVPage> {
                         opacity: 0.6,
                         child: Text(
                           project.name,
-                          style: Utilities.fonts.body1(
-                            fontSize: 18.0,
-                            fontWeight: FontWeight.w500,
+                          style: Utilities.fonts.body(
+                            textStyle: const TextStyle(
+                              fontSize: 18.0,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ),
                       ),

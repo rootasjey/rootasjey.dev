@@ -124,8 +124,10 @@ class _UploadItemCardState extends ConsumerState<UploadCardItem> with UiLoggy {
       child: Text(
         widget.customUploadTask.name,
         style: Utilities.fonts.body(
-          fontSize: 18.0,
-          fontWeight: FontWeight.w700,
+          textStyle: const TextStyle(
+            fontSize: 18.0,
+            fontWeight: FontWeight.w700,
+          ),
         ),
       ),
     );
@@ -197,7 +199,9 @@ class _UploadItemCardState extends ConsumerState<UploadCardItem> with UiLoggy {
         child: Text(
           "${percent.round()}%",
           style: Utilities.fonts.body(
-            fontWeight: FontWeight.w600,
+            textStyle: const TextStyle(
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ),
       ),

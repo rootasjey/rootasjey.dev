@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:beamer/beamer.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +11,9 @@ import 'package:rootasjey/components/popup_menu/popup_menu_item_icon.dart';
 import 'package:rootasjey/globals/app_state.dart';
 import 'package:rootasjey/router/locations/home_location.dart';
 import 'package:rootasjey/globals/utilities.dart';
+import 'package:rootasjey/router/locations/settings_location.dart';
 import 'package:rootasjey/router/locations/signin_location.dart';
+import 'package:rootasjey/types/user/user_firestore.dart';
 import 'package:unicons/unicons.dart';
 
 class ApplicationBar extends ConsumerWidget {
@@ -17,10 +21,13 @@ class ApplicationBar extends ConsumerWidget {
     Key? key,
     this.pinned = true,
     this.bottom,
+    this.backgroundColor,
   }) : super(key: key);
 
   /// Whether the app bar should remain visible at the start of the scroll view.
   final bool pinned;
+
+  final Color? backgroundColor;
 
   /// This widget appears across the bottom of the app bar.
   final PreferredSizeWidget? bottom;
@@ -42,17 +49,22 @@ class ApplicationBar extends ConsumerWidget {
         .location;
 
     final bool hasHistory = location != HomeLocation.route;
+    final Color foregroundColor =
+        Theme.of(context).textTheme.bodyText2?.color?.withOpacity(0.8) ??
+            Colors.black;
 
-    return SliverPadding(
-      padding:
-          isMobileSize ? EdgeInsets.zero : const EdgeInsets.only(top: 30.0),
-      sliver: SliverAppBar(
-        floating: true,
-        snap: true,
-        pinned: pinned,
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        automaticallyImplyLeading: false,
-        title: Padding(
+    return SliverAppBar(
+      floating: true,
+      snap: true,
+      pinned: pinned,
+      backgroundColor: backgroundColor ?? Colors.transparent,
+      automaticallyImplyLeading: false,
+      title: BackdropFilter(
+        filter: ImageFilter.blur(
+          sigmaX: 5,
+          sigmaY: 5,
+        ),
+        child: Padding(
           padding: EdgeInsets.only(
             top: 16.0,
             left: isMobileSize ? 0.0 : 170.0,
@@ -68,20 +80,29 @@ class ApplicationBar extends ConsumerWidget {
                     Padding(
                       padding: const EdgeInsets.only(right: 8.0),
                       child: CircleButton.outlined(
+                        borderColor: Colors.transparent,
                         onTap: () => Utilities.navigation.back(
                           context,
                           isMobile: isMobileSize,
                         ),
                         child: Icon(
                           UniconsLine.arrow_left,
-                          color: Theme.of(context).textTheme.bodyText2?.color,
+                          color: foregroundColor,
                         ),
                       ),
                     ),
                   AppIcon(
                     size: 32.0,
                     onLongPress: () {
-                      Beamer.of(context).beamToNamed(SigninLocation.route);
+                      final UserFirestore? user =
+                          ref.read(AppState.userProvider).firestoreUser;
+
+                      if (user == null) {
+                        Beamer.of(context).beamToNamed(SigninLocation.route);
+                        return;
+                      }
+
+                      Beamer.of(context).beamToNamed(SettingsLocation.route);
                     },
                   ),
                   Padding(
@@ -89,8 +110,10 @@ class ApplicationBar extends ConsumerWidget {
                     child: Text(
                       "rootasjey",
                       style: Utilities.fonts.body3(
-                        fontSize: 16.0,
-                        fontWeight: FontWeight.w600,
+                        textStyle: const TextStyle(
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                   ),
@@ -113,9 +136,11 @@ class ApplicationBar extends ConsumerWidget {
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
                           "resume".tr(),
-                          style: Utilities.fonts.body1(
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.w600,
+                          style: Utilities.fonts.body(
+                            textStyle: const TextStyle(
+                              fontSize: 16.0,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ),
                       ),
@@ -149,8 +174,8 @@ class ApplicationBar extends ConsumerWidget {
             ],
           ),
         ),
-        bottom: bottom,
       ),
+      bottom: bottom,
     );
   }
 }

@@ -7,19 +7,36 @@ import 'package:unicons/unicons.dart';
 class PostFooter extends StatelessWidget {
   const PostFooter({
     super.key,
-    required this.content,
     required this.updatedAt,
     required this.wordCount,
     required this.maxWidth,
+    this.show = false,
   });
 
+  /// Show this widget if the current authenticated can edit the post.
+  final bool show;
+
+  /// Last time this post was updated.
   final DateTime updatedAt;
+
+  /// Limit this widget's width.
   final double maxWidth;
   final int wordCount;
-  final String content;
 
   @override
   Widget build(BuildContext context) {
+    const double bottomSpace = 300.0;
+
+    if (!show) {
+      return SliverToBoxAdapter(
+        child: Container(
+          padding: const EdgeInsets.only(
+            bottom: bottomSpace,
+          ),
+        ),
+      );
+    }
+
     String lastUpdatedAt = "";
     final diff = DateTime.now().difference(updatedAt);
 
@@ -58,8 +75,10 @@ class PostFooter extends StatelessWidget {
                           child: Text(
                             "word_count".plural(wordCount),
                             style: Utilities.fonts.body(
-                              fontSize: 16.0,
-                              fontWeight: FontWeight.w600,
+                              textStyle: const TextStyle(
+                                fontSize: 16.0,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ),
                         ),
@@ -70,25 +89,31 @@ class PostFooter extends StatelessWidget {
                               TextSpan(
                                 text: lastUpdatedAt,
                                 style: Utilities.fonts.body(
-                                  fontWeight: FontWeight.w600,
+                                  textStyle: const TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
                               ),
                               TextSpan(
                                 text: " (${"last_updated".tr().toLowerCase()})",
                                 style: Utilities.fonts.body(
-                                  fontSize: 14.0,
-                                  color: Theme.of(context)
-                                      .textTheme
-                                      .bodyText2
-                                      ?.color
-                                      ?.withOpacity(0.6),
-                                  fontWeight: FontWeight.w500,
+                                  textStyle: TextStyle(
+                                    fontSize: 14.0,
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodyText2
+                                        ?.color
+                                        ?.withOpacity(0.6),
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                 ),
                               ),
                             ]),
                             style: Utilities.fonts.body(
-                              fontSize: 16.0,
-                              fontWeight: FontWeight.w400,
+                              textStyle: const TextStyle(
+                                fontSize: 16.0,
+                                fontWeight: FontWeight.w400,
+                              ),
                             ),
                           ),
                         ),
@@ -99,7 +124,7 @@ class PostFooter extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 300.0),
+          const SizedBox(height: bottomSpace),
         ],
       ),
     );

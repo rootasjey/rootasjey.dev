@@ -19,8 +19,16 @@ class MiniProjectCard extends StatefulWidget {
 }
 
 class _MiniProjectCardState extends State<MiniProjectCard> {
-  double _elevation = 2.0;
+  final double _startElevation = 4.0;
+  final double _endElevation = 12.0;
+  double _elevation = 4.0;
   Color _cardColor = Colors.grey.shade800;
+
+  @override
+  initState() {
+    super.initState();
+    _elevation = _startElevation;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +42,7 @@ class _MiniProjectCardState extends State<MiniProjectCard> {
       child: InkWell(
         onHover: (bool isHover) {
           setState(() {
-            _elevation = isHover ? 8.0 : 2.0;
+            _elevation = isHover ? _endElevation : _startElevation;
             _cardColor = isHover ? widget.color : Colors.grey.shade800;
           });
 

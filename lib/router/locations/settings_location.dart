@@ -1,10 +1,10 @@
 import 'package:beamer/beamer.dart';
 import 'package:flutter/widgets.dart';
-import 'package:rootasjey/screens/forgot_password/forgot_password_page.dart';
+import 'package:rootasjey/screens/settings_page.dart';
 
-class ForgotPasswordLocation extends BeamLocation<BeamState> {
+class SettingsLocation extends BeamLocation<BeamState> {
   /// Main root value for this location.
-  static const String route = "/forgotpassword";
+  static const String route = "/settings";
 
   @override
   List<String> get pathPatterns => [route];
@@ -13,9 +13,9 @@ class ForgotPasswordLocation extends BeamLocation<BeamState> {
   List<BeamPage> buildPages(BuildContext context, BeamState state) {
     return [
       const BeamPage(
-        child: ForgotPasswordPage(),
+        child: SettingsPage(),
         key: ValueKey(route),
-        title: "Forgot Password",
+        title: "Settings",
         type: BeamPageType.fadeTransition,
       ),
     ];

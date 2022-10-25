@@ -7,17 +7,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loggy/loggy.dart';
-import 'package:rootasjey/components/buttons/circle_button.dart';
-import 'package:rootasjey/components/buttons/dark_elevated_button.dart';
-import 'package:rootasjey/components/fade_in_y.dart';
-import 'package:rootasjey/components/icons/app_icon.dart';
 import 'package:rootasjey/components/loading_view.dart';
 import 'package:rootasjey/components/popup_menu/popup_menu_icon.dart';
 import 'package:rootasjey/components/popup_menu/popup_menu_item_icon.dart';
-import 'package:rootasjey/components/project_card.dart';
 import 'package:rootasjey/globals/app_state.dart';
+import 'package:rootasjey/globals/utilities.dart';
+import 'package:rootasjey/router/locations/home_location.dart';
 import 'package:rootasjey/router/locations/projects_location.dart';
-import 'package:rootasjey/screens/create_project_page.dart';
+import 'package:rootasjey/screens/projects_page/create_project_page.dart';
+import 'package:rootasjey/screens/projects_page/projects_page_body.dart';
+import 'package:rootasjey/screens/projects_page/projects_page_empty_view.dart';
 import 'package:rootasjey/types/alias/firestore/document_change_map.dart';
 import 'package:rootasjey/types/alias/firestore/document_map.dart';
 import 'package:rootasjey/types/alias/firestore/query_doc_snap_map.dart';
@@ -25,13 +24,14 @@ import 'package:rootasjey/types/alias/firestore/query_map.dart';
 import 'package:rootasjey/types/alias/firestore/query_snap_map.dart';
 import 'package:rootasjey/types/alias/firestore/query_snapshot_stream_subscription.dart';
 import 'package:rootasjey/types/alias/json_alias.dart';
-import 'package:rootasjey/types/enums/enum_post_item_action.dart';
-import 'package:rootasjey/types/intents/next_intent.dart';
-import 'package:rootasjey/types/intents/previous_intent.dart';
+import 'package:rootasjey/types/enums/enum_project_item_action.dart';
+import 'package:rootasjey/types/intents/escape_intent.dart';
 import 'package:rootasjey/types/project.dart';
-import 'package:rootasjey/globals/utilities.dart';
+import 'package:rootasjey/types/user/user_firestore.dart';
+import 'package:rootasjey/types/user/user_rights.dart';
 import 'package:unicons/unicons.dart';
 
+/// A page widget showing projects.
 class ProjectsPage extends ConsumerStatefulWidget {
   const ProjectsPage({super.key});
 
@@ -49,6 +49,7 @@ class _ProjectsPageState extends ConsumerState<ProjectsPage> with UiLoggy {
   /// True if we're try to create a new project.
   bool _creating = false;
 
+  /// If true, show a specific UI to create a project.
   bool _showCreatePage = false;
 
   /// Last document fetched from Firestore.
@@ -63,8 +64,8 @@ class _ProjectsPageState extends ConsumerState<ProjectsPage> with UiLoggy {
   /// Allow to go forward or backward with the keyboard keys.
   final SwiperController _swipeController = SwiperController();
 
-  /// Listens to illustration's updates.
-  QuerySnapshotStreamSubscription? _postSubscription;
+  /// Listens to projects' updates.
+  QuerySnapshotStreamSubscription? _projectSubscription;
 
   /// Popup menu items for project card.
   final List<PopupMenuEntry<EnumProjectItemAction>> _projectPopupMenuItems = [
@@ -78,6 +79,7 @@ class _ProjectsPageState extends ConsumerState<ProjectsPage> with UiLoggy {
 
   /// Firestore collection name.
   final String _collectionName = "projects";
+
   @override
   void initState() {
     super.initState();
@@ -87,12 +89,17 @@ class _ProjectsPageState extends ConsumerState<ProjectsPage> with UiLoggy {
   @override
   void dispose() {
     _swipeController.dispose();
-    _postSubscription?.cancel();
+    _projectSubscription?.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final UserFirestore? userFirestore =
+        ref.watch(AppState.userProvider).firestoreUser;
+    final UserRights userRights = userFirestore?.rights ?? const UserRights();
+    final bool canManageProjects = userRights.managePosts;
+
     if (_showCreatePage) {
       return CreateProjectPage(
         onCancel: () {
@@ -106,206 +113,86 @@ class _ProjectsPageState extends ConsumerState<ProjectsPage> with UiLoggy {
     }
 
     if (_creating) {
-      return loadingView();
+      return LoadingView.scaffold(
+        message: _creating
+            ? "Creating your new project..."
+            : "Loading featured projects...",
+      );
     }
 
     if (_projects.isEmpty) {
-      return emptyView();
+      return wrapWithShortcuts(
+        child: ProjectsPageEmptyView(
+          canCreate: canManageProjects,
+          fab: fab(show: canManageProjects),
+          onShowCreatePage: onShowCreate,
+          onCancel: onCancel,
+        ),
+      );
     }
 
     final Size windowSize = MediaQuery.of(context).size;
-    final double windowHeight = windowSize.height;
+
+    return wrapWithShortcuts(
+      child: ProjectsPageBody(
+        canManage: canManageProjects,
+        fab: fab(show: canManageProjects),
+        onPopupMenuItemSelected: onPopupMenuItemSelected,
+        onTapProject: onTapProject,
+        projects: _projects,
+        projectPopupMenuItems: _projectPopupMenuItems,
+        swipeController: _swipeController,
+        windowSize: windowSize,
+      ),
+    );
+  }
+
+  Widget fab({required bool show}) {
+    if (!show) {
+      return Container();
+    }
+
+    return FloatingActionButton.extended(
+      backgroundColor: Colors.amber,
+      onPressed: onShowCreate,
+      icon: const Icon(UniconsLine.plus),
+      label: Text(
+        "project_create".tr(),
+        style: Utilities.fonts.body(
+            textStyle: const TextStyle(
+          fontSize: 16.0,
+          fontWeight: FontWeight.w600,
+        )),
+      ),
+    );
+  }
+
+  /// Wrap the target widget with keyboard shortcuts.
+  Widget wrapWithShortcuts({required Widget child}) {
+    const shortcuts = <SingleActivator, Intent>{
+      SingleActivator(LogicalKeyboardKey.escape): EscapeIntent(),
+    };
+
+    final actions = <Type, Action<Intent>>{
+      EscapeIntent: CallbackAction(
+        onInvoke: (Intent intent) => onCancel(),
+      ),
+    };
 
     return Shortcuts(
-      shortcuts: const <SingleActivator, Intent>{
-        SingleActivator(LogicalKeyboardKey.arrowLeft): PreviousIntent(),
-        SingleActivator(LogicalKeyboardKey.arrowRight): NextIntent(),
-      },
+      shortcuts: shortcuts,
       child: Actions(
-        actions: <Type, Action<Intent>>{
-          PreviousIntent: CallbackAction(
-            onInvoke: (Intent intent) => _swipeController.previous(),
-          ),
-          NextIntent: CallbackAction(
-            onInvoke: (Intent intent) => _swipeController.next(),
-          ),
-        },
-        child: Scaffold(
-          floatingActionButton: fab(),
-          body: CustomScrollView(
-            slivers: [
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                    left: 72.0,
-                    top: 72.0,
-                    bottom: 24.0,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          FadeInY(
-                            beginY: Utilities.ui.getBeginY(),
-                            delay: Duration(
-                              milliseconds: Utilities.ui
-                                  .getNextAnimationDelay(reset: true),
-                            ),
-                            child: CircleButton(
-                              onTap: Beamer.of(context).beamBack,
-                              icon: const Icon(UniconsLine.arrow_left),
-                              backgroundColor: Colors.amber,
-                            ),
-                          ),
-                          FadeInY(
-                            beginY: Utilities.ui.getBeginY(),
-                            delay: Duration(
-                              milliseconds:
-                                  Utilities.ui.getNextAnimationDelay(),
-                            ),
-                            child: const Opacity(
-                              opacity: 0.6,
-                              child: AppIcon(
-                                margin: EdgeInsets.only(left: 12.0),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      FadeInY(
-                        beginY: Utilities.ui.getBeginY(),
-                        delay: Duration(
-                          milliseconds: Utilities.ui.getNextAnimationDelay(),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 24.0),
-                          child: Text(
-                            "Projects".toUpperCase(),
-                            style: Utilities.fonts.body2(
-                              fontSize: 40.0,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              SliverToBoxAdapter(
-                child: FadeInY(
-                  beginY: Utilities.ui.getBeginY(),
-                  delay: Duration(
-                    milliseconds: Utilities.ui.getNextAnimationDelay(),
-                  ),
-                  child: SizedBox(
-                    height: windowHeight - 300.0,
-                    child: Swiper(
-                      loop: false,
-                      controller: _swipeController,
-                      pagination: const SwiperPagination(
-                        builder: DotSwiperPaginationBuilder(
-                          color: Colors.white,
-                          activeColor: Colors.amber,
-                        ),
-                      ),
-                      control: const SwiperControl(
-                        color: Colors.amber,
-                        padding: EdgeInsets.all(24.0),
-                      ),
-                      itemBuilder: (BuildContext context, int index) {
-                        final Project project = _projects.elementAt(index);
-
-                        return ProjectCard(
-                          index: index,
-                          useBottomSheet: false,
-                          onTapCard: () => onTapProject(project),
-                          project: project,
-                          popupMenuEntries: _projectPopupMenuItems,
-                          onPopupMenuItemSelected: onPopupMenuItemSelected,
-                        );
-                      },
-                      itemCount: _projects.length,
-                      viewportFraction: 0.5,
-                      scale: 0.6,
-                    ),
-                  ),
-                ),
-              )
-            ],
-          ),
+        actions: actions,
+        child: Focus(
+          autofocus: true,
+          child: child,
         ),
       ),
     );
   }
 
-  Widget emptyView() {
-    const double beginY = 24.0;
-
-    return Scaffold(
-      floatingActionButton: fab(),
-      body: Stack(
-        children: [
-          const Positioned(top: 60.0, left: 60.0, child: AppIcon()),
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const FadeInY(
-                  beginY: beginY,
-                  child: Padding(
-                    padding: EdgeInsets.only(bottom: 24.0),
-                    child: Icon(UniconsLine.box, size: 42.0),
-                  ),
-                ),
-                FadeInY(
-                  beginY: beginY,
-                  delay: const Duration(milliseconds: 50),
-                  child: Text(
-                    "You've no project at this moment. You can create one.",
-                    style: Utilities.fonts.body2(
-                      fontSize: 18.0,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-                FadeInY(
-                  beginY: beginY,
-                  delay: const Duration(milliseconds: 100),
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 12.0),
-                    child: DarkElevatedButton(
-                      child: const Text("create project"),
-                      onPressed: () {
-                        setState(() => _showCreatePage = true);
-                      },
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget fab() {
-    return FloatingActionButton.extended(
-      backgroundColor: Colors.amber,
-      onPressed: () => setState(() => _showCreatePage = true),
-      icon: const Icon(UniconsLine.plus),
-      label: const Text("Create project"),
-    );
-  }
-
-  Widget loadingView() {
-    return LoadingView.scaffold(
-      message: _creating
-          ? "Creating your new project..."
-          : "Loading featured projects...",
-    );
+  void onShowCreate() {
+    () => setState(() => _showCreatePage = true);
   }
 
   /// Make a API request call to create a new document in Firestore
@@ -360,8 +247,8 @@ class _ProjectsPageState extends ConsumerState<ProjectsPage> with UiLoggy {
     });
 
     try {
-      final QueryMap query = getAuthListenQuery();
-      listenToPostEvents(query);
+      final QueryMap query = getFirestoreQuery();
+      listenToProjectEvents(query);
 
       final QuerySnapMap snapshot = await query.get();
 
@@ -400,8 +287,8 @@ class _ProjectsPageState extends ConsumerState<ProjectsPage> with UiLoggy {
     setState(() => _loading = true);
 
     try {
-      final QueryMap query = getAuthListenQuery();
-      listenToPostEvents(query);
+      final QueryMap query = getFirestoreQuery();
+      listenToProjectEvents(query);
 
       final QuerySnapMap snapshot = await query.get();
 
@@ -443,7 +330,7 @@ class _ProjectsPageState extends ConsumerState<ProjectsPage> with UiLoggy {
   }
 
   /// Return the query to listen changes to.
-  QueryMap getAuthListenQuery() {
+  QueryMap getFirestoreQuery() {
     final DocumentSnapshot? lastDocument = _lastDocument;
     final String userId = ref.read(AppState.userProvider).authUser?.uid ?? "";
 
@@ -478,13 +365,13 @@ class _ProjectsPageState extends ConsumerState<ProjectsPage> with UiLoggy {
         .endAtDocument(lastDocument);
   }
 
-  void listenToPostEvents(QueryMap? query) {
+  void listenToProjectEvents(QueryMap? query) {
     if (query == null) {
       return;
     }
 
-    _postSubscription?.cancel();
-    _postSubscription = query.snapshots().skip(1).listen(
+    _projectSubscription?.cancel();
+    _projectSubscription = query.snapshots().skip(1).listen(
       (snapshot) {
         for (DocumentChangeMap documentChange in snapshot.docChanges) {
           switch (documentChange.type) {
@@ -545,7 +432,7 @@ class _ProjectsPageState extends ConsumerState<ProjectsPage> with UiLoggy {
     } on Exception catch (error) {
       loggy.error(
         "The document with the id ${documentChange.doc.id} "
-        "doesn't exist in the illustrations list.",
+        "doesn't exist in the project list.",
       );
 
       loggy.error(error);
@@ -602,5 +489,14 @@ class _ProjectsPageState extends ConsumerState<ProjectsPage> with UiLoggy {
         _projects.insert(index, project);
       });
     }
+  }
+
+  void onCancel() {
+    if (Beamer.of(context).beamingHistory.isNotEmpty) {
+      Beamer.of(context).beamBack();
+      return;
+    }
+
+    Beamer.of(context, root: true).beamToNamed(HomeLocation.route);
   }
 }

@@ -3,7 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:rootasjey/globals/app_state.dart';
 import 'package:rootasjey/router/locations/home_location.dart';
-import 'package:rootasjey/screens/signup_page.dart';
+import 'package:rootasjey/screens/signup_page/signup_page.dart';
 
 class SignupLocation extends BeamLocation<BeamState> {
   /// Main root value for this location.

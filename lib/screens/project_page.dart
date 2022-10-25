@@ -141,32 +141,7 @@ class _ProjectPageState extends ConsumerState<ProjectPage> with UiLoggy {
     const double maxWidth = 640.0;
 
     return Scaffold(
-      floatingActionButton: canManagePosts
-          ? FloatingActionButton.extended(
-              onPressed: () {
-                setState(() => _editing = !_editing);
-              },
-              extendedPadding: const EdgeInsets.symmetric(
-                horizontal: 32.0,
-              ),
-              foregroundColor: Colors.white,
-              backgroundColor: Colors.pink,
-              label: Text(
-                _editing ? "render" : "edit".tr(),
-                style: Utilities.fonts.body(
-                  fontSize: 16.0,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              icon: _editing
-                  ? const Icon(UniconsLine.eye)
-                  : const Icon(UniconsLine.edit_alt),
-            )
-          : FabToTop(
-              hideIfAtTop: _hideFab,
-              fabIcon: const Icon(UniconsLine.arrow_up),
-              pageScrollController: _pageScrollController,
-            ),
+      floatingActionButton: fab(show: canManagePosts),
       body: Stack(
         children: [
           ImprovedScrolling(
@@ -174,25 +149,12 @@ class _ProjectPageState extends ConsumerState<ProjectPage> with UiLoggy {
             onScroll: onScroll,
             child: CustomScrollView(
               controller: _pageScrollController,
-              // shrinkWrap: true,
               slivers: [
                 PostAppBar(
                   showTitle: _showAppBarTitle,
                   textTitle: _project.name,
                   showSettings: _showSettings,
-                  onTapSettings: () {
-                    if (!_showSettings) {
-                      _pageScrollController.animateTo(
-                        0.0,
-                        curve: Curves.decelerate,
-                        duration: const Duration(
-                          milliseconds: 250,
-                        ),
-                      );
-                    }
-
-                    setState(() => _showSettings = !_showSettings);
-                  },
+                  onTapSettings: canManagePosts ? onTapSettings : null,
                 ),
                 PostSettings(
                   confirmDelete: _confirmDeletePost,
@@ -235,6 +197,7 @@ class _ProjectPageState extends ConsumerState<ProjectPage> with UiLoggy {
                   onRemoveTag: onRemoveTag,
                 ),
                 PostCover(
+                  showControlButtons: canManagePosts,
                   cover: _project.cover,
                   onTryAddCoverImage: tryUploadCover,
                   onTryRemoveCoverImage: tryRemoveCoverImage,
@@ -250,8 +213,8 @@ class _ProjectPageState extends ConsumerState<ProjectPage> with UiLoggy {
                   onContentChanged: onContentChanged,
                 ),
                 PostFooter(
-                  content: _content,
                   maxWidth: maxWidth,
+                  show: canManagePosts,
                   wordCount: _project.wordCount,
                   updatedAt: _project.updatedAt,
                 ),
@@ -284,9 +247,11 @@ class _ProjectPageState extends ConsumerState<ProjectPage> with UiLoggy {
                           "updating".tr(),
                           overflow: TextOverflow.ellipsis,
                           style: Utilities.fonts.body(
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black,
+                            textStyle: const TextStyle(
+                              fontSize: 16.0,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black,
+                            ),
                           ),
                         ),
                       ),
@@ -306,12 +271,6 @@ class _ProjectPageState extends ConsumerState<ProjectPage> with UiLoggy {
   }
 
   Future<void> fetchMetadata() async {
-    final String userId = ref.read(AppState.userProvider).authUser?.uid ?? "";
-    if (userId.isEmpty) {
-      loggy.error("User id is emty :o");
-      return;
-    }
-
     setState(() => _loading = true);
 
     try {
@@ -426,32 +385,6 @@ class _ProjectPageState extends ConsumerState<ProjectPage> with UiLoggy {
     }
   }
 
-  /// Update post's character & word count.
-  void updateMetrics() async {
-    final Iterable<RegExpMatch> wordMatches = _wordsRegex.allMatches(_content);
-
-    _project = _project.copyWith(
-      characterCount: _content.length,
-      wordCount: wordMatches.length,
-    );
-
-    setState(() => _saving = true);
-
-    try {
-      await FirebaseFirestore.instance
-          .collection(_collectionName)
-          .doc(_project.id)
-          .update({
-        "character_count": _project.characterCount,
-        "word_count": _project.wordCount,
-      });
-    } catch (error) {
-      loggy.error(error);
-    } finally {
-      setState(() => _saving = false);
-    }
-  }
-
   void tryUpdateLanguage(String newLanguage) async {
     final String prevLanguage = _project.language;
     setState(() {
@@ -506,7 +439,6 @@ class _ProjectPageState extends ConsumerState<ProjectPage> with UiLoggy {
     bool selected,
   ) async {
     if (!selected) {
-      loggy.info("visibility: ${visibility.name} | selected: $selected");
       return;
     }
 
@@ -860,5 +792,52 @@ class _ProjectPageState extends ConsumerState<ProjectPage> with UiLoggy {
       const Duration(seconds: 1),
       trySaveContent,
     );
+  }
+
+  Widget fab({required bool show}) {
+    if (show) {
+      FloatingActionButton.extended(
+        onPressed: () {
+          setState(() => _editing = !_editing);
+        },
+        extendedPadding: const EdgeInsets.symmetric(
+          horizontal: 32.0,
+        ),
+        foregroundColor: Colors.white,
+        backgroundColor: Colors.pink,
+        label: Text(
+          _editing ? "render" : "edit".tr(),
+          style: Utilities.fonts.body(
+            textStyle: const TextStyle(
+              fontSize: 16.0,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+        icon: _editing
+            ? const Icon(UniconsLine.eye)
+            : const Icon(UniconsLine.edit_alt),
+      );
+    }
+
+    return FabToTop(
+      hideIfAtTop: _hideFab,
+      fabIcon: const Icon(UniconsLine.arrow_up),
+      pageScrollController: _pageScrollController,
+    );
+  }
+
+  void onTapSettings() {
+    if (!_showSettings) {
+      _pageScrollController.animateTo(
+        0.0,
+        curve: Curves.decelerate,
+        duration: const Duration(
+          milliseconds: 250,
+        ),
+      );
+    }
+
+    setState(() => _showSettings = !_showSettings);
   }
 }

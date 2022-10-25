@@ -140,8 +140,10 @@ class LangPopupMenuButton extends StatelessWidget {
       child: Text(
         Utilities.lang.toFullString(lang),
         style: Utilities.fonts.body(
-          color: baseColor,
-          fontWeight: FontWeight.w700,
+          textStyle: TextStyle(
+            color: baseColor,
+            fontWeight: FontWeight.w700,
+          ),
         ),
       ),
     );
@@ -153,9 +155,11 @@ class LangPopupMenuButton extends StatelessWidget {
       child: Text(
         lang.toUpperCase(),
         style: Utilities.fonts.body(
-          fontSize: 16.0,
-          fontWeight: FontWeight.w700,
-          color: Theme.of(context).textTheme.bodyText1?.color,
+          textStyle: TextStyle(
+            fontSize: 16.0,
+            fontWeight: FontWeight.w700,
+            color: Theme.of(context).textTheme.bodyText1?.color,
+          ),
         ),
       ),
     );

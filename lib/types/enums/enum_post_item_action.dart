@@ -1,3 +1,3 @@
-enum EnumProjectItemAction {
+enum EnumPostItemAction {
   delete,
 }

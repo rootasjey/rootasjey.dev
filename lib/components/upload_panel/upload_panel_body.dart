@@ -48,8 +48,10 @@ class UploadPanelBody extends ConsumerWidget {
             child: Text(
               "downloads".tr(),
               style: Utilities.fonts.body(
-                fontSize: 24.0,
-                fontWeight: FontWeight.w700,
+                textStyle: const TextStyle(
+                  fontSize: 24.0,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
             ),
           ),

@@ -1,3 +1,6 @@
+import 'dart:math';
+
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:rootasjey/components/buttons/dark_elevated_button.dart';
@@ -34,6 +37,8 @@ class _CreateProjectPageState extends ConsumerState<CreateProjectPage> {
 
   @override
   Widget build(BuildContext context) {
+    final int randomInt = Random().nextInt(5);
+
     return Scaffold(
       body: Stack(
         children: [
@@ -57,8 +62,8 @@ class _CreateProjectPageState extends ConsumerState<CreateProjectPage> {
                     child: Column(
                       children: [
                         header(),
-                        nameInput(),
-                        summaryInput(),
+                        nameInput(randomHint: randomInt),
+                        summaryInput(randomHint: randomInt),
                         footerButtons(),
                       ],
                     ),
@@ -89,10 +94,12 @@ class _CreateProjectPageState extends ConsumerState<CreateProjectPage> {
             milliseconds: Utilities.ui.getNextAnimationDelay(reset: true),
           ),
           child: Text(
-            "Create a new project",
+            "project_create_new".tr(),
             style: Utilities.fonts.body(
-              fontSize: 32.0,
-              fontWeight: FontWeight.w600,
+              textStyle: const TextStyle(
+                fontSize: 32.0,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
         ),
@@ -104,12 +111,13 @@ class _CreateProjectPageState extends ConsumerState<CreateProjectPage> {
             child: Opacity(
               opacity: 0.4,
               child: Text(
-                "You'll be able to write a post about it later.\n"
-                "Projects help you showcase your work to the world.",
+                "post_creat_new_subtitle".tr(),
                 textAlign: TextAlign.center,
                 style: Utilities.fonts.body2(
-                  fontSize: 18.0,
-                  fontWeight: FontWeight.w600,
+                  textStyle: const TextStyle(
+                    fontSize: 18.0,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
             ),
@@ -119,7 +127,7 @@ class _CreateProjectPageState extends ConsumerState<CreateProjectPage> {
     );
   }
 
-  Widget nameInput() {
+  Widget nameInput({int randomHint = 0}) {
     return Column(
       children: [
         FadeInY(
@@ -134,10 +142,12 @@ class _CreateProjectPageState extends ConsumerState<CreateProjectPage> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Text(
-                  "Project's name",
+                  "project_name".tr(),
                   style: Utilities.fonts.body(
-                    fontSize: 16.0,
-                    fontWeight: FontWeight.w600,
+                    textStyle: const TextStyle(
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
               ],
@@ -156,7 +166,7 @@ class _CreateProjectPageState extends ConsumerState<CreateProjectPage> {
               controller: _nameController,
               textInputAction: TextInputAction.next,
               decoration: InputDecoration(
-                hintText: "Tempédie...",
+                hintText: "project_create_new_names.$randomHint".tr(),
                 border: OutlineInputBorder(
                   borderSide: BorderSide(
                     color: Constants.colors.palette.first,
@@ -188,7 +198,7 @@ class _CreateProjectPageState extends ConsumerState<CreateProjectPage> {
     );
   }
 
-  Widget summaryInput() {
+  Widget summaryInput({int randomHint = 0}) {
     return Column(
       children: [
         FadeInY(
@@ -203,10 +213,12 @@ class _CreateProjectPageState extends ConsumerState<CreateProjectPage> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Text(
-                  "Project's summary",
+                  "project_summary".tr(),
                   style: Utilities.fonts.body(
-                    fontSize: 16.0,
-                    fontWeight: FontWeight.w600,
+                    textStyle: const TextStyle(
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
               ],
@@ -228,8 +240,7 @@ class _CreateProjectPageState extends ConsumerState<CreateProjectPage> {
                 widget.onSubmit?.call(_nameController.text, summary);
               },
               decoration: InputDecoration(
-                hintText: "This is an open "
-                    "source project about...",
+                hintText: "project_create_new_summaries.$randomHint".tr(),
                 focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(
                     color: Constants.colors.palette.elementAt(1),
@@ -267,7 +278,7 @@ class _CreateProjectPageState extends ConsumerState<CreateProjectPage> {
             delay: Duration(milliseconds: Utilities.ui.getNextAnimationDelay()),
             child: DarkElevatedButton.icon(
               iconData: UniconsLine.times,
-              labelValue: "cancel",
+              labelValue: "cancel".tr(),
               background: Colors.black,
               onPressed: () => widget.onCancel?.call(),
             ),
@@ -288,11 +299,13 @@ class _CreateProjectPageState extends ConsumerState<CreateProjectPage> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      "create",
+                      "create".tr(),
                       style: Utilities.fonts.body(
-                        fontSize: 16.0,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.green,
+                        textStyle: const TextStyle(
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.green,
+                        ),
                       ),
                     ),
                     const Padding(

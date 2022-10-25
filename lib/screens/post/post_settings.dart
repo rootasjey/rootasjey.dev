@@ -136,8 +136,10 @@ class PostSettings extends StatelessWidget {
                     Text(
                       "settings".tr().toUpperCase(),
                       style: Utilities.fonts.body(
-                        fontSize: 42.0,
-                        fontWeight: FontWeight.w600,
+                        textStyle: const TextStyle(
+                          fontSize: 42.0,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                   ],
@@ -167,8 +169,10 @@ class PostSettings extends StatelessWidget {
             child: Text(
               "Language".toUpperCase(),
               style: Utilities.fonts.body(
-                fontSize: 16.0,
-                fontWeight: FontWeight.w600,
+                textStyle: const TextStyle(
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ),
@@ -184,10 +188,12 @@ class PostSettings extends StatelessWidget {
                 label: Text(
                   Utilities.lang.toFullString(chipLanguage),
                   style: Utilities.fonts.body(
-                    fontSize: 16.0,
-                    fontWeight: chipLanguage == language
-                        ? FontWeight.w600
-                        : FontWeight.w400,
+                    textStyle: TextStyle(
+                      fontSize: 16.0,
+                      fontWeight: chipLanguage == language
+                          ? FontWeight.w600
+                          : FontWeight.w400,
+                    ),
                   ),
                 ),
                 selected: chipLanguage == language,
@@ -218,8 +224,10 @@ class PostSettings extends StatelessWidget {
               child: Text(
                 "Visibility".toUpperCase(),
                 style: Utilities.fonts.body(
-                  fontSize: 16.0,
-                  fontWeight: FontWeight.w600,
+                  textStyle: const TextStyle(
+                    fontSize: 16.0,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
             ),
@@ -238,10 +246,12 @@ class PostSettings extends StatelessWidget {
                     label: Text(
                       chipVisibility.name,
                       style: Utilities.fonts.body(
-                        fontSize: 16.0,
-                        fontWeight: chipVisibility == visibility
-                            ? FontWeight.w600
-                            : FontWeight.w400,
+                        textStyle: TextStyle(
+                          fontSize: 16.0,
+                          fontWeight: chipVisibility == visibility
+                              ? FontWeight.w600
+                              : FontWeight.w400,
+                        ),
                       ),
                     ),
                     selected: chipVisibility == visibility,
@@ -267,8 +277,10 @@ class PostSettings extends StatelessWidget {
           child: Text(
             "Delete this project".toUpperCase(),
             style: Utilities.fonts.body(
-              fontSize: 16.0,
-              fontWeight: FontWeight.w600,
+              textStyle: const TextStyle(
+                fontSize: 16.0,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
         ),
@@ -277,8 +289,10 @@ class PostSettings extends StatelessWidget {
           child: Text(
             "Are you sure?",
             style: Utilities.fonts.body(
-              fontSize: 36.0,
-              fontWeight: FontWeight.w200,
+              textStyle: const TextStyle(
+                fontSize: 36.0,
+                fontWeight: FontWeight.w200,
+              ),
             ),
           ),
         ),
@@ -314,8 +328,10 @@ class PostSettings extends StatelessWidget {
             child: Text(
               "Cover".toUpperCase(),
               style: Utilities.fonts.body(
-                fontSize: 16.0,
-                fontWeight: FontWeight.w600,
+                textStyle: const TextStyle(
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ),
@@ -332,8 +348,10 @@ class PostSettings extends StatelessWidget {
                   child: Text(
                     hasCover ? "cover_replace".tr() : "cover_add".tr(),
                     style: Utilities.fonts.body(
-                      color: Colors.green,
-                      fontWeight: FontWeight.w600,
+                      textStyle: const TextStyle(
+                        color: Colors.green,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                 ),
@@ -343,8 +361,10 @@ class PostSettings extends StatelessWidget {
                     child: Text(
                       "cover_remove".tr(),
                       style: Utilities.fonts.body(
-                        color: Colors.pink,
-                        fontWeight: FontWeight.w600,
+                        textStyle: const TextStyle(
+                          color: Colors.pink,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                   ),
@@ -370,8 +390,10 @@ class PostSettings extends StatelessWidget {
           child: Text(
             "corners",
             style: Utilities.fonts.body(
-              fontSize: 14.0,
-              fontWeight: FontWeight.w600,
+              textStyle: const TextStyle(
+                fontSize: 14.0,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
         ),
@@ -392,10 +414,12 @@ class PostSettings extends StatelessWidget {
                 label: Text(
                   coverCornerhType.name,
                   style: Utilities.fonts.body(
-                    fontSize: 16.0,
-                    fontWeight: coverCornerhType == cover.cornerType
-                        ? FontWeight.w600
-                        : FontWeight.w400,
+                    textStyle: TextStyle(
+                      fontSize: 16.0,
+                      fontWeight: coverCornerhType == cover.cornerType
+                          ? FontWeight.w600
+                          : FontWeight.w400,
+                    ),
                   ),
                 ),
                 selected: coverCornerhType == cover.cornerType,
@@ -428,8 +452,10 @@ class PostSettings extends StatelessWidget {
             child: Text(
               "Danger zone".toUpperCase(),
               style: Utilities.fonts.body(
-                fontSize: 16.0,
-                fontWeight: FontWeight.w600,
+                textStyle: const TextStyle(
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ),
@@ -461,8 +487,10 @@ class PostSettings extends StatelessWidget {
           child: Text(
             "width",
             style: Utilities.fonts.body(
-              fontSize: 14.0,
-              fontWeight: FontWeight.w600,
+              textStyle: const TextStyle(
+                fontSize: 14.0,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
         ),
@@ -483,10 +511,12 @@ class PostSettings extends StatelessWidget {
                 label: Text(
                   coverWidthType.name,
                   style: Utilities.fonts.body(
-                    fontSize: 16.0,
-                    fontWeight: coverWidthType == cover.widthType
-                        ? FontWeight.w600
-                        : FontWeight.w400,
+                    textStyle: TextStyle(
+                      fontSize: 16.0,
+                      fontWeight: coverWidthType == cover.widthType
+                          ? FontWeight.w600
+                          : FontWeight.w400,
+                    ),
                   ),
                 ),
                 selected: coverWidthType == cover.widthType,

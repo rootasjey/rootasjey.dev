@@ -42,6 +42,7 @@ class CircleButton extends StatelessWidget {
     Widget child = Ink(
       child: InkWell(
         onTap: onTap,
+        canRequestFocus: false,
         child: CircleAvatar(
           backgroundColor: backgroundColor,
           radius: radius,
@@ -72,16 +73,18 @@ class CircleButton extends StatelessWidget {
   static Widget outlined({
     required final Function()? onTap,
     required final Widget child,
+    Color borderColor = const Color(0xFF000000),
   }) {
     return Container(
       height: 28.0,
       width: 28.0,
       decoration: BoxDecoration(
-        border: Border.all(width: 2.0),
+        border: Border.all(width: 2.0, color: borderColor),
         borderRadius: BorderRadius.circular(24.0),
       ),
       clipBehavior: Clip.hardEdge,
       child: InkWell(
+        canRequestFocus: false,
         borderRadius: BorderRadius.circular(24.0),
         onTap: onTap,
         child: child,

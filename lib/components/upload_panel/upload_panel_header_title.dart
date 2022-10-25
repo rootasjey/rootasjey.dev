@@ -21,7 +21,9 @@ class UploadPanelHeaderTitle extends StatelessWidget {
     return Text(
       textValue,
       style: Utilities.fonts.body(
-        fontWeight: FontWeight.w600,
+        textStyle: const TextStyle(
+          fontWeight: FontWeight.w600,
+        ),
       ),
     );
   }

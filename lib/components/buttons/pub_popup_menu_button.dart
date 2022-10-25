@@ -54,9 +54,11 @@ class PubPopupMenuButton extends StatelessWidget {
           visibility == EnumContentVisibility.public
               ? "published".tr()
               : "visibility.private".tr(),
-          style: Utilities.fonts.body1(
-            color: baseColor,
-            fontWeight: FontWeight.w700,
+          style: Utilities.fonts.body(
+            textStyle: TextStyle(
+              color: baseColor,
+              fontWeight: FontWeight.w700,
+            ),
           ),
         ),
       );

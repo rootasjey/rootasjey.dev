@@ -45,27 +45,27 @@ class DeleteDialog extends StatelessWidget {
         children: [
           Opacity(
             opacity: 0.8,
-            child: Text(
-              titleValue,
-              style: Utilities.fonts.body(
-                color: Colors.black,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
+            child: Text(titleValue,
+                style: Utilities.fonts.body(
+                  textStyle: const TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.w700,
+                  ),
+                )),
           ),
           Container(
             width: 300.0,
             padding: const EdgeInsets.only(top: 8.0),
             child: Opacity(
               opacity: 0.4,
-              child: Text(
-                descriptionValue,
-                textAlign: TextAlign.center,
-                style: Utilities.fonts.body(
-                  color: Colors.black,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
+              child: Text(descriptionValue,
+                  textAlign: TextAlign.center,
+                  style: Utilities.fonts.body(
+                    textStyle: const TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  )),
             ),
           ),
         ],
@@ -85,8 +85,10 @@ class DeleteDialog extends StatelessWidget {
                         count,
                       ),
                       style: Utilities.fonts.body(
-                        fontSize: 14.0,
-                        fontWeight: FontWeight.w700,
+                        textStyle: const TextStyle(
+                          fontSize: 14.0,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
                     ),
                   ),

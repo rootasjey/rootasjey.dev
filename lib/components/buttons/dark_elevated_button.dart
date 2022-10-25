@@ -24,8 +24,10 @@ class DarkElevatedButton extends StatelessWidget {
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
         backgroundColor: backgroundColor ?? Colors.black,
-        textStyle: Utilities.fonts.body1(
-          fontWeight: FontWeight.w600,
+        textStyle: Utilities.fonts.body(
+          textStyle: const TextStyle(
+            fontWeight: FontWeight.w600,
+          ),
         ),
       ),
       child: Padding(
@@ -49,8 +51,10 @@ class DarkElevatedButton extends StatelessWidget {
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.black87,
           minimumSize: const Size(340.0, 0.0),
-          textStyle: Utilities.fonts.body1(
-            fontWeight: FontWeight.w500,
+          textStyle: Utilities.fonts.body(
+            textStyle: const TextStyle(
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ),
         onPressed: onPressed,
@@ -73,6 +77,7 @@ class DarkElevatedButton extends StatelessWidget {
     Color? foreground,
     double? elevation,
     EdgeInsets margin = EdgeInsets.zero,
+    Size? minimumSize = const Size(200.0, 60.0),
   }) {
     return Padding(
       padding: margin,
@@ -89,16 +94,18 @@ class DarkElevatedButton extends StatelessWidget {
           padding: const EdgeInsets.only(right: 8.0),
           child: Text(
             labelValue,
-            style: Utilities.fonts.body1(
-              color: foreground,
-              fontWeight: FontWeight.w700,
+            style: Utilities.fonts.body(
+              textStyle: TextStyle(
+                color: foreground,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
         ),
         style: ElevatedButton.styleFrom(
           elevation: elevation,
           backgroundColor: background ?? Constants.colors.clairPink,
-          minimumSize: const Size(200.0, 60.0),
+          minimumSize: minimumSize,
         ),
       ),
     );
@@ -116,8 +123,10 @@ class DarkElevatedButton extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(4.0),
         ),
-        textStyle: Utilities.fonts.body1(
-          fontWeight: FontWeight.w600,
+        textStyle: Utilities.fonts.body(
+          textStyle: const TextStyle(
+            fontWeight: FontWeight.w600,
+          ),
         ),
       ),
       child: Padding(

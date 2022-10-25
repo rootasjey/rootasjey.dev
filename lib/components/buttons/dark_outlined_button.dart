@@ -50,8 +50,10 @@ class DarkOutlinedButton extends StatelessWidget {
                   width: 2.0,
                 )
               : null,
-          textStyle: Utilities.fonts.body1(
-            fontWeight: FontWeight.w600,
+          textStyle: Utilities.fonts.body(
+            textStyle: const TextStyle(
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ),
         child: Padding(

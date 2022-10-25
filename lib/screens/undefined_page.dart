@@ -1,11 +1,20 @@
 import 'package:beamer/beamer.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
+import 'package:rootasjey/components/application_bar.dart';
+import 'package:rootasjey/components/buttons/dark_elevated_button.dart';
+import 'package:rootasjey/globals/constants.dart';
+import 'package:rootasjey/globals/utilities.dart';
 import 'package:rootasjey/router/locations/home_location.dart';
-import 'package:unicons/unicons.dart';
 
 class UndefinedPage extends StatefulWidget {
-  const UndefinedPage({super.key});
+  const UndefinedPage({
+    super.key,
+    this.errorCode = "404",
+  });
+
+  final String errorCode;
 
   @override
   State<StatefulWidget> createState() => _UndefinedPageState();
@@ -14,105 +23,77 @@ class UndefinedPage extends StatefulWidget {
 class _UndefinedPageState extends State<UndefinedPage> {
   @override
   Widget build(BuildContext context) {
-    String location = '';
-    final int length = context.beamingHistory.length;
+    String location = "";
+    final history = Beamer.of(context).beamingHistory;
 
-    if (length > 1) {
-      final beamLocation = context.beamingHistory.elementAt(length - 2);
+    if (history.isNotEmpty) {
+      final beamLocation = history.last;
       location = beamLocation.state.routeInformation.location ?? "";
     }
 
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          SliverList(
-            delegate: SliverChildListDelegate.fixed([
-              Column(
-                children: <Widget>[
-                  const Padding(
-                    padding: EdgeInsets.only(top: 60.0, bottom: 8.0),
-                    child: Text(
-                      '404',
-                      style: TextStyle(
-                        fontSize: 120.0,
+          const ApplicationBar(),
+          SliverToBoxAdapter(
+            child: Column(
+              children: <Widget>[
+                Lottie.asset(
+                  "assets/animations/lost_in_space_astronaut.json",
+                  width: 400.0,
+                  height: 400.0,
+                ),
+                Container(
+                  padding: const EdgeInsets.all(12.0),
+                  decoration: BoxDecoration(
+                    color: Constants.colors.palette.first.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                  child: Text(
+                    location,
+                    style: Utilities.fonts.body(
+                      textStyle: const TextStyle(
+                        fontSize: 16.0,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                   ),
-                  Opacity(
-                    opacity: 0.6,
-                    child: RichText(
-                      text: TextSpan(
-                        text: "undefined_page_route_prefix".tr(),
-                        style: TextStyle(
-                          fontSize: 18.0,
-                          fontWeight: FontWeight.w700,
-                          color: Theme.of(context).textTheme.bodyText1?.color,
+                ),
+                Container(
+                  width: 500.0,
+                  padding: const EdgeInsets.only(top: 12.0),
+                  child: Opacity(
+                    opacity: 0.8,
+                    child: Text(
+                      "route_error.${widget.errorCode}".tr(),
+                      textAlign: TextAlign.center,
+                      style: Utilities.fonts.code(
+                        textStyle: const TextStyle(
+                          fontSize: 32.0,
+                          fontWeight: FontWeight.w200,
                         ),
-                        children: [
-                          TextSpan(
-                            text: location,
-                            style: TextStyle(
-                              fontWeight: FontWeight.w700,
-                              color: Theme.of(context).secondaryHeaderColor,
-                            ),
-                          ),
-                          TextSpan(
-                            text: "undefined_page_route_suffix".tr(),
-                          ),
-                        ],
                       ),
                     ),
                   ),
-                  const Padding(
-                    padding: EdgeInsets.only(top: 20.0, bottom: 12.0),
-                    child: Icon(
-                      UniconsLine.car_sideview,
-                      size: 40.0,
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 24.0, bottom: 24.0),
-                    child: ElevatedButton(
-                      onPressed: () => context.beamToNamed(HomeLocation.route),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text("undefined_page_get_back".tr()),
+                ),
+                DarkElevatedButton.large(
+                  margin: const EdgeInsets.only(top: 24.0),
+                  onPressed: () => context.beamToNamed(HomeLocation.route),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      "home_return".tr(),
+                      style: Utilities.fonts.body(
+                        textStyle: const TextStyle(
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                   ),
-                  Container(
-                    width: 400.0,
-                    padding: const EdgeInsets.only(
-                      top: 8.0,
-                      left: 8.0,
-                      right: 8.0,
-                      bottom: 300,
-                    ),
-                    child: Card(
-                        elevation: 4.0,
-                        color: Theme.of(context).backgroundColor,
-                        child: Padding(
-                          padding: const EdgeInsets.all(40.0),
-                          child: Column(
-                            children: <Widget>[
-                              Opacity(
-                                opacity: 0.8,
-                                child: Text(
-                                  "undefined_page_quote".tr(),
-                                  style: const TextStyle(
-                                    fontSize: 18.0,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        )),
-                  ),
-                ],
-              ),
-            ]),
+                ),
+              ],
+            ),
           ),
         ],
       ),

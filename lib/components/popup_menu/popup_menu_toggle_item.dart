@@ -48,9 +48,11 @@ class PopupMenuToggleItem<T> extends PopupMenuItem<T> {
                     Expanded(
                       child: Text(
                         textLabel,
-                        style: Utilities.fonts.body1(
-                          color: foregroundColor,
-                          fontWeight: FontWeight.w700,
+                        style: Utilities.fonts.body(
+                          textStyle: TextStyle(
+                            color: foregroundColor,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
                       ),
                     ),

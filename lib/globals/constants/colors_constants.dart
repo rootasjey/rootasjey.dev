@@ -48,7 +48,8 @@ class ColorsConstants {
 
   /// Color for illustrations.
   final Color illustrations = const Color(0xFF796AD2);
-  final Color lightBackground = const Color(0xFfe3e6ec);
+  // final Color lightBackground = const Color(0xFfe3e6ec);
+  final Color lightBackground = const Color(0xfff8f8ff);
   final Color likes = Colors.pink;
   final Color licenses = Colors.amber.shade800;
   final Color location = Colors.green.shade300;

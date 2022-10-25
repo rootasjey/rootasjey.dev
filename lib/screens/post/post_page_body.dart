@@ -146,8 +146,8 @@ class PostPageBody extends StatelessWidget with UiLoggy {
               launchUrl(uri);
             },
             styleSheet: MarkdownStyle(
-              link: Utilities.fonts.body5(
-                const TextStyle(
+              link: Utilities.fonts.body4(
+                textStyle: const TextStyle(
                   color: Colors.amber,
                   fontSize: 18.0,
                   fontWeight: FontWeight.w500,
@@ -157,21 +157,21 @@ class PostPageBody extends StatelessWidget with UiLoggy {
                 height: 2.0,
               ),
               paragraphPadding: const EdgeInsets.only(top: 0.0, bottom: 12.0),
-              textStyle: Utilities.fonts.body5(
-                TextStyle(
+              textStyle: Utilities.fonts.body4(
+                textStyle: TextStyle(
                   color: Colors.white.withOpacity(0.8),
                   fontSize: 18.0,
                 ),
               ),
-              headline1: Utilities.fonts.body5(
-                const TextStyle(
+              headline1: Utilities.fonts.body4(
+                textStyle: const TextStyle(
                   fontSize: 54.0,
                   fontWeight: FontWeight.w700,
                 ),
               ),
               h1Padding: const EdgeInsets.only(top: 28.0),
-              headline2: Utilities.fonts.body5(
-                const TextStyle(
+              headline2: Utilities.fonts.body4(
+                textStyle: const TextStyle(
                   fontSize: 38.0,
                   fontWeight: FontWeight.w600,
                 ),
@@ -183,11 +183,15 @@ class PostPageBody extends StatelessWidget with UiLoggy {
                 borderRadius: BorderRadius.circular(8.0),
               ),
               codeblockPadding: const EdgeInsets.all(24.0),
-              codeSpan: Utilities.fonts.body4(
-                fontSize: 14,
+              codeSpan: Utilities.fonts.code(
+                textStyle: const TextStyle(
+                  fontSize: 14,
+                ),
               ),
-              codeBlock: Utilities.fonts.body4(
-                fontSize: 14,
+              codeBlock: Utilities.fonts.code(
+                textStyle: const TextStyle(
+                  fontSize: 14,
+                ),
               ),
             ),
           ),

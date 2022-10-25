@@ -1,7 +1,7 @@
 import 'package:beamer/beamer.dart';
 import 'package:flutter/widgets.dart';
 import 'package:rootasjey/screens/project_page.dart';
-import 'package:rootasjey/screens/projects_page.dart';
+import 'package:rootasjey/screens/projects_page/projects_page.dart';
 
 class ProjectsLocation extends BeamLocation<BeamState> {
   static const String route = "/projects";

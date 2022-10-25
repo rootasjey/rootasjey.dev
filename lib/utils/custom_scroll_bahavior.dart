@@ -14,13 +14,13 @@ class CustomScrollBehaviour extends MaterialScrollBehavior {
       case TargetPlatform.macOS:
         return Scrollbar(
           controller: details.controller,
-          thumbVisibility: true,
+          thumbVisibility: false,
           child: child,
         );
       case TargetPlatform.windows:
         return Scrollbar(
           controller: details.controller,
-          thumbVisibility: true,
+          thumbVisibility: false,
           radius: Radius.zero,
           thickness: 16.0,
           trackVisibility: true,

@@ -10,137 +10,47 @@ class FontsUtils {
 
   static String? fontFamily = GoogleFonts.poppins().fontFamily;
 
-  TextStyle body({
-    FontWeight fontWeight = FontWeight.w400,
-    double fontSize = 16.0,
-    double? height,
-    Color? color,
-    TextDecoration? decoration,
-  }) {
+  TextStyle body({TextStyle? textStyle}) {
     return GoogleFonts.montserrat(
-      color: color,
-      fontSize: fontSize,
-      fontWeight: fontWeight,
-      height: height,
-      decoration: decoration,
-    );
-  }
-
-  TextStyle body1({
-    FontWeight fontWeight = FontWeight.w400,
-    double fontSize = 16.0,
-    double? height,
-    Color? color,
-    Color? backgroundColor,
-    TextDecoration? decoration,
-  }) {
-    return GoogleFonts.montserrat(
-      backgroundColor: backgroundColor,
-      color: color,
-      fontSize: fontSize,
-      fontWeight: fontWeight,
-      height: height,
-      decoration: decoration,
+      textStyle: textStyle,
     );
   }
 
   /// Return main text style for this app.
-  TextStyle body2({
-    FontWeight fontWeight = FontWeight.w400,
-    double fontSize = 16.0,
-    double? height,
-    Color? color,
-    TextDecoration? decoration,
-    FontStyle? fontStyle,
-  }) {
+  TextStyle body2({TextStyle? textStyle}) {
     return GoogleFonts.josefinSans(
-      color: color,
-      fontSize: fontSize,
-      fontWeight: fontWeight,
-      height: height,
-      decoration: decoration,
-      fontStyle: fontStyle,
+      textStyle: textStyle,
     );
   }
 
-  TextStyle body3({
-    FontWeight fontWeight = FontWeight.w400,
-    double fontSize = 16.0,
-    double? height,
-    Color? backgroundColor,
-    Color? color,
-    TextDecoration? decoration,
-  }) {
+  TextStyle body3({TextStyle? textStyle}) {
     return GoogleFonts.lobster(
-      backgroundColor: backgroundColor,
-      color: color,
-      fontSize: fontSize,
-      fontWeight: fontWeight,
-      height: height,
-      decoration: decoration,
+      textStyle: textStyle,
     );
   }
 
-  TextStyle body4({
-    FontWeight fontWeight = FontWeight.w400,
-    double fontSize = 16.0,
-    double? height,
-    Color? backgroundColor,
-    Color? color,
-    TextDecoration? decoration,
-    double? decorationThickness,
-    TextDecorationStyle? decorationStyle,
-    Color? decorationColor,
-  }) {
+  TextStyle code({TextStyle? textStyle}) {
     return GoogleFonts.firaCode(
-      backgroundColor: backgroundColor,
-      color: color,
-      fontSize: fontSize,
-      fontWeight: fontWeight,
-      height: height,
-      decoration: decoration,
-      decorationThickness: decorationThickness,
-      decorationStyle: decorationStyle,
-      decorationColor: decorationColor,
+      textStyle: textStyle,
     );
   }
 
-  TextStyle body5(TextStyle textStyle) {
-    return GoogleFonts.poppins(textStyle: textStyle);
-    // return GoogleFonts.poppins(
-    //   backgroundColor: backgroundColor,
-    //   color: color,
-    //   fontSize: fontSize,
-    //   fontStyle: fontStyle,
-    //   fontWeight: fontWeight,
-    //   height: height,
-    //   decoration: decoration,
-    //   decorationThickness: decorationThickness,
-    // );
+  TextStyle body4({TextStyle? textStyle}) {
+    return GoogleFonts.poppins(
+      textStyle: textStyle,
+    );
   }
 
-  /// Can be used for blog post body.
-  TextStyle title3({
-    FontWeight fontWeight = FontWeight.w400,
-    double fontSize = 16.0,
-    double? height,
-    Color? color,
-    Color? backgroundColor,
-    TextDecoration? decoration,
-    TextDecorationStyle? decorationStyle,
-    Color? decorationColor,
-    double? decorationThickness,
-  }) {
+  TextStyle body5({TextStyle? textStyle}) {
+    return GoogleFonts.rubik(
+      textStyle: textStyle,
+    );
+  }
+
+  /// Can be used for blog post title.
+  TextStyle title({TextStyle? textStyle}) {
     return GoogleFonts.playfairDisplay(
-      color: color,
-      backgroundColor: backgroundColor,
-      fontSize: fontSize,
-      fontWeight: fontWeight,
-      height: height,
-      decoration: decoration,
-      decorationStyle: decorationStyle,
-      decorationColor: decorationColor,
-      decorationThickness: decorationThickness,
+      textStyle: textStyle,
     );
   }
 }

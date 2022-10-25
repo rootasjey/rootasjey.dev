@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:rootasjey/components/buttons/dark_elevated_button.dart';
 import 'package:rootasjey/components/fade_in_y.dart';
 import 'package:rootasjey/globals/constants.dart';
 import 'package:rootasjey/globals/utilities.dart';
@@ -11,11 +12,12 @@ class SigninPageBody extends StatelessWidget {
     super.key,
     required this.nameController,
     required this.passwordController,
-    this.onSubmit,
+    this.onCancel,
     this.onNameChanged,
-    this.onPasswordChanged,
-    this.onNavigateToForgotPassword,
     this.onNavigateToCreateAccount,
+    this.onNavigateToForgotPassword,
+    this.onPasswordChanged,
+    this.onSubmit,
   });
 
   /// Input controller for the name/email.
@@ -24,35 +26,38 @@ class SigninPageBody extends StatelessWidget {
   /// Input controller for the password.
   final TextEditingController passwordController;
 
-  /// Callback fired when the user validate their information and want to signin.
-  final void Function(String name, String password)? onSubmit;
+  /// Callback fired to go back or exit this page.
+  final void Function()? onCancel;
 
   /// Callback fired when typed name changed.
   final void Function(String name)? onNameChanged;
 
-  /// Callback fired when typed password changed.
-  final void Function(String password)? onPasswordChanged;
+  /// Callback fired to the create account page.
+  final void Function()? onNavigateToCreateAccount;
 
   /// Callback fired to the forgot password page.
   final void Function()? onNavigateToForgotPassword;
 
-  /// Callback fired to the create account page.
-  final void Function()? onNavigateToCreateAccount;
+  /// Callback fired when typed password changed.
+  final void Function(String password)? onPasswordChanged;
+
+  /// Callback fired when the user validate their information and want to signin.
+  final void Function(String name, String password)? onSubmit;
 
   @override
   Widget build(BuildContext context) {
     return SliverToBoxAdapter(
       child: Center(
-        child: SizedBox(
+        child: Container(
+          padding: const EdgeInsets.only(top: 100.0),
           width: 600.0,
           child: Column(
             children: <Widget>[
               header(context),
-              nameInput(context),
+              usernameInput(context),
               passwordInput(context),
-              forgotPassword(),
-              validationButton(),
-              navigateToCreateAccountButton(),
+              forgotPassword(context),
+              footerButtons(),
             ],
           ),
         ),
@@ -60,7 +65,7 @@ class SigninPageBody extends StatelessWidget {
     );
   }
 
-  Widget nameInput(BuildContext context) {
+  Widget usernameInput(BuildContext context) {
     return Column(
       children: [
         FadeInY(
@@ -75,10 +80,12 @@ class SigninPageBody extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Text(
-                  "Project's name",
+                  "username".tr(),
                   style: Utilities.fonts.body(
-                    fontSize: 16.0,
-                    fontWeight: FontWeight.w600,
+                    textStyle: const TextStyle(
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
               ],
@@ -112,13 +119,13 @@ class SigninPageBody extends StatelessWidget {
                             ?.color
                             ?.withOpacity(0.4) ??
                         Colors.white12,
-                    width: 2.0,
+                    width: 4.0,
                   ),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(
                     color: Constants.colors.palette.first,
-                    width: 2.0,
+                    width: 4.0,
                   ),
                 ),
               ),
@@ -129,31 +136,38 @@ class SigninPageBody extends StatelessWidget {
     );
   }
 
-  Widget forgotPassword() {
+  Widget forgotPassword(BuildContext context) {
     return FadeInY(
-      delay: const Duration(milliseconds: 100),
-      beginY: 50.0,
-      child: TextButton(
-        style: TextButton.styleFrom(
-          foregroundColor: Colors.pink,
-        ),
-        onPressed: onNavigateToForgotPassword,
-        child: Opacity(
-          opacity: 0.6,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: <Widget>[
-              Text(
-                "password_forgot".tr(),
-                style: Utilities.fonts.body(
-                  fontSize: 16.0,
-                  fontWeight: FontWeight.w600,
-                  decoration: TextDecoration.underline,
-                ),
+      beginY: Utilities.ui.getBeginY(),
+      delay: Duration(milliseconds: Utilities.ui.getNextAnimationDelay()),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          TextButton(
+            style: TextButton.styleFrom(
+              foregroundColor: Theme.of(context).textTheme.bodyText2?.color,
+              backgroundColor: Constants.colors.palette.first.withOpacity(0.1),
+            ),
+            onPressed: onNavigateToForgotPassword,
+            child: Opacity(
+              opacity: 0.8,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: <Widget>[
+                  Text(
+                    "password_forgot".tr(),
+                    style: Utilities.fonts.code(
+                      textStyle: const TextStyle(
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -161,24 +175,13 @@ class SigninPageBody extends StatelessWidget {
   Widget header(BuildContext context) {
     return Column(
       children: [
-        // if (Beamer.of(context).beamingHistory.isNotEmpty)
-        //   FadeInX(
-        //     beginX: 10.0,
-        //     delay: const Duration(milliseconds: 200),
-        //     child: Padding(
-        //       padding: const EdgeInsets.only(
-        //         right: 20.0,
-        //       ),
-        //       child: IconButton(
-        //         onPressed: Beamer.of(context).beamBack,
-        //         icon: const Icon(Icons.arrow_back),
-        //       ),
-        //     ),
-        //   ),
         FadeInY(
           beginY: Utilities.ui.getBeginY(),
+          delay: Duration(
+            milliseconds: Utilities.ui.getNextAnimationDelay(reset: true),
+          ),
           child: Icon(
-            UniconsLine.clapper_board,
+            UniconsLine.trees,
             size: 42.0,
             color: Constants.colors.palette.first,
           ),
@@ -186,55 +189,68 @@ class SigninPageBody extends StatelessWidget {
         FadeInY(
           beginY: Utilities.ui.getBeginY(),
           delay: Duration(
-            milliseconds: Utilities.ui.getNextAnimationDelay(reset: true),
+            milliseconds: Utilities.ui.getNextAnimationDelay(),
           ),
           child: Text(
             "signin".tr(),
             style: Utilities.fonts.body(
-              fontSize: 32.0,
-              fontWeight: FontWeight.w600,
+              textStyle: const TextStyle(
+                fontSize: 42.0,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
         ),
         FadeInY(
           beginY: Utilities.ui.getBeginY(),
-          delay: Duration(milliseconds: Utilities.ui.getNextAnimationDelay()),
+          delay: Duration(
+            milliseconds: Utilities.ui.getNextAnimationDelay(),
+          ),
           child: Padding(
             padding: const EdgeInsets.only(top: 8.0),
             child: Opacity(
               opacity: 0.4,
               child: Text(
-                // "You'll be able to write a post about it later.\n"
-                // "Projects help you showcase your work to the world.",
                 "signin_existing_account".tr(),
                 textAlign: TextAlign.center,
                 style: Utilities.fonts.body2(
-                  fontSize: 18.0,
-                  fontWeight: FontWeight.w600,
+                  textStyle: const TextStyle(
+                    fontSize: 18.0,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
             ),
           ),
         ),
+        navigateToCreateAccountButton(),
       ],
     );
   }
 
   Widget navigateToCreateAccountButton() {
     return FadeInY(
-      delay: const Duration(milliseconds: 400),
-      beginY: 50.0,
+      beginY: Utilities.ui.getBeginY(),
+      delay: Duration(
+        milliseconds: Utilities.ui.getNextAnimationDelay(),
+      ),
       child: Padding(
-        padding: const EdgeInsets.only(top: 8.0),
+        padding: const EdgeInsets.only(top: 6.0),
         child: TextButton(
             onPressed: onNavigateToCreateAccount,
+            style: TextButton.styleFrom(
+              backgroundColor: Constants.colors.palette.first.withOpacity(0.1),
+              foregroundColor: Colors.white,
+            ),
             child: Opacity(
               opacity: 0.6,
               child: Text(
                 "dont_own_account".tr(),
-                style: const TextStyle(
-                  decoration: TextDecoration.underline,
-                ),
+                style: Utilities.fonts.code(
+                    textStyle: const TextStyle(
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.w600,
+                )),
               ),
             )),
       ),
@@ -256,10 +272,12 @@ class SigninPageBody extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Text(
-                  "Project's summary",
+                  "password".tr(),
                   style: Utilities.fonts.body(
-                    fontSize: 16.0,
-                    fontWeight: FontWeight.w600,
+                    textStyle: const TextStyle(
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
               ],
@@ -282,12 +300,11 @@ class SigninPageBody extends StatelessWidget {
                 onSubmit?.call(nameController.text, password);
               },
               decoration: InputDecoration(
-                hintText: "This is an open "
-                    "source project about...",
+                hintText: "•••••••••••",
                 focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(
                     color: Constants.colors.palette.elementAt(1),
-                    width: 2.0,
+                    width: 4.0,
                   ),
                 ),
                 enabledBorder: OutlineInputBorder(
@@ -298,7 +315,7 @@ class SigninPageBody extends StatelessWidget {
                             ?.color
                             ?.withOpacity(0.4) ??
                         Colors.white12,
-                    width: 2.0,
+                    width: 4.0,
                   ),
                 ),
               ),
@@ -309,52 +326,63 @@ class SigninPageBody extends StatelessWidget {
     );
   }
 
-  Widget validationButton() {
-    return FadeInY(
-      delay: const Duration(milliseconds: 200),
-      beginY: 50.0,
-      child: Padding(
-        padding: const EdgeInsets.only(top: 80.0),
-        child: ElevatedButton(
-          onPressed: onSubmit != null
-              ? () => onSubmit?.call(
-                    nameController.text,
-                    passwordController.text,
-                  )
-              : null,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Constants.colors.primary,
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(
-                Radius.circular(7.0),
+  Widget footerButtons() {
+    final Color color = Constants.colors.getRandomFromPalette();
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 24.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          FadeInY(
+            beginY: Utilities.ui.getBeginY(),
+            delay: Duration(milliseconds: Utilities.ui.getNextAnimationDelay()),
+            child: DarkElevatedButton.icon(
+              iconData: UniconsLine.times,
+              labelValue: "cancel".tr(),
+              background: Colors.black,
+              onPressed: () => onCancel?.call(),
+              minimumSize: const Size(250.0, 60.0),
+            ),
+          ),
+          FadeInY(
+            beginY: Utilities.ui.getBeginY(),
+            delay: Duration(milliseconds: Utilities.ui.getNextAnimationDelay()),
+            child: DarkElevatedButton.large(
+              onPressed: () {
+                onSubmit?.call(
+                  nameController.text,
+                  passwordController.text,
+                );
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(2.0),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      "signin".tr(),
+                      style: Utilities.fonts.body(
+                        textStyle: TextStyle(
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.w700,
+                          color: color,
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 8.0),
+                      child: Icon(
+                        UniconsLine.arrow_right,
+                        color: color,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
-          child: Container(
-            width: 250.0,
-            padding: const EdgeInsets.all(15.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text(
-                  "signin".tr().toUpperCase(),
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 15.0,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const Padding(
-                  padding: EdgeInsets.only(left: 20.0),
-                  child: Icon(
-                    UniconsLine.arrow_right,
-                    color: Colors.white,
-                  ),
-                )
-              ],
-            ),
-          ),
-        ),
+        ],
       ),
     );
   }

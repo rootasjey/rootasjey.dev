@@ -12,8 +12,13 @@ class PostCover extends StatefulWidget {
     required this.cover,
     this.onTryAddCoverImage,
     this.onTryRemoveCoverImage,
+    this.showControlButtons = false,
   });
 
+  /// Show edit and remove buttons if this is true.
+  final bool showControlButtons;
+
+  /// Cover image of this post to show.
   final Cover cover;
 
   /// Callback fired when we try to upload a new cover
@@ -49,9 +54,13 @@ class _PostCoverState extends State<PostCover> {
     return SliverToBoxAdapter(
       child: InkWell(
         onHover: (bool isHover) {
+          if (!widget.showControlButtons) {
+            return;
+          }
+
           setState(() => _isHover = isHover);
         },
-        onTap: () {},
+        onTap: widget.showControlButtons ? () {} : null,
         child: SizedBox(
           height: height,
           child: Stack(

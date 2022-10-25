@@ -61,8 +61,10 @@ class _PostAppBarState extends State<PostAppBar> with AnimationMixin {
               child: Text(
                 widget.textTitle,
                 style: Utilities.fonts.body(
-                  fontSize: 16.0,
-                  fontWeight: FontWeight.w600,
+                  textStyle: const TextStyle(
+                    fontSize: 16.0,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
             )
@@ -100,26 +102,6 @@ class _PostAppBarState extends State<PostAppBar> with AnimationMixin {
                 top: 0.0,
                 right: 24.0,
                 child: CircleButton(
-                  tooltip: "settings".tr(),
-                  icon: Transform.rotate(
-                    angle: angle.value,
-                    child: const Icon(UniconsLine.setting),
-                  ),
-                  onTap: () {
-                    if (widget.showSettings) {
-                      controller.playReverse(duration: _duration);
-                    } else {
-                      controller.play(duration: _duration);
-                    }
-
-                    widget.onTapSettings?.call();
-                  },
-                ),
-              ),
-              Positioned(
-                top: 0.0,
-                right: 70.0,
-                child: CircleButton(
                   tooltip: "home".tr(),
                   icon: const Icon(UniconsLine.home_alt),
                   onTap: () => Beamer.of(context, root: true).beamToNamed(
@@ -127,6 +109,27 @@ class _PostAppBarState extends State<PostAppBar> with AnimationMixin {
                   ),
                 ),
               ),
+              if (widget.onTapSettings != null)
+                Positioned(
+                  top: 0.0,
+                  right: 70.0,
+                  child: CircleButton(
+                    tooltip: "settings".tr(),
+                    icon: Transform.rotate(
+                      angle: angle.value,
+                      child: const Icon(UniconsLine.setting),
+                    ),
+                    onTap: () {
+                      if (widget.showSettings) {
+                        controller.playReverse(duration: _duration);
+                      } else {
+                        controller.play(duration: _duration);
+                      }
+
+                      widget.onTapSettings?.call();
+                    },
+                  ),
+                ),
             ],
           ),
         ),

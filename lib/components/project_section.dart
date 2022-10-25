@@ -1,6 +1,9 @@
+import 'package:beamer/beamer.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/mini_project_card.dart';
 import 'package:rootasjey/globals/utilities.dart';
+import 'package:rootasjey/router/locations/projects_location.dart';
 import 'package:unicons/unicons.dart';
 
 class ProjectSection extends StatefulWidget {
@@ -17,22 +20,33 @@ class _ProjectSectionState extends State<ProjectSection> {
   @override
   Widget build(BuildContext context) {
     return SliverToBoxAdapter(
-      child: Padding(
-        padding: const EdgeInsets.only(left: 200.0, top: 24.0),
+      child: Container(
+        padding: const EdgeInsets.only(
+          left: 200.0,
+          top: 100.0,
+          bottom: 100.0,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              _projectTitle.isEmpty ? "Featured Projects" : _projectTitle,
-              style: Utilities.fonts.body4(
-                fontSize: 32.0,
-                fontWeight: FontWeight.w600,
-                decorationColor: _backgroundColor,
-                decorationThickness: _projectTitle.isEmpty ? 0.0 : 12.0,
-                decoration: TextDecoration.underline,
+            Opacity(
+              opacity: 1.0,
+              child: Text(
+                _projectTitle.isEmpty
+                    ? "projects_featured".tr()
+                    : _projectTitle,
+                style: Utilities.fonts.body5(
+                  textStyle: TextStyle(
+                    fontSize: 64.0,
+                    fontWeight: FontWeight.w500,
+                    decorationColor: _backgroundColor,
+                    decorationThickness: _projectTitle.isEmpty ? 0.0 : 6.0,
+                    decoration: TextDecoration.underline,
+                  ),
+                ),
               ),
             ),
-            Padding(
+            Container(
               padding: const EdgeInsets.only(top: 16.0),
               child: Wrap(
                 spacing: 12.0,
@@ -77,13 +91,15 @@ class _ProjectSectionState extends State<ProjectSection> {
                 ],
               ),
             ),
-            Opacity(
-              opacity: 0.4,
+            TextButton(
+              onPressed: onNavigateToAllProjects,
               child: Text(
-                "see all projects",
-                style: Utilities.fonts.body1(
-                  fontSize: 16.0,
-                  fontWeight: FontWeight.w600,
+                "projects_see_all".tr(),
+                style: Utilities.fonts.body(
+                  textStyle: const TextStyle(
+                    fontSize: 16.0,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
             ),
@@ -98,5 +114,9 @@ class _ProjectSectionState extends State<ProjectSection> {
       _projectTitle = isHover ? label : "";
       _backgroundColor = isHover ? color : Colors.transparent;
     });
+  }
+
+  void onNavigateToAllProjects() {
+    Beamer.of(context).beamToNamed(ProjectsLocation.route);
   }
 }

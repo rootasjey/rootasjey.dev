@@ -7,13 +7,14 @@ import 'package:rootasjey/utils/cloud.dart';
 /// Network interface for user's actions.
 class UsersActions {
   /// Check email availability accross the app.
-  static Future<bool?> checkEmailAvailability(String email) async {
+  static Future<bool> checkEmailAvailability(String email) async {
     try {
       final HttpsCallableResult resp =
           await Cloud.fun("users-checkEmailAvailability")
               .call({"email": email});
 
-      return resp.data["isAvailable"] as bool?;
+      final bool? isAvailable = resp.data["isAvailable"];
+      return isAvailable ?? false;
     } on FirebaseFunctionsException catch (exception) {
       GlobalLoggy()
           .loggy
@@ -72,8 +73,9 @@ class UsersActions {
   /// Check username availability.
   static Future<bool> checkUsernameAvailability(String username) async {
     try {
-      final resp = await Cloud.fun("users-checkUsernameAvailability")
-          .call({"name": username});
+      final HttpsCallableResult resp =
+          await Cloud.fun("users-checkUsernameAvailability")
+              .call({"name": username});
       return resp.data["isAvailable"] ?? false;
     } on FirebaseFunctionsException catch (exception) {
       GlobalLoggy()

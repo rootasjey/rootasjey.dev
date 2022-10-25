@@ -41,8 +41,10 @@ class _AuthorComponentState extends State<AuthorComponent> with UiLoggy {
         child: Text(
           _user.name,
           style: Utilities.fonts.body2(
-            fontSize: 14.0,
-            fontWeight: FontWeight.w500,
+            textStyle: const TextStyle(
+              fontSize: 14.0,
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ),
       );
@@ -85,9 +87,11 @@ class _AuthorComponentState extends State<AuthorComponent> with UiLoggy {
                   opacity: 0.8,
                   child: Text(
                     _user.name,
-                    style: Utilities.fonts.body1(
-                      fontSize: 18.0,
-                      fontWeight: FontWeight.w600,
+                    style: Utilities.fonts.body(
+                      textStyle: const TextStyle(
+                        fontSize: 18.0,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                 ),
@@ -95,8 +99,10 @@ class _AuthorComponentState extends State<AuthorComponent> with UiLoggy {
                   opacity: 0.4,
                   child: Text(
                     _user.location,
-                    style: Utilities.fonts.body1(
-                      fontWeight: FontWeight.w600,
+                    style: Utilities.fonts.body(
+                      textStyle: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                 ),

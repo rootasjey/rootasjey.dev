@@ -9,12 +9,19 @@ class BetterAvatar extends StatefulWidget {
     this.onTap,
     this.size = 220.0,
     this.colorFilter,
+    this.borderSide = const BorderSide(
+      color: Colors.deepPurple,
+      width: 3.0,
+    ),
+    this.margin = EdgeInsets.zero,
   }) : super(key: key);
 
+  final BorderSide borderSide;
   final double size;
   final double elevation;
   final ImageProvider<Object> image;
   final void Function()? onTap;
+  final EdgeInsets margin;
 
   /// Not used if onTap is null.
   final ColorFilter? colorFilter;
@@ -71,44 +78,44 @@ class _BetterAvatarState extends State<BetterAvatar>
 
     return ScaleTransition(
       scale: scaleAnimation,
-      child: Material(
-        elevation: elevation,
-        color: Colors.transparent,
-        clipBehavior: Clip.antiAlias,
-        shape: const CircleBorder(
-          side: BorderSide(
-            color: Colors.deepPurple,
-            width: 3.0,
+      child: Padding(
+        padding: widget.margin,
+        child: Material(
+          elevation: elevation,
+          color: Colors.transparent,
+          clipBehavior: Clip.antiAlias,
+          shape: CircleBorder(
+            side: widget.borderSide,
           ),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Material(
-            clipBehavior: Clip.antiAlias,
-            shape: const CircleBorder(),
-            child: SizedBox(
-              width: size,
-              height: size,
-              child: Ink.image(
-                image: widget.image,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Material(
+              clipBehavior: Clip.antiAlias,
+              shape: const CircleBorder(),
+              child: SizedBox(
                 width: size,
                 height: size,
-                fit: BoxFit.cover,
-                colorFilter: widget.colorFilter,
-                child: InkWell(
-                  onTap: widget.onTap,
-                  onHover: (isHover) {
-                    if (isHover) {
-                      elevation = (widget.elevation + 1.0) * 2;
-                      scaleAnimationController.forward();
-                      setState(() {});
-                      return;
-                    }
+                child: Ink.image(
+                  image: widget.image,
+                  width: size,
+                  height: size,
+                  fit: BoxFit.cover,
+                  colorFilter: widget.colorFilter,
+                  child: InkWell(
+                    onTap: widget.onTap,
+                    onHover: (isHover) {
+                      if (isHover) {
+                        elevation = (widget.elevation + 1.0) * 2;
+                        scaleAnimationController.forward();
+                        setState(() {});
+                        return;
+                      }
 
-                    elevation = widget.elevation;
-                    scaleAnimationController.reverse();
-                    setState(() {});
-                  },
+                      elevation = widget.elevation;
+                      scaleAnimationController.reverse();
+                      setState(() {});
+                    },
+                  ),
                 ),
               ),
             ),
@@ -121,31 +128,31 @@ class _BetterAvatarState extends State<BetterAvatar>
   Widget withoutLink() {
     final size = widget.size;
 
-    return Material(
-      elevation: elevation,
-      color: Theme.of(context).backgroundColor,
-      clipBehavior: Clip.antiAlias,
-      shape: const CircleBorder(
-        side: BorderSide(
-          color: Colors.deepPurple,
-          width: 3.0,
+    return Padding(
+      padding: widget.margin,
+      child: Material(
+        elevation: elevation,
+        color: Theme.of(context).backgroundColor,
+        clipBehavior: Clip.antiAlias,
+        shape: CircleBorder(
+          side: widget.borderSide,
         ),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Material(
-          clipBehavior: Clip.antiAlias,
-          shape: const CircleBorder(),
-          child: SizedBox(
-            width: size,
-            height: size,
-            child: Image(
-              color: Colors.grey,
-              colorBlendMode: BlendMode.saturation,
-              image: widget.image,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Material(
+            clipBehavior: Clip.antiAlias,
+            shape: const CircleBorder(),
+            child: SizedBox(
               width: size,
               height: size,
-              fit: BoxFit.cover,
+              child: Image(
+                color: Colors.grey,
+                colorBlendMode: BlendMode.saturation,
+                image: widget.image,
+                width: size,
+                height: size,
+                fit: BoxFit.cover,
+              ),
             ),
           ),
         ),

@@ -322,8 +322,7 @@ class _UpdateEmailPageState extends ConsumerState<UpdateEmailPage>
 
               _emailTimer = Timer(1.seconds, () async {
                 final isAvailable =
-                    await (UsersActions.checkEmailAvailability(_emailInputValue)
-                        as FutureOr<bool>);
+                    await UsersActions.checkEmailAvailability(_emailInputValue);
 
                 if (!isAvailable) {
                   setState(() {

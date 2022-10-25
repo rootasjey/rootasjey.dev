@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:rootasjey/globals/constants.dart';
 import 'package:rootasjey/globals/utilities.dart';
-import 'package:rootasjey/types/enums/enum_post_item_action.dart';
+import 'package:rootasjey/types/enums/enum_project_item_action.dart';
 import 'package:rootasjey/types/project.dart';
 import 'package:unicons/unicons.dart';
 
@@ -80,9 +80,11 @@ class ProjectCard extends StatelessWidget {
                               child: Text(
                                 project.name,
                                 overflow: TextOverflow.ellipsis,
-                                style: Utilities.fonts.body1(
-                                  fontSize: 32.0,
-                                  fontWeight: FontWeight.w600,
+                                style: Utilities.fonts.body(
+                                  textStyle: const TextStyle(
+                                    fontSize: 32.0,
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
                               ),
                             ),
@@ -101,9 +103,11 @@ class ProjectCard extends StatelessWidget {
                           opacity: 0.4,
                           child: Text(
                             Jiffy(project.createdAt).yMMMEd,
-                            style: Utilities.fonts.body1(
-                              fontSize: 14.0,
-                              fontWeight: FontWeight.w500,
+                            style: Utilities.fonts.body(
+                              textStyle: const TextStyle(
+                                fontSize: 14.0,
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
                           ),
                         ),
@@ -167,13 +171,13 @@ class ProjectCard extends StatelessWidget {
       width: 500.0,
       child: Opacity(
         opacity: 0.6,
-        child: Text(
-          project.summary,
-          style: Utilities.fonts.body1(
-            fontSize: 18.0,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
+        child: Text(project.summary,
+            style: Utilities.fonts.body(
+              textStyle: const TextStyle(
+                fontSize: 18.0,
+                fontWeight: FontWeight.w500,
+              ),
+            )),
       ),
     );
   }

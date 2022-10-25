@@ -28,8 +28,10 @@ class LoadingView extends StatelessWidget {
             Text(
               message,
               style: Utilities.fonts.body2(
-                fontSize: 24.0,
-                fontWeight: FontWeight.w600,
+                textStyle: const TextStyle(
+                  fontSize: 24.0,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ],
@@ -54,8 +56,10 @@ class LoadingView extends StatelessWidget {
             Text(
               message,
               style: Utilities.fonts.body2(
-                fontSize: 24.0,
-                fontWeight: FontWeight.w600,
+                textStyle: const TextStyle(
+                  fontSize: 24.0,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ],

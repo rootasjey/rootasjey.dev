@@ -232,9 +232,11 @@ class PostPageHeader extends StatelessWidget {
   }
 
   Widget summaryWidget() {
-    final TextStyle style = Utilities.fonts.body1(
-      fontSize: 14.0,
-      fontWeight: FontWeight.w500,
+    final TextStyle style = Utilities.fonts.body(
+      textStyle: const TextStyle(
+        fontSize: 14.0,
+        fontWeight: FontWeight.w500,
+      ),
     );
 
     if (!canManagePosts) {
@@ -274,17 +276,23 @@ class PostPageHeader extends StatelessWidget {
   }
 
   Widget titleWidget() {
-    final TextStyle style = Utilities.fonts.body1(
-      fontSize: 70.0,
-      fontWeight: FontWeight.w600,
+    final TextStyle style = Utilities.fonts.body(
+      textStyle: const TextStyle(
+        fontSize: 70.0,
+        fontWeight: FontWeight.w600,
+      ),
     );
 
     if (!canManagePosts) {
       return Hero(
         tag: documentId,
-        child: Text(
-          name,
-          style: style,
+        child: Align(
+          alignment: Alignment.center,
+          child: Text(
+            name,
+            textAlign: TextAlign.center,
+            style: style,
+          ),
         ),
       );
     }
@@ -316,8 +324,10 @@ class PostPageHeader extends StatelessWidget {
       child: Text(
         publishedAtStr,
         style: Utilities.fonts.body2(
-          fontSize: 14.0,
-          fontWeight: FontWeight.w500,
+          textStyle: const TextStyle(
+            fontSize: 14.0,
+            fontWeight: FontWeight.w500,
+          ),
         ),
       ),
     );
@@ -349,8 +359,10 @@ class PostPageHeader extends StatelessWidget {
       child: Text(
         "(${"date_last_update".tr()}: $updatedAtStr)",
         style: Utilities.fonts.body2(
-          fontSize: 14.0,
-          fontWeight: FontWeight.w400,
+          textStyle: const TextStyle(
+            fontSize: 14.0,
+            fontWeight: FontWeight.w400,
+          ),
         ),
       ),
     );

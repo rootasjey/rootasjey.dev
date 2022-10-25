@@ -6,9 +6,11 @@ class FabToTop extends StatelessWidget {
     required this.fabIcon,
     required this.pageScrollController,
     this.hideIfAtTop = false,
+    this.backgroundColor,
   });
 
   final bool hideIfAtTop;
+  final Color? backgroundColor;
   final Icon fabIcon;
   final ScrollController pageScrollController;
 
@@ -39,7 +41,7 @@ class FabToTop extends StatelessWidget {
           curve: Curves.decelerate,
         );
       },
-      backgroundColor: Colors.amber,
+      backgroundColor: backgroundColor ?? Colors.amber,
       child: fabIcon,
     );
   }

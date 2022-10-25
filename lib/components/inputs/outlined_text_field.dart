@@ -75,9 +75,11 @@ class OutlinedTextField extends StatelessWidget {
               opacity: 0.6,
               child: Text(
                 label!,
-                style: Utilities.fonts.body1(
-                  fontSize: 14.0,
-                  fontWeight: FontWeight.w600,
+                style: Utilities.fonts.body(
+                  textStyle: const TextStyle(
+                    fontSize: 14.0,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
             ),
@@ -94,8 +96,10 @@ class OutlinedTextField extends StatelessWidget {
             keyboardType: keyboardType,
             onChanged: onChanged,
             onSubmitted: onSubmitted,
-            style: Utilities.fonts.body1(
-              fontWeight: FontWeight.w600,
+            style: Utilities.fonts.body(
+              textStyle: const TextStyle(
+                fontWeight: FontWeight.w600,
+              ),
             ),
             cursorColor: primaryColor,
             decoration: InputDecoration(

@@ -48,9 +48,11 @@ class PopupMenuItemIcon<T> extends PopupMenuItem<T> {
                       child: Text(
                         textLabel,
                         style: Utilities.fonts.body(
-                          color: selectedColor,
-                          fontSize: 14.0,
-                          fontWeight: FontWeight.w700,
+                          textStyle: TextStyle(
+                            color: selectedColor,
+                            fontSize: 14.0,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
                       ),
                     ),

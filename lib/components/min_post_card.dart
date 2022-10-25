@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:loggy/loggy.dart';
 import 'package:rootasjey/globals/constants.dart';
+import 'package:rootasjey/types/alias/json_alias.dart';
 import 'package:rootasjey/types/post.dart';
 import 'package:rootasjey/types/user/user_firestore.dart';
 import 'package:unicons/unicons.dart';
@@ -89,7 +90,7 @@ class _MinPostCardState extends State<MinPostCard> with UiLoggy {
             left: 8.0,
           ),
           child: Text(
-            postHeadline.title,
+            postHeadline.name,
             style: const TextStyle(
               fontSize: 24.0,
               fontWeight: FontWeight.w700,
@@ -138,7 +139,7 @@ class _MinPostCardState extends State<MinPostCard> with UiLoggy {
   }
 
   void fetchAuthorName() async {
-    final authorId = widget.post.author.id;
+    final authorId = widget.post.userId;
 
     if (authorId.isEmpty) {
       return;
@@ -146,18 +147,20 @@ class _MinPostCardState extends State<MinPostCard> with UiLoggy {
 
     try {
       final docSnap = await FirebaseFirestore.instance
-          .collection('users')
+          .collection("users")
           .doc(authorId)
+          .collection("user_public_fields")
+          .doc("base")
           .get();
 
-      if (!docSnap.exists) {
+      final Json? map = docSnap.data();
+
+      if (!docSnap.exists || map == null) {
         return;
       }
 
-      final data = docSnap.data()!;
-      data['id'] = docSnap.id;
-
-      final user = UserFirestore.fromMap(data);
+      map["id"] = docSnap.id;
+      final UserFirestore user = UserFirestore.fromMap(map);
 
       // ?NOTE: Prevent setState if not mounted.
       // This is due to each card having its own fetch & state,
