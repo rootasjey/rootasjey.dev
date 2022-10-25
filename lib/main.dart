@@ -86,6 +86,8 @@ void main() async {
     );
   }
 
+  Constants.colors.palette.shuffle();
+
   return runApp(
     ProviderScope(
       child: EasyLocalization(
