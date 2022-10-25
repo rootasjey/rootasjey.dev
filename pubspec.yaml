@@ -105,6 +105,7 @@ flutter:
   - assets/animations/box.json
   - assets/animations/dots.json
   - assets/animations/geometry.json
+  - assets/animations/lost_in_space_astronaut.json
   - assets/animations/particles.json
   - assets/animations/skull_bats.json
   - assets/images/app_icon/32.png
