@@ -2,6 +2,10 @@ import * as functions from "firebase-functions";
 import {adminApp} from "./adminApp";
 
 export const BASE_DOCUMENT_NAME = "base";
+export const ILLUSTRATIONS_COLLECTION_NAME = "illustrations";
+export const ILLUSTRATIONS_DOCUMENT_NAME = "illustrations";
+export const ILLUSTRATION_STATISTICS_COLLECTION_NAME =
+  "illustrations_statistics";
 export const NOTIFICATIONS_DOCUMENT_NAME = "notifications";
 export const POSTS_COLLECTION_NAME = "posts";
 export const POST_LIKED_BY_COLLECTION_NAME = "post_liked_by";

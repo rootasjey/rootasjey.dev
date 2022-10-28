@@ -8,7 +8,7 @@ import {join, dirname} from "path";
 import * as sharp from "sharp";
 
 import {
-  cloudRegions,
+  cloudRegions, USERS_COLLECTION_NAME,
 } from "./utils";
 
 import {adminApp} from "./adminApp";
@@ -67,14 +67,20 @@ export const onCreate = functions
         return true;
       }
 
-      // We only handle cover here -> thumbnail generation
-      if (documentType !== "cover" || !documentId) {
+      if (documentType === "user_profile_picture") {
+        return await setUserProfilePicture(objectMetadata);
+      }
+
+      // We only handle cover here or illustration upload
+      // -> thumbnail generation.
+      if ((documentType !== "cover" && documentType !== "illustration") ||
+          !documentId) {
         return;
       }
 
       const filePath = objectMetadata.name || "";
       const fileName = filePath.split("/").pop() || "";
-      const storageUrl = filePath;
+      const storagePath = filePath;
 
       // Exit if already a thumbnail or is not an image file.
       const contentType = objectMetadata.contentType || "";
@@ -88,12 +94,21 @@ export const onCreate = functions
           .get();
 
       if (!documentSnapshot.exists) {
-        return;
+        functions.logger.error(`
+          Firestore document ${relatedDocumentType}s/${documentId} 
+          does not exist`
+        );
+
+        throw new functions.https.HttpsError(
+            "not-found",
+            `Firestore document ${relatedDocumentType}s/${documentId} 
+            does not exist.`
+        );
       }
 
       const imageFile = adminApp.storage()
           .bucket()
-          .file(storageUrl);
+          .file(storagePath);
 
       if (!await imageFile.exists()) {
         functions.logger.error(`File ${filePath} does not exist`);
@@ -129,22 +144,42 @@ export const onCreate = functions
           downloadToken,
       );
 
-      await documentSnapshot.ref
-          .update({
-            cover: {
-              dimensions: {
-                width,
-                height,
-              },
-              extension,
-              original_url: firebaseDownloadUrl,
-              size: parseFloat(objectMetadata.size),
-              storage_path: storageUrl,
-              thumbnails,
-            },
-            updated_at: adminApp.firestore.FieldValue.serverTimestamp(),
-          });
+      let payload = {};
 
+      if (documentType === "illustration") {
+        payload = {
+          dimensions: {
+            height,
+            width,
+          },
+          extension,
+          links: {
+            illustration_id: documentId,
+            original: firebaseDownloadUrl,
+            storage_path: storagePath,
+            thumbnails,
+          },
+          size: parseFloat(objectMetadata.size),
+          updated_at: adminApp.firestore.Timestamp.now(),
+        };
+      } else if (documentType === "cover") {
+        payload = {
+          cover: {
+            dimensions: {
+              width,
+              height,
+            },
+            extension,
+            original_url: firebaseDownloadUrl,
+            size: parseFloat(objectMetadata.size),
+            storage_path: storagePath,
+            thumbnails,
+          },
+          updated_at: adminApp.firestore.FieldValue.serverTimestamp(),
+        };
+      }
+
+      await documentSnapshot.ref.update(payload);
       return true;
     });
 
@@ -282,4 +317,156 @@ async function generateImageThumbs(
   }
 
   return {dimensions, thumbnails};
+}
+
+/**
+ * Update user's `profilePicture` field with newly upload image.
+ * @param {functions.storage.ObjectMetadata} objectMeta
+ * @return {Promise} Promise
+ */
+async function setUserProfilePicture(
+    objectMeta: functions.storage.ObjectMetadata
+) {
+  const filepath = objectMeta.name || "";
+  const filename = filepath.split("/").pop() || "";
+  const storageUrl = filepath;
+
+  const endIndex: number = filepath.indexOf("/profile");
+  const userId = filepath.substring(6, endIndex);
+
+  if (!userId) {
+    throw new functions.https.HttpsError(
+        "not-found",
+        `We didn't find the target user: ${userId}.`
+    );
+  }
+
+  // Exit if not an image file.
+  const contentType = objectMeta.contentType || "";
+  if (!contentType.includes("image")) {
+    functions.logger.info(
+        `Exiting function => existing image or non-file image: ${filepath}`
+    );
+
+    return;
+  }
+
+  const imageFile = adminApp.storage()
+      .bucket()
+      .file(storageUrl);
+
+  if (!await imageFile.exists()) {
+    throw new functions.https.HttpsError(
+        "not-found",
+        `This file doesn't not exist. 
+        filename: ${filename} | filepath: ${filepath}.`
+    );
+  }
+
+  await imageFile.makePublic();
+  const extension = objectMeta.metadata?.extension ||
+    filename.substring(filename.lastIndexOf(".")).replace(".", "");
+
+  const downloadToken =
+    objectMeta.metadata?.firebaseStorageDownloadTokens ?? "";
+
+  const firebaseDownloadUrl = createPersistentDownloadUrl(
+      objectMeta.bucket,
+      filepath,
+      downloadToken,
+  );
+
+  const dimensions: ISizeCalculationResult = await getDimensionsFromStorage(
+      objectMeta,
+      filename,
+      filepath,
+  );
+
+  const directoryPath = `users/${userId}/profile/picture/`;
+  await cleanProfilePictureDir(directoryPath, filepath);
+
+  return await adminApp.firestore()
+      .collection(USERS_COLLECTION_NAME)
+      .doc(userId)
+      .update({
+        profile_picture: {
+          dimensions: {
+            height: dimensions.height ?? 0,
+            width: dimensions.width ?? 0,
+          },
+          extension,
+          links: {
+            edited: "",
+            original: firebaseDownloadUrl,
+            storage: storageUrl,
+          },
+          size: parseFloat(objectMeta.size),
+          type: dimensions.type ?? "",
+          updated_at: adminApp.firestore.FieldValue.serverTimestamp(),
+        },
+      });
+}
+
+/**
+ * Clean profile picture directory (from Cloud Storage).
+ * @param {string} directoryPath Directory to clean.
+ * @param {string} filePathToKeep File's path to NOT delete.
+ */
+async function cleanProfilePictureDir(
+    directoryPath: string,
+    filePathToKeep: string) {
+  const dir = await adminApp.storage()
+      .bucket()
+      .getFiles({
+        directory: directoryPath,
+      });
+
+  const files = dir[0];
+
+  for await (const file of files) {
+    if (file.name !== filePathToKeep) {
+      await file.delete();
+    }
+  }
+}
+
+/**
+ * Calculate image dimensions.
+ * @param {functions.storage.ObjectMetadata} objectMeta Storage object uploaded.
+ * @param {qtring} filename File's name.
+ * @param {qtring} filepath File's path.
+ * @return {ISizeCalculationResult} Return image dimensions.
+ */
+async function getDimensionsFromStorage(
+    objectMeta: functions.storage.ObjectMetadata,
+    filename: string,
+    filepath: string,
+) {
+  const bucket = gcs.bucket(objectMeta.bucket);
+
+  const workingDir = join(tmpdir(), "thumbs");
+  const tmpFilePath = join(workingDir, filename);
+
+  // 1. Ensure directory exists.
+  await fs.ensureDir(workingDir);
+
+  // 2. Download source file.
+  await bucket.file(filepath).download({
+    destination: tmpFilePath,
+  });
+
+  // 2.1. Try calculate dimensions.
+  let dimensions: ISizeCalculationResult = {height: 0, width: 0};
+
+  try {
+    dimensions = sizeOf.imageSize(tmpFilePath);
+  } catch (error) {
+    console.error(error);
+  }
+
+  // 5. Clean up the tmp/thumbs from file system.
+  await fs.emptyDir(workingDir);
+  await fs.remove(workingDir);
+
+  return dimensions;
 }

@@ -30,6 +30,12 @@ interface DeleteCoverFilesParams {
   includePost?: boolean;
 }
 
+
+interface OperationIllustrationParams {
+  /** Illustration's id. */
+  "illustration_id": string;
+}
+
 interface GenerateImageThumbsParams {
   extension: string;
   fileName: string;

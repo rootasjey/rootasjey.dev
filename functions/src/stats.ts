@@ -2,6 +2,7 @@ import * as functions from "firebase-functions";
 import {adminApp} from "./adminApp";
 import {
   cloudRegions,
+  ILLUSTRATIONS_DOCUMENT_NAME,
   POSTS_COLLECTION_NAME,
   PROJECTS_COLLECTION_NAME,
   STATISTICS_COLLECTION_NAME,
@@ -12,7 +13,59 @@ import {
 
 const firestore = adminApp.firestore();
 
+const ILLUSTRATION_DOC_PATH = "illustrations/{illustration_id}";
 const POST_DOC_PATH = "posts/{postId}";
+
+// --------------
+// Illustrations
+// --------------
+export const onCreateIllustrations = functions
+    .region(cloudRegions.eu)
+    .firestore
+    .document(ILLUSTRATION_DOC_PATH)
+    .onCreate(async (snapshot) => {
+      const statsSnapshot = await firestore
+          .collection(STATISTICS_COLLECTION_NAME)
+          .doc(ILLUSTRATIONS_DOCUMENT_NAME)
+          .get();
+
+
+      const data = snapshot.data();
+      if (!snapshot.exists || !data) {
+        return;
+      }
+
+      let created: number = data.created ?? 0;
+      created = typeof created === "number" ? created + 1 : 1;
+
+      statsSnapshot.ref.update({
+        created,
+      });
+    });
+
+export const onDeleteIllustrations = functions
+    .region(cloudRegions.eu)
+    .firestore
+    .document(ILLUSTRATION_DOC_PATH)
+    .onDelete(async (snapshot) => {
+      const statsSnapshot = await firestore
+          .collection(STATISTICS_COLLECTION_NAME)
+          .doc(ILLUSTRATIONS_DOCUMENT_NAME)
+          .get();
+
+
+      const data = snapshot.data();
+      if (!snapshot.exists || !data) {
+        return;
+      }
+
+      let deleted: number = data.created ?? 0;
+      deleted = typeof deleted === "number" ? deleted + 1 : 1;
+
+      statsSnapshot.ref.update({
+        deleted,
+      });
+    });
 
 // -----
 // Posts
