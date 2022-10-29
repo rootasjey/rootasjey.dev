@@ -155,7 +155,7 @@ export const onCreate = functions
           extension,
           links: {
             illustration_id: documentId,
-            original: firebaseDownloadUrl,
+            original_url: firebaseDownloadUrl,
             storage_path: storagePath,
             thumbnails,
           },

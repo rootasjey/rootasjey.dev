@@ -109,7 +109,7 @@ export const onCreate = functions
           type: "",
         },
         links: {
-          original: "",
+          original_url: "",
           share: {
             read: "",
             write: "",
@@ -143,7 +143,6 @@ export const onCreate = functions
         updated_at: adminApp.firestore.Timestamp.now(),
         user_custom_index,
         version: 0,
-        visibility: "private",
       };
 
       const existingData = snapshot.data();
