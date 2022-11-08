@@ -3,12 +3,16 @@ import 'dart:convert';
 class UserRights {
   const UserRights({
     this.manageData = false,
+    this.manageIllustrations = false,
     this.managePosts = false,
     this.manageUsers = false,
   });
 
   /// If true, the current user can manage app data.
   final bool manageData;
+
+  /// True if the current user can manage (add, remove, edit) illustrations.
+  final bool manageIllustrations;
 
   /// True if the current user can edit application's blog posts.
   final bool managePosts;
@@ -21,11 +25,13 @@ class UserRights {
 
   UserRights copyWith({
     bool? manageData,
+    bool? manageIllustrations,
     bool? managePosts,
     bool? manageUsers,
   }) {
     return UserRights(
       manageData: manageData ?? this.manageData,
+      manageIllustrations: manageIllustrations ?? this.manageIllustrations,
       managePosts: managePosts ?? this.managePosts,
       manageUsers: manageUsers ?? this.manageUsers,
     );
@@ -34,6 +40,7 @@ class UserRights {
   Map<String, dynamic> toMap() {
     return {
       "${prefixKey}manage_data": manageData,
+      "${prefixKey}manage_illustrations": manageIllustrations,
       "${prefixKey}manage_posts": managePosts,
       "${prefixKey}manage_users": manageUsers,
     };
@@ -46,6 +53,7 @@ class UserRights {
 
     return UserRights(
       manageData: map["${prefixKey}manage_data"] ?? false,
+      manageIllustrations: map["${prefixKey}manage_illustrations"] ?? false,
       managePosts: map["${prefixKey}manage_posts"] ?? false,
       manageUsers: map["${prefixKey}manage_users"] ?? false,
     );
@@ -58,7 +66,8 @@ class UserRights {
 
   @override
   String toString() => "UserRights(manageData: $manageData, "
-      "managePosts: $managePosts, manageUsers: $manageUsers)";
+      "manageIllustrations: $manageIllustrations, managePosts: $managePosts, "
+      "manageUsers: $manageUsers)";
 
   @override
   bool operator ==(Object other) {
@@ -66,11 +75,15 @@ class UserRights {
 
     return other is UserRights &&
         other.manageData == manageData &&
+        other.manageIllustrations == manageIllustrations &&
         other.managePosts == managePosts &&
         other.manageUsers == manageUsers;
   }
 
   @override
   int get hashCode =>
-      manageData.hashCode ^ managePosts.hashCode ^ manageUsers.hashCode;
+      manageData.hashCode ^
+      manageIllustrations.hashCode ^
+      managePosts.hashCode ^
+      manageUsers.hashCode;
 }

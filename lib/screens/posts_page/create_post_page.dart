@@ -83,7 +83,7 @@ class _CreateProjectPageState extends ConsumerState<CreatePostPage> {
         FadeInY(
           beginY: Utilities.ui.getBeginY(),
           child: Icon(
-            UniconsLine.clapper_board,
+            UniconsLine.edit_alt,
             size: 42.0,
             color: Constants.colors.palette.first,
           ),
@@ -111,7 +111,7 @@ class _CreateProjectPageState extends ConsumerState<CreatePostPage> {
             child: Opacity(
               opacity: 0.4,
               child: Text(
-                "post_creat_new_subtitle".tr(),
+                "post_create_new_subtitle".tr(),
                 textAlign: TextAlign.center,
                 style: Utilities.fonts.body2(
                   textStyle: const TextStyle(
@@ -142,7 +142,7 @@ class _CreateProjectPageState extends ConsumerState<CreatePostPage> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Text(
-                  "project_name".tr(),
+                  "post_name".tr(),
                   style: Utilities.fonts.body(
                     textStyle: const TextStyle(
                       fontSize: 16.0,
@@ -166,7 +166,7 @@ class _CreateProjectPageState extends ConsumerState<CreatePostPage> {
               controller: _nameController,
               textInputAction: TextInputAction.next,
               decoration: InputDecoration(
-                hintText: "project_create_new_names.$randomHint".tr(),
+                hintText: "post_create_new_names.$randomHint".tr(),
                 border: OutlineInputBorder(
                   borderSide: BorderSide(
                     color: Constants.colors.palette.first,
@@ -213,7 +213,7 @@ class _CreateProjectPageState extends ConsumerState<CreatePostPage> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Text(
-                  "project_summary".tr(),
+                  "post_summary".tr(),
                   style: Utilities.fonts.body(
                     textStyle: const TextStyle(
                       fontSize: 16.0,

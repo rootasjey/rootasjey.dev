@@ -1,10 +1,11 @@
 import 'package:beamer/beamer.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/widgets.dart';
 import 'package:rootasjey/screens/about_page.dart';
 
 class AboutLocation extends BeamLocation<BeamState> {
   /// Main root value for this location.
-  static const String route = '/about';
+  static const String route = "/about";
 
   @override
   List<String> get pathPatterns => [route];
@@ -12,10 +13,10 @@ class AboutLocation extends BeamLocation<BeamState> {
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) {
     return [
-      const BeamPage(
-        child: AboutPage(),
-        key: ValueKey(route),
-        title: "About",
+      BeamPage(
+        child: const AboutPage(),
+        key: const ValueKey(route),
+        title: "about".tr(),
         type: BeamPageType.fadeTransition,
       ),
     ];

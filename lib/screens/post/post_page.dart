@@ -30,32 +30,32 @@ import 'package:rootasjey/types/enums/enum_content_visibility.dart';
 import 'package:rootasjey/types/enums/enum_cover_corner.dart';
 import 'package:rootasjey/types/enums/enum_cover_width.dart';
 import 'package:rootasjey/types/enums/enum_upload_type.dart';
-import 'package:rootasjey/types/project.dart';
+import 'package:rootasjey/types/post.dart';
 import 'package:rootasjey/types/user/user_firestore.dart';
 import 'package:rootasjey/types/user/user_rights.dart';
 import 'package:unicons/unicons.dart';
 import 'package:verbal_expressions/verbal_expressions.dart';
 
-class ProjectPage extends ConsumerStatefulWidget {
-  const ProjectPage({
+class PostPage extends ConsumerStatefulWidget {
+  const PostPage({
     super.key,
-    required this.projectId,
+    required this.postId,
   });
 
-  final String projectId;
+  final String postId;
 
   @override
-  ConsumerState<ProjectPage> createState() => _ProjectPageState();
+  ConsumerState<PostPage> createState() => _PostPageState();
 }
 
-class _ProjectPageState extends ConsumerState<ProjectPage> with UiLoggy {
-  /// True if the project is loading.
+class _PostPageState extends ConsumerState<PostPage> with UiLoggy {
+  /// True if the post is loading.
   bool _loading = false;
 
-  /// True if we're trying to save the project.
+  /// True if we're trying to save the post.
   bool _saving = false;
 
-  /// True if we're trying to delete the project.
+  /// True if we're trying to delete the post.
   bool _deleting = false;
 
   bool _showAddTag = false;
@@ -73,10 +73,10 @@ class _ProjectPageState extends ConsumerState<ProjectPage> with UiLoggy {
   String _content = "";
 
   /// Firestore collection name.
-  final String _collectionName = "projects";
+  final String _collectionName = "posts";
 
-  /// Page project.
-  Project _project = Project.empty();
+  /// Page's post. Main data.
+  Post _post = Post.empty();
 
   final RegExp _wordsRegex = RegExp(r"[\w-._]+");
 
@@ -85,13 +85,12 @@ class _ProjectPageState extends ConsumerState<ProjectPage> with UiLoggy {
 
   /// Post's document subcription.
   /// We use this stream to listen to document fields updates.
-  StreamSubscription<DocumentSnapshot<Map<String, dynamic>>>?
-      _projectSubscription;
+  StreamSubscription<DocumentSnapshot<Map<String, dynamic>>>? _postSubscription;
 
-  /// Input controller for project's title (metadata).
+  /// Input controller for post's title (metadata).
   final TextEditingController _nameController = TextEditingController();
 
-  /// Input controller for project's summary (metadata).
+  /// Input controller for post's summary (metadata).
   final TextEditingController _summaryController = TextEditingController();
   final TextEditingController _tagInputController = TextEditingController();
 
@@ -119,7 +118,7 @@ class _ProjectPageState extends ConsumerState<ProjectPage> with UiLoggy {
     _nameController.dispose();
     _summaryController.dispose();
     _contentController.dispose();
-    _projectSubscription?.cancel();
+    _postSubscription?.cancel();
     super.dispose();
   }
 
@@ -135,7 +134,7 @@ class _ProjectPageState extends ConsumerState<ProjectPage> with UiLoggy {
 
     if (_deleting) {
       return LoadingView.scaffold(
-        message: "Deleting ${_project.name}...",
+        message: "Deleting ${_post.name}...",
       );
     }
 
@@ -153,45 +152,45 @@ class _ProjectPageState extends ConsumerState<ProjectPage> with UiLoggy {
               slivers: [
                 PostAppBar(
                   showTitle: _showAppBarTitle,
-                  textTitle: _project.name,
+                  textTitle: _post.name,
                   showSettings: _showSettings,
                   onTapSettings: canManagePosts ? onTapSettings : null,
                 ),
                 PostSettings(
                   confirmDelete: _confirmDeletePost,
-                  cover: _project.cover,
-                  hasCover: _project.cover.storagePath.isNotEmpty,
-                  language: _project.language,
+                  cover: _post.cover,
+                  hasCover: _post.cover.storagePath.isNotEmpty,
+                  language: _post.language,
                   onCancelDeletePost: onCancelDeletePost,
                   onLanguageChanged: tryUpdateLanguage,
                   onCloseSetting: onCloseSetting,
                   onConfirmDeletePost: onConfirmDeletePost,
                   onCoverWidthTypeSelected: tryUpdateCoverWithType,
                   onCoverCornerTypeSelected: tryUpdateCoverCornerType,
-                  onTryDeletePost: tryDeleteProject,
+                  onTryDeletePost: tryDeletePost,
                   onTryAddCoverImage: tryUploadCover,
-                  onVisibilitySelected: tryUpdateProjectVisibility,
+                  onVisibilitySelected: tryUpdatePostVisibility,
                   onTryRemoveCoverImage: tryRemoveCoverImage,
                   show: _showSettings,
-                  visibility: _project.visibility,
+                  visibility: _post.visibility,
                 ),
                 PostPageHeader(
                   showAddTag: _showAddTag,
                   canManagePosts: canManagePosts,
-                  createdAt: _project.createdAt,
-                  documentId: _project.id,
-                  summary: _project.summary,
+                  createdAt: _post.createdAt,
+                  documentId: _post.id,
+                  summary: _post.summary,
                   summaryController: _summaryController,
-                  language: _project.language,
-                  tags: _project.tags,
-                  publishedAt: _project.createdAt,
+                  language: _post.language,
+                  tags: _post.tags,
+                  publishedAt: _post.createdAt,
                   isMobileSize: isMobileSize,
-                  name: _project.name,
+                  name: _post.name,
                   onNameChanged: onNameChanged,
                   nameController: _nameController,
-                  userId: _project.userId,
-                  updatedAt: _project.updatedAt,
-                  visibility: _project.visibility,
+                  userId: _post.userId,
+                  updatedAt: _post.updatedAt,
+                  visibility: _post.visibility,
                   onToggleAddTagVisibility: onToggleAddTagVisibility,
                   tagInputController: _tagInputController,
                   onInputTagChanged: onInputTagChanged,
@@ -199,7 +198,7 @@ class _ProjectPageState extends ConsumerState<ProjectPage> with UiLoggy {
                 ),
                 PostCover(
                   showControlButtons: canManagePosts,
-                  cover: _project.cover,
+                  cover: _post.cover,
                   onTryAddCoverImage: tryUploadCover,
                   onTryRemoveCoverImage: tryRemoveCoverImage,
                 ),
@@ -216,8 +215,8 @@ class _ProjectPageState extends ConsumerState<ProjectPage> with UiLoggy {
                 PostFooter(
                   maxWidth: maxWidth,
                   show: canManagePosts,
-                  wordCount: _project.wordCount,
-                  updatedAt: _project.updatedAt,
+                  wordCount: _post.wordCount,
+                  updatedAt: _post.updatedAt,
                 ),
               ],
             ),
@@ -276,8 +275,8 @@ class _ProjectPageState extends ConsumerState<ProjectPage> with UiLoggy {
 
     try {
       final DocumentMap query = FirebaseFirestore.instance
-          .collection("projects")
-          .doc(widget.projectId);
+          .collection(_collectionName)
+          .doc(widget.postId);
 
       listenToDocument(query);
 
@@ -285,18 +284,18 @@ class _ProjectPageState extends ConsumerState<ProjectPage> with UiLoggy {
       final Json? map = snapshot.data();
 
       if (!snapshot.exists || map == null) {
-        loggy.error("Project ${snapshot.id} does not seem to exist;");
+        loggy.error("Post ${snapshot.id} does not seem to exist;");
         return;
       }
 
       setState(() {
         map["id"] = snapshot.id;
-        _project = Project.fromMap(map);
-        _summaryController.text = _project.summary;
-        _nameController.text = _project.name;
+        _post = Post.fromMap(map);
+        _summaryController.text = _post.summary;
+        _nameController.text = _post.name;
       });
 
-      if (_project.storagePath.isNotEmpty) {
+      if (_post.storagePath.isNotEmpty) {
         fetchContent();
       }
     } on Exception catch (error) {
@@ -310,7 +309,7 @@ class _ProjectPageState extends ConsumerState<ProjectPage> with UiLoggy {
     try {
       final Reference fileStorage = FirebaseStorage.instance
           .ref()
-          .child("$_collectionName/${widget.projectId}/post.md");
+          .child("$_collectionName/${widget.postId}/post.md");
 
       final Uint8List? data = await fileStorage.getData();
 
@@ -333,12 +332,12 @@ class _ProjectPageState extends ConsumerState<ProjectPage> with UiLoggy {
     }
   }
 
-  /// Save project's content.
+  /// Save post's content.
   Future<void> trySaveContent() async {
     final Iterable<RegExpMatch> wordMatches = _wordsRegex.allMatches(_content);
 
     // Optimistic update
-    _project = _project.copyWith(
+    _post = _post.copyWith(
       characterCount: _content.length,
       wordCount: wordMatches.length,
     );
@@ -347,7 +346,7 @@ class _ProjectPageState extends ConsumerState<ProjectPage> with UiLoggy {
 
     try {
       final Reference fileStorage = FirebaseStorage.instance.ref().child(
-            _project.storagePath,
+            _post.storagePath,
           );
 
       final FullMetadata metadata = await fileStorage.getMetadata();
@@ -387,35 +386,35 @@ class _ProjectPageState extends ConsumerState<ProjectPage> with UiLoggy {
   }
 
   void tryUpdateLanguage(String newLanguage) async {
-    final String prevLanguage = _project.language;
+    final String prevLanguage = _post.language;
     setState(() {
       _saving = true;
-      _project = _project.copyWith(language: newLanguage);
+      _post = _post.copyWith(language: newLanguage);
     });
 
     try {
       await FirebaseFirestore.instance
           .collection(_collectionName)
-          .doc(_project.id)
+          .doc(_post.id)
           .update({
         "language": newLanguage,
       });
     } catch (error) {
       loggy.error(error);
 
-      _project = _project.copyWith(language: prevLanguage);
+      _post = _post.copyWith(language: prevLanguage);
     } finally {
       setState(() => _saving = false);
     }
   }
 
-  void tryUpdateProjectName() async {
+  void tryUpdatePostName() async {
     setState(() => _saving = true);
 
     try {
       await FirebaseFirestore.instance
           .collection(_collectionName)
-          .doc(_project.id)
+          .doc(_post.id)
           .update({
         "name": _nameController.text,
         "summary": _summaryController.text,
@@ -431,11 +430,11 @@ class _ProjectPageState extends ConsumerState<ProjectPage> with UiLoggy {
     _metadataUpdateTimer?.cancel();
     _metadataUpdateTimer = Timer(
       const Duration(seconds: 1),
-      tryUpdateProjectName,
+      tryUpdatePostName,
     );
   }
 
-  void tryUpdateProjectVisibility(
+  void tryUpdatePostVisibility(
     EnumContentVisibility visibility,
     bool selected,
   ) async {
@@ -445,7 +444,7 @@ class _ProjectPageState extends ConsumerState<ProjectPage> with UiLoggy {
 
     setState(() {
       _saving = true;
-      _project = _project.copyWith(
+      _post = _post.copyWith(
         visibility: visibility,
       );
     });
@@ -453,7 +452,7 @@ class _ProjectPageState extends ConsumerState<ProjectPage> with UiLoggy {
     try {
       await FirebaseFirestore.instance
           .collection(_collectionName)
-          .doc(_project.id)
+          .doc(_post.id)
           .update({
         "visibility": visibility.name,
       });
@@ -478,20 +477,20 @@ class _ProjectPageState extends ConsumerState<ProjectPage> with UiLoggy {
       builder: (BuildContext context) {
         return DeleteDialog(
           descriptionValue: "This action is irreversible",
-          titleValue: "Delete this project?",
-          onValidate: tryDeleteProject,
+          titleValue: "Delete this post?",
+          onValidate: tryDeletePost,
         );
       },
     );
   }
 
-  void tryDeleteProject() async {
+  void tryDeletePost() async {
     setState((() => _deleting = true));
 
     try {
       await FirebaseFirestore.instance
           .collection(_collectionName)
-          .doc(widget.projectId)
+          .doc(widget.postId)
           .delete();
 
       if (!mounted) {
@@ -507,10 +506,10 @@ class _ProjectPageState extends ConsumerState<ProjectPage> with UiLoggy {
   }
 
   void listenToDocument(DocumentReference<Map<String, dynamic>> query) {
-    _projectSubscription?.cancel();
-    _projectSubscription = query.snapshots().skip(1).listen((snapshot) {
+    _postSubscription?.cancel();
+    _postSubscription = query.snapshots().skip(1).listen((snapshot) {
       if (!snapshot.exists) {
-        _projectSubscription?.cancel();
+        _postSubscription?.cancel();
         return;
       }
 
@@ -525,16 +524,16 @@ class _ProjectPageState extends ConsumerState<ProjectPage> with UiLoggy {
 
       setState(() {
         data["id"] = snapshot.id;
-        _project = Project.fromMap(data);
+        _post = Post.fromMap(data);
 
-        if (_loading && _project.storagePath.isNotEmpty) {
+        if (_loading && _post.storagePath.isNotEmpty) {
           _loading = false;
         }
       });
     }, onError: (error) {
       loggy.error(error);
     }, onDone: () {
-      _projectSubscription?.cancel();
+      _postSubscription?.cancel();
     });
   }
 
@@ -546,8 +545,8 @@ class _ProjectPageState extends ConsumerState<ProjectPage> with UiLoggy {
     }
 
     ref.read(AppState.uploadTaskListProvider.notifier).pickCover(
-          targetId: _project.id,
-          uploadType: EnumUploadType.projectCover,
+          targetId: _post.id,
+          uploadType: EnumUploadType.postCover,
           userId: userId,
         );
   }
@@ -630,42 +629,42 @@ class _ProjectPageState extends ConsumerState<ProjectPage> with UiLoggy {
   }
 
   void tryUpdateTags(String tag) async {
-    final List<String> initialTags = _project.tags;
+    final List<String> initialTags = _post.tags;
 
-    _project = _project.copyWith(
-      tags: _project.tags..add(tag),
+    _post = _post.copyWith(
+      tags: _post.tags..add(tag),
     );
 
     try {
       await FirebaseFirestore.instance
           .collection(_collectionName)
-          .doc(_project.id)
+          .doc(_post.id)
           .update({
-        "tags": _project.listToMapStringBool(),
+        "tags": _post.listToMapStringBool(),
       });
     } catch (error) {
       loggy.error(error);
-      _project = _project.copyWith(tags: initialTags);
+      _post = _post.copyWith(tags: initialTags);
     }
   }
 
   void onRemoveTag(String tag) async {
-    final List<String> initialTags = _project.tags;
+    final List<String> initialTags = _post.tags;
 
-    _project = _project.copyWith(
-      tags: _project.tags..remove(tag),
+    _post = _post.copyWith(
+      tags: _post.tags..remove(tag),
     );
 
     try {
       await FirebaseFirestore.instance
           .collection(_collectionName)
-          .doc(_project.id)
+          .doc(_post.id)
           .update({
-        "tags": _project.listToMapStringBool(),
+        "tags": _post.listToMapStringBool(),
       });
     } catch (error) {
       loggy.error(error);
-      _project = _project.copyWith(tags: initialTags);
+      _post = _post.copyWith(tags: initialTags);
     }
   }
 
@@ -679,7 +678,7 @@ class _ProjectPageState extends ConsumerState<ProjectPage> with UiLoggy {
     setState(() => _confirmDeletePost = true);
   }
 
-  /// Cancel delete confirmation about this project.
+  /// Cancel delete confirmation about this post.
   void onCancelDeletePost() {
     setState(() => _confirmDeletePost = false);
   }
@@ -698,8 +697,8 @@ class _ProjectPageState extends ConsumerState<ProjectPage> with UiLoggy {
 
     setState(() {
       _saving = true;
-      _project = _project.copyWith(
-        cover: _project.cover.copyWith(
+      _post = _post.copyWith(
+        cover: _post.cover.copyWith(
           widthType: coverWidthType,
         ),
       );
@@ -708,14 +707,14 @@ class _ProjectPageState extends ConsumerState<ProjectPage> with UiLoggy {
     try {
       await FirebaseFirestore.instance
           .collection(_collectionName)
-          .doc(_project.id)
+          .doc(_post.id)
           .update({
         "cover.width_type": coverWidthType.name,
       });
     } catch (error) {
       loggy.error(error);
-      _project = _project.copyWith(
-        cover: _project.cover.copyWith(
+      _post = _post.copyWith(
+        cover: _post.cover.copyWith(
           widthType: prevWidthType,
         ),
       );
@@ -738,8 +737,8 @@ class _ProjectPageState extends ConsumerState<ProjectPage> with UiLoggy {
 
     setState(() {
       _saving = true;
-      _project = _project.copyWith(
-        cover: _project.cover.copyWith(
+      _post = _post.copyWith(
+        cover: _post.cover.copyWith(
           cornerType: coverCornerType,
         ),
       );
@@ -748,14 +747,14 @@ class _ProjectPageState extends ConsumerState<ProjectPage> with UiLoggy {
     try {
       await FirebaseFirestore.instance
           .collection(_collectionName)
-          .doc(_project.id)
+          .doc(_post.id)
           .update({
         "cover.corner_type": coverCornerType.name,
       });
     } catch (error) {
       loggy.error(error);
-      _project = _project.copyWith(
-        cover: _project.cover.copyWith(
+      _post = _post.copyWith(
+        cover: _post.cover.copyWith(
           cornerType: prevCornerType,
         ),
       );
@@ -764,13 +763,13 @@ class _ProjectPageState extends ConsumerState<ProjectPage> with UiLoggy {
     }
   }
 
-  /// Remove project's cover image and delete storage objects.
+  /// Remove post's cover image and delete storage objects.
   void tryRemoveCoverImage() async {
-    final String prevStoragePath = _project.storagePath;
+    final String prevStoragePath = _post.storagePath;
 
     setState(() {
-      _project = _project.copyWith(
-          cover: _project.cover.copyWith(
+      _post = _post.copyWith(
+          cover: _post.cover.copyWith(
         storagePath: "",
       ));
     });
@@ -778,15 +777,15 @@ class _ProjectPageState extends ConsumerState<ProjectPage> with UiLoggy {
     try {
       await FirebaseFirestore.instance
           .collection(_collectionName)
-          .doc(_project.id)
+          .doc(_post.id)
           .update({
         "cover.storage_path": "",
       });
     } catch (error) {
       loggy.error(error);
       setState(() {
-        _project = _project.copyWith(
-            cover: _project.cover.copyWith(
+        _post = _post.copyWith(
+            cover: _post.cover.copyWith(
           storagePath: prevStoragePath,
         ));
       });

@@ -103,7 +103,7 @@ class UserFirestore {
       profilePicture: ProfilePicture.fromMap(map["profile_picture"]),
       stats: UserStats.fromMap(map["stats"]),
       updatedAt: DateHelper.fromFirestore(map["updated_at"]),
-      socialLinks: SocialLinks.fromMap(map["social_link"]),
+      socialLinks: SocialLinks.fromMap(map["social_links"]),
       rights: UserRights.fromMap(map["rights"]),
     );
   }

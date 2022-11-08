@@ -43,4 +43,12 @@ class StorageUtils {
   static void setPassword(String password) async {
     await Glutton.eat(StorageKeys.password, password);
   }
+
+  static Future<bool> getHeroImageControlsVisible() async {
+    return await Glutton.vomit(StorageKeys.heroImageControlVivisible, true);
+  }
+
+  static void setHeroImageControlsVisible(bool newValue) {
+    Glutton.eat(StorageKeys.heroImageControlVivisible, newValue);
+  }
 }

@@ -1,6 +1,6 @@
 import 'package:beamer/beamer.dart';
 import 'package:flutter/widgets.dart';
-import 'package:rootasjey/screens/home_page.dart';
+import 'package:rootasjey/screens/home_page/home_page.dart';
 
 class HomeLocation extends BeamLocation<BeamState> {
   /// Main root value for this location.

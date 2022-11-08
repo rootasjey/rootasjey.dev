@@ -1,16 +1,15 @@
-import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:rootasjey/components/buttons/circle_button.dart';
+import 'package:rootasjey/components/application_bar.dart';
 import 'package:rootasjey/components/fade_in_y.dart';
-import 'package:rootasjey/components/icons/app_icon.dart';
+import 'package:rootasjey/components/post_card.dart';
 import 'package:rootasjey/globals/utilities.dart';
 import 'package:rootasjey/types/enums/enum_post_item_action.dart';
 import 'package:rootasjey/types/intents/escape_intent.dart';
 import 'package:rootasjey/types/intents/next_intent.dart';
 import 'package:rootasjey/types/intents/previous_intent.dart';
 import 'package:rootasjey/types/post.dart';
-import 'package:unicons/unicons.dart';
+import 'package:sliver_tools/sliver_tools.dart';
 
 class PostsPageBody extends StatelessWidget {
   const PostsPageBody({
@@ -55,6 +54,8 @@ class PostsPageBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const double maxCrossAxisExtent = 800.0;
+
     return Shortcuts(
       shortcuts: const <SingleActivator, Intent>{
         SingleActivator(LogicalKeyboardKey.arrowLeft): PreviousIntent(),
@@ -70,94 +71,60 @@ class PostsPageBody extends StatelessWidget {
           floatingActionButton: fab,
           body: CustomScrollView(
             slivers: [
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                    left: 72.0,
-                    top: 72.0,
-                    bottom: 24.0,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          FadeInY(
-                            beginY: Utilities.ui.getBeginY(),
-                            delay: Duration(
-                              milliseconds: Utilities.ui
-                                  .getNextAnimationDelay(reset: true),
-                            ),
-                            child: CircleButton(
-                              onTap: Beamer.of(context).beamBack,
-                              icon: const Icon(UniconsLine.arrow_left),
-                              backgroundColor: Colors.amber,
-                            ),
-                          ),
-                          FadeInY(
-                            beginY: Utilities.ui.getBeginY(),
-                            delay: Duration(
-                              milliseconds:
-                                  Utilities.ui.getNextAnimationDelay(),
-                            ),
-                            child: const Opacity(
-                              opacity: 0.6,
-                              child: AppIcon(
-                                margin: EdgeInsets.only(left: 12.0),
-                              ),
-                            ),
-                          ),
-                        ],
+              const ApplicationBar(
+                padding: EdgeInsets.only(
+                  left: 120.0,
+                  top: 16.0,
+                ),
+              ),
+              SliverCrossAxisConstrained(
+                maxCrossAxisExtent: maxCrossAxisExtent,
+                alignment: -0.28,
+                child: SliverToBoxAdapter(
+                  child: FadeInY(
+                    beginY: Utilities.ui.getBeginY(),
+                    delay: Duration(
+                      milliseconds: Utilities.ui.getNextAnimationDelay(
+                        reset: true,
                       ),
-                      FadeInY(
-                        beginY: Utilities.ui.getBeginY(),
-                        delay: Duration(
-                          milliseconds: Utilities.ui.getNextAnimationDelay(),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 24.0),
-                          child: Text(
-                            "Posts".toUpperCase(),
-                            style: Utilities.fonts.body2(
-                              textStyle: const TextStyle(
-                                fontSize: 40.0,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 120.0),
+                      child: Text(
+                        "Posts".toUpperCase(),
+                        style: Utilities.fonts.body2(
+                          textStyle: const TextStyle(
+                            fontSize: 24.0,
+                            fontWeight: FontWeight.w700,
                           ),
                         ),
                       ),
-                    ],
+                    ),
                   ),
                 ),
               ),
-              SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (BuildContext context, int index) {
-                    final Post post = posts.elementAt(index);
+              SliverCrossAxisConstrained(
+                maxCrossAxisExtent: maxCrossAxisExtent,
+                alignment: -0.39,
+                child: SliverPadding(
+                  padding: const EdgeInsets.only(
+                    top: 42.0,
+                  ),
+                  sliver: SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (BuildContext context, int index) {
+                        final Post post = posts.elementAt(index);
 
-                    return Card(
-                      elevation: 0.0,
-                      color: Colors.transparent,
-                      child: Padding(
-                        padding: const EdgeInsets.all(12.0),
-                        child: Column(
-                          children: [
-                            Text(
-                              post.name,
-                              style: Utilities.fonts.body(
-                                textStyle: const TextStyle(
-                                  fontSize: 24.0,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                  childCount: posts.length,
+                        return PostCard(
+                          post: post,
+                          onTap: onTapPost != null
+                              ? () => onTapPost?.call(post)
+                              : null,
+                        );
+                      },
+                      childCount: posts.length,
+                    ),
+                  ),
                 ),
               ),
             ],

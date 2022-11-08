@@ -2,29 +2,30 @@ import 'dart:convert';
 
 class SocialLinks {
   SocialLinks({
-    this.artbooking = '',
-    this.artstation = '',
-    this.behance = '',
-    this.deviantart = '',
-    this.discord = '',
-    this.dribbble = '',
-    this.facebook = '',
-    this.github = '',
-    this.instagram = '',
-    this.linkedin = '',
+    this.artbooking = "",
+    this.artstation = "",
+    this.behance = "",
+    this.curriculum = "",
+    this.deviantart = "",
+    this.discord = "",
+    this.dribbble = "",
+    this.facebook = "",
+    this.github = "",
+    this.instagram = "",
+    this.linkedin = "",
     this.map = const {},
-    this.other = '',
-    this.patreon = '',
-    this.profilePicture = '',
+    this.other = "",
+    this.patreon = "",
+    this.profilePicture = "",
     this.socialMap = const {},
-    this.tiktok = '',
-    this.tipeee = '',
-    this.tumblr = '',
-    this.twitch = '',
-    this.twitter = '',
-    this.website = '',
-    this.wikipedia = '',
-    this.youtube = '',
+    this.tiktok = "",
+    this.tipeee = "",
+    this.tumblr = "",
+    this.twitch = "",
+    this.twitter = "",
+    this.website = "",
+    this.wikipedia = "",
+    this.youtube = "",
   });
 
   /// All URLs in a map.
@@ -36,6 +37,7 @@ class SocialLinks {
   final String artbooking;
   final String artstation;
   final String behance;
+  final String curriculum;
   final String deviantart;
   final String discord;
   final String dribbble;
@@ -58,6 +60,7 @@ class SocialLinks {
   static const artbookingString = 'artbooking';
   static const artstationString = 'artstation';
   static const behanceString = 'behance';
+  static const curriculumString = 'curriculum';
   static const deviantartString = 'deviantart';
   static const discordString = 'discord';
   static const dribbbleString = 'dribbble';
@@ -81,6 +84,7 @@ class SocialLinks {
     String? artbooking,
     String? artstation,
     String? behance,
+    String? curriculum,
     String? deviantart,
     String? discord,
     String? dribbble,
@@ -106,6 +110,7 @@ class SocialLinks {
       artbooking: artbooking ?? this.artbooking,
       artstation: artstation ?? this.artstation,
       behance: behance ?? this.behance,
+      curriculum: curriculum ?? this.curriculum,
       deviantart: deviantart ?? this.deviantart,
       discord: discord ?? this.discord,
       dribbble: dribbble ?? this.dribbble,
@@ -134,6 +139,7 @@ class SocialLinks {
       artbookingString: artbooking,
       artstationString: artstation,
       behanceString: behance,
+      curriculumString: curriculum,
       deviantartString: deviantart,
       discordString: discord,
       dribbbleString: dribbble,
@@ -157,29 +163,30 @@ class SocialLinks {
 
   factory SocialLinks.empty() {
     return SocialLinks(
-      artbooking: '',
-      artstation: '',
-      behance: '',
-      deviantart: '',
-      discord: '',
-      dribbble: '',
-      facebook: '',
-      github: '',
-      instagram: '',
-      linkedin: '',
+      artbooking: "",
+      artstation: "",
+      behance: "",
+      curriculum: "",
+      deviantart: "",
+      discord: "",
+      dribbble: "",
+      facebook: "",
+      github: "",
+      instagram: "",
+      linkedin: "",
       map: {},
       socialMap: {},
-      other: '',
-      patreon: '',
-      profilePicture: '',
-      tiktok: '',
-      tipeee: '',
-      tumblr: '',
-      twitch: '',
-      twitter: '',
-      website: '',
-      wikipedia: '',
-      youtube: '',
+      other: "",
+      patreon: "",
+      profilePicture: "",
+      tiktok: "",
+      tipeee: "",
+      tumblr: "",
+      twitch: "",
+      twitter: "",
+      website: "",
+      wikipedia: "",
+      youtube: "",
     );
   }
 
@@ -204,29 +211,30 @@ class SocialLinks {
     });
 
     return SocialLinks(
-      artbooking: map[artbookingString] ?? '',
-      artstation: map[artstationString] ?? '',
-      behance: map[behanceString] ?? '',
-      deviantart: map[deviantartString] ?? '',
-      discord: map[discordString] ?? '',
-      dribbble: map[dribbbleString] ?? '',
-      facebook: map[facebookString] ?? '',
-      github: map[githubString] ?? '',
-      instagram: map[instagramString] ?? '',
-      linkedin: map[linkedinString] ?? '',
+      artbooking: map[artbookingString] ?? "",
+      artstation: map[artstationString] ?? "",
+      behance: map[behanceString] ?? "",
+      curriculum: map[curriculumString] ?? "",
+      deviantart: map[deviantartString] ?? "",
+      discord: map[discordString] ?? "",
+      dribbble: map[dribbbleString] ?? "",
+      facebook: map[facebookString] ?? "",
+      github: map[githubString] ?? "",
+      instagram: map[instagramString] ?? "",
+      linkedin: map[linkedinString] ?? "",
       map: dataMap,
       socialMap: socialMap,
-      other: map[otherString] ?? '',
-      patreon: map[patreonString] ?? '',
-      profilePicture: map[profilePictureString] ?? '',
-      tiktok: map[tiktokString] ?? '',
-      tipeee: map[tipeeeString] ?? '',
-      tumblr: map[tumblrString] ?? '',
-      twitch: map[twitchString] ?? '',
-      twitter: map[twitterString] ?? '',
-      website: map[websiteString] ?? '',
-      wikipedia: map[wikipediaString] ?? '',
-      youtube: map[youtubeString] ?? '',
+      other: map[otherString] ?? "",
+      patreon: map[patreonString] ?? "",
+      profilePicture: map[profilePictureString] ?? "",
+      tiktok: map[tiktokString] ?? "",
+      tipeee: map[tipeeeString] ?? "",
+      tumblr: map[tumblrString] ?? "",
+      twitch: map[twitchString] ?? "",
+      twitter: map[twitterString] ?? "",
+      website: map[websiteString] ?? "",
+      wikipedia: map[wikipediaString] ?? "",
+      youtube: map[youtubeString] ?? "",
     );
   }
 

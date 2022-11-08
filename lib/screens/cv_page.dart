@@ -1,4 +1,6 @@
+import 'package:rootasjey/components/application_bar.dart';
 import 'package:rootasjey/components/better_avatar.dart';
+import 'package:rootasjey/globals/constants.dart';
 import 'package:rootasjey/types/experience.dart';
 import 'package:rootasjey/types/experience_date.dart';
 import 'package:rootasjey/types/formation.dart';
@@ -301,12 +303,14 @@ class _CVPageState extends State<CVPage> {
     return Scaffold(
       floatingActionButton: FloatingActionButton.extended(
         onPressed: tryDownloadCV,
+        foregroundColor: Colors.white,
         backgroundColor: Colors.indigo,
         icon: const Icon(UniconsLine.save),
         label: const Text("Download"),
       ),
       body: CustomScrollView(
         slivers: [
+          const ApplicationBar(),
           SliverToBoxAdapter(
             child: Screenshot(
               controller: _screenshotController,
@@ -356,10 +360,16 @@ class _CVPageState extends State<CVPage> {
   }
 
   Widget header() {
+    final Color accentColor = Constants.colors.getRandomFromPalette();
+
     return Wrap(
       spacing: 60.0,
       children: [
         BetterAvatar(
+          borderSide: BorderSide(
+            color: accentColor,
+            width: 3.0,
+          ),
           colorFilter: const ColorFilter.mode(
             Colors.grey,
             BlendMode.saturation,
@@ -374,7 +384,6 @@ class _CVPageState extends State<CVPage> {
                 return SimpleDialog(
                   children: [
                     InkWell(
-                      // onTap: Beamer.of(context).beamBack,
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Image.asset(
@@ -414,9 +423,9 @@ class _CVPageState extends State<CVPage> {
                 opacity: 0.8,
                 child: Text(
                   "Dev web fullstack",
-                  style: Utilities.fonts.body3(
-                    textStyle: const TextStyle(
-                      backgroundColor: Colors.amber,
+                  style: Utilities.fonts.body2(
+                    textStyle: TextStyle(
+                      backgroundColor: accentColor.withOpacity(0.3),
                       fontSize: 28.0,
                     ),
                   ),

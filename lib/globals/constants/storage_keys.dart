@@ -7,6 +7,7 @@ class StorageKeys {
   static const String drafts = "drafts";
   static const String email = "email";
   static const String firstLaunch = "first_launch";
+  static const String heroImageControlVivisible = "hero_image_control_visible";
   static const String imageShareColor = "image_share_color";
   static const String imageShareTextColor = "image_share_text_color";
   static const String itemsStyle = "items_style_";

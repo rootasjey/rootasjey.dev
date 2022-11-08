@@ -1,0 +1,3 @@
+enum EnumIllustrationItemAction {
+  delete,
+}

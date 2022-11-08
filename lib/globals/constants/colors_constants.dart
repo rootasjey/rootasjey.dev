@@ -14,6 +14,25 @@ class ColorsConstants {
     Colors.pink,
   ];
 
+  Color getFromTag(String tag) {
+    switch (tag) {
+      case "storage":
+        return Colors.amber;
+      case "functions":
+        return Colors.pink;
+      case "firestore":
+        return Colors.green;
+      case "web":
+        return Colors.blue;
+      case "flutter":
+        return Colors.lightBlue;
+      case "files":
+        return Colors.cyan;
+      default:
+        return Colors.white;
+    }
+  }
+
   Color getRandomFromPalette() {
     return palette.elementAt(Random().nextInt(palette.length));
   }

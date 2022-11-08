@@ -5,7 +5,6 @@ import 'package:rootasjey/components/upload_panel/upload_panel_header.dart';
 import 'package:rootasjey/globals/app_state.dart';
 import 'package:rootasjey/globals/utilities.dart';
 import 'package:rootasjey/types/custom_upload_task.dart';
-import 'package:supercharged/supercharged.dart';
 
 class UploadPanel extends ConsumerStatefulWidget {
   const UploadPanel({
@@ -74,7 +73,7 @@ class _UploadWindowState extends ConsumerState<UploadPanel> {
       child: AnimatedContainer(
         width: isMobileSize ? windowSize.width : _width,
         height: _height,
-        duration: 150.milliseconds,
+        duration: const Duration(milliseconds: 150),
         child: InkWell(
           onTap: isMobileSize
               ? () => onShowBottomSheet(uploadTaskList)

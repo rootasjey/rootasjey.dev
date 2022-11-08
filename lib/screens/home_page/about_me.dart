@@ -1,8 +1,10 @@
+import 'package:beamer/beamer.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/better_avatar.dart';
 import 'package:rootasjey/globals/constants.dart';
 import 'package:rootasjey/globals/utilities.dart';
+import 'package:rootasjey/router/locations/cv_location.dart';
 import 'package:unicons/unicons.dart';
 
 class AboutMe extends StatelessWidget {
@@ -63,6 +65,13 @@ class AboutMe extends StatelessWidget {
                   width: 4.0,
                 ),
                 image: const AssetImage("assets/images/jeje.jpg"),
+                onTap: () {
+                  Beamer.of(context).beamToNamed(CVLocation.route);
+                },
+                colorFilter: const ColorFilter.mode(
+                  Colors.grey,
+                  BlendMode.saturation,
+                ),
                 size: 140.0,
               ),
               Padding(

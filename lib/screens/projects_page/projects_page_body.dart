@@ -1,17 +1,15 @@
-import 'package:beamer/beamer.dart';
 import 'package:card_swiper/card_swiper.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:rootasjey/components/buttons/circle_button.dart';
+import 'package:rootasjey/components/application_bar.dart';
 import 'package:rootasjey/components/fade_in_y.dart';
-import 'package:rootasjey/components/icons/app_icon.dart';
 import 'package:rootasjey/components/project_card.dart';
 import 'package:rootasjey/globals/utilities.dart';
 import 'package:rootasjey/types/enums/enum_project_item_action.dart';
 import 'package:rootasjey/types/intents/next_intent.dart';
 import 'package:rootasjey/types/intents/previous_intent.dart';
 import 'package:rootasjey/types/project.dart';
-import 'package:unicons/unicons.dart';
 
 class ProjectsPageBody extends StatelessWidget {
   const ProjectsPageBody({
@@ -74,64 +72,35 @@ class ProjectsPageBody extends StatelessWidget {
           floatingActionButton: fab,
           body: CustomScrollView(
             slivers: [
+              const ApplicationBar(
+                padding: EdgeInsets.only(
+                  left: 90.0,
+                  top: 16.0,
+                ),
+              ),
               SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                    left: 72.0,
-                    top: 72.0,
-                    bottom: 24.0,
+                child: FadeInY(
+                  beginY: Utilities.ui.getBeginY(),
+                  delay: Duration(
+                    milliseconds: Utilities.ui.getNextAnimationDelay(),
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          FadeInY(
-                            beginY: Utilities.ui.getBeginY(),
-                            delay: Duration(
-                              milliseconds: Utilities.ui
-                                  .getNextAnimationDelay(reset: true),
-                            ),
-                            child: CircleButton(
-                              onTap: Beamer.of(context).beamBack,
-                              icon: const Icon(UniconsLine.arrow_left),
-                              backgroundColor: Colors.amber,
-                            ),
-                          ),
-                          FadeInY(
-                            beginY: Utilities.ui.getBeginY(),
-                            delay: Duration(
-                              milliseconds:
-                                  Utilities.ui.getNextAnimationDelay(),
-                            ),
-                            child: const Opacity(
-                              opacity: 0.6,
-                              child: AppIcon(
-                                margin: EdgeInsets.only(left: 12.0),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      FadeInY(
-                        beginY: Utilities.ui.getBeginY(),
-                        delay: Duration(
-                          milliseconds: Utilities.ui.getNextAnimationDelay(),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 24.0),
-                          child: Text(
-                            "Projects".toUpperCase(),
-                            style: Utilities.fonts.body2(
-                              textStyle: const TextStyle(
-                                fontSize: 40.0,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                      top: 72.0,
+                      bottom: 24.0,
+                    ),
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: Text(
+                        "projects".tr().toUpperCase(),
+                        style: Utilities.fonts.body2(
+                          textStyle: const TextStyle(
+                            fontSize: 24.0,
+                            fontWeight: FontWeight.w700,
                           ),
                         ),
                       ),
-                    ],
+                    ),
                   ),
                 ),
               ),

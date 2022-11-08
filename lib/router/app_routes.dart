@@ -3,6 +3,7 @@ import 'package:rootasjey/router/locations/about_location.dart';
 import 'package:rootasjey/router/locations/cv_location.dart';
 import 'package:rootasjey/router/locations/forgot_password_location.dart';
 import 'package:rootasjey/router/locations/home_location.dart';
+import 'package:rootasjey/router/locations/illustrations_location.dart';
 import 'package:rootasjey/router/locations/posts_location.dart';
 import 'package:rootasjey/router/locations/settings_location.dart';
 import 'package:rootasjey/router/locations/projects_location.dart';
@@ -18,6 +19,7 @@ final appLocationBuilder = BeamerDelegate(
       AboutLocation(),
       CVLocation(),
       ForgotPasswordLocation(),
+      IllustrationsLocation(),
       PostsLocation(),
       SettingsLocation(),
       ProjectsLocation(),

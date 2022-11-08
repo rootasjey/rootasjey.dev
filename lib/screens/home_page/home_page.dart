@@ -1,16 +1,18 @@
 import 'package:beamer/beamer.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_improved_scrolling/flutter_improved_scrolling.dart';
 import 'package:particles_flutter/particles_flutter.dart';
-import 'package:rootasjey/components/about_me.dart';
+import 'package:rootasjey/router/locations/illustrations_location.dart';
+import 'package:rootasjey/screens/home_page/about_me.dart';
 import 'package:rootasjey/components/application_bar.dart';
 import 'package:rootasjey/components/bezier_clipper.dart';
 import 'package:rootasjey/components/buttons/fab_to_top.dart';
-import 'package:rootasjey/components/github_activities.dart';
-import 'package:rootasjey/components/project_section.dart';
 import 'package:rootasjey/globals/constants.dart';
 import 'package:rootasjey/router/locations/posts_location.dart';
 import 'package:rootasjey/router/locations/projects_location.dart';
+import 'package:rootasjey/screens/home_page/github_activities.dart';
+import 'package:rootasjey/screens/home_page/project_section.dart';
 import 'package:rootasjey/types/enums/enum_direction.dart';
 import 'package:rootasjey/utils/custom_scroll_bahavior.dart';
 import 'package:rootasjey/globals/utilities.dart';
@@ -129,12 +131,12 @@ class _HomePageState extends State<HomePage> {
                 SizedBox(
                   width: 600.0,
                   child: Text.rich(
-                    TextSpan(text: "A random personnal ", children: [
+                    TextSpan(text: "home_hero_title_parts.0".tr(), children: [
                       WidgetSpan(
                         child: InkWell(
                           onTap: onTapColoredWord,
                           child: Text(
-                            "space ",
+                            "home_hero_title_parts.1".tr(),
                             style: Utilities.fonts.body(
                               textStyle: TextStyle(
                                 color: Constants.colors.palette.first,
@@ -145,12 +147,12 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ),
                       ),
-                      const TextSpan(text: "lost in a "),
+                      TextSpan(text: "home_hero_title_parts.2".tr()),
                       WidgetSpan(
                         child: InkWell(
                           onTap: onTapColoredWord,
                           child: Text(
-                            "galaxy.",
+                            "home_hero_title_parts.3".tr(),
                             style: Utilities.fonts.body(
                               textStyle: TextStyle(
                                 color: Constants.colors.palette.elementAt(1),
@@ -176,8 +178,7 @@ class _HomePageState extends State<HomePage> {
                   child: Opacity(
                     opacity: 0.4,
                     child: Text(
-                      "This space won't outrun time though\n"
-                      "So we should enjoy ourselves while we're alive",
+                      "home_hero_subtitle".tr(),
                       style: Utilities.fonts.body3(
                         textStyle: const TextStyle(
                           fontSize: 26.0,
@@ -194,7 +195,7 @@ class _HomePageState extends State<HomePage> {
                     runSpacing: 12.0,
                     children: [
                       navigationButton(
-                        label: "Projects",
+                        label: "projects".tr(),
                         onPressed: () {
                           Beamer.of(context).beamToNamed(
                             ProjectsLocation.route,
@@ -202,12 +203,19 @@ class _HomePageState extends State<HomePage> {
                         },
                       ),
                       navigationButton(
-                        label: "Posts",
+                        label: "posts".tr(),
                         onPressed: () {
                           Beamer.of(context).beamToNamed(PostsLocation.route);
                         },
                       ),
-                      navigationButton(label: "Drawings", onPressed: () {}),
+                      navigationButton(
+                        label: "illustrations".tr(),
+                        onPressed: () {
+                          Beamer.of(context).beamToNamed(
+                            IllustrationsLocation.route,
+                          );
+                        },
+                      ),
                     ],
                   ),
                 ),

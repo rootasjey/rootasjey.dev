@@ -1,6 +1,6 @@
 import 'package:beamer/beamer.dart';
 import 'package:flutter/widgets.dart';
-import 'package:rootasjey/screens/post_page.dart';
+import 'package:rootasjey/screens/post/post_page.dart';
 import 'package:rootasjey/screens/posts_page/posts_page.dart';
 
 class PostsLocation extends BeamLocation<BeamState> {
@@ -29,6 +29,7 @@ class PostsLocation extends BeamLocation<BeamState> {
           ),
           key: ValueKey("$route-${state.pathParameters['postId']}"),
           title: "Post",
+          type: BeamPageType.fadeTransition,
         ),
     ];
   }
