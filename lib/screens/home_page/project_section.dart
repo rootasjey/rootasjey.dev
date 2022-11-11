@@ -115,9 +115,19 @@ class _ProjectSectionState extends State<ProjectSection> {
   }
 
   EdgeInsets getMargin() {
+    if (widget.size.width < Utilities.size.mobileWidthTreshold) {
+      return const EdgeInsets.only(
+        left: 16.0,
+        right: 16.0,
+        top: 64.0,
+        bottom: 100.0,
+      );
+    }
+
     if (widget.size.width < 1000.0) {
       return const EdgeInsets.only(
         left: 36.0,
+        right: 36.0,
         top: 64.0,
         bottom: 100.0,
       );

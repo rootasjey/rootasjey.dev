@@ -1,20 +1,30 @@
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:rootasjey/globals/state/app_settings_notifier.dart';
 import 'package:rootasjey/globals/state/show_upload_window_notifier.dart';
 import 'package:rootasjey/globals/state/upload_bytes_transferred_notifier.dart';
 import 'package:rootasjey/globals/state/upload_task_list_notifier.dart';
+import 'package:rootasjey/types/app_settings.dart';
 import 'package:rootasjey/types/custom_upload_task.dart';
 import 'package:rootasjey/types/user/user.dart';
 import 'package:rootasjey/globals/state/user_notifier.dart';
 
 class AppState {
-  static var userProvider = _userNotifierProvider;
-  static final uploadTaskListProvider = _uploadTaskListProvider;
-  static final uploadBytesTransferredProvider = _uploadBytesTransferredProvider;
-  static final uploadTotalBytesProvider = _uploadTotalBytesProvider;
-  static final uploadPercentageProvider = _uploadPercentageProvider;
+  static final appSettingsProvider = _appSettingsProvider;
   static final showUploadWindowProvider = _showUploadWindowProvider;
+  static final uploadBytesTransferredProvider = _uploadBytesTransferredProvider;
+  static final uploadPercentageProvider = _uploadPercentageProvider;
+  static final uploadTaskListProvider = _uploadTaskListProvider;
+  static final uploadTotalBytesProvider = _uploadTotalBytesProvider;
+  static var userProvider = _userNotifierProvider;
 }
+
+// App settings
+// ------------
+final _appSettingsProvider =
+    StateNotifierProvider<AppSettingsNotifier, AppSettings>(
+  (ref) => AppSettingsNotifier(AppSettings.empty()),
+);
 
 // User
 // -----

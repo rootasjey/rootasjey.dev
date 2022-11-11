@@ -44,6 +44,8 @@ class ApplicationBar extends ConsumerWidget {
     final bool isAuthenticated =
         userFirestore != null && userFirestore.rights.manageData;
 
+    ref.watch(AppState.appSettingsProvider);
+
     final String? location = Beamer.of(context)
         .beamingHistory
         .last
@@ -126,12 +128,11 @@ class ApplicationBar extends ConsumerWidget {
                   OutlinedButton(
                     onPressed: () {
                       // AdaptiveTheme.of(context).setDark();
+
                       final String curriculumUrl = ref
-                              .read(AppState.userProvider)
-                              .firestoreUser
-                              ?.socialLinks
-                              .curriculum ??
-                          "";
+                          .read(AppState.appSettingsProvider)
+                          .socialNetworks
+                          .curriculum;
 
                       if (curriculumUrl.isEmpty) {
                         return;
