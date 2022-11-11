@@ -481,6 +481,7 @@
   "programming_languages_description": "You can add any programming languages used in your project. It will help readers know which tools were involved.",
   "project": "Project",
   "project_after": "After project",
+  "project_carrousel_mobile_swipe": "You can swipe left or right to see other projects.",
   "project_create": "Create project",
   "project_create_error": "Sorry, there was an issue while creating the project. Please try again.",
   "project_create_error_database": "Sorry, there was an issue while creating the project in database. Please try again.",
