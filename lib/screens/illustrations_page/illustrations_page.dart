@@ -97,6 +97,8 @@ class _DrawingsPageState extends ConsumerState<IllustrationsPage> with UiLoggy {
       );
     }
 
+    final Size windowSize = MediaQuery.of(context).size;
+
     final UserFirestore? userFirestore =
         ref.watch(AppState.userProvider).firestoreUser;
     final UserRights userRights = userFirestore?.rights ?? const UserRights();
@@ -121,6 +123,7 @@ class _DrawingsPageState extends ConsumerState<IllustrationsPage> with UiLoggy {
             canManageIllustrations ? _illustrationPopupMenuItems : [],
         onPopupMenuItemSelected: onPopupMenuItemSelected,
         onTapIllustration: onTapIllustration,
+        windowSize: windowSize,
       ),
     );
   }

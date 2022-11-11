@@ -16,14 +16,18 @@ class PostCard extends StatefulWidget {
     this.popupMenuButton,
     this.margin = EdgeInsets.zero,
     this.showAuthorName = false,
-    this.width,
+    this.maxWidth = 580.0,
+    this.compact = false,
   });
+
+  /// Reduce font size if true.
+  final bool compact;
 
   /// Show author's name of the post if true.
   final bool showAuthorName;
 
   /// Width of this card.
-  final double? width;
+  final double maxWidth;
 
   /// Data to populate this card.
   final Post post;
@@ -68,22 +72,19 @@ class _PostCardState extends State<PostCard> with UiLoggy {
         clipBehavior: Clip.hardEdge,
         color: Theme.of(context).backgroundColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6.0)),
-        child: SizedBox(
-          width: widget.width,
-          child: InkWell(
-            onTap: widget.onTap,
-            onHover: (bool isHover) {
-              setState(() {
-                _elevation = isHover ? _endElevation : _startElevation;
-              });
-            },
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                coverWidget(),
-                textWidgets(),
-              ],
-            ),
+        child: InkWell(
+          onTap: widget.onTap,
+          onHover: (bool isHover) {
+            setState(() {
+              _elevation = isHover ? _endElevation : _startElevation;
+            });
+          },
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              coverWidget(),
+              textWidgets(),
+            ],
           ),
         ),
       ),
@@ -141,32 +142,19 @@ class _PostCardState extends State<PostCard> with UiLoggy {
       elevation: 0.0,
       color: Colors.transparent,
       child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 580.0),
+        constraints: BoxConstraints(maxWidth: widget.maxWidth),
         child: Container(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Wrap(
-              //   spacing: 8.0,
-              //   runSpacing: 8.0,
-              //   children: post.tags.take(1).map((tag) {
-              //     return Opacity(
-              //       opacity: 0.6,
-              //       child: Chip(
-              //         elevation: 2.0,
-              //         label: Text(tag),
-              //       ),
-              //     );
-              //   }).toList(),
-              // ),
               Text(
                 postName,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: Utilities.fonts.body(
-                  textStyle: const TextStyle(
-                    fontSize: 32.0,
+                  textStyle: TextStyle(
+                    fontSize: widget.compact ? 18.0 : 32.0,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -181,8 +169,8 @@ class _PostCardState extends State<PostCard> with UiLoggy {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: Utilities.fonts.body(
-                        textStyle: const TextStyle(
-                          fontSize: 16.0,
+                        textStyle: TextStyle(
+                          fontSize: widget.compact ? 14.0 : 16.0,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -200,8 +188,8 @@ class _PostCardState extends State<PostCard> with UiLoggy {
                       child: Text(
                         postMetadata,
                         style: Utilities.fonts.body(
-                          textStyle: const TextStyle(
-                            fontSize: 15.0,
+                          textStyle: TextStyle(
+                            fontSize: widget.compact ? 12.0 : 15.0,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -212,7 +200,7 @@ class _PostCardState extends State<PostCard> with UiLoggy {
                         "•  ${post.tags.first}",
                         style: Utilities.fonts.body(
                           textStyle: TextStyle(
-                            fontSize: 15.0,
+                            fontSize: widget.compact ? 12.0 : 15.0,
                             fontWeight: FontWeight.w600,
                             color: Constants.colors.getFromTag(post.tags.first),
                           ),

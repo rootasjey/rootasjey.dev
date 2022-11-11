@@ -277,9 +277,9 @@ class PostPageHeader extends StatelessWidget {
 
   Widget titleWidget() {
     final TextStyle style = Utilities.fonts.body(
-      textStyle: const TextStyle(
-        fontSize: 70.0,
-        fontWeight: FontWeight.w600,
+      textStyle: TextStyle(
+        fontSize: isMobileSize ? 36.0 : 70.0,
+        fontWeight: isMobileSize ? FontWeight.w700 : FontWeight.w600,
       ),
     );
 

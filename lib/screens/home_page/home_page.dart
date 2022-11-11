@@ -62,8 +62,9 @@ class _HomePageState extends State<HomePage> {
           child: CustomScrollView(
             controller: _pageScrollController,
             slivers: [
-              const ApplicationBar(
+              ApplicationBar(
                 backgroundColor: Colors.black45,
+                padding: getAppBarPadding(size),
               ),
               SliverToBoxAdapter(
                 child: Padding(
@@ -88,9 +89,9 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
               ),
-              const ProjectSection(),
-              const GitHubActivities(),
-              const AboutMe(),
+              ProjectSection(size: size),
+              GitHubActivities(size: size),
+              AboutMe(size: size),
               const SliverPadding(
                 padding: EdgeInsets.only(bottom: 200.0),
               ),
@@ -116,131 +117,132 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
         ),
-        Container(
-          height: size.height - 100.0,
-          padding: const EdgeInsets.only(
-            left: 200.0,
-            bottom: 10.0,
+        ConstrainedBox(
+          constraints: BoxConstraints(
+            minHeight: size.height - 100.0,
           ),
-          child: Align(
-            alignment: Alignment.bottomLeft,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(
-                  width: 600.0,
-                  child: Text.rich(
-                    TextSpan(text: "home_hero_title_parts.0".tr(), children: [
-                      WidgetSpan(
-                        child: InkWell(
-                          onTap: onTapColoredWord,
-                          child: Text(
-                            "home_hero_title_parts.1".tr(),
-                            style: Utilities.fonts.body(
-                              textStyle: TextStyle(
-                                color: Constants.colors.palette.first,
-                                fontSize: 72.0,
-                                fontWeight: FontWeight.w700,
+          child: Padding(
+            padding: getHeroPadding(size),
+            child: Align(
+              alignment: Alignment.bottomLeft,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    width: 600.0,
+                    child: Text.rich(
+                      TextSpan(text: "home_hero_title_parts.0".tr(), children: [
+                        WidgetSpan(
+                          child: InkWell(
+                            onTap: onTapColoredWord,
+                            child: Text(
+                              "home_hero_title_parts.1".tr(),
+                              style: Utilities.fonts.body(
+                                textStyle: TextStyle(
+                                  color: Constants.colors.palette.first,
+                                  fontSize: getHeroFontSize(size),
+                                  fontWeight: FontWeight.w700,
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                      TextSpan(text: "home_hero_title_parts.2".tr()),
-                      WidgetSpan(
-                        child: InkWell(
-                          onTap: onTapColoredWord,
-                          child: Text(
-                            "home_hero_title_parts.3".tr(),
-                            style: Utilities.fonts.body(
-                              textStyle: TextStyle(
-                                color: Constants.colors.palette.elementAt(1),
-                                fontSize: 72.0,
-                                fontWeight: FontWeight.w700,
+                        TextSpan(text: "home_hero_title_parts.2".tr()),
+                        WidgetSpan(
+                          child: InkWell(
+                            onTap: onTapColoredWord,
+                            child: Text(
+                              "home_hero_title_parts.3".tr(),
+                              style: Utilities.fonts.body(
+                                textStyle: TextStyle(
+                                  color: Constants.colors.palette.elementAt(1),
+                                  fontSize: getHeroFontSize(size),
+                                  fontWeight: FontWeight.w700,
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                    ]),
-                    style: Utilities.fonts.body(
-                      textStyle: const TextStyle(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 72.0,
-                        height: 1.2,
-                      ),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 12.0),
-                  child: Opacity(
-                    opacity: 0.4,
-                    child: Text(
-                      "home_hero_subtitle".tr(),
-                      style: Utilities.fonts.body3(
-                        textStyle: const TextStyle(
-                          fontSize: 26.0,
-                          fontWeight: FontWeight.w400,
+                      ]),
+                      style: Utilities.fonts.body(
+                        textStyle: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: getHeroFontSize(size),
+                          height: 1.2,
                         ),
                       ),
                     ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 24.0),
-                  child: Wrap(
-                    spacing: 16.0,
-                    runSpacing: 12.0,
-                    children: [
-                      navigationButton(
-                        label: "projects".tr(),
-                        onPressed: () {
-                          Beamer.of(context).beamToNamed(
-                            ProjectsLocation.route,
-                          );
-                        },
+                  Padding(
+                    padding: const EdgeInsets.only(top: 12.0),
+                    child: Opacity(
+                      opacity: 0.4,
+                      child: Text(
+                        "home_hero_subtitle".tr(),
+                        style: Utilities.fonts.body3(
+                          textStyle: TextStyle(
+                            fontSize: getSubtitleFontSize(size),
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
                       ),
-                      navigationButton(
-                        label: "posts".tr(),
-                        onPressed: () {
-                          Beamer.of(context).beamToNamed(PostsLocation.route);
-                        },
-                      ),
-                      navigationButton(
-                        label: "illustrations".tr(),
-                        onPressed: () {
-                          Beamer.of(context).beamToNamed(
-                            IllustrationsLocation.route,
-                          );
-                        },
-                      ),
-                    ],
+                    ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 24.0),
-                  child: Wrap(
-                    spacing: 12.0,
-                    runSpacing: 12.0,
-                    children: [
-                      socialNetworkItem(
-                        iconData: UniconsLine.medium_m,
-                        url: "https://medium.com/@rootasjey",
-                      ),
-                      socialNetworkItem(
-                        iconData: UniconsLine.github,
-                        url: "https://github.com/rootasjey",
-                      ),
-                      socialNetworkItem(
-                        iconData: UniconsLine.twitter,
-                        url: "https://twitter.com/rootasjey",
-                      ),
-                    ],
+                  Padding(
+                    padding: const EdgeInsets.only(top: 24.0),
+                    child: Wrap(
+                      spacing: 16.0,
+                      runSpacing: 12.0,
+                      children: [
+                        navigationButton(
+                          label: "projects".tr(),
+                          onPressed: () {
+                            Beamer.of(context).beamToNamed(
+                              ProjectsLocation.route,
+                            );
+                          },
+                        ),
+                        navigationButton(
+                          label: "posts".tr(),
+                          onPressed: () {
+                            Beamer.of(context).beamToNamed(PostsLocation.route);
+                          },
+                        ),
+                        navigationButton(
+                          label: "illustrations".tr(),
+                          onPressed: () {
+                            Beamer.of(context).beamToNamed(
+                              IllustrationsLocation.route,
+                            );
+                          },
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                  Padding(
+                    padding: const EdgeInsets.only(top: 24.0),
+                    child: Wrap(
+                      spacing: 12.0,
+                      runSpacing: 12.0,
+                      children: [
+                        socialNetworkItem(
+                          iconData: UniconsLine.medium_m,
+                          url: "https://medium.com/@rootasjey",
+                        ),
+                        socialNetworkItem(
+                          iconData: UniconsLine.github,
+                          url: "https://github.com/rootasjey",
+                        ),
+                        socialNetworkItem(
+                          iconData: UniconsLine.twitter,
+                          url: "https://twitter.com/rootasjey",
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -286,6 +288,59 @@ class _HomePageState extends State<HomePage> {
     return IconButton(
       onPressed: () => launchUrl(Uri.parse(url)),
       icon: Icon(iconData),
+    );
+  }
+
+  EdgeInsets getAppBarPadding(Size size) {
+    if (size.width < Utilities.size.mobileWidthTreshold) {
+      return const EdgeInsets.only(left: 0.0, top: 24.0);
+    }
+
+    if (size.width < 1000.0) {
+      return const EdgeInsets.only(left: 36.0, top: 24.0);
+    }
+
+    return const EdgeInsets.only(left: 170.0, top: 24.0, right: 80.0);
+  }
+
+  double getHeroFontSize(Size size) {
+    if (size.width < Utilities.size.mobileWidthTreshold) {
+      return 54.0;
+    }
+
+    return 72.0;
+  }
+
+  double getSubtitleFontSize(Size size) {
+    if (size.width < Utilities.size.mobileWidthTreshold) {
+      return 18.0;
+    }
+
+    return 26.0;
+  }
+
+  EdgeInsets getHeroPadding(Size size) {
+    if (size.width < Utilities.size.mobileWidthTreshold) {
+      return const EdgeInsets.only(
+        left: 16.0,
+        right: 16.0,
+        top: 36.0,
+        bottom: 10.0,
+      );
+    }
+
+    if (size.width < 1000.0) {
+      return const EdgeInsets.only(
+        left: 42.0,
+        top: 36.0,
+        bottom: 10.0,
+      );
+    }
+
+    return const EdgeInsets.only(
+      left: 200.0,
+      top: 0.0,
+      bottom: 10.0,
     );
   }
 

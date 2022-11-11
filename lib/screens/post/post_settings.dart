@@ -19,6 +19,7 @@ class PostSettings extends StatelessWidget {
     required this.language,
     this.confirmDelete = false,
     this.hasCover = false,
+    this.isMobileSize = false,
     this.show = false,
     this.onLanguageChanged,
     this.onVisibilitySelected,
@@ -31,6 +32,9 @@ class PostSettings extends StatelessWidget {
     this.onCoverCornerTypeSelected,
     this.onTryRemoveCoverImage,
   });
+
+  /// Adapt the UI for small screens if this is true.
+  final bool isMobileSize;
 
   /// Show this widget if true.
   /// Settings is hidden by default.
@@ -96,7 +100,7 @@ class PostSettings extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (!show) {
-      return SliverToBoxAdapter(child: Container());
+      return const SliverToBoxAdapter();
     }
 
     const double dividerHeight = 60.0;
@@ -136,8 +140,8 @@ class PostSettings extends StatelessWidget {
                     Text(
                       "settings".tr().toUpperCase(),
                       style: Utilities.fonts.body(
-                        textStyle: const TextStyle(
-                          fontSize: 42.0,
+                        textStyle: TextStyle(
+                          fontSize: isMobileSize ? 24.0 : 42.0,
                           fontWeight: FontWeight.w600,
                         ),
                       ),

@@ -10,18 +10,21 @@ import 'package:rootasjey/types/enums/enum_project_item_action.dart';
 import 'package:rootasjey/types/intents/next_intent.dart';
 import 'package:rootasjey/types/intents/previous_intent.dart';
 import 'package:rootasjey/types/project.dart';
+import 'package:unicons/unicons.dart';
 
 class ProjectsPageBody extends StatelessWidget {
   const ProjectsPageBody({
     super.key,
-    this.onTapProject,
     required this.projects,
     required this.projectPopupMenuItems,
     required this.swipeController,
     required this.windowSize,
     required this.fab,
-    this.onPopupMenuItemSelected,
     this.canManage = false,
+    this.onNextProject,
+    this.onPopupMenuItemSelected,
+    this.onPreviousProject,
+    this.onTapProject,
   });
 
   /// True if the current authenticated user can manage projects.
@@ -33,6 +36,12 @@ class ProjectsPageBody extends StatelessWidget {
     int,
     Project,
   )? onPopupMenuItemSelected;
+
+  /// Callback fired when we want to navigate to the next project.
+  final void Function()? onNextProject;
+
+  /// Callback fired when we want to navigate to the previous project.
+  final void Function()? onPreviousProject;
 
   /// Callback fired after tapping on a project.
   final void Function(Project project)? onTapProject;
@@ -54,6 +63,12 @@ class ProjectsPageBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isMobileSize =
+        windowSize.width < Utilities.size.mobileWidthTreshold;
+
+    final double swiperHeight =
+        isMobileSize ? windowSize.width - 60.0 : windowSize.height - 300.0;
+
     return Shortcuts(
       shortcuts: const <SingleActivator, Intent>{
         SingleActivator(LogicalKeyboardKey.arrowLeft): PreviousIntent(),
@@ -72,9 +87,9 @@ class ProjectsPageBody extends StatelessWidget {
           floatingActionButton: fab,
           body: CustomScrollView(
             slivers: [
-              const ApplicationBar(
+              ApplicationBar(
                 padding: EdgeInsets.only(
-                  left: 90.0,
+                  left: isMobileSize ? 0.0 : 90.0,
                   top: 16.0,
                 ),
               ),
@@ -111,7 +126,7 @@ class ProjectsPageBody extends StatelessWidget {
                     milliseconds: Utilities.ui.getNextAnimationDelay(),
                   ),
                   child: SizedBox(
-                    height: windowSize.height - 300.0,
+                    height: swiperHeight,
                     child: Swiper(
                       loop: false,
                       controller: swipeController,
@@ -121,10 +136,12 @@ class ProjectsPageBody extends StatelessWidget {
                           activeColor: Colors.amber,
                         ),
                       ),
-                      control: const SwiperControl(
-                        color: Colors.amber,
-                        padding: EdgeInsets.all(24.0),
-                      ),
+                      control: isMobileSize
+                          ? null
+                          : const SwiperControl(
+                              color: Colors.amber,
+                              padding: EdgeInsets.all(24.0),
+                            ),
                       itemBuilder: (BuildContext context, int index) {
                         final Project project = projects.elementAt(index);
 
@@ -135,17 +152,64 @@ class ProjectsPageBody extends StatelessWidget {
                           project: project,
                           popupMenuEntries: projectPopupMenuItems,
                           onPopupMenuItemSelected: onPopupMenuItemSelected,
+                          compact: isMobileSize,
                         );
                       },
                       itemCount: projects.length,
-                      viewportFraction: 0.5,
+                      viewportFraction: isMobileSize ? 0.9 : 0.5,
                       scale: 0.6,
                     ),
                   ),
                 ),
               ),
+              mobileControls(context, isMobileSize),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget mobileControls(BuildContext context, bool isMobileSize) {
+    final Color? iconColor =
+        Theme.of(context).textTheme.bodyText2?.color?.withOpacity(0.6);
+
+    if (!isMobileSize || projects.length < 2) {
+      return const SliverToBoxAdapter();
+    }
+
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          children: [
+            Wrap(
+              spacing: 12.0,
+              children: [
+                IconButton(
+                  onPressed: onPreviousProject,
+                  icon: Icon(UniconsLine.arrow_left, color: iconColor),
+                ),
+                IconButton(
+                  onPressed: onNextProject,
+                  icon: Icon(UniconsLine.arrow_right, color: iconColor),
+                ),
+              ],
+            ),
+            Opacity(
+              opacity: 0.4,
+              child: Text(
+                "project_carrousel_mobile_swipe".tr(),
+                textAlign: TextAlign.center,
+                style: Utilities.fonts.body(
+                  textStyle: const TextStyle(
+                    fontSize: 14.0,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

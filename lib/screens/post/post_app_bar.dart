@@ -14,6 +14,7 @@ class PostAppBar extends StatefulWidget {
     required this.showTitle,
     required this.textTitle,
     this.onTapSettings,
+    this.onTapTitle,
   });
 
   /// Used to handle settings button icon animation.
@@ -25,6 +26,9 @@ class PostAppBar extends StatefulWidget {
 
   /// Callback fired in order to show the settings panel.
   final void Function()? onTapSettings;
+
+  /// Callback usally fired to scroll to top of the page.
+  final void Function()? onTapTitle;
 
   /// App bar title value.
   final String textTitle;
@@ -58,12 +62,15 @@ class _PostAppBarState extends State<PostAppBar> with AnimationMixin {
       title: widget.showTitle
           ? Padding(
               padding: const EdgeInsets.only(top: 8.0),
-              child: Text(
-                widget.textTitle,
-                style: Utilities.fonts.body(
-                  textStyle: const TextStyle(
-                    fontSize: 16.0,
-                    fontWeight: FontWeight.w600,
+              child: InkWell(
+                onTap: widget.onTapTitle,
+                child: Text(
+                  widget.textTitle,
+                  style: Utilities.fonts.body(
+                    textStyle: const TextStyle(
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
               ),

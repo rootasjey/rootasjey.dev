@@ -130,15 +130,16 @@ class _PostPageState extends ConsumerState<PostPage> with UiLoggy {
     final UserRights rights = userFirestore?.rights ?? const UserRights();
 
     final bool canManagePosts = rights.managePosts;
-    final bool isMobileSize = Utilities.size.isMobileSize(context);
+    const double maxWidth = 640.0;
+    final Size windowSize = MediaQuery.of(context).size;
+    final bool isMobileSize =
+        windowSize.width < Utilities.size.mobileWidthTreshold;
 
     if (_deleting) {
       return LoadingView.scaffold(
         message: "Deleting ${_post.name}...",
       );
     }
-
-    const double maxWidth = 640.0;
 
     return Scaffold(
       floatingActionButton: fab(show: canManagePosts),
@@ -155,17 +156,19 @@ class _PostPageState extends ConsumerState<PostPage> with UiLoggy {
                   textTitle: _post.name,
                   showSettings: _showSettings,
                   onTapSettings: canManagePosts ? onTapSettings : null,
+                  onTapTitle: onTapTitle,
                 ),
                 PostSettings(
                   confirmDelete: _confirmDeletePost,
                   cover: _post.cover,
                   hasCover: _post.cover.storagePath.isNotEmpty,
+                  isMobileSize: isMobileSize,
                   language: _post.language,
                   onCancelDeletePost: onCancelDeletePost,
                   onLanguageChanged: tryUpdateLanguage,
                   onCloseSetting: onCloseSetting,
                   onConfirmDeletePost: onConfirmDeletePost,
-                  onCoverWidthTypeSelected: tryUpdateCoverWithType,
+                  onCoverWidthTypeSelected: tryUpdateCoverWidthType,
                   onCoverCornerTypeSelected: tryUpdateCoverCornerType,
                   onTryDeletePost: tryDeletePost,
                   onTryAddCoverImage: tryUploadCover,
@@ -197,10 +200,12 @@ class _PostPageState extends ConsumerState<PostPage> with UiLoggy {
                   onRemoveTag: onRemoveTag,
                 ),
                 PostCover(
-                  showControlButtons: canManagePosts,
                   cover: _post.cover,
+                  isMobileSize: isMobileSize,
                   onTryAddCoverImage: tryUploadCover,
                   onTryRemoveCoverImage: tryRemoveCoverImage,
+                  showControlButtons: canManagePosts,
+                  windowSize: windowSize,
                 ),
                 PostPageBody(
                   canManagePosts: canManagePosts,
@@ -270,6 +275,87 @@ class _PostPageState extends ConsumerState<PostPage> with UiLoggy {
     );
   }
 
+  Widget fab({required bool show}) {
+    if (show) {
+      return FloatingActionButton.extended(
+        onPressed: () {
+          setState(() => _editing = !_editing);
+        },
+        extendedPadding: const EdgeInsets.symmetric(
+          horizontal: 32.0,
+        ),
+        foregroundColor: Colors.white,
+        backgroundColor: Colors.pink,
+        label: Text(
+          _editing ? "render" : "edit".tr(),
+          style: Utilities.fonts.body(
+            textStyle: const TextStyle(
+              fontSize: 16.0,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+        icon: _editing
+            ? const Icon(UniconsLine.eye)
+            : const Icon(UniconsLine.edit_alt),
+      );
+    }
+
+    return FabToTop(
+      hideIfAtTop: _hideFab,
+      fabIcon: const Icon(UniconsLine.arrow_up),
+      pageScrollController: _pageScrollController,
+    );
+  }
+
+  void contentListener() {
+    _contentUpdateTimer?.cancel();
+    _contentUpdateTimer = Timer(
+      const Duration(seconds: 1),
+      trySaveContent,
+    );
+  }
+
+  void confirmDeletePost() {
+    Utilities.ui.showAdaptiveDialog(
+      context,
+      builder: (BuildContext context) {
+        return DeleteDialog(
+          descriptionValue: "This action is irreversible",
+          titleValue: "Delete this post?",
+          onValidate: tryDeletePost,
+        );
+      },
+    );
+  }
+
+  Future<void> fetchContent() async {
+    try {
+      final Reference fileStorage = FirebaseStorage.instance
+          .ref()
+          .child("$_collectionName/${widget.postId}/post.md");
+
+      final Uint8List? data = await fileStorage.getData();
+
+      if (data == null) {
+        _content = "Start typing here...";
+        return;
+      }
+
+      _content = utf8.decode(data, allowMalformed: true);
+
+      if (_content.isEmpty) {
+        _content = "Start typing here...";
+      }
+
+      setState(() {
+        _contentController.text = _content;
+      });
+    } catch (error) {
+      loggy.error(error);
+    }
+  }
+
   Future<void> fetchMetadata() async {
     setState(() => _loading = true);
 
@@ -305,30 +391,237 @@ class _PostPageState extends ConsumerState<PostPage> with UiLoggy {
     setState(() => _loading = false);
   }
 
-  Future<void> fetchContent() async {
-    try {
-      final Reference fileStorage = FirebaseStorage.instance
-          .ref()
-          .child("$_collectionName/${widget.postId}/post.md");
+  /// Show or hide the floating action button based on the scroll Y offset.
+  void handleFabVisibility(double offset) {
+    if (_editing) {
+      return;
+    }
 
-      final Uint8List? data = await fileStorage.getData();
-
-      if (data == null) {
-        _content = "Start typing here...";
+    if (offset <= 60) {
+      if (_hideFab) {
         return;
       }
 
-      _content = utf8.decode(data, allowMalformed: true);
+      setState(() => _hideFab = true);
+      return;
+    }
 
-      if (_content.isEmpty) {
-        _content = "Start typing here...";
+    if (!_hideFab) {
+      return;
+    }
+
+    setState(() => _hideFab = false);
+  }
+
+  void listenToDocument(DocumentReference<Map<String, dynamic>> query) {
+    _postSubscription?.cancel();
+    _postSubscription = query.snapshots().skip(1).listen((snapshot) {
+      if (!snapshot.exists) {
+        _postSubscription?.cancel();
+        return;
+      }
+
+      final Json? data = snapshot.data();
+      if (data == null) {
+        return;
+      }
+
+      if (!mounted) {
+        return;
       }
 
       setState(() {
-        _contentController.text = _content;
+        data["id"] = snapshot.id;
+        _post = Post.fromMap(data);
+
+        if (_loading && _post.storagePath.isNotEmpty) {
+          _loading = false;
+        }
+      });
+    }, onError: (error) {
+      loggy.error(error);
+    }, onDone: () {
+      _postSubscription?.cancel();
+    });
+  }
+
+  /// Show or hide app bar title based on the scroll Y offset.
+  void handleAppBarTitleVisibility(double offset) {
+    if (offset <= 60) {
+      if (!_showAppBarTitle) {
+        return;
+      }
+
+      setState(() {
+        _showAppBarTitle = false;
+      });
+
+      return;
+    }
+
+    if (_showAppBarTitle) {
+      return;
+    }
+
+    setState(() {
+      _showAppBarTitle = true;
+    });
+  }
+
+  /// React to scroll events.
+  void onScroll(double offset) {
+    handleAppBarTitleVisibility(offset);
+    handleFabVisibility(offset);
+  }
+
+  void onNameChanged(String? value) {
+    _metadataUpdateTimer?.cancel();
+    _metadataUpdateTimer = Timer(
+      const Duration(seconds: 1),
+      tryUpdatePostName,
+    );
+  }
+
+  void onTapTitle() {
+    _pageScrollController.animateTo(
+      0,
+      duration: const Duration(milliseconds: 250),
+      curve: Curves.bounceIn,
+    );
+  }
+
+  /// Cancel delete confirmation about this post.
+  void onCancelDeletePost() {
+    setState(() => _confirmDeletePost = false);
+  }
+
+  /// Hide settings panel.
+  void onCloseSetting() {
+    setState(() => _showSettings = false);
+  }
+
+  void onContentChanged(String content) {
+    _content = content;
+
+    _contentUpdateTimer?.cancel();
+    _contentUpdateTimer = Timer(
+      const Duration(seconds: 1),
+      trySaveContent,
+    );
+  }
+
+  /// Show delete confirmation UI.
+  void onConfirmDeletePost() {
+    setState(() => _confirmDeletePost = true);
+  }
+
+  void onInputTagChanged(String tag) {
+    String editedTag = tag;
+
+    if (tag.contains(",") || tag.contains(";")) {
+      editedTag = tag.replaceAll(",", "").replaceAll(";", "").trim();
+
+      if (editedTag.isEmpty) {
+        return;
+      }
+
+      _tagInputController.clear();
+      tryUpdateTags(editedTag);
+    }
+
+    if (_verbalExp.hasMatch(tag)) {
+      editedTag = tag.trim();
+
+      _tagInputController.clear();
+      tryUpdateTags(editedTag);
+    }
+  }
+
+  void onRemoveTag(String tag) async {
+    final List<String> initialTags = _post.tags;
+
+    _post = _post.copyWith(
+      tags: _post.tags..remove(tag),
+    );
+
+    try {
+      await FirebaseFirestore.instance
+          .collection(_collectionName)
+          .doc(_post.id)
+          .update({
+        "tags": _post.listToMapStringBool(),
       });
     } catch (error) {
       loggy.error(error);
+      _post = _post.copyWith(tags: initialTags);
+    }
+  }
+
+  void onTapSettings() {
+    if (!_showSettings) {
+      _pageScrollController.animateTo(
+        0.0,
+        curve: Curves.decelerate,
+        duration: const Duration(
+          milliseconds: 250,
+        ),
+      );
+    }
+
+    setState(() => _showSettings = !_showSettings);
+  }
+
+  void onToggleAddTagVisibility() {
+    setState(() => _showAddTag = !_showAddTag);
+  }
+
+  void tryDeletePost() async {
+    setState((() => _deleting = true));
+
+    try {
+      await FirebaseFirestore.instance
+          .collection(_collectionName)
+          .doc(widget.postId)
+          .delete();
+
+      if (!mounted) {
+        return;
+      }
+
+      Beamer.of(context).beamBack();
+    } catch (error) {
+      loggy.error(error);
+    } finally {
+      setState(() => _deleting = false);
+    }
+  }
+
+  /// Remove post's cover image and delete storage objects.
+  void tryRemoveCoverImage() async {
+    final String prevStoragePath = _post.storagePath;
+
+    setState(() {
+      _post = _post.copyWith(
+          cover: _post.cover.copyWith(
+        storagePath: "",
+      ));
+    });
+
+    try {
+      await FirebaseFirestore.instance
+          .collection(_collectionName)
+          .doc(_post.id)
+          .update({
+        "cover.storage_path": "",
+      });
+    } catch (error) {
+      loggy.error(error);
+      setState(() {
+        _post = _post.copyWith(
+            cover: _post.cover.copyWith(
+          storagePath: prevStoragePath,
+        ));
+      });
     }
   }
 
@@ -426,117 +719,6 @@ class _PostPageState extends ConsumerState<PostPage> with UiLoggy {
     }
   }
 
-  void onNameChanged(String? value) {
-    _metadataUpdateTimer?.cancel();
-    _metadataUpdateTimer = Timer(
-      const Duration(seconds: 1),
-      tryUpdatePostName,
-    );
-  }
-
-  void tryUpdatePostVisibility(
-    EnumContentVisibility visibility,
-    bool selected,
-  ) async {
-    if (!selected) {
-      return;
-    }
-
-    setState(() {
-      _saving = true;
-      _post = _post.copyWith(
-        visibility: visibility,
-      );
-    });
-
-    try {
-      await FirebaseFirestore.instance
-          .collection(_collectionName)
-          .doc(_post.id)
-          .update({
-        "visibility": visibility.name,
-      });
-    } catch (error) {
-      loggy.error(error);
-    } finally {
-      setState(() => _saving = false);
-    }
-  }
-
-  void contentListener() {
-    _contentUpdateTimer?.cancel();
-    _contentUpdateTimer = Timer(
-      const Duration(seconds: 1),
-      trySaveContent,
-    );
-  }
-
-  void confirmDeletePost() {
-    Utilities.ui.showAdaptiveDialog(
-      context,
-      builder: (BuildContext context) {
-        return DeleteDialog(
-          descriptionValue: "This action is irreversible",
-          titleValue: "Delete this post?",
-          onValidate: tryDeletePost,
-        );
-      },
-    );
-  }
-
-  void tryDeletePost() async {
-    setState((() => _deleting = true));
-
-    try {
-      await FirebaseFirestore.instance
-          .collection(_collectionName)
-          .doc(widget.postId)
-          .delete();
-
-      if (!mounted) {
-        return;
-      }
-
-      Beamer.of(context).beamBack();
-    } catch (error) {
-      loggy.error(error);
-    } finally {
-      setState(() => _deleting = false);
-    }
-  }
-
-  void listenToDocument(DocumentReference<Map<String, dynamic>> query) {
-    _postSubscription?.cancel();
-    _postSubscription = query.snapshots().skip(1).listen((snapshot) {
-      if (!snapshot.exists) {
-        _postSubscription?.cancel();
-        return;
-      }
-
-      final Json? data = snapshot.data();
-      if (data == null) {
-        return;
-      }
-
-      if (!mounted) {
-        return;
-      }
-
-      setState(() {
-        data["id"] = snapshot.id;
-        _post = Post.fromMap(data);
-
-        if (_loading && _post.storagePath.isNotEmpty) {
-          _loading = false;
-        }
-      });
-    }, onError: (error) {
-      loggy.error(error);
-    }, onDone: () {
-      _postSubscription?.cancel();
-    });
-  }
-
   void tryUploadCover() async {
     final String userId =
         ref.read(AppState.userProvider).firestoreUser?.id ?? "";
@@ -551,140 +733,8 @@ class _PostPageState extends ConsumerState<PostPage> with UiLoggy {
         );
   }
 
-  /// Show or hide app bar title based on the scroll Y offset.
-  void handleAppBarTitleVisibility(double offset) {
-    if (offset <= 60) {
-      if (!_showAppBarTitle) {
-        return;
-      }
-
-      setState(() {
-        _showAppBarTitle = false;
-      });
-
-      return;
-    }
-
-    if (_showAppBarTitle) {
-      return;
-    }
-
-    setState(() {
-      _showAppBarTitle = true;
-    });
-  }
-
-  /// React to scroll events.
-  void onScroll(double offset) {
-    handleAppBarTitleVisibility(offset);
-    handleFabVisibility(offset);
-  }
-
-  /// Show or hide the floating action button based on the scroll Y offset.
-  void handleFabVisibility(double offset) {
-    if (_editing) {
-      return;
-    }
-
-    if (offset <= 60) {
-      if (_hideFab) {
-        return;
-      }
-
-      setState(() => _hideFab = true);
-      return;
-    }
-
-    if (!_hideFab) {
-      return;
-    }
-
-    setState(() => _hideFab = false);
-  }
-
-  void onToggleAddTagVisibility() {
-    setState(() => _showAddTag = !_showAddTag);
-  }
-
-  void onInputTagChanged(String tag) {
-    String editedTag = tag;
-
-    if (tag.contains(",") || tag.contains(";")) {
-      editedTag = tag.replaceAll(",", "").replaceAll(";", "").trim();
-
-      if (editedTag.isEmpty) {
-        return;
-      }
-
-      _tagInputController.clear();
-      tryUpdateTags(editedTag);
-    }
-
-    if (_verbalExp.hasMatch(tag)) {
-      editedTag = tag.trim();
-
-      _tagInputController.clear();
-      tryUpdateTags(editedTag);
-    }
-  }
-
-  void tryUpdateTags(String tag) async {
-    final List<String> initialTags = _post.tags;
-
-    _post = _post.copyWith(
-      tags: _post.tags..add(tag),
-    );
-
-    try {
-      await FirebaseFirestore.instance
-          .collection(_collectionName)
-          .doc(_post.id)
-          .update({
-        "tags": _post.listToMapStringBool(),
-      });
-    } catch (error) {
-      loggy.error(error);
-      _post = _post.copyWith(tags: initialTags);
-    }
-  }
-
-  void onRemoveTag(String tag) async {
-    final List<String> initialTags = _post.tags;
-
-    _post = _post.copyWith(
-      tags: _post.tags..remove(tag),
-    );
-
-    try {
-      await FirebaseFirestore.instance
-          .collection(_collectionName)
-          .doc(_post.id)
-          .update({
-        "tags": _post.listToMapStringBool(),
-      });
-    } catch (error) {
-      loggy.error(error);
-      _post = _post.copyWith(tags: initialTags);
-    }
-  }
-
-  /// Hide settings panel.
-  void onCloseSetting() {
-    setState(() => _showSettings = false);
-  }
-
-  /// Show delete confirmation UI.
-  void onConfirmDeletePost() {
-    setState(() => _confirmDeletePost = true);
-  }
-
-  /// Cancel delete confirmation about this post.
-  void onCancelDeletePost() {
-    setState(() => _confirmDeletePost = false);
-  }
-
   /// Update cover's width.
-  void tryUpdateCoverWithType(
+  void tryUpdateCoverWidthType(
     EnumCoverWidth coverWidthType,
     bool selected,
   ) async {
@@ -723,7 +773,56 @@ class _PostPageState extends ConsumerState<PostPage> with UiLoggy {
     }
   }
 
-  /// Update cover corners;
+  void tryUpdatePostVisibility(
+    EnumContentVisibility visibility,
+    bool selected,
+  ) async {
+    if (!selected) {
+      return;
+    }
+
+    setState(() {
+      _saving = true;
+      _post = _post.copyWith(
+        visibility: visibility,
+      );
+    });
+
+    try {
+      await FirebaseFirestore.instance
+          .collection(_collectionName)
+          .doc(_post.id)
+          .update({
+        "visibility": visibility.name,
+      });
+    } catch (error) {
+      loggy.error(error);
+    } finally {
+      setState(() => _saving = false);
+    }
+  }
+
+  void tryUpdateTags(String tag) async {
+    final List<String> initialTags = _post.tags;
+
+    _post = _post.copyWith(
+      tags: _post.tags..add(tag),
+    );
+
+    try {
+      await FirebaseFirestore.instance
+          .collection(_collectionName)
+          .doc(_post.id)
+          .update({
+        "tags": _post.listToMapStringBool(),
+      });
+    } catch (error) {
+      loggy.error(error);
+      _post = _post.copyWith(tags: initialTags);
+    }
+  }
+
+  /// Update cover corners.
   void tryUpdateCoverCornerType(
     EnumCoverCorner coverCornerType,
     bool selected,
@@ -761,91 +860,5 @@ class _PostPageState extends ConsumerState<PostPage> with UiLoggy {
     } finally {
       setState(() => _saving = false);
     }
-  }
-
-  /// Remove post's cover image and delete storage objects.
-  void tryRemoveCoverImage() async {
-    final String prevStoragePath = _post.storagePath;
-
-    setState(() {
-      _post = _post.copyWith(
-          cover: _post.cover.copyWith(
-        storagePath: "",
-      ));
-    });
-
-    try {
-      await FirebaseFirestore.instance
-          .collection(_collectionName)
-          .doc(_post.id)
-          .update({
-        "cover.storage_path": "",
-      });
-    } catch (error) {
-      loggy.error(error);
-      setState(() {
-        _post = _post.copyWith(
-            cover: _post.cover.copyWith(
-          storagePath: prevStoragePath,
-        ));
-      });
-    }
-  }
-
-  void onContentChanged(String content) {
-    _content = content;
-
-    _contentUpdateTimer?.cancel();
-    _contentUpdateTimer = Timer(
-      const Duration(seconds: 1),
-      trySaveContent,
-    );
-  }
-
-  Widget fab({required bool show}) {
-    if (show) {
-      FloatingActionButton.extended(
-        onPressed: () {
-          setState(() => _editing = !_editing);
-        },
-        extendedPadding: const EdgeInsets.symmetric(
-          horizontal: 32.0,
-        ),
-        foregroundColor: Colors.white,
-        backgroundColor: Colors.pink,
-        label: Text(
-          _editing ? "render" : "edit".tr(),
-          style: Utilities.fonts.body(
-            textStyle: const TextStyle(
-              fontSize: 16.0,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ),
-        icon: _editing
-            ? const Icon(UniconsLine.eye)
-            : const Icon(UniconsLine.edit_alt),
-      );
-    }
-
-    return FabToTop(
-      hideIfAtTop: _hideFab,
-      fabIcon: const Icon(UniconsLine.arrow_up),
-      pageScrollController: _pageScrollController,
-    );
-  }
-
-  void onTapSettings() {
-    if (!_showSettings) {
-      _pageScrollController.animateTo(
-        0.0,
-        curve: Curves.decelerate,
-        duration: const Duration(
-          milliseconds: 250,
-        ),
-      );
-    }
-
-    setState(() => _showSettings = !_showSettings);
   }
 }

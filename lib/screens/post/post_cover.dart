@@ -13,7 +13,12 @@ class PostCover extends StatefulWidget {
     this.onTryAddCoverImage,
     this.onTryRemoveCoverImage,
     this.showControlButtons = false,
+    this.isMobileSize = false,
+    this.windowSize = Size.zero,
   });
+
+  /// Adapt the UI for small screens if this is true.
+  final bool isMobileSize;
 
   /// Show edit and remove buttons if this is true.
   final bool showControlButtons;
@@ -27,6 +32,8 @@ class PostCover extends StatefulWidget {
 
   /// Callback fired to remove the project/post cove;
   final void Function()? onTryRemoveCoverImage;
+
+  final Size windowSize;
 
   @override
   State<PostCover> createState() => _PostCoverState();
@@ -49,7 +56,9 @@ class _PostCoverState extends State<PostCover> {
   }
 
   Widget fullWidthWidget(BuildContext context) {
-    final double height = MediaQuery.of(context).size.height;
+    final Size windowSize = widget.windowSize;
+    final double height =
+        widget.isMobileSize ? windowSize.width : windowSize.height;
 
     return SliverToBoxAdapter(
       child: InkWell(

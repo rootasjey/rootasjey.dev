@@ -137,6 +137,8 @@ class _ProjectsPageState extends ConsumerState<ProjectsPage> with UiLoggy {
       child: ProjectsPageBody(
         canManage: canManageProjects,
         fab: fab(show: canManageProjects),
+        onNextProject: onNextProject,
+        onPreviousProject: onPreviousProject,
         onPopupMenuItemSelected: onPopupMenuItemSelected,
         onTapProject: onTapProject,
         projects: _projects,
@@ -498,5 +500,13 @@ class _ProjectsPageState extends ConsumerState<ProjectsPage> with UiLoggy {
     }
 
     Beamer.of(context, root: true).beamToNamed(HomeLocation.route);
+  }
+
+  void onNextProject() {
+    _swipeController.next();
+  }
+
+  void onPreviousProject() {
+    _swipeController.previous();
   }
 }

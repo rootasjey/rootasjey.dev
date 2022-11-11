@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:rootasjey/components/application_bar.dart';
@@ -14,14 +15,14 @@ import 'package:sliver_tools/sliver_tools.dart';
 class PostsPageBody extends StatelessWidget {
   const PostsPageBody({
     super.key,
-    this.onTapPost,
     required this.posts,
     required this.postPopupMenuItems,
     required this.windowSize,
     required this.fab,
-    this.onPopupMenuItemSelected,
     this.canManage = false,
     this.onCancel,
+    this.onPopupMenuItemSelected,
+    this.onTapPost,
   });
 
   /// True if the current authenticated user can manage projects.
@@ -55,6 +56,9 @@ class PostsPageBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const double maxCrossAxisExtent = 800.0;
+    final bool isMobileSize =
+        windowSize.width < Utilities.size.mobileWidthTreshold;
+    final double maxWidth = isMobileSize ? windowSize.width - 40.0 : 580.0;
 
     return Shortcuts(
       shortcuts: const <SingleActivator, Intent>{
@@ -71,27 +75,24 @@ class PostsPageBody extends StatelessWidget {
           floatingActionButton: fab,
           body: CustomScrollView(
             slivers: [
-              const ApplicationBar(
-                padding: EdgeInsets.only(
-                  left: 120.0,
-                  top: 16.0,
-                ),
+              ApplicationBar(
+                padding: getAppBarPadding(windowSize),
               ),
-              SliverCrossAxisConstrained(
-                maxCrossAxisExtent: maxCrossAxisExtent,
-                alignment: -0.28,
-                child: SliverToBoxAdapter(
-                  child: FadeInY(
-                    beginY: Utilities.ui.getBeginY(),
-                    delay: Duration(
-                      milliseconds: Utilities.ui.getNextAnimationDelay(
-                        reset: true,
+              SliverPadding(
+                padding: getTitlePadding(windowSize),
+                sliver: SliverCrossAxisConstrained(
+                  maxCrossAxisExtent: maxCrossAxisExtent,
+                  alignment: -0.28,
+                  child: SliverToBoxAdapter(
+                    child: FadeInY(
+                      beginY: Utilities.ui.getBeginY(),
+                      delay: Duration(
+                        milliseconds: Utilities.ui.getNextAnimationDelay(
+                          reset: true,
+                        ),
                       ),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 120.0),
                       child: Text(
-                        "Posts".toUpperCase(),
+                        "posts".tr().toUpperCase(),
                         style: Utilities.fonts.body2(
                           textStyle: const TextStyle(
                             fontSize: 24.0,
@@ -120,6 +121,8 @@ class PostsPageBody extends StatelessWidget {
                           onTap: onTapPost != null
                               ? () => onTapPost?.call(post)
                               : null,
+                          maxWidth: maxWidth,
+                          compact: isMobileSize,
                         );
                       },
                       childCount: posts.length,
@@ -132,5 +135,27 @@ class PostsPageBody extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  EdgeInsets getAppBarPadding(Size size) {
+    if (size.width < 1000.0) {
+      return const EdgeInsets.only(
+        left: 0.0,
+        top: 16.0,
+      );
+    }
+
+    return const EdgeInsets.only(
+      left: 120.0,
+      top: 16.0,
+    );
+  }
+
+  EdgeInsets getTitlePadding(Size size) {
+    if (size.width < 1000.0) {
+      return const EdgeInsets.only(left: 24.0, top: 64.0);
+    }
+
+    return const EdgeInsets.only(top: 120.0);
   }
 }

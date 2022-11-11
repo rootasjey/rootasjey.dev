@@ -8,32 +8,23 @@ import 'package:rootasjey/router/locations/cv_location.dart';
 import 'package:unicons/unicons.dart';
 
 class AboutMe extends StatelessWidget {
-  const AboutMe({super.key});
+  const AboutMe({
+    super.key,
+    this.size = Size.zero,
+  });
+
+  /// Window's size.
+  final Size size;
 
   @override
   Widget build(BuildContext context) {
-    const double height = 1.2;
-    final TextStyle baseStyle = Utilities.fonts.body2(
-      textStyle: const TextStyle(
-        fontSize: 42.0,
-        fontWeight: FontWeight.w300,
-        height: height,
-      ),
-    );
-
-    final TextStyle boldTexStyle = Utilities.fonts.body2(
-      textStyle: const TextStyle(
-        fontSize: 42.0,
-        fontWeight: FontWeight.w600,
-        height: height,
-      ),
-    );
-
     return SliverList(
       delegate: SliverChildListDelegate.fixed([
         Container(
           padding: const EdgeInsets.only(
             top: 100.0,
+            left: 12.0,
+            right: 12.0,
           ),
           child: Column(
             children: [
@@ -112,121 +103,114 @@ class AboutMe extends StatelessWidget {
                       ),
                     ),
                   ),
+                  textAlign: getTitleAlign(),
                 ),
               ),
-              Opacity(
-                opacity: 0.8,
-                child: Container(
-                  width: 700.0,
-                  padding: const EdgeInsets.only(top: 42.0),
-                  child: Text.rich(
-                    TextSpan(
-                      text: "about_me.1".tr(),
-                      children: [
-                        TextSpan(
-                          text: "about_me.2".tr(),
-                          style: boldTexStyle.merge(
-                            const TextStyle(
-                              color: Colors.amber,
-                            ),
-                          ),
-                        ),
-                        TextSpan(
-                          text: "about_me.3".tr(),
-                        ),
-                        TextSpan(
-                          text: "about_me.4".tr(),
-                          style: boldTexStyle.merge(
-                            const TextStyle(
-                              color: Colors.blue,
-                            ),
-                          ),
-                        ),
-                        TextSpan(
-                          text: "about_me.5".tr(),
-                          style: Utilities.fonts.body2(
-                            textStyle: boldTexStyle.merge(
+              Padding(
+                padding: const EdgeInsets.only(top: 42.0),
+                child: Opacity(
+                  opacity: 0.8,
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 700.0),
+                    child: Text.rich(
+                      TextSpan(
+                        text: "about_me.1".tr(),
+                        children: [
+                          TextSpan(
+                            text: "about_me.2".tr(),
+                            style: getBoldStyle().merge(
                               const TextStyle(
-                                color: Colors.green,
+                                color: Colors.amber,
                               ),
                             ),
                           ),
-                        ),
-                        TextSpan(
-                          text: "about_me.6".tr(),
-                          style: boldTexStyle,
-                        ),
-                        TextSpan(
-                          text: "about_me.7".tr(),
-                        ),
-                        TextSpan(
-                          text: "about_me.8".tr(),
-                          style: boldTexStyle,
-                        ),
-                        TextSpan(
-                          text: "about_me.9".tr(),
-                        ),
-                        TextSpan(
-                          text: "about_me.10".tr(),
-                          style: boldTexStyle,
-                        ),
-                        TextSpan(
-                          text: "about_me.11".tr(),
-                        ),
-                        const WidgetSpan(
-                          child: Icon(UniconsLine.heart, color: Colors.pink),
-                          alignment: PlaceholderAlignment.middle,
-                        ),
-                        TextSpan(
-                          text: "about_me.12".tr(),
-                        ),
-                        TextSpan(
-                          text: "about_me.13".tr(),
-                          style: boldTexStyle,
-                        ),
-                        TextSpan(
-                          text: "about_me.14".tr(),
-                        ),
-                        TextSpan(
-                          text: "about_me.15".tr(),
-                          style: boldTexStyle.merge(
-                            const TextStyle(
-                              color: Colors.red,
+                          TextSpan(
+                            text: "about_me.3".tr(),
+                          ),
+                          TextSpan(
+                            text: "about_me.4".tr(),
+                            style: getBoldStyle().merge(
+                              const TextStyle(
+                                color: Colors.blue,
+                              ),
                             ),
                           ),
-                        ),
-                        TextSpan(
-                          text: "about_me.16".tr(),
-                        ),
-                      ],
+                          TextSpan(
+                            text: "about_me.5".tr(),
+                            style: Utilities.fonts.body2(
+                              textStyle: getBoldStyle().merge(
+                                const TextStyle(
+                                  color: Colors.green,
+                                ),
+                              ),
+                            ),
+                          ),
+                          TextSpan(
+                            text: "about_me.6".tr(),
+                            style: getBoldStyle(),
+                          ),
+                          TextSpan(
+                            text: "about_me.7".tr(),
+                          ),
+                          TextSpan(
+                            text: "about_me.8".tr(),
+                            style: getBoldStyle(),
+                          ),
+                          TextSpan(
+                            text: "about_me.9".tr(),
+                          ),
+                          TextSpan(
+                            text: "about_me.10".tr(),
+                            style: getBoldStyle(),
+                          ),
+                          TextSpan(
+                            text: "about_me.11".tr(),
+                          ),
+                          const WidgetSpan(
+                            child: Icon(UniconsLine.heart, color: Colors.pink),
+                            alignment: PlaceholderAlignment.middle,
+                          ),
+                          TextSpan(
+                            text: "about_me.12".tr(),
+                          ),
+                          TextSpan(
+                            text: "about_me.13".tr(),
+                            style: getBoldStyle(),
+                          ),
+                          TextSpan(
+                            text: "about_me.14".tr(),
+                          ),
+                          TextSpan(
+                            text: "about_me.15".tr(),
+                            style: getBoldStyle().merge(
+                              const TextStyle(
+                                color: Colors.red,
+                              ),
+                            ),
+                          ),
+                          TextSpan(
+                            text: "about_me.16".tr(),
+                          ),
+                        ],
+                      ),
+                      textAlign: getSummaryAlign(),
+                      style: getBaseStyle(),
                     ),
-                    textAlign: TextAlign.justify,
-                    style: baseStyle,
                   ),
                 ),
               ),
-              Container(
-                padding: const EdgeInsets.symmetric(vertical: 62.0),
-                width: 800.0,
-                child: const Divider(
-                  thickness: 2.0,
-                ),
-              ),
-              Container(
+              quoteDivider(),
+              Padding(
                 padding: const EdgeInsets.only(top: 10.0),
-                width: 700.0,
-                child: Opacity(
-                  opacity: 0.6,
-                  child: Align(
-                    alignment: Alignment.topRight,
-                    child: Text(
-                      "- My whole life I have reacted to things. Rarely acted.",
-                      style: Utilities.fonts.body2(
-                        textStyle: const TextStyle(
-                          fontSize: 42.0,
-                          fontWeight: FontWeight.w200,
-                          fontStyle: FontStyle.italic,
-                        ),
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 700.0),
+                  child: Opacity(
+                    opacity: 0.6,
+                    child: Align(
+                      alignment: Alignment.topRight,
+                      child: Text(
+                        "- My whole life I have reacted to things. Rarely acted.",
+                        style: getQuoteNameStyle(),
                       ),
                     ),
                   ),
@@ -234,19 +218,13 @@ class AboutMe extends StatelessWidget {
               ),
               Opacity(
                 opacity: 0.4,
-                child: SizedBox(
-                  width: 700.0,
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 700.0),
                   child: Align(
-                    alignment: Alignment.topRight,
+                    alignment: getQuoteAuthorAlign(),
                     child: Text(
                       "Isaac – Castlevania (TV series)",
-                      style: Utilities.fonts.body2(
-                        textStyle: TextStyle(
-                          color: Theme.of(context).textTheme.bodyText2?.color,
-                          fontSize: 24.0,
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
+                      style: getQuoteAuthorStyle(context),
                     ),
                   ),
                 ),
@@ -255,6 +233,125 @@ class AboutMe extends StatelessWidget {
           ),
         ),
       ]),
+    );
+  }
+
+  /// Return TextAlign for summary text.
+  TextAlign getSummaryAlign() {
+    return size.width < Utilities.size.mobileWidthTreshold
+        ? TextAlign.start
+        : TextAlign.justify;
+  }
+
+  /// Return TextAlign for title.
+  TextAlign getTitleAlign() {
+    return size.width < Utilities.size.mobileWidthTreshold
+        ? TextAlign.center
+        : TextAlign.start;
+  }
+
+  /// Return TextStyle for default text in summary.
+  TextStyle getBaseStyle() {
+    if (size.width < Utilities.size.mobileWidthTreshold) {
+      return Utilities.fonts.body2(
+        textStyle: const TextStyle(
+          fontSize: 24.0,
+          fontWeight: FontWeight.w300,
+          height: 1.2,
+        ),
+      );
+    }
+
+    return Utilities.fonts.body2(
+      textStyle: const TextStyle(
+        fontSize: 42.0,
+        fontWeight: FontWeight.w300,
+        height: 1.2,
+      ),
+    );
+  }
+
+  /// Return TextStyle for bold text in summary.
+  TextStyle getBoldStyle() {
+    if (size.width < Utilities.size.mobileWidthTreshold) {
+      return Utilities.fonts.body2(
+        textStyle: const TextStyle(
+          fontSize: 24.0,
+          fontWeight: FontWeight.w600,
+          height: 1.2,
+        ),
+      );
+    }
+
+    return Utilities.fonts.body2(
+      textStyle: const TextStyle(
+        fontSize: 42.0,
+        fontWeight: FontWeight.w600,
+        height: 1.2,
+      ),
+    );
+  }
+
+  /// Return a TextStyle for quote's name.
+  TextStyle getQuoteNameStyle() {
+    if (size.width < Utilities.size.mobileWidthTreshold) {
+      return Utilities.fonts.body2(
+        textStyle: const TextStyle(
+          fontSize: 24.0,
+          fontWeight: FontWeight.w200,
+          fontStyle: FontStyle.italic,
+        ),
+      );
+    }
+
+    return Utilities.fonts.body2(
+      textStyle: const TextStyle(
+        fontSize: 42.0,
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.italic,
+      ),
+    );
+  }
+
+  TextStyle getQuoteAuthorStyle(BuildContext context) {
+    if (size.width < Utilities.size.mobileWidthTreshold) {
+      return Utilities.fonts.body2(
+        textStyle: TextStyle(
+          color: Theme.of(context).textTheme.bodyText2?.color,
+          fontSize: 14.0,
+          fontWeight: FontWeight.w400,
+        ),
+      );
+    }
+
+    return Utilities.fonts.body2(
+      textStyle: TextStyle(
+        color: Theme.of(context).textTheme.bodyText2?.color,
+        fontSize: 24.0,
+        fontWeight: FontWeight.w400,
+      ),
+    );
+  }
+
+  Alignment getQuoteAuthorAlign() {
+    if (size.width < Utilities.size.mobileWidthTreshold) {
+      return Alignment.topLeft;
+    }
+
+    return Alignment.topRight;
+  }
+
+  Widget quoteDivider() {
+    final EdgeInsets padding = size.width < Utilities.size.mobileWidthTreshold
+        ? const EdgeInsets.symmetric(vertical: 12.0)
+        : const EdgeInsets.symmetric(vertical: 62.0);
+
+    return Container(
+      padding: padding,
+      width: 800.0,
+      child: const Divider(
+        thickness: 2.0,
+      ),
     );
   }
 }

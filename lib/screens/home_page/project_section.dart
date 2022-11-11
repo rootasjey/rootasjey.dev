@@ -7,7 +7,13 @@ import 'package:rootasjey/router/locations/projects_location.dart';
 import 'package:unicons/unicons.dart';
 
 class ProjectSection extends StatefulWidget {
-  const ProjectSection({super.key});
+  const ProjectSection({
+    super.key,
+    this.size = Size.zero,
+  });
+
+  /// Window's size.
+  final Size size;
 
   @override
   State<ProjectSection> createState() => _ProjectSectionState();
@@ -19,13 +25,12 @@ class _ProjectSectionState extends State<ProjectSection> {
 
   @override
   Widget build(BuildContext context) {
+    final double fontSize =
+        widget.size.width < Utilities.size.mobileWidthTreshold ? 24.0 : 64.0;
+
     return SliverToBoxAdapter(
       child: Container(
-        padding: const EdgeInsets.only(
-          left: 200.0,
-          top: 100.0,
-          bottom: 100.0,
-        ),
+        padding: getMargin(),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -37,7 +42,7 @@ class _ProjectSectionState extends State<ProjectSection> {
                     : _projectTitle,
                 style: Utilities.fonts.body5(
                   textStyle: TextStyle(
-                    fontSize: 64.0,
+                    fontSize: fontSize,
                     fontWeight: FontWeight.w500,
                     decorationColor: _backgroundColor,
                     decorationThickness: _projectTitle.isEmpty ? 0.0 : 6.0,
@@ -106,6 +111,22 @@ class _ProjectSectionState extends State<ProjectSection> {
           ],
         ),
       ),
+    );
+  }
+
+  EdgeInsets getMargin() {
+    if (widget.size.width < 1000.0) {
+      return const EdgeInsets.only(
+        left: 36.0,
+        top: 64.0,
+        bottom: 100.0,
+      );
+    }
+
+    return const EdgeInsets.only(
+      left: 200.0,
+      top: 100.0,
+      bottom: 100.0,
     );
   }
 

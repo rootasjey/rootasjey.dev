@@ -10,18 +10,32 @@ import 'package:unicons/unicons.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class GitHubActivities extends StatefulWidget {
-  const GitHubActivities({super.key});
+  const GitHubActivities({
+    super.key,
+    this.size = Size.zero,
+  });
+
+  /// Window's size.
+  final Size size;
 
   @override
   State<GitHubActivities> createState() => _GitHubActivitiesState();
 }
 
 class _GitHubActivitiesState extends State<GitHubActivities> with UiLoggy {
+  /// There's more data to fetch if true.
   bool _hasMore = true;
 
+  /// GitHub client to fetch APIs.
   final GitHub _github = GitHub();
+
+  /// Next page to fetch.
   int _pageIndex = 0;
+
+  /// How many items we want in a single page.
   final int _pageSize = 3;
+
+  /// Main page's data.
   final List<Event> _activities = [];
 
   @override
@@ -35,11 +49,7 @@ class _GitHubActivitiesState extends State<GitHubActivities> with UiLoggy {
     return SliverToBoxAdapter(
       child: Container(
         color: Colors.black38,
-        padding: const EdgeInsets.only(
-          left: 200.0,
-          top: 72.0,
-          bottom: 90.0,
-        ),
+        padding: getMargin(),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -115,68 +125,108 @@ class _GitHubActivitiesState extends State<GitHubActivities> with UiLoggy {
                 ),
               ),
             ),
-            Wrap(
-              spacing: 24.0,
-              runSpacing: 12.0,
-              children: [
-                if (_pageIndex > 1)
-                  Tooltip(
-                    message: "activity_reset".tr(),
-                    child: TextButton(
-                      onPressed: reset,
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: Colors.pink,
-                        minimumSize: const Size(20.0, 50.0),
-                      ),
-                      child: const Icon(UniconsLine.history_alt),
-                    ),
-                  ),
-                TextButton(
-                  onPressed: fetch,
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: Constants.colors.palette.first,
-                    backgroundColor:
-                        Constants.colors.palette.first.withOpacity(0.05),
-                    minimumSize: const Size(200.0, 50.0),
-                  ),
-                  child: Text(
-                    "activity_show_more".tr(),
-                    style: Utilities.fonts.body(
-                      textStyle: const TextStyle(
-                        fontSize: 14.0,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ),
-                TextButton(
-                  onPressed: () {
-                    launchUrl(Uri.parse("https://github.com/rootasjey"));
-                  },
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: Constants.colors.palette.elementAt(1),
-                    backgroundColor:
-                        Constants.colors.palette.elementAt(1).withOpacity(0.05),
-                    minimumSize: const Size(200.0, 50.0),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(0.0),
-                    child: Text(
-                      "GitHub",
-                      style: Utilities.fonts.body(
-                        textStyle: const TextStyle(
-                          fontSize: 14.0,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            )
+            footer(),
           ],
         ),
       ),
+    );
+  }
+
+  Widget moreButton() {
+    if (widget.size.width < Utilities.size.mobileWidthTreshold) {
+      return Tooltip(
+        message: "activity_show_more".tr(),
+        child: TextButton(
+          onPressed: fetch,
+          style: OutlinedButton.styleFrom(
+            foregroundColor: Constants.colors.palette.first,
+            backgroundColor: Constants.colors.palette.first.withOpacity(0.05),
+            minimumSize: const Size(20.0, 50.0),
+          ),
+          child: const Icon(UniconsLine.angle_double_down),
+        ),
+      );
+    }
+
+    return TextButton(
+      onPressed: fetch,
+      style: OutlinedButton.styleFrom(
+        foregroundColor: Constants.colors.palette.first,
+        backgroundColor: Constants.colors.palette.first.withOpacity(0.05),
+        minimumSize: const Size(200.0, 50.0),
+      ),
+      child: Text(
+        "activity_show_more".tr(),
+        style: Utilities.fonts.body(
+          textStyle: const TextStyle(
+            fontSize: 14.0,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget githubButton() {
+    if (widget.size.width < Utilities.size.mobileWidthTreshold) {
+      return Tooltip(
+        message: "GitHub",
+        child: TextButton(
+          onPressed: goToGitHubProfile,
+          style: OutlinedButton.styleFrom(
+            foregroundColor: Constants.colors.palette.elementAt(1),
+            backgroundColor:
+                Constants.colors.palette.elementAt(1).withOpacity(0.05),
+            minimumSize: const Size(20.0, 50.0),
+          ),
+          child: const Icon(UniconsLine.github_alt),
+        ),
+      );
+    }
+
+    return TextButton(
+      onPressed: goToGitHubProfile,
+      style: OutlinedButton.styleFrom(
+        foregroundColor: Constants.colors.palette.elementAt(1),
+        backgroundColor:
+            Constants.colors.palette.elementAt(1).withOpacity(0.05),
+        minimumSize: const Size(200.0, 50.0),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(0.0),
+        child: Text(
+          "GitHub",
+          style: Utilities.fonts.body(
+            textStyle: const TextStyle(
+              fontSize: 14.0,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget footer() {
+    return Wrap(
+      spacing: 24.0,
+      runSpacing: 12.0,
+      children: [
+        if (_pageIndex > 1)
+          Tooltip(
+            message: "activity_reset".tr(),
+            child: TextButton(
+              onPressed: reset,
+              style: OutlinedButton.styleFrom(
+                foregroundColor: Colors.pink,
+                minimumSize: const Size(20.0, 50.0),
+              ),
+              child: const Icon(UniconsLine.history_alt),
+            ),
+          ),
+        moreButton(),
+        githubButton(),
+      ],
     );
   }
 
@@ -209,6 +259,26 @@ class _GitHubActivitiesState extends State<GitHubActivities> with UiLoggy {
     } catch (error) {
       loggy.error(error);
     }
+  }
+
+  EdgeInsets getMargin() {
+    if (widget.size.width < 1000.0) {
+      return const EdgeInsets.only(
+        left: 36.0,
+        top: 64.0,
+        bottom: 100.0,
+      );
+    }
+
+    return const EdgeInsets.only(
+      left: 200.0,
+      top: 100.0,
+      bottom: 100.0,
+    );
+  }
+
+  void goToGitHubProfile() {
+    launchUrl(Uri.parse("https://github.com/rootasjey"));
   }
 
   void reset() {

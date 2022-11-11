@@ -131,7 +131,9 @@ class _ProjectPageState extends ConsumerState<ProjectPage> with UiLoggy {
     final UserRights rights = userFirestore?.rights ?? const UserRights();
 
     final bool canManagePosts = rights.managePosts;
-    final bool isMobileSize = Utilities.size.isMobileSize(context);
+    final Size windowSize = MediaQuery.of(context).size;
+    final bool isMobileSize =
+        windowSize.width < Utilities.size.mobileWidthTreshold;
 
     if (_deleting) {
       return LoadingView.scaffold(
@@ -156,17 +158,19 @@ class _ProjectPageState extends ConsumerState<ProjectPage> with UiLoggy {
                   textTitle: _project.name,
                   showSettings: _showSettings,
                   onTapSettings: canManagePosts ? onTapSettings : null,
+                  onTapTitle: onTapTitle,
                 ),
                 PostSettings(
                   confirmDelete: _confirmDeletePost,
                   cover: _project.cover,
                   hasCover: _project.cover.storagePath.isNotEmpty,
+                  isMobileSize: isMobileSize,
                   language: _project.language,
                   onCancelDeletePost: onCancelDeletePost,
                   onLanguageChanged: tryUpdateLanguage,
                   onCloseSetting: onCloseSetting,
                   onConfirmDeletePost: onConfirmDeletePost,
-                  onCoverWidthTypeSelected: tryUpdateCoverWithType,
+                  onCoverWidthTypeSelected: tryUpdateCoverWidthType,
                   onCoverCornerTypeSelected: tryUpdateCoverCornerType,
                   onTryDeletePost: tryDeleteProject,
                   onTryAddCoverImage: tryUploadCover,
@@ -198,10 +202,12 @@ class _ProjectPageState extends ConsumerState<ProjectPage> with UiLoggy {
                   onRemoveTag: onRemoveTag,
                 ),
                 PostCover(
-                  showControlButtons: canManagePosts,
                   cover: _project.cover,
+                  isMobileSize: isMobileSize,
                   onTryAddCoverImage: tryUploadCover,
                   onTryRemoveCoverImage: tryRemoveCoverImage,
+                  showControlButtons: canManagePosts,
+                  windowSize: windowSize,
                 ),
                 PostPageBody(
                   canManagePosts: canManagePosts,
@@ -271,6 +277,87 @@ class _ProjectPageState extends ConsumerState<ProjectPage> with UiLoggy {
     );
   }
 
+  Widget fab({required bool show}) {
+    if (show) {
+      return FloatingActionButton.extended(
+        onPressed: () {
+          setState(() => _editing = !_editing);
+        },
+        extendedPadding: const EdgeInsets.symmetric(
+          horizontal: 32.0,
+        ),
+        foregroundColor: Colors.white,
+        backgroundColor: Colors.pink,
+        label: Text(
+          _editing ? "render" : "edit".tr(),
+          style: Utilities.fonts.body(
+            textStyle: const TextStyle(
+              fontSize: 16.0,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+        icon: _editing
+            ? const Icon(UniconsLine.eye)
+            : const Icon(UniconsLine.edit_alt),
+      );
+    }
+
+    return FabToTop(
+      hideIfAtTop: _hideFab,
+      fabIcon: const Icon(UniconsLine.arrow_up),
+      pageScrollController: _pageScrollController,
+    );
+  }
+
+  void contentListener() {
+    _contentUpdateTimer?.cancel();
+    _contentUpdateTimer = Timer(
+      const Duration(seconds: 1),
+      trySaveContent,
+    );
+  }
+
+  void confirmDeletePost() {
+    Utilities.ui.showAdaptiveDialog(
+      context,
+      builder: (BuildContext context) {
+        return DeleteDialog(
+          descriptionValue: "This action is irreversible",
+          titleValue: "Delete this project?",
+          onValidate: tryDeleteProject,
+        );
+      },
+    );
+  }
+
+  Future<void> fetchContent() async {
+    try {
+      final Reference fileStorage = FirebaseStorage.instance
+          .ref()
+          .child("$_collectionName/${widget.projectId}/post.md");
+
+      final Uint8List? data = await fileStorage.getData();
+
+      if (data == null) {
+        _content = "Start typing here...";
+        return;
+      }
+
+      _content = utf8.decode(data, allowMalformed: true);
+
+      if (_content.isEmpty) {
+        _content = "Start typing here...";
+      }
+
+      setState(() {
+        _contentController.text = _content;
+      });
+    } catch (error) {
+      loggy.error(error);
+    }
+  }
+
   Future<void> fetchMetadata() async {
     setState(() => _loading = true);
 
@@ -306,30 +393,237 @@ class _ProjectPageState extends ConsumerState<ProjectPage> with UiLoggy {
     setState(() => _loading = false);
   }
 
-  Future<void> fetchContent() async {
-    try {
-      final Reference fileStorage = FirebaseStorage.instance
-          .ref()
-          .child("$_collectionName/${widget.projectId}/post.md");
-
-      final Uint8List? data = await fileStorage.getData();
-
-      if (data == null) {
-        _content = "Start typing here...";
+  /// Show or hide app bar title based on the scroll Y offset.
+  void handleAppBarTitleVisibility(double offset) {
+    if (offset <= 60) {
+      if (!_showAppBarTitle) {
         return;
       }
 
-      _content = utf8.decode(data, allowMalformed: true);
+      setState(() {
+        _showAppBarTitle = false;
+      });
 
-      if (_content.isEmpty) {
-        _content = "Start typing here...";
+      return;
+    }
+
+    if (_showAppBarTitle) {
+      return;
+    }
+
+    setState(() {
+      _showAppBarTitle = true;
+    });
+  }
+
+  /// Show or hide the floating action button based on the scroll Y offset.
+  void handleFabVisibility(double offset) {
+    if (_editing) {
+      return;
+    }
+
+    if (offset <= 60) {
+      if (_hideFab) {
+        return;
+      }
+
+      setState(() => _hideFab = true);
+      return;
+    }
+
+    if (!_hideFab) {
+      return;
+    }
+
+    setState(() => _hideFab = false);
+  }
+
+  void listenToDocument(DocumentReference<Map<String, dynamic>> query) {
+    _projectSubscription?.cancel();
+    _projectSubscription = query.snapshots().skip(1).listen((snapshot) {
+      if (!snapshot.exists) {
+        _projectSubscription?.cancel();
+        return;
+      }
+
+      final Json? data = snapshot.data();
+      if (data == null) {
+        return;
+      }
+
+      if (!mounted) {
+        return;
       }
 
       setState(() {
-        _contentController.text = _content;
+        data["id"] = snapshot.id;
+        _project = Project.fromMap(data);
+
+        if (_loading && _project.storagePath.isNotEmpty) {
+          _loading = false;
+        }
+      });
+    }, onError: (error) {
+      loggy.error(error);
+    }, onDone: () {
+      _projectSubscription?.cancel();
+    });
+  }
+
+  /// Cancel delete confirmation about this project.
+  void onCancelDeletePost() {
+    setState(() => _confirmDeletePost = false);
+  }
+
+  /// Hide settings panel.
+  void onCloseSetting() {
+    setState(() => _showSettings = false);
+  }
+
+  /// Show delete confirmation UI.
+  void onConfirmDeletePost() {
+    setState(() => _confirmDeletePost = true);
+  }
+
+  void onContentChanged(String content) {
+    _content = content;
+
+    _contentUpdateTimer?.cancel();
+    _contentUpdateTimer = Timer(
+      const Duration(seconds: 1),
+      trySaveContent,
+    );
+  }
+
+  void onInputTagChanged(String tag) {
+    String editedTag = tag;
+
+    if (tag.contains(",") || tag.contains(";")) {
+      editedTag = tag.replaceAll(",", "").replaceAll(";", "").trim();
+
+      if (editedTag.isEmpty) {
+        return;
+      }
+
+      _tagInputController.clear();
+      tryUpdateTags(editedTag);
+    }
+
+    if (_verbalExp.hasMatch(tag)) {
+      editedTag = tag.trim();
+
+      _tagInputController.clear();
+      tryUpdateTags(editedTag);
+    }
+  }
+
+  void onNameChanged(String? value) {
+    _metadataUpdateTimer?.cancel();
+    _metadataUpdateTimer = Timer(
+      const Duration(seconds: 1),
+      tryUpdateProjectName,
+    );
+  }
+
+  void onRemoveTag(String tag) async {
+    final List<String> initialTags = _project.tags;
+
+    _project = _project.copyWith(
+      tags: _project.tags..remove(tag),
+    );
+
+    try {
+      await FirebaseFirestore.instance
+          .collection(_collectionName)
+          .doc(_project.id)
+          .update({
+        "tags": _project.listToMapStringBool(),
       });
     } catch (error) {
       loggy.error(error);
+      _project = _project.copyWith(tags: initialTags);
+    }
+  }
+
+  /// React to scroll events.
+  void onScroll(double offset) {
+    handleAppBarTitleVisibility(offset);
+    handleFabVisibility(offset);
+  }
+
+  void onTapSettings() {
+    if (!_showSettings) {
+      _pageScrollController.animateTo(
+        0.0,
+        curve: Curves.decelerate,
+        duration: const Duration(
+          milliseconds: 250,
+        ),
+      );
+    }
+
+    setState(() => _showSettings = !_showSettings);
+  }
+
+  void onTapTitle() {
+    _pageScrollController.animateTo(
+      0,
+      duration: const Duration(milliseconds: 250),
+      curve: Curves.bounceIn,
+    );
+  }
+
+  void onToggleAddTagVisibility() {
+    setState(() => _showAddTag = !_showAddTag);
+  }
+
+  void tryDeleteProject() async {
+    setState((() => _deleting = true));
+
+    try {
+      await FirebaseFirestore.instance
+          .collection(_collectionName)
+          .doc(widget.projectId)
+          .delete();
+
+      if (!mounted) {
+        return;
+      }
+
+      Beamer.of(context).beamBack();
+    } catch (error) {
+      loggy.error(error);
+    } finally {
+      setState(() => _deleting = false);
+    }
+  }
+
+  /// Remove project's cover image and delete storage objects.
+  void tryRemoveCoverImage() async {
+    final String prevStoragePath = _project.storagePath;
+
+    setState(() {
+      _project = _project.copyWith(
+          cover: _project.cover.copyWith(
+        storagePath: "",
+      ));
+    });
+
+    try {
+      await FirebaseFirestore.instance
+          .collection(_collectionName)
+          .doc(_project.id)
+          .update({
+        "cover.storage_path": "",
+      });
+    } catch (error) {
+      loggy.error(error);
+      setState(() {
+        _project = _project.copyWith(
+            cover: _project.cover.copyWith(
+          storagePath: prevStoragePath,
+        ));
+      });
     }
   }
 
@@ -386,306 +680,8 @@ class _ProjectPageState extends ConsumerState<ProjectPage> with UiLoggy {
     }
   }
 
-  void tryUpdateLanguage(String newLanguage) async {
-    final String prevLanguage = _project.language;
-    setState(() {
-      _saving = true;
-      _project = _project.copyWith(language: newLanguage);
-    });
-
-    try {
-      await FirebaseFirestore.instance
-          .collection(_collectionName)
-          .doc(_project.id)
-          .update({
-        "language": newLanguage,
-      });
-    } catch (error) {
-      loggy.error(error);
-
-      _project = _project.copyWith(language: prevLanguage);
-    } finally {
-      setState(() => _saving = false);
-    }
-  }
-
-  void tryUpdateProjectName() async {
-    setState(() => _saving = true);
-
-    try {
-      await FirebaseFirestore.instance
-          .collection(_collectionName)
-          .doc(_project.id)
-          .update({
-        "name": _nameController.text,
-        "summary": _summaryController.text,
-      });
-    } catch (error) {
-      loggy.error(error);
-    } finally {
-      setState(() => _saving = false);
-    }
-  }
-
-  void onNameChanged(String? value) {
-    _metadataUpdateTimer?.cancel();
-    _metadataUpdateTimer = Timer(
-      const Duration(seconds: 1),
-      tryUpdateProjectName,
-    );
-  }
-
-  void tryUpdateProjectVisibility(
-    EnumContentVisibility visibility,
-    bool selected,
-  ) async {
-    if (!selected) {
-      return;
-    }
-
-    setState(() {
-      _saving = true;
-      _project = _project.copyWith(
-        visibility: visibility,
-      );
-    });
-
-    try {
-      await FirebaseFirestore.instance
-          .collection(_collectionName)
-          .doc(_project.id)
-          .update({
-        "visibility": visibility.name,
-      });
-    } catch (error) {
-      loggy.error(error);
-    } finally {
-      setState(() => _saving = false);
-    }
-  }
-
-  void contentListener() {
-    _contentUpdateTimer?.cancel();
-    _contentUpdateTimer = Timer(
-      const Duration(seconds: 1),
-      trySaveContent,
-    );
-  }
-
-  void confirmDeletePost() {
-    Utilities.ui.showAdaptiveDialog(
-      context,
-      builder: (BuildContext context) {
-        return DeleteDialog(
-          descriptionValue: "This action is irreversible",
-          titleValue: "Delete this project?",
-          onValidate: tryDeleteProject,
-        );
-      },
-    );
-  }
-
-  void tryDeleteProject() async {
-    setState((() => _deleting = true));
-
-    try {
-      await FirebaseFirestore.instance
-          .collection(_collectionName)
-          .doc(widget.projectId)
-          .delete();
-
-      if (!mounted) {
-        return;
-      }
-
-      Beamer.of(context).beamBack();
-    } catch (error) {
-      loggy.error(error);
-    } finally {
-      setState(() => _deleting = false);
-    }
-  }
-
-  void listenToDocument(DocumentReference<Map<String, dynamic>> query) {
-    _projectSubscription?.cancel();
-    _projectSubscription = query.snapshots().skip(1).listen((snapshot) {
-      if (!snapshot.exists) {
-        _projectSubscription?.cancel();
-        return;
-      }
-
-      final Json? data = snapshot.data();
-      if (data == null) {
-        return;
-      }
-
-      if (!mounted) {
-        return;
-      }
-
-      setState(() {
-        data["id"] = snapshot.id;
-        _project = Project.fromMap(data);
-
-        if (_loading && _project.storagePath.isNotEmpty) {
-          _loading = false;
-        }
-      });
-    }, onError: (error) {
-      loggy.error(error);
-    }, onDone: () {
-      _projectSubscription?.cancel();
-    });
-  }
-
-  void tryUploadCover() async {
-    final String userId =
-        ref.read(AppState.userProvider).firestoreUser?.id ?? "";
-    if (userId.isEmpty) {
-      return;
-    }
-
-    ref.read(AppState.uploadTaskListProvider.notifier).pickCover(
-          targetId: _project.id,
-          uploadType: EnumUploadType.projectCover,
-          userId: userId,
-        );
-  }
-
-  /// Show or hide app bar title based on the scroll Y offset.
-  void handleAppBarTitleVisibility(double offset) {
-    if (offset <= 60) {
-      if (!_showAppBarTitle) {
-        return;
-      }
-
-      setState(() {
-        _showAppBarTitle = false;
-      });
-
-      return;
-    }
-
-    if (_showAppBarTitle) {
-      return;
-    }
-
-    setState(() {
-      _showAppBarTitle = true;
-    });
-  }
-
-  /// React to scroll events.
-  void onScroll(double offset) {
-    handleAppBarTitleVisibility(offset);
-    handleFabVisibility(offset);
-  }
-
-  /// Show or hide the floating action button based on the scroll Y offset.
-  void handleFabVisibility(double offset) {
-    if (_editing) {
-      return;
-    }
-
-    if (offset <= 60) {
-      if (_hideFab) {
-        return;
-      }
-
-      setState(() => _hideFab = true);
-      return;
-    }
-
-    if (!_hideFab) {
-      return;
-    }
-
-    setState(() => _hideFab = false);
-  }
-
-  void onToggleAddTagVisibility() {
-    setState(() => _showAddTag = !_showAddTag);
-  }
-
-  void onInputTagChanged(String tag) {
-    String editedTag = tag;
-
-    if (tag.contains(",") || tag.contains(";")) {
-      editedTag = tag.replaceAll(",", "").replaceAll(";", "").trim();
-
-      if (editedTag.isEmpty) {
-        return;
-      }
-
-      _tagInputController.clear();
-      tryUpdateTags(editedTag);
-    }
-
-    if (_verbalExp.hasMatch(tag)) {
-      editedTag = tag.trim();
-
-      _tagInputController.clear();
-      tryUpdateTags(editedTag);
-    }
-  }
-
-  void tryUpdateTags(String tag) async {
-    final List<String> initialTags = _project.tags;
-
-    _project = _project.copyWith(
-      tags: _project.tags..add(tag),
-    );
-
-    try {
-      await FirebaseFirestore.instance
-          .collection(_collectionName)
-          .doc(_project.id)
-          .update({
-        "tags": _project.listToMapStringBool(),
-      });
-    } catch (error) {
-      loggy.error(error);
-      _project = _project.copyWith(tags: initialTags);
-    }
-  }
-
-  void onRemoveTag(String tag) async {
-    final List<String> initialTags = _project.tags;
-
-    _project = _project.copyWith(
-      tags: _project.tags..remove(tag),
-    );
-
-    try {
-      await FirebaseFirestore.instance
-          .collection(_collectionName)
-          .doc(_project.id)
-          .update({
-        "tags": _project.listToMapStringBool(),
-      });
-    } catch (error) {
-      loggy.error(error);
-      _project = _project.copyWith(tags: initialTags);
-    }
-  }
-
-  /// Hide settings panel.
-  void onCloseSetting() {
-    setState(() => _showSettings = false);
-  }
-
-  /// Show delete confirmation UI.
-  void onConfirmDeletePost() {
-    setState(() => _confirmDeletePost = true);
-  }
-
-  /// Cancel delete confirmation about this project.
-  void onCancelDeletePost() {
-    setState(() => _confirmDeletePost = false);
-  }
-
   /// Update cover's width.
-  void tryUpdateCoverWithType(
+  void tryUpdateCoverWidthType(
     EnumCoverWidth coverWidthType,
     bool selected,
   ) async {
@@ -764,15 +760,11 @@ class _ProjectPageState extends ConsumerState<ProjectPage> with UiLoggy {
     }
   }
 
-  /// Remove project's cover image and delete storage objects.
-  void tryRemoveCoverImage() async {
-    final String prevStoragePath = _project.storagePath;
-
+  void tryUpdateLanguage(String newLanguage) async {
+    final String prevLanguage = _project.language;
     setState(() {
-      _project = _project.copyWith(
-          cover: _project.cover.copyWith(
-        storagePath: "",
-      ));
+      _saving = true;
+      _project = _project.copyWith(language: newLanguage);
     });
 
     try {
@@ -780,73 +772,95 @@ class _ProjectPageState extends ConsumerState<ProjectPage> with UiLoggy {
           .collection(_collectionName)
           .doc(_project.id)
           .update({
-        "cover.storage_path": "",
+        "language": newLanguage,
       });
     } catch (error) {
       loggy.error(error);
-      setState(() {
-        _project = _project.copyWith(
-            cover: _project.cover.copyWith(
-          storagePath: prevStoragePath,
-        ));
+
+      _project = _project.copyWith(language: prevLanguage);
+    } finally {
+      setState(() => _saving = false);
+    }
+  }
+
+  void tryUpdateProjectName() async {
+    setState(() => _saving = true);
+
+    try {
+      await FirebaseFirestore.instance
+          .collection(_collectionName)
+          .doc(_project.id)
+          .update({
+        "name": _nameController.text,
+        "summary": _summaryController.text,
       });
+    } catch (error) {
+      loggy.error(error);
+    } finally {
+      setState(() => _saving = false);
     }
   }
 
-  void onContentChanged(String content) {
-    _content = content;
+  void tryUpdateProjectVisibility(
+    EnumContentVisibility visibility,
+    bool selected,
+  ) async {
+    if (!selected) {
+      return;
+    }
 
-    _contentUpdateTimer?.cancel();
-    _contentUpdateTimer = Timer(
-      const Duration(seconds: 1),
-      trySaveContent,
-    );
-  }
-
-  Widget fab({required bool show}) {
-    if (show) {
-      FloatingActionButton.extended(
-        onPressed: () {
-          setState(() => _editing = !_editing);
-        },
-        extendedPadding: const EdgeInsets.symmetric(
-          horizontal: 32.0,
-        ),
-        foregroundColor: Colors.white,
-        backgroundColor: Colors.pink,
-        label: Text(
-          _editing ? "render" : "edit".tr(),
-          style: Utilities.fonts.body(
-            textStyle: const TextStyle(
-              fontSize: 16.0,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ),
-        icon: _editing
-            ? const Icon(UniconsLine.eye)
-            : const Icon(UniconsLine.edit_alt),
+    setState(() {
+      _saving = true;
+      _project = _project.copyWith(
+        visibility: visibility,
       );
-    }
+    });
 
-    return FabToTop(
-      hideIfAtTop: _hideFab,
-      fabIcon: const Icon(UniconsLine.arrow_up),
-      pageScrollController: _pageScrollController,
-    );
+    try {
+      await FirebaseFirestore.instance
+          .collection(_collectionName)
+          .doc(_project.id)
+          .update({
+        "visibility": visibility.name,
+      });
+    } catch (error) {
+      loggy.error(error);
+    } finally {
+      setState(() => _saving = false);
+    }
   }
 
-  void onTapSettings() {
-    if (!_showSettings) {
-      _pageScrollController.animateTo(
-        0.0,
-        curve: Curves.decelerate,
-        duration: const Duration(
-          milliseconds: 250,
-        ),
-      );
+  void tryUpdateTags(String tag) async {
+    final List<String> initialTags = _project.tags;
+
+    _project = _project.copyWith(
+      tags: _project.tags..add(tag),
+    );
+
+    try {
+      await FirebaseFirestore.instance
+          .collection(_collectionName)
+          .doc(_project.id)
+          .update({
+        "tags": _project.listToMapStringBool(),
+      });
+    } catch (error) {
+      loggy.error(error);
+      _project = _project.copyWith(tags: initialTags);
+    }
+  }
+
+  void tryUploadCover() async {
+    final String userId =
+        ref.read(AppState.userProvider).firestoreUser?.id ?? "";
+    if (userId.isEmpty) {
+      return;
     }
 
-    setState(() => _showSettings = !_showSettings);
+    ref.read(AppState.uploadTaskListProvider.notifier).pickCover(
+          targetId: _project.id,
+          uploadType: EnumUploadType.projectCover,
+          userId: userId,
+        );
   }
 }

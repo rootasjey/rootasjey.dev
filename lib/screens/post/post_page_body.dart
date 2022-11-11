@@ -25,6 +25,7 @@ class PostPageBody extends StatelessWidget with UiLoggy {
   /// The current authenticated user can edit & delete this post if true.
   final bool canManagePosts;
 
+  /// Show a document editor if true.
   final bool editing;
 
   /// True if this post is being loaded.
@@ -33,8 +34,10 @@ class PostPageBody extends StatelessWidget with UiLoggy {
   /// The UI adapts to small screen size if true.
   final bool isMobileSize;
 
+  /// Max allowed width to children inside this widget.
   final double maxWidth;
 
+  /// Callback called when content has changed.
   final void Function(String content)? onContentChanged;
 
   /// Post's content to display in an editor.
@@ -60,7 +63,11 @@ class PostPageBody extends StatelessWidget with UiLoggy {
       return SliverToBoxAdapter(
         child: Center(
           child: Container(
-            padding: const EdgeInsets.only(top: 42.0),
+            padding: const EdgeInsets.only(
+              top: 42.0,
+              left: 12.0,
+              right: 12.0,
+            ),
             width: maxWidth,
             child: TextField(
               autofocus: true,
@@ -103,7 +110,11 @@ class PostPageBody extends StatelessWidget with UiLoggy {
     return SliverToBoxAdapter(
       child: Center(
         child: Container(
-          padding: const EdgeInsets.only(top: 42.0),
+          padding: const EdgeInsets.only(
+            top: 42.0,
+            left: 12.0,
+            right: 12.0,
+          ),
           width: maxWidth,
           child: MarkdownViewer(
             content,

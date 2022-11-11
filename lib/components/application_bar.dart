@@ -15,6 +15,7 @@ import 'package:rootasjey/router/locations/settings_location.dart';
 import 'package:rootasjey/router/locations/signin_location.dart';
 import 'package:rootasjey/types/user/user_firestore.dart';
 import 'package:unicons/unicons.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ApplicationBar extends ConsumerWidget {
   const ApplicationBar({
@@ -22,20 +23,23 @@ class ApplicationBar extends ConsumerWidget {
     this.pinned = true,
     this.bottom,
     this.backgroundColor,
+    this.padding = const EdgeInsets.only(left: 170.0, top: 16.0),
+    this.isMobileSize = false,
   }) : super(key: key);
 
   /// Whether the app bar should remain visible at the start of the scroll view.
   final bool pinned;
 
+  final bool isMobileSize;
   final Color? backgroundColor;
+
+  final EdgeInsets padding;
 
   /// This widget appears across the bottom of the app bar.
   final PreferredSizeWidget? bottom;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final bool isMobileSize = Utilities.size.isMobileSize(context);
-
     final userFirestore = ref.watch(AppState.userProvider).firestoreUser;
     final bool isAuthenticated =
         userFirestore != null && userFirestore.rights.manageData;
@@ -65,10 +69,7 @@ class ApplicationBar extends ConsumerWidget {
           sigmaY: 5,
         ),
         child: Padding(
-          padding: EdgeInsets.only(
-            top: 16.0,
-            left: isMobileSize ? 0.0 : 170.0,
-          ),
+          padding: padding,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             mainAxisSize: MainAxisSize.max,
@@ -119,57 +120,65 @@ class ApplicationBar extends ConsumerWidget {
                   ),
                 ],
               ),
-              Padding(
-                padding: const EdgeInsets.only(right: 80.0),
-                child: Wrap(
-                  spacing: 12.0,
-                  children: [
-                    OutlinedButton(
-                      onPressed: () {
-                        // GlobalLoggy().loggy.info("resume dark");
-                        // AdaptiveTheme.of(context).setDark();
-                      },
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: Colors.pink,
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          "resume".tr(),
-                          style: Utilities.fonts.body(
-                            textStyle: const TextStyle(
-                              fontSize: 16.0,
-                              fontWeight: FontWeight.w600,
-                            ),
+              Wrap(
+                spacing: 12.0,
+                children: [
+                  OutlinedButton(
+                    onPressed: () {
+                      // AdaptiveTheme.of(context).setDark();
+                      final String curriculumUrl = ref
+                              .read(AppState.userProvider)
+                              .firestoreUser
+                              ?.socialLinks
+                              .curriculum ??
+                          "";
+
+                      if (curriculumUrl.isEmpty) {
+                        return;
+                      }
+
+                      launchUrl(Uri.parse(curriculumUrl));
+                    },
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: Colors.pink,
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        "resume".tr(),
+                        style: Utilities.fonts.body(
+                          textStyle: const TextStyle(
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ),
                     ),
-                    if (isAuthenticated)
-                      PopupMenuButton(
-                        itemBuilder: (BuildContext context) {
-                          return [
-                            PopupMenuItemIcon(
-                              icon: const PopupMenuIcon(UniconsLine.signout),
-                              textLabel: "logout".tr(),
-                              newValue: "logout",
-                              selected: false,
-                            ),
-                          ];
-                        },
-                        onSelected: (String value) {
-                          if (value == "logout") {
-                            ref.read(AppState.userProvider.notifier).signOut();
-                            return;
-                          }
-                        },
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(6.0),
-                        ),
-                        icon: const Icon(UniconsLine.setting),
+                  ),
+                  if (isAuthenticated)
+                    PopupMenuButton(
+                      itemBuilder: (BuildContext context) {
+                        return [
+                          PopupMenuItemIcon(
+                            icon: const PopupMenuIcon(UniconsLine.signout),
+                            textLabel: "logout".tr(),
+                            newValue: "logout",
+                            selected: false,
+                          ),
+                        ];
+                      },
+                      onSelected: (String value) {
+                        if (value == "logout") {
+                          ref.read(AppState.userProvider.notifier).signOut();
+                          return;
+                        }
+                      },
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(6.0),
                       ),
-                  ],
-                ),
+                      icon: const Icon(UniconsLine.setting),
+                    ),
+                ],
               ),
             ],
           ),

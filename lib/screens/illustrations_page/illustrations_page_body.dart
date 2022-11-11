@@ -10,12 +10,13 @@ import 'package:rootasjey/types/illustration/illustration.dart';
 class IllustrationsPageBody extends StatelessWidget {
   const IllustrationsPageBody({
     super.key,
-    this.onSelectFiles,
     required this.illustrations,
+    this.onSelectFiles,
     this.fab,
     this.popupMenuItems = const [],
     this.onPopupMenuItemSelected,
     this.onTapIllustration,
+    this.windowSize = Size.zero,
   });
 
   /// Callback fired when an item is selected in illustration popup menu.
@@ -37,6 +38,9 @@ class IllustrationsPageBody extends StatelessWidget {
 
   final List<PopupMenuEntry<EnumIllustrationItemAction>> popupMenuItems;
 
+  /// Window's size.
+  final Size windowSize;
+
   /// Floating Action Button to show at the bottom right of this page.
   final Widget? fab;
 
@@ -48,10 +52,16 @@ class IllustrationsPageBody extends StatelessWidget {
         children: [
           CustomScrollView(
             slivers: [
-              const ApplicationBar(),
+              ApplicationBar(
+                padding: getAppBarPadding(windowSize),
+              ),
               SliverToBoxAdapter(
                 child: Padding(
-                  padding: const EdgeInsets.only(top: 60.0),
+                  padding: const EdgeInsets.only(
+                    top: 60.0,
+                    left: 12.0,
+                    right: 12.0,
+                  ),
                   child: Column(
                     children: [
                       Text(
@@ -102,11 +112,7 @@ class IllustrationsPageBody extends StatelessWidget {
                     },
                     childCount: illustrations.length,
                   ),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3,
-                    mainAxisSpacing: 42.0,
-                    crossAxisSpacing: 42.0,
-                  ),
+                  gridDelegate: getGridDelegate(),
                 ),
               ),
             ],
@@ -118,6 +124,30 @@ class IllustrationsPageBody extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  EdgeInsets getAppBarPadding(Size size) {
+    if (size.width < 1000.0) {
+      return const EdgeInsets.only(left: 12.0, top: 16.0);
+    }
+
+    return const EdgeInsets.only(left: 170.0, top: 16.0);
+  }
+
+  SliverGridDelegate getGridDelegate() {
+    if (windowSize.width < Utilities.size.mobileWidthTreshold) {
+      return const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        mainAxisSpacing: 12.0,
+        crossAxisSpacing: 12.0,
+      );
+    }
+
+    return const SliverGridDelegateWithFixedCrossAxisCount(
+      crossAxisCount: 3,
+      mainAxisSpacing: 42.0,
+      crossAxisSpacing: 42.0,
     );
   }
 }

@@ -17,7 +17,11 @@ class ProjectCard extends StatelessWidget {
     this.onTapCard,
     this.onPopupMenuItemSelected,
     this.popupMenuEntries = const [],
+    this.compact = false,
   });
+
+  /// If
+  final bool compact;
 
   /// If true, a bottom sheet will be displayed on long press event.
   /// Setting this property to true will deactivate popup menu and
@@ -61,7 +65,7 @@ class ProjectCard extends StatelessWidget {
             children: [
               Positioned(
                 bottom: 24.0,
-                left: 42.0,
+                left: compact ? 12.0 : 42.0,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -81,9 +85,11 @@ class ProjectCard extends StatelessWidget {
                                 project.name,
                                 overflow: TextOverflow.ellipsis,
                                 style: Utilities.fonts.body(
-                                  textStyle: const TextStyle(
-                                    fontSize: 32.0,
-                                    fontWeight: FontWeight.w600,
+                                  textStyle: TextStyle(
+                                    fontSize: compact ? 24.0 : 32.0,
+                                    fontWeight: compact
+                                        ? FontWeight.w700
+                                        : FontWeight.w600,
                                   ),
                                 ),
                               ),
@@ -173,8 +179,8 @@ class ProjectCard extends StatelessWidget {
         opacity: 0.6,
         child: Text(project.summary,
             style: Utilities.fonts.body(
-              textStyle: const TextStyle(
-                fontSize: 18.0,
+              textStyle: TextStyle(
+                fontSize: compact ? 14.0 : 18.0,
                 fontWeight: FontWeight.w500,
               ),
             )),
