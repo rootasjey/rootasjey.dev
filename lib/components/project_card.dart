@@ -5,7 +5,7 @@ import 'package:jiffy/jiffy.dart';
 import 'package:rootasjey/globals/constants.dart';
 import 'package:rootasjey/globals/utilities.dart';
 import 'package:rootasjey/types/enums/enum_project_item_action.dart';
-import 'package:rootasjey/types/project.dart';
+import 'package:rootasjey/types/project/project.dart';
 import 'package:unicons/unicons.dart';
 
 class ProjectCard extends StatelessWidget {

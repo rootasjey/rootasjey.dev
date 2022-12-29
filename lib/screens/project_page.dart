@@ -7,6 +7,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_improved_scrolling/flutter_improved_scrolling.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loggy/loggy.dart';
@@ -30,7 +31,7 @@ import 'package:rootasjey/types/enums/enum_content_visibility.dart';
 import 'package:rootasjey/types/enums/enum_cover_corner.dart';
 import 'package:rootasjey/types/enums/enum_cover_width.dart';
 import 'package:rootasjey/types/enums/enum_upload_type.dart';
-import 'package:rootasjey/types/project.dart';
+import 'package:rootasjey/types/project/project.dart';
 import 'package:rootasjey/types/user/user_firestore.dart';
 import 'package:rootasjey/types/user/user_rights.dart';
 import 'package:unicons/unicons.dart';
@@ -69,11 +70,9 @@ class _ProjectPageState extends ConsumerState<ProjectPage> with UiLoggy {
 
   bool _editing = false;
 
-  /// Post's content as String.
-  String _content = "";
-
-  /// Firestore collection name.
-  final String _collectionName = "projects";
+  /// Last saved offset.
+  /// Useful to determinate the scroll direction.
+  double _prevOffset = 0.0;
 
   /// Page project.
   Project _project = Project.empty();
@@ -83,10 +82,20 @@ class _ProjectPageState extends ConsumerState<ProjectPage> with UiLoggy {
   /// Page scroll controller.
   final ScrollController _pageScrollController = ScrollController();
 
+  /// Page scroll direction.
+  /// Show or hide widget according to direction (e.g. FAB).
+  ScrollDirection _scrollDirection = ScrollDirection.idle;
+
   /// Post's document subcription.
   /// We use this stream to listen to document fields updates.
   StreamSubscription<DocumentSnapshot<Map<String, dynamic>>>?
       _projectSubscription;
+
+  /// Post's content as String.
+  String _content = "";
+
+  /// Firestore collection name.
+  final String _collectionName = "projects";
 
   /// Input controller for project's title (metadata).
   final TextEditingController _nameController = TextEditingController();
@@ -144,7 +153,7 @@ class _ProjectPageState extends ConsumerState<ProjectPage> with UiLoggy {
     const double maxWidth = 640.0;
 
     return Scaffold(
-      floatingActionButton: fab(show: canManagePosts),
+      floatingActionButton: fab(canEdit: canManagePosts),
       body: Stack(
         children: [
           ImprovedScrolling(
@@ -277,36 +286,44 @@ class _ProjectPageState extends ConsumerState<ProjectPage> with UiLoggy {
     );
   }
 
-  Widget fab({required bool show}) {
-    if (show) {
-      return FloatingActionButton.extended(
-        onPressed: () {
-          setState(() => _editing = !_editing);
-        },
-        extendedPadding: const EdgeInsets.symmetric(
-          horizontal: 32.0,
-        ),
-        foregroundColor: Colors.white,
-        backgroundColor: Colors.pink,
-        label: Text(
-          _editing ? "render" : "edit".tr(),
-          style: Utilities.fonts.body(
-            textStyle: const TextStyle(
-              fontSize: 16.0,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ),
-        icon: _editing
-            ? const Icon(UniconsLine.eye)
-            : const Icon(UniconsLine.edit_alt),
-      );
+  Widget fab({bool canEdit = false}) {
+    if (canEdit) {
+      return fabEdit();
     }
 
     return FabToTop(
       hideIfAtTop: _hideFab,
       fabIcon: const Icon(UniconsLine.arrow_up),
       pageScrollController: _pageScrollController,
+    );
+  }
+
+  Widget fabEdit() {
+    if (_scrollDirection == ScrollDirection.forward) {
+      return Container();
+    }
+
+    return FloatingActionButton.extended(
+      onPressed: () {
+        setState(() => _editing = !_editing);
+      },
+      extendedPadding: const EdgeInsets.symmetric(
+        horizontal: 32.0,
+      ),
+      foregroundColor: Colors.white,
+      backgroundColor: Colors.pink,
+      label: Text(
+        _editing ? "render" : "edit".tr(),
+        style: Utilities.fonts.body(
+          textStyle: const TextStyle(
+            fontSize: 16.0,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+      icon: _editing
+          ? const Icon(UniconsLine.eye)
+          : const Icon(UniconsLine.edit_alt),
     );
   }
 
@@ -547,6 +564,7 @@ class _ProjectPageState extends ConsumerState<ProjectPage> with UiLoggy {
 
   /// React to scroll events.
   void onScroll(double offset) {
+    updateScrollDirection(offset);
     handleAppBarTitleVisibility(offset);
     handleFabVisibility(offset);
   }
@@ -862,5 +880,40 @@ class _ProjectPageState extends ConsumerState<ProjectPage> with UiLoggy {
           uploadType: EnumUploadType.projectCover,
           userId: userId,
         );
+  }
+
+  void updateScrollDirection(double offset) {
+    final bool atEdge = _pageScrollController.position.atEdge;
+    final bool forwarding = _prevOffset < offset;
+
+    ScrollDirection newScrollDirection = ScrollDirection.forward;
+
+    if (forwarding) {
+      newScrollDirection = ScrollDirection.forward;
+    }
+
+    if (!forwarding && !_pageScrollController.position.outOfRange) {
+      newScrollDirection = ScrollDirection.reverse;
+    }
+
+    if (atEdge && offset == 0.0) {
+      newScrollDirection = ScrollDirection.idle;
+    }
+
+    if (atEdge && offset > 0.0) {
+      newScrollDirection = ScrollDirection.forward;
+    }
+
+    if (offset < 0.0) {
+      newScrollDirection = ScrollDirection.reverse;
+    }
+
+    _prevOffset = offset;
+
+    if (_scrollDirection != newScrollDirection) {
+      setState(() {
+        _scrollDirection = newScrollDirection;
+      });
+    }
   }
 }

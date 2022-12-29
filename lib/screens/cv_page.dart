@@ -4,7 +4,7 @@ import 'package:rootasjey/globals/constants.dart';
 import 'package:rootasjey/types/experience.dart';
 import 'package:rootasjey/types/experience_date.dart';
 import 'package:rootasjey/types/formation.dart';
-import 'package:rootasjey/types/project.dart';
+import 'package:rootasjey/types/project/project.dart';
 import 'package:rootasjey/types/skill.dart';
 import 'package:rootasjey/types/social_links.dart';
 import 'package:file_saver/file_saver.dart';

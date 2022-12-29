@@ -37,6 +37,7 @@ interface OperationIllustrationParams {
 }
 
 interface GenerateImageThumbsParams {
+  documentId: string;
   extension: string;
   fileName: string;
   filePath: string;

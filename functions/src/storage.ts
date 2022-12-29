@@ -126,12 +126,17 @@ export const onCreate = functions
       // Generate thumbnails
       // -------------------
       const {dimensions, thumbnails} = await generateImageThumbs({
+        documentId,
         extension,
         fileName,
         filePath,
         objectMeta: objectMetadata,
         visibility,
       });
+      functions.logger.info(
+          "Generated thumbnails for: ",
+          documentId
+      );
 
       const {height, width} = dimensions;
 
@@ -147,6 +152,11 @@ export const onCreate = functions
       let payload = {};
 
       if (documentType === "illustration") {
+        functions.logger.info(
+            "Will set illusttration thumbnails for: ",
+            documentId
+        );
+
         payload = {
           dimensions: {
             height,
@@ -180,6 +190,10 @@ export const onCreate = functions
       }
 
       await documentSnapshot.ref.update(payload);
+      functions.logger.info(
+          "Did set illusttration thumbnails for: ",
+          documentId
+      );
       return true;
     });
 
@@ -208,10 +222,11 @@ async function generateImageThumbs(
     params: GenerateImageThumbsParams
 ): Promise<GenerateImageThumbsResult> {
   const {
-    objectMeta,
+    documentId,
     extension,
     fileName,
     filePath,
+    objectMeta,
     visibility,
   } = params;
 
@@ -248,7 +263,7 @@ async function generateImageThumbs(
   const bucket = gcs.bucket(objectMeta.bucket);
   const bucketDir = dirname(filePath);
 
-  const workingDir = join(tmpdir(), "thumbs");
+  const workingDir = join(tmpdir(), documentId, "thumbs");
   const tmpFilePath = join(workingDir, fileName);
 
   // 1. Ensure thumbnail directory exists.

@@ -1,4 +1,4 @@
-import 'package:rootasjey/types/post_stats.dart';
+import 'package:rootasjey/types/project/post_stats.dart';
 import 'package:rootasjey/types/project_stats.dart';
 
 /// User's statistics.

@@ -20,11 +20,15 @@ class UploadCardItem extends ConsumerStatefulWidget {
     this.onDone,
     this.onTap,
     this.alternativeTheme = false,
+    this.backgroundColor = Colors.black,
   }) : super(key: key);
 
   /// This item will have a different set of colors if true.
   /// (On mobile, we show a more discrete set of colors).
   final bool alternativeTheme;
+
+  /// This item widget's background color.
+  final Color backgroundColor;
 
   /// Upload task to follow upload progression.
   final CustomUploadTask customUploadTask;
@@ -88,7 +92,7 @@ class _UploadItemCardState extends ConsumerState<UploadCardItem> with UiLoggy {
         borderRadius: BorderRadius.zero,
       ),
       elevation: _elevation,
-      color: widget.alternativeTheme ? Colors.white : Colors.black12,
+      color: widget.backgroundColor,
       child: InkWell(
         onTap: widget.onTap,
         onHover: (isHover) {

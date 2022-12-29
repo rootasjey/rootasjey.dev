@@ -15,7 +15,11 @@ class CreateProjectPage extends ConsumerStatefulWidget {
     super.key,
     this.onCancel,
     this.onSubmit,
+    this.isMobileSize = false,
   });
+
+  /// Adapat the ui to small screens if true.
+  final bool isMobileSize;
 
   /// Called to dismiss this create view.
   final void Function()? onCancel;
@@ -42,10 +46,10 @@ class _CreateProjectPageState extends ConsumerState<CreateProjectPage> {
     return Scaffold(
       body: Stack(
         children: [
-          const Positioned(
+          Positioned(
             top: 60.0,
-            left: 60.0,
-            child: AppIcon(),
+            left: widget.isMobileSize ? 24.0 : 60.0,
+            child: const AppIcon(),
           ),
           CustomScrollView(
             slivers: [
@@ -111,7 +115,7 @@ class _CreateProjectPageState extends ConsumerState<CreateProjectPage> {
             child: Opacity(
               opacity: 0.4,
               child: Text(
-                "post_creat_new_subtitle".tr(),
+                "project_create_new_subtitle".tr(),
                 textAlign: TextAlign.center,
                 style: Utilities.fonts.body2(
                   textStyle: const TextStyle(
@@ -187,7 +191,7 @@ class _CreateProjectPageState extends ConsumerState<CreateProjectPage> {
                 focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(
                     color: Constants.colors.palette.first,
-                    width: 2.0,
+                    width: 4.0,
                   ),
                 ),
               ),
@@ -244,7 +248,7 @@ class _CreateProjectPageState extends ConsumerState<CreateProjectPage> {
                 focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(
                     color: Constants.colors.palette.elementAt(1),
-                    width: 2.0,
+                    width: 4.0,
                   ),
                 ),
                 enabledBorder: OutlineInputBorder(
@@ -266,7 +270,85 @@ class _CreateProjectPageState extends ConsumerState<CreateProjectPage> {
     );
   }
 
+  Widget footerButtonsMobile() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 42.0),
+      child: Wrap(
+        spacing: 24.0,
+        runSpacing: 12.0,
+        children: [
+          FadeInY(
+            beginY: Utilities.ui.getBeginY(),
+            delay: Duration(milliseconds: Utilities.ui.getNextAnimationDelay()),
+            child: Padding(
+              padding: const EdgeInsets.only(top: 2.0),
+              child: TextButton(
+                onPressed: () => widget.onCancel?.call(),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: Constants.colors.palette.first,
+                  backgroundColor:
+                      Constants.colors.palette.first.withOpacity(0.05),
+                  minimumSize: const Size(140.0, 56.0),
+                ),
+                child: Text(
+                  "cancel".tr(),
+                  style: Utilities.fonts.body(
+                    textStyle: const TextStyle(
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          FadeInY(
+            beginY: Utilities.ui.getBeginY(),
+            delay: Duration(milliseconds: Utilities.ui.getNextAnimationDelay()),
+            child: DarkElevatedButton(
+              onPressed: () {
+                widget.onSubmit?.call(
+                  _nameController.text,
+                  _summaryController.text,
+                );
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(2.0),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      "create".tr(),
+                      style: Utilities.fonts.body(
+                        textStyle: const TextStyle(
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.green,
+                        ),
+                      ),
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.only(left: 8.0),
+                      child: Icon(
+                        UniconsLine.arrow_right,
+                        color: Colors.green,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget footerButtons() {
+    if (widget.isMobileSize) {
+      return footerButtonsMobile();
+    }
+
     return Padding(
       padding: const EdgeInsets.only(top: 24.0),
       child: Wrap(

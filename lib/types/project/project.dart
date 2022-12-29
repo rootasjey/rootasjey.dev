@@ -127,7 +127,9 @@ class Project {
 
   factory Project.fromMap(Map<String, dynamic> map) {
     return Project(
-      characterCount: int.tryParse(map["character_count"]) ?? 0,
+      characterCount: map["character_count"] != null
+          ? int.parse(map["character_count"])
+          : 0,
       cover: Cover.fromMap(map["cover"]),
       createdAt: DateHelper.fromFirestore(map["created_at"]),
       id: map["id"] ?? "",
@@ -148,7 +150,7 @@ class Project {
       updatedAt: DateHelper.fromFirestore(map["updated_at"]),
       userId: map["user_id"] ?? "",
       visibility: parseVisibility(map["visibility"]),
-      wordCount: int.tryParse(map["word_count"]) ?? 0,
+      wordCount: map["word_count"] != null ? int.parse(map["word_count"]) : 0,
     );
   }
 

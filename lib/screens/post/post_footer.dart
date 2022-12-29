@@ -47,85 +47,90 @@ class PostFooter extends StatelessWidget {
     }
 
     return SliverToBoxAdapter(
-      child: Column(
-        children: [
-          const SizedBox(height: 50.0),
-          Material(
-            elevation: 4.0,
-            color: Colors.black54,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12.0),
-            ),
-            child: Container(
-              padding: const EdgeInsets.all(24.0),
-              width: maxWidth,
-              child: Row(
-                children: [
-                  const Padding(
-                    padding: EdgeInsets.only(right: 16.0),
-                    child: Icon(UniconsLine.lightbulb_alt, color: Colors.amber),
-                  ),
-                  Expanded(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Opacity(
-                          opacity: 0.6,
-                          child: Text(
-                            "word_count".plural(wordCount),
-                            style: Utilities.fonts.body(
-                              textStyle: const TextStyle(
-                                fontSize: 16.0,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                        ),
-                        Opacity(
-                          opacity: 0.6,
-                          child: Text.rich(
-                            TextSpan(children: [
-                              TextSpan(
-                                text: lastUpdatedAt,
-                                style: Utilities.fonts.body(
-                                  textStyle: const TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                              TextSpan(
-                                text: " (${"last_updated".tr().toLowerCase()})",
-                                style: Utilities.fonts.body(
-                                  textStyle: TextStyle(
-                                    fontSize: 14.0,
-                                    color: Theme.of(context)
-                                        .textTheme
-                                        .bodyText2
-                                        ?.color
-                                        ?.withOpacity(0.6),
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ),
-                            ]),
-                            style: Utilities.fonts.body(
-                              textStyle: const TextStyle(
-                                fontSize: 16.0,
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12.0),
+        child: Column(
+          children: [
+            const SizedBox(height: 50.0),
+            Material(
+              elevation: 4.0,
+              color: Colors.black54,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.0),
+              ),
+              child: Container(
+                padding: const EdgeInsets.all(24.0),
+                width: maxWidth,
+                child: Row(
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.only(right: 16.0),
+                      child:
+                          Icon(UniconsLine.lightbulb_alt, color: Colors.amber),
                     ),
-                  ),
-                ],
+                    Expanded(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Opacity(
+                            opacity: 0.6,
+                            child: Text(
+                              "word_count".plural(wordCount),
+                              style: Utilities.fonts.body(
+                                textStyle: const TextStyle(
+                                  fontSize: 16.0,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ),
+                          Opacity(
+                            opacity: 0.6,
+                            child: Text.rich(
+                              TextSpan(children: [
+                                TextSpan(
+                                  text: lastUpdatedAt,
+                                  style: Utilities.fonts.body(
+                                    textStyle: const TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                                TextSpan(
+                                  text:
+                                      " (${"last_updated".tr().toLowerCase()})",
+                                  style: Utilities.fonts.body(
+                                    textStyle: TextStyle(
+                                      fontSize: 14.0,
+                                      color: Theme.of(context)
+                                          .textTheme
+                                          .bodyText2
+                                          ?.color
+                                          ?.withOpacity(0.6),
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                              ]),
+                              style: Utilities.fonts.body(
+                                textStyle: const TextStyle(
+                                  fontSize: 16.0,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-          const SizedBox(height: bottomSpace),
-        ],
+            const SizedBox(height: bottomSpace),
+          ],
+        ),
       ),
     );
   }

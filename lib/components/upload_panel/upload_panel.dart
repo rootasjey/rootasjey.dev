@@ -66,10 +66,12 @@ class _UploadWindowState extends ConsumerState<UploadPanel> {
     final bool isMobileSize =
         windowSize.width < Utilities.size.mobileWidthTreshold;
 
+    final Color backgroundColor = Theme.of(context).scaffoldBackgroundColor;
+
     return Card(
       margin: EdgeInsets.zero,
       elevation: isMobileSize ? 0.0 : 4.0,
-      color: isMobileSize ? Colors.white : Colors.black38,
+      color: backgroundColor,
       child: AnimatedContainer(
         width: isMobileSize ? windowSize.width : _width,
         height: _height,
@@ -93,6 +95,7 @@ class _UploadWindowState extends ConsumerState<UploadPanel> {
                 ),
                 if (!isMobileSize)
                   UploadPanelBody(
+                    backgroundColor: backgroundColor,
                     expanded: _expanded,
                     onToggleExpanded: onToggleExpanded,
                     uploadTaskList: uploadTaskList,
@@ -107,6 +110,7 @@ class _UploadWindowState extends ConsumerState<UploadPanel> {
 
   void onShowBottomSheet(List<CustomUploadTask> uploadTaskList) {
     final bool isMobileSize = Utilities.size.isMobileSize(context);
+    final Color backgroundColor = Theme.of(context).scaffoldBackgroundColor;
 
     Utilities.ui.showAdaptiveDialog(
       context,
@@ -114,6 +118,7 @@ class _UploadWindowState extends ConsumerState<UploadPanel> {
       builder: (BuildContext context) {
         return Material(
           child: UploadPanelBody(
+            backgroundColor: backgroundColor,
             expanded: true,
             isMobileSize: isMobileSize,
             onToggleExpanded: onToggleExpanded,

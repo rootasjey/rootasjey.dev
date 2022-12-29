@@ -26,7 +26,7 @@ import 'package:rootasjey/types/alias/firestore/query_snapshot_stream_subscripti
 import 'package:rootasjey/types/alias/json_alias.dart';
 import 'package:rootasjey/types/enums/enum_project_item_action.dart';
 import 'package:rootasjey/types/intents/escape_intent.dart';
-import 'package:rootasjey/types/project.dart';
+import 'package:rootasjey/types/project/project.dart';
 import 'package:rootasjey/types/user/user_firestore.dart';
 import 'package:rootasjey/types/user/user_rights.dart';
 import 'package:unicons/unicons.dart';
@@ -100,11 +100,14 @@ class _ProjectsPageState extends ConsumerState<ProjectsPage> with UiLoggy {
     final UserRights userRights = userFirestore?.rights ?? const UserRights();
     final bool canManageProjects = userRights.managePosts;
 
+    final Size windowSize = MediaQuery.of(context).size;
+    final bool isMobileSize =
+        windowSize.width < Utilities.size.mobileWidthTreshold;
+
     if (_showCreatePage) {
       return CreateProjectPage(
-        onCancel: () {
-          setState(() => _showCreatePage = false);
-        },
+        isMobileSize: isMobileSize,
+        onCancel: () => setState(() => _showCreatePage = false),
         onSubmit: (String name, String summary) {
           _showCreatePage = false;
           tryCreateProject(name: name, summary: summary);
@@ -130,8 +133,6 @@ class _ProjectsPageState extends ConsumerState<ProjectsPage> with UiLoggy {
         ),
       );
     }
-
-    final Size windowSize = MediaQuery.of(context).size;
 
     return wrapWithShortcuts(
       child: ProjectsPageBody(
@@ -194,7 +195,7 @@ class _ProjectsPageState extends ConsumerState<ProjectsPage> with UiLoggy {
   }
 
   void onShowCreate() {
-    () => setState(() => _showCreatePage = true);
+    setState(() => _showCreatePage = true);
   }
 
   /// Make a API request call to create a new document in Firestore

@@ -1,10 +1,12 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:rootasjey/components/buttons/circle_button.dart';
 import 'package:rootasjey/components/upload_panel/upload_card_item.dart';
 import 'package:rootasjey/globals/app_state.dart';
 import 'package:rootasjey/globals/utilities.dart';
 import 'package:rootasjey/types/custom_upload_task.dart';
+import 'package:unicons/unicons.dart';
 
 /// Body of `UploadPanel`.
 class UploadPanelBody extends ConsumerWidget {
@@ -14,6 +16,7 @@ class UploadPanelBody extends ConsumerWidget {
     required this.uploadTaskList,
     this.onToggleExpanded,
     this.isMobileSize = false,
+    this.backgroundColor = Colors.black,
   }) : super(key: key);
 
   /// The panel has its maximum size if true. Otherwise the window is minized.
@@ -21,6 +24,9 @@ class UploadPanelBody extends ConsumerWidget {
 
   /// If true, this widget adapts its layout to small screens.
   final bool isMobileSize;
+
+  /// This widget's backgroud color.
+  final Color backgroundColor;
 
   /// List of upload tasks.
   final List<CustomUploadTask> uploadTaskList;
@@ -40,20 +46,26 @@ class UploadPanelBody extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 24.0,
-              vertical: 8.0,
-            ),
-            child: Text(
-              "downloads".tr(),
-              style: Utilities.fonts.body(
-                textStyle: const TextStyle(
-                  fontSize: 24.0,
-                  fontWeight: FontWeight.w700,
+          Wrap(
+            spacing: 12.0,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              CircleButton(
+                margin: const EdgeInsets.only(left: 12.0),
+                onTap: () => Navigator.of(context).pop(),
+                icon: const Icon(UniconsLine.times),
+                tooltip: "close".tr(),
+              ),
+              Text(
+                "downloads".tr(),
+                style: Utilities.fonts.body(
+                  textStyle: const TextStyle(
+                    fontSize: 24.0,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ),
-            ),
+            ],
           ),
           const Divider(
             thickness: 1.5,
@@ -64,6 +76,7 @@ class UploadPanelBody extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: uploadTaskList.map((CustomUploadTask customUploadTask) {
               return UploadCardItem(
+                backgroundColor: backgroundColor,
                 customUploadTask: customUploadTask,
                 alternativeTheme: isMobileSize,
                 onTap: () {},
