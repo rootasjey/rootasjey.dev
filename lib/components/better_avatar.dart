@@ -132,7 +132,7 @@ class _BetterAvatarState extends State<BetterAvatar>
       padding: widget.margin,
       child: Material(
         elevation: elevation,
-        color: Theme.of(context).backgroundColor,
+        color: Theme.of(context).colorScheme.background,
         clipBehavior: Clip.antiAlias,
         shape: CircleBorder(
           side: widget.borderSide,

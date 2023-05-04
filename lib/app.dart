@@ -19,21 +19,20 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return AdaptiveTheme(
       light: ThemeData(
-        brightness: Brightness.light,
-        fontFamily: FontsUtils.fontFamily,
-        backgroundColor: Constants.colors.lightBackground,
-        scaffoldBackgroundColor: Constants.colors.lightBackground,
-        primaryColor: Constants.colors.primary,
-        secondaryHeaderColor: Constants.colors.secondary,
-      ),
+          brightness: Brightness.light,
+          fontFamily: FontsUtils.fontFamily,
+          scaffoldBackgroundColor: Constants.colors.lightBackground,
+          primaryColor: Constants.colors.primary,
+          secondaryHeaderColor: Constants.colors.secondary,
+          colorScheme:
+              ColorScheme.light(background: Constants.colors.lightBackground)),
       dark: ThemeData(
-        brightness: Brightness.dark,
-        fontFamily: FontsUtils.fontFamily,
-        backgroundColor: Constants.colors.dark,
-        scaffoldBackgroundColor: Constants.colors.dark,
-        primaryColor: Constants.colors.primary,
-        secondaryHeaderColor: Constants.colors.secondary,
-      ),
+          brightness: Brightness.dark,
+          fontFamily: FontsUtils.fontFamily,
+          scaffoldBackgroundColor: Constants.colors.dark,
+          primaryColor: Constants.colors.primary,
+          secondaryHeaderColor: Constants.colors.secondary,
+          colorScheme: ColorScheme.dark(background: Constants.colors.dark)),
       initial: savedThemeMode ?? AdaptiveThemeMode.dark,
       builder: (ThemeData theme, ThemeData darkTheme) {
         return MaterialApp.router(

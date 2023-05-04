@@ -597,7 +597,7 @@ class _CVPageState extends State<CVPage> {
     IconData? iconData,
     bool blend = false,
   }) {
-    final Color? foregroundColor = Theme.of(context).textTheme.bodyText1?.color;
+    final Color? foregroundColor = Theme.of(context).textTheme.bodyLarge?.color;
 
     return InkWell(
       key: Key(label),

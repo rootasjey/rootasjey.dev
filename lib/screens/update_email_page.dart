@@ -478,15 +478,21 @@ class _UpdateEmailPageState extends ConsumerState<UpdateEmailPage>
     });
 
     try {
-      if (!await (valuesAvailabilityCheck() as FutureOr<bool>)) {
+      final isEmailAvailable =
+          await (valuesAvailabilityCheck() as FutureOr<bool>);
+      if (!isEmailAvailable) {
         setState(() => _isUpdating = false);
+
+        if (!mounted) {
+          return;
+        }
 
         Snack.error(
           context,
           title: "email".tr(),
           message: "email_not_available".tr(),
         );
-
+        // throw Error();
         return;
       }
 

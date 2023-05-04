@@ -389,7 +389,7 @@ class _IllustrationCardState extends State<IllustrationCard>
 
     Widget cardChild = Card(
       margin: EdgeInsets.zero,
-      color: Theme.of(context).backgroundColor,
+      color: Theme.of(context).colorScheme.background,
       elevation: _elevation,
       shape: RoundedRectangleBorder(
         borderRadius: widget.borderRadius,

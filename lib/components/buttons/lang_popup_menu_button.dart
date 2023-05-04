@@ -79,7 +79,7 @@ class LangPopupMenuButton extends StatelessWidget {
                       ? Theme.of(context).primaryColor
                       : Theme.of(context)
                           .textTheme
-                          .bodyText2
+                          .bodyMedium
                           ?.color
                           ?.withOpacity(0.6);
 
@@ -96,7 +96,7 @@ class LangPopupMenuButton extends StatelessWidget {
             icon: asIconButton
                 ? const Icon(
                     UniconsLine.language,
-                    // color: Theme.of(context).textTheme.bodyText2?.color,
+                    // color: Theme.of(context).textTheme.bodyMedium?.color,
                     color: Colors.black,
                   )
                 : null,
@@ -122,7 +122,7 @@ class LangPopupMenuButton extends StatelessWidget {
 
   Widget outlinedButton(BuildContext context) {
     final Color baseColor =
-        Theme.of(context).textTheme.bodyText2?.color?.withOpacity(0.4) ??
+        Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.4) ??
             Colors.black;
 
     return Container(
@@ -158,7 +158,7 @@ class LangPopupMenuButton extends StatelessWidget {
           textStyle: TextStyle(
             fontSize: 16.0,
             fontWeight: FontWeight.w700,
-            color: Theme.of(context).textTheme.bodyText1?.color,
+            color: Theme.of(context).textTheme.bodyLarge?.color,
           ),
         ),
       ),

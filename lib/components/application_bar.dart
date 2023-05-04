@@ -56,13 +56,14 @@ class ApplicationBar extends ConsumerWidget {
 
     final bool hasHistory = location != HomeLocation.route;
     final Color foregroundColor =
-        Theme.of(context).textTheme.bodyText2?.color?.withOpacity(0.8) ??
+        Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.8) ??
             Colors.black;
 
     return SliverAppBar(
       floating: true,
       snap: true,
       pinned: pinned,
+      toolbarHeight: 90.0,
       backgroundColor: backgroundColor ?? Colors.transparent,
       automaticallyImplyLeading: false,
       title: BackdropFilter(
@@ -127,8 +128,6 @@ class ApplicationBar extends ConsumerWidget {
                 children: [
                   OutlinedButton(
                     onPressed: () {
-                      // AdaptiveTheme.of(context).setDark();
-
                       final String curriculumUrl = ref
                           .read(AppState.appSettingsProvider)
                           .socialNetworks

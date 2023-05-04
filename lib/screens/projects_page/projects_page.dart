@@ -379,13 +379,13 @@ class _ProjectsPageState extends ConsumerState<ProjectsPage> with UiLoggy {
         for (DocumentChangeMap documentChange in snapshot.docChanges) {
           switch (documentChange.type) {
             case DocumentChangeType.added:
-              onAddStreamingIllustration(documentChange);
+              onAddStreamingProject(documentChange);
               break;
             case DocumentChangeType.modified:
-              onUpdateStreamingIllustration(documentChange);
+              onUpdateStreamingProject(documentChange);
               break;
             case DocumentChangeType.removed:
-              onRemoveStreamingIllustration(documentChange);
+              onRemoveStreamingProject(documentChange);
               break;
           }
         }
@@ -398,7 +398,7 @@ class _ProjectsPageState extends ConsumerState<ProjectsPage> with UiLoggy {
 
   /// Fire when a new document has been created in Firestore.
   /// Add the corresponding document in the UI.
-  void onAddStreamingIllustration(DocumentChangeMap documentChange) {
+  void onAddStreamingProject(DocumentChangeMap documentChange) {
     final Json? data = documentChange.doc.data();
 
     if (data == null) {
@@ -414,9 +414,9 @@ class _ProjectsPageState extends ConsumerState<ProjectsPage> with UiLoggy {
 
   /// Fire when a new document has been updated in Firestore.
   /// Update the corresponding document in the UI.
-  void onUpdateStreamingIllustration(DocumentChangeMap documentChange) async {
+  void onUpdateStreamingProject(DocumentChangeMap documentChange) async {
     try {
-      final data = documentChange.doc.data();
+      final Json? data = documentChange.doc.data();
       if (data == null) {
         return;
       }
@@ -444,10 +444,10 @@ class _ProjectsPageState extends ConsumerState<ProjectsPage> with UiLoggy {
 
   /// Fire when a new document has been delete from Firestore.
   /// Delete the corresponding document from the UI.
-  void onRemoveStreamingIllustration(DocumentChangeMap documentChange) {
+  void onRemoveStreamingProject(DocumentChangeMap documentChange) {
     setState(() {
       _projects.removeWhere(
-        (illustration) => illustration.id == documentChange.doc.id,
+        (project) => project.id == documentChange.doc.id,
       );
     });
   }

@@ -163,7 +163,7 @@ class SignupPageBody extends StatelessWidget {
                   borderSide: BorderSide(
                     color: Theme.of(context)
                             .textTheme
-                            .bodyText2
+                            .bodyMedium
                             ?.color
                             ?.withOpacity(0.4) ??
                         Colors.white12,
@@ -247,7 +247,7 @@ class SignupPageBody extends StatelessWidget {
                 borderSide: BorderSide(
                   color: Theme.of(context)
                           .textTheme
-                          .bodyText2
+                          .bodyMedium
                           ?.color
                           ?.withOpacity(0.4) ??
                       Colors.white12,
@@ -461,7 +461,7 @@ class SignupPageBody extends StatelessWidget {
                   borderSide: BorderSide(
                     color: Theme.of(context)
                             .textTheme
-                            .bodyText2
+                            .bodyMedium
                             ?.color
                             ?.withOpacity(0.4) ??
                         Colors.white12,
@@ -592,7 +592,7 @@ class SignupPageBody extends StatelessWidget {
                 borderSide: BorderSide(
                   color: Theme.of(context)
                           .textTheme
-                          .bodyText2
+                          .bodyMedium
                           ?.color
                           ?.withOpacity(0.4) ??
                       Colors.white12,

@@ -24,6 +24,7 @@ import 'package:rootasjey/screens/post/post_footer.dart';
 import 'package:rootasjey/screens/post/post_page_body.dart';
 import 'package:rootasjey/screens/post/post_page_header.dart';
 import 'package:rootasjey/screens/post/post_settings.dart';
+import 'package:rootasjey/types/alias/firestore/doc_snapshot_stream_subscription.dart';
 import 'package:rootasjey/types/alias/firestore/document_map.dart';
 import 'package:rootasjey/types/alias/firestore/document_snapshot_map.dart';
 import 'package:rootasjey/types/alias/json_alias.dart';
@@ -88,7 +89,7 @@ class _PostPageState extends ConsumerState<PostPage> with UiLoggy {
 
   /// Post's document subcription.
   /// We use this stream to listen to document fields updates.
-  StreamSubscription<DocumentSnapshot<Map<String, dynamic>>>? _postSubscription;
+  DocSnapshotStreamSubscription? _postSubscription;
 
   /// Post's content as String.
   String _content = "";

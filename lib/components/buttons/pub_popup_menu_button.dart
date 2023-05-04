@@ -31,7 +31,7 @@ class PubPopupMenuButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Color baseColor =
-        Theme.of(context).textTheme.bodyText2?.color ?? Colors.white;
+        Theme.of(context).textTheme.bodyMedium?.color ?? Colors.white;
 
     const Color color = Colors.black;
     Widget? child;

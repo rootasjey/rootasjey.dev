@@ -70,7 +70,7 @@ class _PostCardState extends State<PostCard> with UiLoggy {
       child: Card(
         elevation: _elevation,
         clipBehavior: Clip.hardEdge,
-        color: Theme.of(context).backgroundColor,
+        color: Theme.of(context).colorScheme.background,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6.0)),
         child: InkWell(
           onTap: widget.onTap,

@@ -31,7 +31,7 @@ class DarkOutlinedButton extends StatelessWidget {
     final Color localAccentColor =
         accentColor != null ? accentColor! : primaryColor;
     final Color baseColor =
-        Theme.of(context).textTheme.bodyText2?.color?.withOpacity(0.6) ??
+        Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.6) ??
             Colors.black;
 
     return Padding(

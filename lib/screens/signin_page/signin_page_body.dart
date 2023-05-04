@@ -115,7 +115,7 @@ class SigninPageBody extends StatelessWidget {
                   borderSide: BorderSide(
                     color: Theme.of(context)
                             .textTheme
-                            .bodyText2
+                            .bodyMedium
                             ?.color
                             ?.withOpacity(0.4) ??
                         Colors.white12,
@@ -145,7 +145,7 @@ class SigninPageBody extends StatelessWidget {
         children: [
           TextButton(
             style: TextButton.styleFrom(
-              foregroundColor: Theme.of(context).textTheme.bodyText2?.color,
+              foregroundColor: Theme.of(context).textTheme.bodyMedium?.color,
               backgroundColor: Constants.colors.palette.first.withOpacity(0.1),
             ),
             onPressed: onNavigateToForgotPassword,
@@ -311,7 +311,7 @@ class SigninPageBody extends StatelessWidget {
                   borderSide: BorderSide(
                     color: Theme.of(context)
                             .textTheme
-                            .bodyText2
+                            .bodyMedium
                             ?.color
                             ?.withOpacity(0.4) ??
                         Colors.white12,
@@ -340,7 +340,6 @@ class SigninPageBody extends StatelessWidget {
             child: DarkElevatedButton.icon(
               iconData: UniconsLine.times,
               labelValue: "cancel".tr(),
-              background: Colors.black,
               onPressed: () => onCancel?.call(),
               minimumSize: const Size(250.0, 60.0),
             ),

@@ -172,7 +172,7 @@ class ProjectsPageBody extends StatelessWidget {
 
   Widget mobileControls(BuildContext context, bool isMobileSize) {
     final Color? iconColor =
-        Theme.of(context).textTheme.bodyText2?.color?.withOpacity(0.6);
+        Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.6);
 
     if (!isMobileSize || projects.length < 2) {
       return const SliverToBoxAdapter();

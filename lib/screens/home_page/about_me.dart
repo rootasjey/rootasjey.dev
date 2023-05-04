@@ -79,7 +79,7 @@ class AboutMe extends StatelessWidget {
                             fontWeight: FontWeight.w100,
                             color: Theme.of(context)
                                 .textTheme
-                                .bodyText2
+                                .bodyMedium
                                 ?.color
                                 ?.withOpacity(0.6),
                           ),
@@ -317,7 +317,7 @@ class AboutMe extends StatelessWidget {
     if (size.width < Utilities.size.mobileWidthTreshold) {
       return Utilities.fonts.body2(
         textStyle: TextStyle(
-          color: Theme.of(context).textTheme.bodyText2?.color,
+          color: Theme.of(context).textTheme.bodyMedium?.color,
           fontSize: 14.0,
           fontWeight: FontWeight.w400,
         ),
@@ -326,7 +326,7 @@ class AboutMe extends StatelessWidget {
 
     return Utilities.fonts.body2(
       textStyle: TextStyle(
-        color: Theme.of(context).textTheme.bodyText2?.color,
+        color: Theme.of(context).textTheme.bodyMedium?.color,
         fontSize: 24.0,
         fontWeight: FontWeight.w400,
       ),

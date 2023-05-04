@@ -181,7 +181,7 @@ class _CreateProjectPageState extends ConsumerState<CreateProjectPage> {
                   borderSide: BorderSide(
                     color: Theme.of(context)
                             .textTheme
-                            .bodyText2
+                            .bodyMedium
                             ?.color
                             ?.withOpacity(0.4) ??
                         Colors.white12,
@@ -255,7 +255,7 @@ class _CreateProjectPageState extends ConsumerState<CreateProjectPage> {
                   borderSide: BorderSide(
                     color: Theme.of(context)
                             .textTheme
-                            .bodyText2
+                            .bodyMedium
                             ?.color
                             ?.withOpacity(0.4) ??
                         Colors.white12,

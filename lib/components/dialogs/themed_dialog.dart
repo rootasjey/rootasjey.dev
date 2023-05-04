@@ -1,10 +1,10 @@
+import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/buttons/dark_elevated_button.dart';
 import 'package:rootasjey/components/buttons/dot_close_button.dart';
 import 'package:rootasjey/components/texts/title_dialog.dart';
 import 'package:rootasjey/components/validation_shortcuts.dart';
-import 'package:rootasjey/globals/constants.dart';
 
 /// A dialog with the theme of the app.
 class ThemedDialog extends StatelessWidget {
@@ -87,6 +87,7 @@ class ThemedDialog extends StatelessWidget {
 
     if (title != null) {
       titleWidget = titleContainer(
+        context,
         color: Theme.of(context).secondaryHeaderColor,
       );
     } else {
@@ -118,7 +119,8 @@ class ThemedDialog extends StatelessWidget {
         child: Dialog(
           insetPadding: const EdgeInsets.all(60.0),
           alignment: Alignment.center,
-          backgroundColor: Constants.colors.clairPink,
+          backgroundColor:
+              AdaptiveTheme.of(context).theme.colorScheme.background,
           clipBehavior: Clip.antiAlias,
           shape: RoundedRectangleBorder(
             side: BorderSide.none,
@@ -150,7 +152,7 @@ class ThemedDialog extends StatelessWidget {
       onValidate: onValidate,
       spaceActive: spaceActive,
       child: SimpleDialog(
-        backgroundColor: Constants.colors.clairPink,
+        backgroundColor: AdaptiveTheme.of(context).theme.colorScheme.background,
         title: titleWidget,
         titlePadding: EdgeInsets.zero,
         contentPadding: EdgeInsets.zero,
@@ -200,9 +202,9 @@ class ThemedDialog extends StatelessWidget {
     );
   }
 
-  Widget titleContainer({required Color color}) {
+  Widget titleContainer(BuildContext context, {required Color color}) {
     return Material(
-      color: Constants.colors.clairPink,
+      color: AdaptiveTheme.of(context).theme.colorScheme.background,
       child: Stack(
         children: [
           closeButton(),

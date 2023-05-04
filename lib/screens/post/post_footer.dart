@@ -105,7 +105,7 @@ class PostFooter extends StatelessWidget {
                                       fontSize: 14.0,
                                       color: Theme.of(context)
                                           .textTheme
-                                          .bodyText2
+                                          .bodyMedium
                                           ?.color
                                           ?.withOpacity(0.6),
                                       fontWeight: FontWeight.w500,
