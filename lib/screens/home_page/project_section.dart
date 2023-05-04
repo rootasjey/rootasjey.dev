@@ -1,9 +1,24 @@
 import 'package:beamer/beamer.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:loggy/loggy.dart';
 import 'package:rootasjey/components/mini_project_card.dart';
+import 'package:rootasjey/components/popup_menu/popup_menu_icon.dart';
+import 'package:rootasjey/components/popup_menu/popup_menu_item_icon.dart';
+import 'package:rootasjey/globals/constants.dart';
 import 'package:rootasjey/globals/utilities.dart';
 import 'package:rootasjey/router/locations/projects_location.dart';
+import 'package:rootasjey/screens/home_page/select_featured_project_dialog.dart';
+import 'package:rootasjey/types/alias/firestore/doc_snapshot_stream_subscription.dart';
+import 'package:rootasjey/types/alias/firestore/document_snapshot_map.dart';
+import 'package:rootasjey/types/alias/json_alias.dart';
+import 'package:rootasjey/types/enums/enum_project_item_action.dart';
+import 'package:rootasjey/types/featured_project.dart';
+import 'package:rootasjey/types/home_page_data.dart';
+import 'package:rootasjey/types/project/popup_entry_project.dart';
+import 'package:rootasjey/types/project/project.dart';
+import 'package:supercharged/supercharged.dart';
 import 'package:unicons/unicons.dart';
 
 class ProjectSection extends StatefulWidget {
@@ -19,9 +34,42 @@ class ProjectSection extends StatefulWidget {
   State<ProjectSection> createState() => _ProjectSectionState();
 }
 
-class _ProjectSectionState extends State<ProjectSection> {
+class _ProjectSectionState extends State<ProjectSection> with UiLoggy {
+  /// Allow section customization if true.
+  bool _editMode = false;
+
+  /// Underline title color.
+  Color _underlineColor = Colors.transparent;
+
+  /// Page data, especially featured projects.
+  HomePageData _homePageData = HomePageData.empty();
+
+  /// Full project data initially fetched from home page data;
+  final List<Project> _projects = [];
+
+  final List<PopupEntryProject> _popupEnries = [
+    PopupMenuItemIcon(
+      icon: const PopupMenuIcon(UniconsLine.trash),
+      textLabel: "delete".tr(),
+    ),
+  ];
+
+  /// Firestore collection's name (page data).
+  final String _collectionName = "pages";
+
+  /// Firestore document's name (page data).
+  final String _documentName = "home";
+
+  /// Section's title.
   String _projectTitle = "";
-  Color _backgroundColor = Colors.transparent;
+
+  DocSnapshotStreamSubscription? _homePageDataSub;
+
+  @override
+  void initState() {
+    super.initState();
+    tryFetchPageData();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +92,7 @@ class _ProjectSectionState extends State<ProjectSection> {
                   textStyle: TextStyle(
                     fontSize: fontSize,
                     fontWeight: FontWeight.w500,
-                    decorationColor: _backgroundColor,
+                    decorationColor: _underlineColor,
                     decorationThickness: _projectTitle.isEmpty ? 0.0 : 6.0,
                     decoration: TextDecoration.underline,
                   ),
@@ -56,57 +104,126 @@ class _ProjectSectionState extends State<ProjectSection> {
               child: Wrap(
                 spacing: 12.0,
                 runSpacing: 12.0,
-                children: [
-                  MiniProjectCard(
-                    iconData: UniconsLine.pen,
-                    label: "Artbooking",
-                    onHover: onHover,
-                    color: Colors.pink,
+                children: _projects
+                    .map(
+                      (Project project) => MiniProjectCard(
+                        thumbnailUrl: project.cover.thumbnails.s,
+                        iconData: UniconsLine.pen,
+                        label: project.name,
+                        onHover: onHover,
+                        color: Colors.pink,
+                        project: project,
+                        popupMenuEntries: _popupEnries,
+                        onTap: onTapProject,
+                        onPopupMenuItemSelected: onPopupMenuItemSelected,
+                        showEditMode: _editMode,
+                        onRemove: onRemoveProject,
+                      ),
+                    )
+                    .toList()
+                  ..add(
+                    MiniProjectCard(
+                      label: "project_add".tr(),
+                      iconData: UniconsLine.plus,
+                      color: Constants.colors.palette.first,
+                      onTap: openDialog,
+                      project: Project.empty(),
+                    ),
                   ),
-                  MiniProjectCard(
-                    iconData: UniconsLine.comment,
-                    label: "fig.style",
-                    onHover: onHover,
-                    color: Colors.amber,
-                  ),
-                  MiniProjectCard(
-                    iconData: UniconsLine.heart_medical,
-                    label: "My Health Partner",
-                    onHover: onHover,
-                    color: Colors.blue,
-                  ),
-                  MiniProjectCard(
-                    iconData: UniconsLine.image,
-                    label: "unsplasharp",
-                    onHover: onHover,
-                    color: Colors.green,
-                  ),
-                  MiniProjectCard(
-                    iconData: UniconsLine.cloud_wifi,
-                    label: "notapokedex",
-                    onHover: onHover,
-                    color: Colors.yellow.shade800,
-                  ),
-                  MiniProjectCard(
-                    iconData: UniconsLine.cloud_wifi,
-                    label: "conway",
-                    onHover: onHover,
-                    color: Colors.blueGrey,
-                  ),
-                ],
               ),
             ),
-            TextButton(
-              onPressed: onNavigateToAllProjects,
-              child: Text(
-                "projects_see_all".tr(),
-                style: Utilities.fonts.body(
-                  textStyle: const TextStyle(
-                    fontSize: 16.0,
-                    fontWeight: FontWeight.w600,
+            // Container(
+            //   padding: const EdgeInsets.only(top: 16.0),
+            //   child: Wrap(
+            //     spacing: 12.0,
+            //     runSpacing: 12.0,
+            //     children: [
+            //       MiniProjectCard(
+            //         iconData: UniconsLine.pen,
+            //         label: "Artbooking",
+            //         onHover: onHover,
+            //         color: Colors.pink,
+            //       ),
+            //       MiniProjectCard(
+            //         iconData: UniconsLine.comment,
+            //         label: "fig.style",
+            //         onHover: onHover,
+            //         color: Colors.amber,
+            //       ),
+            //       MiniProjectCard(
+            //         iconData: UniconsLine.heart_medical,
+            //         label: "My Health Partner",
+            //         onHover: onHover,
+            //         color: Colors.blue,
+            //       ),
+            //       MiniProjectCard(
+            //         iconData: UniconsLine.image,
+            //         label: "unsplasharp",
+            //         onHover: onHover,
+            //         color: Colors.green,
+            //       ),
+            //       MiniProjectCard(
+            //         iconData: UniconsLine.cloud_wifi,
+            //         label: "notapokedex",
+            //         onHover: onHover,
+            //         color: Colors.yellow.shade800,
+            //       ),
+            //       MiniProjectCard(
+            //         iconData: UniconsLine.cloud_wifi,
+            //         label: "conway",
+            //         onHover: onHover,
+            //         color: Colors.blueGrey,
+            //       ),
+            //     ],
+            //   ),
+            // ),
+            // TextButton(
+            //   onPressed: onNavigateToAllProjects,
+            //   child: Text(
+            //     "projects_see_all".tr(),
+            //     style: Utilities.fonts.body(
+            //       textStyle: TextStyle(
+            //         fontSize: 16.0,
+            //         fontWeight: FontWeight.w600,
+            //         color: Constants.colors.palette.first,
+            //       ),
+            //     ),
+            //   ),
+            // ),
+            Wrap(
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                TextButton(
+                  onPressed: onNavigateToAllProjects,
+                  child: Text(
+                    "projects_see_all".tr(),
+                    style: Utilities.fonts.body(
+                      textStyle: TextStyle(
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.w600,
+                        color: Constants.colors.palette.first,
+                      ),
+                    ),
                   ),
                 ),
-              ),
+                CircleAvatar(
+                  radius: 4.0,
+                  backgroundColor: Constants.colors.palette.last,
+                ),
+                TextButton(
+                  onPressed: onToggleEditMode,
+                  child: Text(
+                    _editMode ? "read_only".tr() : "edit".tr(),
+                    style: Utilities.fonts.body(
+                      textStyle: TextStyle(
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.w600,
+                        color: Constants.colors.palette.first,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
         ),
@@ -140,14 +257,182 @@ class _ProjectSectionState extends State<ProjectSection> {
     );
   }
 
+  /// Fetch page data (mainly featured projects).
+  void tryFetchPageData() async {
+    try {
+      final query = FirebaseFirestore.instance
+          .collection(_collectionName)
+          .doc(_documentName);
+
+      listenToDocumentChanges(query);
+      final DocumentSnapshotMap doc = await query.get();
+
+      final Json? data = doc.data();
+      if (!doc.exists || data == null) {
+        return;
+      }
+
+      setState(() {
+        data["id"] = doc.id;
+        _homePageData = HomePageData.fromMap(data);
+      });
+
+      tryFetchAllProject();
+    } catch (error) {
+      loggy.error(error);
+    }
+  }
+
+  void tryFetchAllProject() async {
+    setState(() {
+      _projects.clear();
+    });
+
+    final List<FeatureProject> featuredProjects =
+        _homePageData.featuredProjects;
+
+    for (final FeatureProject p in featuredProjects) {
+      final Project project = await tryFetchProject(p.id);
+      _projects.add(project);
+    }
+
+    setState(() {});
+  }
+
+  Future<Project> tryFetchProject(String projectId) async {
+    try {
+      final DocumentSnapshotMap doc = await FirebaseFirestore.instance
+          .collection("projects")
+          .doc(projectId)
+          .get();
+
+      final Json? data = doc.data();
+      if (!doc.exists || data == null) {
+        return Project.empty();
+      }
+
+      data["id"] = doc.id;
+      return Project.fromMap(data);
+    } catch (error) {
+      loggy.error(error);
+      return Project.empty();
+    }
+  }
+
   void onHover(String label, Color color, bool isHover) {
     setState(() {
       _projectTitle = isHover ? label : "";
-      _backgroundColor = isHover ? color : Colors.transparent;
+      _underlineColor = isHover ? color : Colors.transparent;
     });
   }
 
   void onNavigateToAllProjects() {
     Beamer.of(context).beamToNamed(ProjectsLocation.route);
+  }
+
+  void openDialog() {
+    Utilities.ui.showAdaptiveDialog(
+      context,
+      builder: (BuildContext context) {
+        return SelectFeaturedProjectDialog(
+          onValidate: (selectedProjects) =>
+              tryAddFeaturedProjects(selectedProjects),
+        );
+      },
+    );
+  }
+
+  void tryAddFeaturedProjects(List<Project> projectsToAdd) async {
+    if (projectsToAdd.isEmpty) {
+      return;
+    }
+
+    try {
+      for (var projectToAdd in projectsToAdd) {
+        _homePageData.featuredProjects.add(
+          FeatureProject(
+            id: projectToAdd.id,
+            color: Constants.colors.palette.pickOne().value,
+            name: projectToAdd.name,
+          ),
+        );
+      }
+
+      await FirebaseFirestore.instance
+          .collection(_collectionName)
+          .doc(_documentName)
+          .update(_homePageData.toMap());
+    } catch (error) {
+      loggy.error(error);
+    }
+  }
+
+  void onPopupMenuItemSelected(
+      EnumProjectItemAction action, int index, Project project) {
+    switch (action) {
+      case EnumProjectItemAction.delete:
+        break;
+      default:
+    }
+  }
+
+  void onTapProject() {}
+
+  void onToggleEditMode() {
+    setState(() {
+      _editMode = !_editMode;
+    });
+  }
+
+  void onRemoveProject(Project project) async {
+    _projects.remove(project);
+    _homePageData.featuredProjects.removeWhere((x) => x.id == project.id);
+
+    try {
+      await FirebaseFirestore.instance
+          .collection(_collectionName)
+          .doc(_documentName)
+          .update(_homePageData.toMap());
+
+      setState(() {});
+    } catch (error) {
+      loggy.error(error);
+      _projects.add(project);
+      setState(() {});
+    }
+  }
+
+  void listenToDocumentChanges(DocumentReference<Map<String, dynamic>> query) {
+    _homePageDataSub?.cancel();
+    _homePageDataSub = query.snapshots().skip(1).listen(
+      (snapshot) {
+        if (!snapshot.exists) {
+          _homePageDataSub?.cancel();
+          return;
+        }
+
+        final Json? data = snapshot.data();
+        if (data == null) {
+          return;
+        }
+
+        if (!mounted) {
+          return;
+        }
+
+        setState(() {
+          data["id"] = snapshot.id;
+          _homePageData = HomePageData.fromMap(data);
+        });
+
+        tryFetchAllProject();
+      },
+      onError: (error) {
+        loggy.error(error);
+      },
+      onDone: () {
+        _homePageDataSub?.cancel();
+      },
+    );
   }
 }
