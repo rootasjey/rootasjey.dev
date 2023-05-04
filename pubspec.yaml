@@ -64,9 +64,9 @@ dependencies:
   jiffy: ^5.0.0
   loggy: ^2.0.1+1
   lottie: ^1.4.3
-  markdown_viewer: ^0.4.2
+  markdown_viewer: ^0.5.0
   mime_type: ^1.0.0
-  modal_bottom_sheet: ^2.1.2
+  modal_bottom_sheet: ^3.0.0-pre
   particles_flutter: ^0.1.4
   photo_view: ^0.14.0
   screenshot: ^1.2.3
