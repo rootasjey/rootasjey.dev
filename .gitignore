@@ -24,6 +24,9 @@ migrate_working_dir/
 .fvm/fvm_config.json
 **/firebase_app_id_file.json
 **/firebase_options.dart
+firestore.indexes.json
+firestore.rules
+storage.rules
 
 # The .vscode folder contains launch configuration and tasks you configure in
 # VS Code which you may wish to be included in version control, so this line
