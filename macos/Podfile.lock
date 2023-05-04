@@ -946,7 +946,7 @@ SPEC CHECKSUMS:
   FirebaseSharedSwift: 2269c2ddc7a5efb7fb5f3f3177e790613b52dfda
   FirebaseStorage: 1fead543a1f441c3b434c1c9f12560dd82f8b568
   FirebaseStorageInternal: 81d8a597324ccd06c41a43c5700bc1185a2fc328
-  FlutterMacOS: ae6af50a8ea7d6103d888583d46bd8328a7e9811
+  FlutterMacOS: 8f6f14fa908a6fb3fba0cd85dbd81ec4b251fb24
   GoogleAppMeasurement: 6de2b1a69e4326eb82ee05d138f6a5cb7311bcb1
   GoogleDataTransport: 1c8145da7117bd68bbbed00cf304edb6a24de00f
   GoogleUtilities: 1d20a6ad97ef46f67bbdec158ce00563a671ebb7
@@ -963,6 +963,6 @@ SPEC CHECKSUMS:
   url_launcher_macos: 597e05b8e514239626bcf4a850fcf9ef5c856ec3
   window_manager: 3a1844359a6295ab1e47659b1a777e36773cd6e8
 
-PODFILE CHECKSUM: c7161fcf45d4fd9025dc0f48a76d6e64e52f8176
+PODFILE CHECKSUM: 353c8bcc5d5b0994e508d035b5431cfe18c1dea7
 
 COCOAPODS: 1.11.3
