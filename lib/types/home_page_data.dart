@@ -4,7 +4,7 @@ import 'package:rootasjey/types/featured_project.dart';
 
 class HomePageData {
   final String id;
-  final List<FeatureProject> featuredProjects;
+  final List<FeaturedProject> featuredProjects;
 
   HomePageData({
     required this.id,
@@ -13,7 +13,7 @@ class HomePageData {
 
   HomePageData copyWith({
     String? id,
-    List<FeatureProject>? featuredProjects,
+    List<FeaturedProject>? featuredProjects,
   }) {
     return HomePageData(
       id: id ?? this.id,
@@ -41,18 +41,17 @@ class HomePageData {
     );
   }
 
-  static List<FeatureProject> parseFeaturedProjects(
-    // List<Map<String, dynamic>>? rawProjects,
+  static List<FeaturedProject> parseFeaturedProjects(
     List<dynamic>? rawProjects,
   ) {
-    final List<FeatureProject> projects = [];
+    final List<FeaturedProject> projects = [];
 
     if (rawProjects == null) {
       return projects;
     }
 
     for (final rawProject in rawProjects) {
-      projects.add(FeatureProject.fromMap(rawProject));
+      projects.add(FeaturedProject.fromMap(rawProject));
     }
 
     return projects;

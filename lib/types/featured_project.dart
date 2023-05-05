@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-class FeatureProject {
-  FeatureProject({
+class FeaturedProject {
+  FeaturedProject({
     required this.id,
     required this.color,
     required this.name,
@@ -13,13 +13,13 @@ class FeatureProject {
   String name;
   final bool useIcon;
 
-  FeatureProject copyWith({
+  FeaturedProject copyWith({
     String? id,
     int? color,
     String? name,
     bool? useIcon,
   }) {
-    return FeatureProject(
+    return FeaturedProject(
       id: id ?? this.id,
       color: color ?? this.color,
       name: name ?? this.name,
@@ -36,8 +36,8 @@ class FeatureProject {
     };
   }
 
-  factory FeatureProject.fromMap(Map<String, dynamic> map) {
-    return FeatureProject(
+  factory FeaturedProject.fromMap(Map<String, dynamic> map) {
+    return FeaturedProject(
       id: map["project_id"] as String,
       color: map["color_int"] as int,
       name: map["name"] ?? "",
@@ -47,15 +47,15 @@ class FeatureProject {
 
   String toJson() => json.encode(toMap());
 
-  factory FeatureProject.fromJson(String source) =>
-      FeatureProject.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory FeaturedProject.fromJson(String source) =>
+      FeaturedProject.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
   String toString() =>
       'FeaturedProject(id: $id, name: $name, color: $color, useIcon: $useIcon)';
 
   @override
-  bool operator ==(covariant FeatureProject other) {
+  bool operator ==(covariant FeaturedProject other) {
     if (identical(this, other)) return true;
 
     return other.id == id &&

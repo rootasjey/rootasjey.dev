@@ -22,7 +22,7 @@ class SigninLocation extends BeamLocation<BeamState> {
             final user = containerProvider.read(AppState.userProvider.notifier);
             return !user.isAuthenticated;
           },
-          beamToNamed: (origin, taraget) => HomeLocation.route,
+          beamToNamed: (origin, target) => HomeLocation.route,
         ),
       ];
 

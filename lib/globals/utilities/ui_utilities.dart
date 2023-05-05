@@ -4,6 +4,30 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 class UIUtilities {
   const UIUtilities();
 
+  /// Color filter to greyed out widget.
+  final ColorFilter greyColorFilter = const ColorFilter.matrix(<double>[
+    0.2126,
+    0.7152,
+    0.0722,
+    0,
+    0,
+    0.2126,
+    0.7152,
+    0.0722,
+    0,
+    0,
+    0.2126,
+    0.7152,
+    0.0722,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+  ]);
+
   /// Starting delay for fade in y animmation.
   static int _delay = 0;
 

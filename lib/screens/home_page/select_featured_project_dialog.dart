@@ -21,6 +21,7 @@ class SelectFeaturedProjectDialog extends ConsumerStatefulWidget {
     super.key,
     this.asBottomSheet = false,
     this.onValidate,
+    this.featuredProjectIds = const [],
   });
 
   /// If true, this widget will take a suitable layout for bottom sheet.
@@ -29,6 +30,9 @@ class SelectFeaturedProjectDialog extends ConsumerStatefulWidget {
 
   /// Callback fired when we confirm the deletion.
   final void Function(List<Project> selectedProjects)? onValidate;
+
+  /// Already selected projects.
+  final List<String> featuredProjectIds;
 
   @override
   ConsumerState<SelectFeaturedProjectDialog> createState() =>
@@ -146,10 +150,11 @@ class _AddFeaturedProjectState
                 ),
                 itemBuilder: (BuildContext context, int index) {
                   final Project project = _projects.elementAt(index);
+                  final bool deactivated =
+                      widget.featuredProjectIds.contains(project.id);
 
                   return MiniProjectCard(
-                    label: project.name,
-                    thumbnailUrl: project.cover.thumbnails.s,
+                    deactivated: deactivated,
                     onTap: () => onTapProject(project),
                     selected: _selectedProjects.contains(project),
                     showLabel: true,
@@ -285,8 +290,6 @@ class _AddFeaturedProjectState
                       final Project project = _projects.elementAt(index);
 
                       return MiniProjectCard(
-                        // book: project,
-                        label: project.name,
                         onTap: () => onTapProject(project),
                         selected: _selectedProjects.contains(project),
                         project: project,
