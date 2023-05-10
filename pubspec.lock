@@ -17,6 +17,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.1.1"
+  any_syntax_highlighter:
+    dependency: "direct main"
+    description:
+      name: any_syntax_highlighter
+      sha256: "0e48a8f7b9346cdbddaffda036e725bf374d6313836d4724d88aca910b7cadc3"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.4"
   archive:
     dependency: transitive
     description:
@@ -177,22 +185,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.5"
-  dart_markdown:
-    dependency: transitive
-    description:
-      name: dart_markdown
-      sha256: a21cda21f88d82fe6e3bb386a067d36c802df822c2a0d60d48bdbcd620fd2003
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.1.4"
-  dart_prism:
-    dependency: transitive
-    description:
-      name: dart_prism
-      sha256: "0061a22072e81877bb2447236d15c43413764d957fd0b822f91a5442486af516"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.2.1"
   dismissible_page:
     dependency: "direct main"
     description:
@@ -390,6 +382,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_highlight:
+    dependency: transitive
+    description:
+      name: flutter_highlight
+      sha256: "7b96333867aa07e122e245c033b8ad622e4e3a42a1a2372cbb098a2541d8782c"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.7.0"
   flutter_improved_scrolling:
     dependency: "direct main"
     description:
@@ -427,14 +427,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.7"
-  flutter_prism:
-    dependency: "direct main"
-    description:
-      name: flutter_prism
-      sha256: c5f559daa8f33ac358e61ba4be42f9839f05b14c90fe524a48da0b8a69e619ac
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.2.1"
   flutter_riverpod:
     dependency: "direct main"
     description:
@@ -501,6 +493,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.1"
+  highlight:
+    dependency: transitive
+    description:
+      name: highlight
+      sha256: "5353a83ffe3e3eca7df0abfb72dcf3fa66cc56b953728e7113ad4ad88497cf21"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.7.0"
   http:
     dependency: transitive
     description:
@@ -581,14 +581,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.4.3"
-  markdown_viewer:
-    dependency: "direct main"
+  markdown:
+    dependency: transitive
     description:
-      name: markdown_viewer
-      sha256: "20ba66becfb4aec6e39b1eef07c53463c96ecf315d7da4e7ad960796f866cb45"
+      name: markdown
+      sha256: "8e332924094383133cee218b676871f42db2514f1f6ac617b6cf6152a7faab8e"
       url: "https://pub.dev"
     source: hosted
-    version: "0.5.0"
+    version: "7.1.0"
+  markdown_widget:
+    dependency: "direct main"
+    description:
+      name: markdown_widget
+      sha256: "72e2b7eda5b17eb4b4e6e22722aa22cc097310e5e23eafe8158064f18f142d1b"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.1.0"
   matcher:
     dependency: transitive
     description:
@@ -797,6 +805,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.2.3"
+  scroll_to_index:
+    dependency: transitive
+    description:
+      name: scroll_to_index
+      sha256: b707546e7500d9f070d63e5acf74fd437ec7eeeb68d3412ef7b0afada0b4f176
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.0.1"
   shared_preferences:
     dependency: transitive
     description:
@@ -998,10 +1014,10 @@ packages:
     dependency: "direct main"
     description:
       name: url_launcher
-      sha256: "568176fc8ab5ac1d88ff0db8ff28659d103851670dda55e83b485664c2309299"
+      sha256: "75f2846facd11168d007529d6cd8fcb2b750186bea046af9711f10b907e1587e"
       url: "https://pub.dev"
     source: hosted
-    version: "6.1.6"
+    version: "6.1.10"
   url_launcher_android:
     dependency: transitive
     description:
@@ -1082,6 +1098,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.0"
+  visibility_detector:
+    dependency: transitive
+    description:
+      name: visibility_detector
+      sha256: dd5cc11e13494f432d15939c3aa8ae76844c42b723398643ce9addb88a5ed420
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.4.0+2"
   win32:
     dependency: transitive
     description:
@@ -1115,5 +1139,5 @@ packages:
     source: hosted
     version: "6.1.0"
 sdks:
-  dart: ">=2.18.1 <3.0.0"
+  dart: ">=2.19.0 <3.0.0"
   flutter: ">=3.7.0"

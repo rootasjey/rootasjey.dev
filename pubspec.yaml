@@ -30,6 +30,7 @@ environment:
 # versions available, run `flutter pub outdated`.
 dependencies:
   adaptive_theme: ^3.1.1
+  any_syntax_highlighter: ^0.0.4
   awesome_snackbar_content: ^0.0.8
   beamer: ^1.5.3
   card_swiper: ^2.0.4
@@ -54,7 +55,6 @@ dependencies:
 
   flutter_improved_scrolling: ^0.0.3
   flutter_loggy: ^2.0.1
-  flutter_prism: ^0.2.1
   flutter_riverpod: ^1.0.4
   font_awesome_flutter: ^10.2.1
   github: ^9.4.0
@@ -64,7 +64,7 @@ dependencies:
   jiffy: ^5.0.0
   loggy: ^2.0.1+1
   lottie: ^1.4.3
-  markdown_viewer: ^0.5.0
+  markdown_widget: ^2.1.0
   mime_type: ^1.0.0
   modal_bottom_sheet: ^3.0.0-pre
   particles_flutter: ^0.1.4
