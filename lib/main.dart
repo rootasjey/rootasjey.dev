@@ -63,27 +63,29 @@ void main() async {
   final AdaptiveThemeMode? savedThemeMode = await AdaptiveTheme.getThemeMode();
   setPathUrlStrategy();
 
-  if (Platform.isLinux || Platform.isMacOS || Platform.isWindows) {
-    await windowManager.ensureInitialized();
+  if (!kIsWeb) {
+    if (Platform.isLinux || Platform.isMacOS || Platform.isWindows) {
+      await windowManager.ensureInitialized();
 
-    windowManager.waitUntilReadyToShow(
-      WindowOptions(
-        titleBarStyle: TitleBarStyle.hidden,
-      ),
-      () async {
-        await windowManager.show();
-      },
-    );
-  }
+      windowManager.waitUntilReadyToShow(
+        WindowOptions(
+          titleBarStyle: TitleBarStyle.hidden,
+        ),
+        () async {
+          await windowManager.show();
+        },
+      );
+    }
 
-  if (Platform.isAndroid || Platform.isIOS) {
-    SystemChrome.setSystemUIOverlayStyle(
-      SystemUiOverlayStyle(
-        statusBarColor: Constants.colors.lightBackground,
-        systemNavigationBarColor: Colors.white,
-        systemNavigationBarDividerColor: Colors.transparent,
-      ),
-    );
+    if (Platform.isAndroid || Platform.isIOS) {
+      SystemChrome.setSystemUIOverlayStyle(
+        SystemUiOverlayStyle(
+          statusBarColor: Constants.colors.lightBackground,
+          systemNavigationBarColor: Colors.white,
+          systemNavigationBarDividerColor: Colors.transparent,
+        ),
+      );
+    }
   }
 
   Constants.colors.palette.shuffle();
