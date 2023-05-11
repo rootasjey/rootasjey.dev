@@ -72,7 +72,7 @@ class MiniProjectCard extends StatefulWidget {
   final void Function(String label, Color color, bool isHover)? onHover;
 
   /// Callback fired when this card is tapped.
-  final void Function()? onTap;
+  final void Function(Project project)? onTap;
 
   /// Callback fired when this card should be removed.
   final void Function(Project project)? onRemove;
@@ -182,7 +182,9 @@ class _MiniProjectCardState extends State<MiniProjectCard> {
 
           widget.onHover?.call(widget.project.name, widget.color, isHover);
         },
-        onTap: widget.onTap,
+        onTap: widget.onTap == null
+            ? null
+            : () => widget.onTap?.call(widget.project),
         onLongPress:
             widget.useBottomSheet && !widget.canDrag ? onLongPress : null,
         child: Container(
@@ -263,7 +265,9 @@ class _MiniProjectCardState extends State<MiniProjectCard> {
                       widget.onHover
                           ?.call(widget.project.name, widget.color, isHover);
                     },
-                    onTap: widget.deactivated ? null : widget.onTap,
+                    onTap: widget.deactivated
+                        ? null
+                        : () => widget.onTap?.call(widget.project),
                     onLongPress: widget.useBottomSheet && !widget.canDrag
                         ? onLongPress
                         : null,

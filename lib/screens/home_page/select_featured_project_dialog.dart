@@ -155,7 +155,7 @@ class _AddFeaturedProjectState
 
                   return MiniProjectCard(
                     deactivated: deactivated,
-                    onTap: () => onTapProject(project),
+                    onTap: onTapProject,
                     selected: _selectedProjects.contains(project),
                     showLabel: true,
                     project: project,
@@ -290,7 +290,7 @@ class _AddFeaturedProjectState
                       final Project project = _projects.elementAt(index);
 
                       return MiniProjectCard(
-                        onTap: () => onTapProject(project),
+                        onTap: onTapProject,
                         selected: _selectedProjects.contains(project),
                         project: project,
                       );

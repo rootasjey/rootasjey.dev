@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:typed_data';
 
 import 'package:beamer/beamer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -8,6 +7,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_improved_scrolling/flutter_improved_scrolling.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loggy/loggy.dart';
@@ -59,24 +59,38 @@ class _ProjectPageState extends ConsumerState<ProjectPage> with UiLoggy {
   /// True if we're trying to delete the project.
   bool _deleting = false;
 
+  /// Display add tag component.
   bool _showAddTag = false;
 
+  /// True if we're hiding the Floating Action Button.
   bool _hideFab = true;
+
+  /// True if we're showing the app bar title.
   bool _showAppBarTitle = false;
 
+  /// True if we're showing the settings.
   bool _showSettings = false;
 
   bool _confirmDeletePost = false;
 
+  /// True if we can edit the post.
   bool _editing = false;
 
   /// Last saved offset.
   /// Useful to determinate the scroll direction.
   double _prevOffset = 0.0;
 
+  /// Icon size.
+  double copyIconSize = 24.0;
+
+  /// Copy icon component
+  /// (switch temporaryly to a check mark when tapped).
+  Icon copyIcon = const Icon(UniconsLine.copy, size: 24.0);
+
   /// Page project.
   Project _project = Project.empty();
 
+  /// Regex to detect and count words.
   final RegExp _wordsRegex = RegExp(r"[\w-._]+");
 
   /// Page scroll controller.
@@ -102,6 +116,8 @@ class _ProjectPageState extends ConsumerState<ProjectPage> with UiLoggy {
 
   /// Input controller for project's summary (metadata).
   final TextEditingController _summaryController = TextEditingController();
+
+  /// Input controller for project's tags (metadata).
   final TextEditingController _tagInputController = TextEditingController();
 
   /// Controller for post content.
@@ -113,7 +129,8 @@ class _ProjectPageState extends ConsumerState<ProjectPage> with UiLoggy {
   /// Used to add delay to post's content update.
   Timer? _contentUpdateTimer;
 
-  final VerbalExpression _verbalExp = VerbalExpression()..space();
+  /// Regex to detect spaces between words.
+  final VerbalExpression _verbalSpaceExp = VerbalExpression()..space();
 
   @override
   void initState() {
@@ -227,6 +244,8 @@ class _ProjectPageState extends ConsumerState<ProjectPage> with UiLoggy {
                   editing: _editing,
                   editingController: _contentController,
                   onContentChanged: onContentChanged,
+                  copyIcon: copyIcon,
+                  onCopy: onCopy,
                 ),
                 PostFooter(
                   maxWidth: maxWidth,
@@ -526,7 +545,7 @@ class _ProjectPageState extends ConsumerState<ProjectPage> with UiLoggy {
       tryUpdateTags(editedTag);
     }
 
-    if (_verbalExp.hasMatch(tag)) {
+    if (_verbalSpaceExp.hasMatch(tag)) {
       editedTag = tag.trim();
 
       _tagInputController.clear();
@@ -915,5 +934,18 @@ class _ProjectPageState extends ConsumerState<ProjectPage> with UiLoggy {
         _scrollDirection = newScrollDirection;
       });
     }
+  }
+
+  void onCopy(String code) {
+    Clipboard.setData(ClipboardData(text: code));
+    setState(() {
+      copyIcon = Icon(UniconsLine.check, size: copyIconSize);
+    });
+
+    Future.delayed(const Duration(seconds: 2), () {
+      setState(() {
+        copyIcon = Icon(UniconsLine.copy, size: copyIconSize);
+      });
+    });
   }
 }

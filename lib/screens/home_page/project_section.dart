@@ -20,6 +20,7 @@ import 'package:rootasjey/types/featured_project.dart';
 import 'package:rootasjey/types/home_page_data.dart';
 import 'package:rootasjey/types/project/popup_entry_project.dart';
 import 'package:rootasjey/types/project/project.dart';
+import 'package:rootasjey/types/user/user_firestore.dart';
 import 'package:supercharged/supercharged.dart';
 import 'package:unicons/unicons.dart';
 
@@ -82,7 +83,9 @@ class _ProjectSectionState extends ConsumerState<ProjectSection> with UiLoggy {
     final double fontSize =
         widget.size.width < Utilities.size.mobileWidthTreshold ? 24.0 : 64.0;
 
-    final userFirestore = ref.watch(AppState.userProvider).firestoreUser;
+    final UserFirestore? userFirestore =
+        ref.watch(AppState.userProvider).firestoreUser;
+
     final bool isAuthenticated =
         userFirestore != null && userFirestore.rights.manageData;
 
@@ -104,7 +107,9 @@ class _ProjectSectionState extends ConsumerState<ProjectSection> with UiLoggy {
                     fontWeight: FontWeight.w500,
                     decorationColor: _underlineColor,
                     decorationThickness: _projectTitle.isEmpty ? 0.0 : 6.0,
-                    decoration: TextDecoration.underline,
+                    decoration: _projectTitle.isEmpty
+                        ? TextDecoration.none
+                        : TextDecoration.underline,
                   ),
                 ),
               ),
@@ -365,7 +370,7 @@ class _ProjectSectionState extends ConsumerState<ProjectSection> with UiLoggy {
     Beamer.of(context).beamToNamed(ProjectsLocation.route);
   }
 
-  void openDialog() {
+  void openDialog(Project project) {
     Utilities.ui.showAdaptiveDialog(
       context,
       builder: (BuildContext context) {
@@ -413,7 +418,17 @@ class _ProjectSectionState extends ConsumerState<ProjectSection> with UiLoggy {
     }
   }
 
-  void onTapProject() {}
+  void onTapProject(Project project) {
+    Beamer.of(context).beamToNamed(
+      ProjectsLocation.singleProjectRoute.replaceFirst(
+        ":projectId",
+        project.id,
+      ),
+      data: {
+        "projectId": project.id,
+      },
+    );
+  }
 
   void onToggleEditMode() {
     setState(() {
