@@ -7,13 +7,10 @@ import 'package:rootasjey/types/formation.dart';
 import 'package:rootasjey/types/project/project.dart';
 import 'package:rootasjey/types/skill.dart';
 import 'package:rootasjey/types/social_links.dart';
-import 'package:file_saver/file_saver.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rootasjey/globals/utilities.dart';
-import 'package:screenshot/screenshot.dart';
 import 'package:unicons/unicons.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
@@ -159,7 +156,7 @@ class _CVPageState extends State<CVPage> {
   ];
 
   // Uint8List? _imageFile;
-  final ScreenshotController _screenshotController = ScreenshotController();
+  // final ScreenshotController _screenshotController = ScreenshotController();
 
   final List<Project> _projects = [
     Project(
@@ -312,10 +309,11 @@ class _CVPageState extends State<CVPage> {
         slivers: [
           const ApplicationBar(),
           SliverToBoxAdapter(
-            child: Screenshot(
-              controller: _screenshotController,
-              child: body(),
-            ),
+            child: body(),
+            // child: Screenshot(
+            //   controller: _screenshotController,
+            //   child: body(),
+            // ),
           ),
         ],
       ),
@@ -909,11 +907,11 @@ class _CVPageState extends State<CVPage> {
   }
 
   void tryDownloadCV() async {
-    final Uint8List? imageFile = await _screenshotController.capture();
-    if (imageFile == null) {
-      return;
-    }
+    // final Uint8List? imageFile = await _screenshotController.capture();
+    // if (imageFile == null) {
+    //   return;
+    // }
 
-    await FileSaver.instance.saveFile("cv", imageFile, "png");
+    // await FileSaver.instance.saveFile("cv", imageFile, "png");
   }
 }

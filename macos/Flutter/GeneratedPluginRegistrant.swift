@@ -12,9 +12,9 @@ import firebase_analytics
 import firebase_auth
 import firebase_core
 import firebase_storage
-import path_provider_macos
+import path_provider_foundation
 import screen_retriever
-import shared_preferences_macos
+import shared_preferences_foundation
 import url_launcher_macos
 import window_manager
 

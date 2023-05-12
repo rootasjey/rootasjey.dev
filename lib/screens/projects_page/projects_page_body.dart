@@ -150,7 +150,8 @@ class ProjectsPageBody extends StatelessWidget {
                           useBottomSheet: false,
                           onTapCard: () => onTapProject?.call(project),
                           project: project,
-                          popupMenuEntries: projectPopupMenuItems,
+                          popupMenuEntries:
+                              canManage ? projectPopupMenuItems : [],
                           onPopupMenuItemSelected: onPopupMenuItemSelected,
                           compact: isMobileSize,
                         );

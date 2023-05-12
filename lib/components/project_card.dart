@@ -87,9 +87,7 @@ class ProjectCard extends StatelessWidget {
                                 style: Utilities.fonts.body(
                                   textStyle: TextStyle(
                                     fontSize: compact ? 24.0 : 32.0,
-                                    fontWeight: compact
-                                        ? FontWeight.w700
-                                        : FontWeight.w600,
+                                    fontWeight: FontWeight.w700,
                                   ),
                                 ),
                               ),

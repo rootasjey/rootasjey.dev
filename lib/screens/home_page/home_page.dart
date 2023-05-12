@@ -2,7 +2,7 @@ import 'package:beamer/beamer.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_improved_scrolling/flutter_improved_scrolling.dart';
-import 'package:particles_flutter/particles_flutter.dart';
+import 'package:lottie/lottie.dart';
 import 'package:rootasjey/router/locations/illustrations_location.dart';
 import 'package:rootasjey/screens/home_page/about_me.dart';
 import 'package:rootasjey/components/application_bar.dart';
@@ -71,18 +71,11 @@ class _HomePageState extends State<HomePage> {
                   padding: const EdgeInsets.only(bottom: 24.0),
                   child: Stack(
                     children: [
-                      CircularParticle(
-                        height: size.height - 200.0,
+                      Lottie.asset(
+                        "assets/animations/particles.json",
+                        repeat: true,
+                        height: size.height - 100.0,
                         width: size.width,
-                        isRandSize: true,
-                        maxParticleSize: 8.0,
-                        speedOfParticles: 0.2,
-                        numberOfParticles: 6.0,
-                        onTapAnimation: true,
-                        isRandomColor: true,
-                        randColorList: Constants.colors.palette
-                            .map((Color color) => color.withOpacity(1.0))
-                            .toList(),
                       ),
                       heroWidget(size: size),
                     ],

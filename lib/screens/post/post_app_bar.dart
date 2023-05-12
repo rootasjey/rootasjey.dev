@@ -102,7 +102,7 @@ class _PostAppBarState extends State<PostAppBar> with AnimationMixin {
                 child: CircleButton(
                   tooltip: "back".tr(),
                   icon: const Icon(UniconsLine.arrow_left),
-                  onTap: () => Beamer.of(context).beamBack(),
+                  onTap: () => Utilities.navigation.back(context),
                 ),
               ),
               Positioned(

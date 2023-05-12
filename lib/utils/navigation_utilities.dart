@@ -19,6 +19,16 @@ class NavigationUtilities {
       return;
     }
 
+    final history = Beamer.of(context).beamingHistory;
+    final String? stringLocation = history.last.state.routeInformation.location;
+    final slashRegex = RegExp(r"(/)");
+    final slashMatches = slashRegex.allMatches(stringLocation ?? "");
+
+    if (history.length == 1 && slashMatches.length == 1) {
+      Beamer.of(context).beamToNamed(HomeLocation.route);
+      return;
+    }
+
     Beamer.of(context).popRoute();
   }
 

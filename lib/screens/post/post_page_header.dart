@@ -1,4 +1,3 @@
-import 'package:beamer/beamer.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
@@ -8,6 +7,7 @@ import 'package:rootasjey/globals/constants.dart';
 import 'package:rootasjey/globals/utilities.dart';
 import 'package:rootasjey/types/enums/enum_content_visibility.dart';
 import 'package:simple_animations/simple_animations.dart';
+import 'package:unicons/unicons.dart';
 
 class PostPageHeader extends StatelessWidget {
   const PostPageHeader({
@@ -197,8 +197,14 @@ class PostPageHeader extends StatelessWidget {
       ActionChip(
         elevation: 2.0,
         backgroundColor: Colors.pink,
-        label: Text("← ${"back".tr()}"),
-        onPressed: Beamer.of(context).beamBack,
+        label: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Opacity(opacity: 0.8, child: Icon(UniconsLine.arrow_left)),
+            Text("back".tr()),
+          ],
+        ),
+        onPressed: () => Utilities.navigation.back(context),
       ),
     ];
 
