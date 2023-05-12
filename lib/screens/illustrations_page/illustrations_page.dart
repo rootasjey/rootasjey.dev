@@ -433,7 +433,7 @@ class _DrawingsPageState extends ConsumerState<IllustrationsPage> with UiLoggy {
     }
 
     final int index = _illustrations.indexWhere(
-      (illustration) => illustration.id == documentChange.doc.id,
+      (Illustration illustration) => illustration.id == documentChange.doc.id,
     );
 
     if (index < 0) {
@@ -441,7 +441,7 @@ class _DrawingsPageState extends ConsumerState<IllustrationsPage> with UiLoggy {
     }
 
     data["id"] = documentChange.doc.id;
-    final updatedIllustration = Illustration.fromMap(data);
+    final Illustration updatedIllustration = Illustration.fromMap(data);
 
     setState(() {
       _illustrations.removeAt(index);

@@ -23,16 +23,21 @@ class ApplicationBar extends ConsumerWidget {
     this.pinned = true,
     this.bottom,
     this.backgroundColor,
-    this.padding = const EdgeInsets.only(left: 170.0, top: 16.0),
+    this.padding = const EdgeInsets.only(left: 24.0, top: 16.0, right: 24.0),
     this.isMobileSize = false,
   }) : super(key: key);
 
   /// Whether the app bar should remain visible at the start of the scroll view.
   final bool pinned;
 
+  /// True if the screen's width is smaller than 600px.
+  /// Back behavior is different if this is true.
   final bool isMobileSize;
+
+  /// The background color of the app bar.
   final Color? backgroundColor;
 
+  /// The padding of the app bar.
   final EdgeInsets padding;
 
   /// This widget appears across the bottom of the app bar.

@@ -11,7 +11,6 @@ import 'package:rootasjey/components/popup_menu/popup_menu_icon.dart';
 import 'package:rootasjey/components/popup_menu/popup_menu_item_icon.dart';
 import 'package:rootasjey/globals/app_state.dart';
 import 'package:rootasjey/globals/utilities.dart';
-import 'package:rootasjey/router/locations/home_location.dart';
 import 'package:rootasjey/router/locations/posts_location.dart';
 import 'package:rootasjey/screens/posts_page/create_post_page.dart';
 import 'package:rootasjey/screens/posts_page/posts_page_body.dart';
@@ -122,7 +121,7 @@ class _PostsPageState extends ConsumerState<PostsPage> with UiLoggy {
           canCreate: canManagePosts,
           fab: fab(show: canManagePosts),
           onShowCreatePage: onShowCreate,
-          onCancel: onCancel,
+          onCancel: () => Utilities.navigation.back(context),
         ),
       );
     }
@@ -171,7 +170,7 @@ class _PostsPageState extends ConsumerState<PostsPage> with UiLoggy {
 
     final actions = <Type, Action<Intent>>{
       EscapeIntent: CallbackAction(
-        onInvoke: (Intent intent) => onCancel(),
+        onInvoke: (Intent intent) => Utilities.navigation.back(context),
       ),
     };
 
@@ -403,15 +402,6 @@ class _PostsPageState extends ConsumerState<PostsPage> with UiLoggy {
       final Post post = Post.fromMap(map);
       _posts.insert(0, post);
     });
-  }
-
-  void onCancel() {
-    if (Beamer.of(context).beamingHistory.isNotEmpty) {
-      Beamer.of(context).beamBack();
-      return;
-    }
-
-    Beamer.of(context, root: true).beamToNamed(HomeLocation.route);
   }
 
   /// Fire when a new document has been updated in Firestore.

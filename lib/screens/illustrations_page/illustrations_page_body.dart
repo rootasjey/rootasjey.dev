@@ -52,9 +52,7 @@ class IllustrationsPageBody extends StatelessWidget {
         children: [
           CustomScrollView(
             slivers: [
-              ApplicationBar(
-                padding: getAppBarPadding(windowSize),
-              ),
+              const ApplicationBar(),
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.only(
@@ -125,14 +123,6 @@ class IllustrationsPageBody extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  EdgeInsets getAppBarPadding(Size size) {
-    if (size.width < 1000.0) {
-      return const EdgeInsets.only(left: 12.0, top: 16.0);
-    }
-
-    return const EdgeInsets.only(left: 170.0, top: 16.0);
   }
 
   SliverGridDelegate getGridDelegate() {

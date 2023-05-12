@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:dismissible_page/dismissible_page.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:photo_view/photo_view.dart';
@@ -75,7 +76,7 @@ class _HeroImageState extends State<HeroImage> {
 
   @override
   void dispose() {
-    if (Platform.isAndroid || Platform.isIOS) {
+    if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
       SystemChrome.setSystemUIOverlayStyle(
         SystemUiOverlayStyle(
           statusBarColor: Constants.colors.lightBackground,
