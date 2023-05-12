@@ -23,6 +23,7 @@ class DarkElevatedButton extends StatelessWidget {
     return ElevatedButton(
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
+        foregroundColor: Colors.white,
         backgroundColor: backgroundColor ?? Colors.black,
         textStyle: Utilities.fonts.body(
           textStyle: const TextStyle(
