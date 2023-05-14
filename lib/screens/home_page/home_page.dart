@@ -31,7 +31,7 @@ class _HomePageState extends State<HomePage> {
   EnumDirection _enumDirection = EnumDirection.down;
 
   /// Can be an arrow up or down.
-  Icon _fabIcon = const Icon(UniconsLine.arrow_down);
+  Icon _fabIcon = const Icon(UniconsLine.arrow_down, color: Colors.white);
 
   /// Page scroll controller to programmatically scroll the UI.
   final ScrollController _pageScrollController = ScrollController();
@@ -340,7 +340,7 @@ class _HomePageState extends State<HomePage> {
   void onScroll(double offset) {
     if (offset == 0) {
       setState(() {
-        _fabIcon = const Icon(UniconsLine.arrow_down);
+        _fabIcon = const Icon(UniconsLine.arrow_down, color: Colors.white);
         _enumDirection = EnumDirection.down;
       });
 
@@ -352,7 +352,7 @@ class _HomePageState extends State<HomePage> {
     }
 
     setState(() {
-      _fabIcon = const Icon(UniconsLine.arrow_up);
+      _fabIcon = const Icon(UniconsLine.arrow_up, color: Colors.white);
       _enumDirection = EnumDirection.up;
     });
   }

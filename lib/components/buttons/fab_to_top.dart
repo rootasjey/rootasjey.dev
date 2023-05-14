@@ -9,9 +9,17 @@ class FabToTop extends StatelessWidget {
     this.backgroundColor,
   });
 
+  /// Hide the FAB if it is at the top and this is true.
   final bool hideIfAtTop;
+
+  /// The background color of the FAB.
   final Color? backgroundColor;
+
+  /// The icon of the FAB.
   final Icon fabIcon;
+
+  /// The page scroll controller
+  /// (This is used to programmatically scroll the UI).
   final ScrollController pageScrollController;
 
   @override

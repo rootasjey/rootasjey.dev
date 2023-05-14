@@ -3,6 +3,7 @@ import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:unicons/unicons.dart';
 
+/// A widget that displays application icon.
 class AppIcon extends StatelessWidget {
   const AppIcon({
     super.key,
@@ -12,9 +13,16 @@ class AppIcon extends StatelessWidget {
     this.onLongPress,
   });
 
+  /// The size of the icon.
   final double size;
+
+  /// The margin of the icon.
   final EdgeInsetsGeometry margin;
+
+  /// Called when the icon is tapped.
   final void Function()? onTap;
+
+  /// Called when the icon is long pressed.
   final void Function()? onLongPress;
 
   @override
@@ -27,9 +35,14 @@ class AppIcon extends StatelessWidget {
             () =>
                 Beamer.of(context, root: true).beamToNamed(HomeLocation.route),
         onLongPress: onLongPress,
-        child: Icon(
-          UniconsLine.box,
-          size: size,
+        // child: Icon(
+        //   UniconsLine.box,
+        //   size: size,
+        // ),
+        child: Image.asset(
+          "assets/images/app_icon/128.png",
+          width: size,
+          height: size,
         ),
       ),
     );
