@@ -1,4 +1,5 @@
 import 'package:beamer/beamer.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/widgets.dart';
 import 'package:rootasjey/screens/post/post_page.dart';
 import 'package:rootasjey/screens/posts_page/posts_page.dart';
@@ -16,10 +17,10 @@ class PostsLocation extends BeamLocation<BeamState> {
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) {
     return [
-      const BeamPage(
-        child: PostsPage(),
-        key: ValueKey(route),
-        title: "Posts",
+      BeamPage(
+        child: const PostsPage(),
+        key: const ValueKey(route),
+        title: "page_title.posts".tr(),
         type: BeamPageType.fadeTransition,
       ),
       if (state.pathPatternSegments.contains(":postId"))
@@ -28,9 +29,24 @@ class PostsLocation extends BeamLocation<BeamState> {
             postId: state.pathParameters["postId"] ?? "",
           ),
           key: ValueKey("$route-${state.pathParameters['postId']}"),
-          title: "Post",
+          title: getPostTitle(state),
           type: BeamPageType.fadeTransition,
         ),
     ];
+  }
+
+  String getPostTitle(BeamState state) {
+    final Object? routeState = state.routeState;
+
+    if (routeState == null) {
+      return "page_title.post".tr();
+    }
+
+    final Map mapState = routeState as Map;
+    if (mapState.containsKey("postName")) {
+      return "page_title.any".tr(args: [mapState["postName"]]);
+    }
+
+    return "page_title.post".tr();
   }
 }

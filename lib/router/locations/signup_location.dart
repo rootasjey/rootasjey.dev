@@ -1,4 +1,5 @@
 import 'package:beamer/beamer.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:rootasjey/globals/app_state.dart';
@@ -29,10 +30,10 @@ class SignupLocation extends BeamLocation<BeamState> {
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) {
     return [
-      const BeamPage(
-        child: SignupPage(),
-        key: ValueKey(route),
-        title: "Signup",
+      BeamPage(
+        child: const SignupPage(),
+        key: const ValueKey(route),
+        title: "page_title.signup".tr(),
         type: BeamPageType.fadeTransition,
       ),
     ];

@@ -1,4 +1,5 @@
 import 'package:beamer/beamer.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/widgets.dart';
 import 'package:rootasjey/screens/search_page.dart';
 
@@ -12,10 +13,10 @@ class SearchLocation extends BeamLocation<BeamState> {
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) {
     return [
-      const BeamPage(
-        child: SearchPage(),
-        key: ValueKey(route),
-        title: "Search",
+      BeamPage(
+        child: const SearchPage(),
+        key: const ValueKey(route),
+        title: "page_title.search".tr(),
         type: BeamPageType.fadeTransition,
       ),
     ];

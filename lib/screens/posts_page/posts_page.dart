@@ -218,15 +218,17 @@ class _PostsPageState extends ConsumerState<PostsPage> with UiLoggy {
         return;
       }
 
-      final String route = PostsLocation.singlePostRoute.replaceFirst(
-        ":postId",
-        postSnapshot.id,
-      );
-
-      loggy.info("postSnapshot.id: ${postSnapshot.id}");
-      Beamer.of(context).beamToNamed(route, data: {
-        "postId": postSnapshot.id,
-      });
+      Beamer.of(context).beamToNamed(
+          PostsLocation.singlePostRoute.replaceFirst(
+            ":postId",
+            postSnapshot.id,
+          ),
+          data: {
+            "postId": postSnapshot.id,
+          },
+          routeState: {
+            "postName": name,
+          });
     } on Exception catch (error) {
       loggy.error(error);
       setState(() {
@@ -314,14 +316,16 @@ class _PostsPageState extends ConsumerState<PostsPage> with UiLoggy {
 
   void onTapPost(Post post) {
     Beamer.of(context).beamToNamed(
-      PostsLocation.singlePostRoute.replaceFirst(
-        ":postId",
-        post.id,
-      ),
-      data: {
-        "postId": post.id,
-      },
-    );
+        PostsLocation.singlePostRoute.replaceFirst(
+          ":postId",
+          post.id,
+        ),
+        data: {
+          "postId": post.id,
+        },
+        routeState: {
+          "postName": post.name,
+        });
   }
 
   /// Return the query to listen changes to.

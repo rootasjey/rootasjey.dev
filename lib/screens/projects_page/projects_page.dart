@@ -226,15 +226,15 @@ class _ProjectsPageState extends ConsumerState<ProjectsPage> with UiLoggy {
         return;
       }
 
-      final String route = ProjectsLocation.singleProjectRoute.replaceFirst(
-        ":projectId",
-        projectSnapshot.id,
-      );
-
-      loggy.info("projectSnapshot.id: ${projectSnapshot.id}");
-      Beamer.of(context).beamToNamed(route, data: {
-        "projectId": projectSnapshot.id,
-      });
+      Beamer.of(context).beamToNamed(
+          ProjectsLocation.singleProjectRoute.replaceFirst(
+            ":projectId",
+            projectSnapshot.id,
+          ),
+          data: {
+            "projectId": projectSnapshot.id,
+            "projectName": name,
+          });
     } on Exception catch (error) {
       loggy.error(error);
       setState(() {
@@ -328,6 +328,7 @@ class _ProjectsPageState extends ConsumerState<ProjectsPage> with UiLoggy {
       ),
       data: {
         "projectId": project.id,
+        "projectName": project.name,
       },
     );
   }

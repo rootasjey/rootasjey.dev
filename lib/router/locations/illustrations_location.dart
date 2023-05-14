@@ -19,7 +19,7 @@ class IllustrationsLocation extends BeamLocation<BeamState> {
       BeamPage(
         child: const IllustrationsPage(),
         key: const ValueKey(route),
-        title: "illustrations".tr(),
+        title: "page_title.illustrations".tr(),
         type: BeamPageType.fadeTransition,
       ),
     ];

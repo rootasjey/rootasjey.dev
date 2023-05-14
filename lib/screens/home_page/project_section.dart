@@ -427,6 +427,9 @@ class _ProjectSectionState extends ConsumerState<ProjectSection> with UiLoggy {
       data: {
         "projectId": project.id,
       },
+      routeState: {
+        "projectName": project.name,
+      },
     );
   }
 

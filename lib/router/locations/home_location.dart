@@ -1,4 +1,5 @@
 import 'package:beamer/beamer.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/widgets.dart';
 import 'package:rootasjey/screens/home_page/home_page.dart';
 
@@ -12,10 +13,10 @@ class HomeLocation extends BeamLocation<BeamState> {
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) {
     return [
-      const BeamPage(
-        child: HomePage(),
-        key: ValueKey(route),
-        title: "Home",
+      BeamPage(
+        child: const HomePage(),
+        key: const ValueKey(route),
+        title: "page_title.home".tr(),
         type: BeamPageType.fadeTransition,
       ),
     ];

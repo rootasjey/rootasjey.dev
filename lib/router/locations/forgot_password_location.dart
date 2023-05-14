@@ -1,4 +1,5 @@
 import 'package:beamer/beamer.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/widgets.dart';
 import 'package:rootasjey/screens/forgot_password/forgot_password_page.dart';
 
@@ -12,10 +13,10 @@ class ForgotPasswordLocation extends BeamLocation<BeamState> {
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) {
     return [
-      const BeamPage(
-        child: ForgotPasswordPage(),
-        key: ValueKey(route),
-        title: "Forgot Password",
+      BeamPage(
+        child: const ForgotPasswordPage(),
+        key: const ValueKey(route),
+        title: "page_title.forgot_password".tr(),
         type: BeamPageType.fadeTransition,
       ),
     ];

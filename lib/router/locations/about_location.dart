@@ -16,7 +16,7 @@ class AboutLocation extends BeamLocation<BeamState> {
       BeamPage(
         child: const AboutPage(),
         key: const ValueKey(route),
-        title: "about".tr(),
+        title: "page_title.about".tr(),
         type: BeamPageType.fadeTransition,
       ),
     ];
