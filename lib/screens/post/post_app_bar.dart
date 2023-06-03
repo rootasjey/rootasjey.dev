@@ -2,6 +2,7 @@ import 'package:beamer/beamer.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/buttons/circle_button.dart';
+import 'package:rootasjey/components/icons/cicle_app_icon.dart';
 import 'package:rootasjey/globals/utilities.dart';
 import 'package:rootasjey/router/locations/home_location.dart';
 import 'package:simple_animations/simple_animations.dart';
@@ -87,9 +88,11 @@ class _PostAppBarState extends State<PostAppBar> with AnimationMixin {
                 top: 0.0,
                 left: 0.0,
                 width: 40.0,
+                // child: AppIcon(size: 24.0),
                 child: CircleButton(
                   tooltip: "home".tr(),
-                  icon: const Icon(UniconsLine.box),
+                  // icon: const Icon(UniconsLine.box),
+                  icon: const CircleAppIcon(size: 48.0),
                   onTap: () => Beamer.of(context, root: true).beamToNamed(
                     HomeLocation.route,
                   ),

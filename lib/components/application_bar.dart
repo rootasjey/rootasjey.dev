@@ -101,7 +101,7 @@ class ApplicationBar extends ConsumerWidget {
                       ),
                     ),
                   AppIcon(
-                    size: 32.0,
+                    size: 24.0,
                     onLongPress: () {
                       final UserFirestore? user =
                           ref.read(AppState.userProvider).firestoreUser;

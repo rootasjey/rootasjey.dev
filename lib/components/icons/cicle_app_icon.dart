@@ -3,8 +3,8 @@ import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 
 /// A widget that displays application icon.
-class AppIcon extends StatelessWidget {
-  const AppIcon({
+class CircleAppIcon extends StatelessWidget {
+  const CircleAppIcon({
     super.key,
     this.onTap,
     this.margin = EdgeInsets.zero,
@@ -48,17 +48,17 @@ class AppIcon extends StatelessWidget {
 
   String getIconSize() {
     if (size <= 16) {
-      return "32";
+      return "128-circle";
     }
     if (size <= 32) {
-      return "64";
+      return "128-circle";
     }
     if (size <= 64) {
-      return "128";
+      return "128-circle";
     }
     if (size <= 128) {
-      return "256";
+      return "256-circle";
     }
-    return "512";
+    return "512-circle";
   }
 }
