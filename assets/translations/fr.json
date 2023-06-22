@@ -7,7 +7,7 @@
     "1": "Je suis un développeur fullstack développant des application avec ",
     "2": "Flutter.",
     "3": " Mais je code aussi avec ",
-    "4": "React,",
+    "4": "React, ",
     "5": "Vue, ",
     "6": "Next.",
     "7": "\n\nJ'enseigne la programmation web & python parfois, quand je ne joue pas aux ",
@@ -15,7 +15,7 @@
     "9": " ou que je ne ",
     "10": "regarde pas des films ou séries.",
     "11": "\n\nJ' ",
-    "12": " apprendre de nouvelles chose, je consacre donc beaucoup de temps à lire des",
+    "12": " apprendre de nouvelles choses, je consacre donc beaucoup de temps à lire des ",
     "13": "livres",
     "14": ", regarder ",
     "15": "YouTube",
@@ -274,7 +274,7 @@
   "home_hero_title_parts": {
     "0": "Un ",
     "1": "espace ",
-    "2": "espace personnel perdu dans une ",
+    "2": " personnel perdu dans une ",
     "3": "galaxie."
   },
   "home_return": "Retourner à la page d'accueil",

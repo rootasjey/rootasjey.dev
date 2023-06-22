@@ -21,12 +21,14 @@ class AboutMe extends StatelessWidget {
     return SliverList(
       delegate: SliverChildListDelegate.fixed([
         Container(
+          color: Constants.colors.backgroundPalette.elementAt(1),
           padding: const EdgeInsets.only(
             top: 100.0,
             left: 12.0,
             right: 12.0,
           ),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Padding(
                 padding: const EdgeInsets.only(bottom: 12.0),
@@ -74,14 +76,10 @@ class AboutMe extends StatelessWidget {
                       TextSpan(
                         text: "\nalias",
                         style: Utilities.fonts.body2(
-                          textStyle: TextStyle(
+                          textStyle: const TextStyle(
                             fontSize: 42.0,
                             fontWeight: FontWeight.w100,
-                            color: Theme.of(context)
-                                .textTheme
-                                .bodyMedium
-                                ?.color
-                                ?.withOpacity(0.6),
+                            color: Colors.black,
                           ),
                         ),
                       ),
@@ -96,7 +94,7 @@ class AboutMe extends StatelessWidget {
                         ),
                       ),
                     ],
-                    style: Utilities.fonts.body2(
+                    style: Utilities.fonts.body4(
                       textStyle: const TextStyle(
                         fontSize: 62.0,
                         fontWeight: FontWeight.w600,
@@ -104,14 +102,21 @@ class AboutMe extends StatelessWidget {
                     ),
                   ),
                   textAlign: getTitleAlign(),
+                  style: Utilities.fonts.body(
+                    textStyle: const TextStyle(
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black,
+                    ),
+                  ),
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(top: 42.0),
+                padding: const EdgeInsets.only(top: 72.0),
                 child: Opacity(
                   opacity: 0.8,
                   child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 700.0),
+                    constraints: const BoxConstraints(maxWidth: 800.0),
                     child: Text.rich(
                       TextSpan(
                         text: "about_me.1".tr(),
@@ -137,11 +142,9 @@ class AboutMe extends StatelessWidget {
                           ),
                           TextSpan(
                             text: "about_me.5".tr(),
-                            style: Utilities.fonts.body2(
-                              textStyle: getBoldStyle().merge(
-                                const TextStyle(
-                                  color: Colors.green,
-                                ),
+                            style: getBoldStyle().merge(
+                              const TextStyle(
+                                color: Colors.green,
                               ),
                             ),
                           ),
@@ -240,7 +243,7 @@ class AboutMe extends StatelessWidget {
   TextAlign getSummaryAlign() {
     return size.width < Utilities.size.mobileWidthTreshold
         ? TextAlign.start
-        : TextAlign.justify;
+        : TextAlign.start;
   }
 
   /// Return TextAlign for title.
@@ -253,20 +256,22 @@ class AboutMe extends StatelessWidget {
   /// Return TextStyle for default text in summary.
   TextStyle getBaseStyle() {
     if (size.width < Utilities.size.mobileWidthTreshold) {
-      return Utilities.fonts.body2(
+      return Utilities.fonts.body4(
         textStyle: const TextStyle(
           fontSize: 24.0,
           fontWeight: FontWeight.w300,
           height: 1.2,
+          color: Colors.black,
         ),
       );
     }
 
-    return Utilities.fonts.body2(
+    return Utilities.fonts.body4(
       textStyle: const TextStyle(
-        fontSize: 42.0,
-        fontWeight: FontWeight.w300,
+        fontSize: 32.0,
+        fontWeight: FontWeight.w400,
         height: 1.2,
+        color: Colors.black87,
       ),
     );
   }
@@ -274,20 +279,22 @@ class AboutMe extends StatelessWidget {
   /// Return TextStyle for bold text in summary.
   TextStyle getBoldStyle() {
     if (size.width < Utilities.size.mobileWidthTreshold) {
-      return Utilities.fonts.body2(
+      return Utilities.fonts.body4(
         textStyle: const TextStyle(
           fontSize: 24.0,
           fontWeight: FontWeight.w600,
           height: 1.2,
+          color: Colors.black,
         ),
       );
     }
 
-    return Utilities.fonts.body2(
+    return Utilities.fonts.body4(
       textStyle: const TextStyle(
-        fontSize: 42.0,
+        fontSize: 32.0,
         fontWeight: FontWeight.w600,
         height: 1.2,
+        color: Colors.black,
       ),
     );
   }
@@ -300,6 +307,7 @@ class AboutMe extends StatelessWidget {
           fontSize: 24.0,
           fontWeight: FontWeight.w200,
           fontStyle: FontStyle.italic,
+          color: Colors.black,
         ),
       );
     }
@@ -309,6 +317,7 @@ class AboutMe extends StatelessWidget {
         fontSize: 42.0,
         fontWeight: FontWeight.w200,
         fontStyle: FontStyle.italic,
+        color: Colors.black,
       ),
     );
   }
@@ -316,8 +325,8 @@ class AboutMe extends StatelessWidget {
   TextStyle getQuoteAuthorStyle(BuildContext context) {
     if (size.width < Utilities.size.mobileWidthTreshold) {
       return Utilities.fonts.body2(
-        textStyle: TextStyle(
-          color: Theme.of(context).textTheme.bodyMedium?.color,
+        textStyle: const TextStyle(
+          color: Colors.black,
           fontSize: 14.0,
           fontWeight: FontWeight.w400,
         ),
@@ -325,8 +334,8 @@ class AboutMe extends StatelessWidget {
     }
 
     return Utilities.fonts.body2(
-      textStyle: TextStyle(
-        color: Theme.of(context).textTheme.bodyMedium?.color,
+      textStyle: const TextStyle(
+        color: Colors.black,
         fontSize: 24.0,
         fontWeight: FontWeight.w400,
       ),

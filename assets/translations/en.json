@@ -7,7 +7,7 @@
     "1": "I'm a fullstack developer building application with ",
     "2": "Flutter.",
     "3": " But I also code project with ",
-    "4": "React,",
+    "4": "React, ",
     "5": "Vue, ",
     "6": "Next.",
     "7": "\n\nI teach programming in web & python sometimes, when I'm not playing ",
@@ -279,7 +279,7 @@
   "home": "Home",
   "home_hero_subtitle": "This space won't outrun time though\nSo we should enjoy ourselves while we're alive",
   "home_hero_title_parts": {
-    "0": "A random personnal ",
+    "0": "A personnal ",
     "1": "space ",
     "2": "lost in a ",
     "3": "galaxy."

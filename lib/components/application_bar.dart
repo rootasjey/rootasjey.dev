@@ -9,6 +9,7 @@ import 'package:rootasjey/components/icons/app_icon.dart';
 import 'package:rootasjey/components/popup_menu/popup_menu_icon.dart';
 import 'package:rootasjey/components/popup_menu/popup_menu_item_icon.dart';
 import 'package:rootasjey/globals/app_state.dart';
+import 'package:rootasjey/globals/constants.dart';
 import 'package:rootasjey/router/locations/home_location.dart';
 import 'package:rootasjey/globals/utilities.dart';
 import 'package:rootasjey/router/locations/settings_location.dart';
@@ -145,7 +146,7 @@ class ApplicationBar extends ConsumerWidget {
                       launchUrl(Uri.parse(curriculumUrl));
                     },
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: Colors.pink,
+                      foregroundColor: Constants.colors.palette.elementAt(1),
                     ),
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),

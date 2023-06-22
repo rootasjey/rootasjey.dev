@@ -2,7 +2,6 @@ import 'package:beamer/beamer.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_improved_scrolling/flutter_improved_scrolling.dart';
-import 'package:lottie/lottie.dart';
 import 'package:rootasjey/router/locations/illustrations_location.dart';
 import 'package:rootasjey/screens/home_page/about_me.dart';
 import 'package:rootasjey/components/application_bar.dart';
@@ -63,20 +62,21 @@ class _HomePageState extends State<HomePage> {
             controller: _pageScrollController,
             slivers: [
               ApplicationBar(
-                backgroundColor: Colors.black45,
+                backgroundColor: Colors.black87,
                 padding: getAppBarPadding(size),
               ),
               SliverToBoxAdapter(
-                child: Padding(
+                child: Container(
+                  color: Constants.colors.backgroundPalette.first,
                   padding: const EdgeInsets.only(bottom: 24.0),
                   child: Stack(
                     children: [
-                      Lottie.asset(
-                        "assets/animations/particles.json",
-                        repeat: true,
-                        height: size.height - 100.0,
-                        width: size.width,
-                      ),
+                      // Lottie.asset(
+                      //   "assets/animations/particles.json",
+                      //   repeat: true,
+                      //   height: size.height - 100.0,
+                      //   width: size.width,
+                      // ),
                       heroWidget(size: size),
                     ],
                   ),
@@ -85,9 +85,15 @@ class _HomePageState extends State<HomePage> {
               ProjectSection(size: size),
               GitHubActivities(size: size),
               AboutMe(size: size),
-              const SliverPadding(
-                padding: EdgeInsets.only(bottom: 200.0),
-              ),
+              // const SliverPadding(
+              //   padding: EdgeInsets.only(bottom: 200.0),
+              // ),
+              SliverToBoxAdapter(
+                child: Container(
+                  color: Constants.colors.backgroundPalette.elementAt(1),
+                  height: 200.0,
+                ),
+              )
             ],
           ),
         ),
@@ -100,13 +106,10 @@ class _HomePageState extends State<HomePage> {
       children: [
         Positioned.fill(
           top: -48.0,
-          child: Opacity(
-            opacity: 0.8,
-            child: ClipPath(
-              clipper: const BezierClipper(1),
-              child: Container(
-                color: Colors.black54,
-              ),
+          child: ClipPath(
+            clipper: const BezierClipper(3),
+            child: Container(
+              color: Colors.black,
             ),
           ),
         ),
@@ -114,7 +117,7 @@ class _HomePageState extends State<HomePage> {
           constraints: BoxConstraints(
             minHeight: size.height - 100.0,
           ),
-          child: Padding(
+          child: Container(
             padding: getHeroPadding(size),
             child: Align(
               alignment: Alignment.bottomLeft,
@@ -258,7 +261,7 @@ class _HomePageState extends State<HomePage> {
         child: TextButton(
           onPressed: onPressed,
           style: TextButton.styleFrom(
-            foregroundColor: Colors.pink,
+            foregroundColor: Constants.colors.palette.first,
           ),
           child: Text(
             "→ $label",
@@ -360,6 +363,7 @@ class _HomePageState extends State<HomePage> {
   void onTapColoredWord() {
     setState(() {
       Constants.colors.palette.shuffle();
+      Constants.colors.backgroundPalette.shuffle();
     });
   }
 }

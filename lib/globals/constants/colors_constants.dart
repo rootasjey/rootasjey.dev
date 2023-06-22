@@ -10,8 +10,17 @@ class ColorsConstants {
     Colors.blue,
     Colors.green,
     Colors.amber.shade700,
-    Colors.deepPurple,
+    Colors.deepPurple.shade200,
     Colors.pink,
+  ];
+
+  final List<Color> backgroundPalette = [
+    Colors.blue.shade50,
+    const Color.fromRGBO(253, 239, 245, 1),
+    Colors.amber.shade50,
+    Colors.deepPurple.shade50,
+    Colors.lightGreen.shade50,
+    Colors.pink.shade50,
   ];
 
   Color getFromTag(String tag) {
@@ -67,8 +76,7 @@ class ColorsConstants {
 
   /// Color for illustrations.
   final Color illustrations = const Color(0xFF796AD2);
-  // final Color lightBackground = const Color(0xFfe3e6ec);
-  final Color lightBackground = const Color(0xfff8f8ff);
+  final Color lightBackground = const Color.fromRGBO(253, 239, 245, 1);
   final Color likes = Colors.pink;
   final Color licenses = Colors.amber.shade800;
   final Color location = Colors.green.shade300;

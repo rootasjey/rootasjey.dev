@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:rootasjey/components/buttons/circle_button.dart';
 import 'package:rootasjey/components/popup_menu/popup_menu_item_icon.dart';
+import 'package:rootasjey/globals/constants.dart';
 import 'package:rootasjey/globals/utilities.dart';
 import 'package:rootasjey/types/drag_data.dart';
 import 'package:rootasjey/types/enums/enum_project_item_action.dart';
@@ -22,6 +23,7 @@ class MiniProjectCard extends StatefulWidget {
     this.onHover,
     this.onTap,
     this.iconData,
+    this.iconColor,
     this.onPopupMenuItemSelected,
     this.popupMenuEntries = const [],
     this.useBottomSheet = false,
@@ -67,6 +69,9 @@ class MiniProjectCard extends StatefulWidget {
 
   /// Card's background color on hover.
   final Color color;
+
+  /// Icon's color.
+  final Color? iconColor;
 
   /// Callback fired when this card is hovered.
   final void Function(String label, Color color, bool isHover)? onHover;
@@ -151,7 +156,7 @@ class _MiniProjectCardState extends State<MiniProjectCard> {
   }
 
   Widget iconCard({bool usingAsDropTarget = false}) {
-    final Color primaryColor = Theme.of(context).primaryColor;
+    final Color borderColor = Constants.colors.palette.first;
     BorderSide borderSide = BorderSide.none;
 
     if (widget.selected) {
@@ -159,7 +164,7 @@ class _MiniProjectCardState extends State<MiniProjectCard> {
     }
 
     if (usingAsDropTarget) {
-      borderSide = BorderSide(color: primaryColor, width: 4.0);
+      borderSide = BorderSide(color: borderColor, width: 4.0);
     }
 
     final bool isProjectEmpty = widget.project.id.isEmpty;
@@ -191,7 +196,7 @@ class _MiniProjectCardState extends State<MiniProjectCard> {
           width: cardSide,
           height: cardSide,
           padding: const EdgeInsets.all(12.0),
-          child: Icon(widget.iconData),
+          child: Icon(widget.iconData, color: widget.iconColor),
         ),
       ),
     );
@@ -203,7 +208,7 @@ class _MiniProjectCardState extends State<MiniProjectCard> {
           strokeWidth: 3.0,
           borderType: BorderType.RRect,
           radius: const Radius.circular(4.0),
-          color: Theme.of(context).primaryColor.withOpacity(0.6),
+          color: borderColor,
           dashPattern: const [8, 4],
           child: cardChild,
         ),

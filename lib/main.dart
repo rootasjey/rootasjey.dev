@@ -89,6 +89,7 @@ void main() async {
   }
 
   Constants.colors.palette.shuffle();
+  Constants.colors.backgroundPalette.shuffle();
 
   return runApp(
     ProviderScope(

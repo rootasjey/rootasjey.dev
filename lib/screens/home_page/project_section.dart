@@ -45,9 +45,6 @@ class _ProjectSectionState extends ConsumerState<ProjectSection> with UiLoggy {
   /// waiting to be validated by the server.
   bool _hasPendingReorder = false;
 
-  /// Underline title color.
-  Color _underlineColor = Colors.transparent;
-
   /// Page data, especially featured projects.
   HomePageData _homePageData = HomePageData.empty();
 
@@ -92,6 +89,7 @@ class _ProjectSectionState extends ConsumerState<ProjectSection> with UiLoggy {
     return SliverToBoxAdapter(
       child: Container(
         padding: getMargin(),
+        color: Constants.colors.backgroundPalette.first,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -104,12 +102,8 @@ class _ProjectSectionState extends ConsumerState<ProjectSection> with UiLoggy {
                 style: Utilities.fonts.body5(
                   textStyle: TextStyle(
                     fontSize: fontSize,
-                    fontWeight: FontWeight.w500,
-                    decorationColor: _underlineColor,
-                    decorationThickness: _projectTitle.isEmpty ? 0.0 : 6.0,
-                    decoration: _projectTitle.isEmpty
-                        ? TextDecoration.none
-                        : TextDecoration.underline,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black.withOpacity(0.8),
                   ),
                 ),
               ),
@@ -261,6 +255,7 @@ class _ProjectSectionState extends ConsumerState<ProjectSection> with UiLoggy {
       children.add(
         MiniProjectCard(
           iconData: UniconsLine.plus,
+          iconColor: Constants.colors.palette.first,
           color: Constants.colors.palette.first,
           onTap: openDialog,
           project: Project.empty().copyWith(name: "project_add".tr()),
@@ -362,7 +357,6 @@ class _ProjectSectionState extends ConsumerState<ProjectSection> with UiLoggy {
   void onHover(String label, Color color, bool isHover) {
     setState(() {
       _projectTitle = isHover ? label : "";
-      _underlineColor = isHover ? color : Colors.transparent;
     });
   }
 
