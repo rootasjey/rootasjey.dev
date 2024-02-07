@@ -98,7 +98,7 @@ export function randomIntFromInterval(min: number, max: number): number {
  */
 export function getNewPostFirestorePayload(
     params: GetNewPostFirestorePayloadParams
-): Post {
+): Record<string, unknown> {
   const {initialContent, storagePath} = params;
 
   return {
@@ -167,3 +167,22 @@ export function getNewPostFirestorePayload(
     word_count: initialContent.split(" ").length,
   };
 }
+
+
+/**
+ * Generate a long lived persistant Firebase Storage download URL.
+ * @param {String} bucket Bucket name.
+ * @param {String} pathToFile File's path.
+ * @param {String} downloadToken File's download token.
+ * @return {String} Firebase Storage download url.
+ */
+export const createPersistentDownloadUrl = (
+    bucket: string,
+    pathToFile: string,
+    downloadToken: string,
+): string => {
+  return `https://firebasestorage.googleapis.com/v0/b/${bucket}/o/${encodeURIComponent(
+      pathToFile
+  )}?alt=media&token=${downloadToken}`;
+};
+

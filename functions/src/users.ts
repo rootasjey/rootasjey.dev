@@ -103,7 +103,7 @@ export const clearProfilePicture = functions
       const dir = await adminApp.storage()
           .bucket()
           .getFiles({
-            directory: `images/users/${userAuth.uid}/pp`,
+            prefix: `images/users/${userAuth.uid}/pp`,
           });
 
       const files = dir[0];

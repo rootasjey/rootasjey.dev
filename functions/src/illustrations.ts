@@ -8,7 +8,10 @@ import {
   ILLUSTRATIONS_DOCUMENT_NAME,
   ILLUSTRATION_STATISTICS_COLLECTION_NAME,
   STATISTICS_COLLECTION_NAME,
+  createPersistentDownloadUrl,
 } from "./utils";
+
+import {ISizeCalculationResult} from "image-size/dist/types/interface";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const firebaseTools = require("firebase-tools");
@@ -84,6 +87,144 @@ export const getSignedUrl = functions
     });
 
 /**
+ * Fix illustration Firestore metadata.
+ * Populate firestore document properties:
+ * - links
+ * - dimensions
+ */
+export const fixMetadata = functions
+    .region(cloudRegions.eu)
+    .https
+    .onCall(async (params: OperationIllustrationParams, context) => {
+      const {illustration_id: illustrationId} = params;
+      const userAuth = context.auth;
+
+      if (typeof illustrationId !== "string") {
+        throw new functions.https.HttpsError(
+            "invalid-argument",
+            `The function must be called with 
+         a valid [illustration_id] argument (string)
+         which is the illustration's id to delete.`,
+        );
+      }
+
+      const illustrationSnap = await firestore
+          .collection(ILLUSTRATIONS_COLLECTION_NAME)
+          .doc(illustrationId)
+          .get();
+
+      const illustrationData = illustrationSnap.data();
+      if (!illustrationSnap.exists || !illustrationData) {
+        throw new functions.https.HttpsError(
+            "not-found",
+            `The illustration id [${illustrationId}] doesn't exist.`,
+        );
+      }
+
+      if (illustrationData.visibility !== "public") {
+        console.log("illustration not public");
+        if (!userAuth) {
+          throw new functions.https.HttpsError(
+              "unauthenticated",
+              "The function must be called from an authenticated user.",
+          );
+        }
+
+        if (illustrationData.user_id !== userAuth.uid) {
+          throw new functions.https.HttpsError(
+              "permission-denied",
+              "You don't have the permission to edit this illustration.",
+          );
+        }
+      }
+
+      const bucket = adminApp.storage().bucket();
+      const baseStoragePath = `illustrations/${illustrationId}`;
+      // eslint-disable-next-line max-len
+      const originalStoragePath = `${baseStoragePath}/original.${illustrationData.extension}`;
+
+      const originalFile = bucket.file(originalStoragePath);
+      const originalDownloadToken = originalFile.metadata?.metadata
+        ?.firebaseStorageDownloadTokens ?? "";
+
+      const originalUrl = createPersistentDownloadUrl(
+          bucket.name,
+          originalStoragePath,
+          originalDownloadToken,
+      );
+
+      const thumbnailMap: {[key: string]: string} = {
+        l: "",
+        m: "",
+        s: "",
+        xl: "",
+        xs: "",
+        xxl: "",
+      };
+
+      const fileResponse = await bucket.getFiles({
+        prefix: baseStoragePath + "/",
+      });
+
+      const files = fileResponse[0];
+      if (!files || files.length === 0) {
+        throw new functions.https.HttpsError(
+            "not-found",
+            `The illustration id [${illustrationId}] doesn't exist.`,
+        );
+      }
+
+      for await (const file of files) {
+        let key = file.name.split("/").pop() || "";
+        key = key.substring(0, key.lastIndexOf(".")).replace("thumb@", "");
+
+        const metadataResponse = await file.getMetadata();
+        const metadata = metadataResponse[0];
+
+        const downloadToken = metadata.metadata
+          ?.firebaseStorageDownloadTokens ?? "";
+
+        const firebaseDownloadUrl = createPersistentDownloadUrl(
+            bucket.name,
+            file.name,
+            downloadToken,
+        );
+
+        thumbnailMap[key] = firebaseDownloadUrl;
+      }
+
+      functions.logger.info(
+          "(illustration) fix metadata (firestore): ",
+          illustrationId,
+      );
+      let dimensions: ISizeCalculationResult = {height: 0, width: 0};
+      const fileMeta = originalFile.metadata.metadata;
+
+      if (fileMeta && fileMeta.width) {
+        dimensions = {
+          width: parseFloat(fileMeta.width),
+          height: parseFloat(fileMeta.height),
+        };
+      }
+
+      await illustrationSnap.ref
+          .update({...illustrationData, ...{
+            dimensions,
+            links: {
+              storage_path: originalStoragePath,
+              thumbnails: thumbnailMap,
+              original_url: originalUrl,
+            },
+            size: parseFloat(originalFile.metadata.size?.toString() ?? "0"),
+          }});
+
+      return {
+        illustrationId,
+        success: true,
+      };
+    });
+
+/**
  * Event triggered when an illustration document is created in Firestore.
  * Populate illustration document after it's been created.
  * Create collection statistics too.
@@ -146,6 +287,11 @@ export const onCreate = functions
       };
 
       const existingData = snapshot.data();
+      functions.logger.info(
+          "(illustration) Document creation (initial fields): ",
+          snapshot.id,
+          JSON.stringify(existingData),
+      );
       await firestore
           .collection(ILLUSTRATIONS_COLLECTION_NAME)
           .doc(snapshot.id)
@@ -221,7 +367,7 @@ export const onVisibilityUpdate = functions
               // Delete the download token.
               // A new one will be generated
               // when attempting to download the illustration.
-              firebaseStorageDownloadTokens: null,
+              firebaseStorageDownloadTokens: "",
             },
           });
     });

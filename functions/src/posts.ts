@@ -134,8 +134,10 @@ export const onUpdate = functions
         const exists = await postFile.exists();
         if (exists) {
           const [metadata] = await postFile.getMetadata();
-          metadata.metadata.visibility = afterPostData.visibility;
-          await postFile.setMetadata(metadata);
+          if (metadata && metadata.metadata) {
+            metadata.metadata.visibility = afterPostData.visibility;
+            await postFile.setMetadata(metadata);
+          }
         }
       }
 

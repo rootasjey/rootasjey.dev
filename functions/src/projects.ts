@@ -136,8 +136,10 @@ export const onUpdate = functions
         const exists = await projectFile.exists();
         if (exists) {
           const [metadata] = await projectFile.getMetadata();
-          metadata.metadata.visibility = afterProjectData.visibility;
-          await projectFile.setMetadata(metadata);
+          if (metadata && metadata.metadata) {
+            metadata.metadata.visibility = afterProjectData.visibility;
+            await projectFile.setMetadata(metadata);
+          }
         }
       }
 

@@ -8,7 +8,7 @@ import {join, dirname} from "path";
 import * as sharp from "sharp";
 
 import {
-  cloudRegions, USERS_COLLECTION_NAME,
+  cloudRegions, createPersistentDownloadUrl, USERS_COLLECTION_NAME,
 } from "./utils";
 
 import {adminApp} from "./adminApp";
@@ -149,6 +149,17 @@ export const onCreate = functions
           downloadToken,
       );
 
+      // Set original file dimensions.
+      imageFile.setMetadata({
+        metadata: {
+          ...objectMetadata.metadata,
+          ...{
+            height,
+            width,
+          },
+        },
+      });
+
       let payload = {};
 
       if (documentType === "illustration") {
@@ -194,25 +205,13 @@ export const onCreate = functions
           "Did set illusttration thumbnails for: ",
           documentId
       );
+      functions.logger.info(
+          "info for: ",
+          documentId,
+          JSON.stringify(payload)
+      );
       return true;
     });
-
-/**
- * Generate a long lived persistant Firebase Storage download URL.
- * @param {String} bucket Bucket name.
- * @param {String} pathToFile File's path.
- * @param {String} downloadToken File's download token.
- * @return {String} Firebase Storage download url.
- */
-const createPersistentDownloadUrl = (
-    bucket: string,
-    pathToFile: string,
-    downloadToken: string,
-) => {
-  return `https://firebasestorage.googleapis.com/v0/b/${bucket}/o/${encodeURIComponent(
-      pathToFile
-  )}?alt=media&token=${downloadToken}`;
-};
 
 /**
  * Create several thumbnails from an original file.
@@ -290,14 +289,17 @@ async function generateImageThumbs(
         const thumbPath = join(workingDir, thumbName);
 
         // Resize source image.
-        await sharp(tmpFilePath)
-            .resize(size, size, {withoutEnlargement: true})
+        const outputInfo = await sharp(tmpFilePath)
+            .resize(size, undefined, {withoutEnlargement: true, fit: "inside"})
             .toFile(thumbPath);
 
         return bucket.upload(thumbPath, {
           destination: join(bucketDir, thumbName),
           metadata: {
-            metadata: objectMeta.metadata,
+            metadata: {...objectMeta.metadata, ...{
+              height: outputInfo.height,
+              width: outputInfo.width,
+            }},
           },
           public: visibility === "public",
         });
@@ -427,18 +429,19 @@ async function setUserProfilePicture(
  * @param {string} directoryPath Directory to clean.
  * @param {string} filePathToKeep File's path to NOT delete.
  */
+/**
+ * Remove all files in a directory except for a specified file.
+ * @param {string} directoryPath - Directory to clean.
+ * @param {string} filePathToKeep - File's path to NOT delete.
+ */
 async function cleanProfilePictureDir(
     directoryPath: string,
     filePathToKeep: string) {
-  const dir = await adminApp.storage()
-      .bucket()
-      .getFiles({
-        directory: directoryPath,
-      });
+  const files = await adminApp.storage().bucket().getFiles({
+    prefix: directoryPath,
+  });
 
-  const files = dir[0];
-
-  for await (const file of files) {
+  for await (const file of files[0]) {
     if (file.name !== filePathToKeep) {
       await file.delete();
     }
