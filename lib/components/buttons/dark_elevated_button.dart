@@ -4,11 +4,11 @@ import 'package:rootasjey/globals/utilities.dart';
 
 class DarkElevatedButton extends StatelessWidget {
   const DarkElevatedButton({
-    Key? key,
+    super.key,
     required this.child,
     this.onPressed,
     this.backgroundColor,
-  }) : super(key: key);
+  });
 
   final Color? backgroundColor;
 

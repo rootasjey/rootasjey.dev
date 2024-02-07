@@ -131,8 +131,8 @@ class _PostCardState extends State<PostCard> with UiLoggy {
     final DateTime now = DateTime.now();
     final bool showFullDate = now.difference(post.createdAt).inDays > 4;
     String postMetadata = showFullDate
-        ? Jiffy(post.createdAt).yMMMEd
-        : Jiffy(post.createdAt).fromNow();
+        ? Jiffy.parseFromDateTime(post.createdAt).yMMMEd
+        : Jiffy.parseFromDateTime(post.createdAt).fromNow();
 
     if (widget.showAuthorName) {
       postMetadata = "$_authorName - $postMetadata";

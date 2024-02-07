@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:rootasjey/components/fade_in_y.dart';
+import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:rootasjey/components/popup_menu/popup_menu_icon.dart';
 import 'package:rootasjey/globals/utilities.dart';
-import 'package:unicons/unicons.dart';
 
 /// A PopupMenuItem with a leading icon.
 class PopupMenuItemIcon<T> extends PopupMenuItem<T> {
   PopupMenuItemIcon({
-    Key? key,
+    super.key,
     required this.icon,
     required this.textLabel,
     this.newEnabled = true,
@@ -19,50 +18,45 @@ class PopupMenuItemIcon<T> extends PopupMenuItem<T> {
     this.delay = const Duration(seconds: 0),
     this.selectedColor,
   }) : super(
-          key: key,
           value: newValue,
           enabled: newEnabled,
           height: newHeight,
           padding: newPadding,
           mouseCursor: newMouseCursor,
-          child: FadeInY(
-            beginY: 12.0,
-            delay: delay,
-            child: Padding(
-              padding: const EdgeInsets.only(left: 8.0),
-              child: Opacity(
-                opacity: 1.0,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(right: 18.0),
-                      child: icon.runtimeType == PopupMenuIcon
-                          ? PopupMenuIcon(
-                              (icon as PopupMenuIcon).iconData,
-                              color: selectedColor ?? icon.color,
-                            )
-                          : icon,
-                    ),
-                    Expanded(
-                      child: Text(
-                        textLabel,
-                        style: Utilities.fonts.body(
-                          textStyle: TextStyle(
-                            color: selectedColor,
-                            fontSize: 14.0,
-                            fontWeight: FontWeight.w700,
-                          ),
+          child: Padding(
+            padding: const EdgeInsets.only(left: 8.0),
+            child: Opacity(
+              opacity: 1.0,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(right: 18.0),
+                    child: icon.runtimeType == PopupMenuIcon
+                        ? PopupMenuIcon(
+                            (icon as PopupMenuIcon).iconData,
+                            color: selectedColor ?? icon.color,
+                          )
+                        : icon,
+                  ),
+                  Expanded(
+                    child: Text(
+                      textLabel,
+                      style: Utilities.fonts.body(
+                        textStyle: TextStyle(
+                          color: selectedColor,
+                          fontSize: 14.0,
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
                     ),
-                    if (selected)
-                      Icon(
-                        UniconsLine.check,
-                        color: selectedColor,
-                      ),
-                  ],
-                ),
+                  ),
+                  if (selected)
+                    Icon(
+                      TablerIcons.check,
+                      color: selectedColor,
+                    ),
+                ],
               ),
             ),
           ),

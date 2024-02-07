@@ -9,7 +9,7 @@ import 'package:rootasjey/components/validation_shortcuts.dart';
 /// A dialog with the theme of the app.
 class ThemedDialog extends StatelessWidget {
   const ThemedDialog({
-    Key? key,
+    super.key,
     required this.body,
     required this.onCancel,
     this.onValidate,
@@ -26,7 +26,7 @@ class ThemedDialog extends StatelessWidget {
     this.height = 600.0,
     this.width = 500.0,
     this.footer,
-  }) : super(key: key);
+  });
 
   /// Show a divider below the header if true.
   final bool showDivider;

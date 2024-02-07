@@ -1,50 +1,61 @@
 // ignore_for_file: unnecessary_null_comparison
 
-import 'dart:async';
+import "dart:async";
 
-import 'package:beamer/beamer.dart';
-import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:rootasjey/actions/users.dart';
-import 'package:rootasjey/components/application_bar.dart';
-import 'package:rootasjey/components/bezier_clipper.dart';
-import 'package:rootasjey/components/loading_view.dart';
-import 'package:rootasjey/globals/app_state.dart';
-import 'package:rootasjey/globals/state/user_notifier.dart';
-import 'package:rootasjey/router/locations/home_location.dart';
-import 'package:rootasjey/router/locations/signin_location.dart';
-import 'package:rootasjey/screens/signup_page/signup_page_body.dart';
-import 'package:rootasjey/types/create_account_resp.dart';
-import 'package:rootasjey/types/intents/escape_intent.dart';
-import 'package:rootasjey/utils/snack.dart';
+import "package:beamer/beamer.dart";
+import "package:easy_localization/easy_localization.dart";
+import "package:flutter/material.dart";
+import "package:flutter/services.dart";
+import "package:loggy/loggy.dart";
+import "package:rootasjey/actions/user_actions.dart";
+import "package:rootasjey/components/application_bar.dart";
+import "package:rootasjey/components/loading_view.dart";
+import "package:rootasjey/globals/constants.dart";
+import "package:rootasjey/globals/utils.dart";
+import "package:rootasjey/router/locations/home_location.dart";
+import "package:rootasjey/router/locations/signin_location.dart";
+import "package:rootasjey/router/navigation_state_helper.dart";
+import "package:rootasjey/screens/signup_page/signup_page_body.dart";
+import "package:rootasjey/screens/signup_page/signup_page_header.dart";
+import "package:rootasjey/types/cloud_fun_error.dart";
+import "package:rootasjey/types/create_account_response.dart";
+import "package:rootasjey/types/enums/enum_page_state.dart";
+import "package:rootasjey/types/intents/escape_intent.dart";
 
-class SignupPage extends ConsumerStatefulWidget {
+class SignupPage extends StatefulWidget {
+  const SignupPage({
+    super.key,
+    this.onSignupResult,
+  });
+
+  /// Called when the user signs up.
   final void Function(bool isAuthenticated)? onSignupResult;
 
-  const SignupPage({Key? key, this.onSignupResult}) : super(key: key);
-
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _SignupPageState();
+  createState() => _SignupPageState();
 }
 
-class _SignupPageState extends ConsumerState<SignupPage> {
-  /// True if checking the server for email availability.
-  bool _checkingEmail = false;
+class _SignupPageState extends State<SignupPage> with UiLoggy {
+  /// Used to hide/show password.
+  bool _hidePassword = true;
 
-  /// True if checking the server for username availability.
-  bool _checkingUsername = false;
-
-  /// True if the server is creating the user account.
-  bool _creatingAccount = false;
+  /// A random accent color.
+  Color _accentColor = Colors.amber;
 
   /// Time to wait before checking an input value against the backend.
   final Duration _debounceDuration = const Duration(seconds: 1);
 
-  final _confirmPasswordNode = FocusNode();
-  final _passwordNode = FocusNode();
-  final _usernameNode = FocusNode();
+  /// Page's state (e.g. idle, checking username, etc.).
+  EnumPageState _pageState = EnumPageState.idle;
+
+  /// Used to focus confirm password input.
+  final FocusNode _confirmPasswordFocusNode = FocusNode();
+
+  /// Used to focus email input.
+  final FocusNode _emailFocusNode = FocusNode();
+
+  /// Used to focus username input.
+  final FocusNode _usernameFocusNode = FocusNode();
 
   /// Error message to display next to the email input.
   /// If this is empty, there's no error for this specific input.
@@ -78,24 +89,36 @@ class _SignupPageState extends ConsumerState<SignupPage> {
       TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+    _emailController.text = NavigationStateHelper.userEmailInput;
+    _passwordController.text = NavigationStateHelper.userPasswordInput;
+    _accentColor = Constants.colors.getRandomFromPalette();
+  }
+
+  @override
   void dispose() {
     super.dispose();
-    _usernameNode.dispose();
-    _passwordNode.dispose();
-    _confirmPasswordNode.dispose();
+    _emailFocusNode.dispose();
+    _confirmPasswordFocusNode.dispose();
+    _usernameFocusNode.dispose();
     _emailController.dispose();
     _usernameController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
+    _emailTimer?.cancel();
+    _usernameTimer?.cancel();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_creatingAccount) {
+    if (_pageState == EnumPageState.creatingAccount) {
       return LoadingView.scaffold(
-        message: "accunt_creating".tr(),
+        message: "account.creating".tr(),
       );
     }
+
+    final bool isMobileSize = Utils.measurements.isMobileSize(context);
 
     const shortcuts = <SingleActivator, Intent>{
       SingleActivator(LogicalKeyboardKey.escape): EscapeIntent(),
@@ -112,45 +135,40 @@ class _SignupPageState extends ConsumerState<SignupPage> {
       child: Actions(
         actions: actions,
         child: Scaffold(
-          body: Stack(
-            children: [
-              Positioned(
-                top: 0.0,
-                left: 0.0,
-                right: 0.0,
-                height: 300.0,
-                child: Opacity(
-                  opacity: 0.8,
-                  child: ClipPath(
-                    clipper: const BezierClipper(1),
-                    child: Container(
-                      color: Colors.black54,
-                    ),
-                  ),
-                ),
+          body: CustomScrollView(
+            slivers: [
+              ApplicationBar(
+                isMobileSize: isMobileSize,
+                title: const SizedBox.shrink(),
               ),
-              CustomScrollView(
-                slivers: [
-                  const ApplicationBar(),
-                  SignupPageBody(
-                    checkingEmail: _checkingEmail,
-                    checkingUsername: _checkingUsername,
-                    usernameController: _usernameController,
-                    passwordController: _passwordController,
-                    onEmailChanged: onEmailChanged,
-                    onUsernameChanged: onUsernameChanged,
-                    emailErrorMessage: _emailErrorMessage,
-                    usernameErrorMessage: _usernameErrorMessage,
-                    onConfirmPasswordChanged: onConfirmPasswordChanged,
-                    confirmPasswordErrorMessage: _confirmPasswordErrorMessage,
-                    confirmPasswordController: _confirmPasswordController,
-                    emailController: _emailController,
-                    onSubmit: tryCreateAccount,
-                    onCancel: onCancel,
-                    onNavigateToSignin: onNavigateToSignin,
-                  ),
-                  const SliverPadding(padding: EdgeInsets.only(bottom: 200.0)),
-                ],
+              SignupPageHeader(
+                isMobileSize: isMobileSize,
+                onNavigateToSignin: navigateToSigninPage,
+                accentColor: _accentColor,
+              ),
+              SignupPageBody(
+                confirmPasswordController: _confirmPasswordController,
+                confirmPasswordErrorMessage: _confirmPasswordErrorMessage,
+                confirmPasswordFocusNode: _confirmPasswordFocusNode,
+                emailController: _emailController,
+                emailErrorMessage: _emailErrorMessage,
+                emailFocusNode: _emailFocusNode,
+                hidePassword: _hidePassword,
+                isMobileSize: isMobileSize,
+                pageState: _pageState,
+                passwordController: _passwordController,
+                onCancel: onCancel,
+                onEmailChanged: onEmailChanged,
+                onHidePasswordChanged: onHidePasswordChanged,
+                onPasswordChanged: onPasswordChanged,
+                onConfirmPasswordChanged: onConfirmPasswordChanged,
+                onNavigateToSignin: navigateToSigninPage,
+                onSubmit: createAccount,
+                onUsernameChanged: onUsernameChanged,
+                accentColor: _accentColor,
+                usernameController: _usernameController,
+                usernameErrorMessage: _usernameErrorMessage,
+                usernameFocusNode: _usernameFocusNode,
               ),
             ],
           ),
@@ -167,13 +185,9 @@ class _SignupPageState extends ConsumerState<SignupPage> {
     required String password,
     required String confirmPassword,
   }) async {
-    final bool passwordOk = checkConfirmPassword(
-      password,
-      confirmPassword,
-    );
-    final bool usernameOk = await checkUsername(username);
+    final bool passwordOk = checkConfirmPassword(password, confirmPassword);
     final bool emailOk = await checkEmail(email);
-
+    final bool usernameOk = await checkUsername(username);
     return usernameOk && emailOk && passwordOk;
   }
 
@@ -184,24 +198,23 @@ class _SignupPageState extends ConsumerState<SignupPage> {
   bool checkConfirmPassword(String password, String confirmPassword) {
     if (confirmPassword.isEmpty) {
       setState(() {
-        _confirmPasswordErrorMessage = "password_confirm_empty_forbidden".tr();
+        _confirmPasswordErrorMessage = "password.error.current_empty".tr();
       });
 
+      _confirmPasswordFocusNode.requestFocus();
       return false;
     }
 
     if (confirmPassword != password) {
       setState(() {
-        _confirmPasswordErrorMessage = "password_error.mismatch".tr();
+        _confirmPasswordErrorMessage = "password.error.nomatch".tr();
       });
 
+      _confirmPasswordFocusNode.requestFocus();
       return false;
     }
 
-    setState(() {
-      _confirmPasswordErrorMessage = "";
-    });
-
+    setState(() => _confirmPasswordErrorMessage = "");
     return true;
   }
 
@@ -211,41 +224,28 @@ class _SignupPageState extends ConsumerState<SignupPage> {
     email = email.trim();
 
     if (email.isEmpty) {
-      setState(() {
-        _emailErrorMessage = "email_error.empty".tr();
-      });
+      setState(() => _emailErrorMessage = "email.error.empty".tr());
+      _emailFocusNode.requestFocus();
       return false;
     }
 
-    final bool isWellFormatted = UsersActions.checkEmailFormat(email);
+    final bool isWellFormatted = UserActions.checkEmailFormat(email);
 
     if (!isWellFormatted) {
-      setState(() {
-        _checkingEmail = false;
-        _emailErrorMessage = "email_error.format".tr();
-      });
-
+      setState(() => _emailErrorMessage = "email.error.not_valid".tr());
+      _emailFocusNode.requestFocus();
       return false;
     }
 
-    setState(() => _checkingEmail = true);
-
-    final bool isAvailable = await UsersActions.checkEmailAvailability(email);
+    final bool isAvailable = await UserActions.checkEmailAvailability(email);
 
     if (!isAvailable) {
-      setState(() {
-        _checkingEmail = false;
-        _emailErrorMessage = "email_not_available".tr();
-      });
-
+      setState(() => _emailErrorMessage = "email.error.not_available".tr());
+      _emailFocusNode.requestFocus();
       return false;
     }
 
-    setState(() {
-      _checkingEmail = false;
-      _emailErrorMessage = "";
-    });
-
+    setState(() => _emailErrorMessage = "");
     return true;
   }
 
@@ -256,51 +256,119 @@ class _SignupPageState extends ConsumerState<SignupPage> {
     username = username.trim();
 
     if (username.isEmpty) {
-      setState(() {
-        _usernameErrorMessage = "username_error.empty".tr();
-      });
-
+      setState(() => _usernameErrorMessage = "username.error.empty".tr());
+      _usernameFocusNode.requestFocus();
       return false;
     }
 
     if (username.length < 3) {
       setState(() {
-        _usernameErrorMessage = "username_error.minimum".tr();
+        _usernameErrorMessage = "username.error.minimum_length".tr();
       });
 
+      _usernameFocusNode.requestFocus();
       return false;
     }
 
-    if (!UsersActions.checkUsernameFormat(username)) {
-      setState(() {
-        _usernameErrorMessage = "username_error.format".tr();
-      });
-
+    if (!UserActions.checkUsernameFormat(username)) {
+      setState(() => _usernameErrorMessage = "username.error.format".tr());
+      _usernameFocusNode.requestFocus();
       return false;
     }
 
-    setState(() => _checkingUsername = true);
-
-    final bool isAvailable = await UsersActions.checkUsernameAvailability(
+    final bool isAvailable = await UserActions.checkUsernameAvailability(
       _usernameController.text,
     );
 
     if (!isAvailable) {
       setState(() {
-        _checkingUsername = false;
-        _usernameErrorMessage = "username_not_available_args".tr(
+        _usernameErrorMessage = "username.error.already_taken".tr(
           args: [username],
         );
       });
+
+      _usernameFocusNode.requestFocus();
       return false;
     }
 
-    setState(() {
-      _checkingUsername = false;
-      _usernameErrorMessage = "";
-    });
-
+    setState(() => _usernameErrorMessage = "");
     return true;
+  }
+
+  /// Ask backend to create a new user account with the specified values.
+  void createAccount(
+    String username,
+    String email,
+    String password,
+    String confirmPassword,
+  ) async {
+    setState(() => _pageState = EnumPageState.creatingAccount);
+    final bool inputsAreOk = await checkAllInputs(
+      username: username,
+      email: email,
+      password: password,
+      confirmPassword: confirmPassword,
+    );
+
+    if (!inputsAreOk) {
+      setState(() => _pageState = EnumPageState.idle);
+      return;
+    }
+
+    try {
+      final CreateAccountResponse createAccountResponse =
+          await Utils.state.user.signUp(
+        email: email,
+        username: username,
+        password: password,
+      );
+
+      if (!mounted) return;
+      if (createAccountResponse.success) {
+        return Beamer.of(context).beamToReplacementNamed(
+          HomeLocation.route,
+        );
+      }
+
+      String message = "account.error.create".tr();
+      final CloudFunError? error = createAccountResponse.error;
+
+      if (error != null && error.code != null && error.message != null) {
+        message = "[code: ${error.code}] - ${error.message}";
+      }
+
+      if (!mounted) return;
+      Utils.graphic.showSnackbar(
+        context,
+        message: message,
+      );
+
+      setState(() => _pageState = EnumPageState.idle);
+    } catch (error) {
+      if (!mounted) return;
+      loggy.error(error);
+
+      Utils.graphic.showSnackbar(
+        context,
+        message: "account.error.create".tr(),
+      );
+      setState(() => _pageState = EnumPageState.idle);
+    }
+  }
+
+  /// Navigate to sign in page.
+  void navigateToSigninPage() {
+    final BeamerDelegate beamer = Beamer.of(context);
+    final BeamState beamState = beamer.currentBeamLocation.state as BeamState;
+    final List<String> pathSegments = beamState.pathPatternSegments;
+    final String prefix = pathSegments.first;
+
+    if (prefix == "d") {
+      // beamer.beamToNamed(DashboardContentLocation.signinRoute);
+      return;
+    }
+
+    beamer.root.beamToNamed(SigninLocation.route);
   }
 
   /// Navigate back to previous or home page.
@@ -315,94 +383,44 @@ class _SignupPageState extends ConsumerState<SignupPage> {
 
   /// React to email changes and call `checkEmail(email)` method.
   void onEmailChanged(String email) async {
+    setState(() => _emailErrorMessage = "");
     _emailTimer?.cancel();
-    _emailTimer = Timer(_debounceDuration, () => checkEmail(email));
+    _emailTimer = Timer(_debounceDuration, () async {
+      setState(() => _pageState = EnumPageState.checkingEmail);
+      await checkEmail(email);
+      setState(() => _pageState = EnumPageState.idle);
+    });
+
+    NavigationStateHelper.userEmailInput = email;
   }
 
   /// React to confirm password changes
   /// and call `checkUsername(username)` method.
   void onConfirmPasswordChanged(String password, String confirmPassword) {
+    setState(() => _confirmPasswordErrorMessage = "");
     checkConfirmPassword(password, confirmPassword);
   }
 
-  /// Navigate to sign in page.
-  void onNavigateToSignin() {
-    Beamer.of(context).beamToNamed(SigninLocation.route);
+  /// Show or hide password input value.
+  void onHidePasswordChanged(bool value) {
+    setState(() => _hidePassword = value);
+  }
+
+  /// React to password changes.
+  void onPasswordChanged(String password) {
+    NavigationStateHelper.userPasswordInput = password;
   }
 
   /// React to username changes.
   /// Check for input validity: emptyness, format, availability.
   /// Poppulate username error message if there's an error in one of those steps.
   void onUsernameChanged(String username) async {
+    setState(() => _usernameErrorMessage = "");
     _usernameTimer?.cancel();
-    _usernameTimer = Timer(_debounceDuration, () => checkUsername(username));
-  }
-
-  /// Ask backend to create a new user account with the specified values.
-  void tryCreateAccount(
-    String username,
-    String email,
-    String password,
-    String confirmPassword,
-  ) async {
-    setState(() => _creatingAccount = true);
-
-    final bool inputsAreOk = await checkAllInputs(
-      username: username,
-      email: email,
-      password: password,
-      confirmPassword: confirmPassword,
-    );
-
-    if (!inputsAreOk) {
-      setState(() => _creatingAccount = false);
-      return;
-    }
-
-    try {
-      final UserNotifier userNotifier = ref.read(
-        AppState.userProvider.notifier,
-      );
-
-      final CreateAccountResp createAccountResponse = await userNotifier.signUp(
-        email: email,
-        username: username,
-        password: password,
-      );
-
-      setState(() => _creatingAccount = false);
-
-      if (createAccountResponse.success) {
-        if (!mounted) return;
-        Beamer.of(context).beamToNamed(HomeLocation.route);
-        return;
-      }
-
-      String message = "account_create_error".tr();
-      final error = createAccountResponse.error;
-
-      if (error != null && error.code != null && error.message != null) {
-        message = "[code: ${error.code}] - ${error.message}";
-      }
-
-      if (!mounted) {
-        return;
-      }
-
-      setState(() => _creatingAccount = false);
-      Snack.error(context, title: "", message: message);
-    } catch (error) {
-      setState(() => _creatingAccount = false);
-
-      if (!mounted) {
-        return;
-      }
-
-      Snack.error(
-        context,
-        title: "account".tr(),
-        message: "account_create_error".tr(),
-      );
-    }
+    _usernameTimer = Timer(_debounceDuration, () async {
+      setState(() => _pageState = EnumPageState.checkingUsername);
+      await checkUsername(username);
+      setState(() => _pageState = EnumPageState.idle);
+    });
   }
 }

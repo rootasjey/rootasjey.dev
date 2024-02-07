@@ -7,15 +7,17 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_solidart/flutter_solidart.dart';
+import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:loggy/loggy.dart';
+import 'package:rootasjey/actions/illustration_actions.dart';
 import 'package:rootasjey/components/hero_image.dart';
 import 'package:rootasjey/components/loading_view.dart';
 import 'package:rootasjey/components/popup_menu/popup_menu_icon.dart';
 import 'package:rootasjey/components/popup_menu/popup_menu_item_icon.dart';
-import 'package:rootasjey/globals/app_state.dart';
 import 'package:rootasjey/globals/constants.dart';
 import 'package:rootasjey/globals/utilities.dart';
+import 'package:rootasjey/globals/utils.dart';
 import 'package:rootasjey/router/locations/home_location.dart';
 import 'package:rootasjey/screens/illustrations_page/illustrations_page_body.dart';
 import 'package:rootasjey/screens/illustrations_page/illustrations_page_empty.dart';
@@ -26,20 +28,20 @@ import 'package:rootasjey/types/alias/firestore/query_snap_map.dart';
 import 'package:rootasjey/types/alias/firestore/query_snapshot_stream_subscription.dart';
 import 'package:rootasjey/types/alias/json_alias.dart';
 import 'package:rootasjey/types/enums/enum_illustration_item_action.dart';
+import 'package:rootasjey/types/enums/enum_signal_id.dart';
 import 'package:rootasjey/types/illustration/illustration.dart';
 import 'package:rootasjey/types/intents/escape_intent.dart';
 import 'package:rootasjey/types/user/user_firestore.dart';
 import 'package:rootasjey/types/user/user_rights.dart';
-import 'package:unicons/unicons.dart';
 
-class IllustrationsPage extends ConsumerStatefulWidget {
+class IllustrationsPage extends StatefulWidget {
   const IllustrationsPage({super.key});
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _DrawingsPageState();
+  State<StatefulWidget> createState() => _DrawingsPageState();
 }
 
-class _DrawingsPageState extends ConsumerState<IllustrationsPage> with UiLoggy {
+class _DrawingsPageState extends State<IllustrationsPage> with UiLoggy {
   /// True if there're more posts to fetch.
   bool _hasNext = true;
 
@@ -64,7 +66,7 @@ class _DrawingsPageState extends ConsumerState<IllustrationsPage> with UiLoggy {
   final List<PopupMenuEntry<EnumIllustrationItemAction>>
       _illustrationPopupMenuItems = [
     PopupMenuItemIcon(
-      icon: const PopupMenuIcon(UniconsLine.trash),
+      icon: const PopupMenuIcon(TablerIcons.trash),
       textLabel: "delete".tr(),
       newValue: EnumIllustrationItemAction.delete,
       selected: false,
@@ -99,10 +101,11 @@ class _DrawingsPageState extends ConsumerState<IllustrationsPage> with UiLoggy {
     }
 
     final Size windowSize = MediaQuery.of(context).size;
+    final Signal<UserFirestore> signalUserFirestore =
+        context.get(EnumSignalId.userFirestore);
 
-    final UserFirestore? userFirestore =
-        ref.watch(AppState.userProvider).firestoreUser;
-    final UserRights userRights = userFirestore?.rights ?? const UserRights();
+    final UserFirestore userFirestore = signalUserFirestore.value;
+    final UserRights userRights = userFirestore.rights;
     final bool canManageIllustrations = userRights.manageIllustrations;
 
     if (_illustrations.isEmpty) {
@@ -110,7 +113,7 @@ class _DrawingsPageState extends ConsumerState<IllustrationsPage> with UiLoggy {
         child: IllustrationsPageEmpty(
           canCreate: canManageIllustrations,
           fab: fab(show: canManageIllustrations),
-          onShowCreatePage: onSelectFiles,
+          onShowCreatePage: pickFiles,
           onCancel: onCancel,
         ),
       );
@@ -135,7 +138,7 @@ class _DrawingsPageState extends ConsumerState<IllustrationsPage> with UiLoggy {
     }
 
     return FloatingActionButton.extended(
-      onPressed: onSelectFiles,
+      onPressed: pickFiles,
       label: Text(
         "upload".tr(),
         style: Utilities.fonts.body(
@@ -147,7 +150,7 @@ class _DrawingsPageState extends ConsumerState<IllustrationsPage> with UiLoggy {
       ),
       foregroundColor: Colors.white,
       backgroundColor: Constants.colors.palette.first,
-      icon: const Icon(UniconsLine.upload),
+      icon: const Icon(TablerIcons.upload),
       extendedPadding: const EdgeInsets.symmetric(horizontal: 28.0),
     );
   }
@@ -204,7 +207,9 @@ class _DrawingsPageState extends ConsumerState<IllustrationsPage> with UiLoggy {
       for (final QueryDocSnapMap document in snapshot.docs) {
         final Json data = document.data();
         data["id"] = document.id;
-        _illustrations.add(Illustration.fromMap(data));
+        final Illustration illustration = Illustration.fromMap(data);
+        _illustrations.add(illustration);
+        fixEmptyThumbnail(illustration);
       }
 
       setState(() {
@@ -262,6 +267,16 @@ class _DrawingsPageState extends ConsumerState<IllustrationsPage> with UiLoggy {
     } finally {
       _loadingMore = false;
     }
+  }
+
+  /// Fix thumbnail issues for the illustration.
+  void fixEmptyThumbnail(Illustration illustration) async {
+    if (illustration.getThumbnail().isNotEmpty) {
+      return;
+    }
+
+    loggy.info("Thumbnail for illustration ${illustration.id} is empty.");
+    await IllustrationActions.fix(illustrationId: illustration.id);
   }
 
   /// Return query to fetch illustrations according to the selected tab.
@@ -392,17 +407,13 @@ class _DrawingsPageState extends ConsumerState<IllustrationsPage> with UiLoggy {
     });
   }
 
-  void onSelectFiles() {
-    final String userId =
-        ref.read(AppState.userProvider).firestoreUser?.id ?? "";
+  void pickFiles() {
+    final Signal<UserFirestore> signalUserFirestore =
+        context.get(EnumSignalId.userFirestore);
+    final String userId = signalUserFirestore.value.id;
 
-    if (userId.isEmpty) {
-      return;
-    }
-
-    ref.read(AppState.uploadTaskListProvider.notifier).pickIllustrations(
-          userId: userId,
-        );
+    if (userId.isEmpty) return;
+    Utils.state.illustrations.pickIllustrations(userId: userId);
   }
 
   void onTapIllustration(Illustration illustration) {

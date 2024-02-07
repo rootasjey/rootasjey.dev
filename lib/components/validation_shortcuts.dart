@@ -9,14 +9,14 @@ import 'package:rootasjey/types/intents/escape_intent.dart';
 /// if it doesn't automatically works.
 class ValidationShortcuts extends StatelessWidget {
   const ValidationShortcuts({
-    Key? key,
+    super.key,
     required this.child,
     this.onValidate,
     this.onCancel,
     this.focusNode,
     this.spaceActive = true,
     this.autofocus = true,
-  }) : super(key: key);
+  });
 
   final Widget child;
   final Function()? onValidate;

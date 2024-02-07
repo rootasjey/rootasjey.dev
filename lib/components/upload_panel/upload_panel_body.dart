@@ -1,23 +1,22 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:rootasjey/components/buttons/circle_button.dart';
 import 'package:rootasjey/components/upload_panel/upload_card_item.dart';
-import 'package:rootasjey/globals/app_state.dart';
 import 'package:rootasjey/globals/utilities.dart';
+import 'package:rootasjey/globals/utils.dart';
 import 'package:rootasjey/types/custom_upload_task.dart';
-import 'package:unicons/unicons.dart';
 
 /// Body of `UploadPanel`.
-class UploadPanelBody extends ConsumerWidget {
+class UploadPanelBody extends StatelessWidget {
   const UploadPanelBody({
-    Key? key,
+    super.key,
     required this.expanded,
     required this.uploadTaskList,
     this.onToggleExpanded,
     this.isMobileSize = false,
     this.backgroundColor = Colors.black,
-  }) : super(key: key);
+  });
 
   /// The panel has its maximum size if true. Otherwise the window is minized.
   final bool expanded;
@@ -35,7 +34,7 @@ class UploadPanelBody extends ConsumerWidget {
   final void Function()? onToggleExpanded;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     if (!expanded) {
       return Container();
     }
@@ -53,7 +52,7 @@ class UploadPanelBody extends ConsumerWidget {
               CircleButton(
                 margin: const EdgeInsets.only(left: 12.0),
                 onTap: () => Navigator.of(context).pop(),
-                icon: const Icon(UniconsLine.times),
+                icon: const Icon(TablerIcons.x),
                 tooltip: "close".tr(),
               ),
               Text(
@@ -84,23 +83,12 @@ class UploadPanelBody extends ConsumerWidget {
                   final int bytesTransferred =
                       customUploadTask.task?.snapshot.bytesTransferred ?? 0;
 
-                  ref
-                      .read(AppState.uploadBytesTransferredProvider.notifier)
-                      .remove(bytesTransferred);
-                  ref
-                      .read(AppState.uploadTaskListProvider.notifier)
-                      .cancel(customUploadTask);
+                  Utils.state.illustrations.uploadBytesTransferred
+                      .updateValue((value) => value - bytesTransferred);
+                  Utils.state.illustrations.cancel(customUploadTask);
                 },
                 onDone: () {
-                  final int totalBytes =
-                      customUploadTask.task?.snapshot.totalBytes ?? 0;
-
-                  ref
-                      .read(AppState.uploadBytesTransferredProvider.notifier)
-                      .remove(totalBytes);
-                  ref
-                      .read(AppState.uploadTaskListProvider.notifier)
-                      .removeDone(customUploadTask);
+                  Utils.state.illustrations.removeDone(customUploadTask);
                 },
               );
             }).toList(),

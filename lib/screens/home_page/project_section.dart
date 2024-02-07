@@ -2,12 +2,12 @@ import 'package:beamer/beamer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_solidart/flutter_solidart.dart';
+import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:loggy/loggy.dart';
 import 'package:rootasjey/components/mini_project_card.dart';
 import 'package:rootasjey/components/popup_menu/popup_menu_icon.dart';
 import 'package:rootasjey/components/popup_menu/popup_menu_item_icon.dart';
-import 'package:rootasjey/globals/app_state.dart';
 import 'package:rootasjey/globals/constants.dart';
 import 'package:rootasjey/globals/utilities.dart';
 import 'package:rootasjey/router/locations/projects_location.dart';
@@ -16,15 +16,15 @@ import 'package:rootasjey/types/alias/firestore/doc_snapshot_stream_subscription
 import 'package:rootasjey/types/alias/firestore/document_snapshot_map.dart';
 import 'package:rootasjey/types/alias/json_alias.dart';
 import 'package:rootasjey/types/enums/enum_project_item_action.dart';
+import 'package:rootasjey/types/enums/enum_signal_id.dart';
 import 'package:rootasjey/types/featured_project.dart';
 import 'package:rootasjey/types/home_page_data.dart';
 import 'package:rootasjey/types/project/popup_entry_project.dart';
 import 'package:rootasjey/types/project/project.dart';
 import 'package:rootasjey/types/user/user_firestore.dart';
 import 'package:supercharged/supercharged.dart';
-import 'package:unicons/unicons.dart';
 
-class ProjectSection extends ConsumerStatefulWidget {
+class ProjectSection extends StatefulWidget {
   const ProjectSection({
     super.key,
     this.size = Size.zero,
@@ -34,10 +34,10 @@ class ProjectSection extends ConsumerStatefulWidget {
   final Size size;
 
   @override
-  ConsumerState<ProjectSection> createState() => _ProjectSectionState();
+  State<ProjectSection> createState() => _ProjectSectionState();
 }
 
-class _ProjectSectionState extends ConsumerState<ProjectSection> with UiLoggy {
+class _ProjectSectionState extends State<ProjectSection> with UiLoggy {
   /// Allow section customization if true.
   bool _canEdit = false;
 
@@ -53,7 +53,7 @@ class _ProjectSectionState extends ConsumerState<ProjectSection> with UiLoggy {
 
   final List<PopupEntryProject> _popupEnries = [
     PopupMenuItemIcon(
-      icon: const PopupMenuIcon(UniconsLine.trash),
+      icon: const PopupMenuIcon(TablerIcons.trash),
       textLabel: "delete".tr(),
     ),
   ];
@@ -80,11 +80,12 @@ class _ProjectSectionState extends ConsumerState<ProjectSection> with UiLoggy {
     final double fontSize =
         widget.size.width < Utilities.size.mobileWidthTreshold ? 24.0 : 64.0;
 
-    final UserFirestore? userFirestore =
-        ref.watch(AppState.userProvider).firestoreUser;
+    final Signal<UserFirestore> signalUserFirestore =
+        context.get(EnumSignalId.userFirestore);
 
-    final bool isAuthenticated =
-        userFirestore != null && userFirestore.rights.manageData;
+    final UserFirestore userFirestore = signalUserFirestore.value;
+    final bool isAuthenticated = userFirestore.id.isNotEmpty;
+    // final bool isAuthenticated = userFirestore.rights.manageData;
 
     return SliverToBoxAdapter(
       child: Container(
@@ -135,7 +136,7 @@ class _ProjectSectionState extends ConsumerState<ProjectSection> with UiLoggy {
             //         color: Colors.amber,
             //       ),
             //       MiniProjectCard(
-            //         iconData: UniconsLine.heart_medical,
+            //         iconData: TablerIcons.heart_medical,
             //         label: "My Health Partner",
             //         onHover: onHover,
             //         color: Colors.blue,
@@ -234,7 +235,7 @@ class _ProjectSectionState extends ConsumerState<ProjectSection> with UiLoggy {
       index++;
       children.add(
         MiniProjectCard(
-          iconData: UniconsLine.pen,
+          iconData: TablerIcons.pencil,
           onHover: onHover,
           color: Colors.pink,
           project: project,
@@ -254,7 +255,7 @@ class _ProjectSectionState extends ConsumerState<ProjectSection> with UiLoggy {
     if (isAuthenticated) {
       children.add(
         MiniProjectCard(
-          iconData: UniconsLine.plus,
+          iconData: TablerIcons.plus,
           iconColor: Constants.colors.palette.first,
           color: Constants.colors.palette.first,
           onTap: openDialog,

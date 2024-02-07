@@ -1,11 +1,11 @@
 import 'package:beamer/beamer.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:rootasjey/components/better_avatar.dart';
 import 'package:rootasjey/globals/constants.dart';
 import 'package:rootasjey/globals/utilities.dart';
 import 'package:rootasjey/router/locations/cv_location.dart';
-import 'package:unicons/unicons.dart';
 
 class AboutMe extends StatelessWidget {
   const AboutMe({
@@ -170,7 +170,7 @@ class AboutMe extends StatelessWidget {
                             text: "about_me.11".tr(),
                           ),
                           const WidgetSpan(
-                            child: Icon(UniconsLine.heart, color: Colors.pink),
+                            child: Icon(TablerIcons.heart, color: Colors.pink),
                             alignment: PlaceholderAlignment.middle,
                           ),
                           TextSpan(

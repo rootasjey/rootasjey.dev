@@ -4,9 +4,9 @@ import 'package:rootasjey/globals/utilities.dart';
 
 class UploadPanelHeaderTitle extends StatelessWidget {
   const UploadPanelHeaderTitle({
-    Key? key,
+    super.key,
     required this.pendingTaskCount,
-  }) : super(key: key);
+  });
 
   final int pendingTaskCount;
 

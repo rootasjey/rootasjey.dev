@@ -47,18 +47,20 @@ class _GitHubActivityCardState extends State<GitHubActivityCard> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Opacity(
-                  opacity: 0.4,
-                  child: Text(
-                    Jiffy(event.createdAt).fromNow(),
-                    style: Utilities.fonts.body5(
-                      textStyle: const TextStyle(
-                        fontSize: 14.0,
-                        fontWeight: FontWeight.w400,
+                if (event.createdAt != null)
+                  Opacity(
+                    opacity: 0.4,
+                    child: Text(
+                      Jiffy.parseFromDateTime(event.createdAt ?? DateTime.now())
+                          .fromNow(),
+                      style: Utilities.fonts.body5(
+                        textStyle: const TextStyle(
+                          fontSize: 14.0,
+                          fontWeight: FontWeight.w400,
+                        ),
                       ),
                     ),
                   ),
-                ),
                 Opacity(
                   opacity: 0.8,
                   child: Text(

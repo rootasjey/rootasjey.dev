@@ -5,11 +5,11 @@ import 'package:rootasjey/components/upload_panel/upload_panel_resume_button.dar
 
 class UploadPanelHeaderButtons extends StatelessWidget {
   const UploadPanelHeaderButtons({
-    Key? key,
+    super.key,
     required this.runningTaskCount,
     required this.pausedTaskCount,
     required this.pendingTaskCount,
-  }) : super(key: key);
+  });
 
   /// Current active tasks
   final int runningTaskCount;

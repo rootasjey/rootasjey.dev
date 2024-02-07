@@ -1,12 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:loggy/loggy.dart';
 import 'package:rootasjey/globals/constants.dart';
 import 'package:rootasjey/types/alias/json_alias.dart';
 import 'package:rootasjey/types/post.dart';
 import 'package:rootasjey/types/user/user_firestore.dart';
-import 'package:unicons/unicons.dart';
 
 /// Minimal post card.
 class MinPostCard extends StatefulWidget {
@@ -66,7 +66,7 @@ class _MinPostCardState extends State<MinPostCard> with UiLoggy {
                 Padding(
                   padding: const EdgeInsets.only(left: 24.0),
                   child: Icon(
-                    UniconsLine.arrow_right,
+                    TablerIcons.arrow_right,
                     color: Constants.colors.primary,
                   ),
                 ),
@@ -105,7 +105,7 @@ class _MinPostCardState extends State<MinPostCard> with UiLoggy {
           child: Opacity(
             opacity: 0.6,
             child: Text(
-              '$_authorName - ${Jiffy(postHeadline.createdAt).fromNow()}',
+              '$_authorName - ${Jiffy.parseFromDateTime(postHeadline.createdAt).fromNow()}',
               style: const TextStyle(
                 fontSize: 15.0,
                 fontWeight: FontWeight.w300,

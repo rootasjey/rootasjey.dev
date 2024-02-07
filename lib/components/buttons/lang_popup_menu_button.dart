@@ -1,13 +1,13 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:rootasjey/components/popup_menu/popup_menu_toggle_item.dart';
 import 'package:rootasjey/globals/constants.dart';
 import 'package:rootasjey/globals/utilities.dart';
-import 'package:unicons/unicons.dart';
 
 class LangPopupMenuButton extends StatelessWidget {
   const LangPopupMenuButton({
-    Key? key,
+    super.key,
     required this.lang,
     required this.onLangChanged,
     this.elevation = 0.0,
@@ -16,7 +16,7 @@ class LangPopupMenuButton extends StatelessWidget {
     this.padding = const EdgeInsets.all(8.0),
     this.outlined = false,
     this.asIconButton = false,
-  }) : super(key: key);
+  });
 
   /// If true, show this PopupMenuButton button as an IconButton.
   final bool asIconButton;
@@ -95,7 +95,7 @@ class LangPopupMenuButton extends StatelessWidget {
             },
             icon: asIconButton
                 ? const Icon(
-                    UniconsLine.language,
+                    TablerIcons.language,
                     // color: Theme.of(context).textTheme.bodyMedium?.color,
                     color: Colors.black,
                   )
@@ -112,7 +112,7 @@ class LangPopupMenuButton extends StatelessWidget {
 
     if (selected) {
       return Icon(
-        UniconsLine.check,
+        TablerIcons.check,
         color: primary,
       );
     }

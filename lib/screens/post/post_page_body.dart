@@ -5,6 +5,7 @@ import 'package:any_syntax_highlighter/themes/any_syntax_highlighter_theme.dart'
 import 'package:any_syntax_highlighter/themes/any_syntax_highlighter_theme_collection.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:loggy/loggy.dart';
 import 'package:markdown_widget/config/configs.dart';
 import 'package:markdown_widget/widget/all.dart';
@@ -12,11 +13,10 @@ import 'package:rootasjey/components/buttons/circle_button.dart';
 import 'package:rootasjey/components/loading_view.dart';
 import 'package:rootasjey/globals/constants.dart';
 import 'package:rootasjey/globals/utilities.dart';
-import 'package:unicons/unicons.dart';
 
 class PostPageBody extends StatelessWidget with UiLoggy {
   const PostPageBody({
-    Key? key,
+    super.key,
     required this.content,
     required this.maxWidth,
     required this.editingController,
@@ -25,9 +25,10 @@ class PostPageBody extends StatelessWidget with UiLoggy {
     this.isMobileSize = false,
     this.loading = false,
     this.onContentChanged,
-    this.copyIcon = const Icon(UniconsLine.copy),
+    this.copyIcon = const Icon(TablerIcons.copy),
     this.onCopy,
-  }) : super(key: key);
+    this.githubTheme = AnySyntaxHighlighterThemeCollection.defaultTheme,
+  });
 
   /// The current authenticated user can edit & delete this post if true.
   final bool canManagePosts;
@@ -54,8 +55,7 @@ class PostPageBody extends StatelessWidget with UiLoggy {
 
   final TextEditingController editingController;
 
-  final AnySyntaxHighlighterTheme _githubTheme =
-      AnySyntaxHighlighterThemeCollection.githubWebTheme;
+  final AnySyntaxHighlighterTheme githubTheme;
 
   final Icon copyIcon;
 
@@ -288,7 +288,7 @@ class PostPageBody extends StatelessWidget with UiLoggy {
                   ),
                 ),
                 PreConfig(
-                  wrapper: (child, code) {
+                  wrapper: (child, code, _) {
                     return Stack(
                       children: [
                         AnySyntaxHighlighter(
@@ -296,31 +296,31 @@ class PostPageBody extends StatelessWidget with UiLoggy {
                           isSelectableText: true,
                           lineNumbers: true,
                           padding: 12.0,
-                          lineNumbersPadding:
-                              const EdgeInsets.only(right: 12.0),
+                          // lineNumbersPadding:
+                          //     const EdgeInsets.only(right: 12.0),
                           theme: AnySyntaxHighlighterTheme(
-                            boxDecoration: BoxDecoration(
+                            decoration: BoxDecoration(
                               color: Colors.black54,
                               borderRadius: BorderRadius.circular(8.0),
                             ),
-                            private: _githubTheme.private,
-                            classStyle: _githubTheme.classStyle,
-                            staticStyle: _githubTheme.staticStyle,
-                            constructor: _githubTheme.constructor,
-                            comment: _githubTheme.comment,
-                            multilineComment: _githubTheme.multilineComment,
-                            method: _githubTheme.method,
-                            keyword: _githubTheme.keyword,
-                            string: _githubTheme.string,
-                            number: _githubTheme.number,
-                            identifier: _githubTheme.identifier,
-                            function: _githubTheme.function,
-                            separator: _githubTheme.separator,
-                            operator: _githubTheme.operator,
-                            fontFamily: _githubTheme.fontFamily,
-                            fontFeatures: _githubTheme.fontFeatures,
-                            letterSpacing: _githubTheme.letterSpacing,
-                            wordSpacing: _githubTheme.wordSpacing,
+                            private: githubTheme.private,
+                            classStyle: githubTheme.classStyle,
+                            staticStyle: githubTheme.staticStyle,
+                            constructor: githubTheme.constructor,
+                            comment: githubTheme.comment,
+                            multilineComment: githubTheme.multilineComment,
+                            method: githubTheme.method,
+                            keyword: githubTheme.keyword,
+                            string: githubTheme.string,
+                            number: githubTheme.number,
+                            identifier: githubTheme.identifier,
+                            function: githubTheme.function,
+                            separator: githubTheme.separator,
+                            operator: githubTheme.operator,
+                            fontFamily: githubTheme.fontFamily,
+                            fontFeatures: githubTheme.fontFeatures,
+                            letterSpacing: githubTheme.letterSpacing,
+                            wordSpacing: githubTheme.wordSpacing,
                             lineNumber: Utilities.fonts.body4(
                               textStyle: TextStyle(
                                 fontSize: 14.0,

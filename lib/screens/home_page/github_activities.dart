@@ -1,12 +1,12 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:github/github.dart';
 import 'package:loggy/loggy.dart';
 import 'package:rootasjey/components/buttons/github_activity_card.dart';
 import 'package:rootasjey/globals/constants.dart';
 import 'package:rootasjey/globals/utilities.dart';
 import 'package:timelines/timelines.dart';
-import 'package:unicons/unicons.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class GitHubActivities extends StatefulWidget {
@@ -143,7 +143,7 @@ class _GitHubActivitiesState extends State<GitHubActivities> with UiLoggy {
             backgroundColor: Constants.colors.palette.first.withOpacity(0.05),
             minimumSize: const Size(20.0, 50.0),
           ),
-          child: const Icon(UniconsLine.angle_double_down),
+          child: const Icon(TablerIcons.dots),
         ),
       );
     }
@@ -179,7 +179,7 @@ class _GitHubActivitiesState extends State<GitHubActivities> with UiLoggy {
                 Constants.colors.palette.elementAt(1).withOpacity(0.05),
             minimumSize: const Size(20.0, 50.0),
           ),
-          child: const Icon(UniconsLine.github_alt),
+          child: const Icon(TablerIcons.brand_github),
         ),
       );
     }
@@ -221,7 +221,7 @@ class _GitHubActivitiesState extends State<GitHubActivities> with UiLoggy {
                 foregroundColor: Colors.pink,
                 minimumSize: const Size(20.0, 50.0),
               ),
-              child: const Icon(UniconsLine.history_alt),
+              child: const Icon(TablerIcons.history),
             ),
           ),
         moreButton(),

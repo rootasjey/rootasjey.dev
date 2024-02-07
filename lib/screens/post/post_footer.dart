@@ -1,8 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:rootasjey/globals/utilities.dart';
-import 'package:unicons/unicons.dart';
 
 class PostFooter extends StatelessWidget {
   const PostFooter({
@@ -41,9 +41,9 @@ class PostFooter extends StatelessWidget {
     final diff = DateTime.now().difference(updatedAt);
 
     if (diff.inDays < 10) {
-      lastUpdatedAt = Jiffy(updatedAt).fromNow();
+      lastUpdatedAt = Jiffy.parseFromDateTime(updatedAt).fromNow();
     } else {
-      lastUpdatedAt = Jiffy(updatedAt).yMMMMEEEEd;
+      lastUpdatedAt = Jiffy.parseFromDateTime(updatedAt).yMMMMEEEEd;
     }
 
     return SliverToBoxAdapter(
@@ -65,8 +65,7 @@ class PostFooter extends StatelessWidget {
                   children: [
                     const Padding(
                       padding: EdgeInsets.only(right: 16.0),
-                      child:
-                          Icon(UniconsLine.lightbulb_alt, color: Colors.amber),
+                      child: Icon(TablerIcons.bulb, color: Colors.amber),
                     ),
                     Expanded(
                       child: Column(

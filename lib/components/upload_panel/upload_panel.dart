@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_solidart/flutter_solidart.dart';
 import 'package:rootasjey/components/upload_panel/upload_panel_body.dart';
 import 'package:rootasjey/components/upload_panel/upload_panel_header.dart';
-import 'package:rootasjey/globals/app_state.dart';
 import 'package:rootasjey/globals/utilities.dart';
+import 'package:rootasjey/globals/utils.dart';
 import 'package:rootasjey/types/custom_upload_task.dart';
+import 'package:rootasjey/types/enums/enum_signal_id.dart';
 
-class UploadPanel extends ConsumerStatefulWidget {
+class UploadPanel extends StatefulWidget {
   const UploadPanel({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   createState() => _UploadWindowState();
 }
 
-class _UploadWindowState extends ConsumerState<UploadPanel> {
+class _UploadWindowState extends State<UploadPanel> {
   /// Grow the upload panel to a maxium size if true.
   /// Otherwise minimize the window.
   bool _expanded = false;
@@ -43,24 +44,22 @@ class _UploadWindowState extends ConsumerState<UploadPanel> {
 
   @override
   Widget build(BuildContext context) {
-    final bool showUploadWindow = ref.watch(AppState.showUploadWindowProvider);
+    final List<CustomUploadTask> uploadTaskList =
+        context.observe(EnumSignalId.uploadTaskList);
+    final Computed<bool> signalShowUploadWindow =
+        context.get(EnumSignalId.showUploadWindow);
 
-    if (!showUploadWindow) {
+    if (!signalShowUploadWindow.value) {
       return Container();
     }
 
-    final List<CustomUploadTask> uploadTaskList = ref.watch(
-      AppState.uploadTaskListProvider,
-    );
+    final int abortedTaskCount = Utils.state.illustrations.abortedTaskCount();
+    final int successTaskCount = Utils.state.illustrations.successTaskCount();
+    final int runningTaskCount = Utils.state.illustrations.runningTaskCount();
+    final int pausedTaskCount = Utils.state.illustrations.pausedTaskCount();
+    final int pendingTaskCount = Utils.state.illustrations.pendingTaskCount();
 
-    final taskListNotifier = AppState.uploadTaskListProvider.notifier;
-    final int abortedTaskCount = ref.read(taskListNotifier).abortedTaskCount;
-    final int successTaskCount = ref.read(taskListNotifier).successTaskCount;
-    final int runningTaskCount = ref.read(taskListNotifier).runningTaskCount;
-    final int pausedTaskCount = ref.read(taskListNotifier).pausedTaskCount;
-    final int pendingTaskCount = ref.read(taskListNotifier).pendingTaskCount;
-
-    final int percent = ref.watch(AppState.uploadPercentageProvider);
+    final int percent = Utils.state.illustrations.uploadPercentage?.value ?? 0;
 
     final Size windowSize = MediaQuery.of(context).size;
     final bool isMobileSize =

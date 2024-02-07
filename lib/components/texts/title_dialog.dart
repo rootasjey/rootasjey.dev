@@ -6,11 +6,11 @@ import 'package:rootasjey/globals/utilities.dart';
 /// A component displaying a title and subtitle with a close button.
 class TitleDialog extends StatelessWidget {
   const TitleDialog({
-    Key? key,
+    super.key,
     required this.titleValue,
     required this.subtitleValue,
     required this.onCancel,
-  }) : super(key: key);
+  });
 
   /// Text title.
   final String titleValue;

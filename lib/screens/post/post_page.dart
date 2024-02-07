@@ -9,15 +9,16 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_improved_scrolling/flutter_improved_scrolling.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_solidart/flutter_solidart.dart';
+import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:loggy/loggy.dart';
 import 'package:lottie/lottie.dart';
 import 'package:rootasjey/components/buttons/fab_to_top.dart';
 import 'package:rootasjey/components/dialogs/delete_dialog.dart';
 import 'package:rootasjey/components/loading_view.dart';
 import 'package:rootasjey/components/upload_panel/upload_panel.dart';
-import 'package:rootasjey/globals/app_state.dart';
 import 'package:rootasjey/globals/utilities.dart';
+import 'package:rootasjey/globals/utils.dart';
 import 'package:rootasjey/screens/post/post_app_bar.dart';
 import 'package:rootasjey/screens/post/post_cover.dart';
 import 'package:rootasjey/screens/post/post_footer.dart';
@@ -31,14 +32,14 @@ import 'package:rootasjey/types/alias/json_alias.dart';
 import 'package:rootasjey/types/enums/enum_content_visibility.dart';
 import 'package:rootasjey/types/enums/enum_cover_corner.dart';
 import 'package:rootasjey/types/enums/enum_cover_width.dart';
+import 'package:rootasjey/types/enums/enum_signal_id.dart';
 import 'package:rootasjey/types/enums/enum_upload_type.dart';
 import 'package:rootasjey/types/post.dart';
 import 'package:rootasjey/types/user/user_firestore.dart';
 import 'package:rootasjey/types/user/user_rights.dart';
-import 'package:unicons/unicons.dart';
 import 'package:verbal_expressions/verbal_expressions.dart';
 
-class PostPage extends ConsumerStatefulWidget {
+class PostPage extends StatefulWidget {
   const PostPage({
     super.key,
     required this.postId,
@@ -47,10 +48,10 @@ class PostPage extends ConsumerStatefulWidget {
   final String postId;
 
   @override
-  ConsumerState<PostPage> createState() => _PostPageState();
+  State<PostPage> createState() => _PostPageState();
 }
 
-class _PostPageState extends ConsumerState<PostPage> with UiLoggy {
+class _PostPageState extends State<PostPage> with UiLoggy {
   /// True if the post is loading.
   bool _loading = false;
 
@@ -134,10 +135,10 @@ class _PostPageState extends ConsumerState<PostPage> with UiLoggy {
 
   @override
   Widget build(BuildContext context) {
-    final UserFirestore? userFirestore =
-        ref.watch(AppState.userProvider).firestoreUser;
+    final Signal<UserFirestore> signalUserFirestore =
+        context.get(EnumSignalId.userFirestore);
 
-    final UserRights rights = userFirestore?.rights ?? const UserRights();
+    final UserRights rights = signalUserFirestore.value.rights;
 
     final bool canManagePosts = rights.managePosts;
     const double maxWidth = 640.0;
@@ -292,7 +293,7 @@ class _PostPageState extends ConsumerState<PostPage> with UiLoggy {
 
     return FabToTop(
       hideIfAtTop: _hideFab,
-      fabIcon: const Icon(UniconsLine.arrow_up),
+      fabIcon: const Icon(TablerIcons.arrow_up),
       pageScrollController: _pageScrollController,
     );
   }
@@ -320,9 +321,8 @@ class _PostPageState extends ConsumerState<PostPage> with UiLoggy {
           ),
         ),
       ),
-      icon: _editing
-          ? const Icon(UniconsLine.eye)
-          : const Icon(UniconsLine.edit_alt),
+      icon:
+          _editing ? const Icon(TablerIcons.eye) : const Icon(TablerIcons.edit),
     );
   }
 
@@ -739,17 +739,16 @@ class _PostPageState extends ConsumerState<PostPage> with UiLoggy {
   }
 
   void tryUploadCover() async {
-    final String userId =
-        ref.read(AppState.userProvider).firestoreUser?.id ?? "";
-    if (userId.isEmpty) {
-      return;
-    }
+    final Signal<UserFirestore> signalUserFirestore =
+        context.get(EnumSignalId.userFirestore);
+    final String userId = signalUserFirestore.value.id;
+    if (userId.isEmpty) return;
 
-    ref.read(AppState.uploadTaskListProvider.notifier).pickCover(
-          targetId: _post.id,
-          uploadType: EnumUploadType.postCover,
-          userId: userId,
-        );
+    Utils.state.illustrations.pickCover(
+      targetId: _post.id,
+      uploadType: EnumUploadType.postCover,
+      userId: userId,
+    );
   }
 
   /// Update cover's width.

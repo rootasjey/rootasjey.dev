@@ -12,7 +12,7 @@ import 'package:rootasjey/router/locations/signin_location.dart';
 import 'package:rootasjey/router/locations/signup_location.dart';
 import 'package:rootasjey/router/locations/tos_location.dart';
 
-final appLocationBuilder = BeamerDelegate(
+final appBeamerDelegate = BeamerDelegate(
   locationBuilder: BeamerLocationBuilder(
     beamLocations: [
       HomeLocation(),
@@ -28,5 +28,5 @@ final appLocationBuilder = BeamerDelegate(
       SignupLocation(),
       TosLocation(),
     ],
-  ),
+  ).call,
 );

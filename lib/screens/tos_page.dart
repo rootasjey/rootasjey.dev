@@ -1,11 +1,11 @@
 import 'package:beamer/beamer.dart';
+import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:rootasjey/components/footer.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/globals/constants.dart';
 import 'package:rootasjey/globals/utilities.dart';
-import 'package:unicons/unicons.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:supercharged/supercharged.dart';
 
@@ -63,7 +63,7 @@ class _TosPageState extends State<TosPage> {
     return IconButton(
       tooltip: "back".tr(),
       onPressed: Beamer.of(context).beamBack,
-      icon: const Icon(UniconsLine.arrow_left),
+      icon: const Icon(TablerIcons.arrow_left),
     );
   }
 

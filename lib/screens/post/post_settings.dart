@@ -1,15 +1,14 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:rootasjey/components/buttons/circle_button.dart';
 import 'package:rootasjey/components/buttons/dark_elevated_button.dart';
-import 'package:rootasjey/components/fade_in_y.dart';
 import 'package:rootasjey/globals/utilities.dart';
 import 'package:rootasjey/types/cover.dart';
 import 'package:rootasjey/types/enums/enum_content_visibility.dart';
 import 'package:rootasjey/types/enums/enum_cover_corner.dart';
 import 'package:rootasjey/types/enums/enum_cover_width.dart';
 import 'package:simple_animations/animation_builder/play_animation_builder.dart';
-import 'package:unicons/unicons.dart';
 
 class PostSettings extends StatelessWidget {
   const PostSettings({
@@ -133,7 +132,7 @@ class PostSettings extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     CircleButton(
-                      icon: const Icon(UniconsLine.times),
+                      icon: const Icon(TablerIcons.x),
                       onTap: onCloseSetting,
                       margin: const EdgeInsets.only(right: 24.0),
                     ),
@@ -162,8 +161,57 @@ class PostSettings extends StatelessWidget {
   }
 
   Widget languageWidget({required double dividerHeight}) {
-    return FadeInY(
-      beginY: 12.0,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Divider(height: dividerHeight),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 16.0),
+          child: Text(
+            "Language".toUpperCase(),
+            style: Utilities.fonts.body(
+              textStyle: const TextStyle(
+                fontSize: 16.0,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ),
+        Wrap(
+          spacing: 16.0,
+          runSpacing: 16.0,
+          children: Utilities.lang.available().map((String chipLanguage) {
+            return ChoiceChip(
+              padding: const EdgeInsets.symmetric(
+                vertical: 8.0,
+                horizontal: 12.0,
+              ),
+              label: Text(
+                Utilities.lang.toFullString(chipLanguage),
+                style: Utilities.fonts.body(
+                  textStyle: TextStyle(
+                    fontSize: 16.0,
+                    fontWeight: chipLanguage == language
+                        ? FontWeight.w600
+                        : FontWeight.w400,
+                  ),
+                ),
+              ),
+              selected: chipLanguage == language,
+              selectedColor: Colors.blue,
+              onSelected: (bool selected) {
+                onLanguageChanged?.call(chipLanguage);
+              },
+            );
+          }).toList(),
+        ),
+      ],
+    );
+  }
+
+  Widget visibilityWidget({required double dividerHeight}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 0.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -171,7 +219,7 @@ class PostSettings extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(bottom: 16.0),
             child: Text(
-              "Language".toUpperCase(),
+              "Visibility".toUpperCase(),
               style: Utilities.fonts.body(
                 textStyle: const TextStyle(
                   fontSize: 16.0,
@@ -181,92 +229,36 @@ class PostSettings extends StatelessWidget {
             ),
           ),
           Wrap(
-            spacing: 16.0,
-            runSpacing: 16.0,
-            children: Utilities.lang.available().map((String chipLanguage) {
-              return ChoiceChip(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 8.0,
-                  horizontal: 12.0,
-                ),
-                label: Text(
-                  Utilities.lang.toFullString(chipLanguage),
-                  style: Utilities.fonts.body(
-                    textStyle: TextStyle(
-                      fontSize: 16.0,
-                      fontWeight: chipLanguage == language
-                          ? FontWeight.w600
-                          : FontWeight.w400,
-                    ),
+              spacing: 16.0,
+              runSpacing: 16.0,
+              children: [
+                EnumContentVisibility.private,
+                EnumContentVisibility.public,
+              ].map((chipVisibility) {
+                return ChoiceChip(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 8.0,
+                    horizontal: 12.0,
                   ),
-                ),
-                selected: chipLanguage == language,
-                selectedColor: Colors.blue,
-                onSelected: (bool selected) {
-                  onLanguageChanged?.call(chipLanguage);
-                },
-              );
-            }).toList(),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget visibilityWidget({required double dividerHeight}) {
-    return FadeInY(
-      beginY: 12.0,
-      delay: const Duration(milliseconds: 100),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 0.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Divider(height: dividerHeight),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 16.0),
-              child: Text(
-                "Visibility".toUpperCase(),
-                style: Utilities.fonts.body(
-                  textStyle: const TextStyle(
-                    fontSize: 16.0,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ),
-            Wrap(
-                spacing: 16.0,
-                runSpacing: 16.0,
-                children: [
-                  EnumContentVisibility.private,
-                  EnumContentVisibility.public,
-                ].map((chipVisibility) {
-                  return ChoiceChip(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 8.0,
-                      horizontal: 12.0,
-                    ),
-                    label: Text(
-                      chipVisibility.name,
-                      style: Utilities.fonts.body(
-                        textStyle: TextStyle(
-                          fontSize: 16.0,
-                          fontWeight: chipVisibility == visibility
-                              ? FontWeight.w600
-                              : FontWeight.w400,
-                        ),
+                  label: Text(
+                    chipVisibility.name,
+                    style: Utilities.fonts.body(
+                      textStyle: TextStyle(
+                        fontSize: 16.0,
+                        fontWeight: chipVisibility == visibility
+                            ? FontWeight.w600
+                            : FontWeight.w400,
                       ),
                     ),
-                    selected: chipVisibility == visibility,
-                    selectedColor: Colors.blue,
-                    onSelected: (bool selected) {
-                      onVisibilitySelected?.call(chipVisibility, selected);
-                    },
-                  );
-                }).toList()),
-          ],
-        ),
+                  ),
+                  selected: chipVisibility == visibility,
+                  selectedColor: Colors.blue,
+                  onSelected: (bool selected) {
+                    onVisibilitySelected?.call(chipVisibility, selected);
+                  },
+                );
+              }).toList()),
+        ],
       ),
     );
   }
@@ -320,63 +312,59 @@ class PostSettings extends StatelessWidget {
   }
 
   Widget coverWidget({required double dividerHeight}) {
-    return FadeInY(
-      beginY: 12.0,
-      delay: const Duration(milliseconds: 200),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Divider(height: dividerHeight),
-          Padding(
-            padding: const EdgeInsets.only(bottom: 16.0),
-            child: Text(
-              "Cover".toUpperCase(),
-              style: Utilities.fonts.body(
-                textStyle: const TextStyle(
-                  fontSize: 16.0,
-                  fontWeight: FontWeight.w600,
-                ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Divider(height: dividerHeight),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 16.0),
+          child: Text(
+            "Cover".toUpperCase(),
+            style: Utilities.fonts.body(
+              textStyle: const TextStyle(
+                fontSize: 16.0,
+                fontWeight: FontWeight.w600,
               ),
             ),
           ),
-          coverWidthWidget(),
-          coverCenterCustomWidget(),
-          Padding(
-            padding: const EdgeInsets.only(top: 24.0),
-            child: Wrap(
-              spacing: 24.0,
-              runSpacing: 24.0,
-              children: [
+        ),
+        coverWidthWidget(),
+        coverCenterCustomWidget(),
+        Padding(
+          padding: const EdgeInsets.only(top: 24.0),
+          child: Wrap(
+            spacing: 24.0,
+            runSpacing: 24.0,
+            children: [
+              DarkElevatedButton(
+                onPressed: onTryAddCoverImage,
+                child: Text(
+                  hasCover ? "cover_replace".tr() : "cover_add".tr(),
+                  style: Utilities.fonts.body(
+                    textStyle: const TextStyle(
+                      color: Colors.green,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+              if (hasCover)
                 DarkElevatedButton(
-                  onPressed: onTryAddCoverImage,
+                  onPressed: onTryRemoveCoverImage,
                   child: Text(
-                    hasCover ? "cover_replace".tr() : "cover_add".tr(),
+                    "cover_remove".tr(),
                     style: Utilities.fonts.body(
                       textStyle: const TextStyle(
-                        color: Colors.green,
+                        color: Colors.pink,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                   ),
                 ),
-                if (hasCover)
-                  DarkElevatedButton(
-                    onPressed: onTryRemoveCoverImage,
-                    child: Text(
-                      "cover_remove".tr(),
-                      style: Utilities.fonts.body(
-                        textStyle: const TextStyle(
-                          color: Colors.pink,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ),
-              ],
-            ),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -444,37 +432,33 @@ class PostSettings extends StatelessWidget {
       return confirmDeleteWidget(dividerHeight: dividerHeight);
     }
 
-    return FadeInY(
-      beginY: 12.0,
-      delay: const Duration(milliseconds: 300),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Divider(height: dividerHeight),
-          Padding(
-            padding: const EdgeInsets.only(bottom: 16.0),
-            child: Text(
-              "Danger zone".toUpperCase(),
-              style: Utilities.fonts.body(
-                textStyle: const TextStyle(
-                  fontSize: 16.0,
-                  fontWeight: FontWeight.w600,
-                ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Divider(height: dividerHeight),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 16.0),
+          child: Text(
+            "Danger zone".toUpperCase(),
+            style: Utilities.fonts.body(
+              textStyle: const TextStyle(
+                fontSize: 16.0,
+                fontWeight: FontWeight.w600,
               ),
             ),
           ),
-          Wrap(
-            spacing: 16.0,
-            runSpacing: 16.0,
-            children: [
-              DarkElevatedButton(
-                onPressed: onConfirmDeletePost,
-                child: Text("delete".tr()),
-              ),
-            ],
-          ),
-        ],
-      ),
+        ),
+        Wrap(
+          spacing: 16.0,
+          runSpacing: 16.0,
+          children: [
+            DarkElevatedButton(
+              onPressed: onConfirmDeletePost,
+              child: Text("delete".tr()),
+            ),
+          ],
+        ),
+      ],
     );
   }
 

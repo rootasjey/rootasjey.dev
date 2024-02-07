@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:rootasjey/globals/utilities.dart';
+import 'package:rootasjey/globals/constants.dart';
+import 'package:rootasjey/globals/utils.dart';
 
-/// A TextField with a predefined outlined border.
 class OutlinedTextField extends StatelessWidget {
+  /// A TextField with a predefined outlined border.
   const OutlinedTextField({
-    Key? key,
+    super.key,
+    this.accentColor = Colors.blue,
     this.label,
     this.controller,
     this.hintText = "",
@@ -18,13 +20,17 @@ class OutlinedTextField extends StatelessWidget {
     this.focusNode,
     this.obscureText = false,
     this.textCapitalization = TextCapitalization.sentences,
-  }) : super(key: key);
+    this.suffixIcon,
+  });
 
   /// Will immediately request focus on mount if true.
   final bool autofocus;
 
   /// Will hide characters of true (usually for passwords).
   final bool obscureText;
+
+  /// Accent color (of the border when focused).
+  final Color accentColor;
 
   /// Limit this widget constrants.
   final BoxConstraints constraints;
@@ -59,9 +65,14 @@ class OutlinedTextField extends StatelessWidget {
   /// Adapt mobile keyboard to this input (sentences, email, ...).
   final TextInputType? keyboardType;
 
+  /// Icon to display at the end of the input.
+  final Widget? suffixIcon;
+
   @override
   Widget build(BuildContext context) {
-    final Color primaryColor = Theme.of(context).primaryColor;
+    final Brightness brightness = Theme.of(context).brightness;
+    final Color fillColor =
+        brightness == Brightness.light ? Colors.white70 : Colors.black38;
 
     final BorderRadius borderRadius = BorderRadius.circular(4.0);
 
@@ -74,8 +85,8 @@ class OutlinedTextField extends StatelessWidget {
             child: Opacity(
               opacity: 0.6,
               child: Text(
-                label!,
-                style: Utilities.fonts.body(
+                label ?? "",
+                style: Utils.calligraphy.body(
                   textStyle: const TextStyle(
                     fontSize: 14.0,
                     fontWeight: FontWeight.w600,
@@ -96,16 +107,17 @@ class OutlinedTextField extends StatelessWidget {
             keyboardType: keyboardType,
             onChanged: onChanged,
             onSubmitted: onSubmitted,
-            style: Utilities.fonts.body(
+            style: Utils.calligraphy.body(
               textStyle: const TextStyle(
                 fontWeight: FontWeight.w600,
               ),
             ),
-            cursorColor: primaryColor,
+            cursorColor: accentColor,
             decoration: InputDecoration(
               filled: true,
-              fillColor: Colors.white,
+              fillColor: fillColor,
               hintText: hintText,
+              suffixIcon: suffixIcon,
               contentPadding: EdgeInsets.symmetric(
                 horizontal: 8.0,
                 vertical: maxLines == null ? 8.0 : 0.0,
@@ -113,21 +125,21 @@ class OutlinedTextField extends StatelessWidget {
               errorBorder: OutlineInputBorder(
                 borderRadius: borderRadius,
                 borderSide: BorderSide(
-                  color: Theme.of(context).secondaryHeaderColor,
+                  color: Constants.colors.error,
                   width: 1.5,
                 ),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: borderRadius,
                 borderSide: BorderSide(
-                  color: primaryColor,
+                  color: accentColor,
                   width: 2.0,
                 ),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: borderRadius,
                 borderSide: BorderSide(
-                  color: primaryColor,
+                  color: accentColor,
                   width: 2.5,
                 ),
               ),

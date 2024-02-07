@@ -65,6 +65,7 @@ class ColorsConstants {
   final Color drafts = Colors.amber.shade600;
 
   final Color delete = Colors.pink;
+  final Color error = Colors.pink;
 
   /// Color for email.
   final Color email = Colors.blue.shade300;

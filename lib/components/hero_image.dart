@@ -4,11 +4,11 @@ import 'package:dismissible_page/dismissible_page.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:rootasjey/components/buttons/circle_button.dart';
 import 'package:rootasjey/globals/constants.dart';
 import 'package:rootasjey/utils/storage_utils.dart';
-import 'package:unicons/unicons.dart';
 
 class HeroImage extends StatefulWidget {
   const HeroImage({
@@ -121,7 +121,7 @@ class _HeroImageState extends State<HeroImage> {
               child: CircleButton(
                 backgroundColor: Colors.white60,
                 icon: const Icon(
-                  UniconsLine.times,
+                  TablerIcons.x,
                   color: Colors.black,
                 ),
                 onTap: () => Navigator.of(context).pop(),

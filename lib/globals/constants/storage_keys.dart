@@ -14,6 +14,7 @@ class StorageKeys {
   static const String itemsLayoutGrid = "ItemsLayout.grid";
   static const String itemsLayoutList = "ItemsLayout.list";
   static const String lang = "lang";
+  static const String language = "language";
   static const String onOpenNotificationPath = "on_open_notification_path";
   static const String notificationsActivated = "notifications_activated";
   static const String quoteIdNotification = "quote_id_notification";

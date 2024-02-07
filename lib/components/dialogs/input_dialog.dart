@@ -8,7 +8,7 @@ import 'package:rootasjey/globals/constants.dart';
 /// A dialog which has one or multiple inputs.
 class InputDialog extends StatelessWidget {
   const InputDialog({
-    Key? key,
+    super.key,
     required this.onCancel,
     required this.onSubmitted,
     required this.subtitleValue,
@@ -19,7 +19,7 @@ class InputDialog extends StatelessWidget {
     this.onNameChanged,
     this.onDescriptionChanged,
     this.submitButtonValue = "",
-  }) : super(key: key);
+  });
 
   /// If true, this widget will take a suitable layout for bottom sheet.
   /// Otherwise, it will have a dialog layout.

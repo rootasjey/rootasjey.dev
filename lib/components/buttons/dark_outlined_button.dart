@@ -3,13 +3,13 @@ import 'package:rootasjey/globals/utilities.dart';
 
 class DarkOutlinedButton extends StatelessWidget {
   const DarkOutlinedButton({
-    Key? key,
+    super.key,
     required this.child,
     this.accentColor,
     this.margin = EdgeInsets.zero,
     this.onPressed,
     this.selected = false,
-  }) : super(key: key);
+  });
 
   /// This button will be highlited with `accentColor` if this is true.
   final bool selected;

@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:rootasjey/components/author_component.dart';
 import 'package:rootasjey/components/buttons/close_ship.dart';
@@ -7,11 +8,10 @@ import 'package:rootasjey/globals/constants.dart';
 import 'package:rootasjey/globals/utilities.dart';
 import 'package:rootasjey/types/enums/enum_content_visibility.dart';
 import 'package:simple_animations/simple_animations.dart';
-import 'package:unicons/unicons.dart';
 
 class PostPageHeader extends StatelessWidget {
   const PostPageHeader({
-    Key? key,
+    super.key,
     required this.createdAt,
     required this.publishedAt,
     required this.updatedAt,
@@ -32,7 +32,7 @@ class PostPageHeader extends StatelessWidget {
     this.onInputTagChanged,
     this.onRemoveTag,
     this.onToggleAddTagVisibility,
-  }) : super(key: key);
+  });
 
   /// The current authenticated user can edit & delete this post if true.
   final bool canManagePosts;
@@ -200,7 +200,7 @@ class PostPageHeader extends StatelessWidget {
         label: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Opacity(opacity: 0.8, child: Icon(UniconsLine.arrow_left)),
+            const Opacity(opacity: 0.8, child: Icon(TablerIcons.arrow_left)),
             Text("back".tr()),
           ],
         ),
@@ -322,8 +322,8 @@ class PostPageHeader extends StatelessWidget {
   Widget publishedAtWidget() {
     final Duration publishedAtDiff = DateTime.now().difference(publishedAt);
     final String publishedAtStr = publishedAtDiff.inDays > 4
-        ? Jiffy(publishedAt).yMMMEd
-        : Jiffy(publishedAt).fromNow();
+        ? Jiffy.parseFromDateTime(publishedAt).yMMMEd
+        : Jiffy.parseFromDateTime(publishedAt).fromNow();
 
     return Opacity(
       opacity: 0.6,
@@ -340,8 +340,8 @@ class PostPageHeader extends StatelessWidget {
   }
 
   Widget updatedAtWidget() {
-    final bool updateSameOrBeforePub =
-        Jiffy(updatedAt).isSameOrBefore(publishedAt);
+    final bool updateSameOrBeforePub = Jiffy.parseFromDateTime(updatedAt)
+        .isSameOrBefore(Jiffy.parseFromDateTime(publishedAt));
 
     final bool updatePubDiff = updatedAt.difference(publishedAt).inMinutes < 30;
 
@@ -357,8 +357,8 @@ class PostPageHeader extends StatelessWidget {
 
     final Duration updatedAtDiff = DateTime.now().difference(updatedAt);
     final String updatedAtStr = updatedAtDiff.inDays > 20
-        ? Jiffy(updatedAt).format("dd/MM/yy")
-        : Jiffy(updatedAt).fromNow();
+        ? Jiffy.parseFromDateTime(updatedAt).format(pattern: "dd/MM/yy")
+        : Jiffy.parseFromDateTime(updatedAt).fromNow();
 
     return Opacity(
       opacity: 0.5,

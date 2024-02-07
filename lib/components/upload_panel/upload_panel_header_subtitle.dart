@@ -1,18 +1,17 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:rootasjey/globals/utilities.dart';
 
-class UploadPanelHeaderSubtitle extends ConsumerWidget {
+class UploadPanelHeaderSubtitle extends StatelessWidget {
   const UploadPanelHeaderSubtitle({
-    Key? key,
+    super.key,
     required this.percent,
     required this.abortedTaskCount,
     required this.successTaskCount,
     required this.runningTaskCount,
     required this.pausedTaskCount,
     required this.pendingTaskCount,
-  }) : super(key: key);
+  });
 
   final int percent;
   final int abortedTaskCount;
@@ -22,7 +21,7 @@ class UploadPanelHeaderSubtitle extends ConsumerWidget {
   final int pendingTaskCount;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     if (percent == 0 && pendingTaskCount > 0) {
       return const SizedBox(
         width: 200.0,

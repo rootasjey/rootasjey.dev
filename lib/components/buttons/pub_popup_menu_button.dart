@@ -1,9 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:rootasjey/components/popup_menu/popup_menu_item_icon.dart';
 import 'package:rootasjey/globals/utilities.dart';
 import 'package:rootasjey/types/enums/enum_content_visibility.dart';
-import 'package:unicons/unicons.dart';
 
 class PubPopupMenuButton extends StatelessWidget {
   const PubPopupMenuButton({
@@ -66,8 +66,8 @@ class PubPopupMenuButton extends StatelessWidget {
 
     if (asIconButton) {
       icon = visibility == EnumContentVisibility.public
-          ? const Icon(UniconsLine.eye, color: color)
-          : const Icon(UniconsLine.eye_slash, color: color);
+          ? const Icon(TablerIcons.eye, color: color)
+          : const Icon(TablerIcons.eye_cancel, color: color);
     }
 
     return PopupMenuButton(

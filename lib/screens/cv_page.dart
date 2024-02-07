@@ -1,3 +1,4 @@
+import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:rootasjey/components/application_bar.dart';
 import 'package:rootasjey/components/better_avatar.dart';
 import 'package:rootasjey/globals/constants.dart';
@@ -8,15 +9,13 @@ import 'package:rootasjey/types/project/project.dart';
 import 'package:rootasjey/types/skill.dart';
 import 'package:rootasjey/types/social_links.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rootasjey/globals/utilities.dart';
-import 'package:unicons/unicons.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 class CVPage extends StatefulWidget {
-  const CVPage({Key? key}) : super(key: key);
+  const CVPage({super.key});
 
   @override
   State<StatefulWidget> createState() => _CVPageState();
@@ -270,27 +269,27 @@ class _CVPageState extends State<CVPage> {
     ),
     Skill(
       label: "JavaScript",
-      iconData: FontAwesomeIcons.js,
+      iconData: TablerIcons.brand_javascript,
       url: "https://javascript.com",
     ),
     Skill(
       label: "node.JS",
-      iconData: FontAwesomeIcons.nodeJs,
+      iconData: TablerIcons.brand_nodejs,
       url: "https://nodejs.com",
     ),
     Skill(
       label: "Python",
-      iconData: FontAwesomeIcons.python,
+      iconData: TablerIcons.brand_python,
       url: "https://python.org",
     ),
     Skill(
       label: "Vue.JS",
-      iconData: FontAwesomeIcons.vuejs,
+      iconData: TablerIcons.brand_vue,
       url: "https://vuejs.org",
     ),
     Skill(
       label: "React.JS",
-      iconData: FontAwesomeIcons.react,
+      iconData: TablerIcons.brand_react,
       url: "https://reactjs.com",
     ),
   ];
@@ -302,7 +301,7 @@ class _CVPageState extends State<CVPage> {
         onPressed: tryDownloadCV,
         foregroundColor: Colors.white,
         backgroundColor: Colors.indigo,
-        icon: const Icon(UniconsLine.save),
+        icon: const Icon(TablerIcons.download),
         label: const Text("Download"),
       ),
       body: CustomScrollView(
@@ -443,7 +442,7 @@ class _CVPageState extends State<CVPage> {
                     children: [
                       const Padding(
                         padding: EdgeInsets.only(right: 12.0),
-                        child: Icon(UniconsLine.location_point),
+                        child: Icon(TablerIcons.location),
                       ),
                       Text(
                         "Yvelines, France",
@@ -471,7 +470,7 @@ class _CVPageState extends State<CVPage> {
                     children: [
                       const Padding(
                         padding: EdgeInsets.only(right: 12.0),
-                        child: Icon(UniconsLine.envelope),
+                        child: Icon(TablerIcons.mail),
                       ),
                       Text(
                         "jerem.freelance@codingbox.fr",
@@ -499,7 +498,7 @@ class _CVPageState extends State<CVPage> {
                     children: [
                       const Padding(
                         padding: EdgeInsets.only(right: 12.0),
-                        child: Icon(UniconsLine.globe),
+                        child: Icon(TablerIcons.globe),
                       ),
                       Text(
                         "https://rootasjey.dev",
@@ -527,7 +526,7 @@ class _CVPageState extends State<CVPage> {
                     children: [
                       const Padding(
                         padding: EdgeInsets.only(right: 12.0),
-                        child: Icon(UniconsLine.github_alt),
+                        child: Icon(TablerIcons.brand_github),
                       ),
                       Text(
                         "https://github.com/rootasjey.dev",
@@ -641,7 +640,7 @@ class _CVPageState extends State<CVPage> {
               children: [
                 const Padding(
                   padding: EdgeInsets.only(right: 12.0),
-                  child: Icon(UniconsLine.briefcase, color: Colors.blue),
+                  child: Icon(TablerIcons.briefcase, color: Colors.blue),
                 ),
                 Text(
                   "Expériences Professionnelles",
@@ -739,7 +738,7 @@ class _CVPageState extends State<CVPage> {
             children: [
               const Padding(
                 padding: EdgeInsets.only(right: 12.0),
-                child: Icon(UniconsLine.university, color: Colors.green),
+                child: Icon(TablerIcons.school, color: Colors.green),
               ),
               Text(
                 "Formation",
@@ -806,7 +805,7 @@ class _CVPageState extends State<CVPage> {
                 children: [
                   const Padding(
                     padding: EdgeInsets.only(right: 12.0),
-                    child: Icon(UniconsLine.rocket, color: Colors.pink),
+                    child: Icon(TablerIcons.rocket, color: Colors.pink),
                   ),
                   Text(
                     "Projects",

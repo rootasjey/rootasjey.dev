@@ -3,7 +3,7 @@ import 'package:supercharged/supercharged.dart';
 
 class BetterAvatar extends StatefulWidget {
   const BetterAvatar({
-    Key? key,
+    super.key,
     required this.image,
     this.elevation = 4.0,
     this.onTap,
@@ -14,7 +14,7 @@ class BetterAvatar extends StatefulWidget {
       width: 3.0,
     ),
     this.margin = EdgeInsets.zero,
-  }) : super(key: key);
+  });
 
   final BorderSide borderSide;
   final double size;

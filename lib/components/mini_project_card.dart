@@ -1,7 +1,7 @@
 import 'package:dotted_border/dotted_border.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:rootasjey/components/buttons/circle_button.dart';
 import 'package:rootasjey/components/popup_menu/popup_menu_item_icon.dart';
 import 'package:rootasjey/globals/constants.dart';
@@ -10,7 +10,6 @@ import 'package:rootasjey/types/drag_data.dart';
 import 'package:rootasjey/types/enums/enum_project_item_action.dart';
 import 'package:rootasjey/types/project/popup_entry_project.dart';
 import 'package:rootasjey/types/project/project.dart';
-import 'package:unicons/unicons.dart';
 
 class MiniProjectCard extends StatefulWidget {
   const MiniProjectCard({
@@ -319,7 +318,7 @@ class _MiniProjectCardState extends State<MiniProjectCard> {
       child: CircleButton(
         radius: 8.0,
         backgroundColor: Colors.black45,
-        icon: const Icon(UniconsLine.times, size: 14.0),
+        icon: const Icon(TablerIcons.x, size: 14.0),
         onTap: () {
           widget.onRemove?.call(widget.project);
         },
@@ -352,7 +351,7 @@ class _MiniProjectCardState extends State<MiniProjectCard> {
           backgroundColor: Colors.black38,
           child: Padding(
             padding: EdgeInsets.all(0.0),
-            child: Icon(UniconsLine.ellipsis_h, size: 14),
+            child: Icon(TablerIcons.dots, size: 14),
           ),
         ),
       ),
@@ -430,9 +429,9 @@ class _MiniProjectCardState extends State<MiniProjectCard> {
   }
 
   void onLongPress() {
-    showCupertinoModalBottomSheet(
+    showBottomSheet(
       context: context,
-      expand: false,
+      enableDrag: true,
       backgroundColor: Colors.white70,
       builder: (BuildContext context) {
         return Padding(

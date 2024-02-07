@@ -2,15 +2,14 @@ import 'package:beamer/beamer.dart';
 import 'package:card_swiper/card_swiper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_solidart/flutter_solidart.dart';
+import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:loggy/loggy.dart';
 import 'package:rootasjey/components/loading_view.dart';
 import 'package:rootasjey/components/popup_menu/popup_menu_icon.dart';
 import 'package:rootasjey/components/popup_menu/popup_menu_item_icon.dart';
-import 'package:rootasjey/globals/app_state.dart';
 import 'package:rootasjey/globals/utilities.dart';
 import 'package:rootasjey/router/locations/home_location.dart';
 import 'package:rootasjey/router/locations/projects_location.dart';
@@ -25,21 +24,21 @@ import 'package:rootasjey/types/alias/firestore/query_snap_map.dart';
 import 'package:rootasjey/types/alias/firestore/query_snapshot_stream_subscription.dart';
 import 'package:rootasjey/types/alias/json_alias.dart';
 import 'package:rootasjey/types/enums/enum_project_item_action.dart';
+import 'package:rootasjey/types/enums/enum_signal_id.dart';
 import 'package:rootasjey/types/intents/escape_intent.dart';
 import 'package:rootasjey/types/project/project.dart';
 import 'package:rootasjey/types/user/user_firestore.dart';
 import 'package:rootasjey/types/user/user_rights.dart';
-import 'package:unicons/unicons.dart';
 
 /// A page widget showing projects.
-class ProjectsPage extends ConsumerStatefulWidget {
+class ProjectsPage extends StatefulWidget {
   const ProjectsPage({super.key});
 
   @override
-  ConsumerState<ProjectsPage> createState() => _ProjectsPageState();
+  State<ProjectsPage> createState() => _ProjectsPageState();
 }
 
-class _ProjectsPageState extends ConsumerState<ProjectsPage> with UiLoggy {
+class _ProjectsPageState extends State<ProjectsPage> with UiLoggy {
   /// True if there're more projects to fetch.
   bool _hasNext = true;
 
@@ -70,7 +69,7 @@ class _ProjectsPageState extends ConsumerState<ProjectsPage> with UiLoggy {
   /// Popup menu items for project card.
   final List<PopupMenuEntry<EnumProjectItemAction>> _projectPopupMenuItems = [
     PopupMenuItemIcon(
-      icon: const PopupMenuIcon(UniconsLine.trash),
+      icon: const PopupMenuIcon(TablerIcons.trash),
       textLabel: "delete".tr(),
       newValue: EnumProjectItemAction.delete,
       selected: false,
@@ -95,9 +94,9 @@ class _ProjectsPageState extends ConsumerState<ProjectsPage> with UiLoggy {
 
   @override
   Widget build(BuildContext context) {
-    final UserFirestore? userFirestore =
-        ref.watch(AppState.userProvider).firestoreUser;
-    final UserRights userRights = userFirestore?.rights ?? const UserRights();
+    final Signal<UserFirestore> signalUserFirestore =
+        context.get(EnumSignalId.userFirestore);
+    final UserRights userRights = signalUserFirestore.value.rights;
     final bool canManageProjects = userRights.managePosts;
 
     final Size windowSize = MediaQuery.of(context).size;
@@ -158,7 +157,7 @@ class _ProjectsPageState extends ConsumerState<ProjectsPage> with UiLoggy {
     return FloatingActionButton.extended(
       backgroundColor: Colors.amber,
       onPressed: onShowCreate,
-      icon: const Icon(UniconsLine.plus),
+      icon: const Icon(TablerIcons.plus),
       label: Text(
         "project_create".tr(),
         style: Utilities.fonts.body(
@@ -204,11 +203,11 @@ class _ProjectsPageState extends ConsumerState<ProjectsPage> with UiLoggy {
     required String name,
     required String summary,
   }) async {
-    final User? user = ref.read(AppState.userProvider).authUser;
-    if (user == null) {
-      return;
-    }
+    final Signal<UserFirestore> signalUserFirestore =
+        context.get(EnumSignalId.userFirestore);
 
+    final String userId = signalUserFirestore.value.id;
+    if (userId.isEmpty) return;
     setState(() => _creating = true);
 
     try {
@@ -217,7 +216,7 @@ class _ProjectsPageState extends ConsumerState<ProjectsPage> with UiLoggy {
         "language": "en",
         "name": name,
         "summary": summary,
-        "user_id": user.uid,
+        "user_id": userId,
       });
 
       setState(() => _creating = false);
@@ -336,7 +335,11 @@ class _ProjectsPageState extends ConsumerState<ProjectsPage> with UiLoggy {
   /// Return the query to listen changes to.
   QueryMap getFirestoreQuery() {
     final DocumentSnapshot? lastDocument = _lastDocument;
-    final String userId = ref.read(AppState.userProvider).authUser?.uid ?? "";
+
+    final Signal<UserFirestore> signalUserFirestore =
+        context.get(EnumSignalId.userFirestore);
+
+    final String userId = signalUserFirestore.value.id;
 
     if (userId.isEmpty) {
       if (lastDocument == null) {

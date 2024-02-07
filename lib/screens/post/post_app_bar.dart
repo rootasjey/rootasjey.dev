@@ -1,12 +1,12 @@
 import 'package:beamer/beamer.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:rootasjey/components/buttons/circle_button.dart';
 import 'package:rootasjey/components/icons/cicle_app_icon.dart';
 import 'package:rootasjey/globals/utilities.dart';
 import 'package:rootasjey/router/locations/home_location.dart';
 import 'package:simple_animations/simple_animations.dart';
-import 'package:unicons/unicons.dart';
 
 class PostAppBar extends StatefulWidget {
   const PostAppBar({
@@ -104,7 +104,7 @@ class _PostAppBarState extends State<PostAppBar> with AnimationMixin {
                 width: 40.0,
                 child: CircleButton(
                   tooltip: "back".tr(),
-                  icon: const Icon(UniconsLine.arrow_left),
+                  icon: const Icon(TablerIcons.arrow_left),
                   onTap: () => Utilities.navigation.back(context),
                 ),
               ),
@@ -113,7 +113,7 @@ class _PostAppBarState extends State<PostAppBar> with AnimationMixin {
                 right: 24.0,
                 child: CircleButton(
                   tooltip: "home".tr(),
-                  icon: const Icon(UniconsLine.home_alt),
+                  icon: const Icon(TablerIcons.home),
                   onTap: () => Beamer.of(context, root: true).beamToNamed(
                     HomeLocation.route,
                   ),
@@ -127,7 +127,7 @@ class _PostAppBarState extends State<PostAppBar> with AnimationMixin {
                     tooltip: "settings".tr(),
                     icon: Transform.rotate(
                       angle: angle.value,
-                      child: const Icon(UniconsLine.setting),
+                      child: const Icon(TablerIcons.settings),
                     ),
                     onTap: () {
                       if (widget.showSettings) {

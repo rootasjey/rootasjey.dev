@@ -2,7 +2,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:rootasjey/components/application_bar.dart';
-import 'package:rootasjey/components/fade_in_y.dart';
 import 'package:rootasjey/components/post_card.dart';
 import 'package:rootasjey/globals/utilities.dart';
 import 'package:rootasjey/types/enums/enum_post_item_action.dart';
@@ -84,20 +83,12 @@ class PostsPageBody extends StatelessWidget {
                   maxCrossAxisExtent: maxCrossAxisExtent,
                   alignment: -0.28,
                   child: SliverToBoxAdapter(
-                    child: FadeInY(
-                      beginY: Utilities.ui.getBeginY(),
-                      delay: Duration(
-                        milliseconds: Utilities.ui.getNextAnimationDelay(
-                          reset: true,
-                        ),
-                      ),
-                      child: Text(
-                        "posts".tr().toUpperCase(),
-                        style: Utilities.fonts.body2(
-                          textStyle: const TextStyle(
-                            fontSize: 24.0,
-                            fontWeight: FontWeight.w700,
-                          ),
+                    child: Text(
+                      "posts".tr().toUpperCase(),
+                      style: Utilities.fonts.body2(
+                        textStyle: const TextStyle(
+                          fontSize: 24.0,
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
                     ),

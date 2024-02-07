@@ -2,7 +2,7 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:rootasjey/components/popup_menu/popup_menu_item_icon.dart';
 import 'package:rootasjey/globals/constants.dart';
 import 'package:rootasjey/globals/utilities.dart';
@@ -12,13 +12,12 @@ import 'package:rootasjey/types/illustration/illustration.dart';
 import 'package:shimmer_animation/shimmer_animation.dart';
 import 'package:simple_animations/simple_animations.dart';
 import 'package:supercharged/supercharged.dart';
-import 'package:unicons/unicons.dart';
 
 /// A component representing an illustration with its main content (an image).
 class IllustrationCard extends StatefulWidget {
   /// Create a new illustration card.
   const IllustrationCard({
-    Key? key,
+    super.key,
     required this.illustration,
     required this.index,
     required this.heroTag,
@@ -33,7 +32,7 @@ class IllustrationCard extends StatefulWidget {
     this.elevation = 3.0,
     this.size = 300.0,
     this.margin = EdgeInsets.zero,
-    this.backIcon = UniconsLine.tear,
+    this.backIcon = TablerIcons.droplet,
     this.onDoubleTap,
     this.onDragCompleted,
     this.onDragEnd,
@@ -50,7 +49,7 @@ class IllustrationCard extends StatefulWidget {
     this.popupMenuEntries = const [],
     this.dragGroupName = "",
     this.illustrationKey = "",
-  }) : super(key: key);
+  });
 
   /// If true, the card can be dragged. Usually used to re-order items.
   final bool canDrag;
@@ -355,7 +354,7 @@ class _IllustrationCardState extends State<IllustrationCard>
     required String textValue,
   }) {
     if (widget.useIconPlaceholder) {
-      return const Icon(UniconsLine.plus);
+      return const Icon(TablerIcons.plus);
     }
 
     if (widget.size < 300.0) {
@@ -501,8 +500,8 @@ class _IllustrationCardState extends State<IllustrationCard>
           child: Center(
             child: Icon(
               widget.illustration.liked
-                  ? UniconsLine.heart
-                  : UniconsLine.heart_break,
+                  ? TablerIcons.heart
+                  : TablerIcons.heart_broken,
               size: 42.0,
               color: Theme.of(context).secondaryHeaderColor,
             ),
@@ -545,7 +544,7 @@ class _IllustrationCardState extends State<IllustrationCard>
 
   Widget lineHeartIcon() {
     return const Icon(
-      UniconsLine.heart,
+      TablerIcons.heart,
       color: Colors.black,
       size: 16.0,
     );
@@ -559,10 +558,18 @@ class _IllustrationCardState extends State<IllustrationCard>
         borderRadius: BorderRadius.circular(16.0),
       ),
       clipBehavior: Clip.antiAlias,
-      child: Shimmer(
-        colorOpacity: 0.2,
-        color: Theme.of(context).primaryColor,
-        child: Container(),
+      child: InkWell(
+        onHover: onHoverImage,
+        onTap: () {},
+        child: Shimmer(
+          colorOpacity: 0.2,
+          color: Theme.of(context).primaryColor,
+          child: Stack(
+            children: [
+              popupMenuButton(),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -585,7 +592,7 @@ class _IllustrationCardState extends State<IllustrationCard>
             side: const BorderSide(color: Colors.white, width: 2.0),
           ),
           child: const Icon(
-            UniconsLine.square_full,
+            TablerIcons.square_0_filled,
             color: Colors.transparent,
           ),
         ),
@@ -606,7 +613,7 @@ class _IllustrationCardState extends State<IllustrationCard>
         child: const Padding(
           padding: EdgeInsets.all(4.0),
           child: Icon(
-            UniconsLine.check,
+            TablerIcons.check,
             size: 18.0,
             color: Colors.white,
           ),
@@ -652,7 +659,7 @@ class _IllustrationCardState extends State<IllustrationCard>
             child: const Padding(
               padding: EdgeInsets.all(4.0),
               child: Icon(
-                UniconsLine.ellipsis_h,
+                TablerIcons.dots,
                 color: Colors.amber,
                 size: 20,
               ),
@@ -695,9 +702,9 @@ class _IllustrationCardState extends State<IllustrationCard>
   }
 
   void onLongPressImage() {
-    showCupertinoModalBottomSheet(
+    showBottomSheet(
       context: context,
-      expand: false,
+      enableDrag: true,
       backgroundColor: Colors.white,
       builder: (BuildContext context) {
         return Padding(

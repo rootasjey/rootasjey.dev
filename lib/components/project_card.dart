@@ -1,12 +1,12 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:rootasjey/globals/constants.dart';
 import 'package:rootasjey/globals/utilities.dart';
 import 'package:rootasjey/types/enums/enum_project_item_action.dart';
 import 'package:rootasjey/types/project/project.dart';
-import 'package:unicons/unicons.dart';
 
 class ProjectCard extends StatelessWidget {
   const ProjectCard({
@@ -106,7 +106,7 @@ class ProjectCard extends StatelessWidget {
                         child: Opacity(
                           opacity: 0.4,
                           child: Text(
-                            Jiffy(project.createdAt).yMMMEd,
+                            Jiffy.parseFromDateTime(project.createdAt).yMMMEd,
                             style: Utilities.fonts.body(
                               textStyle: const TextStyle(
                                 fontSize: 14.0,
@@ -156,7 +156,7 @@ class ProjectCard extends StatelessWidget {
           child: const Padding(
             padding: EdgeInsets.all(4.0),
             child: Icon(
-              UniconsLine.ellipsis_h,
+              TablerIcons.dots,
               // color: value,
               size: 20,
             ),

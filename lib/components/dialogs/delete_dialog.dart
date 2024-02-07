@@ -6,7 +6,7 @@ import 'package:rootasjey/globals/utilities.dart';
 
 class DeleteDialog extends StatelessWidget {
   const DeleteDialog({
-    Key? key,
+    super.key,
     required this.descriptionValue,
     required this.titleValue,
     this.showCounter = false,
@@ -14,7 +14,7 @@ class DeleteDialog extends StatelessWidget {
     this.count = 1,
     this.onValidate,
     this.confirmButtonValue,
-  }) : super(key: key);
+  });
 
   /// Show how many items are going to be deleted, if true.
   final bool showCounter;

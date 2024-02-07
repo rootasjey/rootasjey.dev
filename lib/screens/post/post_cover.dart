@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:rootasjey/components/buttons/circle_button.dart';
-import 'package:rootasjey/components/fade_in_x.dart';
 import 'package:rootasjey/types/cover.dart';
 import 'package:rootasjey/types/enums/enum_cover_corner.dart';
 import 'package:rootasjey/types/enums/enum_cover_width.dart';
-import 'package:unicons/unicons.dart';
 
 class PostCover extends StatefulWidget {
   const PostCover({
@@ -138,25 +137,17 @@ class _PostCoverState extends State<PostCover> {
         spacing: 12.0,
         runSpacing: 12.0,
         children: [
-          FadeInX(
-            beginX: 24.0,
-            delay: const Duration(milliseconds: 0),
-            child: CircleButton(
-              backgroundColor: Colors.black54,
-              elevation: 2.0,
-              icon: const Icon(UniconsLine.trash),
-              onTap: widget.onTryRemoveCoverImage,
-            ),
+          CircleButton(
+            backgroundColor: Colors.black54,
+            elevation: 2.0,
+            icon: const Icon(TablerIcons.trash),
+            onTap: widget.onTryRemoveCoverImage,
           ),
-          FadeInX(
-            beginX: 24.0,
-            delay: const Duration(milliseconds: 50),
-            child: CircleButton(
-              backgroundColor: Colors.black54,
-              elevation: 2.0,
-              icon: const Icon(UniconsLine.upload),
-              onTap: widget.onTryAddCoverImage,
-            ),
+          CircleButton(
+            backgroundColor: Colors.black54,
+            elevation: 2.0,
+            icon: const Icon(TablerIcons.upload),
+            onTap: widget.onTryAddCoverImage,
           ),
         ],
       ),

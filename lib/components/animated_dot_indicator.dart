@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:github/github.dart';
 import 'package:timelines/timelines.dart';
-import 'package:unicons/unicons.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AnimatedDotIndicator extends StatefulWidget {
@@ -57,17 +57,17 @@ class _AnimatedDotIndicatorState extends State<AnimatedDotIndicator> {
   IconData _getEventIcon(String? type) {
     switch (type) {
       case "CreateEvent":
-        return UniconsLine.drill;
+        return TablerIcons.hammer;
       case "PushEvent":
-        return UniconsLine.upload;
+        return TablerIcons.upload;
       case "WatchEvent":
-        return UniconsLine.eye;
+        return TablerIcons.eye;
       case "PullRequestEvent":
-        return UniconsLine.arrows_merge;
+        return TablerIcons.arrow_merge;
       case "DeleteEvent":
-        return UniconsLine.trash;
+        return TablerIcons.trash;
       default:
-        return UniconsLine.brackets_curly;
+        return TablerIcons.brackets;
     }
   }
 }

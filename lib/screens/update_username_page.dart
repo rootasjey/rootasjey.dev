@@ -3,31 +3,26 @@ import 'dart:async';
 import 'package:beamer/beamer.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:loggy/loggy.dart';
-import 'package:rootasjey/actions/users.dart';
-import 'package:rootasjey/components/fade_in_y.dart';
+import 'package:rootasjey/actions/user_actions.dart';
 import 'package:rootasjey/components/sliver_edge_padding.dart';
-import 'package:rootasjey/globals/app_state.dart';
 import 'package:rootasjey/globals/constants.dart';
+import 'package:rootasjey/globals/utils.dart';
 import 'package:rootasjey/router/locations/signin_location.dart';
-import 'package:rootasjey/types/cloud_func_error.dart';
-import 'package:rootasjey/globals/state/user_notifier.dart';
+import 'package:rootasjey/types/cloud_fun_error.dart';
 import 'package:rootasjey/utils/snack.dart';
 import 'package:flutter/material.dart';
 import 'package:supercharged/supercharged.dart';
-import 'package:unicons/unicons.dart';
 
-class UpdateUsernamePage extends ConsumerStatefulWidget {
+class UpdateUsernamePage extends StatefulWidget {
   const UpdateUsernamePage({super.key});
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() =>
-      _UpdateUsernamePageState();
+  State<StatefulWidget> createState() => _UpdateUsernamePageState();
 }
 
-class _UpdateUsernamePageState extends ConsumerState<UpdateUsernamePage>
-    with UiLoggy {
+class _UpdateUsernamePageState extends State<UpdateUsernamePage> with UiLoggy {
   bool _isUpdating = false;
   bool _isCheckingName = false;
   bool _isCompleted = false;
@@ -130,7 +125,7 @@ class _UpdateUsernamePageState extends ConsumerState<UpdateUsernamePage>
                       opacity: 0.8,
                       child: IconButton(
                         onPressed: Beamer.of(context).beamBack,
-                        icon: const Icon(UniconsLine.arrow_left),
+                        icon: const Icon(TablerIcons.arrow_left),
                       ),
                     ),
                   ),
@@ -203,7 +198,7 @@ class _UpdateUsernamePageState extends ConsumerState<UpdateUsernamePage>
                     Padding(
                       padding: const EdgeInsets.only(right: 10.0),
                       child: Icon(
-                        UniconsLine.envelope,
+                        TablerIcons.mail,
                         color: Constants.colors.secondary,
                       ),
                     ),
@@ -242,20 +237,9 @@ class _UpdateUsernamePageState extends ConsumerState<UpdateUsernamePage>
       delegate: SliverChildListDelegate([
         Column(
           children: [
-            FadeInY(
-              beginY: 10.0,
-              child: helperCard(),
-            ),
-            FadeInY(
-              beginY: 10.0,
-              delay: 100.milliseconds,
-              child: usernameInput(),
-            ),
-            FadeInY(
-              beginY: 10.0,
-              delay: 200.milliseconds,
-              child: validationButton(),
-            ),
+            helperCard(),
+            usernameInput(),
+            validationButton(),
           ],
         ),
       ]),
@@ -315,7 +299,7 @@ class _UpdateUsernamePageState extends ConsumerState<UpdateUsernamePage>
               });
 
               final isWellFormatted =
-                  UsersActions.checkUsernameFormat(_newUsername);
+                  UserActions.checkUsernameFormat(_newUsername);
 
               if (!isWellFormatted) {
                 setState(() {
@@ -335,7 +319,7 @@ class _UpdateUsernamePageState extends ConsumerState<UpdateUsernamePage>
 
               _nameTimer = Timer(1.seconds, () async {
                 _isNameAvailable =
-                    await UsersActions.checkUsernameAvailability(_newUsername);
+                    await UserActions.checkUsernameAvailability(_newUsername);
 
                 if (!_isNameAvailable) {
                   setState(() {
@@ -403,7 +387,7 @@ class _UpdateUsernamePageState extends ConsumerState<UpdateUsernamePage>
   }
 
   bool checkInputsFormat() {
-    final isWellFormatted = UsersActions.checkUsernameFormat(_newUsername);
+    final isWellFormatted = UserActions.checkUsernameFormat(_newUsername);
 
     if (!isWellFormatted) {
       setState(() {
@@ -430,7 +414,7 @@ class _UpdateUsernamePageState extends ConsumerState<UpdateUsernamePage>
 
     try {
       final bool isNameAvailable =
-          await UsersActions.checkUsernameAvailability(_newUsername);
+          await UserActions.checkUsernameAvailability(_newUsername);
 
       if (!isNameAvailable) {
         if (!mounted) return;
@@ -462,11 +446,7 @@ class _UpdateUsernamePageState extends ConsumerState<UpdateUsernamePage>
         return;
       }
 
-      // final UserNotifier userNotifier = AppState.getUserNotifier();
-      final UserNotifier userNotifier =
-          ref.read(AppState.userProvider.notifier);
-
-      final usernameUpdateResponse = await userNotifier.updateUsername(
+      final usernameUpdateResponse = await Utils.state.user.updateUsername(
         _newUsername,
       );
 
@@ -478,7 +458,7 @@ class _UpdateUsernamePageState extends ConsumerState<UpdateUsernamePage>
           _isUpdating = false;
         });
 
-        final CloudFuncError? exception = usernameUpdateResponse.error;
+        final CloudFunError? exception = usernameUpdateResponse.error;
         if (exception == null) return;
 
         Snack.error(

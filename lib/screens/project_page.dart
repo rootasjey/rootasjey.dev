@@ -9,15 +9,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_improved_scrolling/flutter_improved_scrolling.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_solidart/flutter_solidart.dart';
+import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:loggy/loggy.dart';
 import 'package:lottie/lottie.dart';
 import 'package:rootasjey/components/buttons/fab_to_top.dart';
 import 'package:rootasjey/components/dialogs/delete_dialog.dart';
 import 'package:rootasjey/components/loading_view.dart';
 import 'package:rootasjey/components/upload_panel/upload_panel.dart';
-import 'package:rootasjey/globals/app_state.dart';
 import 'package:rootasjey/globals/utilities.dart';
+import 'package:rootasjey/globals/utils.dart';
 import 'package:rootasjey/screens/post/post_app_bar.dart';
 import 'package:rootasjey/screens/post/post_cover.dart';
 import 'package:rootasjey/screens/post/post_footer.dart';
@@ -30,14 +31,14 @@ import 'package:rootasjey/types/alias/json_alias.dart';
 import 'package:rootasjey/types/enums/enum_content_visibility.dart';
 import 'package:rootasjey/types/enums/enum_cover_corner.dart';
 import 'package:rootasjey/types/enums/enum_cover_width.dart';
+import 'package:rootasjey/types/enums/enum_signal_id.dart';
 import 'package:rootasjey/types/enums/enum_upload_type.dart';
 import 'package:rootasjey/types/project/project.dart';
 import 'package:rootasjey/types/user/user_firestore.dart';
 import 'package:rootasjey/types/user/user_rights.dart';
-import 'package:unicons/unicons.dart';
 import 'package:verbal_expressions/verbal_expressions.dart';
 
-class ProjectPage extends ConsumerStatefulWidget {
+class ProjectPage extends StatefulWidget {
   const ProjectPage({
     super.key,
     required this.projectId,
@@ -46,10 +47,10 @@ class ProjectPage extends ConsumerStatefulWidget {
   final String projectId;
 
   @override
-  ConsumerState<ProjectPage> createState() => _ProjectPageState();
+  State<ProjectPage> createState() => _ProjectPageState();
 }
 
-class _ProjectPageState extends ConsumerState<ProjectPage> with UiLoggy {
+class _ProjectPageState extends State<ProjectPage> with UiLoggy {
   /// True if the project is loading.
   bool _loading = false;
 
@@ -85,7 +86,7 @@ class _ProjectPageState extends ConsumerState<ProjectPage> with UiLoggy {
 
   /// Copy icon component
   /// (switch temporaryly to a check mark when tapped).
-  Icon copyIcon = const Icon(UniconsLine.copy, size: 24.0);
+  Icon copyIcon = const Icon(TablerIcons.copy, size: 24.0);
 
   /// Page project.
   Project _project = Project.empty();
@@ -151,10 +152,10 @@ class _ProjectPageState extends ConsumerState<ProjectPage> with UiLoggy {
 
   @override
   Widget build(BuildContext context) {
-    final UserFirestore? userFirestore =
-        ref.watch(AppState.userProvider).firestoreUser;
+    final Signal<UserFirestore> signalUserFirestore =
+        context.get(EnumSignalId.userFirestore);
 
-    final UserRights rights = userFirestore?.rights ?? const UserRights();
+    final UserRights rights = signalUserFirestore.value.rights;
 
     final bool canManagePosts = rights.managePosts;
     final Size windowSize = MediaQuery.of(context).size;
@@ -312,7 +313,7 @@ class _ProjectPageState extends ConsumerState<ProjectPage> with UiLoggy {
 
     return FabToTop(
       hideIfAtTop: _hideFab,
-      fabIcon: const Icon(UniconsLine.arrow_up),
+      fabIcon: const Icon(TablerIcons.arrow_up),
       pageScrollController: _pageScrollController,
     );
   }
@@ -340,9 +341,8 @@ class _ProjectPageState extends ConsumerState<ProjectPage> with UiLoggy {
           ),
         ),
       ),
-      icon: _editing
-          ? const Icon(UniconsLine.eye)
-          : const Icon(UniconsLine.edit_alt),
+      icon:
+          _editing ? const Icon(TablerIcons.eye) : const Icon(TablerIcons.edit),
     );
   }
 
@@ -888,17 +888,17 @@ class _ProjectPageState extends ConsumerState<ProjectPage> with UiLoggy {
   }
 
   void tryUploadCover() async {
-    final String userId =
-        ref.read(AppState.userProvider).firestoreUser?.id ?? "";
-    if (userId.isEmpty) {
-      return;
-    }
+    final Signal<UserFirestore> signalUserFirestore =
+        context.get(EnumSignalId.userFirestore);
 
-    ref.read(AppState.uploadTaskListProvider.notifier).pickCover(
-          targetId: _project.id,
-          uploadType: EnumUploadType.projectCover,
-          userId: userId,
-        );
+    final String userId = signalUserFirestore.value.id;
+    if (userId.isEmpty) return;
+
+    Utils.state.illustrations.pickCover(
+      targetId: _project.id,
+      uploadType: EnumUploadType.projectCover,
+      userId: userId,
+    );
   }
 
   void updateScrollDirection(double offset) {
@@ -939,12 +939,12 @@ class _ProjectPageState extends ConsumerState<ProjectPage> with UiLoggy {
   void onCopy(String code) {
     Clipboard.setData(ClipboardData(text: code));
     setState(() {
-      copyIcon = Icon(UniconsLine.check, size: copyIconSize);
+      copyIcon = Icon(TablerIcons.check, size: copyIconSize);
     });
 
     Future.delayed(const Duration(seconds: 2), () {
       setState(() {
-        copyIcon = Icon(UniconsLine.copy, size: copyIconSize);
+        copyIcon = Icon(TablerIcons.copy, size: copyIconSize);
       });
     });
   }

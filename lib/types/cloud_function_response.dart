@@ -1,9 +1,9 @@
-import 'package:rootasjey/types/cloud_func_error.dart';
+import 'package:rootasjey/types/cloud_fun_error.dart';
 import 'package:rootasjey/types/partial_user.dart';
 
 class CloudFunctionsResponse {
   bool success;
-  final CloudFuncError? error;
+  final CloudFunError? error;
   final PartialUser? user;
 
   CloudFunctionsResponse({
@@ -16,7 +16,7 @@ class CloudFunctionsResponse {
     return CloudFunctionsResponse(
       success: data["success"] ?? true,
       user: PartialUser.fromJSON(data["user"]),
-      error: CloudFuncError.fromJSON(data["error"]),
+      error: CloudFunError.fromMap(data["error"]),
     );
   }
 }

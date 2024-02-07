@@ -2,7 +2,6 @@ import 'package:beamer/beamer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loggy/loggy.dart';
 import 'package:rootasjey/components/buttons/dark_elevated_button.dart';
 import 'package:rootasjey/components/dialogs/themed_dialog.dart';
@@ -16,7 +15,7 @@ import 'package:rootasjey/types/alias/firestore/query_snapshot_stream_subscripti
 import 'package:rootasjey/types/alias/json_alias.dart';
 import 'package:rootasjey/types/project/project.dart';
 
-class SelectFeaturedProjectDialog extends ConsumerStatefulWidget {
+class SelectFeaturedProjectDialog extends StatefulWidget {
   const SelectFeaturedProjectDialog({
     super.key,
     this.asBottomSheet = false,
@@ -35,12 +34,12 @@ class SelectFeaturedProjectDialog extends ConsumerStatefulWidget {
   final List<String> featuredProjectIds;
 
   @override
-  ConsumerState<SelectFeaturedProjectDialog> createState() =>
+  State<SelectFeaturedProjectDialog> createState() =>
       _AddFeaturedProjectState();
 }
 
-class _AddFeaturedProjectState
-    extends ConsumerState<SelectFeaturedProjectDialog> with UiLoggy {
+class _AddFeaturedProjectState extends State<SelectFeaturedProjectDialog>
+    with UiLoggy {
   /// True if there're more projects to fetch.
   bool _hasNext = true;
 

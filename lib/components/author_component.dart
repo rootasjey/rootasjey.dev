@@ -10,11 +10,11 @@ import 'package:rootasjey/types/user/user_firestore.dart';
 /// Tapping on the avatar will redirect to user's profile page.
 class AuthorComponent extends StatefulWidget {
   const AuthorComponent({
-    Key? key,
+    super.key,
     required this.userId,
     this.padding = EdgeInsets.zero,
     this.simpleMode = true,
-  }) : super(key: key);
+  });
 
   final String userId;
   final EdgeInsets padding;

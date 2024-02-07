@@ -3,25 +3,24 @@ import 'dart:async';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:loggy/loggy.dart';
 import 'package:rootasjey/components/buttons/circle_button.dart';
-import 'package:rootasjey/globals/app_state.dart';
 import 'package:rootasjey/globals/utilities.dart';
+import 'package:rootasjey/globals/utils.dart';
 import 'package:rootasjey/types/custom_upload_task.dart';
-import 'package:unicons/unicons.dart';
 
 /// A card to display one uploading illustration.
-class UploadCardItem extends ConsumerStatefulWidget {
+class UploadCardItem extends StatefulWidget {
   const UploadCardItem({
-    Key? key,
+    super.key,
     required this.customUploadTask,
     this.onCancel,
     this.onDone,
     this.onTap,
     this.alternativeTheme = false,
     this.backgroundColor = Colors.black,
-  }) : super(key: key);
+  });
 
   /// This item will have a different set of colors if true.
   /// (On mobile, we show a more discrete set of colors).
@@ -46,7 +45,7 @@ class UploadCardItem extends ConsumerStatefulWidget {
   createState() => _UploadItemCardState();
 }
 
-class _UploadItemCardState extends ConsumerState<UploadCardItem> with UiLoggy {
+class _UploadItemCardState extends State<UploadCardItem> with UiLoggy {
   /// This items card's elevation.
   double _elevation = 0.0;
 
@@ -71,9 +70,8 @@ class _UploadItemCardState extends ConsumerState<UploadCardItem> with UiLoggy {
         _bytesTransferred = snapshot.bytesTransferred;
         _totalBytes = snapshot.totalBytes;
 
-        ref
-            .read(AppState.uploadBytesTransferredProvider.notifier)
-            .add(_bytesTransferred);
+        Utils.state.illustrations.uploadBytesTransferred
+            .updateValue((value) => value + _bytesTransferred);
       },
       onError: (error) {
         loggy.error(error);
@@ -237,7 +235,7 @@ class _UploadItemCardState extends ConsumerState<UploadCardItem> with UiLoggy {
         onTap: widget.onCancel,
         backgroundColor: Colors.white,
         icon: const Icon(
-          UniconsLine.times,
+          TablerIcons.x,
           size: 16.0,
           color: Colors.black87,
         ),
@@ -250,7 +248,7 @@ class _UploadItemCardState extends ConsumerState<UploadCardItem> with UiLoggy {
       radius: 16.0,
       backgroundColor: Colors.white,
       icon: const Icon(
-        UniconsLine.check,
+        TablerIcons.check,
         size: 16.0,
         color: Colors.black87,
       ),

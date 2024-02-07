@@ -20,9 +20,9 @@ class NavigationUtilities {
     }
 
     final history = Beamer.of(context).beamingHistory;
-    final String? stringLocation = history.last.state.routeInformation.location;
+    final String stringLocation = history.last.state.routeInformation.uri.path;
     final slashRegex = RegExp(r"(/)");
-    final slashMatches = slashRegex.allMatches(stringLocation ?? "");
+    final slashMatches = slashRegex.allMatches(stringLocation);
 
     if (history.length == 1 && slashMatches.length == 1) {
       Beamer.of(context).beamToNamed(HomeLocation.route);
@@ -44,13 +44,13 @@ class NavigationUtilities {
 
   bool handleMobileBack(BuildContext context) {
     final String location = Beamer.of(context)
-            .beamingHistory
-            .last
-            .history
-            .last
-            .routeInformation
-            .location ??
-        "";
+        .beamingHistory
+        .last
+        .history
+        .last
+        .routeInformation
+        .uri
+        .path;
 
     final bool containsAtelier = location.contains("atelier");
     final List<String> locationParts = location.split("/");

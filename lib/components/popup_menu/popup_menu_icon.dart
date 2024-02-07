@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 class PopupMenuIcon extends StatelessWidget {
   const PopupMenuIcon(
     this.iconData, {
-    Key? key,
+    super.key,
     this.color,
-  }) : super(key: key);
+  });
 
   final IconData iconData;
   final Color? color;

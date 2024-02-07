@@ -2,15 +2,14 @@ import 'package:card_swiper/card_swiper.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:rootasjey/components/application_bar.dart';
-import 'package:rootasjey/components/fade_in_y.dart';
 import 'package:rootasjey/components/project_card.dart';
 import 'package:rootasjey/globals/utilities.dart';
 import 'package:rootasjey/types/enums/enum_project_item_action.dart';
 import 'package:rootasjey/types/intents/next_intent.dart';
 import 'package:rootasjey/types/intents/previous_intent.dart';
 import 'package:rootasjey/types/project/project.dart';
-import 'package:unicons/unicons.dart';
 
 class ProjectsPageBody extends StatelessWidget {
   const ProjectsPageBody({
@@ -94,25 +93,19 @@ class ProjectsPageBody extends StatelessWidget {
                 ),
               ),
               SliverToBoxAdapter(
-                child: FadeInY(
-                  beginY: Utilities.ui.getBeginY(),
-                  delay: Duration(
-                    milliseconds: Utilities.ui.getNextAnimationDelay(),
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                    top: 72.0,
+                    bottom: 24.0,
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.only(
-                      top: 72.0,
-                      bottom: 24.0,
-                    ),
-                    child: Align(
-                      alignment: Alignment.center,
-                      child: Text(
-                        "projects".tr().toUpperCase(),
-                        style: Utilities.fonts.body2(
-                          textStyle: const TextStyle(
-                            fontSize: 24.0,
-                            fontWeight: FontWeight.w700,
-                          ),
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: Text(
+                      "projects".tr().toUpperCase(),
+                      style: Utilities.fonts.body2(
+                        textStyle: const TextStyle(
+                          fontSize: 24.0,
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
                     ),
@@ -120,46 +113,40 @@ class ProjectsPageBody extends StatelessWidget {
                 ),
               ),
               SliverToBoxAdapter(
-                child: FadeInY(
-                  beginY: Utilities.ui.getBeginY(),
-                  delay: Duration(
-                    milliseconds: Utilities.ui.getNextAnimationDelay(),
-                  ),
-                  child: SizedBox(
-                    height: swiperHeight,
-                    child: Swiper(
-                      loop: false,
-                      controller: swipeController,
-                      pagination: const SwiperPagination(
-                        builder: DotSwiperPaginationBuilder(
-                          color: Colors.white,
-                          activeColor: Colors.amber,
-                        ),
+                child: SizedBox(
+                  height: swiperHeight,
+                  child: Swiper(
+                    loop: false,
+                    controller: swipeController,
+                    pagination: const SwiperPagination(
+                      builder: DotSwiperPaginationBuilder(
+                        color: Colors.white,
+                        activeColor: Colors.amber,
                       ),
-                      control: isMobileSize
-                          ? null
-                          : const SwiperControl(
-                              color: Colors.amber,
-                              padding: EdgeInsets.all(24.0),
-                            ),
-                      itemBuilder: (BuildContext context, int index) {
-                        final Project project = projects.elementAt(index);
-
-                        return ProjectCard(
-                          index: index,
-                          useBottomSheet: false,
-                          onTapCard: () => onTapProject?.call(project),
-                          project: project,
-                          popupMenuEntries:
-                              canManage ? projectPopupMenuItems : [],
-                          onPopupMenuItemSelected: onPopupMenuItemSelected,
-                          compact: isMobileSize,
-                        );
-                      },
-                      itemCount: projects.length,
-                      viewportFraction: isMobileSize ? 0.9 : 0.5,
-                      scale: 0.6,
                     ),
+                    control: isMobileSize
+                        ? null
+                        : const SwiperControl(
+                            color: Colors.amber,
+                            padding: EdgeInsets.all(24.0),
+                          ),
+                    itemBuilder: (BuildContext context, int index) {
+                      final Project project = projects.elementAt(index);
+
+                      return ProjectCard(
+                        index: index,
+                        useBottomSheet: false,
+                        onTapCard: () => onTapProject?.call(project),
+                        project: project,
+                        popupMenuEntries:
+                            canManage ? projectPopupMenuItems : [],
+                        onPopupMenuItemSelected: onPopupMenuItemSelected,
+                        compact: isMobileSize,
+                      );
+                    },
+                    itemCount: projects.length,
+                    viewportFraction: isMobileSize ? 0.9 : 0.5,
+                    scale: 0.6,
                   ),
                 ),
               ),
@@ -189,11 +176,11 @@ class ProjectsPageBody extends StatelessWidget {
               children: [
                 IconButton(
                   onPressed: onPreviousProject,
-                  icon: Icon(UniconsLine.arrow_left, color: iconColor),
+                  icon: Icon(TablerIcons.arrow_left, color: iconColor),
                 ),
                 IconButton(
                   onPressed: onNextProject,
-                  icon: Icon(UniconsLine.arrow_right, color: iconColor),
+                  icon: Icon(TablerIcons.arrow_right, color: iconColor),
                 ),
               ],
             ),

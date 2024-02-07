@@ -1,7 +1,7 @@
 import 'package:beamer/beamer.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:unicons/unicons.dart';
+import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 
 class PageTitle extends StatelessWidget {
   final String textTitle;
@@ -9,11 +9,11 @@ class PageTitle extends StatelessWidget {
   final MainAxisAlignment mainAxisAlignment;
 
   const PageTitle({
-    Key? key,
+    super.key,
     required this.textTitle,
     this.isLoading = false,
     this.mainAxisAlignment = MainAxisAlignment.start,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +29,7 @@ class PageTitle extends StatelessWidget {
               child: IconButton(
                 tooltip: "back".tr(),
                 onPressed: Beamer.of(context).beamBack,
-                icon: const Icon(UniconsLine.arrow_left),
+                icon: const Icon(TablerIcons.arrow_left),
               ),
             ),
             Text(

@@ -2,6 +2,7 @@ import 'package:beamer/beamer.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_improved_scrolling/flutter_improved_scrolling.dart';
+import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:rootasjey/router/locations/illustrations_location.dart';
 import 'package:rootasjey/screens/home_page/about_me.dart';
 import 'package:rootasjey/components/application_bar.dart';
@@ -15,7 +16,6 @@ import 'package:rootasjey/screens/home_page/project_section.dart';
 import 'package:rootasjey/types/enums/enum_direction.dart';
 import 'package:rootasjey/utils/custom_scroll_bahavior.dart';
 import 'package:rootasjey/globals/utilities.dart';
-import 'package:unicons/unicons.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HomePage extends StatefulWidget {
@@ -30,7 +30,7 @@ class _HomePageState extends State<HomePage> {
   EnumDirection _enumDirection = EnumDirection.down;
 
   /// Can be an arrow up or down.
-  Icon _fabIcon = const Icon(UniconsLine.arrow_down, color: Colors.white);
+  Icon _fabIcon = const Icon(TablerIcons.arrow_down, color: Colors.white);
 
   /// Page scroll controller to programmatically scroll the UI.
   final ScrollController _pageScrollController = ScrollController();
@@ -223,15 +223,15 @@ class _HomePageState extends State<HomePage> {
                       runSpacing: 12.0,
                       children: [
                         socialNetworkItem(
-                          iconData: UniconsLine.medium_m,
+                          iconData: TablerIcons.brand_medium,
                           url: "https://medium.com/@rootasjey",
                         ),
                         socialNetworkItem(
-                          iconData: UniconsLine.github,
+                          iconData: TablerIcons.brand_github,
                           url: "https://github.com/rootasjey",
                         ),
                         socialNetworkItem(
-                          iconData: UniconsLine.twitter,
+                          iconData: TablerIcons.brand_twitter,
                           url: "https://twitter.com/rootasjey",
                         ),
                       ],
@@ -343,7 +343,7 @@ class _HomePageState extends State<HomePage> {
   void onScroll(double offset) {
     if (offset == 0) {
       setState(() {
-        _fabIcon = const Icon(UniconsLine.arrow_down, color: Colors.white);
+        _fabIcon = const Icon(TablerIcons.arrow_down, color: Colors.white);
         _enumDirection = EnumDirection.down;
       });
 
@@ -355,7 +355,7 @@ class _HomePageState extends State<HomePage> {
     }
 
     setState(() {
-      _fabIcon = const Icon(UniconsLine.arrow_up, color: Colors.white);
+      _fabIcon = const Icon(TablerIcons.arrow_up, color: Colors.white);
       _enumDirection = EnumDirection.up;
     });
   }

@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:loggy/loggy.dart';
-import 'package:rootasjey/actions/users.dart';
+import 'package:rootasjey/actions/user_actions.dart';
 import 'package:rootasjey/components/application_bar.dart';
 import 'package:rootasjey/components/bezier_clipper.dart';
 import 'package:rootasjey/components/loading_view.dart';
@@ -121,7 +121,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> with UiLoggy {
       return false;
     }
 
-    final bool isWellFormatted = UsersActions.checkEmailFormat(email);
+    final bool isWellFormatted = UserActions.checkEmailFormat(email);
 
     if (!isWellFormatted) {
       setState(() {
@@ -176,10 +176,8 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> with UiLoggy {
       });
     } catch (error) {
       loggy.error(error);
-
-      setState(() {
-        loading = false;
-      });
+      setState(() => loading = false);
+      if (!mounted) return;
 
       Snack.error(
         context,

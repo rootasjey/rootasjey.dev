@@ -1,8 +1,7 @@
 import 'package:beamer/beamer.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:rootasjey/globals/app_state.dart';
+import 'package:rootasjey/globals/utils.dart';
 import 'package:rootasjey/router/locations/home_location.dart';
 import 'package:rootasjey/screens/signin_page/signin_page.dart';
 
@@ -19,9 +18,7 @@ class SigninLocation extends BeamLocation<BeamState> {
         BeamGuard(
           pathPatterns: [route],
           check: (context, location) {
-            final containerProvider = ProviderContainer();
-            final user = containerProvider.read(AppState.userProvider.notifier);
-            return !user.isAuthenticated;
+            return !Utils.state.user.userAuthenticated;
           },
           beamToNamed: (origin, target) => HomeLocation.route,
         ),
