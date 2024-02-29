@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:rootasjey/components/popup_menu/popup_menu_icon.dart';
-import 'package:rootasjey/globals/utilities.dart';
+import 'package:rootasjey/globals/utils.dart';
 
 /// A PopupMenuItem which display a checkmark if active.
 class PopupMenuToggleItem<T> extends PopupMenuItem<T> {
@@ -43,7 +43,7 @@ class PopupMenuToggleItem<T> extends PopupMenuItem<T> {
                   Expanded(
                     child: Text(
                       textLabel,
-                      style: Utilities.fonts.body(
+                      style: Utils.calligraphy.body(
                         textStyle: TextStyle(
                           color: foregroundColor,
                           fontWeight: FontWeight.w700,

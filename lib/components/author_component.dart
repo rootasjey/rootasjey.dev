@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:loggy/loggy.dart';
 import 'package:rootasjey/components/better_avatar.dart';
-import 'package:rootasjey/globals/utilities.dart';
+import 'package:rootasjey/globals/utils.dart';
 import 'package:rootasjey/types/alias/json_alias.dart';
 import 'package:rootasjey/types/user/user_firestore.dart';
 
@@ -40,7 +40,7 @@ class _AuthorComponentState extends State<AuthorComponent> with UiLoggy {
         opacity: 0.6,
         child: Text(
           _user.name,
-          style: Utilities.fonts.body2(
+          style: Utils.calligraphy.body2(
             textStyle: const TextStyle(
               fontSize: 14.0,
               fontWeight: FontWeight.w500,
@@ -87,7 +87,7 @@ class _AuthorComponentState extends State<AuthorComponent> with UiLoggy {
                   opacity: 0.8,
                   child: Text(
                     _user.name,
-                    style: Utilities.fonts.body(
+                    style: Utils.calligraphy.body(
                       textStyle: const TextStyle(
                         fontSize: 18.0,
                         fontWeight: FontWeight.w600,
@@ -99,7 +99,7 @@ class _AuthorComponentState extends State<AuthorComponent> with UiLoggy {
                   opacity: 0.4,
                   child: Text(
                     _user.location,
-                    style: Utilities.fonts.body(
+                    style: Utils.calligraphy.body(
                       textStyle: const TextStyle(
                         fontWeight: FontWeight.w600,
                       ),

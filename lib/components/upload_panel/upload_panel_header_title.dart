@@ -1,6 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:rootasjey/globals/utilities.dart';
+import 'package:rootasjey/globals/utils.dart';
 
 class UploadPanelHeaderTitle extends StatelessWidget {
   const UploadPanelHeaderTitle({
@@ -20,7 +20,7 @@ class UploadPanelHeaderTitle extends StatelessWidget {
 
     return Text(
       textValue,
-      style: Utilities.fonts.body(
+      style: Utils.calligraphy.body(
         textStyle: const TextStyle(
           fontWeight: FontWeight.w600,
         ),

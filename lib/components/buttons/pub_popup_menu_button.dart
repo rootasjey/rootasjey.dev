@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:rootasjey/components/popup_menu/popup_menu_item_icon.dart';
-import 'package:rootasjey/globals/utilities.dart';
+import 'package:rootasjey/globals/utils.dart';
 import 'package:rootasjey/types/enums/enum_content_visibility.dart';
 
 class PubPopupMenuButton extends StatelessWidget {
@@ -54,7 +54,7 @@ class PubPopupMenuButton extends StatelessWidget {
           visibility == EnumContentVisibility.public
               ? "published".tr()
               : "visibility.private".tr(),
-          style: Utilities.fonts.body(
+          style: Utils.calligraphy.body(
             textStyle: TextStyle(
               color: baseColor,
               fontWeight: FontWeight.w700,

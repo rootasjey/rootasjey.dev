@@ -8,9 +8,8 @@ import 'package:flutter_solidart/flutter_solidart.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:loggy/loggy.dart';
 import 'package:rootasjey/components/loading_view.dart';
-import 'package:rootasjey/components/popup_menu/popup_menu_icon.dart';
-import 'package:rootasjey/components/popup_menu/popup_menu_item_icon.dart';
-import 'package:rootasjey/globals/utilities.dart';
+import 'package:rootasjey/globals/constants.dart';
+import 'package:rootasjey/globals/utils.dart';
 import 'package:rootasjey/router/locations/home_location.dart';
 import 'package:rootasjey/router/locations/projects_location.dart';
 import 'package:rootasjey/screens/projects_page/create_project_page.dart';
@@ -51,6 +50,9 @@ class _ProjectsPageState extends State<ProjectsPage> with UiLoggy {
   /// If true, show a specific UI to create a project.
   bool _showCreatePage = false;
 
+  /// Accent color for border and title.
+  Color _accentColor = Colors.blue;
+
   /// Last document fetched from Firestore.
   DocumentSnapshot? _lastDocument;
 
@@ -66,22 +68,13 @@ class _ProjectsPageState extends State<ProjectsPage> with UiLoggy {
   /// Listens to projects' updates.
   QuerySnapshotStreamSubscription? _projectSubscription;
 
-  /// Popup menu items for project card.
-  final List<PopupMenuEntry<EnumProjectItemAction>> _projectPopupMenuItems = [
-    PopupMenuItemIcon(
-      icon: const PopupMenuIcon(TablerIcons.trash),
-      textLabel: "delete".tr(),
-      newValue: EnumProjectItemAction.delete,
-      selected: false,
-    ),
-  ];
-
   /// Firestore collection name.
   final String _collectionName = "projects";
 
   @override
   void initState() {
     super.initState();
+    _accentColor = Constants.colors.getRandomFromPalette();
     fetchProjects();
   }
 
@@ -99,9 +92,8 @@ class _ProjectsPageState extends State<ProjectsPage> with UiLoggy {
     final UserRights userRights = signalUserFirestore.value.rights;
     final bool canManageProjects = userRights.managePosts;
 
+    final bool isMobileSize = Utils.measurements.isMobileSize(context);
     final Size windowSize = MediaQuery.of(context).size;
-    final bool isMobileSize =
-        windowSize.width < Utilities.size.mobileWidthTreshold;
 
     if (_showCreatePage) {
       return CreateProjectPage(
@@ -125,6 +117,7 @@ class _ProjectsPageState extends State<ProjectsPage> with UiLoggy {
     if (_projects.isEmpty) {
       return wrapWithShortcuts(
         child: ProjectsPageEmptyView(
+          isMobileSize: isMobileSize,
           canCreate: canManageProjects,
           fab: fab(show: canManageProjects),
           onShowCreatePage: onShowCreate,
@@ -135,15 +128,12 @@ class _ProjectsPageState extends State<ProjectsPage> with UiLoggy {
 
     return wrapWithShortcuts(
       child: ProjectsPageBody(
+        accentColor: _accentColor,
+        isMobileSize: isMobileSize,
         canManage: canManageProjects,
         fab: fab(show: canManageProjects),
-        onNextProject: onNextProject,
-        onPreviousProject: onPreviousProject,
-        onPopupMenuItemSelected: onPopupMenuItemSelected,
         onTapProject: onTapProject,
         projects: _projects,
-        projectPopupMenuItems: _projectPopupMenuItems,
-        swipeController: _swipeController,
         windowSize: windowSize,
       ),
     );
@@ -154,17 +144,22 @@ class _ProjectsPageState extends State<ProjectsPage> with UiLoggy {
       return Container();
     }
 
-    return FloatingActionButton.extended(
-      backgroundColor: Colors.amber,
-      onPressed: onShowCreate,
-      icon: const Icon(TablerIcons.plus),
-      label: Text(
-        "project_create".tr(),
-        style: Utilities.fonts.body(
+    return Padding(
+      padding: const EdgeInsets.only(right: 12.0, bottom: 12.0),
+      child: FloatingActionButton.extended(
+        backgroundColor: _accentColor,
+        onPressed: onShowCreate,
+        shape: const StadiumBorder(),
+        icon: const Icon(TablerIcons.plus, size: 16.0),
+        label: Text(
+          "project_create".tr(),
+          style: Utils.calligraphy.body4(
             textStyle: const TextStyle(
-          fontSize: 16.0,
-          fontWeight: FontWeight.w600,
-        )),
+              fontSize: 14.0,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
       ),
     );
   }

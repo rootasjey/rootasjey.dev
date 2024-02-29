@@ -12,7 +12,7 @@ import 'package:markdown_widget/widget/all.dart';
 import 'package:rootasjey/components/buttons/circle_button.dart';
 import 'package:rootasjey/components/loading_view.dart';
 import 'package:rootasjey/globals/constants.dart';
-import 'package:rootasjey/globals/utilities.dart';
+import 'package:rootasjey/globals/utils.dart';
 
 class PostPageBody extends StatelessWidget with UiLoggy {
   const PostPageBody({
@@ -176,7 +176,7 @@ class PostPageBody extends StatelessWidget with UiLoggy {
   //             launchUrl(uri);
   //           },
   //           styleSheet: MarkdownStyle(
-  //             link: Utilities.fonts.body4(
+  //             link: Utils.calligraphy.body4(
   //               textStyle: const TextStyle(
   //                 color: Colors.amber,
   //                 fontSize: 18.0,
@@ -187,20 +187,20 @@ class PostPageBody extends StatelessWidget with UiLoggy {
   //               height: 2.0,
   //             ),
   //             paragraphPadding: const EdgeInsets.only(top: 0.0, bottom: 12.0),
-  //             textStyle: Utilities.fonts.body4(
+  //             textStyle: Utils.calligraphy.body4(
   //               textStyle: TextStyle(
   //                 color: Colors.white.withOpacity(0.8),
   //                 fontSize: 18.0,
   //               ),
   //             ),
-  //             headline1: Utilities.fonts.body4(
+  //             headline1: Utils.calligraphy.body4(
   //               textStyle: const TextStyle(
   //                 fontSize: 54.0,
   //                 fontWeight: FontWeight.w700,
   //               ),
   //             ),
   //             h1Padding: const EdgeInsets.only(top: 28.0),
-  //             headline2: Utilities.fonts.body4(
+  //             headline2: Utils.calligraphy.body4(
   //               textStyle: const TextStyle(
   //                 fontSize: 38.0,
   //                 fontWeight: FontWeight.w600,
@@ -213,12 +213,12 @@ class PostPageBody extends StatelessWidget with UiLoggy {
   //               borderRadius: BorderRadius.circular(8.0),
   //             ),
   //             codeblockPadding: const EdgeInsets.all(24.0),
-  //             codeSpan: Utilities.fonts.code(
+  //             codeSpan: Utils.calligraphy.code(
   //               textStyle: const TextStyle(
   //                 fontSize: 14,
   //               ),
   //             ),
-  //             codeBlock: Utilities.fonts.code(
+  //             codeBlock: Utils.calligraphy.code(
   //               textStyle: const TextStyle(
   //                 fontSize: 14,
   //               ),
@@ -246,7 +246,7 @@ class PostPageBody extends StatelessWidget with UiLoggy {
             config: MarkdownConfig.darkConfig.copy(
               configs: [
                 PConfig(
-                  textStyle: Utilities.fonts.body4(
+                  textStyle: Utils.calligraphy.body4(
                     textStyle: TextStyle(
                       color: Theme.of(context)
                           .textTheme
@@ -258,7 +258,7 @@ class PostPageBody extends StatelessWidget with UiLoggy {
                   ),
                 ),
                 H1Config(
-                  style: Utilities.fonts.body4(
+                  style: Utils.calligraphy.body4(
                     textStyle: const TextStyle(
                       fontSize: 54.0,
                       fontWeight: FontWeight.w700,
@@ -266,7 +266,7 @@ class PostPageBody extends StatelessWidget with UiLoggy {
                   ),
                 ),
                 H2Config(
-                  style: Utilities.fonts.body4(
+                  style: Utils.calligraphy.body4(
                     textStyle: TextStyle(
                       fontSize: 32.0,
                       fontWeight: FontWeight.w700,
@@ -279,7 +279,7 @@ class PostPageBody extends StatelessWidget with UiLoggy {
                   ),
                 ),
                 LinkConfig(
-                  style: Utilities.fonts.body4(
+                  style: Utils.calligraphy.body4(
                     textStyle: const TextStyle(
                       color: Colors.amber,
                       fontSize: 18.0,
@@ -321,7 +321,7 @@ class PostPageBody extends StatelessWidget with UiLoggy {
                             fontFeatures: githubTheme.fontFeatures,
                             letterSpacing: githubTheme.letterSpacing,
                             wordSpacing: githubTheme.wordSpacing,
-                            lineNumber: Utilities.fonts.body4(
+                            lineNumber: Utils.calligraphy.body4(
                               textStyle: TextStyle(
                                 fontSize: 14.0,
                                 fontWeight: FontWeight.w600,

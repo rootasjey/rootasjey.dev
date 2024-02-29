@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
-import 'package:rootasjey/globals/utilities.dart';
+import 'package:rootasjey/globals/utils.dart';
 
 /// A sliver component to display when data is not ready yet.
 class LoadingView extends StatelessWidget {
@@ -27,7 +27,7 @@ class LoadingView extends StatelessWidget {
             ),
             Text(
               message,
-              style: Utilities.fonts.body2(
+              style: Utils.calligraphy.body2(
                 textStyle: const TextStyle(
                   fontSize: 24.0,
                   fontWeight: FontWeight.w600,
@@ -55,7 +55,7 @@ class LoadingView extends StatelessWidget {
             ),
             Text(
               message,
-              style: Utilities.fonts.body2(
+              style: Utils.calligraphy.body2(
                 textStyle: const TextStyle(
                   fontSize: 24.0,
                   fontWeight: FontWeight.w600,

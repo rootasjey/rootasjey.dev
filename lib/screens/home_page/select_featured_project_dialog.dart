@@ -6,7 +6,8 @@ import 'package:loggy/loggy.dart';
 import 'package:rootasjey/components/buttons/dark_elevated_button.dart';
 import 'package:rootasjey/components/dialogs/themed_dialog.dart';
 import 'package:rootasjey/components/mini_project_card.dart';
-import 'package:rootasjey/globals/utilities.dart';
+import 'package:rootasjey/globals/utils.dart';
+
 import 'package:rootasjey/types/alias/firestore/document_change_map.dart';
 import 'package:rootasjey/types/alias/firestore/query_doc_snap_map.dart';
 import 'package:rootasjey/types/alias/firestore/query_map.dart';
@@ -115,7 +116,7 @@ class _AddFeaturedProjectState extends State<SelectFeaturedProjectDialog>
                 opacity: 0.8,
                 child: Text(
                   "loading".tr(),
-                  style: Utilities.fonts.body(
+                  style: Utils.calligraphy.body(
                     textStyle: const TextStyle(
                       fontSize: 16.0,
                       fontWeight: FontWeight.w700,
@@ -187,7 +188,7 @@ class _AddFeaturedProjectState extends State<SelectFeaturedProjectDialog>
                     child: Text(
                       "select_featured_projects"
                           .plural(_selectedProjects.length),
-                      style: Utilities.fonts.body(
+                      style: Utils.calligraphy.body(
                         textStyle: TextStyle(
                           fontSize: 14.0,
                           fontWeight: FontWeight.w600,
@@ -214,7 +215,7 @@ class _AddFeaturedProjectState extends State<SelectFeaturedProjectDialog>
             opacity: 0.8,
             child: Text(
               "projects".tr().toUpperCase(),
-              style: Utilities.fonts.body(
+              style: Utils.calligraphy.body(
                 textStyle: const TextStyle(
                   fontWeight: FontWeight.w700,
                 ),
@@ -228,7 +229,7 @@ class _AddFeaturedProjectState extends State<SelectFeaturedProjectDialog>
               child: Text(
                 "project_featured_select".tr(),
                 textAlign: TextAlign.center,
-                style: Utilities.fonts.body(),
+                style: Utils.calligraphy.body(),
               ),
             ),
           ),
@@ -248,7 +249,7 @@ class _AddFeaturedProjectState extends State<SelectFeaturedProjectDialog>
                 opacity: 0.8,
                 child: Text(
                   "loading".tr(),
-                  style: Utilities.fonts.body(
+                  style: Utils.calligraphy.body(
                       textStyle: const TextStyle(
                     fontWeight: FontWeight.w700,
                   )),

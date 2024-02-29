@@ -6,6 +6,7 @@ import 'package:flutter_solidart/flutter_solidart.dart';
 import 'package:rootasjey/components/loading_view.dart';
 import 'package:rootasjey/globals/constants.dart';
 import 'package:rootasjey/globals/utils.dart';
+import 'package:rootasjey/globals/utils/calligraphy.dart';
 import 'package:rootasjey/router/app_routes.dart';
 import 'package:rootasjey/router/navigation_state_helper.dart';
 import 'package:rootasjey/types/custom_upload_task.dart';
@@ -13,7 +14,6 @@ import 'package:rootasjey/types/enums/enum_page_state.dart';
 import 'package:rootasjey/types/enums/enum_signal_id.dart';
 import 'package:rootasjey/types/user/user_auth.dart';
 import 'package:rootasjey/types/user/user_firestore.dart';
-import 'package:rootasjey/utils/fonts.dart';
 
 /// Main app class.
 class App extends StatefulWidget {
@@ -41,7 +41,7 @@ class _AppState extends State<App> {
   Widget build(BuildContext context) {
     final lightTheme = ThemeData(
       brightness: Brightness.light,
-      fontFamily: FontsUtils.fontFamily,
+      fontFamily: Calligraphy.fontFamily,
       scaffoldBackgroundColor: Constants.colors.lightBackground,
       primaryColor: Constants.colors.primary,
       secondaryHeaderColor: Constants.colors.secondary,
@@ -51,7 +51,7 @@ class _AppState extends State<App> {
 
     final darkTheme = ThemeData(
       brightness: Brightness.dark,
-      fontFamily: FontsUtils.fontFamily,
+      fontFamily: Calligraphy.fontFamily,
       scaffoldBackgroundColor: Constants.colors.dark,
       primaryColor: Constants.colors.primary,
       secondaryHeaderColor: Constants.colors.secondary,

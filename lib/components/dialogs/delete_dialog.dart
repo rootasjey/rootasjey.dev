@@ -2,7 +2,7 @@ import 'package:beamer/beamer.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/dialogs/themed_dialog.dart';
-import 'package:rootasjey/globals/utilities.dart';
+import 'package:rootasjey/globals/utils.dart';
 
 class DeleteDialog extends StatelessWidget {
   const DeleteDialog({
@@ -46,7 +46,7 @@ class DeleteDialog extends StatelessWidget {
           Opacity(
             opacity: 0.8,
             child: Text(titleValue,
-                style: Utilities.fonts.body(
+                style: Utils.calligraphy.body(
                   textStyle: const TextStyle(
                     color: Colors.black,
                     fontWeight: FontWeight.w700,
@@ -60,7 +60,7 @@ class DeleteDialog extends StatelessWidget {
               opacity: 0.4,
               child: Text(descriptionValue,
                   textAlign: TextAlign.center,
-                  style: Utilities.fonts.body(
+                  style: Utils.calligraphy.body(
                     textStyle: const TextStyle(
                       color: Colors.black,
                       fontWeight: FontWeight.w700,
@@ -84,7 +84,7 @@ class DeleteDialog extends StatelessWidget {
                       "multi_items_selected".plural(
                         count,
                       ),
-                      style: Utilities.fonts.body(
+                      style: Utils.calligraphy.body(
                         textStyle: const TextStyle(
                           fontSize: 14.0,
                           fontWeight: FontWeight.w700,

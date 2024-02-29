@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:rootasjey/globals/utilities.dart';
+import 'package:rootasjey/globals/utils.dart';
 
 class DarkOutlinedButton extends StatelessWidget {
   const DarkOutlinedButton({
@@ -50,7 +50,7 @@ class DarkOutlinedButton extends StatelessWidget {
                   width: 2.0,
                 )
               : null,
-          textStyle: Utilities.fonts.body(
+          textStyle: Utils.calligraphy.body(
             textStyle: const TextStyle(
               fontWeight: FontWeight.w600,
             ),

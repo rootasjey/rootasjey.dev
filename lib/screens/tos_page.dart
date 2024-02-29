@@ -5,7 +5,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/globals/constants.dart';
-import 'package:rootasjey/globals/utilities.dart';
+import 'package:rootasjey/globals/utils.dart';
+
 import 'package:url_launcher/url_launcher.dart';
 import 'package:supercharged/supercharged.dart';
 
@@ -72,7 +73,7 @@ class _TosPageState extends State<TosPage> {
 
     double horPadding = 80.0;
 
-    if (width < Utilities.size.mobileWidthTreshold) {
+    if (width < Utils.measurements.mobileWidthTreshold) {
       horPadding = 20.0;
     }
 

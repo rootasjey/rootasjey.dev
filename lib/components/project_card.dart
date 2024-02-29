@@ -1,26 +1,22 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
-import 'package:jiffy/jiffy.dart';
-import 'package:rootasjey/globals/constants.dart';
-import 'package:rootasjey/globals/utilities.dart';
-import 'package:rootasjey/types/enums/enum_project_item_action.dart';
+import 'package:measured/measured.dart';
+import 'package:rootasjey/globals/utils.dart';
 import 'package:rootasjey/types/project/project.dart';
 
-class ProjectCard extends StatelessWidget {
+class ProjectCard extends StatefulWidget {
   const ProjectCard({
     super.key,
     required this.index,
     required this.project,
     required this.useBottomSheet,
-    this.onTapCard,
-    this.onPopupMenuItemSelected,
-    this.popupMenuEntries = const [],
+    this.onTap,
     this.compact = false,
+    this.descriptionMaxLines,
   });
 
-  /// If
+  /// Display a compact version of the card.
   final bool compact;
 
   /// If true, a bottom sheet will be displayed on long press event.
@@ -28,49 +24,98 @@ class ProjectCard extends StatelessWidget {
   /// hide like button.
   final bool useBottomSheet;
 
+  final int? descriptionMaxLines;
+
   /// Index position in a list, if available.
   final int index;
 
-  /// Callback fired when one of the popup menu item entries is selected.
-  final void Function(
-    EnumProjectItemAction action,
-    int index,
-    Project project,
-  )? onPopupMenuItemSelected;
+  /// Callback fired on tap.
+  final void Function(Project project)? onTap;
 
-  final void Function()? onTapCard;
-
-  /// Menu item list displayed after tapping on the corresponding popup button.
-  final List<PopupMenuEntry<EnumProjectItemAction>> popupMenuEntries;
+  /// Project's data for this card.
   final Project project;
 
   @override
+  State<ProjectCard> createState() => _ProjectCardState();
+}
+
+class _ProjectCardState extends State<ProjectCard> {
+  int _maxLines = 1;
+
+  double _elevation = 6.0;
+  final double _initialElevation = 1.0;
+  final double _endElevation = 0.0;
+  final double _hoverElevation = 3.0;
+
+  @override
+  void initState() {
+    super.initState();
+    _elevation = _initialElevation;
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 6.0,
-      clipBehavior: Clip.hardEdge,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12.0),
-      ),
-      child: Ink.image(
-        image: NetworkImage(project.getCover()),
-        fit: BoxFit.cover,
-        colorFilter: const ColorFilter.mode(
-          Colors.black26,
-          BlendMode.darken,
+    // final Color? foregroundColor =
+    //     Theme.of(context).textTheme.bodyMedium?.color;
+
+    return Measured(
+      outlined: false,
+      borders: const [],
+      onChanged: (Size size) {
+        if (size.width < 240.0) {
+          setState(() => _maxLines = 1);
+        } else {
+          setState(() => _maxLines = 3);
+        }
+      },
+      child: Card(
+        elevation: _elevation,
+        clipBehavior: Clip.hardEdge,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12.0),
         ),
         child: InkWell(
-          onTap: onTapCard,
+          onTap: widget.onTap == null
+              ? null
+              : () => widget.onTap?.call(widget.project),
+          onHover: (bool isHit) {
+            setState(() {
+              _elevation = isHit ? _hoverElevation : _initialElevation;
+            });
+          },
+          onTapDown: (details) {
+            setState(() => _elevation = _endElevation);
+          },
+          onTapUp: (details) {
+            setState(() => _elevation = _initialElevation);
+          },
           child: Stack(
             children: [
-              Positioned(
-                bottom: 24.0,
-                left: compact ? 12.0 : 42.0,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Hero(
-                      tag: project.id,
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Ink.image(
+                    image: NetworkImage(widget.project.getCover()),
+                    fit: BoxFit.cover,
+                    colorFilter: const ColorFilter.mode(
+                      Colors.black26,
+                      BlendMode.darken,
+                    ),
+                    height: 120.0,
+                    child: InkWell(
+                      onTap: widget.onTap == null
+                          ? null
+                          : () => widget.onTap?.call(widget.project),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: 12.0,
+                      right: 12.0,
+                      top: 12.0,
+                    ),
+                    child: Hero(
+                      tag: widget.project.id,
                       child: Material(
                         color: Colors.transparent,
                         child: ClipRect(
@@ -82,11 +127,11 @@ class ProjectCard extends StatelessWidget {
                             child: SizedBox(
                               width: 500.0,
                               child: Text(
-                                project.name,
+                                widget.project.name,
                                 overflow: TextOverflow.ellipsis,
-                                style: Utilities.fonts.body(
+                                style: Utils.calligraphy.body(
                                   textStyle: TextStyle(
-                                    fontSize: compact ? 24.0 : 32.0,
+                                    fontSize: widget.compact ? 24.0 : 32.0,
                                     fontWeight: FontWeight.w700,
                                   ),
                                 ),
@@ -96,31 +141,40 @@ class ProjectCard extends StatelessWidget {
                         ),
                       ),
                     ),
-                    summaryWidget(),
-                    ClipRect(
-                      child: BackdropFilter(
-                        filter: ImageFilter.blur(
-                          sigmaX: 5,
-                          sigmaY: 5,
-                        ),
-                        child: Opacity(
-                          opacity: 0.4,
-                          child: Text(
-                            Jiffy.parseFromDateTime(project.createdAt).yMMMEd,
-                            style: Utilities.fonts.body(
-                              textStyle: const TextStyle(
-                                fontSize: 14.0,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                  summaryWidget(),
+                ],
               ),
-              popupMenuButton(),
+              // Positioned(
+              //   bottom: 6.0,
+              //   left: 0.0,
+              //   child: Column(
+              //     mainAxisSize: MainAxisSize.min,
+              //     crossAxisAlignment: CrossAxisAlignment.start,
+              //     children: [
+              //       Container(
+              //         height: 24.0,
+              //         width: 300.0,
+              //         padding: const EdgeInsets.symmetric(vertical: 12.0),
+              //         child: const WaveDivider(),
+              //       ),
+              //       Padding(
+              //         padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              //         child: Text(
+              //           Jiffy.parseFromDateTime(widget.project.createdAt)
+              //               .yMMMEd,
+              //           style: Utils.calligraphy.body(
+              //             textStyle: TextStyle(
+              //               fontSize: 14.0,
+              //               fontWeight: FontWeight.w400,
+              //               color: foregroundColor?.withOpacity(0.6),
+              //             ),
+              //           ),
+              //         ),
+              //       ),
+              //     ],
+              //   ),
+              // ),
             ],
           ),
         ),
@@ -128,60 +182,28 @@ class ProjectCard extends StatelessWidget {
     );
   }
 
-  Widget popupMenuButton() {
-    if (popupMenuEntries.isEmpty || useBottomSheet) {
+  Widget summaryWidget() {
+    if (widget.project.summary.isEmpty) {
       return Container();
     }
 
-    return Positioned(
-      bottom: 10.0,
-      right: 10.0,
-      child: PopupMenuButton<EnumProjectItemAction>(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(6.0),
-        ),
-        onSelected: (EnumProjectItemAction action) {
-          onPopupMenuItemSelected?.call(
-            action,
-            index,
-            project,
-          );
-        },
-        itemBuilder: (BuildContext context) {
-          return popupMenuEntries;
-        },
-        child: CircleAvatar(
-          radius: 15.0,
-          backgroundColor: Constants.colors.clairPink,
-          child: const Padding(
-            padding: EdgeInsets.all(4.0),
-            child: Icon(
-              TablerIcons.dots,
-              // color: value,
-              size: 20,
-            ),
+    final Color? foregroundColor =
+        Theme.of(context).textTheme.bodyMedium?.color;
+
+    return Container(
+      width: 500.0,
+      padding: const EdgeInsets.symmetric(horizontal: 24.0),
+      child: Text(
+        widget.project.summary,
+        maxLines: _maxLines,
+        overflow: TextOverflow.ellipsis,
+        style: Utils.calligraphy.body(
+          textStyle: TextStyle(
+            fontSize: widget.compact ? 14.0 : 16.0,
+            fontWeight: FontWeight.w400,
+            color: foregroundColor?.withOpacity(0.6),
           ),
         ),
-      ),
-    );
-  }
-
-  Widget summaryWidget() {
-    if (project.summary.isEmpty) {
-      return Container();
-    }
-
-    return SizedBox(
-      width: 500.0,
-      child: Opacity(
-        opacity: 0.6,
-        child: Text(project.summary,
-            style: Utilities.fonts.body(
-              textStyle: TextStyle(
-                fontSize: compact ? 14.0 : 18.0,
-                fontWeight: FontWeight.w500,
-              ),
-            )),
       ),
     );
   }

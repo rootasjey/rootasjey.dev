@@ -3,19 +3,23 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:rootasjey/components/application_bar.dart';
 import 'package:rootasjey/components/buttons/dark_elevated_button.dart';
-import 'package:rootasjey/globals/utilities.dart';
+import 'package:rootasjey/globals/utils.dart';
 
 class ProjectsPageEmptyView extends StatelessWidget {
   const ProjectsPageEmptyView({
     super.key,
     required this.fab,
-    this.onShowCreatePage,
     this.canCreate = false,
+    this.isMobileSize = false,
+    this.onShowCreatePage,
     this.onCancel,
   });
 
   /// True if the current authenticated user can create projects.
   final bool canCreate;
+
+  /// True if the screen size is mobile.
+  final bool isMobileSize;
 
   /// Callback fired to show create page.
   final void Function()? onShowCreatePage;
@@ -48,7 +52,7 @@ class ProjectsPageEmptyView extends StatelessWidget {
                   canCreate
                       ? "project_empty_create".tr()
                       : "project_empty".tr(),
-                  style: Utilities.fonts.body2(
+                  style: Utils.calligraphy.body2(
                     textStyle: const TextStyle(
                       fontSize: 18.0,
                       fontWeight: FontWeight.w600,

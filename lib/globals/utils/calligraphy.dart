@@ -19,7 +19,7 @@ class Calligraphy {
 
   /// Return second text style for this app.
   TextStyle body2({TextStyle? textStyle}) {
-    return GoogleFonts.josefinSans(
+    return GoogleFonts.caprasimo(
       textStyle: textStyle,
     );
   }
@@ -31,7 +31,13 @@ class Calligraphy {
   }
 
   TextStyle body4({TextStyle? textStyle}) {
-    return GoogleFonts.poppins(
+    return GoogleFonts.borel(
+      textStyle: textStyle,
+    );
+  }
+
+  TextStyle body5({TextStyle? textStyle}) {
+    return GoogleFonts.lobster(
       textStyle: textStyle,
     );
   }

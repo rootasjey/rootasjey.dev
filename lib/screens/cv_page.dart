@@ -2,6 +2,7 @@ import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:rootasjey/components/application_bar.dart';
 import 'package:rootasjey/components/better_avatar.dart';
 import 'package:rootasjey/globals/constants.dart';
+import 'package:rootasjey/globals/utils.dart';
 import 'package:rootasjey/types/experience.dart';
 import 'package:rootasjey/types/experience_date.dart';
 import 'package:rootasjey/types/formation.dart';
@@ -10,7 +11,7 @@ import 'package:rootasjey/types/skill.dart';
 import 'package:rootasjey/types/social_links.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:rootasjey/globals/utilities.dart';
+
 import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
@@ -420,7 +421,7 @@ class _CVPageState extends State<CVPage> {
                 opacity: 0.8,
                 child: Text(
                   "Dev web fullstack",
-                  style: Utilities.fonts.body2(
+                  style: Utils.calligraphy.body2(
                     textStyle: TextStyle(
                       backgroundColor: accentColor.withOpacity(0.3),
                       fontSize: 28.0,
@@ -446,7 +447,7 @@ class _CVPageState extends State<CVPage> {
                       ),
                       Text(
                         "Yvelines, France",
-                        style: Utilities.fonts.body(
+                        style: Utils.calligraphy.body(
                           textStyle: const TextStyle(
                             fontSize: 16.0,
                           ),
@@ -474,7 +475,7 @@ class _CVPageState extends State<CVPage> {
                       ),
                       Text(
                         "jerem.freelance@codingbox.fr",
-                        style: Utilities.fonts.body(
+                        style: Utils.calligraphy.body(
                           textStyle: const TextStyle(
                             fontSize: 16.0,
                           ),
@@ -502,7 +503,7 @@ class _CVPageState extends State<CVPage> {
                       ),
                       Text(
                         "https://rootasjey.dev",
-                        style: Utilities.fonts.body(
+                        style: Utils.calligraphy.body(
                           textStyle: const TextStyle(
                             fontSize: 16.0,
                           ),
@@ -530,7 +531,7 @@ class _CVPageState extends State<CVPage> {
                       ),
                       Text(
                         "https://github.com/rootasjey.dev",
-                        style: Utilities.fonts.body(
+                        style: Utils.calligraphy.body(
                           textStyle: const TextStyle(
                             fontSize: 16.0,
                           ),
@@ -559,7 +560,7 @@ class _CVPageState extends State<CVPage> {
           "Je sais m'adapter et je contribue régulièrement à des projets open-source. "
           "J'ai un tempérament curieux et un attrait pour l'art, "
           "la musique, et les jeux-vidéo. Entre autres.",
-          style: Utilities.fonts.body(
+          style: Utils.calligraphy.body(
             textStyle: const TextStyle(
               fontSize: 16.0,
             ),
@@ -644,7 +645,7 @@ class _CVPageState extends State<CVPage> {
                 ),
                 Text(
                   "Expériences Professionnelles",
-                  style: Utilities.fonts.body(
+                  style: Utils.calligraphy.body(
                     textStyle: const TextStyle(
                       fontSize: 24.0,
                     ),
@@ -670,7 +671,7 @@ class _CVPageState extends State<CVPage> {
             children: [
               Text(
                 exp.job,
-                style: Utilities.fonts.body(
+                style: Utils.calligraphy.body(
                   textStyle: const TextStyle(
                     fontWeight: FontWeight.w600,
                     fontSize: 20.0,
@@ -689,7 +690,7 @@ class _CVPageState extends State<CVPage> {
                   },
                   child: Text(
                     exp.company,
-                    style: Utilities.fonts.body(
+                    style: Utils.calligraphy.body(
                       textStyle: const TextStyle(
                         fontWeight: FontWeight.w400,
                         fontSize: 16.0,
@@ -702,7 +703,7 @@ class _CVPageState extends State<CVPage> {
                 opacity: 0.5,
                 child: Text(
                   "${exp.date.start} - ${exp.date.end}",
-                  style: Utilities.fonts.body(
+                  style: Utils.calligraphy.body(
                     textStyle: const TextStyle(
                       fontWeight: FontWeight.w400,
                       fontSize: 16.0,
@@ -742,7 +743,7 @@ class _CVPageState extends State<CVPage> {
               ),
               Text(
                 "Formation",
-                style: Utilities.fonts.body(
+                style: Utils.calligraphy.body(
                   textStyle: const TextStyle(
                     fontSize: 24.0,
                   ),
@@ -761,7 +762,7 @@ class _CVPageState extends State<CVPage> {
                 children: [
                   Text(
                     formation.degree,
-                    style: Utilities.fonts.body(
+                    style: Utils.calligraphy.body(
                       textStyle: const TextStyle(
                         fontSize: 20.0,
                         fontWeight: FontWeight.w500,
@@ -809,7 +810,7 @@ class _CVPageState extends State<CVPage> {
                   ),
                   Text(
                     "Projects",
-                    style: Utilities.fonts.body(
+                    style: Utils.calligraphy.body(
                       textStyle: const TextStyle(
                         fontSize: 24.0,
                       ),
@@ -846,7 +847,7 @@ class _CVPageState extends State<CVPage> {
                         opacity: 0.6,
                         child: Text(
                           project.name,
-                          style: Utilities.fonts.body(
+                          style: Utils.calligraphy.body(
                             textStyle: const TextStyle(
                               fontSize: 18.0,
                               fontWeight: FontWeight.w500,

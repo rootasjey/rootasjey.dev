@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:rootasjey/components/popup_menu/popup_menu_icon.dart';
-import 'package:rootasjey/globals/utilities.dart';
+import 'package:rootasjey/globals/utils.dart';
 
 /// A PopupMenuItem with a leading icon.
 class PopupMenuItemIcon<T> extends PopupMenuItem<T> {
@@ -42,7 +42,7 @@ class PopupMenuItemIcon<T> extends PopupMenuItem<T> {
                   Expanded(
                     child: Text(
                       textLabel,
-                      style: Utilities.fonts.body(
+                      style: Utils.calligraphy.body(
                         textStyle: TextStyle(
                           color: selectedColor,
                           fontSize: 14.0,

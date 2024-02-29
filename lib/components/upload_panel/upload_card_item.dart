@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:loggy/loggy.dart';
 import 'package:rootasjey/components/buttons/circle_button.dart';
-import 'package:rootasjey/globals/utilities.dart';
+
 import 'package:rootasjey/globals/utils.dart';
 import 'package:rootasjey/types/custom_upload_task.dart';
 
@@ -125,10 +125,10 @@ class _UploadItemCardState extends State<UploadCardItem> with UiLoggy {
       opacity: 0.8,
       child: Text(
         widget.customUploadTask.name,
-        style: Utilities.fonts.body(
+        style: Utils.calligraphy.body(
           textStyle: const TextStyle(
-            fontSize: 18.0,
-            fontWeight: FontWeight.w700,
+            fontSize: 14.0,
+            fontWeight: FontWeight.w400,
           ),
         ),
       ),
@@ -200,7 +200,7 @@ class _UploadItemCardState extends State<UploadCardItem> with UiLoggy {
         opacity: 0.6,
         child: Text(
           "${percent.round()}%",
-          style: Utilities.fonts.body(
+          style: Utils.calligraphy.body(
             textStyle: const TextStyle(
               fontWeight: FontWeight.w600,
             ),
@@ -231,12 +231,12 @@ class _UploadItemCardState extends State<UploadCardItem> with UiLoggy {
     if (!isDone) {
       return CircleButton(
         tooltip: "cancel".tr(),
-        radius: 16.0,
+        radius: 10.0,
         onTap: widget.onCancel,
         backgroundColor: Colors.white,
         icon: const Icon(
           TablerIcons.x,
-          size: 16.0,
+          size: 12.0,
           color: Colors.black87,
         ),
       );
@@ -245,11 +245,11 @@ class _UploadItemCardState extends State<UploadCardItem> with UiLoggy {
     return CircleButton(
       onTap: widget.onDone,
       tooltip: "done".tr(),
-      radius: 16.0,
+      radius: 10.0,
       backgroundColor: Colors.white,
       icon: const Icon(
-        TablerIcons.check,
-        size: 16.0,
+        TablerIcons.x,
+        size: 12.0,
         color: Colors.black87,
       ),
     );

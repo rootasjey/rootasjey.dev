@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:rootasjey/components/buttons/circle_button.dart';
 import 'package:rootasjey/components/buttons/dark_elevated_button.dart';
-import 'package:rootasjey/globals/utilities.dart';
+import 'package:rootasjey/globals/utils.dart';
+
 import 'package:rootasjey/types/cover.dart';
 import 'package:rootasjey/types/enums/enum_content_visibility.dart';
 import 'package:rootasjey/types/enums/enum_cover_corner.dart';
 import 'package:rootasjey/types/enums/enum_cover_width.dart';
+import 'package:rootasjey/types/enums/enum_language_selection.dart';
 import 'package:simple_animations/animation_builder/play_animation_builder.dart';
 
 class PostSettings extends StatelessWidget {
@@ -138,7 +140,7 @@ class PostSettings extends StatelessWidget {
                     ),
                     Text(
                       "settings".tr().toUpperCase(),
-                      style: Utilities.fonts.body(
+                      style: Utils.calligraphy.body(
                         textStyle: TextStyle(
                           fontSize: isMobileSize ? 24.0 : 42.0,
                           fontWeight: FontWeight.w600,
@@ -169,7 +171,7 @@ class PostSettings extends StatelessWidget {
           padding: const EdgeInsets.only(bottom: 16.0),
           child: Text(
             "Language".toUpperCase(),
-            style: Utilities.fonts.body(
+            style: Utils.calligraphy.body(
               textStyle: const TextStyle(
                 fontSize: 16.0,
                 fontWeight: FontWeight.w600,
@@ -180,27 +182,29 @@ class PostSettings extends StatelessWidget {
         Wrap(
           spacing: 16.0,
           runSpacing: 16.0,
-          children: Utilities.lang.available().map((String chipLanguage) {
+          children: Utils.linguistic
+              .available()
+              .map((EnumLanguageSelection chipLanguage) {
             return ChoiceChip(
               padding: const EdgeInsets.symmetric(
                 vertical: 8.0,
                 horizontal: 12.0,
               ),
               label: Text(
-                Utilities.lang.toFullString(chipLanguage),
-                style: Utilities.fonts.body(
+                Utils.linguistic.toFullString(chipLanguage.name),
+                style: Utils.calligraphy.body(
                   textStyle: TextStyle(
                     fontSize: 16.0,
-                    fontWeight: chipLanguage == language
+                    fontWeight: chipLanguage.name == language
                         ? FontWeight.w600
                         : FontWeight.w400,
                   ),
                 ),
               ),
-              selected: chipLanguage == language,
+              selected: chipLanguage.name == language,
               selectedColor: Colors.blue,
               onSelected: (bool selected) {
-                onLanguageChanged?.call(chipLanguage);
+                onLanguageChanged?.call(chipLanguage.name);
               },
             );
           }).toList(),
@@ -220,7 +224,7 @@ class PostSettings extends StatelessWidget {
             padding: const EdgeInsets.only(bottom: 16.0),
             child: Text(
               "Visibility".toUpperCase(),
-              style: Utilities.fonts.body(
+              style: Utils.calligraphy.body(
                 textStyle: const TextStyle(
                   fontSize: 16.0,
                   fontWeight: FontWeight.w600,
@@ -242,7 +246,7 @@ class PostSettings extends StatelessWidget {
                   ),
                   label: Text(
                     chipVisibility.name,
-                    style: Utilities.fonts.body(
+                    style: Utils.calligraphy.body(
                       textStyle: TextStyle(
                         fontSize: 16.0,
                         fontWeight: chipVisibility == visibility
@@ -272,7 +276,7 @@ class PostSettings extends StatelessWidget {
           opacity: 0.6,
           child: Text(
             "Delete this project".toUpperCase(),
-            style: Utilities.fonts.body(
+            style: Utils.calligraphy.body(
               textStyle: const TextStyle(
                 fontSize: 16.0,
                 fontWeight: FontWeight.w600,
@@ -284,7 +288,7 @@ class PostSettings extends StatelessWidget {
           padding: const EdgeInsets.only(bottom: 24.0),
           child: Text(
             "Are you sure?",
-            style: Utilities.fonts.body(
+            style: Utils.calligraphy.body(
               textStyle: const TextStyle(
                 fontSize: 36.0,
                 fontWeight: FontWeight.w200,
@@ -320,7 +324,7 @@ class PostSettings extends StatelessWidget {
           padding: const EdgeInsets.only(bottom: 16.0),
           child: Text(
             "Cover".toUpperCase(),
-            style: Utilities.fonts.body(
+            style: Utils.calligraphy.body(
               textStyle: const TextStyle(
                 fontSize: 16.0,
                 fontWeight: FontWeight.w600,
@@ -340,7 +344,7 @@ class PostSettings extends StatelessWidget {
                 onPressed: onTryAddCoverImage,
                 child: Text(
                   hasCover ? "cover_replace".tr() : "cover_add".tr(),
-                  style: Utilities.fonts.body(
+                  style: Utils.calligraphy.body(
                     textStyle: const TextStyle(
                       color: Colors.green,
                       fontWeight: FontWeight.w600,
@@ -353,7 +357,7 @@ class PostSettings extends StatelessWidget {
                   onPressed: onTryRemoveCoverImage,
                   child: Text(
                     "cover_remove".tr(),
-                    style: Utilities.fonts.body(
+                    style: Utils.calligraphy.body(
                       textStyle: const TextStyle(
                         color: Colors.pink,
                         fontWeight: FontWeight.w600,
@@ -381,7 +385,7 @@ class PostSettings extends StatelessWidget {
           opacity: 0.8,
           child: Text(
             "corners",
-            style: Utilities.fonts.body(
+            style: Utils.calligraphy.body(
               textStyle: const TextStyle(
                 fontSize: 14.0,
                 fontWeight: FontWeight.w600,
@@ -405,7 +409,7 @@ class PostSettings extends StatelessWidget {
                 ),
                 label: Text(
                   coverCornerhType.name,
-                  style: Utilities.fonts.body(
+                  style: Utils.calligraphy.body(
                     textStyle: TextStyle(
                       fontSize: 16.0,
                       fontWeight: coverCornerhType == cover.cornerType
@@ -440,7 +444,7 @@ class PostSettings extends StatelessWidget {
           padding: const EdgeInsets.only(bottom: 16.0),
           child: Text(
             "Danger zone".toUpperCase(),
-            style: Utilities.fonts.body(
+            style: Utils.calligraphy.body(
               textStyle: const TextStyle(
                 fontSize: 16.0,
                 fontWeight: FontWeight.w600,
@@ -474,7 +478,7 @@ class PostSettings extends StatelessWidget {
           opacity: 0.8,
           child: Text(
             "width",
-            style: Utilities.fonts.body(
+            style: Utils.calligraphy.body(
               textStyle: const TextStyle(
                 fontSize: 14.0,
                 fontWeight: FontWeight.w600,
@@ -498,7 +502,7 @@ class PostSettings extends StatelessWidget {
                 ),
                 label: Text(
                   coverWidthType.name,
-                  style: Utilities.fonts.body(
+                  style: Utils.calligraphy.body(
                     textStyle: TextStyle(
                       fontSize: 16.0,
                       fontWeight: coverWidthType == cover.widthType

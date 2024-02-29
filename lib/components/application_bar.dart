@@ -137,7 +137,7 @@ class ApplicationBar extends StatelessWidget {
                     ),
                   if (!hideIcon)
                     AppIcon(
-                      size: 36.0,
+                      size: 24.0,
                       onTap: onTapIcon,
                     ),
                   appBarTitle(context),

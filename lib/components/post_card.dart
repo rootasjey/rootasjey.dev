@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:loggy/loggy.dart';
 import 'package:rootasjey/globals/constants.dart';
-import 'package:rootasjey/globals/utilities.dart';
+import 'package:rootasjey/globals/utils.dart';
+
 import 'package:rootasjey/types/post.dart';
 import 'package:rootasjey/types/user/user_firestore.dart';
 
@@ -152,7 +153,7 @@ class _PostCardState extends State<PostCard> with UiLoggy {
                 postName,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: Utilities.fonts.body(
+                style: Utils.calligraphy.body(
                   textStyle: TextStyle(
                     fontSize: widget.compact ? 18.0 : 32.0,
                     fontWeight: FontWeight.w700,
@@ -168,7 +169,7 @@ class _PostCardState extends State<PostCard> with UiLoggy {
                       post.summary,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: Utilities.fonts.body(
+                      style: Utils.calligraphy.body(
                         textStyle: TextStyle(
                           fontSize: widget.compact ? 14.0 : 16.0,
                           fontWeight: FontWeight.w500,
@@ -187,7 +188,7 @@ class _PostCardState extends State<PostCard> with UiLoggy {
                       opacity: 0.6,
                       child: Text(
                         postMetadata,
-                        style: Utilities.fonts.body(
+                        style: Utils.calligraphy.body(
                           textStyle: TextStyle(
                             fontSize: widget.compact ? 12.0 : 15.0,
                             fontWeight: FontWeight.w600,
@@ -198,7 +199,7 @@ class _PostCardState extends State<PostCard> with UiLoggy {
                     if (post.tags.isNotEmpty)
                       Text(
                         "•  ${post.tags.first}",
-                        style: Utilities.fonts.body(
+                        style: Utils.calligraphy.body(
                           textStyle: TextStyle(
                             fontSize: widget.compact ? 12.0 : 15.0,
                             fontWeight: FontWeight.w600,

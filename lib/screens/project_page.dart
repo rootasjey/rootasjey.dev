@@ -17,7 +17,7 @@ import 'package:rootasjey/components/buttons/fab_to_top.dart';
 import 'package:rootasjey/components/dialogs/delete_dialog.dart';
 import 'package:rootasjey/components/loading_view.dart';
 import 'package:rootasjey/components/upload_panel/upload_panel.dart';
-import 'package:rootasjey/globals/utilities.dart';
+
 import 'package:rootasjey/globals/utils.dart';
 import 'package:rootasjey/screens/post/post_app_bar.dart';
 import 'package:rootasjey/screens/post/post_cover.dart';
@@ -160,7 +160,7 @@ class _ProjectPageState extends State<ProjectPage> with UiLoggy {
     final bool canManagePosts = rights.managePosts;
     final Size windowSize = MediaQuery.of(context).size;
     final bool isMobileSize =
-        windowSize.width < Utilities.size.mobileWidthTreshold;
+        windowSize.width < Utils.measurements.mobileWidthTreshold;
 
     if (_deleting) {
       return LoadingView.scaffold(
@@ -282,7 +282,7 @@ class _ProjectPageState extends State<ProjectPage> with UiLoggy {
                         child: Text(
                           "updating".tr(),
                           overflow: TextOverflow.ellipsis,
-                          style: Utilities.fonts.body(
+                          style: Utils.calligraphy.body(
                             textStyle: const TextStyle(
                               fontSize: 16.0,
                               fontWeight: FontWeight.w600,
@@ -334,7 +334,7 @@ class _ProjectPageState extends State<ProjectPage> with UiLoggy {
       backgroundColor: Colors.pink,
       label: Text(
         _editing ? "render" : "edit".tr(),
-        style: Utilities.fonts.body(
+        style: Utils.calligraphy.body(
           textStyle: const TextStyle(
             fontSize: 16.0,
             fontWeight: FontWeight.w600,
@@ -355,7 +355,7 @@ class _ProjectPageState extends State<ProjectPage> with UiLoggy {
   }
 
   void confirmDeletePost() {
-    Utilities.ui.showAdaptiveDialog(
+    Utils.graphic.showAdaptiveDialog(
       context,
       builder: (BuildContext context) {
         return DeleteDialog(

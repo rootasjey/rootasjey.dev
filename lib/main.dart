@@ -16,7 +16,6 @@ import 'package:rootasjey/firebase_options.dart';
 import 'package:rootasjey/globals/constants.dart';
 import 'package:rootasjey/router/app_routes.dart';
 import 'package:rootasjey/router/navigation_state_helper.dart';
-import 'package:url_strategy/url_strategy.dart';
 import 'package:window_manager/window_manager.dart';
 
 void main() async {
@@ -50,7 +49,6 @@ void main() async {
   }
 
   final AdaptiveThemeMode? savedThemeMode = await AdaptiveTheme.getThemeMode();
-  setPathUrlStrategy();
 
   if (!kIsWeb) {
     if (Platform.isLinux || Platform.isMacOS || Platform.isWindows) {

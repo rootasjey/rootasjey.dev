@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:rootasjey/components/application_bar.dart';
 import 'package:rootasjey/components/buttons/dark_elevated_button.dart';
-import 'package:rootasjey/globals/utilities.dart';
+import 'package:rootasjey/globals/utils.dart';
 
 class PostsPageEmptyView extends StatelessWidget {
   const PostsPageEmptyView({
@@ -46,7 +46,7 @@ class PostsPageEmptyView extends StatelessWidget {
                 ),
                 Text(
                   canCreate ? "post_empty_create".tr() : "post_empty".tr(),
-                  style: Utilities.fonts.body2(
+                  style: Utils.calligraphy.body2(
                     textStyle: const TextStyle(
                       fontSize: 18.0,
                       fontWeight: FontWeight.w600,

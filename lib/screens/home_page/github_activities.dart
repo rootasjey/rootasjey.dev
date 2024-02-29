@@ -5,7 +5,8 @@ import 'package:github/github.dart';
 import 'package:loggy/loggy.dart';
 import 'package:rootasjey/components/buttons/github_activity_card.dart';
 import 'package:rootasjey/globals/constants.dart';
-import 'package:rootasjey/globals/utilities.dart';
+import 'package:rootasjey/globals/utils.dart';
+
 import 'package:timelines/timelines.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -56,7 +57,7 @@ class _GitHubActivitiesState extends State<GitHubActivities> with UiLoggy {
           children: [
             Text(
               "activity_recent".tr(),
-              style: Utilities.fonts.body5(
+              style: Utils.calligraphy.body5(
                 textStyle: const TextStyle(
                   fontSize: 64.0,
                   fontWeight: FontWeight.w500,
@@ -67,7 +68,7 @@ class _GitHubActivitiesState extends State<GitHubActivities> with UiLoggy {
               opacity: 0.4,
               child: Text(
                 "activity_recent_description".tr(),
-                style: Utilities.fonts.body(
+                style: Utils.calligraphy.body(
                   textStyle: const TextStyle(
                     fontSize: 16.0,
                     fontWeight: FontWeight.w600,
@@ -133,7 +134,7 @@ class _GitHubActivitiesState extends State<GitHubActivities> with UiLoggy {
   }
 
   Widget moreButton() {
-    if (widget.size.width < Utilities.size.mobileWidthTreshold) {
+    if (widget.size.width < Utils.measurements.mobileWidthTreshold) {
       return Tooltip(
         message: "activity_show_more".tr(),
         child: TextButton(
@@ -157,7 +158,7 @@ class _GitHubActivitiesState extends State<GitHubActivities> with UiLoggy {
       ),
       child: Text(
         "activity_show_more".tr(),
-        style: Utilities.fonts.body(
+        style: Utils.calligraphy.body(
           textStyle: const TextStyle(
             fontSize: 14.0,
             fontWeight: FontWeight.w600,
@@ -168,7 +169,7 @@ class _GitHubActivitiesState extends State<GitHubActivities> with UiLoggy {
   }
 
   Widget githubButton() {
-    if (widget.size.width < Utilities.size.mobileWidthTreshold) {
+    if (widget.size.width < Utils.measurements.mobileWidthTreshold) {
       return Tooltip(
         message: "GitHub",
         child: TextButton(
@@ -196,7 +197,7 @@ class _GitHubActivitiesState extends State<GitHubActivities> with UiLoggy {
         padding: const EdgeInsets.all(0.0),
         child: Text(
           "GitHub",
-          style: Utilities.fonts.body(
+          style: Utils.calligraphy.body(
             textStyle: const TextStyle(
               fontSize: 14.0,
               fontWeight: FontWeight.w600,

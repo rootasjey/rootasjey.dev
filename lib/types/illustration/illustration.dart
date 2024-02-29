@@ -1,7 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
-import 'package:rootasjey/globals/utilities.dart';
+import 'package:rootasjey/globals/utils.dart';
+
 import 'package:rootasjey/types/enums/enum_content_visibility.dart';
 import 'package:rootasjey/types/illustration/dimensions.dart';
 import 'package:rootasjey/types/illustration/illustration_links.dart';
@@ -117,7 +118,7 @@ class Illustration {
   factory Illustration.fromMap(Map<String, dynamic> data) {
     return Illustration(
       artMovements: parseArtMovements(data["art_movements"]),
-      createdAt: Utilities.date.fromFirestore(data["created_at"]),
+      createdAt: Utils.tictac.fromFirestore(data["created_at"]),
       description: data["description"] ?? "",
       dimensions: Dimensions.fromMap(data["dimensions"]),
       extension: data["extension"] ?? "",
@@ -128,7 +129,7 @@ class Illustration {
       name: data["name"] ?? "",
       size: data["size"] ?? 0,
       topics: parseTopics(data["topics"]),
-      updatedAt: Utilities.date.fromFirestore(data["updated_at"]),
+      updatedAt: Utils.tictac.fromFirestore(data["updated_at"]),
       userId: data["user_id"] ?? "",
       userCustomIndex: data["user_custom_index"] ?? 0,
       version: data["version"] ?? 0,

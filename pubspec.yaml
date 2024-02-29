@@ -17,7 +17,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 3.0.0+5
+version: 3.2.0+7
 
 environment:
   sdk: '>=3.2.0 <4.0.0'
@@ -31,7 +31,10 @@ environment:
 dependencies:
   adaptive_theme: ^3.5.0
   algoliasearch: ^1.5.0
-  any_syntax_highlighter: ^0.0.13
+  any_syntax_highlighter:
+    git:
+      url: https://github.com/rootasjey/any_syntax_highlighter.git
+      ref: main
   awesome_snackbar_content: ^0.0.8
   beamer: ^1.6.0
   bottom_sheet: ^4.0.0
@@ -60,15 +63,20 @@ dependencies:
   flutter_improved_scrolling: ^0.0.3
   flutter_loggy: ^2.0.2
   flutter_solidart: ^1.7.0
+  flutter_svg: ^1.1.6
   flutter_tabler_icons: ^1.20.0
   github: ^9.22.0
   glutton: ^2.0.0
-  google_fonts: ^4.0.5
+  google_fonts: ^6.1.0
   jiffy: ^6.2.1
   just_the_tooltip: ^0.0.12
   loggy: ^2.0.3
   lottie: ^3.0.0
   markdown_widget: ^2.3.2+3
+  measured: ^0.1.0
+  media_kit: ^1.1.10+1
+  media_kit_libs_video: ^1.0.4
+  media_kit_video: ^1.2.4
   mime_type: ^1.0.0
   photo_view: ^0.14.0
   shimmer_animation: ^2.1.0+1
@@ -77,9 +85,11 @@ dependencies:
   super_context_menu: ^0.8.4
   supercharged: ^2.1.1
   timelines: ^0.1.0
+  two_dimensional_scrollables: ^0.1.1
   url_launcher: ^6.2.4
-  url_strategy: ^0.2.0
   verbal_expressions: ^1.0.0
+  wave_divider: ^0.0.3
+  wave_shape_package: ^0.0.3
   window_manager: ^0.3.8
 
 

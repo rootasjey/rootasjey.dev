@@ -69,6 +69,11 @@
   "app_annual_fee_why": "Pourquoi dois-je payer des frais annuels de 45€ ?",
   "app_type_question": "Quel type d'application voulez-vous ?",
   "apps": "Applications",
+  "art": {
+    "name": "Art",
+    "names": "Arts",
+    "subtitle": "Quand je me sens inspiré créativement, mon esprit explose en un arc-en-ciel. Aussi, je suis quotidiennement ébloui par l'ingéniosité de l'univers et des gens."
+  },
   "audience": {
     "small": "Moins de 10 000 visiteurs par mois",
     "medium": "Entre 10  000 et 100 000 visiteurs par mois",
@@ -367,6 +372,7 @@
   "other": "Autres",
   "page_title": {
     "about": "@:rootasjey_leading À propos",
+    "art": "@:rootasjey_leading Art",
     "any": "@:rootasjey_leading {}",
     "cv": "@:rootasjey_leading CV",
     "forgot_password": "@:rootasjey_leading Mot de passe oublié",
@@ -555,6 +561,7 @@
   "project_update_urls_fail": "Nous sommes désolés, une erreur est survenue lors de la mise à jour des liens du projet. Veuillez réessayer ultérieurement.",
   "project_updating": "Mise à jour du projet...",
   "projects": "Projets",
+  "projects_subtitle": "J'adore travailler sur ceux-ci. Certains viennent de mes envies personnelles. D'autres sont de mon expérience professionnelle. Si c'est présent ici, c'est probablement open source.",
   "projects_featured": "Projects en Vedette",
   "projects_loading": "Chargement des projects",
   "projects_my": "Mes projets",
@@ -629,6 +636,11 @@
   "tags_add_hide": "Masquer le champ de text de tag",
   "tags_description": "Vous pouvez ajouter des tags pour categoriser votre projet. Vous pourriez mettre les tags \"hackathon\" ou \"prototype\" par exemple.",
   "tags_edit": "Modifier les tags",
+  "terrarium": {
+    "name": "Terrarium",
+    "names": "Terrariums",
+    "subtitle": "Créer des minimondes vivants divise mon âge par 2. Avoir la satisfaction du travail manuelle, rétablir un petite connexion à la nature, et pouvoir observer l'évolution de son œuvre sont des choses qui me rempli de joie."
+  },
   "thank_you_exclamation": "Merci !",
   "thank_you_newsletter": "Merci pour avoir souscrit à la newsletter. À bientôt 👋",
   "the_purpose": "Le but",
@@ -656,7 +668,8 @@
   "updating": "Mise à jour",
   "upgrade": "Mise à jour",
   "upgrade_description": "Nous mettrons à jour votre site dès qu'un bug sera détecté ou qu'une faille de sécurité sera répertoriée.",
-  "upload": "Upload",
+  "upload": "Téléverser",
+  "uploads": "Téléversements",
   "upload_aborted_count": {
     "zero": "{} abandonée.",
     "one": "{} abandonée.",
@@ -701,6 +714,11 @@
   "username_update_description": "Vous voulez choisir un pseudo qui vous ressemble d'avantage ?",
   "username_update_success": "Votre nom d'utilisateur a été mis à jour",
   "username_updating": "Mise à jour de votre nom d'utilisateur...",
+  "video_montage": {
+    "name": "Montage vidéos",
+    "names": "Montage vidéos",
+    "subtitle": "Lorsque je me ma casquette de réalisateur, Je coupe les vidéos comme du beurre. Je choisi une musique, un sujet, et c'est parti !"
+  },
   "view_online": "Voir en ligne",
   "visibility": {
     "private": "privé",

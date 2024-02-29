@@ -1,9 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
-import 'package:rootasjey/components/buttons/circle_button.dart';
 import 'package:rootasjey/components/upload_panel/upload_card_item.dart';
-import 'package:rootasjey/globals/utilities.dart';
+
 import 'package:rootasjey/globals/utils.dart';
 import 'package:rootasjey/types/custom_upload_task.dart';
 
@@ -45,26 +43,17 @@ class UploadPanelBody extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Wrap(
-            spacing: 12.0,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            children: [
-              CircleButton(
-                margin: const EdgeInsets.only(left: 12.0),
-                onTap: () => Navigator.of(context).pop(),
-                icon: const Icon(TablerIcons.x),
-                tooltip: "close".tr(),
-              ),
-              Text(
-                "downloads".tr(),
-                style: Utilities.fonts.body(
-                  textStyle: const TextStyle(
-                    fontSize: 24.0,
-                    fontWeight: FontWeight.w700,
-                  ),
+          Padding(
+            padding: const EdgeInsets.only(left: 24.0),
+            child: Text(
+              "uploads".tr(),
+              style: Utils.calligraphy.body(
+                textStyle: const TextStyle(
+                  fontSize: 24.0,
+                  fontWeight: FontWeight.w700,
                 ),
               ),
-            ],
+            ),
           ),
           const Divider(
             thickness: 1.5,

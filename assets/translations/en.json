@@ -67,6 +67,11 @@
   "app_type_question": "What type of app do you want?",
   "apps": "Apps",
   "are_you_sure": "Are you sure?",
+  "art": {
+    "name": "Art",
+    "names": "Arts",
+    "subtitle": "When I feel creatively inspired, it explodes outo a rainbow. Also I'm daily mindblowed by the ingeniousness of the universe and of the people."
+  },
   "avertising": "Advertising",
   "avertising_content": "The web & mobile apps may contain advertising to generate revenues. Advertisers may collect additional data on your navigation and preferences. We don't own, control or manage this part of your personal data.",
   "audience": {
@@ -367,6 +372,7 @@
   "other": "Other",
   "page_title": {
     "about": "@:rootasjey_leading About",
+    "art": "@:rootasjey_leading Art",
     "any": "@:rootasjey_leading {}",
     "cv": "@:rootasjey_leading CV",
     "forgot_password": "@:rootasjey_leading Forgot Password",
@@ -556,6 +562,7 @@
   "project_update_urls_fail": "Sorry, there was an issue while updating your project's links. Pleasy try again.",
   "project_updating": "Updating project...",
   "projects": "Projects",
+  "projects_subtitle": "I loved working on these. Some come from my personal taste. Other are from my professional experience. If it's there, it's probably open source.",
   "projects_featured": "Featured Projects",
   "projects_loading": "Loading projects",
   "projects_my": "My projects",
@@ -630,6 +637,11 @@
   "tags_add_hide": "Hide tag text field",
   "tags_description": "You can add tags to categorize your project. You could set the \"hackathon\" or \"prototype\" tags for example.",
   "tags_edit": "Edit tags",
+  "terrarium": {
+    "name": "Terrarium",
+    "names": "Terrariums",
+    "subtitle": "When I create minimondes (mini worlds) it's like i'm 8. To be satisfied with manual work, to connect with nature, and to observe the evolution of my work feel me with joy."
+  },
   "thank_you_exclamation": "Thank you!",
   "thank_you_newsletter": "Thank you for subscribing to the newsletter. See you soon 👋",
   "the_purpose": "The purpose",
@@ -658,6 +670,7 @@
   "upgrade": "Upgrade",
   "upgrade_description": "We'll upgrade your website Whenever a bug is detected or a more recent dependency is available.",
   "upload": "Upload",
+  "uploads": "Uploads",
   "upload_aborted_count": {
     "zero": "{} aborted.",
     "one": "{} aborted.",
@@ -702,6 +715,11 @@
   "username_update_description": "Want a more personalized name?",
   "username_update_success": "Your username has been successfuly updated",
   "username_updating": "Updating your username...",
+  "video_montage": {
+    "name": "Video montage",
+    "names": "Video montages",
+    "subtitle": "When I put my director's casquette, I cut video like a butcher. I choose a music, a subject, and c'est parti!"
+  },
   "view_online": "View online",
   "visibility": {
     "private": "private",

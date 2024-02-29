@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:rootasjey/components/buttons/circle_button.dart';
 import 'package:rootasjey/components/icons/cicle_app_icon.dart';
-import 'package:rootasjey/globals/utilities.dart';
+import 'package:rootasjey/globals/utils.dart';
+
 import 'package:rootasjey/router/locations/home_location.dart';
 import 'package:simple_animations/simple_animations.dart';
 
@@ -67,7 +68,7 @@ class _PostAppBarState extends State<PostAppBar> with AnimationMixin {
                 onTap: widget.onTapTitle,
                 child: Text(
                   widget.textTitle,
-                  style: Utilities.fonts.body(
+                  style: Utils.calligraphy.body(
                     textStyle: const TextStyle(
                       fontSize: 16.0,
                       fontWeight: FontWeight.w600,
@@ -105,7 +106,7 @@ class _PostAppBarState extends State<PostAppBar> with AnimationMixin {
                 child: CircleButton(
                   tooltip: "back".tr(),
                   icon: const Icon(TablerIcons.arrow_left),
-                  onTap: () => Utilities.navigation.back(context),
+                  onTap: () => Utils.passage.back(context),
                 ),
               ),
               Positioned(

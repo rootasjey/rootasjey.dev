@@ -8,19 +8,16 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_solidart/flutter_solidart.dart';
-import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:loggy/loggy.dart';
 import 'package:rootasjey/actions/illustration_actions.dart';
 import 'package:rootasjey/components/hero_image.dart';
 import 'package:rootasjey/components/loading_view.dart';
-import 'package:rootasjey/components/popup_menu/popup_menu_icon.dart';
-import 'package:rootasjey/components/popup_menu/popup_menu_item_icon.dart';
 import 'package:rootasjey/globals/constants.dart';
-import 'package:rootasjey/globals/utilities.dart';
 import 'package:rootasjey/globals/utils.dart';
 import 'package:rootasjey/router/locations/home_location.dart';
 import 'package:rootasjey/screens/illustrations_page/illustrations_page_body.dart';
 import 'package:rootasjey/screens/illustrations_page/illustrations_page_empty.dart';
+import 'package:rootasjey/screens/illustrations_page/illustrations_page_fab.dart';
 import 'package:rootasjey/types/alias/firestore/document_change_map.dart';
 import 'package:rootasjey/types/alias/firestore/query_doc_snap_map.dart';
 import 'package:rootasjey/types/alias/firestore/query_map.dart';
@@ -33,15 +30,22 @@ import 'package:rootasjey/types/illustration/illustration.dart';
 import 'package:rootasjey/types/intents/escape_intent.dart';
 import 'package:rootasjey/types/user/user_firestore.dart';
 import 'package:rootasjey/types/user/user_rights.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class IllustrationsPage extends StatefulWidget {
-  const IllustrationsPage({super.key});
+  const IllustrationsPage({super.key, this.onGoToHomePage});
+
+  /// Called when the user goes back to the home page.
+  final void Function()? onGoToHomePage;
 
   @override
   State<StatefulWidget> createState() => _DrawingsPageState();
 }
 
 class _DrawingsPageState extends State<IllustrationsPage> with UiLoggy {
+  /// True if the license panel should be expanded.
+  bool _expandLicensePanel = false;
+
   /// True if there're more posts to fetch.
   bool _hasNext = true;
 
@@ -51,27 +55,19 @@ class _DrawingsPageState extends State<IllustrationsPage> with UiLoggy {
   /// True if the app is fetching more illustration data.
   bool _loadingMore = false;
 
+  Color _accentColor = Colors.blue;
+
   /// Last document fetched from Firestore.
   DocumentSnapshot? _lastDocument;
 
   /// Maximum posts fetch per page.
   final int _limit = 10;
 
+  /// List of illustrations.
   final List<Illustration> _illustrations = [];
 
   /// Listens to posts' updates.
   QuerySnapshotStreamSubscription? _illustrationSubscription;
-
-  /// Popup menu items for post card.
-  final List<PopupMenuEntry<EnumIllustrationItemAction>>
-      _illustrationPopupMenuItems = [
-    PopupMenuItemIcon(
-      icon: const PopupMenuIcon(TablerIcons.trash),
-      textLabel: "delete".tr(),
-      newValue: EnumIllustrationItemAction.delete,
-      selected: false,
-    ),
-  ];
 
   /// Page scroll controller.
   final ScrollController _pageScrollController = ScrollController();
@@ -82,6 +78,7 @@ class _DrawingsPageState extends State<IllustrationsPage> with UiLoggy {
   @override
   void initState() {
     super.initState();
+    initProps();
     fetchData();
   }
 
@@ -112,7 +109,10 @@ class _DrawingsPageState extends State<IllustrationsPage> with UiLoggy {
       return wrapWithShortcuts(
         child: IllustrationsPageEmpty(
           canCreate: canManageIllustrations,
-          fab: fab(show: canManageIllustrations),
+          fab: IllustrationsPageFab(
+            isVisible: canManageIllustrations,
+            pickFiles: pickFiles,
+          ),
           onShowCreatePage: pickFiles,
           onCancel: onCancel,
         ),
@@ -121,37 +121,20 @@ class _DrawingsPageState extends State<IllustrationsPage> with UiLoggy {
 
     return wrapWithShortcuts(
       child: IllustrationsPageBody(
+        accentColor: _accentColor,
         illustrations: _illustrations,
-        fab: fab(show: canManageIllustrations),
-        popupMenuItems:
-            canManageIllustrations ? _illustrationPopupMenuItems : [],
-        onPopupMenuItemSelected: onPopupMenuItemSelected,
+        expandLicensePanel: _expandLicensePanel,
+        onToggleExpandLicensePanel: onToggleExpandLicensePanel,
+        fab: IllustrationsPageFab(
+          isVisible: canManageIllustrations,
+          pickFiles: pickFiles,
+        ),
+        onDeleteIllustration: tryDeleteIllustration,
         onTapIllustration: onTapIllustration,
+        onGoToExternalLicense: onGoToExternalLicense,
+        onTapAppIcon: widget.onGoToHomePage,
         windowSize: windowSize,
       ),
-    );
-  }
-
-  Widget fab({bool show = true}) {
-    if (!show) {
-      return Container();
-    }
-
-    return FloatingActionButton.extended(
-      onPressed: pickFiles,
-      label: Text(
-        "upload".tr(),
-        style: Utilities.fonts.body(
-          textStyle: const TextStyle(
-            fontSize: 16.0,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ),
-      foregroundColor: Colors.white,
-      backgroundColor: Constants.colors.palette.first,
-      icon: const Icon(TablerIcons.upload),
-      extendedPadding: const EdgeInsets.symmetric(horizontal: 28.0),
     );
   }
 
@@ -212,14 +195,16 @@ class _DrawingsPageState extends State<IllustrationsPage> with UiLoggy {
         fixEmptyThumbnail(illustration);
       }
 
+      if (!mounted) return;
       setState(() {
+        _loading = false;
         _lastDocument = snapshot.docs.last;
         _hasNext = snapshot.docs.length == _limit;
       });
     } catch (error) {
-      loggy.error(error);
-    } finally {
+      if (!mounted) return;
       setState(() => _loading = false);
+      loggy.error(error);
     }
   }
 
@@ -327,6 +312,10 @@ class _DrawingsPageState extends State<IllustrationsPage> with UiLoggy {
         .where("visibility", isEqualTo: "public")
         .orderBy("user_custom_index", descending: true)
         .endAtDocument(lastDocument);
+  }
+
+  void initProps() {
+    _accentColor = Constants.colors.getRandomBackground();
   }
 
   /// Listen to tillustrations'events.
@@ -470,5 +459,15 @@ class _DrawingsPageState extends State<IllustrationsPage> with UiLoggy {
     } catch (error) {
       loggy.error(error);
     }
+  }
+
+  void onToggleExpandLicensePanel() {
+    setState(() {
+      _expandLicensePanel = !_expandLicensePanel;
+    });
+  }
+
+  void onGoToExternalLicense() {
+    launchUrl(Uri.parse("https://creativecommons.org/licenses/by-sa/4.0"));
   }
 }

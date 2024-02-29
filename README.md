@@ -7,13 +7,14 @@ My personal universe
 </p>
 
 <p align="center">
-  <img src="./screenshots/home.desktop.png" alt="rootasjey's universe"/>
+  <img src="./screenshots/home-desktop-v4.png" alt="rootasjey's universe"/>
 </p>
 
 ## Table of Contents
 
 - [Table of Contents](#table-of-contents)
 - [👀 Overview](#-overview)
+- [✏️ Concept](#️-concept)
 - [🚀 Quickstart](#-quickstart)
 - [✨ Features](#-features)
   - [**Landing Page**](#landing-page)
@@ -31,6 +32,17 @@ This is my personal [website](https://rootasjey.dev) and portfolio made with [Fl
 It has my resume, runnable projects, some blog posts and illustrations (I like drawing). It's responsive too.
 
 If you wish to clone and/or run this project, you'll need a Firebase account with similar settings as mine. I'm going to write a post to explain what services you need (basically Firestore, Functions and Storage).
+
+
+## ✏️ Concept
+
+I drew this concept before starting coding.<br/>
+It's a snapping grid which can be scrolled vertically and horizontally.<br/>
+Each screen has its own experience 😍.
+
+<p align="center">
+  <img src="./screenshots/concept-v4-dark.jpg" alt="rootasjey's universe"/>
+</p>
 
 ## 🚀 Quickstart
 

@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:jiffy/jiffy.dart';
-import 'package:rootasjey/globals/utilities.dart';
+import 'package:rootasjey/globals/utils.dart';
 
 class PostFooter extends StatelessWidget {
   const PostFooter({
@@ -76,7 +76,7 @@ class PostFooter extends StatelessWidget {
                             opacity: 0.6,
                             child: Text(
                               "word_count".plural(wordCount),
-                              style: Utilities.fonts.body(
+                              style: Utils.calligraphy.body(
                                 textStyle: const TextStyle(
                                   fontSize: 16.0,
                                   fontWeight: FontWeight.w600,
@@ -90,7 +90,7 @@ class PostFooter extends StatelessWidget {
                               TextSpan(children: [
                                 TextSpan(
                                   text: lastUpdatedAt,
-                                  style: Utilities.fonts.body(
+                                  style: Utils.calligraphy.body(
                                     textStyle: const TextStyle(
                                       fontWeight: FontWeight.w600,
                                     ),
@@ -99,7 +99,7 @@ class PostFooter extends StatelessWidget {
                                 TextSpan(
                                   text:
                                       " (${"last_updated".tr().toLowerCase()})",
-                                  style: Utilities.fonts.body(
+                                  style: Utils.calligraphy.body(
                                     textStyle: TextStyle(
                                       fontSize: 14.0,
                                       color: Theme.of(context)
@@ -112,7 +112,7 @@ class PostFooter extends StatelessWidget {
                                   ),
                                 ),
                               ]),
-                              style: Utilities.fonts.body(
+                              style: Utils.calligraphy.body(
                                 textStyle: const TextStyle(
                                   fontSize: 16.0,
                                   fontWeight: FontWeight.w400,

@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:rootasjey/components/popup_menu/popup_menu_toggle_item.dart';
 import 'package:rootasjey/globals/constants.dart';
-import 'package:rootasjey/globals/utilities.dart';
+import 'package:rootasjey/globals/utils.dart';
+import 'package:rootasjey/types/enums/enum_language_selection.dart';
 
 class LangPopupMenuButton extends StatelessWidget {
   const LangPopupMenuButton({
@@ -68,12 +69,12 @@ class LangPopupMenuButton extends StatelessWidget {
             itemBuilder: (BuildContext tcontext) {
               int index = 0;
 
-              return Utilities.lang.available().map(
-                (final String languageCode) {
+              return Utils.linguistic.available().map(
+                (final EnumLanguageSelection lang) {
                   index++;
 
                   final bool selected =
-                      context.locale.languageCode == languageCode;
+                      context.locale.languageCode == lang.name;
 
                   final Color? color = selected
                       ? Theme.of(context).primaryColor
@@ -85,8 +86,8 @@ class LangPopupMenuButton extends StatelessWidget {
 
                   return PopupMenuToggleItem<String>(
                     delay: Duration(milliseconds: 25 * index),
-                    textLabel: Utilities.lang.toFullString(languageCode),
-                    newValue: languageCode,
+                    textLabel: Utils.linguistic.toFullString(lang.name),
+                    newValue: lang.name,
                     selected: selected,
                     foregroundColor: color,
                   );
@@ -138,8 +139,8 @@ class LangPopupMenuButton extends StatelessWidget {
         ),
       ),
       child: Text(
-        Utilities.lang.toFullString(lang),
-        style: Utilities.fonts.body(
+        Utils.linguistic.toFullString(lang),
+        style: Utils.calligraphy.body(
           textStyle: TextStyle(
             color: baseColor,
             fontWeight: FontWeight.w700,
@@ -154,7 +155,7 @@ class LangPopupMenuButton extends StatelessWidget {
       padding: padding,
       child: Text(
         lang.toUpperCase(),
-        style: Utilities.fonts.body(
+        style: Utils.calligraphy.body(
           textStyle: TextStyle(
             fontSize: 16.0,
             fontWeight: FontWeight.w700,

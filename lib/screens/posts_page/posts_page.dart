@@ -9,7 +9,8 @@ import 'package:loggy/loggy.dart';
 import 'package:rootasjey/components/loading_view.dart';
 import 'package:rootasjey/components/popup_menu/popup_menu_icon.dart';
 import 'package:rootasjey/components/popup_menu/popup_menu_item_icon.dart';
-import 'package:rootasjey/globals/utilities.dart';
+import 'package:rootasjey/globals/utils.dart';
+
 import 'package:rootasjey/router/locations/posts_location.dart';
 import 'package:rootasjey/screens/posts_page/create_post_page.dart';
 import 'package:rootasjey/screens/posts_page/posts_page_body.dart';
@@ -121,7 +122,7 @@ class _PostsPageState extends State<PostsPage> with UiLoggy {
           canCreate: canManagePosts,
           fab: fab(show: canManagePosts),
           onShowCreatePage: onShowCreate,
-          onCancel: () => Utilities.navigation.back(context),
+          onCancel: () => Utils.passage.back(context),
         ),
       );
     }
@@ -152,7 +153,7 @@ class _PostsPageState extends State<PostsPage> with UiLoggy {
       icon: const Icon(TablerIcons.plus),
       label: Text(
         "post_create".tr(),
-        style: Utilities.fonts.body(
+        style: Utils.calligraphy.body(
           textStyle: const TextStyle(
             fontSize: 16.0,
             fontWeight: FontWeight.w600,
@@ -170,7 +171,7 @@ class _PostsPageState extends State<PostsPage> with UiLoggy {
 
     final actions = <Type, Action<Intent>>{
       EscapeIntent: CallbackAction(
-        onInvoke: (Intent intent) => Utilities.navigation.back(context),
+        onInvoke: (Intent intent) => Utils.passage.back(context),
       ),
     };
 
@@ -374,13 +375,13 @@ class _PostsPageState extends State<PostsPage> with UiLoggy {
         for (DocumentChangeMap documentChange in snapshot.docChanges) {
           switch (documentChange.type) {
             case DocumentChangeType.added:
-              onAddStreamingIllustration(documentChange);
+              onAddPostDocument(documentChange);
               break;
             case DocumentChangeType.modified:
-              onUpdateStreamingIllustration(documentChange);
+              onUpdatePostDocument(documentChange);
               break;
             case DocumentChangeType.removed:
-              onRemoveStreamingIllustration(documentChange);
+              onRemovePostDocument(documentChange);
               break;
           }
         }
@@ -393,7 +394,7 @@ class _PostsPageState extends State<PostsPage> with UiLoggy {
 
   /// Fire when a new document has been created in Firestore.
   /// Add the corresponding document in the UI.
-  void onAddStreamingIllustration(DocumentChangeMap documentChange) {
+  void onAddPostDocument(DocumentChangeMap documentChange) {
     final Json? map = documentChange.doc.data();
 
     if (map == null) {
@@ -409,7 +410,7 @@ class _PostsPageState extends State<PostsPage> with UiLoggy {
 
   /// Fire when a new document has been updated in Firestore.
   /// Update the corresponding document in the UI.
-  void onUpdateStreamingIllustration(DocumentChangeMap documentChange) async {
+  void onUpdatePostDocument(DocumentChangeMap documentChange) async {
     try {
       final Json? data = documentChange.doc.data();
       if (data == null) {
@@ -439,7 +440,7 @@ class _PostsPageState extends State<PostsPage> with UiLoggy {
 
   /// Fire when a new document has been delete from Firestore.
   /// Delete the corresponding document from the UI.
-  void onRemoveStreamingIllustration(DocumentChangeMap documentChange) {
+  void onRemovePostDocument(DocumentChangeMap documentChange) {
     setState(() {
       _posts.removeWhere(
         (illustration) => illustration.id == documentChange.doc.id,

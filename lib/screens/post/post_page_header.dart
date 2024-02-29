@@ -5,7 +5,8 @@ import 'package:jiffy/jiffy.dart';
 import 'package:rootasjey/components/author_component.dart';
 import 'package:rootasjey/components/buttons/close_ship.dart';
 import 'package:rootasjey/globals/constants.dart';
-import 'package:rootasjey/globals/utilities.dart';
+import 'package:rootasjey/globals/utils.dart';
+
 import 'package:rootasjey/types/enums/enum_content_visibility.dart';
 import 'package:simple_animations/simple_animations.dart';
 
@@ -204,7 +205,7 @@ class PostPageHeader extends StatelessWidget {
             Text("back".tr()),
           ],
         ),
-        onPressed: () => Utilities.navigation.back(context),
+        onPressed: () => Utils.passage.back(context),
       ),
     ];
 
@@ -238,7 +239,7 @@ class PostPageHeader extends StatelessWidget {
   }
 
   Widget summaryWidget() {
-    final TextStyle style = Utilities.fonts.body(
+    final TextStyle style = Utils.calligraphy.body(
       textStyle: const TextStyle(
         fontSize: 14.0,
         fontWeight: FontWeight.w500,
@@ -282,7 +283,7 @@ class PostPageHeader extends StatelessWidget {
   }
 
   Widget titleWidget() {
-    final TextStyle style = Utilities.fonts.body(
+    final TextStyle style = Utils.calligraphy.body(
       textStyle: TextStyle(
         fontSize: isMobileSize ? 36.0 : 70.0,
         fontWeight: isMobileSize ? FontWeight.w700 : FontWeight.w600,
@@ -329,7 +330,7 @@ class PostPageHeader extends StatelessWidget {
       opacity: 0.6,
       child: Text(
         publishedAtStr,
-        style: Utilities.fonts.body2(
+        style: Utils.calligraphy.body2(
           textStyle: const TextStyle(
             fontSize: 14.0,
             fontWeight: FontWeight.w500,
@@ -364,7 +365,7 @@ class PostPageHeader extends StatelessWidget {
       opacity: 0.5,
       child: Text(
         "(${"date_last_update".tr()}: $updatedAtStr)",
-        style: Utilities.fonts.body2(
+        style: Utils.calligraphy.body2(
           textStyle: const TextStyle(
             fontSize: 14.0,
             fontWeight: FontWeight.w400,

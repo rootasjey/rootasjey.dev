@@ -15,6 +15,15 @@ class ColorsConstants {
   ];
 
   final List<Color> backgroundPalette = [
+    Colors.blue.shade100,
+    const Color.fromRGBO(253, 239, 245, 1),
+    Colors.amber.shade100,
+    Colors.deepPurple.shade100,
+    Colors.lightGreen.shade100,
+    Colors.pink.shade100,
+  ];
+
+  final List<Color> lightPalette = [
     Colors.blue.shade50,
     const Color.fromRGBO(253, 239, 245, 1),
     Colors.amber.shade50,
@@ -46,6 +55,20 @@ class ColorsConstants {
     return palette.elementAt(Random().nextInt(palette.length));
   }
 
+  Color getRandomBackground() {
+    return backgroundPalette.elementAt(
+      Random().nextInt(backgroundPalette.length),
+    );
+  }
+
+  Color getRandomLight() {
+    return lightPalette.elementAt(Random().nextInt(lightPalette.length));
+  }
+
+  final Color art = Colors.orange;
+  final Color videoMontage = Colors.purple.shade300;
+  final Color terrarium = Colors.green.shade300;
+
   /// Color for statistics.
   final Color activity = Colors.red;
 
@@ -60,7 +83,9 @@ class ColorsConstants {
   /// Color for contests.
   final Color contests = Colors.indigo;
 
-  final Color dark = const Color(0xFF303030);
+  final Color dark = Colors.black;
+  final Color darkBackground = const Color.fromARGB(255, 27, 27, 27);
+  // final Color darkBackground = const Color(0xFF303030);
 
   final Color drafts = Colors.amber.shade600;
 

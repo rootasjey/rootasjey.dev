@@ -5,7 +5,8 @@ import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:rootasjey/components/buttons/circle_button.dart';
 import 'package:rootasjey/components/popup_menu/popup_menu_item_icon.dart';
 import 'package:rootasjey/globals/constants.dart';
-import 'package:rootasjey/globals/utilities.dart';
+import 'package:rootasjey/globals/utils.dart';
+
 import 'package:rootasjey/types/drag_data.dart';
 import 'package:rootasjey/types/enums/enum_project_item_action.dart';
 import 'package:rootasjey/types/project/popup_entry_project.dart';
@@ -257,7 +258,7 @@ class _MiniProjectCardState extends State<MiniProjectCard> {
                   width: _cardSize,
                   height: _cardSize,
                   colorFilter:
-                      widget.deactivated ? Utilities.ui.greyColorFilter : null,
+                      widget.deactivated ? Utils.graphic.greyColorFilter : null,
                   child: InkWell(
                     onHover: (bool isHover) {
                       setState(() {
@@ -451,7 +452,7 @@ class _MiniProjectCardState extends State<MiniProjectCard> {
                       opacity: 0.8,
                       child: Text(
                         popupMenuItemIcon.textLabel,
-                        style: Utilities.fonts.body(
+                        style: Utils.calligraphy.body(
                           textStyle: const TextStyle(
                             fontSize: 16.0,
                             fontWeight: FontWeight.w600,

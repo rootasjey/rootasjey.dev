@@ -9,7 +9,8 @@ import 'package:rootasjey/components/mini_project_card.dart';
 import 'package:rootasjey/components/popup_menu/popup_menu_icon.dart';
 import 'package:rootasjey/components/popup_menu/popup_menu_item_icon.dart';
 import 'package:rootasjey/globals/constants.dart';
-import 'package:rootasjey/globals/utilities.dart';
+import 'package:rootasjey/globals/utils.dart';
+
 import 'package:rootasjey/router/locations/projects_location.dart';
 import 'package:rootasjey/screens/home_page/select_featured_project_dialog.dart';
 import 'package:rootasjey/types/alias/firestore/doc_snapshot_stream_subscription.dart';
@@ -72,13 +73,15 @@ class _ProjectSectionState extends State<ProjectSection> with UiLoggy {
   @override
   void initState() {
     super.initState();
-    tryFetchPageData();
+    fetchPageData();
   }
 
   @override
   Widget build(BuildContext context) {
     final double fontSize =
-        widget.size.width < Utilities.size.mobileWidthTreshold ? 24.0 : 64.0;
+        widget.size.width < Utils.measurements.mobileWidthTreshold
+            ? 24.0
+            : 64.0;
 
     final Signal<UserFirestore> signalUserFirestore =
         context.get(EnumSignalId.userFirestore);
@@ -100,7 +103,7 @@ class _ProjectSectionState extends State<ProjectSection> with UiLoggy {
                 _projectTitle.isEmpty
                     ? "projects_featured".tr()
                     : _projectTitle,
-                style: Utilities.fonts.body5(
+                style: Utils.calligraphy.body5(
                   textStyle: TextStyle(
                     fontSize: fontSize,
                     fontWeight: FontWeight.w600,
@@ -117,64 +120,6 @@ class _ProjectSectionState extends State<ProjectSection> with UiLoggy {
                 children: projectCards(isAuthenticated),
               ),
             ),
-            // Container(
-            //   padding: const EdgeInsets.only(top: 16.0),
-            //   child: Wrap(
-            //     spacing: 12.0,
-            //     runSpacing: 12.0,
-            //     children: [
-            //       MiniProjectCard(
-            //         iconData: UniconsLine.pen,
-            //         label: "Artbooking",
-            //         onHover: onHover,
-            //         color: Colors.pink,
-            //       ),
-            //       MiniProjectCard(
-            //         iconData: UniconsLine.comment,
-            //         label: "fig.style",
-            //         onHover: onHover,
-            //         color: Colors.amber,
-            //       ),
-            //       MiniProjectCard(
-            //         iconData: TablerIcons.heart_medical,
-            //         label: "My Health Partner",
-            //         onHover: onHover,
-            //         color: Colors.blue,
-            //       ),
-            //       MiniProjectCard(
-            //         iconData: UniconsLine.image,
-            //         label: "unsplasharp",
-            //         onHover: onHover,
-            //         color: Colors.green,
-            //       ),
-            //       MiniProjectCard(
-            //         iconData: UniconsLine.cloud_wifi,
-            //         label: "notapokedex",
-            //         onHover: onHover,
-            //         color: Colors.yellow.shade800,
-            //       ),
-            //       MiniProjectCard(
-            //         iconData: UniconsLine.cloud_wifi,
-            //         label: "conway",
-            //         onHover: onHover,
-            //         color: Colors.blueGrey,
-            //       ),
-            //     ],
-            //   ),
-            // ),
-            // TextButton(
-            //   onPressed: onNavigateToAllProjects,
-            //   child: Text(
-            //     "projects_see_all".tr(),
-            //     style: Utilities.fonts.body(
-            //       textStyle: TextStyle(
-            //         fontSize: 16.0,
-            //         fontWeight: FontWeight.w600,
-            //         color: Constants.colors.palette.first,
-            //       ),
-            //     ),
-            //   ),
-            // ),
             Wrap(
               crossAxisAlignment: WrapCrossAlignment.center,
               children: [
@@ -182,7 +127,7 @@ class _ProjectSectionState extends State<ProjectSection> with UiLoggy {
                   onPressed: onNavigateToAllProjects,
                   child: Text(
                     "projects_see_all".tr(),
-                    style: Utilities.fonts.body(
+                    style: Utils.calligraphy.body(
                       textStyle: TextStyle(
                         fontSize: 16.0,
                         fontWeight: FontWeight.w600,
@@ -214,7 +159,7 @@ class _ProjectSectionState extends State<ProjectSection> with UiLoggy {
         onPressed: onToggleEditMode,
         child: Text(
           _canEdit ? "read_only".tr() : "edit".tr(),
-          style: Utilities.fonts.body(
+          style: Utils.calligraphy.body(
             textStyle: TextStyle(
               fontSize: 16.0,
               fontWeight: FontWeight.w600,
@@ -268,7 +213,7 @@ class _ProjectSectionState extends State<ProjectSection> with UiLoggy {
   }
 
   EdgeInsets getMargin() {
-    if (widget.size.width < Utilities.size.mobileWidthTreshold) {
+    if (widget.size.width < Utils.measurements.mobileWidthTreshold) {
       return const EdgeInsets.only(
         left: 16.0,
         right: 16.0,
@@ -294,7 +239,7 @@ class _ProjectSectionState extends State<ProjectSection> with UiLoggy {
   }
 
   /// Fetch page data (mainly featured projects).
-  void tryFetchPageData() async {
+  void fetchPageData() async {
     try {
       final query = FirebaseFirestore.instance
           .collection(_collectionName)
@@ -313,13 +258,13 @@ class _ProjectSectionState extends State<ProjectSection> with UiLoggy {
         _homePageData = HomePageData.fromMap(data);
       });
 
-      tryFetchAllProject();
+      fetchAllProject();
     } catch (error) {
       loggy.error(error);
     }
   }
 
-  void tryFetchAllProject() async {
+  void fetchAllProject() async {
     setState(() {
       _projects.clear();
     });
@@ -328,14 +273,14 @@ class _ProjectSectionState extends State<ProjectSection> with UiLoggy {
         _homePageData.featuredProjects;
 
     for (final FeaturedProject p in featuredProjects) {
-      final Project project = await tryFetchProject(p.id);
+      final Project project = await fetchProject(p.id);
       _projects.add(project);
     }
 
     setState(() {});
   }
 
-  Future<Project> tryFetchProject(String projectId) async {
+  Future<Project> fetchProject(String projectId) async {
     try {
       final DocumentSnapshotMap doc = await FirebaseFirestore.instance
           .collection("projects")
@@ -366,7 +311,7 @@ class _ProjectSectionState extends State<ProjectSection> with UiLoggy {
   }
 
   void openDialog(Project project) {
-    Utilities.ui.showAdaptiveDialog(
+    Utils.graphic.showAdaptiveDialog(
       context,
       builder: (BuildContext context) {
         return SelectFeaturedProjectDialog(
@@ -481,7 +426,7 @@ class _ProjectSectionState extends State<ProjectSection> with UiLoggy {
           return;
         }
 
-        tryFetchAllProject();
+        fetchAllProject();
       },
       onError: (error) {
         loggy.error(error);

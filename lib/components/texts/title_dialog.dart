@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/components/buttons/dot_close_button.dart';
-import 'package:rootasjey/globals/utilities.dart';
+import 'package:rootasjey/globals/utils.dart';
 
 /// A component displaying a title and subtitle with a close button.
 class TitleDialog extends StatelessWidget {
@@ -48,7 +48,7 @@ class TitleDialog extends StatelessWidget {
                       opacity: 0.8,
                       child: Text(
                         titleValue,
-                        style: Utilities.fonts.body(
+                        style: Utils.calligraphy.body(
                           textStyle: const TextStyle(
                             color: Colors.black,
                             fontWeight: FontWeight.w700,
@@ -62,7 +62,7 @@ class TitleDialog extends StatelessWidget {
                       child: Text(
                         subtitleValue,
                         textAlign: TextAlign.center,
-                        style: Utilities.fonts.body(
+                        style: Utils.calligraphy.body(
                           textStyle: const TextStyle(
                             color: Colors.black,
                             fontWeight: FontWeight.w700,

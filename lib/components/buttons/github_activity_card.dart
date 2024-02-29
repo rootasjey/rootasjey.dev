@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:github/github.dart';
 import 'package:jiffy/jiffy.dart';
-import 'package:rootasjey/globals/utilities.dart';
+import 'package:rootasjey/globals/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class GitHubActivityCard extends StatefulWidget {
@@ -53,7 +53,7 @@ class _GitHubActivityCardState extends State<GitHubActivityCard> {
                     child: Text(
                       Jiffy.parseFromDateTime(event.createdAt ?? DateTime.now())
                           .fromNow(),
-                      style: Utilities.fonts.body5(
+                      style: Utils.calligraphy.body5(
                         textStyle: const TextStyle(
                           fontSize: 14.0,
                           fontWeight: FontWeight.w400,
@@ -65,7 +65,7 @@ class _GitHubActivityCardState extends State<GitHubActivityCard> {
                   opacity: 0.8,
                   child: Text(
                     event.repo?.name ?? "",
-                    style: Utilities.fonts.body2(
+                    style: Utils.calligraphy.body2(
                       textStyle: const TextStyle(
                         fontSize: 16.0,
                         fontWeight: FontWeight.w400,
@@ -78,7 +78,7 @@ class _GitHubActivityCardState extends State<GitHubActivityCard> {
                     opacity: 0.6,
                     child: Text(
                       eventType,
-                      style: Utilities.fonts.code(
+                      style: Utils.calligraphy.code(
                         textStyle: const TextStyle(
                           fontSize: 14.0,
                           fontWeight: FontWeight.w600,

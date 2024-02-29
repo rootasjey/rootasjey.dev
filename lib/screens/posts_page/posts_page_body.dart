@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:rootasjey/components/application_bar.dart';
 import 'package:rootasjey/components/post_card.dart';
-import 'package:rootasjey/globals/utilities.dart';
+import 'package:rootasjey/globals/utils.dart';
+
 import 'package:rootasjey/types/enums/enum_post_item_action.dart';
 import 'package:rootasjey/types/intents/escape_intent.dart';
 import 'package:rootasjey/types/intents/next_intent.dart';
@@ -56,7 +57,7 @@ class PostsPageBody extends StatelessWidget {
   Widget build(BuildContext context) {
     const double maxCrossAxisExtent = 800.0;
     final bool isMobileSize =
-        windowSize.width < Utilities.size.mobileWidthTreshold;
+        windowSize.width < Utils.measurements.mobileWidthTreshold;
     final double maxWidth = isMobileSize ? windowSize.width - 40.0 : 580.0;
 
     return Shortcuts(
@@ -85,7 +86,7 @@ class PostsPageBody extends StatelessWidget {
                   child: SliverToBoxAdapter(
                     child: Text(
                       "posts".tr().toUpperCase(),
-                      style: Utilities.fonts.body2(
+                      style: Utils.calligraphy.body2(
                         textStyle: const TextStyle(
                           fontSize: 24.0,
                           fontWeight: FontWeight.w700,

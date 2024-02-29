@@ -6,7 +6,7 @@ import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:rootasjey/components/buttons/dark_elevated_button.dart';
 import 'package:rootasjey/components/icons/app_icon.dart';
 import 'package:rootasjey/globals/constants.dart';
-import 'package:rootasjey/globals/utilities.dart';
+import 'package:rootasjey/globals/utils.dart';
 
 class CreatePostPage extends StatefulWidget {
   const CreatePostPage({
@@ -84,7 +84,7 @@ class _CreateProjectPageState extends State<CreatePostPage> {
         ),
         Text(
           "post_create_new".tr(),
-          style: Utilities.fonts.body(
+          style: Utils.calligraphy.body(
             textStyle: const TextStyle(
               fontSize: 32.0,
               fontWeight: FontWeight.w600,
@@ -98,7 +98,7 @@ class _CreateProjectPageState extends State<CreatePostPage> {
             child: Text(
               "post_create_new_subtitle".tr(),
               textAlign: TextAlign.center,
-              style: Utilities.fonts.body2(
+              style: Utils.calligraphy.body2(
                 textStyle: const TextStyle(
                   fontSize: 18.0,
                   fontWeight: FontWeight.w600,
@@ -124,7 +124,7 @@ class _CreateProjectPageState extends State<CreatePostPage> {
             children: [
               Text(
                 "post_name".tr(),
-                style: Utilities.fonts.body(
+                style: Utils.calligraphy.body(
                   textStyle: const TextStyle(
                     fontSize: 16.0,
                     fontWeight: FontWeight.w600,
@@ -187,7 +187,7 @@ class _CreateProjectPageState extends State<CreatePostPage> {
             children: [
               Text(
                 "post_summary".tr(),
-                style: Utilities.fonts.body(
+                style: Utils.calligraphy.body(
                   textStyle: const TextStyle(
                     fontSize: 16.0,
                     fontWeight: FontWeight.w600,
@@ -261,7 +261,7 @@ class _CreateProjectPageState extends State<CreatePostPage> {
                 children: [
                   Text(
                     "create".tr(),
-                    style: Utilities.fonts.body(
+                    style: Utils.calligraphy.body(
                       textStyle: const TextStyle(
                         fontSize: 16.0,
                         fontWeight: FontWeight.w700,

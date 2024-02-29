@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_solidart/flutter_solidart.dart';
 import 'package:rootasjey/components/upload_panel/upload_panel_body.dart';
 import 'package:rootasjey/components/upload_panel/upload_panel_header.dart';
-import 'package:rootasjey/globals/utilities.dart';
+
 import 'package:rootasjey/globals/utils.dart';
 import 'package:rootasjey/types/custom_upload_task.dart';
 import 'package:rootasjey/types/enums/enum_signal_id.dart';
@@ -63,7 +63,7 @@ class _UploadWindowState extends State<UploadPanel> {
 
     final Size windowSize = MediaQuery.of(context).size;
     final bool isMobileSize =
-        windowSize.width < Utilities.size.mobileWidthTreshold;
+        windowSize.width < Utils.measurements.mobileWidthTreshold;
 
     final Color backgroundColor = Theme.of(context).scaffoldBackgroundColor;
 
@@ -71,6 +71,13 @@ class _UploadWindowState extends State<UploadPanel> {
       margin: EdgeInsets.zero,
       elevation: isMobileSize ? 0.0 : 4.0,
       color: backgroundColor,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8.0),
+        side: BorderSide(
+          color: Theme.of(context).dividerColor,
+          width: 1.0,
+        ),
+      ),
       child: AnimatedContainer(
         width: isMobileSize ? windowSize.width : _width,
         height: _height,
@@ -108,10 +115,10 @@ class _UploadWindowState extends State<UploadPanel> {
   }
 
   void onShowBottomSheet(List<CustomUploadTask> uploadTaskList) {
-    final bool isMobileSize = Utilities.size.isMobileSize(context);
+    final bool isMobileSize = Utils.measurements.isMobileSize(context);
     final Color backgroundColor = Theme.of(context).scaffoldBackgroundColor;
 
-    Utilities.ui.showAdaptiveDialog(
+    Utils.graphic.showAdaptiveDialog(
       context,
       isMobileSize: isMobileSize,
       builder: (BuildContext context) {

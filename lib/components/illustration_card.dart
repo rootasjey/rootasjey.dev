@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:rootasjey/components/popup_menu/popup_menu_item_icon.dart';
 import 'package:rootasjey/globals/constants.dart';
-import 'package:rootasjey/globals/utilities.dart';
+import 'package:rootasjey/globals/utils.dart';
+
 import 'package:rootasjey/types/drag_data.dart';
 import 'package:rootasjey/types/enums/enum_illustration_item_action.dart';
 import 'package:rootasjey/types/illustration/illustration.dart';
@@ -366,7 +367,7 @@ class _IllustrationCardState extends State<IllustrationCard>
           ? textValue
           : "illustration_permutation_description".tr(),
       textAlign: TextAlign.center,
-      style: Utilities.fonts.body3(
+      style: Utils.calligraphy.body3(
         textStyle: const TextStyle(
           fontSize: 18.0,
           fontWeight: FontWeight.w600,
@@ -438,7 +439,7 @@ class _IllustrationCardState extends State<IllustrationCard>
                     padding: const EdgeInsets.all(16.0),
                     child: Text(
                       "image_load_failed".tr(),
-                      style: Utilities.fonts.body(
+                      style: Utils.calligraphy.body(
                         textStyle: const TextStyle(
                           fontWeight: FontWeight.w700,
                         ),
@@ -724,7 +725,7 @@ class _IllustrationCardState extends State<IllustrationCard>
                       opacity: 0.8,
                       child: Text(
                         popupMenuItemIcon.textLabel,
-                        style: Utilities.fonts.body(
+                        style: Utils.calligraphy.body(
                           textStyle: const TextStyle(
                             fontSize: 16.0,
                             fontWeight: FontWeight.w600,

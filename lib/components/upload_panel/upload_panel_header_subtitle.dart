@@ -1,6 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:rootasjey/globals/utilities.dart';
+import 'package:rootasjey/globals/utils.dart';
 
 class UploadPanelHeaderSubtitle extends StatelessWidget {
   const UploadPanelHeaderSubtitle({
@@ -35,7 +35,7 @@ class UploadPanelHeaderSubtitle extends StatelessWidget {
       opacity: 0.6,
       child: Text(
         getWindowSubtitle(),
-        style: Utilities.fonts.body(
+        style: Utils.calligraphy.body(
           textStyle: const TextStyle(
             fontWeight: FontWeight.w600,
           ),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rootasjey/globals/constants.dart';
-import 'package:rootasjey/globals/utilities.dart';
+import 'package:rootasjey/globals/utils.dart';
 
 class DarkElevatedButton extends StatelessWidget {
   const DarkElevatedButton({
@@ -25,7 +25,7 @@ class DarkElevatedButton extends StatelessWidget {
       style: ElevatedButton.styleFrom(
         foregroundColor: Colors.white,
         backgroundColor: backgroundColor ?? Colors.black,
-        textStyle: Utilities.fonts.body(
+        textStyle: Utils.calligraphy.body(
           textStyle: const TextStyle(
             fontWeight: FontWeight.w600,
           ),
@@ -52,7 +52,7 @@ class DarkElevatedButton extends StatelessWidget {
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.black87,
           minimumSize: const Size(340.0, 0.0),
-          textStyle: Utilities.fonts.body(
+          textStyle: Utils.calligraphy.body(
             textStyle: const TextStyle(
               fontWeight: FontWeight.w500,
             ),
@@ -95,7 +95,7 @@ class DarkElevatedButton extends StatelessWidget {
           padding: const EdgeInsets.only(right: 8.0),
           child: Text(
             labelValue,
-            style: Utilities.fonts.body(
+            style: Utils.calligraphy.body(
               textStyle: TextStyle(
                 color: foreground,
                 fontWeight: FontWeight.w700,
@@ -124,7 +124,7 @@ class DarkElevatedButton extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(4.0),
         ),
-        textStyle: Utilities.fonts.body(
+        textStyle: Utils.calligraphy.body(
           textStyle: const TextStyle(
             fontWeight: FontWeight.w600,
           ),
