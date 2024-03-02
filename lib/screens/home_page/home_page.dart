@@ -32,6 +32,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final bool useTinyText = Utils.measurements.isMobileSize(context);
     final Brightness brightness = Theme.of(context).brightness;
     final bool isDark = brightness == Brightness.dark;
     final Color? foregroundColor =
@@ -48,8 +49,8 @@ class _HomePageState extends State<HomePage> {
                 TextSpan(
                   text: Constants.appName,
                   style: Utils.calligraphy.body(
-                    textStyle: const TextStyle(
-                      fontSize: 112.0,
+                    textStyle: TextStyle(
+                      fontSize: useTinyText ? 64.0 : 112.0,
                       fontWeight: FontWeight.w800,
                       height: 1.0,
                     ),

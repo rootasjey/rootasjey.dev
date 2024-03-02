@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:beamer/beamer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -25,6 +26,7 @@ import 'package:rootasjey/types/alias/firestore/query_snap_map.dart';
 import 'package:rootasjey/types/alias/firestore/query_snapshot_stream_subscription.dart';
 import 'package:rootasjey/types/alias/json_alias.dart';
 import 'package:rootasjey/types/enums/enum_illustration_item_action.dart';
+import 'package:rootasjey/types/enums/enum_page_state.dart';
 import 'package:rootasjey/types/enums/enum_signal_id.dart';
 import 'package:rootasjey/types/illustration/illustration.dart';
 import 'package:rootasjey/types/intents/escape_intent.dart';
@@ -49,28 +51,28 @@ class _DrawingsPageState extends State<IllustrationsPage> with UiLoggy {
   /// True if there're more posts to fetch.
   bool _hasNext = true;
 
-  /// True if the page is fetching illustrations.
-  bool _loading = false;
+  /// Page state (e.g. idle, loading).
+  EnumPageState _pageState = EnumPageState.idle;
 
-  /// True if the app is fetching more illustration data.
-  bool _loadingMore = false;
-
+  /// Accent color for border and title.
   Color _accentColor = Colors.blue;
 
   /// Last document fetched from Firestore.
   DocumentSnapshot? _lastDocument;
 
-  /// Maximum posts fetch per page.
-  final int _limit = 10;
+  final int _pageSize = 9;
+
+  /// Current page of the illustration list.
+  int _currentPage = 0;
+
+  /// Total page of the illustration list.
+  int _totalPage = 0;
 
   /// List of illustrations.
   final List<Illustration> _illustrations = [];
 
   /// Listens to posts' updates.
   QuerySnapshotStreamSubscription? _illustrationSubscription;
-
-  /// Page scroll controller.
-  final ScrollController _pageScrollController = ScrollController();
 
   /// Firestore collection name.
   final String _collectionName = "illustrations";
@@ -85,13 +87,12 @@ class _DrawingsPageState extends State<IllustrationsPage> with UiLoggy {
   @override
   void dispose() {
     _illustrationSubscription?.cancel();
-    _pageScrollController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_loading) {
+    if (_pageState == EnumPageState.loading) {
       return LoadingView.scaffold(
         message: "illustrations_loading".tr(),
       );
@@ -119,10 +120,21 @@ class _DrawingsPageState extends State<IllustrationsPage> with UiLoggy {
       );
     }
 
+    final int startIndex = _currentPage * _pageSize;
+    final int endIndex = min(_illustrations.length, startIndex + _pageSize);
+
     return wrapWithShortcuts(
       child: IllustrationsPageBody(
         accentColor: _accentColor,
-        illustrations: _illustrations,
+        hasNext: _hasNext,
+        onNextPage: onNextPage,
+        onPreviousPage: onPreviousPage,
+        currentPage: _currentPage,
+        totalPage: _totalPage,
+        illustrations: _illustrations.sublist(
+          max(0, startIndex),
+          min(_illustrations.length, endIndex),
+        ),
         expandLicensePanel: _expandLicensePanel,
         onToggleExpandLicensePanel: onToggleExpandLicensePanel,
         fab: IllustrationsPageFab(
@@ -168,19 +180,19 @@ class _DrawingsPageState extends State<IllustrationsPage> with UiLoggy {
 
   void fetchIllustrations() async {
     setState(() {
-      _loading = true;
+      _pageState = EnumPageState.loading;
       _hasNext = true;
       _illustrations.clear();
     });
+
     try {
       final QueryMap query = getFetchQuery();
       final QuerySnapMap snapshot = await query.get();
-
       listenIllustrationsEvents(getListenQuery());
 
       if (snapshot.docs.isEmpty) {
         setState(() {
-          _loading = false;
+          _pageState = EnumPageState.idle;
           _hasNext = false;
         });
 
@@ -197,37 +209,38 @@ class _DrawingsPageState extends State<IllustrationsPage> with UiLoggy {
 
       if (!mounted) return;
       setState(() {
-        _loading = false;
+        _pageState = EnumPageState.idle;
         _lastDocument = snapshot.docs.last;
-        _hasNext = snapshot.docs.length == _limit;
+        _hasNext = snapshot.docs.length == _pageSize;
+        _totalPage = _illustrations.length ~/ _pageSize;
       });
     } catch (error) {
       if (!mounted) return;
-      setState(() => _loading = false);
+      setState(() => _pageState = EnumPageState.idle);
       loggy.error(error);
     }
   }
 
   /// Fetch more illustrations data from Firestore.
   void fetchMoreIllustrations() async {
-    if (!_hasNext || _lastDocument == null || _loadingMore) {
+    if (!_hasNext ||
+        _lastDocument == null ||
+        _pageState == EnumPageState.loadingMore) {
+      setState(() {});
       return;
     }
 
-    _loadingMore = true;
+    _pageState = EnumPageState.loadingMore;
 
     try {
       final QueryMap? query = getFetchMoreQuery();
-      if (query == null) {
-        return;
-      }
-
+      if (query == null) return;
       final QuerySnapMap snapshot = await query.get();
 
       if (snapshot.docs.isEmpty) {
         setState(() {
           _hasNext = false;
-          _loadingMore = false;
+          _pageState = EnumPageState.idle;
         });
 
         return;
@@ -236,21 +249,20 @@ class _DrawingsPageState extends State<IllustrationsPage> with UiLoggy {
       for (QueryDocSnapMap document in snapshot.docs) {
         final Json data = document.data();
         data["id"] = document.id;
-
         _illustrations.add(Illustration.fromMap(data));
       }
 
       setState(() {
         _lastDocument = snapshot.docs.last;
-        _hasNext = snapshot.docs.length == _limit;
-        _loadingMore = false;
+        _hasNext = snapshot.docs.length == _pageSize;
+        _pageState = EnumPageState.idle;
+        _totalPage = _illustrations.length ~/ _pageSize;
       });
 
       listenIllustrationsEvents(getListenQuery());
     } catch (error) {
       loggy.error(error);
-    } finally {
-      _loadingMore = false;
+      setState(() => _pageState = EnumPageState.idle);
     }
   }
 
@@ -267,11 +279,17 @@ class _DrawingsPageState extends State<IllustrationsPage> with UiLoggy {
   /// Return query to fetch illustrations according to the selected tab.
   /// It's either active illustrations or archvied ones.
   QueryMap getFetchQuery() {
-    return FirebaseFirestore.instance
+    final query = FirebaseFirestore.instance
         .collection(_collectionName)
         .where("visibility", isEqualTo: "public")
         .orderBy("user_custom_index", descending: true)
-        .limit(_limit);
+        .limit(_pageSize);
+
+    if (_lastDocument == null) {
+      return query;
+    }
+
+    return query.startAfterDocument(_lastDocument as DocumentSnapshot);
   }
 
   /// Return query to fetch more illustrations according to the selected tab.
@@ -286,7 +304,7 @@ class _DrawingsPageState extends State<IllustrationsPage> with UiLoggy {
         .collection(_collectionName)
         .where("visibility", isEqualTo: "public")
         .orderBy("user_custom_index", descending: true)
-        .limit(_limit)
+        .limit(_pageSize)
         .startAfterDocument(lastDocument);
   }
 
@@ -469,5 +487,17 @@ class _DrawingsPageState extends State<IllustrationsPage> with UiLoggy {
 
   void onGoToExternalLicense() {
     launchUrl(Uri.parse("https://creativecommons.org/licenses/by-sa/4.0"));
+  }
+
+  void onNextPage() {
+    final int nextPage = _currentPage + 1;
+    _currentPage = _hasNext ? nextPage : min(_totalPage, nextPage);
+    fetchMoreIllustrations();
+  }
+
+  void onPreviousPage() {
+    setState(() {
+      _currentPage = max(0, _currentPage - 1);
+    });
   }
 }

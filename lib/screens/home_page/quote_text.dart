@@ -9,11 +9,24 @@ class QuoteText extends StatefulWidget {
     required this.quoteText,
     this.author = "",
     this.reference = "",
+    this.textStyle,
+    this.metaTextStyle,
   });
 
+  /// Quote text to display.
   final String quoteText;
+
+  /// Author of the quote.
   final String author;
+
+  /// Reference of the quote.
   final String reference;
+
+  /// Quote text's style.
+  final TextStyle? textStyle;
+
+  /// Author & reference text's style.
+  final TextStyle? metaTextStyle;
 
   @override
   State<QuoteText> createState() => _QuoteTextState();
@@ -72,7 +85,7 @@ class _QuoteTextState extends State<QuoteText> {
                       blurRadius: 2.0,
                     ),
                   ],
-                ),
+                ).merge(widget.textStyle),
               ),
               TextSpan(
                 text: metaText,
@@ -80,7 +93,7 @@ class _QuoteTextState extends State<QuoteText> {
                   textStyle: TextStyle(
                     fontSize: 24.0,
                     color: foregroundColor?.withOpacity(0.4),
-                  ),
+                  ).merge(widget.metaTextStyle),
                 ),
               ),
             ],
