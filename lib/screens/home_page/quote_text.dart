@@ -37,6 +37,8 @@ class _QuoteTextState extends State<QuoteText> {
 
   @override
   Widget build(BuildContext context) {
+    final Brightness brightness = Theme.of(context).brightness;
+    final bool isDark = brightness == Brightness.dark;
     final Color? foregroundColor =
         Theme.of(context).textTheme.bodyMedium?.color;
 
@@ -78,10 +80,11 @@ class _QuoteTextState extends State<QuoteText> {
               TextSpan(
                 text: widget.quoteText,
                 style: TextStyle(
+                  color: isDark ? Constants.colors.getRandomBackground() : null,
                   shadows: [
                     Shadow(
                       color: _shadowColor,
-                      offset: const Offset(4, 4),
+                      offset: isDark ? const Offset(0, 0) : const Offset(4, 4),
                       blurRadius: 2.0,
                     ),
                   ],

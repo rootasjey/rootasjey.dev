@@ -266,6 +266,12 @@
   "freelancer_profiles": "Ci-dessous se trouvent mes profiles de freelance",
   "github": "GitHub",
   "github_description": "Ceci est mon activité publique sur la programmation. J'utilise principalement GitHub pour mes projets, et sont généralement sour la licence ",
+  "go": {
+    "down": "Aller en bas",
+    "left": "Aller à gauche",
+    "right": "Aller à droite",
+    "up": "Aller en haut"
+  },
   "hint_blog": "Vous voulez écrire des articles et des histoires sur vos centres d'intérêt. Comme un blog ou un journal en ligne.",
   "hint_profilio": "Vous souhaitez exposer votre travail et vos projets. Si vous êtes un artiste par exemple.",
   "hint_showcase": "Vous aimeriez une application comportant plusieurs page pour expliquer un business, avec une page de mise en relation.",
@@ -612,6 +618,7 @@
   "share_on_twitter": "Partager sur Twitter",
   "short_bio": "Je suis un entrepreneur et développeur freelance.",
   "showcase": "Exposition",
+  "shuffle_color": "Mélanger les couleurs",
   "signin": "Se connecter",
   "signingin": "Connexion",
   "signin_existing_account": "Se connecter à un compte existant",

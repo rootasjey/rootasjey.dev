@@ -266,6 +266,12 @@
   "freelancer_profiles": "Below are my freelancer profiles",
   "github": "GitHub",
   "github_description": "This is my public activity about programming. I mainly use GitHub for my projects, and most of them are under ",
+  "go": {
+    "down": "Go down",
+    "left": "Go left",
+    "right": "Go right",
+    "up": "Go up"
+  },
   "hint_blog": "You want to write posts and stories about your favourites subjects. Like an online journal.",
   "hint_profilio": "You want to display your work and projects. For example if you're an artist.",
   "hint_showcase": "You want an app with a few pages to showcase a business or something else, with a contact page. This can typically be a bakery website.",
@@ -613,6 +619,7 @@
   "share_on_twitter": "Share on Twitter",
   "short_bio": "I'm a french entrepreneur and freelance developer.",
   "showcase": "Showcase",
+  "shuffle_color": "Shuffle color",
   "signin": "Sign in",
   "signingin": "Signing in",
   "signin_existing_account": "Connect to your existing account",

@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:loggy/loggy.dart';
@@ -24,49 +27,17 @@ class TwoDimensionalGridContainer extends StatefulWidget {
 
 class _TwoDimensionalGridContainerState
     extends State<TwoDimensionalGridContainer> with UiLoggy {
-  /// Accent color.
-  // Color _accentColor = Colors.amber.shade100;
-
-  // bool _shouldRepaintUi = false;
-
-  Size _previousSize = Size.zero;
+  bool _reverseArrowDown = false;
+  bool _reverseArrowRight = false;
 
   /// Background color.
   Color _backgroundColor = Colors.blue.shade50;
 
-  /// Horizontal scroll controller.
-  static final ScrollController _hScrollController = ScrollController();
+  /// Current column index in the grid (according to the scroll controllers x•y).
+  int _currentColumn = 0;
 
-  /// Vertical scroll controller.
-  static final ScrollController _vScrollController = ScrollController();
-
-  /// Window's size.
-  static Size _windowSize = Size.zero;
-
-  /// Grid of widgets to display.
-  final List<List<Widget?>> _grid = [
-    [
-      const QuotePage(key: ValueKey("about-me")),
-      const IllustrationsPage(
-        key: ValueKey("illustrations-page"),
-        onGoToHomePage: onGoToHomePage,
-      ),
-      const UndefinedPage(),
-    ],
-    [
-      const MenuCategoriesPage(),
-      const HomePage(
-        key: ValueKey("home-page"),
-        onGoToPage: onGoToPage,
-      ),
-      const VideoMontagesPage(key: ValueKey("video-montages-page")),
-    ],
-    [
-      const UndefinedPage(),
-      const ProjectsPage(key: ValueKey("projects-page")),
-      const UndefinedPage(),
-    ],
-  ];
+  /// Current row index in the grid (according to the scroll controllers x•y).
+  int _currentRow = 0;
 
   /// Initial horizontal page index in the [_grid] to display.
   static const int _hStartPage = 1;
@@ -74,9 +45,60 @@ class _TwoDimensionalGridContainerState
   /// Initial vertical page index in the [_grid] to display.
   static const int _vStartPage = 1;
 
-  /// Current horizontal & vertical page index in the [_grid] visible.
-  /// Useful for navigating with the arrow buttons.
-  TableVicinity _vicinity = const TableVicinity(row: 1, column: 1);
+  /// Grid of widgets to display.
+  final List<List<Widget?>> _grid = [
+    [
+      const QuotePage(
+        quoteName: "Le bonheur ne reside pas au kilomètre final "
+            "qui n'existera jamais, mais au kilomètre zéro, "
+            "qui commence a chaque instant.",
+        quoteAuthor: "Shanti",
+        quoteReference: "Kilomètre zero",
+      ),
+      const IllustrationsPage(
+        onGoToHomePage: onGoToHomePage,
+      ),
+      const UndefinedPage(),
+      const UndefinedPage(),
+    ],
+    [
+      const MenuCategoriesPage(),
+      const HomePage(
+        onGoToPage: onGoToPage,
+      ),
+      const VideoMontagesPage(),
+      const UndefinedPage(),
+    ],
+    [
+      const UndefinedPage(),
+      const ProjectsPage(),
+      const UndefinedPage(),
+      const UndefinedPage(),
+    ],
+  ];
+
+  /// Horizontal scroll controller.
+  static final ScrollController _hScrollController = ScrollController();
+
+  /// Vertical scroll controller.
+  static final ScrollController _vScrollController = ScrollController();
+
+  /// Previous window's size (used to compare to the current window's size).
+  /// Used to rebuild the UI when the window's size changes.
+  Size _previousSize = Size.zero;
+
+  /// Window's size.
+  static Size _windowSize = Size.zero;
+
+  /// Timer used to delay new column affectation.
+  /// (New column index is calculated on every scroll position,
+  /// so the affection would trigger ~60 fram per second).
+  Timer? _setColTimer;
+
+  /// Timer used to delay new row affectation.
+  /// (New row index is calculated on every scroll position,
+  /// so the affection would trigger ~60 fram per second).
+  Timer? _setRowTimer;
 
   @override
   void initState() {
@@ -88,8 +110,11 @@ class _TwoDimensionalGridContainerState
         _hStartPage * _windowSize.width,
       );
 
+      _currentColumn = _hStartPage;
+      _currentRow = _vStartPage;
       _vScrollController.jumpTo(_vStartPage * _windowSize.height);
-      _vicinity = const TableVicinity(row: _vStartPage, column: _hStartPage);
+      _hScrollController.addListener(onHorizontalScroll);
+      _vScrollController.addListener(onVerticalScroll);
     });
   }
 
@@ -97,6 +122,8 @@ class _TwoDimensionalGridContainerState
   void dispose() {
     _hScrollController.dispose();
     _vScrollController.dispose();
+    _setColTimer?.cancel();
+    _setRowTimer?.cancel();
     super.dispose();
   }
 
@@ -117,6 +144,12 @@ class _TwoDimensionalGridContainerState
         message: "Rebuilding complex UI...",
       );
     }
+
+    _reverseArrowDown = _currentRow >= _grid.length - 1;
+    _reverseArrowRight = _currentColumn >= _grid[_currentRow].length - 1;
+    // final bool reverseArrowDown = _currentRow >= _grid.length - 1;
+    // final bool reverseArrowRight =
+    //     _currentColumn >= _grid[_currentRow].length - 1;
 
     return Scaffold(
       backgroundColor: _backgroundColor,
@@ -164,32 +197,32 @@ class _TwoDimensionalGridContainerState
             },
           ),
           Positioned(
-            bottom: 36.0,
+            bottom: 24.0,
             right: 8.0,
             child: Utils.graphic.tooltip(
-              tooltipString: "go down",
+              tooltipString: _reverseArrowDown ? "go.up".tr() : "go.down".tr(),
               child: IconButton(
-                onPressed: () {
-                  _vScrollController.animateTo(
-                    (_vicinity.row + 1) * _windowSize.width,
-                    duration: const Duration(milliseconds: 250),
-                    curve: Curves.decelerate,
-                  );
-                },
+                onPressed: _reverseArrowDown ? onTapArrowUp : onTapArrowDown,
                 color: foregroundColor?.withOpacity(0.6),
-                icon: const Icon(TablerIcons.arrow_down),
+                icon: _reverseArrowDown
+                    ? const Icon(TablerIcons.arrow_up)
+                    : const Icon(TablerIcons.arrow_down),
               ),
             ),
           ),
           Positioned(
             bottom: 8.0,
-            right: 36.0,
+            right: 24.0,
             child: Utils.graphic.tooltip(
-              tooltipString: "go right",
+              tooltipString:
+                  _reverseArrowRight ? "go.left".tr() : "go.right".tr(),
               child: IconButton(
-                onPressed: () {},
+                onPressed:
+                    _reverseArrowRight ? onTapArrowLeft : onTapArrowRight,
                 color: foregroundColor?.withOpacity(0.6),
-                icon: const Icon(TablerIcons.arrow_right),
+                icon: _reverseArrowRight
+                    ? const Icon(TablerIcons.arrow_left)
+                    : const Icon(TablerIcons.arrow_right),
               ),
             ),
           ),
@@ -198,6 +231,7 @@ class _TwoDimensionalGridContainerState
     );
   }
 
+  /// Callback to go to home page.
   static void onGoToHomePage() {
     _hScrollController.animateTo(
       _hStartPage * _windowSize.width,
@@ -211,6 +245,7 @@ class _TwoDimensionalGridContainerState
     );
   }
 
+  /// Callback to go to a specific page.
   static void onGoToPage(String pageName) {
     switch (pageName) {
       case "illustrations-page":
@@ -232,5 +267,105 @@ class _TwoDimensionalGridContainerState
         );
         break;
     }
+  }
+
+  /// Callback called when the user scrolls horizontally.
+  void onHorizontalScroll() {
+    final int newColIndex = (_hScrollController.offset / _windowSize.width)
+        .round()
+        .clamp(0, _grid[0].length - 1);
+    setDelayedColumn(newColIndex);
+  }
+
+  /// Callback called when the user taps on the arrow down.
+  void onTapArrowDown() async {
+    final int newRowIndex = _currentRow + 1;
+    if (newRowIndex >= _grid.length) {
+      return;
+    }
+
+    await _vScrollController.animateTo(
+      newRowIndex * _windowSize.width,
+      duration: const Duration(milliseconds: 250),
+      curve: Curves.decelerate,
+    );
+  }
+
+  /// Callback called when the user taps on the arrow up.
+  void onTapArrowUp() {
+    final int newRowIndex = _currentRow - 1;
+    if (newRowIndex < 0) {
+      return;
+    }
+
+    _vScrollController.animateTo(
+      newRowIndex * _windowSize.width,
+      duration: const Duration(milliseconds: 250),
+      curve: Curves.decelerate,
+    );
+  }
+
+  /// Callback called when the user taps on the arrow left.
+  void onTapArrowLeft() {
+    final int newColIndex = _currentColumn - 1;
+    if (newColIndex < 0) {
+      return;
+    }
+
+    _hScrollController.animateTo(
+      newColIndex * _windowSize.width,
+      duration: const Duration(milliseconds: 250),
+      curve: Curves.decelerate,
+    );
+  }
+
+  /// Callback called when the user taps on the arrow right.
+  void onTapArrowRight() {
+    final int newColIndex = _currentColumn + 1;
+    if (newColIndex >= _grid[_currentRow].length) {
+      return;
+    }
+
+    _hScrollController.animateTo(
+      newColIndex * _windowSize.width,
+      duration: const Duration(milliseconds: 250),
+      curve: Curves.decelerate,
+    );
+  }
+
+  /// Callback called when the user scrolls vertically.
+  void onVerticalScroll() {
+    final int newRowIndex = (_vScrollController.offset / _windowSize.height)
+        .round()
+        .clamp(0, _grid.length - 1);
+    setDelayedRow(newRowIndex);
+  }
+
+  /// Save the current column index in the grid.
+  void setDelayedColumn(int newColumnIndex) {
+    _setColTimer?.cancel();
+    _setColTimer = Timer(const Duration(milliseconds: 250), () {
+      _currentColumn = newColumnIndex;
+
+      // Update arrow direction if we can't go down anymore.
+      if (newColumnIndex >= _grid[_currentRow].length - 1 &&
+          !_reverseArrowRight) {
+        setState(() {
+          _reverseArrowRight = true;
+        });
+      } else if (newColumnIndex <= 0 && _reverseArrowRight) {
+        setState(() {
+          _reverseArrowRight = false;
+        });
+      }
+    });
+  }
+
+  /// Save the current row index in the grid.
+  void setDelayedRow(int newRowIndex) {
+    _setRowTimer?.cancel();
+    _setRowTimer = Timer(const Duration(milliseconds: 250), () {
+      _currentRow = newRowIndex;
+    });
   }
 }

@@ -226,7 +226,11 @@ class IllustrationsPageBody extends StatelessWidget {
                                     ),
                                     child: const Padding(
                                       padding: EdgeInsets.all(4.0),
-                                      child: Icon(TablerIcons.x, size: 18.0),
+                                      child: Icon(
+                                        TablerIcons.x,
+                                        size: 18.0,
+                                        color: Colors.black,
+                                      ),
                                     ),
                                   ),
                                 ),

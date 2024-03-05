@@ -38,7 +38,7 @@ If you wish to clone and/or run this project, you'll need a Firebase account wit
 
 I drew this concept before starting coding.<br/>
 It's a snapping grid which can be scrolled vertically and horizontally.<br/>
-Each screen has its own experience 😍.
+Each screen has its own experience 😍
 
 <p align="center">
   <img src="./screenshots/concept-v4-dark.jpg" alt="rootasjey's universe"/>

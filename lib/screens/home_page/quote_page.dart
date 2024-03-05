@@ -5,11 +5,23 @@ import 'package:rootasjey/screens/home_page/quote_text.dart';
 class QuotePage extends StatelessWidget {
   const QuotePage({
     super.key,
+    required this.quoteName,
+    this.quoteAuthor = "",
+    this.quoteReference = "",
     this.size = Size.zero,
   });
 
   /// Window's size.
   final Size size;
+
+  /// Quote's content.
+  final String quoteName;
+
+  /// Quote's author.
+  final String quoteAuthor;
+
+  /// Quote's reference.
+  final String quoteReference;
 
   @override
   Widget build(BuildContext context) {
@@ -25,11 +37,9 @@ class QuotePage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 QuoteText(
-                  quoteText: "Le bonheur ne reside pas au kilomètre final "
-                      "qui n'existera jamais, mais au kilomètre zéro, "
-                      "qui commence a chaque instant.",
-                  author: "Shanti",
-                  reference: "Kilomètre zero",
+                  quoteText: quoteName,
+                  author: quoteAuthor,
+                  reference: quoteReference,
                   textStyle: TextStyle(
                     fontSize: useTinyText ? 18.0 : 24.0,
                   ),
