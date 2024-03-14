@@ -139,6 +139,10 @@ class _TwoDimensionalGridContainerState
       _previousSize = _windowSize;
       Future.delayed(const Duration(milliseconds: 1000), () {
         setState(() {});
+        WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+          _vScrollController.jumpTo(_currentRow * _windowSize.height);
+          _hScrollController.jumpTo(_currentColumn * _windowSize.width);
+        });
       });
       return LoadingView.scaffold(
         message: "Rebuilding complex UI...",
@@ -147,9 +151,6 @@ class _TwoDimensionalGridContainerState
 
     _reverseArrowDown = _currentRow >= _grid.length - 1;
     _reverseArrowRight = _currentColumn >= _grid[_currentRow].length - 1;
-    // final bool reverseArrowDown = _currentRow >= _grid.length - 1;
-    // final bool reverseArrowRight =
-    //     _currentColumn >= _grid[_currentRow].length - 1;
 
     return Scaffold(
       backgroundColor: _backgroundColor,

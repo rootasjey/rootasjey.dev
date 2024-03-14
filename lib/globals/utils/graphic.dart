@@ -229,6 +229,7 @@ class Graphic with UiLoggy {
   Widget tooltip({
     required Widget child,
     required String tooltipString,
+    AxisDirection preferredDirection = AxisDirection.down,
   }) {
     if (tooltipString.isEmpty) {
       return child;
@@ -237,6 +238,7 @@ class Graphic with UiLoggy {
     return JustTheTooltip(
       tailLength: 4.0,
       tailBaseWidth: 12.0,
+      preferredDirection: preferredDirection,
       waitDuration: const Duration(seconds: 1),
       content: Padding(
         padding: const EdgeInsets.all(8.0),

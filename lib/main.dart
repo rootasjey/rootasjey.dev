@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:loggy/loggy.dart';
+import 'package:media_kit/media_kit.dart';
 import 'package:rootasjey/app.dart';
 import 'package:rootasjey/firebase_options.dart';
 import 'package:rootasjey/globals/constants.dart';
@@ -32,6 +33,7 @@ void main() async {
   );
 
   Beamer.setPathUrlStrategy();
+  MediaKit.ensureInitialized();
   await EasyLocalization.ensureInitialized();
   await dotenv.load(fileName: "var.env");
 

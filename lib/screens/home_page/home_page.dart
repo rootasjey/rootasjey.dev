@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:loggy/loggy.dart';
 import 'package:rootasjey/components/buttons/circle_button.dart';
@@ -226,19 +227,30 @@ class _HomePageState extends State<HomePage> {
                   backgroundColor: buttonBackgroundColor,
                 ),
                 if (!isDark)
-                  Utils.graphic.tooltip(
-                    tooltipString: "shuffle_color".tr(),
-                    child: CircleButton(
-                      onTap: onShuffleColor,
-                      radius: _actionButtonRadius,
-                      backgroundColor: buttonBackgroundColor,
-                      icon: Icon(
-                        TablerIcons.color_swatch,
-                        color: Colors.black,
-                        size: _actionButtonSize,
+                  Utils.graphic
+                      .tooltip(
+                        tooltipString: "shuffle_color".tr(),
+                        child: CircleButton(
+                          onTap: onShuffleColor,
+                          radius: _actionButtonRadius,
+                          backgroundColor: buttonBackgroundColor,
+                          icon: Icon(
+                            TablerIcons.color_swatch,
+                            color: Colors.black,
+                            size: _actionButtonSize,
+                          ),
+                        ),
+                      )
+                      .animate()
+                      .fadeIn(
+                        duration: const Duration(milliseconds: 225),
+                        curve: Curves.fastOutSlowIn,
+                      )
+                      .scaleXY(
+                        begin: 0.4,
+                        end: 1.0,
+                        curve: Curves.easeInOut,
                       ),
-                    ),
-                  ),
               ],
             ),
           ),

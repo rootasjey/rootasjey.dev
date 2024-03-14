@@ -1,5 +1,6 @@
 import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:rootasjey/components/buttons/circle_button.dart';
 import 'package:rootasjey/globals/utils.dart';
@@ -31,6 +32,9 @@ class BrightnessButton extends StatefulWidget {
 }
 
 class _BrightnessButtonState extends State<BrightnessButton> {
+  double _target = 1.0;
+  final double _endTarget = 0.8;
+
   @override
   Widget build(BuildContext context) {
     final mode = AdaptiveTheme.of(context).mode;
@@ -46,6 +50,7 @@ class _BrightnessButtonState extends State<BrightnessButton> {
     return Padding(
       padding: widget.margin,
       child: Utils.graphic.tooltip(
+        preferredDirection: AxisDirection.left,
         tooltipString: getTooltipString(mode),
         child: ContextMenuWidget(
           menuProvider: (request) {
@@ -63,12 +68,33 @@ class _BrightnessButtonState extends State<BrightnessButton> {
           child: CircleButton(
             radius: widget.radius,
             backgroundColor: widget.backgroundColor ?? Colors.black12,
-            onTap: () => AdaptiveTheme.of(context).toggleThemeMode(
-              useSystem: false,
+            onTap: () {
+              _target = _target == _endTarget ? 1.0 : _endTarget;
+              AdaptiveTheme.of(context).toggleThemeMode(
+                useSystem: false,
+              );
+            },
+            icon: Icon(
+              iconData,
+              color: Colors.black,
+              size: widget.buttonSize,
             ),
-            // onTap: () => AdaptiveTheme.of(context).toggleThemeMode(),
-            icon: Icon(iconData, color: Colors.black, size: widget.buttonSize),
-          ),
+          )
+              .animate(
+                target: _target,
+              )
+              .rotate(
+                duration: const Duration(milliseconds: 1000),
+                begin: -6.0,
+                end: 0.0,
+                curve: Curves.easeOut,
+              )
+              .scaleXY(
+                duration: const Duration(milliseconds: 500),
+                begin: 0.4,
+                end: 1.0,
+                curve: Curves.easeInOut,
+              ),
         ),
       ),
     );
