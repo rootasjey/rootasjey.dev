@@ -16,7 +16,7 @@ class TermsOfServicePage extends StatelessWidget {
 
     final Color accentColor = Constants.colors.getRandomFromPalette();
 
-    final bool isMobileSize = Utils.measurements.isMobileSize(context);
+    final bool isMobileSize = Utils.graphic.isMobileSize(context);
 
     return Scaffold(
       body: CustomScrollView(

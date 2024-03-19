@@ -43,38 +43,35 @@ class SigninPageFooter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Widget submitButton = ElevatedButton(
+    final Widget submitButton = TextButton(
       onPressed: () => onSubmit?.call(
         nameController.text,
         passwordController.text,
       ),
-      style: ElevatedButton.styleFrom(
-        backgroundColor: isDark ? Colors.white : Colors.black,
+      style: TextButton.styleFrom(
+        // backgroundColor: isDark ? Colors.white : Colors.black,
+        backgroundColor: accentColor.withOpacity(0.1),
         elevation: 0.0,
         foregroundColor: accentColor,
         padding: const EdgeInsets.symmetric(
-          horizontal: 16.0,
-          vertical: 23.0,
+          horizontal: 12.0,
+          vertical: 14.0,
         ),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(4.0),
+          borderRadius: BorderRadius.circular(16.0),
         ),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            "signin.name".tr(),
+            "signin.name".tr().toUpperCase(),
             style: Utils.calligraphy.body(
               textStyle: const TextStyle(
-                fontSize: 16.0,
-                fontWeight: FontWeight.w500,
+                fontSize: 14.0,
+                fontWeight: FontWeight.w400,
               ),
             ),
-          ),
-          const Padding(
-            padding: EdgeInsets.only(left: 8.0),
-            child: Icon(TablerIcons.arrow_right),
           ),
         ],
       ),

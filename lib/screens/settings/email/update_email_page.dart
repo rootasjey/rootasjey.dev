@@ -68,7 +68,7 @@ class _UpdateEmailPageState extends State<UpdateEmailPage> with UiLoggy {
 
   @override
   Widget build(BuildContext context) {
-    final bool isMobileSize = Utils.measurements.isMobileSize(context);
+    final bool isMobileSize = Utils.graphic.isMobileSize(context);
     final EdgeInsets margin = isMobileSize
         ? const EdgeInsets.only(left: 24.0)
         : const EdgeInsets.only(left: 48.0);

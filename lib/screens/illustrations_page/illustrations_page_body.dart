@@ -1,17 +1,18 @@
-import 'package:beamer/beamer.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
-import 'package:rootasjey/components/icons/app_icon.dart';
 import 'package:rootasjey/components/illustration_card.dart';
+import 'package:rootasjey/components/square_header.dart';
 import 'package:rootasjey/components/upload_panel/upload_panel.dart';
 import 'package:rootasjey/globals/constants.dart';
 import 'package:rootasjey/globals/utils.dart';
+import 'package:rootasjey/screens/illustrations_page/close_license_panel_button.dart';
 import 'package:rootasjey/types/enums/enum_page_state.dart';
 import 'package:rootasjey/types/illustration/illustration.dart';
 import 'package:super_context_menu/super_context_menu.dart';
+import 'package:timelines/timelines.dart';
 import 'package:wave_divider/wave_divider.dart';
 
 class IllustrationsPageBody extends StatelessWidget {
@@ -20,6 +21,7 @@ class IllustrationsPageBody extends StatelessWidget {
     required this.illustrations,
     this.expandLicensePanel = false,
     this.hasNext = false,
+    this.canManageIllustrations = false,
     this.accentColor = Colors.blue,
     this.pageState = EnumPageState.idle,
     this.currentPage = 0,
@@ -27,14 +29,18 @@ class IllustrationsPageBody extends StatelessWidget {
     this.onDeleteIllustration,
     this.onTapIllustration,
     this.onSelectFiles,
-    this.onToggleExpandLicensePanel,
+    this.onGoBack,
     this.onGoToExternalLicense,
-    this.onTapAppIcon,
     this.onPreviousPage,
+    this.onTapAppIcon,
+    this.onToggleExpandLicensePanel,
     this.onNextPage,
     this.windowSize = Size.zero,
     this.fab,
   });
+
+  /// Show administrative tools if true.
+  final bool canManageIllustrations;
 
   /// True if the license panel should be expanded.
   final bool expandLicensePanel;
@@ -65,11 +71,14 @@ class IllustrationsPageBody extends StatelessWidget {
   /// Navigate to the external license page.
   final void Function()? onGoToExternalLicense;
 
-  /// Callback fired when the user goes back to the previous page.
+  /// Callback fired when the user goes back to the previous illustrations page.
   final void Function()? onPreviousPage;
 
-  /// Callback fired when the user goes back to the next page.
+  /// Callback fired when the user goes back to the next illustrations page.
   final void Function()? onNextPage;
+
+  /// Callback to go back to the previous screen page.
+  final void Function()? onGoBack;
 
   /// Callback fired when an illustration is deleted.
   final void Function(
@@ -96,11 +105,14 @@ class IllustrationsPageBody extends StatelessWidget {
     final Color? foregroundColor =
         Theme.of(context).textTheme.bodyMedium?.color;
 
+    final Color? iconColorPicto = foregroundColor?.withOpacity(0.4);
+
     double wrapWidth = (100 * 3) + (12 * 2);
     if (windowSize.height < 600.0) {
       wrapWidth = windowSize.width * 0.9;
     }
 
+    final bool isMobileSize = Utils.graphic.isMobileFromSize(windowSize);
     final bool isExtremMinHeight = windowSize.height < 460.0;
     final bool showGrid = pageState == EnumPageState.idle;
     final bool showPaginationButtons =
@@ -127,40 +139,22 @@ class IllustrationsPageBody extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Container(
-                    padding: const EdgeInsets.only(top: 12.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Utils.graphic.tooltip(
-                          tooltipString: "home".tr(),
-                          child: AppIcon(
-                            size: 24.0,
-                            margin: const EdgeInsets.only(right: 12.0),
-                            onTap: onTapAppIcon,
-                          ),
-                        ),
-                        const Icon(TablerIcons.point),
-                        Utils.graphic.tooltip(
-                          tooltipString: "back".tr(),
-                          child: IconButton(
-                            onPressed: context.beamBack,
-                            icon: const Icon(TablerIcons.arrow_back),
-                          ),
-                        ),
-                      ],
-                    ),
+                  SquareHeader(
+                    margin: const EdgeInsets.only(top: 12.0),
+                    onGoBack: onGoBack,
+                    onGoHome: onTapAppIcon,
                   ),
                   Container(
                     width: 440.0,
-                    padding: const EdgeInsets.only(
+                    padding: EdgeInsets.only(
                       left: 12.0,
                       right: 12.0,
+                      bottom: isMobileSize ? 6.0 : 0.0,
                     ),
                     child: Column(
                       children: [
                         Text(
-                          "illustrations".tr().toUpperCase(),
+                          "illustration.names".tr().toUpperCase(),
                           style: Utils.calligraphy.body2(
                             textStyle: const TextStyle(
                               fontSize: 24.0,
@@ -169,10 +163,11 @@ class IllustrationsPageBody extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          "illustrations_subtitle".tr(),
+                          "illustration.subtitle".tr(),
+                          textAlign: TextAlign.center,
                           style: Utils.calligraphy.body(
                             textStyle: TextStyle(
-                              fontSize: 16.0,
+                              fontSize: isMobileSize ? 12.0 : 16.0,
                               fontWeight: FontWeight.w400,
                               color: foregroundColor?.withOpacity(0.5),
                             ),
@@ -206,57 +201,40 @@ class IllustrationsPageBody extends StatelessWidget {
                         curve: Curves.decelerate,
                         child: Container(
                           height: expandLicensePanel ? null : 0.0,
-                          width: 440.0,
+                          width: isExtremMinHeight ? null : 440.0,
                           padding: const EdgeInsets.all(24.0),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              WaveDivider(
-                                color: accentColor,
-                              ),
-                              Container(
-                                padding: const EdgeInsets.only(bottom: 4.0),
-                                child: InkWell(
-                                  onTap: onToggleExpandLicensePanel,
-                                  borderRadius: BorderRadius.circular(24.0),
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(24.0),
-                                      color: accentColor,
-                                    ),
-                                    child: const Padding(
-                                      padding: EdgeInsets.all(4.0),
-                                      child: Icon(
-                                        TablerIcons.x,
-                                        size: 18.0,
-                                        color: Colors.black,
-                                      ),
-                                    ),
-                                  ),
-                                ),
+                              const WaveDivider(
+                                padding: EdgeInsets.only(bottom: 24.0),
                               ),
                               Wrap(
                                 spacing: 12.0,
                                 runSpacing: 12.0,
                                 crossAxisAlignment: WrapCrossAlignment.center,
                                 children: [
+                                  CloseLicensePanelButton(
+                                    onToggleExpandLicensePanel:
+                                        onToggleExpandLicensePanel,
+                                  ),
                                   SvgPicture.network(
                                     "https://chooser-beta.creativecommons.org/img/cc-logo.f0ab4ebe.svg",
                                     width: badgeWidth,
                                     height: badgeWidth,
-                                    color: foregroundColor?.withOpacity(0.8),
+                                    color: iconColorPicto,
                                   ),
                                   SvgPicture.network(
                                     "https://chooser-beta.creativecommons.org/img/cc-by.21b728bb.svg",
                                     width: badgeWidth,
                                     height: badgeWidth,
-                                    color: foregroundColor?.withOpacity(0.8),
+                                    color: iconColorPicto,
                                   ),
                                   SvgPicture.network(
                                     "https://chooser-beta.creativecommons.org/img/cc-sa.d1572b71.svg",
                                     width: badgeWidth,
                                     height: badgeWidth,
-                                    color: foregroundColor?.withOpacity(0.8),
+                                    color: iconColorPicto,
                                   ),
                                   Text(
                                     "CC BY-SA 4.0",
@@ -264,8 +242,7 @@ class IllustrationsPageBody extends StatelessWidget {
                                       textStyle: TextStyle(
                                         fontSize: 16.0,
                                         fontWeight: FontWeight.w400,
-                                        color:
-                                            foregroundColor?.withOpacity(0.6),
+                                        color: iconColorPicto,
                                       ),
                                     ),
                                   ),
@@ -335,17 +312,25 @@ class IllustrationsPageBody extends StatelessWidget {
                       child: Container(
                         width: expandLicensePanel ? 0.0 : wrapWidth,
                         height: expandLicensePanel ? 0.0 : null,
-                        padding: const EdgeInsets.only(top: 42.0),
+                        padding: isMobileSize
+                            ? const EdgeInsets.only(
+                                left: 12.0,
+                                right: 12.0,
+                                top: 24.0,
+                              )
+                            : const EdgeInsets.only(top: 42.0),
                         child: Wrap(
                           spacing: 12.0,
                           runSpacing: 12.0,
-                          alignment: isExtremMinHeight
+                          alignment: isMobileSize
                               ? WrapAlignment.center
                               : WrapAlignment.start,
                           children: illustrations
                               .map((Illustration illustration) {
                                 index++;
                                 return ContextMenuWidget(
+                                  contextMenuIsAllowed: (Offset offset) =>
+                                      canManageIllustrations,
                                   menuProvider: (MenuRequest request) {
                                     return Menu(
                                       children: [
@@ -393,7 +378,7 @@ class IllustrationsPageBody extends StatelessWidget {
                       width: wrapWidth,
                       padding: const EdgeInsets.only(top: 12.0),
                       child: Row(
-                        mainAxisAlignment: isExtremMinHeight
+                        mainAxisAlignment: isMobileSize
                             ? MainAxisAlignment.center
                             : MainAxisAlignment.start,
                         children: [
@@ -405,6 +390,7 @@ class IllustrationsPageBody extends StatelessWidget {
                               icon: const Icon(TablerIcons.arrow_left),
                             ),
                           ),
+                          const DotIndicator(size: 6.0),
                           Utils.graphic.tooltip(
                             tooltipString: "next page",
                             child: IconButton(

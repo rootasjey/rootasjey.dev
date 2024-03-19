@@ -8,7 +8,6 @@ import "package:rootasjey/components/basic_shortcuts.dart";
 import "package:rootasjey/globals/constants.dart";
 import "package:rootasjey/globals/utils.dart";
 import "package:rootasjey/router/locations/home_location.dart";
-import "package:rootasjey/router/locations/settings_location.dart";
 import "package:rootasjey/screens/settings/about_settings.dart";
 import "package:rootasjey/screens/settings/account_settings.dart";
 import "package:rootasjey/screens/settings/app_language_selection.dart";
@@ -62,7 +61,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
-    final bool isMobileSize = Utils.measurements.isMobileSize(context);
+    final bool isMobileSize = Utils.graphic.isMobileSize(context);
     final String? currentLanguageCode =
         EasyLocalization.of(context)?.currentLocale?.languageCode;
 
@@ -217,18 +216,10 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   /// Navigate to the update password page.
-  void onTapUpdatePassword() {
-    Beamer.of(context).beamToNamed(
-      SettingsLocation.updatePasswordRoute,
-    );
-  }
+  void onTapUpdatePassword() {}
 
   /// Navigate to the update username page.
-  void onTapUpdateUsername() {
-    Beamer.of(context).beamToNamed(
-      SettingsLocation.updateUsernameRoute,
-    );
-  }
+  void onTapUpdateUsername() {}
 
   /// Navigate to the color palette page.
   void onTapColorPalette() {

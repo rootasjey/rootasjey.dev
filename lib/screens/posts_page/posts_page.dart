@@ -1,4 +1,3 @@
-import 'package:beamer/beamer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -10,13 +9,10 @@ import 'package:rootasjey/components/loading_view.dart';
 import 'package:rootasjey/components/popup_menu/popup_menu_icon.dart';
 import 'package:rootasjey/components/popup_menu/popup_menu_item_icon.dart';
 import 'package:rootasjey/globals/utils.dart';
-
-import 'package:rootasjey/router/locations/posts_location.dart';
 import 'package:rootasjey/screens/posts_page/create_post_page.dart';
 import 'package:rootasjey/screens/posts_page/posts_page_body.dart';
 import 'package:rootasjey/screens/posts_page/posts_page_empty_view.dart';
 import 'package:rootasjey/types/alias/firestore/document_change_map.dart';
-import 'package:rootasjey/types/alias/firestore/document_map.dart';
 import 'package:rootasjey/types/alias/firestore/query_doc_snap_map.dart';
 import 'package:rootasjey/types/alias/firestore/query_map.dart';
 import 'package:rootasjey/types/alias/firestore/query_snap_map.dart';
@@ -205,29 +201,16 @@ class _PostsPageState extends State<PostsPage> with UiLoggy {
     setState(() => _creating = true);
 
     try {
-      final DocumentMap postSnapshot =
-          await FirebaseFirestore.instance.collection(_collectionName).add({
-        "language": "en",
-        "name": name,
-        "summary": summary,
-        "user_id": userId,
-      });
+      // final DocumentMap postSnapshot =
+      //     await FirebaseFirestore.instance.collection(_collectionName).add({
+      //   "language": "en",
+      //   "name": name,
+      //   "summary": summary,
+      //   "user_id": userId,
+      // });
 
       setState(() => _creating = false);
-
-      if (!mounted) return;
-
-      Beamer.of(context).beamToNamed(
-          PostsLocation.singlePostRoute.replaceFirst(
-            ":postId",
-            postSnapshot.id,
-          ),
-          data: {
-            "postId": postSnapshot.id,
-          },
-          routeState: {
-            "postName": name,
-          });
+      // if (!mounted) return;
     } on Exception catch (error) {
       loggy.error(error);
       setState(() => _creating = false);
@@ -311,19 +294,7 @@ class _PostsPageState extends State<PostsPage> with UiLoggy {
     }
   }
 
-  void onTapPost(Post post) {
-    Beamer.of(context).beamToNamed(
-        PostsLocation.singlePostRoute.replaceFirst(
-          ":postId",
-          post.id,
-        ),
-        data: {
-          "postId": post.id,
-        },
-        routeState: {
-          "postName": post.name,
-        });
-  }
+  void onTapPost(Post post) {}
 
   /// Return the query to listen changes to.
   QueryMap getFirestoreQuery() {

@@ -1,25 +1,47 @@
-import 'package:beamer/beamer.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:media_kit/media_kit.dart';
-import 'package:media_kit_video/media_kit_video.dart';
-import 'package:rootasjey/components/buttons/circle_button.dart';
-import 'package:rootasjey/components/icons/app_icon.dart';
+import 'package:rootasjey/components/square_header.dart';
 import 'package:rootasjey/globals/utils.dart';
 import 'package:rootasjey/router/navigation_state_helper.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:rootasjey/screens/video_montage/video_item.dart';
+import 'package:rootasjey/types/media_data.dart';
 import 'package:wave_divider/wave_divider.dart';
 
 class VideoMontagesPage extends StatefulWidget {
-  const VideoMontagesPage({super.key});
+  const VideoMontagesPage({
+    super.key,
+    this.onGoHome,
+    this.onGoBack,
+  });
+
+  /// Callback to go back to the previous page.
+  final void Function()? onGoBack;
+
+  /// Callback to go back to the home page.
+  final void Function()? onGoHome;
 
   @override
   State<VideoMontagesPage> createState() => _VideoMontagesPageState();
 }
 
 class _VideoMontagesPageState extends State<VideoMontagesPage> {
-  bool _showVideoCover = true;
+  final MediaData _mediaData = MediaData(
+    url: "https://firebasestorage.googleapis.com/v0/b/rootasjey.appspot.com/o/"
+        "videos%2Fdispatches-from-elsewhere%2Foccasionally-scared--resolution-1080p.mp4"
+        "?alt=media&token=e12bc54d-2c36-4898-a5b1-92af93aadade",
+    name: "Dispatches from Elsewhere",
+    // name: "Occasionally Scared",
+    description: "This tv series inspired me a lot artistically. "
+        "Some of the subjects in the show resonated with me, and I wanted to give back something.\n"
+        "I composed with the scenes that gave me the strongest feelings. I hope you enjoy it!",
+    type: "video",
+    index: 0,
+    youtubeUrl: "https://youtu.be/X-DNSHygTOg?si=P2qh75xtrwmuH9gm",
+    vimeoUrl: "https://vimeo.com/906780923?share=copy",
+    coverImageUrl: "https://firebasestorage.googleapis.com/v0/b"
+        "/rootasjey.appspot.com/o/videos%2Fdispatches-from-elsewhere%2Fthumbnail.jpg?alt=media&token=5335c02f-a503-44ff-87e1-01734102f054",
+  );
 
   @override
   void initState() {
@@ -41,37 +63,23 @@ class _VideoMontagesPageState extends State<VideoMontagesPage> {
 
   @override
   Widget build(BuildContext context) {
-    final Size windowSize = MediaQuery.of(context).size;
-    final bool isMobileSize =
-        windowSize.width < Utils.measurements.mobileWidthTreshold;
     final Color? foregroundColor = Theme.of(context).textTheme.bodyLarge?.color;
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+
+    final Size windowSize = MediaQuery.of(context).size;
+    final bool isMobileSize = windowSize.width <= 800.0 ||
+        windowSize.height < Utils.graphic.mobileHeightTreshold;
 
     return SafeArea(
       child: Scaffold(
         body: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 60.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Utils.graphic.tooltip(
-                    tooltipString: "home".tr(),
-                    child: const AppIcon(
-                      size: 24.0,
-                      margin: EdgeInsets.only(right: 12.0),
-                    ),
-                  ),
-                  const Icon(TablerIcons.point),
-                  Utils.graphic.tooltip(
-                    tooltipString: "back".tr(),
-                    child: IconButton(
-                      onPressed: context.beamBack,
-                      icon: const Icon(TablerIcons.arrow_back),
-                    ),
-                  ),
-                ],
-              ),
+            SquareHeader(
+              margin: isMobileSize
+                  ? const EdgeInsets.only(top: 24.0)
+                  : const EdgeInsets.only(top: 60.0),
+              onGoBack: widget.onGoBack,
+              onGoHome: widget.onGoHome,
             ),
             Padding(
               padding: const EdgeInsets.only(
@@ -79,7 +87,7 @@ class _VideoMontagesPageState extends State<VideoMontagesPage> {
                 right: 12.0,
               ),
               child: FractionallySizedBox(
-                widthFactor: isMobileSize ? 0.9 : 0.6,
+                widthFactor: isMobileSize ? 1.0 : 0.6,
                 child: Column(
                   children: [
                     Text(
@@ -93,16 +101,17 @@ class _VideoMontagesPageState extends State<VideoMontagesPage> {
                     ),
                     Text(
                       "video_montage.subtitle".tr(),
+                      textAlign: TextAlign.center,
                       style: Utils.calligraphy.body(
                         textStyle: TextStyle(
-                          fontSize: 16.0,
+                          fontSize: isMobileSize ? 14.0 : 16.0,
                           fontWeight: FontWeight.w400,
                           color: foregroundColor?.withOpacity(0.5),
                         ),
                       ),
                     ),
                     const Padding(
-                      padding: EdgeInsets.only(top: 24.0),
+                      padding: EdgeInsets.only(top: 24.0, right: 6.0),
                       child: WaveDivider(),
                     ),
                   ],
@@ -110,159 +119,24 @@ class _VideoMontagesPageState extends State<VideoMontagesPage> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(
-                vertical: 36.0,
-                horizontal: 42.0,
-              ),
-              child: Wrap(
-                spacing: 32.0,
-                runSpacing: 32.0,
-                alignment: WrapAlignment.center,
-                crossAxisAlignment: WrapCrossAlignment.start,
-                runAlignment: WrapAlignment.center,
-                children: [
-                  Stack(
-                    children: [
-                      Card(
-                        elevation: 4.0,
-                        clipBehavior: Clip.hardEdge,
-                        color: Colors.amber,
-                        child: SizedBox(
-                          height: 242.0,
-                          width: 420.0,
-                          child: Video(
-                            aspectRatio: 16 / 9,
-                            controller: NavigationStateHelper.videoController,
-                          ),
-                        ),
-                      ),
-                      if (_showVideoCover)
-                        Card(
-                          elevation: 4.0,
-                          clipBehavior: Clip.hardEdge,
-                          child: SizedBox(
-                            height: 242.0,
-                            width: 420.0,
-                            child: Ink.image(
-                              fit: BoxFit.cover,
-                              image: const NetworkImage(
-                                  "https://firebasestorage.googleapis.com/v0/b"
-                                  "/rootasjey.appspot.com/o/videos%2Fdispatches-from-elsewhere%2Fthumbnail.jpg?alt=media&token=5335c02f-a503-44ff-87e1-01734102f054"),
-                              child: InkWell(
-                                onTap: playVideo,
-                                child: Center(
-                                  child: CircleButton(
-                                    onTap: playVideo,
-                                    icon: const Icon(
-                                      TablerIcons.player_play,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                    ],
-                  ),
-                  Card(
-                    elevation: 0.0,
-                    child: Container(
-                      height: 242.0,
-                      width: 420.0,
-                      padding: const EdgeInsets.all(24.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Dispatches From Elsewhere",
-                            style: Utils.calligraphy.title(
-                              textStyle: TextStyle(
-                                fontSize: 24.0,
-                                fontWeight: FontWeight.w700,
-                                color: foregroundColor,
-                                height: 1.0,
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 12.0),
-                            child: Text.rich(
-                              const TextSpan(
-                                text: "",
-                                children: [
-                                  TextSpan(
-                                    text:
-                                        "This tv series inspired me a lot artistically. "
-                                        "Some of the subjects in the show resonated with me, and I wanted to give back something.\n"
-                                        "I composed with the scenes that gave me the strongest feelings. I hope you enjoy it!",
-                                  ),
-                                ],
-                              ),
-                              style: Utils.calligraphy.body(
-                                textStyle: TextStyle(
-                                  fontSize: 16.0,
-                                  fontWeight: FontWeight.w400,
-                                  color: foregroundColor?.withOpacity(0.5),
-                                ),
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 4.0),
-                            child: Wrap(
-                              spacing: 12.0,
-                              runSpacing: 12.0,
-                              children: [
-                                CircleButton(
-                                  onTap: () {
-                                    launchUrl(
-                                      Uri.parse(
-                                        "https://youtu.be/X-DNSHygTOg?si=P2qh75xtrwmuH9gm",
-                                      ),
-                                    );
-                                  },
-                                  radius: 14.0,
-                                  tooltip: "View on YouTube",
-                                  icon: const Icon(
-                                    TablerIcons.brand_youtube,
-                                    color: Colors.black,
-                                    size: 18.0,
-                                  ),
-                                ),
-                                CircleButton(
-                                  onTap: () {
-                                    launchUrl(
-                                      Uri.parse(
-                                        "https://vimeo.com/906780923?share=copy",
-                                      ),
-                                    );
-                                  },
-                                  radius: 14.0,
-                                  tooltip: "View on Vimeo",
-                                  icon: const Icon(
-                                    TablerIcons.brand_vimeo,
-                                    color: Colors.black,
-                                    size: 18.0,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
+              padding: isMobileSize
+                  ? const EdgeInsets.symmetric(horizontal: 6.0)
+                  : const EdgeInsets.symmetric(
+                      vertical: 12.0,
+                      horizontal: 42.0,
                     ),
-                  ),
-                ],
+              child: VideoItem(
+                isDark: isDark,
+                isMobileSize: isMobileSize,
+                videoController: NavigationStateHelper.videoController,
+                margin: const EdgeInsets.all(24.0),
+                mediaData: _mediaData,
+                windowSize: windowSize,
               ),
             ),
           ],
         ),
       ),
     );
-  }
-
-  void playVideo() {
-    setState(() => _showVideoCover = false);
-    NavigationStateHelper.videoController.player.play();
   }
 }

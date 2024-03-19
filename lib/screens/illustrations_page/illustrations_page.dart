@@ -29,16 +29,22 @@ import 'package:rootasjey/types/enums/enum_illustration_item_action.dart';
 import 'package:rootasjey/types/enums/enum_page_state.dart';
 import 'package:rootasjey/types/enums/enum_signal_id.dart';
 import 'package:rootasjey/types/illustration/illustration.dart';
-import 'package:rootasjey/types/intents/escape_intent.dart';
 import 'package:rootasjey/types/user/user_firestore.dart';
 import 'package:rootasjey/types/user/user_rights.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class IllustrationsPage extends StatefulWidget {
-  const IllustrationsPage({super.key, this.onGoToHomePage});
+  const IllustrationsPage({
+    super.key,
+    this.onGoHome,
+    this.onGoBack,
+  });
 
   /// Called when the user goes back to the home page.
-  final void Function()? onGoToHomePage;
+  final void Function()? onGoHome;
+
+  /// Callback to go back to the previous page.
+  final void Function()? onGoBack;
 
   @override
   State<StatefulWidget> createState() => _DrawingsPageState();
@@ -60,7 +66,17 @@ class _DrawingsPageState extends State<IllustrationsPage> with UiLoggy {
   /// Last document fetched from Firestore.
   DocumentSnapshot? _lastDocument;
 
-  final int _pageSize = 9;
+  /// Illustration page size.
+  int _pageSize = 9;
+
+  /// Illustration page size for large screens.
+  final int _largePageSize = 9;
+
+  /// Illustration page size for medium screens.
+  final int _mediumPageSize = 6;
+
+  /// Illustration page size for tiny screens.
+  final int _smallPageSize = 4;
 
   /// Current page of the illustration list.
   int _currentPage = 0;
@@ -81,7 +97,7 @@ class _DrawingsPageState extends State<IllustrationsPage> with UiLoggy {
   void initState() {
     super.initState();
     initProps();
-    fetchData();
+    fetchIllustrations();
   }
 
   @override
@@ -94,11 +110,13 @@ class _DrawingsPageState extends State<IllustrationsPage> with UiLoggy {
   Widget build(BuildContext context) {
     if (_pageState == EnumPageState.loading) {
       return LoadingView.scaffold(
-        message: "illustrations_loading".tr(),
+        message: "illustration.loading".tr(),
       );
     }
 
     final Size windowSize = MediaQuery.of(context).size;
+    _pageSize = getPageSize(windowSize);
+
     final Signal<UserFirestore> signalUserFirestore =
         context.get(EnumSignalId.userFirestore);
 
@@ -107,75 +125,45 @@ class _DrawingsPageState extends State<IllustrationsPage> with UiLoggy {
     final bool canManageIllustrations = userRights.manageIllustrations;
 
     if (_illustrations.isEmpty) {
-      return wrapWithShortcuts(
-        child: IllustrationsPageEmpty(
-          canCreate: canManageIllustrations,
-          fab: IllustrationsPageFab(
-            isVisible: canManageIllustrations,
-            pickFiles: pickFiles,
-          ),
-          onShowCreatePage: pickFiles,
-          onCancel: onCancel,
+      return IllustrationsPageEmpty(
+        canCreate: canManageIllustrations,
+        fab: IllustrationsPageFab(
+          isVisible: canManageIllustrations,
+          pickFiles: pickFiles,
         ),
+        onShowCreatePage: pickFiles,
+        onCancel: onCancel,
       );
     }
 
     final int startIndex = _currentPage * _pageSize;
     final int endIndex = min(_illustrations.length, startIndex + _pageSize);
 
-    return wrapWithShortcuts(
-      child: IllustrationsPageBody(
-        accentColor: _accentColor,
-        hasNext: _hasNext,
-        onNextPage: onNextPage,
-        onPreviousPage: onPreviousPage,
-        currentPage: _currentPage,
-        totalPage: _totalPage,
-        illustrations: _illustrations.sublist(
-          max(0, startIndex),
-          min(_illustrations.length, endIndex),
-        ),
-        expandLicensePanel: _expandLicensePanel,
-        onToggleExpandLicensePanel: onToggleExpandLicensePanel,
-        fab: IllustrationsPageFab(
-          isVisible: canManageIllustrations,
-          pickFiles: pickFiles,
-        ),
-        onDeleteIllustration: tryDeleteIllustration,
-        onTapIllustration: onTapIllustration,
-        onGoToExternalLicense: onGoToExternalLicense,
-        onTapAppIcon: widget.onGoToHomePage,
-        windowSize: windowSize,
+    return IllustrationsPageBody(
+      accentColor: _accentColor,
+      hasNext: _hasNext,
+      canManageIllustrations: canManageIllustrations,
+      onNextPage: onNextPage,
+      onGoBack: widget.onGoBack,
+      onPreviousPage: onPreviousPage,
+      currentPage: _currentPage,
+      totalPage: _totalPage,
+      illustrations: _illustrations.sublist(
+        max(0, startIndex),
+        min(_illustrations.length, endIndex),
       ),
+      expandLicensePanel: _expandLicensePanel,
+      onToggleExpandLicensePanel: onToggleExpandLicensePanel,
+      fab: IllustrationsPageFab(
+        isVisible: canManageIllustrations,
+        pickFiles: pickFiles,
+      ),
+      onDeleteIllustration: tryDeleteIllustration,
+      onTapIllustration: onTapIllustration,
+      onGoToExternalLicense: onGoToExternalLicense,
+      onTapAppIcon: widget.onGoHome,
+      windowSize: windowSize,
     );
-  }
-
-  /// Wrap the target widget with keyboard shortcuts.
-  Widget wrapWithShortcuts({required Widget child}) {
-    const shortcuts = <SingleActivator, Intent>{
-      SingleActivator(LogicalKeyboardKey.escape): EscapeIntent(),
-    };
-
-    final actions = <Type, Action<Intent>>{
-      EscapeIntent: CallbackAction(
-        onInvoke: (Intent intent) => onCancel(),
-      ),
-    };
-
-    return Shortcuts(
-      shortcuts: shortcuts,
-      child: Actions(
-        actions: actions,
-        child: Focus(
-          autofocus: true,
-          child: child,
-        ),
-      ),
-    );
-  }
-
-  void fetchData() {
-    fetchIllustrations();
   }
 
   void fetchIllustrations() async {
@@ -499,5 +487,17 @@ class _DrawingsPageState extends State<IllustrationsPage> with UiLoggy {
     setState(() {
       _currentPage = max(0, _currentPage - 1);
     });
+  }
+
+  int getPageSize(Size windowSize) {
+    if (windowSize.width < 400.0 || windowSize.height < 400.0) {
+      return _smallPageSize;
+    }
+
+    if (windowSize.width < 900.0 || windowSize.height < 600.0) {
+      return _mediumPageSize;
+    }
+
+    return _largePageSize;
   }
 }

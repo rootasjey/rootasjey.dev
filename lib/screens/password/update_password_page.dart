@@ -70,7 +70,7 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> with UiLoggy {
 
   @override
   Widget build(BuildContext context) {
-    final bool isMobileSize = Utils.measurements.isMobileSize(context);
+    final bool isMobileSize = Utils.graphic.isMobileSize(context);
     final Color accentColor = Constants.colors.getRandomFromPalette();
 
     return Scaffold(

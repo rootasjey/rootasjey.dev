@@ -144,7 +144,7 @@ class _PostPageState extends State<PostPage> with UiLoggy {
     const double maxWidth = 640.0;
     final Size windowSize = MediaQuery.of(context).size;
     final bool isMobileSize =
-        windowSize.width < Utils.measurements.mobileWidthTreshold;
+        windowSize.width < Utils.graphic.mobileWidthTreshold;
 
     if (_deleting) {
       return LoadingView.scaffold(

@@ -11,12 +11,10 @@ import 'package:rootasjey/components/loading_view.dart';
 import 'package:rootasjey/globals/constants.dart';
 import 'package:rootasjey/globals/utils.dart';
 import 'package:rootasjey/router/locations/home_location.dart';
-import 'package:rootasjey/router/locations/projects_location.dart';
 import 'package:rootasjey/screens/projects_page/create_project_page.dart';
 import 'package:rootasjey/screens/projects_page/projects_page_body.dart';
 import 'package:rootasjey/screens/projects_page/projects_page_empty_view.dart';
 import 'package:rootasjey/types/alias/firestore/document_change_map.dart';
-import 'package:rootasjey/types/alias/firestore/document_map.dart';
 import 'package:rootasjey/types/alias/firestore/query_doc_snap_map.dart';
 import 'package:rootasjey/types/alias/firestore/query_map.dart';
 import 'package:rootasjey/types/alias/firestore/query_snap_map.dart';
@@ -31,7 +29,17 @@ import 'package:rootasjey/types/user/user_rights.dart';
 
 /// A page widget showing projects.
 class ProjectsPage extends StatefulWidget {
-  const ProjectsPage({super.key});
+  const ProjectsPage({
+    super.key,
+    this.onGoHome,
+    this.onGoBack,
+  });
+
+  /// Callback to go back to the previous page.
+  final void Function()? onGoBack;
+
+  /// Callback to go back to the home page.
+  final void Function()? onGoHome;
 
   @override
   State<ProjectsPage> createState() => _ProjectsPageState();
@@ -74,7 +82,8 @@ class _ProjectsPageState extends State<ProjectsPage> with UiLoggy {
   @override
   void initState() {
     super.initState();
-    _accentColor = Constants.colors.getRandomFromPalette();
+    _accentColor = Constants.colors.getRandomBackground();
+    // _accentColor = Constants.colors.getRandomFromPalette();
     fetchProjects();
   }
 
@@ -92,7 +101,7 @@ class _ProjectsPageState extends State<ProjectsPage> with UiLoggy {
     final UserRights userRights = signalUserFirestore.value.rights;
     final bool canManageProjects = userRights.managePosts;
 
-    final bool isMobileSize = Utils.measurements.isMobileSize(context);
+    final bool isMobileSize = Utils.graphic.isMobileSize(context);
     final Size windowSize = MediaQuery.of(context).size;
 
     if (_showCreatePage) {
@@ -131,6 +140,8 @@ class _ProjectsPageState extends State<ProjectsPage> with UiLoggy {
         accentColor: _accentColor,
         isMobileSize: isMobileSize,
         canManage: canManageProjects,
+        onGoHome: widget.onGoHome,
+        onGoBack: widget.onGoBack,
         fab: fab(show: canManageProjects),
         onTapProject: onTapProject,
         projects: _projects,
@@ -206,29 +217,19 @@ class _ProjectsPageState extends State<ProjectsPage> with UiLoggy {
     setState(() => _creating = true);
 
     try {
-      final DocumentMap projectSnapshot =
-          await FirebaseFirestore.instance.collection("projects").add({
-        "language": "en",
-        "name": name,
-        "summary": summary,
-        "user_id": userId,
-      });
+      // final DocumentMap projectSnapshot =
+      //     await FirebaseFirestore.instance.collection("projects").add({
+      //   "language": "en",
+      //   "name": name,
+      //   "summary": summary,
+      //   "user_id": userId,
+      // });
 
       setState(() => _creating = false);
 
       if (!mounted) {
         return;
       }
-
-      Beamer.of(context).beamToNamed(
-          ProjectsLocation.singleProjectRoute.replaceFirst(
-            ":projectId",
-            projectSnapshot.id,
-          ),
-          data: {
-            "projectId": projectSnapshot.id,
-            "projectName": name,
-          });
     } on Exception catch (error) {
       loggy.error(error);
       setState(() {
@@ -314,18 +315,7 @@ class _ProjectsPageState extends State<ProjectsPage> with UiLoggy {
     }
   }
 
-  void onTapProject(Project project) {
-    Beamer.of(context).beamToNamed(
-      ProjectsLocation.singleProjectRoute.replaceFirst(
-        ":projectId",
-        project.id,
-      ),
-      data: {
-        "projectId": project.id,
-        "projectName": project.name,
-      },
-    );
-  }
+  void onTapProject(Project project) {}
 
   /// Return the query to listen changes to.
   QueryMap getFirestoreQuery() {

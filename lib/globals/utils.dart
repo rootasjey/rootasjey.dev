@@ -3,7 +3,6 @@ import 'package:rootasjey/globals/utils/calligraphy.dart';
 import 'package:rootasjey/globals/utils/graphic.dart';
 import 'package:rootasjey/globals/utils/lambda.dart';
 import 'package:rootasjey/globals/utils/linguistic.dart';
-import 'package:rootasjey/globals/utils/measurements.dart';
 import 'package:rootasjey/globals/utils/passage.dart';
 import 'package:rootasjey/globals/utils/search.dart';
 import 'package:rootasjey/globals/utils/tictac.dart';
@@ -15,9 +14,6 @@ class Utils {
 
   /// Typography interface.
   static const calligraphy = Calligraphy();
-
-  /// Everything about size interface.
-  static const measurements = Measurements();
 
   /// Navigation interface.
   static const passage = Passage();

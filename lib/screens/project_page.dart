@@ -160,7 +160,7 @@ class _ProjectPageState extends State<ProjectPage> with UiLoggy {
     final bool canManagePosts = rights.managePosts;
     final Size windowSize = MediaQuery.of(context).size;
     final bool isMobileSize =
-        windowSize.width < Utils.measurements.mobileWidthTreshold;
+        windowSize.width < Utils.graphic.mobileWidthTreshold;
 
     if (_deleting) {
       return LoadingView.scaffold(

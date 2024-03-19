@@ -73,7 +73,7 @@ class _TosPageState extends State<TosPage> {
 
     double horPadding = 80.0;
 
-    if (width < Utils.measurements.mobileWidthTreshold) {
+    if (width < Utils.graphic.mobileWidthTreshold) {
       horPadding = 20.0;
     }
 

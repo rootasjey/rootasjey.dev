@@ -6,7 +6,6 @@ import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:rootasjey/components/icons/app_icon.dart';
 import 'package:rootasjey/globals/constants.dart';
 import 'package:rootasjey/globals/utils.dart';
-import 'package:rootasjey/router/locations/art_location.dart';
 import 'package:rootasjey/screens/art/art_button.dart';
 import 'package:wave_divider/wave_divider.dart';
 
@@ -29,7 +28,7 @@ class _ArtPageState extends State<ArtPage> {
   @override
   Widget build(BuildContext context) {
     final Color? foregroundColor = Theme.of(context).textTheme.bodyLarge?.color;
-    final bool isMobileSize = Utils.measurements.isMobileSize(context);
+    final bool isMobileSize = Utils.graphic.isMobileSize(context);
 
     return SafeArea(
       child: Scaffold(
@@ -110,23 +109,17 @@ class _ArtPageState extends State<ArtPage> {
                 sliver: SliverList.list(
                   children: [
                     ArtButton(
-                      onPressed: () => context.beamToNamed(
-                        ArtLocation.illustrationsRoute,
-                      ),
+                      onPressed: () {},
                       accentColor: Constants.colors.art,
-                      textTitle: "illustrations".tr().toLowerCase(),
+                      textTitle: "illustration.names".tr().toLowerCase(),
                     ),
                     ArtButton(
-                      onPressed: () {
-                        context.beamToNamed(ArtLocation.videoMontagesRoute);
-                      },
+                      onPressed: () {},
                       accentColor: Constants.colors.videoMontage,
                       textTitle: "video_montage.names".tr().toLowerCase(),
                     ),
                     ArtButton(
-                      onPressed: () {
-                        context.beamToNamed(ArtLocation.terrariumsRoute);
-                      },
+                      onPressed: () {},
                       accentColor: Constants.colors.terrarium,
                       textTitle: "terrarium.names".tr().toLowerCase(),
                     ),

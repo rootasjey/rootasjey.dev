@@ -50,8 +50,8 @@ class IllustrationsPageEmpty extends StatelessWidget {
                       ),
                       Text(
                         canCreate
-                            ? "illustration_empty_create".tr()
-                            : "illustrations_empty".tr(),
+                            ? "illustration.empty_create".tr()
+                            : "illustration.empty".tr(),
                         style: Utils.calligraphy.body2(
                           textStyle: const TextStyle(
                             fontSize: 18.0,
@@ -64,7 +64,7 @@ class IllustrationsPageEmpty extends StatelessWidget {
                           padding: const EdgeInsets.only(top: 12.0),
                           child: DarkElevatedButton(
                             onPressed: canCreate ? onShowCreatePage : null,
-                            child: Text("illustration_upload".tr()),
+                            child: Text("illustration.upload".tr()),
                           ),
                         ),
                       if (!canCreate)

@@ -134,7 +134,7 @@ class _GitHubActivitiesState extends State<GitHubActivities> with UiLoggy {
   }
 
   Widget moreButton() {
-    if (widget.size.width < Utils.measurements.mobileWidthTreshold) {
+    if (widget.size.width < Utils.graphic.mobileWidthTreshold) {
       return Tooltip(
         message: "activity_show_more".tr(),
         child: TextButton(
@@ -169,7 +169,7 @@ class _GitHubActivitiesState extends State<GitHubActivities> with UiLoggy {
   }
 
   Widget githubButton() {
-    if (widget.size.width < Utils.measurements.mobileWidthTreshold) {
+    if (widget.size.width < Utils.graphic.mobileWidthTreshold) {
       return Tooltip(
         message: "GitHub",
         child: TextButton(

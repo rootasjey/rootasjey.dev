@@ -7,8 +7,13 @@ class ArtButton extends StatefulWidget {
     required this.textTitle,
     this.accentColor = Colors.blue,
     this.onPressed,
+    this.isMobileSize = false,
   });
 
+  /// Reduce text button if true.
+  final bool isMobileSize;
+
+  /// Color of the button.
   final Color accentColor;
 
   /// Callback fired when button is pressed.
@@ -45,7 +50,7 @@ class _ArtButtonState extends State<ArtButton> {
         widget.textTitle,
         style: Utils.calligraphy.body(
           textStyle: TextStyle(
-            fontSize: 64.0,
+            fontSize: widget.isMobileSize ? 18.0 : 64.0,
             fontWeight: FontWeight.w600,
             color: foregroundColor?.withOpacity(0.8),
             shadows: [

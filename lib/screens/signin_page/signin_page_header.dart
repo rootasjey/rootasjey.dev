@@ -28,51 +28,49 @@ class SigninPageHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SliverToBoxAdapter(
-      child: Padding(
-        padding: margin,
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 12.0, bottom: 8.0),
-              child: Icon(
-                TablerIcons.air_balloon,
-                color: accentColor,
-                size: 42.0,
+    return Padding(
+      padding: margin,
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 12.0, bottom: 8.0),
+            child: Icon(
+              TablerIcons.air_balloon,
+              color: accentColor,
+              size: 42.0,
+            ),
+          ),
+          Text(
+            "welcome_back".tr(),
+            style: Utils.calligraphy.body(
+              textStyle: TextStyle(
+                fontSize: isMobileSize ? 24.0 : 54.0,
+                fontWeight: FontWeight.w600,
               ),
             ),
-            Text(
-              "signin.name".tr(),
-              style: Utils.calligraphy.body(
-                textStyle: TextStyle(
-                  fontSize: isMobileSize ? 24.0 : 54.0,
-                  fontWeight: FontWeight.w600,
-                ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 6.0),
+            child: TextButton(
+              onPressed: onNavigateToCreateAccount,
+              style: TextButton.styleFrom(
+                backgroundColor: accentColor.withOpacity(0.1),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 6.0),
-              child: TextButton(
-                onPressed: onNavigateToCreateAccount,
-                style: TextButton.styleFrom(
-                  backgroundColor: accentColor.withOpacity(0.1),
-                ),
-                child: Opacity(
-                  opacity: 0.6,
-                  child: Text(
-                    "account.dont_own".tr(),
-                    style: Utils.calligraphy.code(
-                      textStyle: const TextStyle(
-                        fontSize: 16.0,
-                        fontWeight: FontWeight.w600,
-                      ),
+              child: Opacity(
+                opacity: 0.6,
+                child: Text(
+                  "account.dont_own".tr(),
+                  style: Utils.calligraphy.code(
+                    textStyle: const TextStyle(
+                      fontSize: 14.0,
+                      fontWeight: FontWeight.w400,
                     ),
                   ),
                 ),
               ),
             ),
-          ].animate().slideY(begin: 0.8, end: 0.0).fadeIn(),
-        ),
+          ),
+        ].animate().slideY(begin: 0.8, end: 0.0).fadeIn(),
       ),
     );
   }

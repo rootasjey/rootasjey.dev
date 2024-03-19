@@ -9,10 +9,7 @@ import 'package:rootasjey/components/buttons/circle_button.dart';
 import 'package:rootasjey/components/loading_view.dart';
 import 'package:rootasjey/globals/constants.dart';
 import 'package:rootasjey/globals/utils.dart';
-import 'package:rootasjey/router/locations/forgot_password_location.dart';
 import 'package:rootasjey/router/locations/home_location.dart';
-import 'package:rootasjey/router/locations/settings_location.dart';
-import 'package:rootasjey/router/locations/signup_location.dart';
 import 'package:rootasjey/router/navigation_state_helper.dart';
 import 'package:rootasjey/screens/signin_page/signin_page_body.dart';
 import 'package:rootasjey/screens/signin_page/signin_page_header.dart';
@@ -74,7 +71,7 @@ class _SigninPageState extends State<SigninPage> with UiLoggy {
       );
     }
 
-    final bool isMobileSize = Utils.measurements.isMobileSize(context);
+    final bool isMobileSize = Utils.graphic.isMobileSize(context);
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
@@ -207,8 +204,6 @@ class _SigninPageState extends State<SigninPage> with UiLoggy {
       // beamer.beamToNamed(DashboardContentLocation.forgotPasswordRoute);
       return;
     }
-
-    beamer.root.beamToNamed(ForgotPasswordLocation.route);
   }
 
   /// Navigate to the create account page.
@@ -222,8 +217,6 @@ class _SigninPageState extends State<SigninPage> with UiLoggy {
       // beamer.beamToNamed(DashboardContentLocation.signupRoute);
       return;
     }
-
-    beamer.root.beamToNamed(SignupLocation.route);
   }
 
   /// Navigate to the settings page.
@@ -237,8 +230,6 @@ class _SigninPageState extends State<SigninPage> with UiLoggy {
       // beamer.beamToNamed(DashboardContentLocation.settingsRoute);
       return;
     }
-
-    Beamer.of(context, root: true).beamToNamed(SettingsLocation.route);
   }
 
   /// Navigate to the previous page.

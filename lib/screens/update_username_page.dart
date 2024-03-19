@@ -9,7 +9,6 @@ import 'package:rootasjey/actions/user_actions.dart';
 import 'package:rootasjey/components/sliver_edge_padding.dart';
 import 'package:rootasjey/globals/constants.dart';
 import 'package:rootasjey/globals/utils.dart';
-import 'package:rootasjey/router/locations/signin_location.dart';
 import 'package:rootasjey/types/cloud_fun_error.dart';
 import 'package:rootasjey/utils/snack.dart';
 import 'package:flutter/material.dart';
@@ -441,8 +440,6 @@ class _UpdateUsernamePageState extends State<UpdateUsernamePage> with UiLoggy {
           _isCompleted = false;
           _isUpdating = false;
         });
-
-        Beamer.of(context).beamToNamed(SigninLocation.route);
         return;
       }
 

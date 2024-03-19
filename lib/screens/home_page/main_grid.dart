@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:beamer/beamer.dart';
+import 'package:change_case/change_case.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
@@ -8,6 +10,7 @@ import 'package:rootasjey/components/loading_view.dart';
 import 'package:rootasjey/components/snap_bounce_scroll_physics.dart';
 import 'package:rootasjey/globals/constants.dart';
 import 'package:rootasjey/globals/utils.dart';
+import 'package:rootasjey/screens/curriculum/curriculum_page.dart';
 import 'package:rootasjey/screens/home_page/quote_page.dart';
 import 'package:rootasjey/screens/home_page/home_page.dart';
 import 'package:rootasjey/screens/home_page/menu_categories_page.dart';
@@ -17,16 +20,14 @@ import 'package:rootasjey/screens/undefined_page.dart';
 import 'package:rootasjey/screens/video_montage/video_montages_page.dart';
 import 'package:two_dimensional_scrollables/two_dimensional_scrollables.dart';
 
-class TwoDimensionalGridContainer extends StatefulWidget {
-  const TwoDimensionalGridContainer({super.key});
+class MainGrid extends StatefulWidget {
+  const MainGrid({super.key});
 
   @override
-  State<TwoDimensionalGridContainer> createState() =>
-      _TwoDimensionalGridContainerState();
+  State<MainGrid> createState() => _MainGridState();
 }
 
-class _TwoDimensionalGridContainerState
-    extends State<TwoDimensionalGridContainer> with UiLoggy {
+class _MainGridState extends State<MainGrid> with UiLoggy {
   bool _reverseArrowDown = false;
   bool _reverseArrowRight = false;
 
@@ -45,9 +46,21 @@ class _TwoDimensionalGridContainerState
   /// Initial vertical page index in the [_grid] to display.
   static const int _vStartPage = 1;
 
+  /// Offset history.
+  /// Used to go back to the previous page.
+  static final List<Offset> _offsetHistory = [];
+
   /// Grid of widgets to display.
   final List<List<Widget?>> _grid = [
     [
+      const CurriculumPage(
+        onGoHome: onGoToHomePage,
+        onGoBack: onGoToPreviousPage,
+      ),
+      const IllustrationsPage(
+        onGoHome: onGoToHomePage,
+        onGoBack: onGoToPreviousPage,
+      ),
       const QuotePage(
         quoteName: "Le bonheur ne reside pas au kilomètre final "
             "qui n'existera jamais, mais au kilomètre zéro, "
@@ -55,33 +68,40 @@ class _TwoDimensionalGridContainerState
         quoteAuthor: "Shanti",
         quoteReference: "Kilomètre zero",
       ),
-      const IllustrationsPage(
-        onGoToHomePage: onGoToHomePage,
-      ),
-      const UndefinedPage(),
       const UndefinedPage(),
     ],
     [
-      const MenuCategoriesPage(),
+      const MenuCategoriesPage(
+        onTapCategory: onGoToPage,
+        onGoHome: onGoToHomePage,
+        onGoBack: onGoToPreviousPage,
+      ),
       const HomePage(
         onGoToPage: onGoToPage,
+        onGoBack: onGoToPreviousPage,
       ),
-      const VideoMontagesPage(),
+      const VideoMontagesPage(
+        onGoHome: onGoToHomePage,
+        onGoBack: onGoToPreviousPage,
+      ),
       const UndefinedPage(),
     ],
     [
       const UndefinedPage(),
-      const ProjectsPage(),
+      const ProjectsPage(
+        onGoHome: onGoToHomePage,
+        onGoBack: onGoToPreviousPage,
+      ),
       const UndefinedPage(),
       const UndefinedPage(),
     ],
   ];
 
-  /// Horizontal scroll controller.
-  static final ScrollController _hScrollController = ScrollController();
+  /// Horizontal axis scroll controller.
+  static ScrollController _hScrollController = ScrollController();
 
-  /// Vertical scroll controller.
-  static final ScrollController _vScrollController = ScrollController();
+  /// Vertical axis scroll controller.
+  static ScrollController _vScrollController = ScrollController();
 
   /// Previous window's size (used to compare to the current window's size).
   /// Used to rebuild the UI when the window's size changes.
@@ -100,6 +120,10 @@ class _TwoDimensionalGridContainerState
   /// so the affection would trigger ~60 fram per second).
   Timer? _setRowTimer;
 
+  /// Used to rebuild part of the UI if we had an exception
+  /// (usually from two dimension scrollables).
+  bool _recoverUiFromCrash = false;
+
   @override
   void initState() {
     super.initState();
@@ -116,6 +140,45 @@ class _TwoDimensionalGridContainerState
       _hScrollController.addListener(onHorizontalScroll);
       _vScrollController.addListener(onVerticalScroll);
     });
+
+    FlutterError.onError = (FlutterErrorDetails details) {
+      loggy.error(details.exception, details.stack);
+      if (details.exception is! AssertionError) {
+        return;
+      }
+
+      final AssertionError assertionError = details.exception as AssertionError;
+
+      final String stackTrace = assertionError.stackTrace?.toString() ?? "";
+      final bool isDimensionalViewport = stackTrace.contains(
+          "package:flutter/src/widgets/two_dimensional_viewport.dart");
+
+      final bool containChildError = details.exception
+          .toString()
+          .contains("_children.containsValue(child)': is not true.");
+
+      final bool isTwoDimensionalGridError =
+          details.library == "rendering library" &&
+              isDimensionalViewport &&
+              containChildError;
+
+      // loggy.info(stackTrace);
+      if (isTwoDimensionalGridError) {
+        _vScrollController = ScrollController();
+        _hScrollController = ScrollController();
+        // _vScrollController.detach(_vScrollController.position);
+        // _hScrollController.detach(_hScrollController.position);
+        if (_recoverUiFromCrash) {
+          return;
+        }
+
+        WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+          setState(() {
+            _recoverUiFromCrash = true;
+          });
+        });
+      }
+    };
   }
 
   @override
@@ -135,13 +198,20 @@ class _TwoDimensionalGridContainerState
 
     if (_previousSize == Size.zero) {
       _previousSize = _windowSize;
-    } else if (_windowSize != _previousSize) {
+    } else if (_windowSize != _previousSize || _recoverUiFromCrash) {
       _previousSize = _windowSize;
+      _recoverUiFromCrash = false;
+
       Future.delayed(const Duration(milliseconds: 1000), () {
         setState(() {});
         WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-          _vScrollController.jumpTo(_currentRow * _windowSize.height);
-          _hScrollController.jumpTo(_currentColumn * _windowSize.width);
+          if (_vScrollController.hasClients) {
+            _vScrollController.jumpTo(_currentRow * _windowSize.height);
+          }
+
+          if (_hScrollController.hasClients) {
+            _hScrollController.jumpTo(_currentColumn * _windowSize.width);
+          }
         });
       });
       return LoadingView.scaffold(
@@ -234,40 +304,40 @@ class _TwoDimensionalGridContainerState
 
   /// Callback to go to home page.
   static void onGoToHomePage() {
-    _hScrollController.animateTo(
-      _hStartPage * _windowSize.width,
-      duration: const Duration(milliseconds: 250),
-      curve: Curves.decelerate,
-    );
-    _vScrollController.animateTo(
-      _vStartPage * _windowSize.height,
-      duration: const Duration(milliseconds: 250),
-      curve: Curves.decelerate,
-    );
+    moveGridTo(_vStartPage, _hStartPage);
   }
 
   /// Callback to go to a specific page.
   static void onGoToPage(String pageName) {
     switch (pageName) {
       case "illustrations-page":
-        _vScrollController.animateTo(
-          0,
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.decelerate,
-        );
+        moveGridTo(0, 1);
         break;
       case "home-page":
+        moveGridTo(_vStartPage, _hStartPage);
         break;
       case "projects-page":
+        moveGridTo(2, 1);
         break;
       case "video-montages-page":
-        _hScrollController.animateTo(
-          2 * _windowSize.width,
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.decelerate,
-        );
+        moveGridTo(1, 2);
         break;
     }
+  }
+
+  static Future<void> moveGridTo(int line, int column) {
+    return Future.wait([
+      _vScrollController.animateTo(
+        line * _windowSize.height,
+        duration: Duration(milliseconds: 800 * line),
+        curve: Curves.decelerate,
+      ),
+      _hScrollController.animateTo(
+        column * _windowSize.width,
+        duration: Duration(milliseconds: 800 * column),
+        curve: Curves.decelerate,
+      ),
+    ]);
   }
 
   /// Callback called when the user scrolls horizontally.
@@ -287,7 +357,7 @@ class _TwoDimensionalGridContainerState
 
     await _vScrollController.animateTo(
       newRowIndex * _windowSize.width,
-      duration: const Duration(milliseconds: 250),
+      duration: const Duration(milliseconds: 1000),
       curve: Curves.decelerate,
     );
   }
@@ -301,7 +371,7 @@ class _TwoDimensionalGridContainerState
 
     _vScrollController.animateTo(
       newRowIndex * _windowSize.width,
-      duration: const Duration(milliseconds: 250),
+      duration: const Duration(milliseconds: 1000),
       curve: Curves.decelerate,
     );
   }
@@ -315,7 +385,7 @@ class _TwoDimensionalGridContainerState
 
     _hScrollController.animateTo(
       newColIndex * _windowSize.width,
-      duration: const Duration(milliseconds: 250),
+      duration: const Duration(milliseconds: 1000),
       curve: Curves.decelerate,
     );
   }
@@ -329,7 +399,7 @@ class _TwoDimensionalGridContainerState
 
     _hScrollController.animateTo(
       newColIndex * _windowSize.width,
-      duration: const Duration(milliseconds: 250),
+      duration: const Duration(milliseconds: 1000),
       curve: Curves.decelerate,
     );
   }
@@ -359,6 +429,8 @@ class _TwoDimensionalGridContainerState
           _reverseArrowRight = false;
         });
       }
+
+      updateBrowserUrl();
     });
   }
 
@@ -367,6 +439,50 @@ class _TwoDimensionalGridContainerState
     _setRowTimer?.cancel();
     _setRowTimer = Timer(const Duration(milliseconds: 250), () {
       _currentRow = newRowIndex;
+      updateBrowserUrl();
     });
+  }
+
+  void updateBrowserUrl() {
+    final String segment = _grid[_currentRow][_currentColumn]
+        .toString()
+        .replaceFirst("Page", "")
+        .toKebabCase();
+
+    final BeamerDelegate beamer = Beamer.of(context);
+    final String origin = beamer.initialPath;
+
+    beamer.updateRouteInformation(RouteInformation(
+      uri: Uri.parse("$origin$segment"),
+    ));
+
+    pushOffset(_currentRow, _currentColumn);
+  }
+
+  static void onGoToPreviousPage() {
+    if (_offsetHistory.isEmpty) {
+      return;
+    }
+
+    _offsetHistory.removeLast(); // First remove current offset.
+    final Offset offset = _offsetHistory.removeLast(); // Use N-2 offset value
+    moveGridTo(offset.dx.toInt(), offset.dy.toInt());
+  }
+
+  void pushOffset(int currentRow, int currentColumn) {
+    if (_offsetHistory.isEmpty) {
+      _offsetHistory.add(
+        Offset(currentRow.toDouble(), currentColumn.toDouble()),
+      );
+      return;
+    }
+
+    final Offset currentOffset = _offsetHistory.last;
+    if (currentOffset.dx.toInt() == currentRow &&
+        currentOffset.dy.toInt() == currentColumn) {
+      return;
+    }
+
+    _offsetHistory.add(Offset(currentRow.toDouble(), currentColumn.toDouble()));
   }
 }

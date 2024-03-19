@@ -57,7 +57,7 @@ class PostsPageBody extends StatelessWidget {
   Widget build(BuildContext context) {
     const double maxCrossAxisExtent = 800.0;
     final bool isMobileSize =
-        windowSize.width < Utils.measurements.mobileWidthTreshold;
+        windowSize.width < Utils.graphic.mobileWidthTreshold;
     final double maxWidth = isMobileSize ? windowSize.width - 40.0 : 580.0;
 
     return Shortcuts(

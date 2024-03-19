@@ -11,6 +11,12 @@ import 'package:rootasjey/types/enums/enum_snackbar_type.dart';
 class Graphic with UiLoggy {
   const Graphic();
 
+  /// Width limit between mobile & desktop screen size.
+  final double mobileWidthTreshold = 700.0;
+
+  /// Height limit between mobile & desktop screen size.
+  final double mobileHeightTreshold = 600.0;
+
   /// Color filter to greyed out widget.
   final ColorFilter greyColorFilter = const ColorFilter.matrix(<double>[
     0.2126,
@@ -121,6 +127,20 @@ class Graphic with UiLoggy {
     }
 
     return Platform.isAndroid || Platform.isIOS;
+  }
+
+  /// Return true if the app's window is equal or less than the maximum
+  bool isMobileFromSize(Size size) {
+    return size.width <= mobileWidthTreshold ||
+        size.height <= mobileHeightTreshold;
+  }
+
+  /// Return true if the app's window is equal or less than the maximum
+  /// mobile width or height.
+  bool isMobileSize(BuildContext context) {
+    final Size size = MediaQuery.of(context).size;
+    return size.width <= mobileWidthTreshold ||
+        size.height <= mobileHeightTreshold;
   }
 
   /// Show a dialog or a modal bottom sheet according to `isMobileSize` value.

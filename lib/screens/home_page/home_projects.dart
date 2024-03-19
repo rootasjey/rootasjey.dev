@@ -1,10 +1,8 @@
-import 'package:beamer/beamer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:loggy/loggy.dart';
 import 'package:rootasjey/globals/constants.dart';
 import 'package:rootasjey/globals/utils.dart';
-import 'package:rootasjey/router/locations/projects_location.dart';
 import 'package:rootasjey/screens/home_page/colored_text.dart';
 import 'package:rootasjey/screens/home_page/select_featured_project_dialog.dart';
 import 'package:rootasjey/types/alias/firestore/doc_snapshot_stream_subscription.dart';
@@ -168,13 +166,9 @@ class _HomeProjectsState extends State<HomeProjects> with UiLoggy {
     }
   }
 
-  void onTapProjects() {
-    context.beamToNamed(ProjectsLocation.route);
-  }
+  void onTapProjects() {}
 
-  void onNavigateToAllProjects() {
-    Beamer.of(context).beamToNamed(ProjectsLocation.route);
-  }
+  void onNavigateToAllProjects() {}
 
   void openDialog(Project project) {
     Utils.graphic.showAdaptiveDialog(
@@ -225,20 +219,7 @@ class _HomeProjectsState extends State<HomeProjects> with UiLoggy {
     }
   }
 
-  void onTapProject(Project project) {
-    Beamer.of(context).beamToNamed(
-      ProjectsLocation.singleProjectRoute.replaceFirst(
-        ":projectId",
-        project.id,
-      ),
-      data: {
-        "projectId": project.id,
-      },
-      routeState: {
-        "projectName": project.name,
-      },
-    );
-  }
+  void onTapProject(Project project) {}
 
   void onToggleEditMode() {
     setState(() {

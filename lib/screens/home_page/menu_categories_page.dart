@@ -1,25 +1,37 @@
+import 'package:change_case/change_case.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
-import 'package:rootasjey/components/icons/app_icon.dart';
+import 'package:rootasjey/components/square_header.dart';
 import 'package:rootasjey/globals/constants.dart';
 import 'package:rootasjey/globals/utils.dart';
 import 'package:rootasjey/screens/art/art_button.dart';
+import 'package:rootasjey/screens/illustrations_page/illustrations_page.dart';
+import 'package:rootasjey/screens/projects_page/projects_page.dart';
+import 'package:rootasjey/screens/video_montage/video_montages_page.dart';
 import 'package:wave_divider/wave_divider.dart';
 
 class MenuCategoriesPage extends StatelessWidget {
   const MenuCategoriesPage({
     super.key,
     this.onTapCategory,
+    this.onGoBack,
+    this.onGoHome,
   });
 
+  /// Callback to go back to the previous page.
+  final void Function()? onGoBack;
+
+  /// Callback to go back to the home page.
+  final void Function()? onGoHome;
+
+  /// Callback to go to a specific page.
   final void Function(String name)? onTapCategory;
 
   @override
   Widget build(BuildContext context) {
     final Color? foregroundColor = Theme.of(context).textTheme.bodyLarge?.color;
-    final bool isMobileSize = Utils.measurements.isMobileSize(context);
+    final bool isMobileSize = Utils.graphic.isMobileSize(context);
 
     return SafeArea(
       child: Scaffold(
@@ -30,87 +42,75 @@ class MenuCategoriesPage extends StatelessWidget {
               // color: _accentColor,
             ),
           ),
-          child: CustomScrollView(
-            slivers: [
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 60.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+          child: Column(
+            children: [
+              SquareHeader(
+                margin: const EdgeInsets.only(top: 60.0),
+                onGoBack: onGoBack,
+                onGoHome: onGoHome,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(
+                  left: 12.0,
+                  right: 12.0,
+                ),
+                child: FractionallySizedBox(
+                  widthFactor: isMobileSize ? 0.8 : 0.6,
+                  child: Column(
                     children: [
-                      Utils.graphic.tooltip(
-                        tooltipString: "home".tr(),
-                        child: const AppIcon(
-                          size: 24.0,
-                          margin: EdgeInsets.only(right: 12.0),
+                      Text(
+                        "creative.name".tr().toUpperCase(),
+                        style: Utils.calligraphy.body2(
+                          textStyle: const TextStyle(
+                            fontSize: 24.0,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
                       ),
-                      const Icon(TablerIcons.point),
-                      Utils.graphic.tooltip(
-                        tooltipString: "back".tr(),
-                        child: IconButton(
-                          onPressed: () {},
-                          icon: const Icon(TablerIcons.arrow_back),
+                      Text(
+                        "art.subtitle".tr(),
+                        textAlign:
+                            isMobileSize ? TextAlign.center : TextAlign.start,
+                        style: Utils.calligraphy.body(
+                          textStyle: TextStyle(
+                            fontSize: isMobileSize ? 14.0 : 16.0,
+                            fontWeight: FontWeight.w400,
+                            color: foregroundColor?.withOpacity(0.5),
+                          ),
                         ),
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.only(top: 24.0),
+                        child: WaveDivider(),
                       ),
                     ],
                   ),
                 ),
               ),
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                    left: 12.0,
-                    right: 12.0,
-                  ),
-                  child: FractionallySizedBox(
-                    widthFactor: isMobileSize ? 0.9 : 0.6,
-                    child: Column(
-                      children: [
-                        Text(
-                          "art.name".tr().toUpperCase(),
-                          style: Utils.calligraphy.body2(
-                            textStyle: const TextStyle(
-                              fontSize: 24.0,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                        ),
-                        Text(
-                          "art.subtitle".tr(),
-                          style: Utils.calligraphy.body(
-                            textStyle: TextStyle(
-                              fontSize: 16.0,
-                              fontWeight: FontWeight.w400,
-                              color: foregroundColor?.withOpacity(0.5),
-                            ),
-                          ),
-                        ),
-                        const Padding(
-                          padding: EdgeInsets.only(top: 24.0),
-                          child: WaveDivider(),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              SliverPadding(
-                padding: const EdgeInsets.only(top: 42.0, bottom: 42.0),
-                sliver: SliverList.list(
+              Padding(
+                padding: const EdgeInsets.only(bottom: 42.0),
+                child: Column(
                   children: [
                     ArtButton(
-                      onPressed: () {},
+                      isMobileSize: isMobileSize,
+                      onPressed: () => onTapCategory?.call(
+                        const ProjectsPage().toString().toKebabCase(),
+                      ),
                       accentColor: Constants.colors.art,
                       textTitle: "projects".tr().toLowerCase(),
                     ),
                     ArtButton(
-                      onPressed: () {},
+                      isMobileSize: isMobileSize,
+                      onPressed: () => onTapCategory?.call(
+                          const IllustrationsPage().toString().toKebabCase()),
                       accentColor: Constants.colors.art,
-                      textTitle: "illustrations".tr().toLowerCase(),
+                      textTitle: "illustration.names".tr().toLowerCase(),
                     ),
                     ArtButton(
-                      onPressed: () {},
+                      isMobileSize: isMobileSize,
+                      onPressed: () => onTapCategory?.call(
+                        const VideoMontagesPage().toString().toKebabCase(),
+                      ),
                       accentColor: Constants.colors.videoMontage,
                       textTitle: "video_montage.names".tr().toLowerCase(),
                     ),

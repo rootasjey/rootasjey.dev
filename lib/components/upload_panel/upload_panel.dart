@@ -63,7 +63,7 @@ class _UploadWindowState extends State<UploadPanel> {
 
     final Size windowSize = MediaQuery.of(context).size;
     final bool isMobileSize =
-        windowSize.width < Utils.measurements.mobileWidthTreshold;
+        windowSize.width < Utils.graphic.mobileWidthTreshold;
 
     final Color backgroundColor = Theme.of(context).scaffoldBackgroundColor;
 
@@ -115,7 +115,7 @@ class _UploadWindowState extends State<UploadPanel> {
   }
 
   void onShowBottomSheet(List<CustomUploadTask> uploadTaskList) {
-    final bool isMobileSize = Utils.measurements.isMobileSize(context);
+    final bool isMobileSize = Utils.graphic.isMobileSize(context);
     final Color backgroundColor = Theme.of(context).scaffoldBackgroundColor;
 
     Utils.graphic.showAdaptiveDialog(

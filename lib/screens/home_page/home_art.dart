@@ -1,8 +1,6 @@
-import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:rootasjey/globals/constants.dart';
 import 'package:rootasjey/globals/utils.dart';
-import 'package:rootasjey/router/locations/art_location.dart';
 import 'package:rootasjey/screens/home_page/colored_text.dart';
 
 class HomeArt extends StatelessWidget {
@@ -47,17 +45,17 @@ class HomeArt extends StatelessWidget {
             ),
           ),
           ColoredText(
-            onTap: () => context.beamToNamed(ArtLocation.illustrationsRoute),
+            onTap: () {},
             textHoverColor: Constants.colors.art,
             textValue: "Illustrations •",
           ),
           ColoredText(
-            onTap: () => context.beamToNamed(ArtLocation.videoMontagesRoute),
+            onTap: () {},
             textHoverColor: Constants.colors.videoMontage,
             textValue: "Video montages •",
           ),
           ColoredText(
-            onTap: () => context.beamToNamed(ArtLocation.terrariumsRoute),
+            onTap: () {},
             textHoverColor: Constants.colors.terrarium,
             textValue: "Terrariums •",
           ),

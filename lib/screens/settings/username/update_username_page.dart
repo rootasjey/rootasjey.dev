@@ -51,7 +51,7 @@ class _UpdateUsernamePageState extends State<UpdateUsernamePage> with UiLoggy {
 
   @override
   Widget build(BuildContext context) {
-    final bool isMobileSize = Utils.measurements.isMobileSize(context);
+    final bool isMobileSize = Utils.graphic.isMobileSize(context);
 
     return BasicShortcuts(
       autofocus: false,

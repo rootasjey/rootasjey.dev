@@ -13,7 +13,6 @@ import "package:rootasjey/components/loading_view.dart";
 import "package:rootasjey/globals/constants.dart";
 import "package:rootasjey/globals/utils.dart";
 import "package:rootasjey/router/locations/home_location.dart";
-import "package:rootasjey/router/locations/signin_location.dart";
 import "package:rootasjey/router/navigation_state_helper.dart";
 import "package:rootasjey/screens/signup_page/signup_page_body.dart";
 import "package:rootasjey/screens/signup_page/signup_page_header.dart";
@@ -118,7 +117,7 @@ class _SignupPageState extends State<SignupPage> with UiLoggy {
       );
     }
 
-    final bool isMobileSize = Utils.measurements.isMobileSize(context);
+    final bool isMobileSize = Utils.graphic.isMobileSize(context);
 
     const shortcuts = <SingleActivator, Intent>{
       SingleActivator(LogicalKeyboardKey.escape): EscapeIntent(),
@@ -367,8 +366,6 @@ class _SignupPageState extends State<SignupPage> with UiLoggy {
       // beamer.beamToNamed(DashboardContentLocation.signinRoute);
       return;
     }
-
-    beamer.root.beamToNamed(SigninLocation.route);
   }
 
   /// Navigate back to previous or home page.

@@ -1,5 +1,7 @@
+import 'package:change_case/change_case.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
@@ -8,6 +10,9 @@ import 'package:rootasjey/components/buttons/circle_button.dart';
 import 'package:rootasjey/globals/constants.dart';
 import 'package:rootasjey/globals/utils.dart';
 import 'package:rootasjey/screens/home_page/brightness_button.dart';
+import 'package:rootasjey/screens/illustrations_page/illustrations_page.dart';
+import 'package:rootasjey/screens/signin_page/simple_signin_page.dart';
+import 'package:rootasjey/screens/video_montage/video_montages_page.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:wave_divider/wave_divider.dart';
 
@@ -15,9 +20,14 @@ class HomePage extends StatefulWidget with UiLoggy {
   const HomePage({
     super.key,
     this.onGoToPage,
+    this.onGoBack,
   });
 
+  /// Callback to go to a specific page.
   final void Function(String pageName)? onGoToPage;
+
+  /// Callback to go back.
+  final void Function()? onGoBack;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -44,7 +54,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final bool useTinyText = Utils.measurements.isMobileSize(context);
+    final bool isMobileSize = Utils.graphic.isMobileSize(context);
     final Brightness brightness = Theme.of(context).brightness;
     final bool isDark = brightness == Brightness.dark;
     final Color? foregroundColor =
@@ -66,29 +76,39 @@ class _HomePageState extends State<HomePage> {
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text.rich(
-                TextSpan(
-                  children: [
-                    TextSpan(
-                      text: Constants.appName,
-                      style: Utils.calligraphy.body(
-                        textStyle: TextStyle(
-                          fontSize: useTinyText ? 64.0 : 112.0,
-                          fontWeight: FontWeight.w800,
-                          height: 1.0,
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 6.0),
+                child: Text.rich(
+                  TextSpan(
+                    children: [
+                      TextSpan(
+                        text: Constants.appName,
+                        style: Utils.calligraphy.body(
+                          textStyle: TextStyle(
+                            fontSize: isMobileSize ? 54.0 : 112.0,
+                            fontWeight: FontWeight.w800,
+                            height: 1.0,
+                          ),
                         ),
                       ),
+                      const TextSpan(
+                        text: "\nI'm a creative developer",
+                      ),
+                      TextSpan(
+                        text: ".",
+                        style: TextStyle(
+                          color: foregroundColor?.withOpacity(0.1),
+                        ),
+                        recognizer: TapGestureRecognizer()..onTap = signin,
+                      ),
+                    ],
+                  ),
+                  style: Utils.calligraphy.body3(
+                    textStyle: TextStyle(
+                      fontSize: 24.0,
+                      fontWeight: FontWeight.w600,
+                      color: foregroundColor?.withOpacity(1.0),
                     ),
-                    const TextSpan(
-                      text: "\nI'm a creative developer",
-                    )
-                  ],
-                ),
-                style: Utils.calligraphy.body3(
-                  textStyle: TextStyle(
-                    fontSize: 24.0,
-                    fontWeight: FontWeight.w600,
-                    color: foregroundColor?.withOpacity(1.0),
                   ),
                 ),
               ),
@@ -123,7 +143,12 @@ class _HomePageState extends State<HomePage> {
                         tooltipString: "illustrations",
                         child: IconButton(
                           onPressed: () {
-                            widget.onGoToPage?.call("illustrations-page");
+                            widget.onGoToPage?.call(
+                              const IllustrationsPage()
+                                  .toString()
+                                  .toKebabCase(),
+                            );
+                            // widget.onGoToPage?.call("illustrations-page");
                           },
                           icon: const Icon(TablerIcons.photo),
                         ),
@@ -132,7 +157,12 @@ class _HomePageState extends State<HomePage> {
                         tooltipString: "video montages",
                         child: IconButton(
                           onPressed: () {
-                            widget.onGoToPage?.call("video-montages-page");
+                            widget.onGoToPage?.call(
+                              const VideoMontagesPage()
+                                  .toString()
+                                  .toKebabCase(),
+                            );
+                            // widget.onGoToPage?.call("video-montages-page");
                           },
                           icon: const Icon(TablerIcons.movie),
                         ),
@@ -215,11 +245,13 @@ class _HomePageState extends State<HomePage> {
             ],
           ),
           Positioned(
-            top: 24.0,
-            right: 24.0,
+            top: isMobileSize ? null : 24.0,
+            bottom: isMobileSize ? 24.0 : null,
+            right: isMobileSize ? null : 24.0,
+            left: isMobileSize ? 24.0 : null,
             child: Wrap(
               spacing: 12.0,
-              direction: Axis.vertical,
+              direction: isMobileSize ? Axis.horizontal : Axis.vertical,
               children: [
                 BrightnessButton(
                   radius: _actionButtonRadius,
@@ -271,5 +303,19 @@ class _HomePageState extends State<HomePage> {
         .getDownloadURL();
 
     launchUrl(Uri.parse(url));
+  }
+
+  void signin() {
+    if (Utils.state.user.userAuthenticated) {
+      return;
+    }
+
+    Utils.graphic.showAdaptiveDialog(
+      context,
+      isMobileSize: false,
+      builder: (BuildContext context) {
+        return const SimpleSigninPage();
+      },
+    );
   }
 }

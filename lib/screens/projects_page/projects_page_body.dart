@@ -1,8 +1,6 @@
-import 'package:beamer/beamer.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
-import 'package:rootasjey/components/icons/app_icon.dart';
+import 'package:rootasjey/components/square_header.dart';
 import 'package:rootasjey/globals/utils.dart';
 import 'package:rootasjey/types/project/project.dart';
 
@@ -11,11 +9,13 @@ class ProjectsPageBody extends StatelessWidget {
     super.key,
     required this.projects,
     required this.fab,
+    required this.windowSize,
     this.canManage = false,
     this.isMobileSize = false,
     this.accentColor = Colors.blue,
     this.onTapProject,
-    required this.windowSize,
+    this.onGoBack,
+    this.onGoHome,
   });
 
   /// True if the screen size is mobile.
@@ -30,6 +30,12 @@ class ProjectsPageBody extends StatelessWidget {
   /// Callback fired after tapping on a project.
   final void Function(Project project)? onTapProject;
 
+  /// Callback to go back to the previous page.
+  final void Function()? onGoBack;
+
+  /// Callback to go back to the home page.
+  final void Function()? onGoHome;
+
   /// Project list. Main data.
   final List<Project> projects;
 
@@ -41,7 +47,6 @@ class ProjectsPageBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // int index = -1;
     final Color? foregroundColor =
         Theme.of(context).textTheme.bodyMedium?.color;
 
@@ -58,28 +63,12 @@ class ProjectsPageBody extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 60.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Utils.graphic.tooltip(
-                    tooltipString: "home".tr(),
-                    child: const AppIcon(
-                      size: 24.0,
-                      margin: EdgeInsets.only(right: 12.0),
-                    ),
-                  ),
-                  const Icon(TablerIcons.point),
-                  Utils.graphic.tooltip(
-                    tooltipString: "back".tr(),
-                    child: IconButton(
-                      onPressed: context.beamBack,
-                      icon: const Icon(TablerIcons.arrow_back),
-                    ),
-                  ),
-                ],
-              ),
+            SquareHeader(
+              margin: isMobileSize
+                  ? const EdgeInsets.only(top: 24.0)
+                  : const EdgeInsets.only(top: 60.0),
+              onGoBack: onGoBack,
+              onGoHome: onGoHome,
             ),
             Padding(
               padding: const EdgeInsets.only(
@@ -87,7 +76,7 @@ class ProjectsPageBody extends StatelessWidget {
                 right: 12.0,
               ),
               child: FractionallySizedBox(
-                widthFactor: isMobileSize ? 0.9 : 0.6,
+                widthFactor: isMobileSize ? 1.0 : 0.6,
                 child: Column(
                   children: [
                     Text(
@@ -103,7 +92,7 @@ class ProjectsPageBody extends StatelessWidget {
                       "projects_subtitle".tr(),
                       style: Utils.calligraphy.body(
                         textStyle: TextStyle(
-                          fontSize: 16.0,
+                          fontSize: isMobileSize ? 14.0 : 16.0,
                           fontWeight: FontWeight.w400,
                           color: foregroundColor?.withOpacity(0.5),
                         ),
@@ -113,50 +102,48 @@ class ProjectsPageBody extends StatelessWidget {
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(top: 42.0),
+            Container(
+              padding: const EdgeInsets.only(
+                top: 42.0,
+                left: 12.0,
+                right: 24.0,
+              ),
               child: Wrap(
                 spacing: 24.0,
                 runSpacing: 24.0,
                 direction: Axis.vertical,
-                children: projects.map((project) {
-                  // index++;
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        project.name,
-                        style: Utils.calligraphy.body(
-                          textStyle: const TextStyle(
-                            height: 1.0,
-                            fontSize: 64.0,
-                            fontWeight: FontWeight.w600,
+                children: projects.map((Project project) {
+                  return SizedBox(
+                    width: windowSize.width - 48.0,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          project.name,
+                          style: Utils.calligraphy.body(
+                            textStyle: TextStyle(
+                              height: 1.0,
+                              fontSize: isMobileSize ? 24.0 : 64.0,
+                              fontWeight: FontWeight.w200,
+                              color: foregroundColor?.withOpacity(0.8),
+                            ),
                           ),
                         ),
-                      ),
-                      Text(
-                        project.summary,
-                        style: Utils.calligraphy.body(
-                          textStyle: TextStyle(
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.w400,
-                            color: foregroundColor?.withOpacity(0.6),
+                        Text(
+                          project.summary,
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
+                          style: Utils.calligraphy.body(
+                            textStyle: TextStyle(
+                              fontSize: isMobileSize ? 14.0 : 16.0,
+                              fontWeight: FontWeight.w400,
+                              color: foregroundColor?.withOpacity(0.4),
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   );
-                  // return SizedBox(
-                  //   width: 240.0,
-                  //   height: 300.0,
-                  //   child: ProjectCard(
-                  //     index: index,
-                  //     useBottomSheet: false,
-                  //     project: project,
-                  //     onTap: onTapProject,
-                  //     descriptionMaxLines: isMobileSize ? 3 : 5,
-                  //   ),
-                  // );
                 }).toList(),
               ),
               // child: GridView.builder(

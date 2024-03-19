@@ -1,4 +1,3 @@
-import 'package:beamer/beamer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -10,8 +9,6 @@ import 'package:rootasjey/components/popup_menu/popup_menu_icon.dart';
 import 'package:rootasjey/components/popup_menu/popup_menu_item_icon.dart';
 import 'package:rootasjey/globals/constants.dart';
 import 'package:rootasjey/globals/utils.dart';
-
-import 'package:rootasjey/router/locations/projects_location.dart';
 import 'package:rootasjey/screens/home_page/select_featured_project_dialog.dart';
 import 'package:rootasjey/types/alias/firestore/doc_snapshot_stream_subscription.dart';
 import 'package:rootasjey/types/alias/firestore/document_snapshot_map.dart';
@@ -79,9 +76,7 @@ class _ProjectSectionState extends State<ProjectSection> with UiLoggy {
   @override
   Widget build(BuildContext context) {
     final double fontSize =
-        widget.size.width < Utils.measurements.mobileWidthTreshold
-            ? 24.0
-            : 64.0;
+        widget.size.width < Utils.graphic.mobileWidthTreshold ? 24.0 : 64.0;
 
     final Signal<UserFirestore> signalUserFirestore =
         context.get(EnumSignalId.userFirestore);
@@ -213,7 +208,7 @@ class _ProjectSectionState extends State<ProjectSection> with UiLoggy {
   }
 
   EdgeInsets getMargin() {
-    if (widget.size.width < Utils.measurements.mobileWidthTreshold) {
+    if (widget.size.width < Utils.graphic.mobileWidthTreshold) {
       return const EdgeInsets.only(
         left: 16.0,
         right: 16.0,
@@ -306,9 +301,7 @@ class _ProjectSectionState extends State<ProjectSection> with UiLoggy {
     });
   }
 
-  void onNavigateToAllProjects() {
-    Beamer.of(context).beamToNamed(ProjectsLocation.route);
-  }
+  void onNavigateToAllProjects() {}
 
   void openDialog(Project project) {
     Utils.graphic.showAdaptiveDialog(
@@ -358,20 +351,7 @@ class _ProjectSectionState extends State<ProjectSection> with UiLoggy {
     }
   }
 
-  void onTapProject(Project project) {
-    Beamer.of(context).beamToNamed(
-      ProjectsLocation.singleProjectRoute.replaceFirst(
-        ":projectId",
-        project.id,
-      ),
-      data: {
-        "projectId": project.id,
-      },
-      routeState: {
-        "projectName": project.name,
-      },
-    );
-  }
+  void onTapProject(Project project) {}
 
   void onToggleEditMode() {
     setState(() {

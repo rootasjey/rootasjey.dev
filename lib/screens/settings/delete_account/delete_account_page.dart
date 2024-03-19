@@ -6,7 +6,6 @@ import "package:rootasjey/components/loading_view.dart";
 import "package:rootasjey/globals/constants.dart";
 import "package:rootasjey/globals/utils.dart";
 import "package:rootasjey/router/locations/home_location.dart";
-import "package:rootasjey/router/locations/signin_location.dart";
 import "package:rootasjey/screens/settings/delete_account/delete_account_page_body.dart";
 import "package:rootasjey/screens/settings/delete_account/delete_account_page_header.dart";
 import "package:rootasjey/types/action_return_value.dart";
@@ -40,7 +39,7 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> with UiLoggy {
 
   @override
   Widget build(BuildContext context) {
-    final bool isMobileSize = Utils.measurements.isMobileSize(context);
+    final bool isMobileSize = Utils.graphic.isMobileSize(context);
     final Color accentColor = Constants.colors.delete;
 
     if (_pageState == EnumPageState.loading) {
@@ -132,8 +131,6 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> with UiLoggy {
         context,
         message: "account.delete.success".tr(),
       );
-
-      context.beamToNamed(SigninLocation.route);
     } catch (error) {
       loggy.error(error);
       setState(() => _pageState = EnumPageState.idle);

@@ -25,7 +25,7 @@ class QuotePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool useTinyText = Utils.measurements.isMobileSize(context);
+    final bool useTinyText = Utils.graphic.isMobileSize(context);
     return Scaffold(
       body: Center(
         child: ConstrainedBox(

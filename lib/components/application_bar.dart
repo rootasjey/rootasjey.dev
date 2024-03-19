@@ -11,8 +11,6 @@ import 'package:rootasjey/components/letter_avatar.dart';
 import 'package:rootasjey/globals/constants.dart';
 import 'package:rootasjey/globals/utils.dart';
 import 'package:rootasjey/router/locations/home_location.dart';
-import 'package:rootasjey/router/locations/settings_location.dart';
-import 'package:rootasjey/router/locations/signin_location.dart';
 import 'package:rootasjey/types/enums/enum_app_bar_mode.dart';
 import 'package:rootasjey/types/user/user_auth.dart';
 import 'package:rootasjey/types/user/user_firestore.dart';
@@ -216,7 +214,7 @@ class ApplicationBar extends StatelessWidget {
     }
 
     return IconButton(
-      onPressed: () => context.beamToNamed(SigninLocation.route),
+      onPressed: () {},
       tooltip: "signin.name".tr(),
       color: foregroundColor,
       icon: const Icon(TablerIcons.user),
@@ -236,7 +234,7 @@ class ApplicationBar extends StatelessWidget {
       MenuAction(
         title: "settings.name".tr(),
         image: MenuImage.icon(TablerIcons.settings),
-        callback: () => context.beamToNamed(SettingsLocation.route),
+        callback: () {},
       ),
       MenuSeparator(),
       MenuAction(
