@@ -1,5 +1,3 @@
-import 'package:rootasjey/router/locations/home_location.dart';
-import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 
 /// A widget that displays application icon.
@@ -32,10 +30,7 @@ class AppIcon extends StatelessWidget {
       padding: margin,
       child: InkWell(
         borderRadius: BorderRadius.circular(12.0),
-        onTap: onTap ??
-            () => Beamer.of(context, root: true).beamToNamed(
-                  HomeLocation.route,
-                ),
+        onTap: onTap,
         onLongPress: onLongPress,
         child: Image.asset(
           "assets/images/app_icon/$iconSize.png",
