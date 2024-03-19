@@ -24,18 +24,22 @@
   "about_me_1": "I'm Jérémie CORPINOT, a freelance developer living in France.",
   "about_me_2": "I'm originally from Guadeloupe and one day I traveled to Paris to study Architecture. But that didn't work out very weel as I never passed the entrance exam. So, I went to Versailles University where I was graduated with a Master in Computer Sciences.",
   "about_me_3": "I love drawings, video games, heroic-fantasy books, to name a few. I started my freelancer journey in June, 2019 in order to work on what really matters.",
-  "account_already_own": "I already have an account",
-  "account_create_new": "Create a new account",
-  "account_create_error": "There was an issue while creating your new account. Please retry.",
-  "account_creating": "Creating your account",
-  "account_delete": "Delete account",
-  "account_delete_description": "Well, we're sad but we say goodbye.",
-  "account_delete_successfull": "Your account has been successfuly deleted!",
-  "account_deletion_after": "What happens after?",
-  "account_deletion_point_1": "Your personal data will be deleted",
-  "account_deletion_point_2": "Your published quotes will stay on the platform",
-  "account_deletion_point_3": "Your username will (slowly) be dissaciated with the published quotes",
-  "account_recover": "Recover account",
+  "account": {
+    "already_own": "I already have an account",
+    "create_new": "Create a new account",
+    "create_error": "There was an issue while creating your new account. Please retry.",
+    "creating": "Creating your account",
+    "delete": "Delete account",
+    "delete_description": "Well, we're sad but we say goodbye.",
+    "delete_successfull": "Your account has been successfuly deleted!",
+    "deletion_after": "What happens after?",
+    "deletion_point_1": "Your personal data will be deleted",
+    "deletion_point_2": "Your published quotes will stay on the platform",
+    "deletion_point_3": "Your username will (slowly) be dissaciated with the published quotes",
+    "dont_own": "I don't have an account",
+    "recover": "Recover account"
+
+  },
   "action_irreversible": "This action is irreversible",
   "activity": "Activity",
   "activity_reset": "Reset activity list",
@@ -127,6 +131,9 @@
   "cover_remove": "Remove cover",
   "cover_replace": "Replace cover",
   "create": "Create",
+  "creative": {
+    "name": "Creative"
+  },
   "dark": "Dark",
   "dashboard": "Dashboard",
   "date_select": "Select a date",
@@ -166,35 +173,133 @@
   "edit": "Edit",
   "edit_location": "Edit location",
   "editorial": "Editorial",
-  "email": "Email",
-  "email_address_yours": "Your email address",
-  "email_check_spam": "Please check your spam folder too",
-  "email_current": "Current email",
-  "email_doesnt_exist": "Sorry, this email doesn't exist.",
-  "email_empty_forbidden": "Email cannot be empty",
-  "email_error": {
-    "empty": "Email must not be empty.",
-    "format": "Email is not in the right format (e.g. username@example.com)."
+  "email": {
+    "check_spam": "Please check your spam folder too",
+    "error": {
+      "doesnt_exist": "Sorry, this email doesn't exist.",
+      "empty_forbidden": "Email cannot be empty",
+      "empty": "The email field is empty. Please enter a valid email address.",
+      "not_available": "Sorry, this email is not available. Please try another one.",
+      "not_valid": "The value entered is not a valid email address"
     },
-  "email_new": "New email",
-  "email_not_available": "This email address is not available",
-  "email_not_valid": "The value entered is not a valid email address",
-  "email_empty_no_valid": "The email field is empty. Please enter a valid email address.",
-  "email_password_reset_link": "A password reset link has been sent to your mail box",
-  "email_response_soon": "You will receive an email response shortly",
-  "email_send_me": "Send me an email",
-  "email_sending": "Sending email...",
-  "email_update": "Update email",
-  "email_update_description": "Your email can only be associated with one account.",
-  "email_update_error": "Error while updating your email. Please try again later.",
-  "email_update_successful": "Your email has been successfuly updated",
-  "email_update_example": "If your email is outdated",
-  "email_updating": "Updating your email...",
-  "email_use_other": "Use another email",
-  "email_user_use": "No, your email will NOT be used to send you spam or shared with thrid-parties",
+    "name": "Email",
+    "new": "New email",
+    "password_reset_link": "A password reset link has been sent to your mail box",
+    "response_soon": "You will receive an email response shortly",
+    "sending": "Sending email",
+    "send_me": "Send me an email",
+    "send_reset_link": "Send reset link",
+    "sending_password_recovery": "Sending password recovery to your email inbox",
+    "update": "Update email",
+    "update_tips": "Enter your new email address below with your password to confirm this change.",
+    "use_other": "Use another email",
+    "user_use": "No, your email will NOT be used to send you spam or shared with thrid-parties"
+  },
   "ending": "Ending",
   "enroll": "Enroll",
   "enroll_description": "This is the start process. You won't be charged until we validate your project.",
+  "experience": {
+    "map": {
+      "dassault_systems": {
+        "company": "Dassault Systemes",
+        "job": "Software Engineer",
+        "start_date": "2015",
+        "end_date": "2019",
+        "target": "Develop cloud service & app for 3DS",
+        "tasks": {
+          "0": "JavaScript vanilla development (object pattern)",
+          "1": "UI/UX integration",
+          "2": "Unit, Integration, End-to-end tests",
+          "3": "External API integration (e.g. Google, Dropbox)",
+          "4": "Drafting technical specifications",
+          "5": "Pair programming, code review, UX collaboration"
+        },
+        "website": "https://www.3ds.com"
+      },
+      "fabernovel": {
+        "company": "Fabernovel",
+        "job": "Software Architect",
+        "start_date": "2019 May",
+        "end_date": "2019 June",
+        "target": "Redesign of customer personal bank account business",
+        "tasks": {
+          "0": "Fonctional programming",
+          "1": "Unit tests",
+          "2": "Pair programming, code review",
+          "3": "User data management",
+          "4": "Weekly meetings about new technologies",
+          "5": "Agile, scrum"
+        },
+        "website": "https://www.fabernovel.com"
+      },
+      "coding_box": {
+        "company": "CODING BOX",
+        "job": "Entrepreneur",
+        "start_date": "2019 October",
+        "end_date": "Today",
+        "target": "Create fun open source projects",
+        "tasks": {
+          "0": "Mobile applications development (iOS, Android)",
+          "1": "NoSQL databases (Firebase, MangoDB)",
+          "2": "CI/CD pipeline (Firebase, GCP)",
+          "3": "API deployment",
+          "4": "Flutter & dart development",
+          "5": "Project management (specifications, drafting, meeting)"
+        },
+        "website": "https://www.codingbox.fr"
+      },
+      "openclassrooms": {
+        "company": "OpenClassrooms",
+        "job": "Mentor (JavaScript, Python)",
+        "start_date": "2021 February",
+        "end_date": "2022 May",
+        "target": "To share knowledge about programming",
+        "tasks": {
+          "0": "Time management",
+          "1": "Drafting courses and exercices",
+          "2": "Understand student issues",
+          "3": "Create metaphorical examples to help understand",
+          "4": "Pair programming & debugging",
+          "5": "Showcase my past professional experiences"
+        },
+        "website": "https://openclassrooms.com"
+      },
+      "servier": {
+        "company": "Servier",
+        "job": "Fullstack Developer",
+        "start_date": "2021 July",
+        "end_date": "2022 Mars",
+        "target": "Redesign of My Health Partner",
+        "tasks": {
+          "0": "Frontend development (Next.JS, React.JS)",
+          "1": "Data management & API integration (Strapi)",
+          "2": "UI/UX integration (Figma)",
+          "3": "Pair programming, code review",
+          "4": "CI/CD pipeline (GitHub, Platform.sh, Azure)",
+          "5": "SEO optimizations"
+        },
+        "website": "https://myhealth-partner.com"
+      },
+      "comptoirs": {
+        "company": "Comptoirs",
+        "job": "Frontend Developer",
+        "start_date": "2022 October",
+        "end_date": "2023 April",
+        "target": "Create a backoffice for device monitoring",
+        "tasks": {
+          "0": "React.JS development",
+          "1": "API integration",
+          "2": "Design system, UI/UX integration (Figma)",
+          "3": "Pair programming, code review",
+          "4": "UI/UX collbaration",
+          "5": "Problem resolution"
+        },
+        "website": "https://www.comptoirs.co/"
+      }
+    },
+    "name": "Professional Experience",
+    "names": "Professional Experiences"
+  },
   "extra": "Extra",
   "extra_description": "You need extra features no listed here.",
   "faq": {
@@ -260,7 +365,28 @@
   "follow_me_there": "Follow me there",
   "form_below": "OR use the form below 👇 ",
   "form_invalid": "There are invalid field in the form. Please check all field and click send again.",
-  "formation": "Formation",
+  "formation": {
+    "map": {
+      "master_versailles": {
+        "school": "University of Versailles",
+        "degree": "Master in Computer Science",
+        "start_date": "2010",
+        "end_date": "2015",
+        "target": "Analysis & design of security systems of information",
+        "tasks": {
+          "0": "Design patterns (Observer, Composition, Factory)",
+          "1": "Algorithms (travelling salesman problem, graphs theory)",
+          "2": "Cryptography (e.g. RSA, AES, DES)",
+          "3": "Backend development with J2EE (Spring) & Python (Flask)",
+          "4": "Data mining & data integration",
+          "5": "Web programmation (HTML, CSS, JavaScript, PHP, Symfony)"
+        },
+        "website": "https://uvsq.fr"
+      }
+    },
+    "name": "Formation",
+    "names": "Formations"
+  },
   "formation_degree": "I've a master degree in Computer Science from Versailles University. There, I learned design pattern, J2EE, Algorithm, Security & Cryptography, data integration, among other things.",
   "formation_benefits": "I learnt how to work on multiple projects, alone and in a group. Most of the projects were great and challenging.",
   "freelancer_profiles": "Below are my freelancer profiles",
@@ -299,13 +425,15 @@
   "i_dont_know": "I don't know",
   "iap": "In-app purchases",
   "iap_content": "The apps contain in-app purchases which offer additional features.",
-  "illustration": "Illustration",
-  "illustration_upload": "Upload illustration",
-  "illustration_empty_create": "You have no illustration right now. You can upload a new one.",
-  "illustrations": "Illustrations",
-  "illustrations_empty": "There is no illustration at the moment.",
-  "illustrations_loading": "Loading illustrations",
-  "illustrations_subtitle": "When I'm motivated to dive into art, this is what I do.",
+  "illustration": {
+    "name": "Illustration",
+    "names": "Illustrations",
+    "upload": "Upload illustration",
+    "empty_create": "You have no illustration right now. You can upload a new one.",
+    "empty": "There is no illustration at the moment.",
+    "loading": "Loading illustrations",
+    "subtitle": "My weekly art - I mainly use Procreate"
+  },
   "image_cropping": "Cropping your image...",
   "image_size_exceeded": "Image's size cannot be greater than 5MB",
   "image_update_cloud": "Updating your image to the cloud...",
@@ -394,30 +522,34 @@
     "signup": "@:rootasjey_leading Signup",
     "tos": "@:rootasjey_leading Term of Services"
   },
-  "password": "Password",
-  "password_choosing_good": "Choosing a good password",
-  "password_choosing_good_desc": "Resist against brute-force attacks",
-  "password_confirm": "Confirm password",
-  "password_confirm_empty_forbidden": "Confirm password cannot be empty",
-  "password_current": "Current password",
-  "password_empty_forbidden": "Password cannot be empty.",
-  "password_enter": "Enter your password",
-  "password_error":{
-    "mismatch": "Passwords don't match.",
-    "incorrect": "The password is incorrect or the user does not exists."
+  "password": {
+    "forgot": "Forgot password",
+    "choosing_good": "Choosing a good password",
+    "choosing_good_desc": "Resist against brute-force attacks",
+    "confirm": "Confirm password",
+    "confirm_empty_forbidden": "Confirm password cannot be empty",
+    "current": "Current password",
+    "empty_forbidden": "Password cannot be empty.",
+    "enter": "Enter your password",
+    "error":{
+      "mismatch": "Passwords don't match.",
+      "incorrect": "The password is incorrect or the user does not exists."
+    },
+    "forgot_reset_process": "We will send a reset link to your mail box.",
+    "hide": "Hide password",
+    "name": "Password",
+    "new": "New password",
+    "show": "Show password",
+    "tips": "Tips",
+    "tips_1": "Choose at least a 6-characters password length",
+    "tips_2": "Choose a pass-phrase",
+    "tips_3": "Use special characters (e.g. *!#?)",
+    "update": "Update password",
+    "update_description": "Be sure to choose a good password and to remember it. Please use a password manager if you can.",
+    "update_error": "Error while updating your password.",
+    "update_success": "Your password has been successfuly updated.",
+    "updating": "Updating your password..."
   },
-  "password_forgot": "Forgot Password",
-  "password_forgot_reset_process": "We will send a reset link to your mail box.",
-  "password_new": "New password",
-  "password_tips": "Tips",
-  "password_tips_1": "Choose at least a 6-characters password length",
-  "password_tips_2": "Choose a pass-phrase",
-  "password_tips_3": "Use special characters (e.g. *!#?)",
-  "password_update": "Update password",
-  "password_update_description": "Be sure to choose a good password and to remember it. Please use a password manager if you can.",
-  "password_update_error": "Error while updating your password.",
-  "password_update_success": "Your password has been successfuly updated.",
-  "password_updating": "Updating your password...",
   "pause": "Pause",
   "payment_delayed": "Delayed",
   "payment_how": "How do you want to pay?",
@@ -620,11 +752,13 @@
   "short_bio": "I'm a french entrepreneur and freelance developer.",
   "showcase": "Showcase",
   "shuffle_color": "Shuffle color",
-  "signin": "Sign in",
-  "signingin": "Signing in",
-  "signin_existing_account": "Connect to your existing account",
-  "signup": "Sign up",
-  "signing_up": "Signing up",
+  "signin": {
+    "again": "Please sign in again",
+    "existing_account": "Already have an account?",
+    "failed": "Failed to sign in. Please try again.",
+    "in": "Connecting",
+    "name": "Sign in"
+  },
   "signout": "Sign out",
   "size": "Size",
   "skip": "Skip",
@@ -725,7 +859,7 @@
   "video_montage": {
     "name": "Video montage",
     "names": "Video montages",
-    "subtitle": "When I put my director's casquette, I cut video like a butcher. I choose a music, a subject, and c'est parti!"
+    "subtitle": "I want to share the beauty of these pieces of art"
   },
   "view_online": "View online",
   "visibility": {
@@ -738,6 +872,7 @@
   "website_dev": "Website development",
   "website_dev_description": "Your website will be handfully crafted to meet your requirements.",
   "website_globally_available": "We will create a website globally available for you.",
+  "welcome_back": "Welcome back",
   "welcome_text": "Welcome to rootasjey website. A virtual space about art & development.",
   "who_am_i": "Who am I?",
   "why": "Why?",

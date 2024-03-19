@@ -24,19 +24,22 @@
   "about_me_1": "Bonjour, je suis Jérémie CORPINOT, un développeur freelance vivant en France.",
   "about_me_2": "Je suis originaire des Antilles et bien que voulais initialement étudier l'architecture, je me suis orienté vers des études de programmation à l'Université de Versailles.",
   "about_me_3": "J'adore le dessin, les jeux-vidéos, les livres parmis d'autres. J'ai débuté mon aventure de freelance en Juin 2019 dans le but de créer des projets qui me sont chers.",
-  "account_already_own": "J'ai déjà un compte",
-  "account_create_new": "Créer un nouveau compte",
-  "account_create_error": "Il y a eu une erreur lors de la création de votre compte. Veuillez réessayer.",
-  "account_creating": "Créationd de votre compte",
-  "account_delete": "Supprimer le compte",
-  "account_delete_description": "On est triste mais on vous dit aurevoir.",
-  "account_delete_successfull": "Votre compte a été supprimé avec succès !",
-  "account_deletion_after": "Que se passera-t-il après ?",
-  "account_deletion_point_1": "Vos données personnelles seront supprimées",
-  "account_deletion_point_2": "Vos citations publiées resterons sur la plateforme",
-  "account_deletion_point_3": "Your username will (slowly) be dissaciated with the published quotes",
+  "account": {
+    "already_own": "J'ai déjà un compte",
+    "create_new": "Créer un nouveau compte",
+    "create_error": "Il y a eu une erreur lors de la création de votre compte. Veuillez réessayer.",
+    "creating": "Créationd de votre compte",
+    "delete": "Supprimer le compte",
+    "delete_description": "On est triste mais on vous dit aurevoir.",
+    "delete_successfull": "Votre compte a été supprimé avec succès !",
+    "deletion_after": "Que se passera-t-il après ?",
+    "deletion_point_1": "Vos données personnelles seront supprimées",
+    "deletion_point_2": "Vos citations publiées resterons sur la plateforme",
+    "deletion_point_3": "Your username will (slowly) be dissaciated with the published quotes",
+    "dont_own": "Je n'ai pas de compte",
+    "recover": "Récupérer son compte"
+  },
   "action_irreversible": "Cette action est irreversible",
-  "account_recover": "Récupérer son compte",
   "activity": "Activité",
   "activity_reset": "Réinitialiser la liste des activités",
   "activities": "Activités",
@@ -125,8 +128,11 @@
   "country_please_fill": "Veuillez indiquer votre pays et votre ville si vous souhaitez une rencontre.",
   "cover_add": "Ajouter une couverture",
   "cover_remove": "Retirer la couverture",
-  "create": "Créer",
   "cover_replace": "Remplacer la couverture",
+  "create": "Créer",
+  "creative": {
+    "name": "Creativité"
+  },
   "dark": "Sombre",
   "dashboard": "Tableau de bord",
   "date_select": "Selectionner une date",
@@ -166,37 +172,135 @@
   "edit": "Editer",
   "edit_location": "Edit location",
   "editorial": "Édition",
-  "email": "Email",
-  "email_address_yours": "Votre adresse email",
-  "email_check_spam": "Veuillez également vérifier votre de dossier de spam",
-  "email_current": "Email actuel",
-  "email_doesnt_exist": "Désolés, cette adresse email n'existe pas.",
-  "email_empty_forbidden": "L'email ne peut pas être vide",
-  "email_empty_no_valid": "Le champ email est vide. Veuillez saisir une adresse email valide.",
-  "email_error": {
-    "empty": "L'email ne doit pas être vide.",
-    "format": "L'email ne respecte pas le bon format (e.g. monemail@example.fr)."
+  "email": {
+    "check_spam": "Veuillez vérifier votre dossier de spam",
+    "error": {
+      "doesnt_exist": "Désolés, cette adresse email n'existe pas.",
+      "empty_forbidden": "L'email ne peut pas être vide",
+      "empty": "Le champ email est vide. Veuillez saisir une adresse email valide.",
+      "not_available": "Désolés, cette adresse email n'est pas disponible. Veuillez en choisir une autre.",
+      "not_valid": "L'adresse email saisie n'est pas valide"
     },
-  "email_new": "Nouvel email",
-  "email_not_available": "Cette adresse email n'est pas disponible",
-  "email_not_valid": "L'email saisie n'est pas valide",
-  "email_password_reset_link": "Un lien pour réinitialiser votre mot de passe vous a été envoyé dans votre boîte email",
-  "email_response_soon": "Vous allez recevoir une réponse par email bientôt",
-  "email_send_me": "Envoyez-moi un email",
-  "email_sending": "Envoie de l'email...",
-  "email_update": "Mise à jour de l'email",
-  "email_update_description": "Votre email ne peut être associé qu'à un seul compte.",
-  "email_update_example": "Si votre email n'est plus utilisé",
-  "email_update_error": "Une erreur est survenue durant la mise à jour de votre email. Veuillez réessayer.",
-  "email_update_successful": "Votre email a été mis à jour",
-  "email_updating": "Mise à jour de votre email...",
-  "email_use_other": "Utiliser une autre adresse email",
-  "email_user_use": "Non, votre email ne sera pas utilisé pour vous envoyer du spam ni partagé avec des tiers",
+    "password_reset_link": "Un lien pour réinitialiser votre mot de passe vous a été envoyé dans votre boîte email",
+    "response_soon": "Vous allez recevoir une réponse par email bientôt",
+    "name": "Email",
+    "new": "Nouvel email",
+    "send_me": "Envoyer un email",
+    "sending": "Envoi de l'email",
+    "send_reset_link": "Envoyer le lien de réinitialisation",
+    "sending_password_recovery": "Envoie du lien pour réinitialiser votre mot de passe",
+    "update": "Mettre à jour mon email",
+    "update_tips": "Entrez votre nouvelle adresse email ci-dessous ainsi que votre mot de passe pour confirmer ce changement.",
+    "use_other": "Utiliser une autre adresse email",
+    "user_use": "Non, votre email ne sera pas utilisé pour vous envoyer du spam ni partagé avec des tiers"
+  },
   "ending": "À la fin",
   "enroll": "M'inscrire",
   "enroll_description": "C'est le début du processus. Vous ne serez pas débité avant la validation du projet.",
   "extra": "Extra",
   "extra_description": "Vous avez besoin de fonctionnalités supplémentaires.",
+  "experience": {
+    "name": "Expérience Professionnelle",
+    "names": "Expériences Professionnelles",
+    "map": {
+      "dassault_systems": {
+        "company": "Dassault Systemes",
+        "job": "Développeur Logiciels",
+        "start_date": "2015",
+        "end_date": "2019",
+        "target": "Développement d'une app de stockage de fichiers cloude pour 3DS",
+        "tasks": {
+          "0": "Développement en JavaScript vanilla (object pattern)",
+          "1": "Intégrations UI/UX",
+          "2": "Tetsts unitaires, d'intégration, et end-to-end",
+          "3": "Intégration d'API externes (e.g. Google, Dropbox)",
+          "4": "Rédaction de spécifications techniques",
+          "5": "Pair programming, code review, collaboration UX"
+        },
+        "website": "https://www.3ds.com"
+      },
+      "fabernovel": {
+        "company": "Fabernovel",
+        "job": "Architecte logiciel",
+        "start_date": "2019 Mai",
+        "end_date": "2019 Juin",
+        "target": "Refonte d'un front office pour les clients d'une banque",
+        "tasks": {
+          "0": "Programmation fonctionnelle",
+          "1": "Tests unitaires",
+          "2": "Pair programming, code review",
+          "3": "Considération des données utilisateurs",
+          "4": "Réunion hebdomadaire sur les nouvelles technos",
+          "5": "Agile, scrum"
+        },
+        "website": "https://www.fabernovel.com"
+      },
+      "coding_box": {
+        "company": "CODING BOX",
+        "job": "Entrepreneur",
+        "start_date": "2019 Octobre",
+        "end_date": "Aujourd'hui",
+        "target": "Créer des projets open source & fun",
+        "tasks": {
+          "0": "Développement d'applications mobile (iOS, Android)",
+          "1": "Base de données noSQL (Firebase, MangoDB)",
+          "2": "CI/CD pipeline (Firebase, GCP)",
+          "3": "Déploiement d'API",
+          "4": "Programmation Flutter & dart",
+          "5": "Management de projet (specifications, drafting, meeting)"
+        },
+        "website": "https://www.codingbox.fr"
+      },
+      "openclassrooms": {
+        "company": "OpenClassrooms",
+        "job": "Mentor (JavaScript, Python)",
+        "start_date": "2021 Février",
+        "end_date": "2022 Mai",
+        "target": "Partager ma connaissance de la programmation",
+        "tasks": {
+          "0": "Gestion du temps avec les élèves",
+          "1": "Rédaction de cours et d'exercices",
+          "2": "Comprendre les difficultés des étudiants",
+          "3": "Créer des exemples pertinents aidant à la compréhension",
+          "4": "Pair programming & déboggage",
+          "5": "Donner un retour d'expérience du monde professionel"
+        },
+        "website": "https://openclassrooms.com"
+      },
+      "servier": {
+        "company": "Servier",
+        "job": "Développeur Fullstack",
+        "start_date": "2021 Juiller",
+        "end_date": "2022 Mars",
+        "target": "Refonte de My Health Partner",
+        "tasks": {
+          "0": "Développement frontend (Next.JS, React.JS)",
+          "1": "Gestion de données et intégration d'API (Strapi)",
+          "2": "Intégration UI/UX (Figma)",
+          "3": "Pair programming, code review",
+          "4": "CI/CD pipeline (GitHub, Platform.sh, Azure)",
+          "5": "Optimisations SEO"
+        },
+        "website": "https://myhealth-partner.com"
+      },
+      "comptoirs": {
+        "company": "Comptoirs",
+        "job": "Développeur frontend",
+        "start_date": "2022 Octobre",
+        "end_date": "2023 Avril",
+        "target": "Création d'un backoffice pour la gestion d'un parc réseau",
+        "tasks": {
+          "0": "Développpement en React.JS",
+          "1": "Intégration API",
+          "2": "Design system, intégration UI/UX (Figma)",
+          "3": "Pair programming, code review",
+          "4": "Collaboration avec l'équipe UI/UX",
+          "5": "Résolution de problèmes"
+        },
+        "website": "https://www.comptoirs.co/"
+      }
+    }
+  },
   "faq": {
     "title": "Faq",
     "price": {
@@ -260,7 +364,28 @@
   "follow_me_there": "Suivez-moi par-ici",
   "form_below": "OU utiliser le formulaire ci-dessous 👇 ",
   "form_invalid": "Il y a des champs éronnés dans le formulaire. Veuillez vérifier les valeurs entrées et réessayer.",
-  "formation": "Formation",
+  "formation": {
+    "map": {
+      "master_versailles": {
+        "school": "Université de Versailles",
+        "degree": "Master d'informatique",
+        "start_date": "2010",
+        "end_date": "2015",
+        "target": "Analyse et conception de systèmes d'information sûrs.",
+        "tasks": {
+          "0": "Design patterns (Observer, Composition, Factory)",
+          "1": "Algorithmique (problème du voyageur, théorie des graphes)",
+          "2": "Cryptographie et sécurité web",
+          "3": "Développement backend J2EE (Spring) & Python (Flask)",
+          "4": "Data mining & intégration de données (BDD musicale)",
+          "5": "Programmation web (HTML, CSS, JavaScript, PHP, Symfony)"
+        },
+        "website": "https://uvsq.fr"
+      }
+    },
+    "name": "Formation",
+    "names": "Formations"
+  },
   "formation_degree": "J'ai un diplôme de Master en Informatique de l'Université de Versailles. J'y ai appris les design patterns, le J2EE, l'agorithmie, la sécurité et la cryptographie, l'intégration de données, entre autres.",
   "formation_benefits": "J'ai appris à travailler sur des projets multiples, seul et en groupe.",
   "freelancer_profiles": "Ci-dessous se trouvent mes profiles de freelance",
@@ -299,13 +424,16 @@
   "i_dont_know": "Je ne sais pas",
   "iap": "Achats intégrés",
   "iap_content": "Cette app peut contenir des achats intégrés dans le but de vous fournir des fonctionnalités supplémentaires.",
-  "illustration": "Illustration",
-  "illustration_upload": "Transférer une illustration",
-  "illustration_empty_create": "Vous n'avez aucune illustration pour l'instant. Vous pouvez transférer de nouvelles.",
-  "illustrations": "Illustrations",
-  "illustrations_empty": "Il n'y a pas d'illustration pour le moment.",
-  "illustrations_loading": "Chargement des illustrations",
-  "illustrations_subtitle": "Lorsque je suis motivé à plonger dans mon univers artistic, je produis ces quelques illustrations.",
+  "illustration": {
+    "create": "Créer une illustration",
+    "name": "Illustration",
+    "names": "Illustrations",
+    "upload": "Transférer une illustration",
+    "empty_create": "Vous n'avez aucune illustration pour l'instant. Vous pouvez transférer de nouvelles.",
+    "empty": "Il n'y a pas d'illustration pour le moment.",
+    "loading": "Chargement des illustrations",
+    "subtitle": "Mes illustrations hebdomadaire - J'utilise principalement Procreate"
+  },
   "image_cropping": "Rognage de votre image...",
   "image_size_exceeded": "La taille de l'image ne doit être inférieure 5MB",
   "image_update_cloud": "Upload de votre image dans le cloud...",
@@ -394,30 +522,34 @@
     "signup": "@:rootasjey_leading Créer un compte",
     "tos": "@:rootasjey_leading CGU"
   },
-  "password": "Mot de passe",
-  "password_choosing_good": "Choisir un bon mot de passe",
-  "password_choosing_good_desc": "Resister contre les attaques de brute-force",
-  "password_confirm": "Confirmer le mot de passe",
-  "password_confirm_empty_forbidden": "La confirmation du mot de passe ne peut pas être vide",
-  "password_current": "Mot de passe actuel",
-  "password_empty_forbidden": "Le mot de passe ne peut pas être vide.",
-  "password_enter": "Saisissez votre mot de passe",
-  "password_error":{
-    "mismatch": "Les mots de passe ne correspondent pas",
-    "incorrect": "Le mot de passe est erroné ou l'utilisateur n'exist pas."
+  "password": {
+    "forgot": "Mot de passe oublié",
+    "choosing_good": "Choisir un bon mot de passe",
+    "choosing_good_desc": "Resister contre les attaques de brute-force",
+    "confirm": "Confirmer le mot de passe",
+    "confirm_empty_forbidden": "La confirmation du mot de passe ne peut pas être vide",
+    "current": "Mot de passe actuel",
+    "empty_forbidden": "Le mot de passe ne peut pas être vide.",
+    "enter": "Saisissez votre mot de passe",
+    "error":{
+      "mismatch": "Les mots de passe ne correspondent pas",
+      "incorrect": "Le mot de passe est erroné ou l'utilisateur n'exist pas."
+    },
+    "forgot_reset_process": "Nous vous enverrons un lien de réinitialisation de votre mot de passe dans votre boîte email.",
+    "hide": "Masquer le mot de passe",
+    "name": "Mot de passe",
+    "new": "Nouveau mot de passe",
+    "show": "Afficher le mot de passe",
+    "tips": "Conseils",
+    "tips_1": "Choisir un mot de passe d'au moins 6 caractères",
+    "tips_2": "Préférer une phrase de passe",
+    "tips_3": "Utiliser des caractères spéciaux (e.g. *!#?)",
+    "update": "Mettre à jour le mot de passe",
+    "update_description": "Veuillez choisir un bon mot de passe et de vous en souvenir. Vous pouvez utiliser un gestionnaire de mot de passes si vous le pouvez.",
+    "update_error": "Une erreur est survenue durant la mise à jour de votre mot de passe.",
+    "update_success": "Votre mot de passe a été mis à jour.",
+    "updating": "Mise à jour du mot de passe..."
   },
-  "password_forgot": "J'ai oublié mon mot de passe",
-  "password_forgot_reset_process": "Nous vous enverrons un lien de réinitialisation de votre mot de passe dans votre boîte email.",
-  "password_new": "Nouveau mot de passe",
-  "password_tips": "Conseils",
-  "password_tips_1": "Choisir un mot de passe d'au moins 6 caractères",
-  "password_tips_2": "Préférer une phrase de passe",
-  "password_tips_3": "Utiliser des caractères spéciaux (e.g. *!#?)",
-  "password_update": "Mettre à jour le mot de passe",
-  "password_update_description": "Veuillez choisir un bon mot de passe et de vous en souvenir. Vous pouvez utiliser un gestionnaire de mot de passes si vous le pouvez.",
-  "password_update_error": "Une erreur est survenue durant la mise à jour de votre mot de passe.",
-  "password_update_success": "Votre mot de passe a été mis à jour.",
-  "password_updating": "Mise à jour du mot de passe...",
   "pause": "Pause",
   "payment_delayed": "Différé",
   "payment_how": "Comment voulez-vous payer ?",
@@ -619,7 +751,13 @@
   "short_bio": "Je suis un entrepreneur et développeur freelance.",
   "showcase": "Exposition",
   "shuffle_color": "Mélanger les couleurs",
-  "signin": "Se connecter",
+  "signin": {
+    "again": "Veuillez vous reconnecter",
+    "existing_account": "Connectez-vous avec votre compte existant",
+    "failed": "Echec de l'authentification. Veuillez reessayer.",
+    "in": "Connexion en cours",
+    "name": "Se connecter"
+  },
   "signingin": "Connexion",
   "signin_existing_account": "Se connecter à un compte existant",
   "signup": "S'inscrire",
@@ -724,7 +862,7 @@
   "video_montage": {
     "name": "Montage vidéos",
     "names": "Montage vidéos",
-    "subtitle": "Lorsque je me ma casquette de réalisateur, Je coupe les vidéos comme du beurre. Je choisi une musique, un sujet, et c'est parti !"
+    "subtitle": "Je veux partager la beauté de ces œuvres d'art"
   },
   "view_online": "Voir en ligne",
   "visibility": {
@@ -737,6 +875,7 @@
   "website_dev": "Dévelopement de site web",
   "website_dev_description": "Votre site web sera créé à la main selon vos envies.",
   "website_globally_available": "Nous créerons pour vous un site web globalement disponible.",
+  "welcome_back": "Ravi de vous retrouver",
   "welcome_text": "Bienvenu(e) sur le site web de rootasjey. Un espace virtuel sur l'art et le développement.",
   "who_am_i": "Qui suis-je ?",
   "why": "Pourquoi ?",
