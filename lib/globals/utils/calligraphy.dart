@@ -50,7 +50,7 @@ class Calligraphy {
 
   /// Can be used for blog post title.
   TextStyle title({TextStyle? textStyle}) {
-    return GoogleFonts.playfairDisplay(
+    return GoogleFonts.merriweather(
       textStyle: textStyle,
     );
   }
