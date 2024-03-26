@@ -70,6 +70,7 @@ dependencies:
   github: ^9.22.0
   glutton: ^2.0.0
   google_fonts: ^6.1.0
+  interactive_slider: ^0.2.2
   jiffy: ^6.2.1
   just_the_tooltip: ^0.0.12
   loggy: ^2.0.3
