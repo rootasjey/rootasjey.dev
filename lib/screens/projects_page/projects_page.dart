@@ -3,7 +3,6 @@ import 'package:card_swiper/card_swiper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_solidart/flutter_solidart.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:loggy/loggy.dart';
@@ -22,7 +21,6 @@ import 'package:rootasjey/types/alias/firestore/query_snapshot_stream_subscripti
 import 'package:rootasjey/types/alias/json_alias.dart';
 import 'package:rootasjey/types/enums/enum_project_item_action.dart';
 import 'package:rootasjey/types/enums/enum_signal_id.dart';
-import 'package:rootasjey/types/intents/escape_intent.dart';
 import 'package:rootasjey/types/project/project.dart';
 import 'package:rootasjey/types/user/user_firestore.dart';
 import 'package:rootasjey/types/user/user_rights.dart';
@@ -83,7 +81,6 @@ class _ProjectsPageState extends State<ProjectsPage> with UiLoggy {
   void initState() {
     super.initState();
     _accentColor = Constants.colors.getRandomBackground();
-    // _accentColor = Constants.colors.getRandomFromPalette();
     fetchProjects();
   }
 
@@ -118,35 +115,31 @@ class _ProjectsPageState extends State<ProjectsPage> with UiLoggy {
     if (_creating) {
       return LoadingView.scaffold(
         message: _creating
-            ? "Creating your new project..."
-            : "Loading featured projects...",
+            ? "${"project.creating".tr()}..."
+            : "${"projects.loading_featured".tr()}...",
       );
     }
 
     if (_projects.isEmpty) {
-      return wrapWithShortcuts(
-        child: ProjectsPageEmptyView(
-          isMobileSize: isMobileSize,
-          canCreate: canManageProjects,
-          fab: fab(show: canManageProjects),
-          onShowCreatePage: onShowCreate,
-          onCancel: onCancel,
-        ),
+      return ProjectsPageEmptyView(
+        isMobileSize: isMobileSize,
+        canCreate: canManageProjects,
+        fab: fab(show: canManageProjects),
+        onShowCreatePage: onShowCreate,
+        onCancel: onCancel,
       );
     }
 
-    return wrapWithShortcuts(
-      child: ProjectsPageBody(
-        accentColor: _accentColor,
-        isMobileSize: isMobileSize,
-        canManage: canManageProjects,
-        onGoHome: widget.onGoHome,
-        onGoBack: widget.onGoBack,
-        fab: fab(show: canManageProjects),
-        onTapProject: onTapProject,
-        projects: _projects,
-        windowSize: windowSize,
-      ),
+    return ProjectsPageBody(
+      accentColor: _accentColor,
+      isMobileSize: isMobileSize,
+      canManage: canManageProjects,
+      onGoHome: widget.onGoHome,
+      onGoBack: widget.onGoBack,
+      fab: fab(show: canManageProjects),
+      onTapProject: onTapProject,
+      projects: _projects,
+      windowSize: windowSize,
     );
   }
 
@@ -170,30 +163,6 @@ class _ProjectsPageState extends State<ProjectsPage> with UiLoggy {
               fontWeight: FontWeight.w500,
             ),
           ),
-        ),
-      ),
-    );
-  }
-
-  /// Wrap the target widget with keyboard shortcuts.
-  Widget wrapWithShortcuts({required Widget child}) {
-    const shortcuts = <SingleActivator, Intent>{
-      SingleActivator(LogicalKeyboardKey.escape): EscapeIntent(),
-    };
-
-    final actions = <Type, Action<Intent>>{
-      EscapeIntent: CallbackAction(
-        onInvoke: (Intent intent) => onCancel(),
-      ),
-    };
-
-    return Shortcuts(
-      shortcuts: shortcuts,
-      child: Actions(
-        actions: actions,
-        child: Focus(
-          autofocus: true,
-          child: child,
         ),
       ),
     );
@@ -239,6 +208,7 @@ class _ProjectsPageState extends State<ProjectsPage> with UiLoggy {
   }
 
   void fetchProjects() async {
+    if (!mounted) return;
     setState(() {
       _loading = true;
       _projects.clear();
@@ -251,6 +221,7 @@ class _ProjectsPageState extends State<ProjectsPage> with UiLoggy {
       final QuerySnapMap snapshot = await query.get();
 
       if (snapshot.size == 0) {
+        if (!mounted) return;
         setState(() {
           _hasNext = false;
           _loading = false;
@@ -266,6 +237,7 @@ class _ProjectsPageState extends State<ProjectsPage> with UiLoggy {
         _projects.add(Project.fromMap(map));
       }
 
+      if (!mounted) return;
       setState(() {
         _loading = false;
         _lastDocument = snapshot.docs.last;
@@ -282,6 +254,7 @@ class _ProjectsPageState extends State<ProjectsPage> with UiLoggy {
       return;
     }
 
+    if (!mounted) return;
     setState(() => _loading = true);
 
     try {
@@ -291,6 +264,7 @@ class _ProjectsPageState extends State<ProjectsPage> with UiLoggy {
       final QuerySnapMap snapshot = await query.get();
 
       if (snapshot.size == 0) {
+        if (!mounted) return;
         setState(() {
           _hasNext = false;
           _loading = false;
@@ -305,6 +279,7 @@ class _ProjectsPageState extends State<ProjectsPage> with UiLoggy {
         _projects.add(Project.fromMap(data));
       }
 
+      if (!mounted) return;
       setState(() {
         _loading = false;
         _lastDocument = snapshot.docs.last;
@@ -417,6 +392,7 @@ class _ProjectsPageState extends State<ProjectsPage> with UiLoggy {
       data["id"] = documentChange.doc.id;
       final updatedProject = Project.fromMap(data);
 
+      if (!mounted) return;
       setState(() {
         _projects.removeAt(index);
         _projects.insert(index, updatedProject);
@@ -434,6 +410,7 @@ class _ProjectsPageState extends State<ProjectsPage> with UiLoggy {
   /// Fire when a new document has been delete from Firestore.
   /// Delete the corresponding document from the UI.
   void onRemoveStreamingProject(DocumentChangeMap documentChange) {
+    if (!mounted) return;
     setState(() {
       _projects.removeWhere(
         (project) => project.id == documentChange.doc.id,

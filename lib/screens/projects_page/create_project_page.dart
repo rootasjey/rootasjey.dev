@@ -87,7 +87,7 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
           color: Constants.colors.palette.first,
         ),
         Text(
-          "project_create_new".tr(),
+          "project.create".tr(),
           style: Utils.calligraphy.body(
             textStyle: const TextStyle(
               fontSize: 32.0,
@@ -100,7 +100,7 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
           child: Opacity(
             opacity: 0.4,
             child: Text(
-              "project_create_new_subtitle".tr(),
+              "project.create_subtitle".tr(),
               textAlign: TextAlign.center,
               style: Utils.calligraphy.body2(
                 textStyle: const TextStyle(
@@ -147,7 +147,7 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
             controller: _nameController,
             textInputAction: TextInputAction.next,
             decoration: InputDecoration(
-              hintText: "project_create_new_names.$randomHint".tr(),
+              hintText: "project.create.template.names.$randomHint".tr(),
               border: OutlineInputBorder(
                 borderSide: BorderSide(
                   color: Constants.colors.palette.first,
@@ -213,7 +213,7 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
               widget.onSubmit?.call(_nameController.text, summary);
             },
             decoration: InputDecoration(
-              hintText: "project_create_new_summaries.$randomHint".tr(),
+              hintText: "project.create.template.summaries.$randomHint".tr(),
               focusedBorder: OutlineInputBorder(
                 borderSide: BorderSide(
                   color: Constants.colors.palette.elementAt(1),

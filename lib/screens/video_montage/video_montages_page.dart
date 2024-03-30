@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:media_kit/media_kit.dart';
 import 'package:rootasjey/components/square_header.dart';
+import 'package:rootasjey/globals/constants.dart';
 import 'package:rootasjey/globals/utils.dart';
 import 'package:rootasjey/router/navigation_state_helper.dart';
 import 'package:rootasjey/screens/video_montage/video_item.dart';
@@ -26,6 +26,9 @@ class VideoMontagesPage extends StatefulWidget {
 }
 
 class _VideoMontagesPageState extends State<VideoMontagesPage> {
+  /// Page background color.
+  final Color _backgroundColor = Constants.colors.getRandomBackground();
+
   final MediaData _mediaData = MediaData(
     url: "https://firebasestorage.googleapis.com/v0/b/rootasjey.appspot.com/o/"
         "videos%2Fdispatches-from-elsewhere%2Foccasionally-scared--resolution-1080p.mp4"
@@ -46,19 +49,14 @@ class _VideoMontagesPageState extends State<VideoMontagesPage> {
   @override
   void initState() {
     super.initState();
-    NavigationStateHelper.player.open(
-      Media(
-        "https://firebasestorage.googleapis.com/v0/b/rootasjey.appspot.com/o/"
-        "videos%2Fdispatches-from-elsewhere%2Foccasionally-scared--resolution-1080p.mp4"
-        "?alt=media&token=e12bc54d-2c36-4898-a5b1-92af93aadade",
-      ),
-      play: false,
-    );
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
+    // NavigationStateHelper.player.open(
+    //   Media(
+    //     "https://firebasestorage.googleapis.com/v0/b/rootasjey.appspot.com/o/"
+    //     "videos%2Fdispatches-from-elsewhere%2Foccasionally-scared--resolution-1080p.mp4"
+    //     "?alt=media&token=e12bc54d-2c36-4898-a5b1-92af93aadade",
+    //   ),
+    //   play: false,
+    // );
   }
 
   @override
@@ -72,6 +70,7 @@ class _VideoMontagesPageState extends State<VideoMontagesPage> {
 
     return SafeArea(
       child: Scaffold(
+        backgroundColor: _backgroundColor.withOpacity(0.1),
         body: Column(
           children: [
             SquareHeader(
@@ -128,6 +127,7 @@ class _VideoMontagesPageState extends State<VideoMontagesPage> {
               child: VideoItem(
                 isDark: isDark,
                 isMobileSize: isMobileSize,
+                accentColor: _backgroundColor,
                 videoController: NavigationStateHelper.videoController,
                 margin: const EdgeInsets.all(24.0),
                 mediaData: _mediaData,

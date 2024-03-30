@@ -1,5 +1,7 @@
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
+import 'package:rootasjey/types/alias/firestore/query_doc_snap_map.dart';
+import 'package:rootasjey/types/track_data.dart';
 
 class NavigationStateHelper {
   /// Initial browser url.
@@ -24,6 +26,21 @@ class NavigationStateHelper {
 
   /// Media Player for audio and video playback.
   static Player player = Player();
+
+  /// Current media loaded into the player.
+  static Media currentMedia = Media("");
+
+  /// Current track.
+  static TrackData currentTrack = TrackData.empty();
+
+  /// List of tracks.
+  static List<TrackData> tracks = [];
+
+  /// True if there're more tracks to fetch from the server.
+  static bool hasMoreTrackToFetch = true;
+
+  /// Last fetched firestore document track.
+  static QueryDocSnapMap? lastDocTrack;
 
   /// Video Controller.
   static final VideoController videoController = VideoController(player);

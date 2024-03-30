@@ -64,7 +64,7 @@ class ProjectsPageEmptyView extends StatelessWidget {
                     padding: const EdgeInsets.only(top: 12.0),
                     child: DarkElevatedButton(
                       onPressed: canCreate ? onShowCreatePage : null,
-                      child: Text("project_create".tr()),
+                      child: Text("project.create".tr()),
                     ),
                   ),
                 if (!canCreate)

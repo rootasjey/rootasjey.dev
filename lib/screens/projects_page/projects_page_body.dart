@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:rootasjey/components/square_header.dart';
 import 'package:rootasjey/globals/utils.dart';
 import 'package:rootasjey/types/project/project.dart';
+import 'package:wave_divider/wave_divider.dart';
 
 class ProjectsPageBody extends StatelessWidget {
   const ProjectsPageBody({
@@ -72,15 +73,15 @@ class ProjectsPageBody extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.only(
-                left: 12.0,
-                right: 12.0,
+                left: 24.0,
+                right: 24.0,
               ),
               child: FractionallySizedBox(
                 widthFactor: isMobileSize ? 1.0 : 0.6,
                 child: Column(
                   children: [
                     Text(
-                      "projects".tr().toUpperCase(),
+                      "project.names".tr().toUpperCase(),
                       style: Utils.calligraphy.body2(
                         textStyle: const TextStyle(
                           fontSize: 24.0,
@@ -89,7 +90,8 @@ class ProjectsPageBody extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      "projects_subtitle".tr(),
+                      "project.subtitle".tr(),
+                      textAlign: TextAlign.center,
                       style: Utils.calligraphy.body(
                         textStyle: TextStyle(
                           fontSize: isMobileSize ? 14.0 : 16.0,
@@ -98,6 +100,9 @@ class ProjectsPageBody extends StatelessWidget {
                         ),
                       ),
                     ),
+                    const WaveDivider(
+                      padding: EdgeInsets.symmetric(vertical: 24.0),
+                    ),
                   ],
                 ),
               ),
@@ -105,46 +110,49 @@ class ProjectsPageBody extends StatelessWidget {
             Container(
               padding: const EdgeInsets.only(
                 top: 42.0,
-                left: 12.0,
+                left: 24.0,
                 right: 24.0,
               ),
-              child: Wrap(
-                spacing: 24.0,
-                runSpacing: 24.0,
-                direction: Axis.vertical,
-                children: projects.map((Project project) {
-                  return SizedBox(
-                    width: windowSize.width - 48.0,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          project.name,
-                          style: Utils.calligraphy.body(
-                            textStyle: TextStyle(
-                              height: 1.0,
-                              fontSize: isMobileSize ? 24.0 : 64.0,
-                              fontWeight: FontWeight.w200,
-                              color: foregroundColor?.withOpacity(0.8),
+              child: FractionallySizedBox(
+                widthFactor: isMobileSize ? 1.0 : 0.6,
+                child: Wrap(
+                  spacing: 24.0,
+                  runSpacing: 24.0,
+                  direction: Axis.vertical,
+                  children: projects.map((Project project) {
+                    return SizedBox(
+                      width: windowSize.width - 48.0,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            project.name,
+                            style: Utils.calligraphy.body(
+                              textStyle: TextStyle(
+                                height: 1.0,
+                                fontSize: isMobileSize ? 24.0 : 64.0,
+                                fontWeight: FontWeight.w200,
+                                color: foregroundColor?.withOpacity(0.8),
+                              ),
                             ),
                           ),
-                        ),
-                        Text(
-                          project.summary,
-                          maxLines: 3,
-                          overflow: TextOverflow.ellipsis,
-                          style: Utils.calligraphy.body(
-                            textStyle: TextStyle(
-                              fontSize: isMobileSize ? 14.0 : 16.0,
-                              fontWeight: FontWeight.w400,
-                              color: foregroundColor?.withOpacity(0.4),
+                          Text(
+                            project.summary,
+                            maxLines: 3,
+                            overflow: TextOverflow.ellipsis,
+                            style: Utils.calligraphy.body(
+                              textStyle: TextStyle(
+                                fontSize: isMobileSize ? 14.0 : 16.0,
+                                fontWeight: FontWeight.w400,
+                                color: foregroundColor?.withOpacity(0.4),
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                  );
-                }).toList(),
+                        ],
+                      ),
+                    );
+                  }).toList(),
+                ),
               ),
               // child: GridView.builder(
               //   gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(

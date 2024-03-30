@@ -98,7 +98,7 @@ class _AddFeaturedProjectState extends State<SelectFeaturedProjectDialog>
       title: header(),
       body: body(),
       textButtonValidation:
-          "select_featured_projects".plural(_selectedProjects.length),
+          "project.select_featured".plural(_selectedProjects.length),
       footer: footer(onValidate: onValidateCallback),
       onCancel: Beamer.of(context).popRoute,
       onValidate: onValidateCallback,
@@ -214,7 +214,7 @@ class _AddFeaturedProjectState extends State<SelectFeaturedProjectDialog>
           Opacity(
             opacity: 0.8,
             child: Text(
-              "projects".tr().toUpperCase(),
+              "project.names".tr().toUpperCase(),
               style: Utils.calligraphy.body(
                 textStyle: const TextStyle(
                   fontWeight: FontWeight.w700,

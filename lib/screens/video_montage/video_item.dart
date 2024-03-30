@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:media_kit_video/media_kit_video.dart';
@@ -14,6 +15,7 @@ class VideoItem extends StatefulWidget {
     required this.mediaData,
     this.isDark = false,
     this.isMobileSize = false,
+    this.accentColor = Colors.blue,
     this.margin = EdgeInsets.zero,
     this.windowSize = Size.zero,
   });
@@ -23,6 +25,9 @@ class VideoItem extends StatefulWidget {
 
   /// Adapt UI to mobile size if true.
   final bool isMobileSize;
+
+  /// Accent color for border and title.
+  final Color accentColor;
 
   /// Space around the video item.
   final EdgeInsets margin;
@@ -113,7 +118,6 @@ class _VideoItemState extends State<VideoItem> {
               Card(
                 elevation: 4.0,
                 clipBehavior: Clip.hardEdge,
-                color: Colors.amber,
                 child: SizedBox(
                   height: cardHeight,
                   width: cardWidth,
@@ -130,7 +134,7 @@ class _VideoItemState extends State<VideoItem> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12.0),
                     side: BorderSide(
-                      color: Constants.colors.getRandomFromPalette(),
+                      color: widget.accentColor,
                       width: 2.0,
                     ),
                   ),
@@ -369,13 +373,11 @@ class _VideoItemState extends State<VideoItem> {
                   CircleButton(
                     onTap: () {
                       launchUrl(
-                        Uri.parse(
-                          mediaData.youtubeUrl,
-                        ),
+                        Uri.parse(mediaData.youtubeUrl),
                       );
                     },
                     radius: 14.0,
-                    tooltip: "View on YouTube",
+                    tooltip: "view_on".tr(args: ["YouTube"]),
                     backgroundColor:
                         widget.isDark ? Colors.white12 : Colors.black12,
                     icon: Icon(
@@ -393,7 +395,7 @@ class _VideoItemState extends State<VideoItem> {
                       );
                     },
                     radius: 14.0,
-                    tooltip: "View on Vimeo",
+                    tooltip: "view_on".tr(args: ["Vimeo"]),
                     backgroundColor:
                         widget.isDark ? Colors.white12 : Colors.black12,
                     icon: Icon(

@@ -6,9 +6,13 @@ import 'package:rootasjey/screens/home_page/main_grid.dart';
 class HomeLocation extends BeamLocation<BeamState> {
   /// Main root value for this location.
   static const String route = '/';
+  static const String routeWildcard = '/*';
 
   @override
-  List<Pattern> get pathPatterns => [route];
+  List<Pattern> get pathPatterns => [
+        route,
+        routeWildcard,
+      ];
 
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) {

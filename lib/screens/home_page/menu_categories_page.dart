@@ -37,10 +37,7 @@ class MenuCategoriesPage extends StatelessWidget {
       child: Scaffold(
         body: Container(
           decoration: BoxDecoration(
-            border: Border.all(
-              width: 16.0,
-              // color: _accentColor,
-            ),
+            border: Border.all(width: 16.0),
           ),
           child: Column(
             children: [
@@ -97,7 +94,7 @@ class MenuCategoriesPage extends StatelessWidget {
                         const ProjectsPage().toString().toKebabCase(),
                       ),
                       accentColor: Constants.colors.art,
-                      textTitle: "projects".tr().toLowerCase(),
+                      textTitle: "project.names".tr().toLowerCase(),
                     ),
                     ArtButton(
                       isMobileSize: isMobileSize,

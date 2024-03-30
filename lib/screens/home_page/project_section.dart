@@ -199,7 +199,7 @@ class _ProjectSectionState extends State<ProjectSection> with UiLoggy {
           iconColor: Constants.colors.palette.first,
           color: Constants.colors.palette.first,
           onTap: openDialog,
-          project: Project.empty().copyWith(name: "project_add".tr()),
+          project: Project.empty().copyWith(name: "project.add".tr()),
         ),
       );
     }

@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:beamer/beamer.dart';
 import 'package:change_case/change_case.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:loggy/loggy.dart';
@@ -10,11 +12,13 @@ import 'package:rootasjey/components/loading_view.dart';
 import 'package:rootasjey/components/snap_bounce_scroll_physics.dart';
 import 'package:rootasjey/globals/constants.dart';
 import 'package:rootasjey/globals/utils.dart';
+import 'package:rootasjey/router/navigation_state_helper.dart';
 import 'package:rootasjey/screens/curriculum/curriculum_page.dart';
 import 'package:rootasjey/screens/home_page/quote_page.dart';
 import 'package:rootasjey/screens/home_page/home_page.dart';
 import 'package:rootasjey/screens/home_page/menu_categories_page.dart';
 import 'package:rootasjey/screens/illustrations_page/illustrations_page.dart';
+import 'package:rootasjey/screens/music/music_page.dart';
 import 'package:rootasjey/screens/projects_page/projects_page.dart';
 import 'package:rootasjey/screens/undefined_page.dart';
 import 'package:rootasjey/screens/video_montage/video_montages_page.dart';
@@ -87,7 +91,10 @@ class _MainGridState extends State<MainGrid> with UiLoggy {
       const UndefinedPage(),
     ],
     [
-      const UndefinedPage(),
+      const MusicPage(
+        onGoHome: onGoToHomePage,
+        onGoBack: onGoToPreviousPage,
+      ),
       const ProjectsPage(
         onGoHome: onGoToHomePage,
         onGoBack: onGoToPreviousPage,
@@ -139,6 +146,11 @@ class _MainGridState extends State<MainGrid> with UiLoggy {
       _vScrollController.jumpTo(_vStartPage * _windowSize.height);
       _hScrollController.addListener(onHorizontalScroll);
       _vScrollController.addListener(onVerticalScroll);
+
+      if (!kIsWeb) return;
+      Future.delayed(const Duration(milliseconds: 500), () {
+        initGridPositionFromUrl();
+      });
     });
 
     FlutterError.onError = (FlutterErrorDetails details) {
@@ -166,8 +178,6 @@ class _MainGridState extends State<MainGrid> with UiLoggy {
       if (isTwoDimensionalGridError) {
         _vScrollController = ScrollController();
         _hScrollController = ScrollController();
-        // _vScrollController.detach(_vScrollController.position);
-        // _hScrollController.detach(_hScrollController.position);
         if (_recoverUiFromCrash) {
           return;
         }
@@ -329,12 +339,14 @@ class _MainGridState extends State<MainGrid> with UiLoggy {
     return Future.wait([
       _vScrollController.animateTo(
         line * _windowSize.height,
-        duration: Duration(milliseconds: 800 * line),
+        // duration must be > 0
+        duration: Duration(milliseconds: 800 * max(1, line)),
         curve: Curves.decelerate,
       ),
       _hScrollController.animateTo(
         column * _windowSize.width,
-        duration: Duration(milliseconds: 800 * column),
+        // duration must be > 0
+        duration: Duration(milliseconds: 800 * max(1, column)),
         curve: Curves.decelerate,
       ),
     ]);
@@ -450,7 +462,7 @@ class _MainGridState extends State<MainGrid> with UiLoggy {
         .toKebabCase();
 
     final BeamerDelegate beamer = Beamer.of(context);
-    final String origin = beamer.initialPath;
+    const String origin = "/";
 
     beamer.updateRouteInformation(RouteInformation(
       uri: Uri.parse("$origin$segment"),
@@ -484,5 +496,46 @@ class _MainGridState extends State<MainGrid> with UiLoggy {
     }
 
     _offsetHistory.add(Offset(currentRow.toDouble(), currentColumn.toDouble()));
+  }
+
+  void initGridPositionFromUrl() {
+    final String url = NavigationStateHelper.initialBrowserUrl;
+    if (url.isEmpty || url == "/") {
+      return;
+    }
+
+    final List<String> segments = url.split("/");
+    if (segments.length < 2) {
+      return;
+    }
+
+    final String targetSegment = segments.elementAt(1);
+    switch (targetSegment) {
+      case "curriculum":
+        moveGridTo(0, 0);
+        break;
+      case "illustrations":
+        moveGridTo(0, 1);
+        break;
+      case "quote":
+        moveGridTo(0, 2);
+        break;
+      case "creative":
+        moveGridTo(1, 0);
+        break;
+      case "home":
+        moveGridTo(1, 1);
+        break;
+      case "video-montages":
+        moveGridTo(1, 2);
+        break;
+      case "music":
+        moveGridTo(2, 0);
+        break;
+      case "projects":
+        moveGridTo(2, 1);
+        break;
+      default:
+    }
   }
 }

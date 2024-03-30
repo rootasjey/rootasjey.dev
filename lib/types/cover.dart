@@ -21,6 +21,14 @@ class Cover {
   final String storagePath;
   final Thumbnails thumbnails;
 
+  Cover.empty()
+      : widthType = EnumCoverWidth.full,
+        cornerType = EnumCoverCorner.rounded,
+        extension = "",
+        originalUrl = "",
+        storagePath = "",
+        thumbnails = const Thumbnails();
+
   Cover copyWith({
     String? extension,
     String? originalUrl,

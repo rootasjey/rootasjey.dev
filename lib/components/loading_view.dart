@@ -6,12 +6,16 @@ import 'package:rootasjey/globals/utils.dart';
 class LoadingView extends StatelessWidget {
   const LoadingView({
     super.key,
-    this.message = "loading...",
     this.useSliver = false,
+    this.margin = EdgeInsets.zero,
+    this.message = "loading...",
   });
 
   /// Whether to use a [SliverToBoxAdapter] or not.
   final bool useSliver;
+
+  /// Space around the loading view.
+  final EdgeInsets margin;
 
   /// Message value to display as a loading message.
   final String message;
@@ -42,12 +46,18 @@ class LoadingView extends StatelessWidget {
     );
 
     if (useSliver) {
-      return SliverToBoxAdapter(
-        child: center,
+      return SliverPadding(
+        padding: margin,
+        sliver: SliverToBoxAdapter(
+          child: center,
+        ),
       );
     }
 
-    return center;
+    return Padding(
+      padding: margin,
+      child: center,
+    );
   }
 
   /// Return a Scaffold widget displaying a loading animation.
