@@ -7,8 +7,8 @@ class Constants {
   static const appName = "rootasjey";
 
   /// App version.
-  static const appVersion = "3.7.0";
-  static const buildNumber = "12";
+  static const appVersion = "3.10.0";
+  static const buildNumber = "15";
 
   /// Last time terms of service was updated.
   static final DateTime termsOfServiceLastUpdated = DateTime(2020, 12, 12);
@@ -24,6 +24,16 @@ class Constants {
 
   /// Github url.
   static String githubUrl = "https://github.com/rootasjey/rootasjey";
+
+  /// LinkedIn url.
+  static String linkedinUrl =
+      "https://www.linkedin.com/in/j%C3%A9r%C3%A9mie-c-7b25194a/";
+
+  static String resumeEnPath =
+      "/assets/files/jc-resume-fullstack-dev-2024-en.pdf";
+
+  static String resumeFrPath =
+      "/assets/files/jc-resume-fullstack-dev-2024-fr.pdf";
 
   /// All necessary colors for the app.
   static final colors = ColorsConstants();

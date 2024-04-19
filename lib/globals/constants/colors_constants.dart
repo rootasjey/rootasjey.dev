@@ -26,9 +26,7 @@ class ColorsConstants {
   final List<Color> lightPalette = [
     Colors.blue.shade50,
     const Color.fromRGBO(253, 239, 245, 1),
-    Colors.amber.shade50,
     Colors.deepPurple.shade50,
-    Colors.lightGreen.shade50,
     Colors.pink.shade50,
   ];
 
@@ -110,7 +108,7 @@ class ColorsConstants {
   final Color password = Colors.orange.shade300;
 
   /// Primary application's color.
-  final Color primary = const Color(0xFF796AD2);
+  final Color primary = const Color(0xFF5133FB);
 
   /// Color for profile.
   final Color profile = Colors.indigo;

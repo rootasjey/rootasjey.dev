@@ -45,6 +45,9 @@ class _AppState extends State<App> {
       scaffoldBackgroundColor: Constants.colors.lightBackground,
       primaryColor: Constants.colors.primary,
       secondaryHeaderColor: Constants.colors.secondary,
+      primaryColorDark: Constants.colors.primary,
+      primaryColorLight: Constants.colors.primary,
+      primaryIconTheme: IconThemeData(color: Constants.colors.primary),
       colorScheme:
           ColorScheme.light(background: Constants.colors.lightBackground),
     );
@@ -54,6 +57,9 @@ class _AppState extends State<App> {
       fontFamily: Calligraphy.fontFamily,
       scaffoldBackgroundColor: Constants.colors.dark,
       primaryColor: Constants.colors.primary,
+      primaryColorDark: Constants.colors.primary,
+      primaryColorLight: Constants.colors.primary,
+      primaryIconTheme: IconThemeData(color: Constants.colors.primary),
       secondaryHeaderColor: Constants.colors.secondary,
       colorScheme: ColorScheme.dark(background: Constants.colors.dark),
     );
