@@ -42,18 +42,22 @@ class AppIcon extends StatelessWidget {
   }
 
   String getIconSize() {
+    if (size <= 12) {
+      return "16";
+    }
+
     if (size <= 16) {
       return "32";
     }
+
     if (size <= 32) {
       return "64";
     }
+
     if (size <= 64) {
       return "128";
     }
-    if (size <= 128) {
-      return "256";
-    }
-    return "512";
+
+    return "128";
   }
 }
