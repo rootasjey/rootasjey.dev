@@ -9,18 +9,18 @@
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare"
   },
-  "devDependencies": {
-    "@nuxt/devtools": "latest",
-    "@nuxt/ui": "^2.13.0",
-    "nuxt": "^3.10.1",
-    "nuxt-icon": "^0.6.10",
-    "nuxt-vuefire": "^1.0.2"
-  },
   "dependencies": {
     "@firebase/app-types": "^0.9.2",
     "@iconify-json/tabler": "^1.1.113",
     "firebase": "^10.12.2",
     "firebase-admin": "11.10.0",
     "firebase-functions": "4.1.0"
+  },
+  "devDependencies": {
+    "@nuxt/devtools": "latest",
+    "@nuxt/ui": "^2.13.0",
+    "nuxt": "^3.10.1",
+    "nuxt-icon": "^0.6.10",
+    "nuxt-vuefire": "^1.0.2"
   }
 }

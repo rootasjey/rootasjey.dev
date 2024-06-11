@@ -8,7 +8,6 @@
 
     <UContainer class="projects-section">
       <div v-if="loading" class="loading">
-        <img alt="kwotes logo" class="logo center" src="~/assets/animations/animated-app.gif" width="90" height="90" />
         <p>Loading...</p>
       </div>
 
