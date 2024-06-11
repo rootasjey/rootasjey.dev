@@ -1,4 +1,0 @@
-enum EnumDirection {
-  up,
-  down,
-}

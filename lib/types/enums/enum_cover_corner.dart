@@ -1,4 +1,0 @@
-enum EnumCoverCorner {
-  squared,
-  rounded,
-}

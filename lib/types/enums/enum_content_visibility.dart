@@ -1,4 +1,0 @@
-enum EnumContentVisibility {
-  private,
-  public,
-}

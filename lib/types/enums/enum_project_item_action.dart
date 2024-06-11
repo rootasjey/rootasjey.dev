@@ -1,3 +1,0 @@
-enum EnumProjectItemAction {
-  delete,
-}
