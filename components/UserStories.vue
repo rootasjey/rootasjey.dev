@@ -1,6 +1,6 @@
 <template>
   <div class="my-container">
-    <h1 class="section-title">User stories</h1>
+    <!-- <h1 class="section-title">User stories</h1> -->
     <div class="branding-section">
       <div class="branding-section-imgs">
         <img src="https://www.dassault.fr/img/upload/ct/716/3DS_Corp_Logotype_Blue_RGB.png" alt="" srcset="">
@@ -16,7 +16,7 @@
       </div>
     </div>
 
-    <UContainer class="projects-section">
+    <div class="projects-section">
       <div v-if="loading" class="loading">
         <p>Loading...</p>
       </div>
@@ -103,7 +103,7 @@
             label="View project" />
         </template>
       </UCard>
-    </UContainer>
+    </div>
   </div>
 </template>
 
@@ -155,7 +155,6 @@
     font-size: 3rem;
     font-weight: 400;
     font-family: "Poetsen One";
-    margin-bottom: 0.5rem;
   }
 
   .dot-divider {
@@ -167,6 +166,8 @@
     flex-direction: row;
     justify-content: center;
     align-items: center;
+    flex-wrap: wrap;
+    margin-top: 0.5rem;
 
     width: 100%;
 
@@ -182,6 +183,8 @@
       flex-direction: row;
       justify-content: center;
       align-items: center;
+      flex-wrap: no-wrap;
+      overflow: auto;
       gap: 2rem;
 
       background-color: var(--branding-background);
@@ -244,6 +247,14 @@
     font-weight: 400;
     text-transform: uppercase;
     text-align: center;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .my-container {
+    .projects-section {
+      width: 100%;
+    }
   }
 }
 

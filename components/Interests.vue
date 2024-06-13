@@ -1,17 +1,17 @@
 <template>
   <div class="super-container">
-    <h1 class="section-title">Interests</h1>
-    <h3 class="opacity-60">To fall in love</h3>
+    <!-- <h1 class="section-title">Interests</h1> -->
+    <h3 class="description opacity-60">To fall in love</h3>
 
-    <WavyLine color="love" />
+    <WavyLine class="wavy-line" color="love" />
 
-    <UContainer class="projects-section">
-      <UCard class="interest-card">
+    <div class="interest-section">
+      <UCard class="interest-card" :ui="{ body: '' }">
         <div class="flex flex-row">
           <img src="https://upload.wikimedia.org/wikipedia/en/c/cc/Hades_cover_art.jpg" alt="hades image">
-          <div class="w-1/2 ml-12">
+          <div class="card-content-text">
             <h1 class="title">Hades</h1>
-            <p class="description mb-4 mt-2">
+            <p class="description">
               Hades is a 2020 roguelike action role-playing game developed and published by Supergiant Games.
             </p>
           </div>
@@ -20,12 +20,12 @@
           <UIcon name="i-tabler-device-gamepad-2" />
         </div>
       </UCard>
-      <UCard class="interest-card">
+      <UCard class="interest-card" :ui="{ body: '' }">
         <div class="flex flex-row">
           <img src="https://i.ytimg.com/an/IA-v_LB3Qpc/7932776273451997754_mq.jpg?v=62ebfa55" alt="Arcane image">
-          <div class="w-1/2 ml-12">
+          <div class="card-content-text">
             <h1 class="title">Arcane</h1>
-            <p class="description mb-4 mt-2">
+            <p class="description">
               Arcane is an animated television series set in the League of Legends universe.
             </p>
           </div>
@@ -34,13 +34,13 @@
           <UIcon name="i-tabler-device-tv-old" />
         </div>
       </UCard>
-      <UCard class="interest-card">
+      <UCard class="interest-card" :ui="{ body: '' }">
         <div class="flex flex-row">
           <img src="https://upload.wikimedia.org/wikipedia/commons/1/1f/Everything_everywhere_all_at_once_logo.jpg"
             alt="Everything, everywhere, all at once image">
-          <div class="w-1/2 ml-12">
+          <div class="card-content-text">
             <h1 class="title">Everything, everywhere, all at once</h1>
-            <p class="description mb-4 mt-2">
+            <p class="description">
               2022 American absurdist comedy-drama film directed by Daniel Kwan
               and Daniel Scheinert.
             </p>
@@ -50,7 +50,7 @@
           <UIcon name="i-tabler-movie" />
         </div>
       </UCard>
-    </UContainer>
+    </div>
   </div>
 </template>
 
@@ -79,6 +79,13 @@ const isDark = computed({
   align-items: center;
 
   margin-bottom: 25%;
+  
+  .description {
+    margin-top: 2rem;
+    font-size: 1.4rem;
+    /* margin-bottom: 14px; */
+    margin-top: 16px;
+  }
 
   .section-title {
     font-size: 3rem;
@@ -87,7 +94,7 @@ const isDark = computed({
     margin-bottom: 0.5rem;
   }
 
-  .projects-section {
+  .interest-section {
     display: flex;
     flex-direction: column;
     flex-wrap: wrap;
@@ -102,7 +109,14 @@ const isDark = computed({
       margin: 1rem;
       max-width: 1000px;
       position: relative;
+      padding: 1rem;
       transition: transform 0.3s ease;
+
+
+      .card-content-text {
+        width: 50%;
+        margin-left: 24px;
+      }
 
 
       h1.title {
@@ -148,17 +162,38 @@ const isDark = computed({
 
 @media screen and (max-width: 1274px) {
   .super-container {
-    .projects-section {
+    .interest-section {
       width: 100%;
 
-      .description {
-        max-lines: 3;
-        text-overflow: ellipsis;
-        overflow: hidden;
-        height: 8rem;
-        max-height: 8rem;
+      .interest-card {
+        .card-content-text {
+          width: 50%;
+          margin-right: 12px;
+          margin-left: 12px;
+
+          .title {
+            font-size: 1.0rem;  
+            font-weight: 400;
+          }
+          
+        .description {
+          font-size: 0.8rem;
+          margin-bottom: 0;
+          margin-top: 0;
+
+          max-lines: 3;
+          text-overflow: ellipsis;
+          overflow: hidden;
+          height: 8rem;
+          max-height: 8rem;
+        }
+        }
       }
     }
+  }
+
+  .wavy-line {
+    display: none;
   }
 }
 

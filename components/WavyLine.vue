@@ -32,6 +32,13 @@ defineProps<WavyLineProps>()
   /* -webkit-animation: animate .9s linear infinite; */
 }
 
+@media screen and (max-width: 800px) {
+  .wavy-line:before {
+    width: 600px;
+    display: inline-block;
+  }
+}
+
 @keyframes animate {
   0% {
     left: -0px;

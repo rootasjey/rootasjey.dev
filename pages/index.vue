@@ -1,5 +1,5 @@
 <template>
-  <div class="my-container">
+  <div class="my-container w-full">
     <UTooltip :text="isDark ? 'Turn on the lights' : 'Apaga las luces'" class="brightness-button"
       :shortcuts="['⌘', 'i']" :popper="{ placement: 'left' }">
       <UButton :icon="isDark ? 'i-heroicons-moon-20-solid' : 'i-heroicons-sun-20-solid'" color="primary" variant="ghost"
@@ -22,7 +22,7 @@
     </UContextMenu>
 
     <div class="hero-container">
-      <UContainer>
+      <div>
         <h1 class="title">I'm a creative developer</h1>
         <div class="description">
           I'm constantly seeking out new ways to solve problems,
@@ -46,7 +46,7 @@
             square variant="outline" :ui="{ rounded: 'rounded-full' }" class="px-3"
             to="https://firebasestorage.googleapis.com/v0/b/rootasjey.appspot.com/o/assets%2Ffiles%2Fjc-resume-fullstack-dev-2024-en.pdf?alt=media&token=e838ef0b-eadb-4476-926a-020c56030f8c" />
         </div>
-      </UContainer>
+      </div>
     </div>
 
     <div class="tabs-container">
@@ -245,6 +245,8 @@ function onClickBrightness() {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+
+  width: 100%;
 }
 
 .hero-container {
@@ -271,7 +273,7 @@ function onClickBrightness() {
     font-weight: 400;
     font-family: "Rubik";
 
-    width: 460px;
+    max-width: 460px;
   }
 
   .social-container {
@@ -284,6 +286,17 @@ function onClickBrightness() {
 
   .open-for-work {
     margin-top: 2rem;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .hero-container {
+    max-width: 100%;
+    width: 100%;
+    padding-left: 3rem;
+    padding-right: 3rem;
+
+    overflow-x: hidden;
   }
 }
 

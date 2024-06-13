@@ -1,28 +1,31 @@
 <template>
   <div class="super-container">
-    <h1 class="section-title">Projects</h1>
-    <h3 class="opacity-60">My own little kingdom</h3>
+    <!-- <h1 class="section-title">Projects</h1> -->
+    <h3 class="description opacity-60">My own little kingdom</h3>
+    <WavyLine class="wavy-line" color="primary" />
 
-    <!-- <div class="wavy-line wavy-line-yellow" data-text="xxxxxxxxxxxxxx"></div> -->
-    <WavyLine color="primary" />
-
-    <UContainer class="projects-section">
+    <div class="projects-section">
       <div v-if="loading" class="loading">
         <p>Loading...</p>
       </div>
 
-      <UCard class="project-card">
-        <div class="flex flex-row">
-          <div class="w-1/2 mr-12">
+      <UCard class="project-card"
+        :ui="{ header: { base: width > 600 ? 'hidden' : '' }, divide: width > 600 ? '' : 'divide-y divide-gray-200 dark:divide-gray-800' }">
+        <template #header>
+          <img class="img-header" src="https://github.com/rootasjey/kwotes/raw/master/screenshots/kwotes-banner.jpg"
+            alt="kwotes banner">
+        </template>
+
+        <div class="card-content flex flex-row">
+          <div class="card-content-text">
             <h1 class="title">Kwotes</h1>
             <p class="description mb-4">
               kwotes is a captivating mobile application that offers a vast collection of inspiring,
-              thought-provoking, and insightful quotes from a diverse range of sources. Designed to be a constant
-              companion for users, kwotes provides a seamless and engaging experience, allowing individuals to
-              explore, save, and share their favorite quotes with ease.
+              thought-provoking, and insightful quotes from a diverse range of sources. Kwotes allows to
+              explore, save, and share favorite quotes with ease.
             </p>
 
-            <div class="flex flex-row gap-4 items-center">
+            <div class="flex flex-row flex-wrap gap-4 items-center">
               <UTooltip text="GitHub" :popper="{ placement: 'top' }">
                 <UButton icon="i-tabler-brand-github" to="https://github.com/rootasjey/kwotes" target="_blank"
                   variant="outline" label="" :color="isDark ? 'secondary' : 'primary'" />
@@ -54,9 +57,16 @@
         </div>
       </UCard>
 
-      <UCard class="project-card">
-        <div class="flex flex-row">
-          <div class="w-1/2 mr-12">
+      <UCard class="project-card"
+        :ui="{ header: { base: width > 600 ? 'hidden' : '' }, divide: width > 600 ? '' : 'divide-y divide-gray-200 dark:divide-gray-800' }">
+        <template #header>
+          <img class="img-header"
+            src="https://firebasestorage.googleapis.com/v0/b/rootasjey.appspot.com/o/images%2Ftemp%2Funsplasharp-cover.jpg?alt=media&token=4a3e3bb9-eecc-4e89-94b2-bc31912e7f60"
+            alt="unsplasharp banner">
+        </template>
+
+        <div class="card-content flex flex-row">
+          <div class="card-content-text">
             <h1 class="title">Unsplasharp</h1>
             <p class="description mb-4">
               Unofficial C# wrapper around Unsplash API targeting .NET Standard 1.4.
@@ -93,9 +103,15 @@
         </div>
       </UCard>
 
-      <UCard class="project-card">
-        <div class="flex flex-row">
-          <div class="w-1/2 mr-12">
+      <UCard class="project-card"
+        :ui="{ header: { base: width > 600 ? 'hidden' : '' }, divide: width > 600 ? '' : 'divide-y divide-gray-200 dark:divide-gray-800' }">
+        <template #header>
+          <img class="img-header" src="https://github.com/rootasjey/kwotes/raw/master/screenshots/kwotes-banner.jpg"
+            alt="kwotes banner">
+        </template>
+
+        <div class="card-content flex flex-row">
+          <div class="card-content-text">
             <h1 class="title">Backwards</h1>
             <p class="description mb-4">
               🚧 [WIP] A turn-based game system built with Phaser 3.
@@ -130,9 +146,16 @@
         </div>
       </UCard>
 
-      <UCard class="project-card">
-        <div class="flex flex-row">
-          <div class="w-1/2 mr-12">
+      <UCard class="project-card"
+        :ui="{ header: { base: width > 600 ? 'hidden' : '' }, divide: width > 600 ? '' : 'divide-y divide-gray-200 dark:divide-gray-800' }">
+        <template #header>
+          <img class="img-header"
+            src="https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?q=80&w=2969&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+            alt="kwotes trivia banner">
+        </template>
+
+        <div class="card-content flex flex-row">
+          <div class="card-content-text">
             <h1 class="title">Kwotes Trivia</h1>
             <p class="description mb-4">
               Enjoy a 5 questions trivia game with your friends.
@@ -167,9 +190,16 @@
         </div>
       </UCard>
 
-      <UCard class="project-card">
-        <div class="flex flex-row">
-          <div class="w-1/2 mr-12">
+      <UCard class="project-card"
+        :ui="{ header: { base: width > 600 ? 'hidden' : '' }, divide: width > 600 ? '' : 'divide-y divide-gray-200 dark:divide-gray-800' }">
+        <template #header>
+          <img class="img-header"
+            src="https://firebasestorage.googleapis.com/v0/b/rootasjey.appspot.com/o/images%2Ftemp%2Fkwotes-cli-v0.png?alt=media&token=568cb6cc-4bfd-4be5-945d-4d77249f7cb8"
+            alt="kwotes cli banner">
+        </template>
+
+        <div class="card-content flex flex-row">
+          <div class="card-content-text">
             <h1 class="title">Kwotes CLI</h1>
             <p class="description mb-4">
               A tiny CLI app for kwotes platform.
@@ -204,9 +234,16 @@
         </div>
       </UCard>
 
-      <UCard class="project-card">
-        <div class="flex flex-row">
-          <div class="w-1/2 mr-12">
+      <UCard class="project-card"
+        :ui="{ header: { base: width > 600 ? 'hidden' : '' }, divide: width > 600 ? '' : 'divide-y divide-gray-200 dark:divide-gray-800' }">
+        <template #header>
+          <img class="img-header"
+            src="https://github.com/rootasjey/metrix-fitbit/blob/master/screenshots/changelog.png?raw=true"
+            alt="metrix fitbit banner">
+        </template>
+
+        <div class="card-content flex flex-row">
+          <div class="card-content-text">
             <h1 class="title">Metrix Fitbit</h1>
             <p class="description mb-4">
               A Fitbit clock face showing metrics activities.
@@ -235,9 +272,16 @@
         </div>
       </UCard>
 
-      <UCard class="project-card">
-        <div class="flex flex-row">
-          <div class="w-1/2 mr-12">
+      <UCard class="project-card"
+        :ui="{ header: { base: width > 600 ? 'hidden' : '' }, divide: width > 600 ? '' : 'divide-y divide-gray-200 dark:divide-gray-800' }">
+        <template #header>
+          <img class="img-header"
+            src="https://github.com/rootasjey/alarms-fitbit/blob/master/screenshots/screenshot1.png?raw=true"
+            alt="alarm fitbit banner">
+        </template>
+
+        <div class="card-content flex flex-row">
+          <div class="card-content-text">
             <h1 class="title">Alarm Fitbit</h1>
             <p class="description mb-4">
               A Fitbit clock face looking like the Alarms app.
@@ -266,9 +310,16 @@
         </div>
       </UCard>
 
-      <UCard class="project-card">
-        <div class="flex flex-row">
-          <div class="w-1/2 mr-12">
+      <UCard class="project-card"
+        :ui="{ header: { base: width > 600 ? 'hidden' : '' }, divide: width > 600 ? '' : 'divide-y divide-gray-200 dark:divide-gray-800' }">
+        <template #header>
+          <img class="img-header"
+            src="https://github.com/rootasjey/feels_uwp/blob/master/screenshots/presentation.png?raw=true"
+            alt="feels uwp banner">
+        </template>
+
+        <div class="card-content flex flex-row">
+          <div class="card-content-text">
             <h1 class="title">Feels (UWP)</h1>
             <p class="description mb-4">
               Minimalistic weather app for universal windows platform.
@@ -298,9 +349,16 @@
         </div>
       </UCard>
 
-      <UCard class="project-card">
-        <div class="flex flex-row">
-          <div class="w-1/2 mr-12">
+      <UCard class="project-card"
+        :ui="{ header: { base: width > 600 ? 'hidden' : '' }, divide: width > 600 ? '' : 'divide-y divide-gray-200 dark:divide-gray-800' }">
+        <template #header>
+          <img class="img-header"
+            src="https://github.com/rootasjey/citations365-8/blob/master/citations.windows.jpg?raw=true"
+            alt="feels uwp banner">
+        </template>
+
+        <div class="card-content flex flex-row">
+          <div class="card-content-text">
             <h1 class="title">Citations 365 (UWP)</h1>
             <p class="description mb-4">
               A quotes app written for Windows 10.
@@ -331,7 +389,7 @@
             alt="feels uwp banner">
         </div>
       </UCard>
-    </UContainer>
+    </div>
   </div>
 </template>
 
@@ -339,6 +397,9 @@
 import { collection, getDocs, query, orderBy, limit } from 'firebase/firestore';
 import { ref, type Ref, computed, onMounted, unref } from 'vue'
 import { useCollection, useFirestore } from 'vuefire'
+import { useWindowSize } from '@vueuse/core'
+
+const { width } = useWindowSize()
 
 const colorMode = useColorMode()
 const isDark = computed({
@@ -393,7 +454,11 @@ async function fetchData() {
     font-size: 3rem;
     font-weight: 400;
     font-family: "Poetsen One";
-    margin-bottom: 0.5rem;
+  }
+
+  .description {
+    margin-top: 2rem;
+    font-size: 1.4rem;
   }
 
   .projects-section {
@@ -412,6 +477,10 @@ async function fetchData() {
       max-width: 1200px;
       transition: transform 0.3s ease;
 
+      .card-content-text {
+        width: 50%;
+        margin-right: 12px;
+      }
 
       h1.title {
         font-size: 1.2rem;
@@ -425,12 +494,12 @@ async function fetchData() {
         font-weight: 300;
       }
 
-        img {
-          width: 360px;
-          height: 200px;
-          object-fit: cover;
-          border-radius: 0.5rem;
-        }
+      img {
+        width: 400px;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 0.5rem;
+      }
     }
 
     .project-card:hover {
@@ -456,21 +525,31 @@ async function fetchData() {
         height: 8rem;
         max-height: 8rem;
       }
+
+      .project-card {
+        .card-content {
+          img {
+            display: none;
+          }
+
+          .card-content-text {
+            width: 100%;
+            margin-right: 0;
+            
+            .description {
+                margin-top: 0rem;
+                font-size: 0.8rem;
+                text-overflow: ellipsis;
+              }
+          }
+        }
+      }
+    }
+
+    .wavy-line {
+      display: none;
     }
   }
 }
 
-.loading {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-
-  p {
-    margin-top: 1rem;
-    font-size: 1rem;
-    font-weight: 400;
-    text-transform: uppercase;
-    text-align: center;
-  }
-}
 </style>
