@@ -11,11 +11,7 @@ export default defineNuxtConfig({
   },
   css: ['~/assets/styles/main.css'],
   devtools: { enabled: true },
-  modules: [
-    "@nuxt/ui",
-    "nuxt-vuefire",
-    "nuxt-icon",
-  ],
+  modules: ["@nuxt/ui", "nuxt-vuefire", "nuxt-icon", "@nuxt/image"],
   routeRules: {
     '/': { ssr: true },
   },
