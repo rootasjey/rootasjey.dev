@@ -42,9 +42,11 @@
               to="https://www.linkedin.com/in/jérémie-c-7b25194a" />
           </UTooltip>
 
-          <UButton label="Open for work" :icon="'i-tabler-file-cv'" size="sm" :color="isDark ? 'secondary' : 'primary'"
+          <UTooltip text="You can still contact me" :popper="{ placement: 'bottom' }">
+          <UButton label="Closed for work" :icon="'i-tabler-file-cv'" size="sm" :color="isDark ? 'secondary' : 'primary'"
             square variant="outline" :ui="{ rounded: 'rounded-full' }" class="px-3"
             to="https://firebasestorage.googleapis.com/v0/b/rootasjey.appspot.com/o/assets%2Ffiles%2Fjc-resume-fullstack-dev-2024-en.pdf?alt=media&token=e838ef0b-eadb-4476-926a-020c56030f8c" />
+          </UTooltip>
         </div>
       </div>
     </div>

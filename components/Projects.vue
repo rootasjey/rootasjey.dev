@@ -1,6 +1,5 @@
 <template>
   <div class="super-container">
-    <!-- <h1 class="section-title">Projects</h1> -->
     <h3 class="description opacity-60">My own little kingdom</h3>
     <WavyLine class="wavy-line" color="primary" />
 
@@ -9,384 +8,38 @@
         <p>Loading...</p>
       </div>
 
-      <UCard class="project-card"
+      <UCard v-for="project in pageItems" class="project-card"
         :ui="{ header: { base: width > 600 ? 'hidden' : '' }, divide: width > 600 ? '' : 'divide-y divide-gray-200 dark:divide-gray-800' }">
         <template #header>
-          <img class="img-header" src="https://github.com/rootasjey/kwotes/raw/master/screenshots/kwotes-banner.jpg"
-            alt="kwotes banner">
+          <img class="img-header" :src="project.image.src" :alt="project.image.alt">
         </template>
 
         <div class="card-content flex flex-row">
           <div class="card-content-text">
-            <h1 class="title">Kwotes</h1>
+            <h1 class="title">{{ project.name }}</h1>
             <p class="description mb-4">
-              kwotes is a captivating mobile application that offers a vast collection of inspiring,
-              thought-provoking, and insightful quotes from a diverse range of sources. Kwotes allows to
-              explore, save, and share favorite quotes with ease.
+              {{ project.description }}
             </p>
 
-            <div class="flex flex-row flex-wrap gap-4 items-center">
-              <UTooltip text="GitHub" :popper="{ placement: 'top' }">
-                <UButton icon="i-tabler-brand-github" to="https://github.com/rootasjey/kwotes" target="_blank"
-                  variant="outline" label="" :color="isDark ? 'secondary' : 'primary'" />
+            <div v-if="project.links.length > 0 || project.technologies.length > 0"
+              class="flex flex-row flex-wrap gap-4 items-center">
+              <UTooltip v-for="link in project.links" :text="link.name" :popper="{ placement: 'top' }">
+                <UButton :icon="link.icon" :to="link.url" target="_blank" variant="outline" label=""
+                  :color="isDark ? 'secondary' : 'primary'" />
               </UTooltip>
 
-              <UTooltip text="Website" :popper="{ placement: 'top' }">
-                <UButton icon="i-tabler-brand-appstore"
-                  to="https://apps.apple.com/fr/app/kwotes/id6478239805?platform=iphone" target="_blank"
-                  variant="outline" label="" :color="isDark ? 'secondary' : 'primary'" />
-              </UTooltip>
+              <div v-if="project.links.length > 0 && project.technologies.length > 0"
+                class="dot-divider w-2 h-2	rounded-full" />
 
-              <div class="dot-divider w-2 h-2	rounded-full" />
-
-              <UTooltip text="Flutter" :popper="{ placement: 'top' }">
-                <UButton icon="i-tabler-brand-flutter" to="https://flutter.dev" target="_blank" variant="solid"
-                  color="gray" label="" />
-              </UTooltip>
-              <UTooltip text="Firebase" :popper="{ placement: 'top' }">
-                <UButton icon="i-tabler-brand-firebase" to="https://firebase.com" target="_blank" variant="solid"
-                  color="gray" label="" />
-              </UTooltip>
-              <UTooltip text="Algolia" :popper="{ placement: 'top' }">
-                <UButton icon="i-tabler-brand-algolia" to="https://algolia.com" target="_blank" variant="solid"
-                  color="gray" label="" />
-              </UTooltip>
-            </div>
-          </div>
-          <img src="https://github.com/rootasjey/kwotes/raw/master/screenshots/kwotes-banner.jpg" alt="kwotes banner">
-        </div>
-      </UCard>
-
-      <UCard class="project-card"
-        :ui="{ header: { base: width > 600 ? 'hidden' : '' }, divide: width > 600 ? '' : 'divide-y divide-gray-200 dark:divide-gray-800' }">
-        <template #header>
-          <img class="img-header"
-            src="https://firebasestorage.googleapis.com/v0/b/rootasjey.appspot.com/o/images%2Ftemp%2Funsplasharp-cover.jpg?alt=media&token=4a3e3bb9-eecc-4e89-94b2-bc31912e7f60"
-            alt="unsplasharp banner">
-        </template>
-
-        <div class="card-content flex flex-row">
-          <div class="card-content-text">
-            <h1 class="title">Unsplasharp</h1>
-            <p class="description mb-4">
-              Unofficial C# wrapper around Unsplash API targeting .NET Standard 1.4.
-              Unsplasharp provides a unified interface for accessing the Unsplash API.
-            </p>
-
-            <div class="flex flex-row gap-4 items-center">
-              <UTooltip text="GitHub" :popper="{ placement: 'top' }">
-                <UButton icon="i-tabler-brand-github" to="https://github.com/rootasjey/unsplasharp" target="_blank"
-                  variant="outline" label="" :color="isDark ? 'secondary' : 'primary'" />
-              </UTooltip>
-
-              <!-- <UTooltip text="Website" :popper="{ placement: 'top' }">
-                  <UButton icon="i-tabler-world-latitude" to="https://kwotes.fr" target="_blank" variant="outline"
-                    label="" :color="isDark ? 'secondary' : 'primary'" />
-                </UTooltip> -->
-
-              <div class="dot-divider w-2 h-2	rounded-full" />
-
-              <UTooltip text="C#" :popper="{ placement: 'top' }">
-                <UButton icon="i-tabler-brand-c-sharp" to="https://docs.microsoft.com/fr-fr/dotnet/csharp/"
-                  target="_blank" variant="solid" color="gray" label="" />
-              </UTooltip>
-              <UTooltip text=".NET" :popper="{ placement: 'top' }">
-                <UButton to="https://dotnet.microsoft.com/" target="_blank" variant="solid" color="gray" label="">
-                  <Icon name="mdi:dot-net" size="1.1rem" />
+              <UTooltip v-for="tech in project.technologies" :text="tech.name" :popper="{ placement: 'top' }">
+                <UButton :icon="tech.useExternalIcon ? undefined : tech.icon" :to="tech.href" target="_blank" variant="solid"
+                  color="gray" label="">
+                  <Icon v-if="tech.useExternalIcon" :name="tech.icon" size="1.1rem" />
                 </UButton>
               </UTooltip>
             </div>
           </div>
-          <img
-            src="https://firebasestorage.googleapis.com/v0/b/rootasjey.appspot.com/o/images%2Ftemp%2Funsplasharp-cover.jpg?alt=media&token=4a3e3bb9-eecc-4e89-94b2-bc31912e7f60"
-            alt="unsplasharp banner">
-        </div>
-      </UCard>
-
-      <UCard class="project-card"
-        :ui="{ header: { base: width > 600 ? 'hidden' : '' }, divide: width > 600 ? '' : 'divide-y divide-gray-200 dark:divide-gray-800' }">
-        <template #header>
-          <img class="img-header" src="https://github.com/rootasjey/kwotes/raw/master/screenshots/kwotes-banner.jpg"
-            alt="kwotes banner">
-        </template>
-
-        <div class="card-content flex flex-row">
-          <div class="card-content-text">
-            <h1 class="title">Backwards</h1>
-            <p class="description mb-4">
-              🚧 [WIP] A turn-based game system built with Phaser 3.
-            </p>
-
-            <div class="flex flex-row gap-4 items-center">
-              <UTooltip text="GitHub" :popper="{ placement: 'top' }">
-                <UButton icon="i-tabler-brand-github" to="https://github.com/rootasjey/backwards" target="_blank"
-                  variant="outline" label="" :color="isDark ? 'secondary' : 'primary'" />
-              </UTooltip>
-
-              <!-- <UTooltip text="Website" :popper="{ placement: 'top' }">
-                  <UButton icon="i-tabler-world-latitude" to="https://kwotes.fr" target="_blank" variant="outline"
-                    label="" :color="isDark ? 'secondary' : 'primary'" />
-                </UTooltip> -->
-
-              <div class="dot-divider w-2 h-2	rounded-full" />
-
-              <UTooltip text="TypeScript" :popper="{ placement: 'top' }">
-                <UButton icon="i-tabler-brand-typescript" to="https://www.typescriptlang.org/" target="_blank"
-                  variant="solid" color="gray" label="" />
-              </UTooltip>
-              <UTooltip text="Phaser" :popper="{ placement: 'top' }">
-                <UButton to="https://phaser.io/" target="_blank" variant="solid" color="gray" label="">
-                  <Icon name="covid:vaccine-protection-infrared-thermometer-gun" size="1.1rem" />
-                </UButton>
-              </UTooltip>
-            </div>
-          </div>
-          <img src="https://github.com/rootasjey/backwards/blob/master/cycles-preview.gif?raw=true"
-            alt="backwards banner">
-        </div>
-      </UCard>
-
-      <UCard class="project-card"
-        :ui="{ header: { base: width > 600 ? 'hidden' : '' }, divide: width > 600 ? '' : 'divide-y divide-gray-200 dark:divide-gray-800' }">
-        <template #header>
-          <img class="img-header"
-            src="https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?q=80&w=2969&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-            alt="kwotes trivia banner">
-        </template>
-
-        <div class="card-content flex flex-row">
-          <div class="card-content-text">
-            <h1 class="title">Kwotes Trivia</h1>
-            <p class="description mb-4">
-              Enjoy a 5 questions trivia game with your friends.
-            </p>
-
-            <div class="flex flex-row gap-4 items-center">
-              <UTooltip text="GitHub" :popper="{ placement: 'top' }">
-                <UButton icon="i-tabler-brand-github" to="https://github.com/rootasjey/kwotes-trivia" target="_blank"
-                  variant="outline" label="" :color="isDark ? 'secondary' : 'primary'" />
-              </UTooltip>
-
-              <!-- <UTooltip text="Website" :popper="{ placement: 'top' }">
-                  <UButton icon="i-tabler-world-latitude" to="https://kwotes.fr" target="_blank" variant="outline"
-                    label="" :color="isDark ? 'secondary' : 'primary'" />
-                </UTooltip> -->
-
-              <div class="dot-divider w-2 h-2	rounded-full" />
-
-              <UTooltip text="Flutter" :popper="{ placement: 'top' }">
-                <UButton icon="i-tabler-brand-flutter" to="https://flutter.dev" target="_blank" variant="solid"
-                  color="gray" label="" />
-              </UTooltip>
-              <UTooltip text="Firebase" :popper="{ placement: 'top' }">
-                <UButton icon="i-tabler-brand-firebase" to="https://firebase.com" target="_blank" variant="solid"
-                  color="gray" label="" />
-              </UTooltip>
-            </div>
-          </div>
-          <img
-            src="https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?q=80&w=2969&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-            alt="kwotes trivia banner">
-        </div>
-      </UCard>
-
-      <UCard class="project-card"
-        :ui="{ header: { base: width > 600 ? 'hidden' : '' }, divide: width > 600 ? '' : 'divide-y divide-gray-200 dark:divide-gray-800' }">
-        <template #header>
-          <img class="img-header"
-            src="https://firebasestorage.googleapis.com/v0/b/rootasjey.appspot.com/o/images%2Ftemp%2Fkwotes-cli-v0.png?alt=media&token=568cb6cc-4bfd-4be5-945d-4d77249f7cb8"
-            alt="kwotes cli banner">
-        </template>
-
-        <div class="card-content flex flex-row">
-          <div class="card-content-text">
-            <h1 class="title">Kwotes CLI</h1>
-            <p class="description mb-4">
-              A tiny CLI app for kwotes platform.
-            </p>
-
-            <div class="flex flex-row gap-4 items-center">
-              <UTooltip text="GitHub" :popper="{ placement: 'top' }">
-                <UButton icon="i-tabler-brand-github" to="https://github.com/rootasjey/kwotes-cli" target="_blank"
-                  variant="outline" label="" :color="isDark ? 'secondary' : 'primary'" />
-              </UTooltip>
-
-              <!-- <UTooltip text="Website" :popper="{ placement: 'top' }">
-                  <UButton icon="i-tabler-world-latitude" to="https://kwotes.fr" target="_blank" variant="outline"
-                    label="" :color="isDark ? 'secondary' : 'primary'" />
-                </UTooltip> -->
-
-              <div class="dot-divider w-2 h-2	rounded-full" />
-
-              <UTooltip text="Python" :popper="{ placement: 'top' }">
-                <UButton icon="i-tabler-brand-python" to="https://python.org" target="_blank" variant="solid"
-                  color="gray" label="" />
-              </UTooltip>
-              <UTooltip text="Typer" :popper="{ placement: 'top' }">
-                <UButton icon="i-tabler-arrow-autofit-right" to="https://typer.tiangolo.com/" target="_blank"
-                  variant="solid" color="gray" label="" />
-              </UTooltip>
-            </div>
-          </div>
-          <img
-            src="https://firebasestorage.googleapis.com/v0/b/rootasjey.appspot.com/o/images%2Ftemp%2Fkwotes-cli-v0.png?alt=media&token=568cb6cc-4bfd-4be5-945d-4d77249f7cb8"
-            alt="kwotes cli banner">
-        </div>
-      </UCard>
-
-      <UCard class="project-card"
-        :ui="{ header: { base: width > 600 ? 'hidden' : '' }, divide: width > 600 ? '' : 'divide-y divide-gray-200 dark:divide-gray-800' }">
-        <template #header>
-          <img class="img-header"
-            src="https://github.com/rootasjey/metrix-fitbit/blob/master/screenshots/changelog.png?raw=true"
-            alt="metrix fitbit banner">
-        </template>
-
-        <div class="card-content flex flex-row">
-          <div class="card-content-text">
-            <h1 class="title">Metrix Fitbit</h1>
-            <p class="description mb-4">
-              A Fitbit clock face showing metrics activities.
-            </p>
-
-            <div class="flex flex-row gap-4 items-center">
-              <UTooltip text="GitHub" :popper="{ placement: 'top' }">
-                <UButton icon="i-tabler-brand-github" to="https://github.com/rootasjey/metrix-fitbit" target="_blank"
-                  variant="outline" label="" :color="isDark ? 'secondary' : 'primary'" />
-              </UTooltip>
-
-              <div class="dot-divider w-2 h-2	rounded-full" />
-
-              <UTooltip text="JavaScript" :popper="{ placement: 'top' }">
-                <UButton icon="i-tabler-brand-javascript" to="https://www.javascript.com/" target="_blank"
-                  variant="solid" color="gray" label="" />
-              </UTooltip>
-              <UTooltip text="CSS" :popper="{ placement: 'top' }">
-                <UButton icon="i-tabler-file-type-css" to="https://developer.mozilla.org/en-US/docs/Web/CSS/"
-                  target="_blank" variant="solid" color="gray" label="" />
-              </UTooltip>
-            </div>
-          </div>
-          <img src="https://github.com/rootasjey/metrix-fitbit/blob/master/screenshots/changelog.png?raw=true"
-            alt="metrix fitbit banner">
-        </div>
-      </UCard>
-
-      <UCard class="project-card"
-        :ui="{ header: { base: width > 600 ? 'hidden' : '' }, divide: width > 600 ? '' : 'divide-y divide-gray-200 dark:divide-gray-800' }">
-        <template #header>
-          <img class="img-header"
-            src="https://github.com/rootasjey/alarms-fitbit/blob/master/screenshots/screenshot1.png?raw=true"
-            alt="alarm fitbit banner">
-        </template>
-
-        <div class="card-content flex flex-row">
-          <div class="card-content-text">
-            <h1 class="title">Alarm Fitbit</h1>
-            <p class="description mb-4">
-              A Fitbit clock face looking like the Alarms app.
-            </p>
-
-            <div class="flex flex-row gap-4 items-center">
-              <UTooltip text="GitHub" :popper="{ placement: 'top' }">
-                <UButton icon="i-tabler-brand-github" to="https://github.com/rootasjey/alarm-fitbit" target="_blank"
-                  variant="outline" label="" :color="isDark ? 'secondary' : 'primary'" />
-              </UTooltip>
-
-              <div class="dot-divider w-2 h-2	rounded-full" />
-
-              <UTooltip text="JavaScript" :popper="{ placement: 'top' }">
-                <UButton icon="i-tabler-brand-javascript" to="https://www.javascript.com/" target="_blank"
-                  variant="solid" color="gray" label="" />
-              </UTooltip>
-              <UTooltip text="CSS" :popper="{ placement: 'top' }">
-                <UButton icon="i-tabler-file-type-css" to="https://developer.mozilla.org/en-US/docs/Web/CSS/"
-                  target="_blank" variant="solid" color="gray" label="" />
-              </UTooltip>
-            </div>
-          </div>
-          <img src="https://github.com/rootasjey/alarms-fitbit/blob/master/screenshots/screenshot1.png?raw=true"
-            alt="alarm fitbit banner">
-        </div>
-      </UCard>
-
-      <UCard class="project-card"
-        :ui="{ header: { base: width > 600 ? 'hidden' : '' }, divide: width > 600 ? '' : 'divide-y divide-gray-200 dark:divide-gray-800' }">
-        <template #header>
-          <img class="img-header"
-            src="https://github.com/rootasjey/feels_uwp/blob/master/screenshots/presentation.png?raw=true"
-            alt="feels uwp banner">
-        </template>
-
-        <div class="card-content flex flex-row">
-          <div class="card-content-text">
-            <h1 class="title">Feels (UWP)</h1>
-            <p class="description mb-4">
-              Minimalistic weather app for universal windows platform.
-            </p>
-
-            <div class="flex flex-row gap-4 items-center">
-              <UTooltip text="GitHub" :popper="{ placement: 'top' }">
-                <UButton icon="i-tabler-brand-github" to="https://github.com/rootasjey/feels_uwp" target="_blank"
-                  variant="outline" label="" :color="isDark ? 'secondary' : 'primary'" />
-              </UTooltip>
-              <UTooltip text="Microsoft store" :popper="{ placement: 'top' }">
-                <UButton icon="i-tabler-building-store"
-                  to="https://apps.microsoft.com/detail/9nb305kw0mbp?activetab=pivot:overviewtab&hl=en-us&gl=US"
-                  target="_blank" variant="outline" label="" :color="isDark ? 'secondary' : 'primary'" />
-              </UTooltip>
-
-              <div class="dot-divider w-2 h-2	rounded-full" />
-
-              <UTooltip text="C#" :popper="{ placement: 'top' }">
-                <UButton icon="i-tabler-brand-c-sharp" to="https://docs.microsoft.com/fr-fr/dotnet/csharp/"
-                  target="_blank" variant="solid" color="gray" label="" />
-              </UTooltip>
-            </div>
-          </div>
-          <img src="https://github.com/rootasjey/feels_uwp/blob/master/screenshots/presentation.png?raw=true"
-            alt="feels uwp banner">
-        </div>
-      </UCard>
-
-      <UCard class="project-card"
-        :ui="{ header: { base: width > 600 ? 'hidden' : '' }, divide: width > 600 ? '' : 'divide-y divide-gray-200 dark:divide-gray-800' }">
-        <template #header>
-          <img class="img-header"
-            src="https://github.com/rootasjey/citations365-8/blob/master/citations.windows.jpg?raw=true"
-            alt="feels uwp banner">
-        </template>
-
-        <div class="card-content flex flex-row">
-          <div class="card-content-text">
-            <h1 class="title">Citations 365 (UWP)</h1>
-            <p class="description mb-4">
-              A quotes app written for Windows 10.
-              Read meaningful quotes everyday.
-              Source is based on https://evene.lefigaro.fr
-            </p>
-
-            <div class="flex flex-row gap-4 items-center">
-              <UTooltip text="GitHub" :popper="{ placement: 'top' }">
-                <UButton icon="i-tabler-brand-github" to="https://github.com/rootasjey/citations365-8" target="_blank"
-                  variant="outline" label="" :color="isDark ? 'secondary' : 'primary'" />
-              </UTooltip>
-              <UTooltip text="Microsoft store" :popper="{ placement: 'top' }">
-                <UButton icon="i-tabler-building-store"
-                  to="https://apps.microsoft.com/detail/9nblggh68cv1?hl=en-us&gl=US" target="_blank" variant="outline"
-                  label="" :color="isDark ? 'secondary' : 'primary'" />
-              </UTooltip>
-
-              <div class="dot-divider w-2 h-2	rounded-full" />
-
-              <UTooltip text="C#" :popper="{ placement: 'top' }">
-                <UButton icon="i-tabler-brand-c-sharp" to="https://docs.microsoft.com/fr-fr/dotnet/csharp/"
-                  target="_blank" variant="solid" color="gray" label="" />
-              </UTooltip>
-            </div>
-          </div>
-          <img src="https://github.com/rootasjey/citations365-8/blob/master/citations.windows.jpg?raw=true"
-            alt="feels uwp banner">
+          <img :src="project.image.src" :alt="project.image.alt">
         </div>
       </UCard>
     </div>
@@ -410,6 +63,259 @@ const isDark = computed({
     colorMode.preference = colorMode.value === 'dark' ? 'light' : 'dark'
   }
 })
+
+const pageItems = [
+  {
+    name: "Kwotes",
+    description: "kwotes is a captivating mobile application that offers a vast collection of inspiring, thought- provoking, and insightful quotes from a diverse range of sources.Kwotes allows to explore, save, and share favorite quotes with ease.",
+    image: {
+      src: "https://github.com/rootasjey/kwotes/raw/master/screenshots/kwotes-banner.jpg",
+      alt: "kwotes banner",
+    },
+    links: [
+      {
+        name: "GitHub",
+        icon: "i-tabler-brand-github",
+        url: "https://github.com/rootasjey/kwotes",
+      },
+      {
+        name: "App Store",
+        icon: "i-tabler-brand-appstore",
+        url: "https://apps.apple.com/fr/app/kwotes/id6478239805?platform=iphone",
+      },
+    ],
+    technologies: [
+      {
+        name: "Flutter",
+        icon: "i-tabler-brand-flutter",
+        href: "https://flutter.dev",
+      },
+      {
+        name: "Firebase",
+        icon: "i-tabler-brand-firebase",
+        href: "https://firebase.com",
+      },
+      {
+        name: "Algolia",
+        icon: "i-tabler-brand-algolia",
+        href: "https://algolia.com",
+      },
+    ],
+  },
+  {
+    name: "Unsplasharp",
+    description: "Unofficial C# wrapper around Unsplash API targeting .NET Standard 1.4. Unsplasharp provides a unified interface for accessing the Unsplash API.",
+    image: {
+      src: "https://firebasestorage.googleapis.com/v0/b/rootasjey.appspot.com/o/images%2Ftemp%2Funsplasharp-cover.jpg?alt=media&token=4a3e3bb9-eecc-4e89-94b2-bc31912e7f60",
+      alt: "unsplasharp banner",
+    },
+    links: [
+      {
+        name: "GitHub",
+        icon: "i-tabler-brand-github",
+        url: "https://github.com/rootasjey/unsplasharp",
+      },
+    ],
+    technologies: [
+      {
+        name: "C#",
+        icon: "i-tabler-brand-c-sharp",
+        href: "https://docs.microsoft.com/fr-fr/dotnet/csharp/",
+      },
+      {
+        name: ".NET",
+        icon: "mdi:dot-net",
+        href: "https://dotnet.microsoft.com/",
+        useExternalIcon: true,
+      },
+    ],
+  },
+  {
+    name: "Backwards",
+    description: "🚧 [WIP] A turn-based game system built with Phaser 3.",
+    image: {
+      src: "https://github.com/rootasjey/backwards/blob/master/cycles-preview.gif?raw=true",
+      alt: "backwards banner",
+    },
+    links: [
+      {
+        name: "GitHub",
+        icon: "i-tabler-brand-github",
+        url: "https://github.com/rootasjey/backwards",
+      },
+    ],
+    technologies: [
+      {
+        name: "TypeScript",
+        icon: "i-tabler-brand-typescript",
+        href: "https://www.typescriptlang.org/",
+      },
+      {
+        name: "Phaser",
+        icon: "covid:vaccine-protection-infrared-thermometer-gun",
+        href: "https://phaser.io/",
+        useExternalIcon: true,
+      },
+    ],
+  },
+  {
+    name: "Kwotes Trivia",
+    description: "Enjoy a 5 questions trivia game with your friends.",
+    image: {
+      src: "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?q=80&w=2969&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      alt: "kwotes trivia banner",
+    },
+    links: [
+      {
+        name: "GitHub",
+        icon: "i-tabler-brand-github",
+        url: "https://github.com/rootasjey/kwotes-trivia",
+      },
+    ],
+    technologies: [
+      {
+        name: "Flutter",
+        icon: "i-tabler-brand-flutter",
+        href: "https://flutter.dev",
+      },
+      {
+        name: "Firebase",
+        icon: "i-tabler-brand-firebase",
+        href: "https://firebase.com",
+      },
+    ],
+  },
+  {
+    name: "Kwotes CLI",
+    description: "A tiny CLI app for Kwotes platform.",
+    image: {
+      src: "https://firebasestorage.googleapis.com/v0/b/rootasjey.appspot.com/o/images%2Ftemp%2Fkwotes-cli-v0.png?alt=media&token=568cb6cc-4bfd-4be5-945d-4d77249f7cb8",
+      alt: "kwotes cli banner",
+    },
+    links: [
+      {
+        name: "GitHub",
+        icon: "i-tabler-brand-github",
+        url: "https://github.com/rootasjey/kwotes-cli",
+      },
+    ],
+    technologies: [
+      {
+        name: "Python",
+        icon: "i-tabler-brand-python",
+        href: "https://docs.python.org/3/",
+      },
+      {
+        name: "Typer",
+        icon: "i-tabler-arrow-autofit-right",
+        href: "https://typer.tiangolo.com/",
+      },
+    ],
+  },
+  {
+    name: "Metrix Fitbit",
+    description: "A Fitbit clock face showing metrics activities.",
+    image: {
+      src: "https://github.com/rootasjey/metrix-fitbit/blob/master/screenshots/changelog.png?raw=true",
+      alt: "metrix fitbit banner",
+    },
+    links: [
+      {
+        name: "GitHub",
+        icon: "i-tabler-brand-github",
+        url: "https://github.com/rootasjey/metrix-fitbit",
+      },
+    ],
+    technologies: [
+      {
+        name: "JavaScript",
+        icon: "i-tabler-brand-javascript",
+        href: "https://www.javascript.com/",
+      },
+      {
+        name: "CSS",
+        icon: "i-tabler-brand-css3",
+        href: "https://www.w3.org/Style/CSS/",
+      },
+    ],
+  },
+  {
+    name: "Alarms Fitbit",
+    description: "A Fitbit clock face looking like the Alarms app.",
+    image: {
+      src: "https://github.com/rootasjey/alarms-fitbit/blob/master/screenshots/screenshot1.png?raw=true",
+      alt: "alarms fitbit banner",
+    },
+    links: [
+      {
+        name: "GitHub",
+        icon: "i-tabler-brand-github",
+        url: "https://github.com/rootasjey/alarms-fitbit",
+      },
+    ],
+    technologies: [
+      {
+        name: "JavaScript",
+        icon: "i-tabler-brand-javascript",
+        href: "https://www.javascript.com/",
+      },
+      {
+        name: "CSS",
+        icon: "i-tabler-brand-css3",
+        href: "https://www.w3.org/Style/CSS/",
+      },
+    ],
+  },
+  {
+    name: "Feels UWP",
+    description: "Minimalistic weather app for universal windows platform.",
+    image: {
+      src: "https://github.com/rootasjey/feels_uwp/blob/master/screenshots/presentation.png?raw=true",
+      alt: "feels uwp banner",
+    },
+    links: [
+      {
+        name: "GitHub",
+        icon: "i-tabler-brand-github",
+        url: "https://github.com/rootasjey/feels_uwp",
+      },
+    ],
+    technologies: [
+      {
+        name: "C#",
+        icon: "i-tabler-brand-c-sharp",
+        href: "https://docs.microsoft.com/fr-fr/dotnet/csharp/",
+      },
+    ],
+  },
+  {
+    name: "Citations 365 (UWP)",
+    description: "A quotes app written for Windows 10. Read meaningful quotes everyday. Source is based on https://evene.lefigaro.fr",
+    image: {
+      src: "https://github.com/rootasjey/citations365-8/blob/master/citations.windows.jpg?raw=true",
+      alt: "feels uwp banner",
+    },
+    links: [
+      {
+        name: "GitHub",
+        icon: "i-tabler-brand-github",
+        url: "https://github.com/rootasjey/citations365-8",
+      },
+      {
+        name: "Microsoft store",
+        icon: "i-tabler-building-store",
+        url: "https://apps.microsoft.com/detail/9nblggh68cv1?hl=en-us&gl=US",
+      },
+    ],
+    technologies: [
+      {
+        name: "C#",
+        icon: "i-tabler-brand-c-sharp",
+        href: "https://docs.microsoft.com/fr-fr/dotnet/csharp/",
+      },
+    ],
+  },
+]
 
 const loading = ref(false)
 const error = ref("")

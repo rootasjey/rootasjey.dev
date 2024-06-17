@@ -6,48 +6,20 @@
     <WavyLine class="wavy-line" color="love" />
 
     <div class="interest-section">
-      <UCard class="interest-card" :ui="{ body: '' }">
+      <UCard v-for="interest in pageItems" class="interest-card" :ui="{ body: '' }">
         <div class="flex flex-row">
-          <img src="https://upload.wikimedia.org/wikipedia/en/c/cc/Hades_cover_art.jpg" alt="hades image">
+          <NuxtImg :src="interest.image.src" :alt="interest.image.alt" />
           <div class="card-content-text">
-            <h1 class="title">Hades</h1>
+            <h1 class="title">{{ interest.name }}</h1>
             <p class="description">
-              Hades is a 2020 roguelike action role-playing game developed and published by Supergiant Games.
+              {{ interest.description }}
             </p>
           </div>
         </div>
         <div class="category">
-          <UIcon name="i-tabler-device-gamepad-2" />
-        </div>
-      </UCard>
-      <UCard class="interest-card" :ui="{ body: '' }">
-        <div class="flex flex-row">
-          <img src="https://i.ytimg.com/an/IA-v_LB3Qpc/7932776273451997754_mq.jpg?v=62ebfa55" alt="Arcane image">
-          <div class="card-content-text">
-            <h1 class="title">Arcane</h1>
-            <p class="description">
-              Arcane is an animated television series set in the League of Legends universe.
-            </p>
-          </div>
-        </div>
-        <div class="category">
-          <UIcon name="i-tabler-device-tv-old" />
-        </div>
-      </UCard>
-      <UCard class="interest-card" :ui="{ body: '' }">
-        <div class="flex flex-row">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/1/1f/Everything_everywhere_all_at_once_logo.jpg"
-            alt="Everything, everywhere, all at once image">
-          <div class="card-content-text">
-            <h1 class="title">Everything, everywhere, all at once</h1>
-            <p class="description">
-              2022 American absurdist comedy-drama film directed by Daniel Kwan
-              and Daniel Scheinert.
-            </p>
-          </div>
-        </div>
-        <div class="category">
-          <UIcon name="i-tabler-movie" />
+          <UTooltip v-for="category in interest.categories" :text="category.name" :popper="{ placement: 'top' }">
+            <UIcon :name="category.icon" />
+          </UTooltip>
         </div>
       </UCard>
     </div>
@@ -68,6 +40,77 @@ const isDark = computed({
     colorMode.preference = colorMode.value === 'dark' ? 'light' : 'dark'
   }
 })
+
+const pageItems = [
+  {
+    name: 'Hades',
+    categories: [
+      {
+        name: "Game",
+        icon: "i-tabler-device-gamepad-2"
+      },
+    ],
+    description: 'Hades is a 2020 roguelike action role-playing game developed and published by Supergiant Games.',
+    image: {
+      src: 'https://upload.wikimedia.org/wikipedia/en/c/cc/Hades_cover_art.jpg',
+      alt: 'Hades image'
+    },
+    links: [
+      {
+        name: 'Hades on Steam',
+        icon: 'i-tabler-brand-steam',
+        url: 'https://store.steampowered.com/app/1145360/Hades/'
+      },
+      {
+        name: 'Hades on Epic Games',
+        icon: 'i-tabler-brand-epic-games',
+        url: 'https://www.epicgames.com/store/en-US/product/hades'
+      },
+    ],
+  },
+  {
+    name: 'Arcane',
+    categories: [
+      {
+        name: "Series",
+        icon: "i-tabler-device-tv-old"
+      },
+    ],
+    description: 'Arcane is an animated television series set in the League of Legends universe.',
+    image: {
+      src: 'https://i.ytimg.com/an/IA-v_LB3Qpc/7932776273451997754_mq.jpg?v=62ebfa55',
+      alt: 'Arcane image'
+    },
+    links: [
+      {
+        name: 'Arcane on YouTube',
+        icon: 'i-tabler-brand-youtube',
+        url: 'https://www.youtube.com/watch?v=IA-v_LB3Qpc'
+      },
+    ],
+  },
+  {
+    name: "Everything Everywhere All at Once",
+    categories: [
+      {
+        name: "Movie",
+        icon: "i-tabler-movie"
+      }
+    ],
+    description: '2022 American absurdist comedy-drama film directed by Daniel Kwan and Daniel Scheinert.',
+    image: {
+      src: 'https://upload.wikimedia.org/wikipedia/commons/1/1f/Everything_everywhere_all_at_once_logo.jpg',
+      alt: 'Everything, everywhere, all at once image',
+        },
+    links: [
+      {
+        name: 'Everything, everywhere, all at once on YouTube',
+        icon: 'i-tabler-brand-youtube',
+        url: 'https://www.youtube.com/watch?v=IA-v_LB3Qpc'
+      },
+    ],
+  },
+]
 
 </script>
 
