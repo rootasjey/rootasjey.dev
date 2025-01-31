@@ -17,7 +17,13 @@ export default defineNuxtConfig({
       ],
     },
   },
-  modules: ["@unocss/nuxt", "@una-ui/nuxt", "@nuxtjs/color-mode", "nuxt-vuefire"],
+  modules: [
+    "@nuxthub/core",
+    "@nuxtjs/color-mode",
+    "@una-ui/nuxt",
+    "@unocss/nuxt",
+    "nuxt-vuefire",
+  ],
   unocss: {
     preflight: true,
     icons: {
