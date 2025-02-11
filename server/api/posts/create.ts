@@ -1,15 +1,10 @@
 // POST /api/posts/create
-import { getAuth } from 'firebase-admin/auth'
-import { getFirestore } from 'firebase-admin/firestore'
-import { getStorage } from 'firebase-admin/storage'
-import { createPostData, createPostFileContent, createPostFileMetadata } from '~/server/utils/server.post'
+import { RecordId } from 'surrealdb'
+import { useSurrealDB } from '~/composables/useSurrealDB'
+import { createPostData } from '~/server/utils/server.post'
 
 export default defineEventHandler(async (event) => {
-  const userIdToken = getHeader(event, "Authorization")
-  const decodedToken = await getAuth().verifyIdToken(userIdToken ?? "")
-  const userId = decodedToken.uid
-
-  const db = getFirestore()
+  const { db, connect, decodeJWT } = useSurrealDB()
   const body = await readBody(event)
 
   if (!body.name) {
@@ -19,31 +14,28 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  const postData = createPostData(body, userId)
-  const addedPost = await db
-  .collection("posts")
-  .add(postData)
-
-  // Create a new post's styles document in Firestore
-  await addedPost.collection("post_styles").doc("meta").set({
-    align: "",
-  })
-
-  const doc = await addedPost.get()
-
-  const storage = getStorage()
-  const bucket = storage.bucket()
-  const file = bucket.file(`posts/${doc.id}/post.json`)
-  await file.save(
-    createPostFileContent(),
-    createPostFileMetadata({
-      postId: doc.id, 
-      userId,
-    }),
-  )
-
-  return {
-    ...postData,
-    id: doc.id,
+  await connect()
+  let userRecordId: RecordId = new RecordId("", "")
+  const rawToken = getHeader(event, "Authorization")
+  if (!rawToken) {
+    throw createError({
+      statusCode: 401,
+      message: "Unauthorized",
+    })
   }
+
+  const token = rawToken.replace('Bearer ', '').replace('token=', '')
+  const decoded = decodeJWT(token)
+  const idParts = decoded.ID.split(":")
+  userRecordId = new RecordId(idParts[0], idParts[1])
+  await db.authenticate(token)
+
+
+  const postData = createPostData(body, userRecordId)
+
+  // Create new record in SurrealDB posts table
+  const post = await db.create("posts", postData)
+  console.log("Created post response:", post)
+
+  return post
 })

@@ -7,9 +7,7 @@
 </template>
 
 <script lang="ts" setup>
-import 'unocss'
 import '@una-ui/preset/una.css'
-
 </script>
 
 <style>

@@ -1,3 +1,5 @@
+import type { RecordId } from "surrealdb"
+
 export type CreatePostType = {
   category: string
   description: string
@@ -5,15 +7,15 @@ export type CreatePostType = {
 }
 
 export type PostType = {
-  authors: string[]
+  author: RecordId
   /** True if the user is the author of the post. */
   canEdit: boolean
   /** Post content in JSON format. */
-  content?: string
+  content?: Object
   created_at: string
   description: string
   category: string
-  id: string
+  id: string | RecordId
   isDeleteDialogOpen?: boolean
   image: {
     alt: string
@@ -35,7 +37,6 @@ export type PostType = {
   slug: string
   tags: string[]
   updated_at: string
-  user_id: string
   visibility: string
 }
 

@@ -1,37 +1,39 @@
-// Define a new api endpoint to create a new project in Fireestore
-import { getAuth } from 'firebase-admin/auth'
-import { getFirestore } from 'firebase-admin/firestore'
+// POST /api/projects/create.ts
+import { RecordId } from 'surrealdb'
+import { useSurrealDB } from '~/composables/useSurrealDB'
 
 export default defineEventHandler(async (event) => {
-  const userIdToken = getHeader(event, "Authorization")
-  const decodedToken = await getAuth().verifyIdToken(userIdToken ?? "")
-  const userId = decodedToken.uid
+  const { db, connect, decodeJWT } = useSurrealDB()
+  const rawToken = getHeader(event, "Authorization")
+  if (!rawToken) {
+    throw createError({
+      statusCode: 401,
+      message: "Unauthorized",
+    })
+  }
 
-  const db = getFirestore()
+  const token = rawToken.replace('Bearer ', '').replace('token=', '')
+  const decoded = decodeJWT(token)
+  const idParts = decoded.ID.split(":")
+  const userRecordId = new RecordId(idParts[0], idParts[1])
+
+  await connect()
+  await db.authenticate(token)
   const body = await readBody(event)
 
   const project = {
     ...body,
+    author: userRecordId,
     company: "",
-    created_at: new Date().toISOString(),
     image: {
       alt: "",
       src: "",
     },
     links: [],
     slug: body.name.toLowerCase().replaceAll(" ", "-"),
-    updated_at: new Date().toISOString(),
-    user_id: userId,
     visibility: "private",
   }
 
-  const addedProject = await db
-  .collection("projects")
-  .add(project)
-
-  const doc = await addedProject.get()
-  return {
-    ...project,
-    id: doc.id,
-  }
+  const createdProject = await db.create("projects", project)
+  return createdProject
 })

@@ -37,3 +37,5 @@ firestore.rules
 storage.rules
 service-account.json
 rootasjey-firebase-adminsdk-8wlfd-515559bdf4.json
+
+.wrangler

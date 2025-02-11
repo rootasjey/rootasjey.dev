@@ -44,34 +44,61 @@
 
 <script setup>
 import { ref } from 'vue'
-import { useFirebaseAuth } from 'vuefire'
-import { signInWithEmailAndPassword } from 'firebase/auth'
 import { useRouter } from 'vue-router'
 
 const email = ref('')
 const password = ref('')
 const error = ref('')
-const auth = useFirebaseAuth()
 const router = useRouter()
 
 const handleLogin = async () => {
   try {
-    error.value = ''
-    await signInWithEmailAndPassword(auth, email.value, password.value)
+    error.value = ""
+    const { token } = await $fetch('/api/user/signin', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: {
+        email: email.value,
+        password: password.value
+      }
+    })
+
+    // Set both cookie and localStorage
+    document.cookie = `token=${token}; path=/`
+    localStorage.setItem('token', token)
+    localStorage.setItem('email', email.value)
+    localStorage.setItem('password', password.value)
     router.push('/')
   } catch (e) {
     error.value = e.message
   }
 }
-
-onMounted(() => {
+onMounted(async () => {
   // Redirect if user is already authenticated
-  const unsubscribe = auth.onAuthStateChanged((user) => {
-    if (!user) return
+  const token = localStorage.getItem('token')
+  if (token && checkTokenExpiration(token)) {
+    console.log("OK")
+    document.cookie = `token=${token}; path=/`
     router.push('/')
-  })
-
-  // Cleanup subscription
-  onUnmounted(() => unsubscribe())
+    return
+  }
+  
+  const savedEmail = localStorage.getItem('email')
+  const savedPassword = localStorage.getItem('password')
+  if (email && password) {
+    email.value = savedEmail
+    password.value = savedPassword
+    handleLogin()
+  }
 })
+
+const checkTokenExpiration = (token) => {
+  const base64Url = token.split('.')[1]
+  const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/')
+  const payload = JSON.parse(window.atob(base64))
+  return payload.exp * 1000 > Date.now()
+}
+
 </script>

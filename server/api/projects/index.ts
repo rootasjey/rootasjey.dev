@@ -1,10 +1,13 @@
-import { getFirestore } from 'firebase-admin/firestore'
+// GET /api/projects
+import { useSurrealDB } from '~/composables/useSurrealDB'
 
 export default defineEventHandler(async (event) => {
-  const db = getFirestore()
+  const { db, connect } = useSurrealDB()
+  await connect()
 
-  const snapshot = await db.collection("projects").get()
-  const projects = snapshot.docs.map((doc) => Object.assign({ id: doc.id }, doc.data()))
+  const [projects]: any[] = await db.query(`
+    SELECT * FROM projects WHERE visibility = 'public'
+  `)
 
   const projectByCategory: { [key: string]: any[] } = {}
   for await (const project of projects) {

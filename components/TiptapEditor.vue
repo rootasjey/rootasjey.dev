@@ -50,9 +50,9 @@ const props = defineProps({
     },
   },
   modelValue: {
-    type: String,
+    type: Object,
     required: false,
-    default: "<p>I'm running Tiptap with Vue.js. 🎉</p>",
+    default: { "type": "doc", "content": [{ "type": "paragraph", "content": [{ "type": "text", "text": "I\'m running Tiptap with Vue.js. 🎉" }] }] },
   },
 })
 
@@ -82,7 +82,7 @@ const editor = new Editor({
       },
     }),
   ],
-  content: JSON.parse(props.modelValue),
+  content: props.modelValue,
   onUpdate: () => {
     emit("update:modelValue", editor.getJSON())
   },
@@ -112,9 +112,9 @@ onBeforeUnmount(() => {
 
 <style>
 .tiptap:focus-visible {
-  outline: 2px dashed rgb(var(--una-primary));
+  outline: 1px dashed #2C7FFF;
   border-radius: 0.25rem;
-  outline-offset: 0.60rem;
+  outline-offset: 1.20rem;
 }
 
 .tiptap {
@@ -154,6 +154,7 @@ onBeforeUnmount(() => {
 
   h1 {
     font-size: 3rem;
+    font-weight: 700;
   }
 
   h2 {

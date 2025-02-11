@@ -1,3 +1,4 @@
+import { RecordId } from "surrealdb"
 
 /**
  * Creates a new post data object with default values.
@@ -6,12 +7,12 @@
  * @param userId - The ID of the user creating the post.
  * @returns A new post data object with default values.
  */
-export const createPostData = (body: any, userId: string) => {
+export const createPostData = (body: any, userId: RecordId) => {
   const name = body?.name || "New Post"
   return {
-    authors: [],
+    author: userId,
     category: body?.category ?? "",
-    created_at: new Date(),
+    content: {},
     description: body?.description ?? "",
     image: {
       alt: "",
@@ -25,10 +26,15 @@ export const createPostData = (body: any, userId: string) => {
       views: 0,
     },
     name,
+    project: undefined,
+    published_at: undefined,
     slug: name.toLowerCase().replaceAll(" ", "-"),
+    styles: {
+      meta: {
+        align: undefined,
+      },
+    },
     tags: [],
-    updated_at: new Date(),
-    user_id: userId ?? "",
     visibility: "private",
   }
 }

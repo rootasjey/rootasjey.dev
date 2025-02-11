@@ -1,15 +1,11 @@
 // PUT /api/posts/[id]/update-meta
-import { getAuth } from 'firebase-admin/auth'
-import { getFirestore } from 'firebase-admin/firestore'
+import { RecordId } from "surrealdb"
+import { useSurrealDB } from "~/composables/useSurrealDB"
 
 export default defineEventHandler(async (event) => {
-  const userIdToken = getHeader(event, "Authorization")
-  const decodedToken = await getAuth().verifyIdToken(userIdToken ?? "")
-  const userId = decodedToken.uid
-
+  const { db, connect } = useSurrealDB()
   const postId = event.context.params?.id
   const body = await readBody(event)
-  const db = getFirestore()
 
   if (!postId) {
     throw createError({
@@ -25,47 +21,27 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  const postToUpdate = await db.collection("posts")
-    .doc(postId)
-    .get()
-  
-  if (!postToUpdate.exists) {
-    throw createError({
-      statusCode: 404,
-      message: 'Post not found',
-    })
-  }
-
-  if (postToUpdate.data()?.user_id !== userId) {
-    throw createError({
-      statusCode: 403,
-      message: 'You are not authorized to update this post',
-    })
+  await connect()
+  const rawToken = getHeader(event, "Authorization")
+  if (rawToken) {
+    const token = rawToken.replace('Bearer ', '').replace('token=', '')
+    await db.authenticate(token)
   }
 
   let category = body.category ?? ""
   category = category === "no category" ? "" : category.toLowerCase()
 
-  await postToUpdate.ref
-    .update({
-      category,
-      description: body.description ?? "",
-      language: body.language ?? "en",
-      name: body.name,
-      visibility: body.visibility ?? "public",
-      slug: body.slug ?? "",
-      updated_at: new Date(),
-    })
-
-  const updatedPost = await postToUpdate.ref.get()
-
-  const postData  = updatedPost.data()
-  const post = {
-    ...postData,
-    id: updatedPost.id,
-    created_at: new Date(postData?.created_at.toDate()),
-    updated_at: new Date(postData?.updated_at.toDate()),
-  }
+  const postRecordParts = postId.split(":")
+  const postRecordId = new RecordId(postRecordParts[0], postRecordParts[1])
+  const post = await db.merge(postRecordId, {
+    category,
+    description: body.description ?? "",
+    language: body.language ?? "en",
+    name: body.name,
+    visibility: body.visibility ?? "public",
+    slug: body.slug ?? "",
+    // updated_at: new Date(),
+  })
 
   return {
     message: 'Post updated successfully',

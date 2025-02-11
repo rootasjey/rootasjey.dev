@@ -1,17 +1,20 @@
 // GET /api/home/how-many-items
-// Fetch the number of items in the firestore collection
-// for "projects", "posts" and "experiments".
-import { getFirestore } from "firebase-admin/firestore"
+import { useSurrealDB } from "~/composables/useSurrealDB"
 
 export default defineEventHandler(async (event) => {
-  const db = getFirestore()
-  const experiments = await db.collection('experiments').count().get()
-  const posts = await db.collection('posts').where('visibility', 'in', ['public', 'project:public']).count().get()
-  const projects = await db.collection('projects').count().get()
+  const { db, connect } = useSurrealDB()
+  await connect()
+
+  // Count the number of projects in the "projects" collection
+  const [postCount]: any = await db.query("SELECT count() AS posts FROM posts WHERE visibility = 'public' OR visibility = 'project:public' GROUP ALL;")
+  const [projectCount]: any = await db.query("SELECT count() AS projects FROM projects WHERE visibility = 'public' GROUP ALL;")
+
+  const { projects } = projectCount[0]
+  const { posts } = postCount[0]
 
   return {
-    projects: projects.data().count,
-    posts: posts.data().count,
-    experiments: experiments.data().count,
+    projects,
+    posts,
+    experiments: 0,
   }
 })

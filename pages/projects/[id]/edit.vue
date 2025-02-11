@@ -24,7 +24,7 @@
               Edit this project fields
             </h5>
 
-            <div v-if="_currentUser">
+            <div v-if="token">
               <UDialog v-model:open="project.isDeleteDialogOpen" :title="`Delete ${project.name}`"
                 description="Are you sure you want to delete this project?">
                 <template #trigger>
@@ -79,7 +79,7 @@
               {{ project.post_id }}
             </UButton>
 
-            <div v-if="_currentUser">
+            <div v-if="token">
               <UDialog v-model:open="_isDeletePostDialogIsOpen" :title="`Delete Post`"
                 :description="`Are you sure you want to delete the post associated with ${project.name} project?`">
                 <template #trigger>
@@ -134,7 +134,6 @@
 import type { ProjectType } from '~/types/project'
 
 const route = useRoute()
-const _currentUser = useCurrentUser()
 const _isDeletePostDialogIsOpen = ref(false)
 
 const project = ref <ProjectType>({
@@ -153,10 +152,27 @@ const project = ref <ProjectType>({
   visibility: "public",
 })
 
+
+const getTokenFromCookie = (cookieStr: string) => {
+  const tokenMatch = cookieStr?.match(/token=([^;]+)/)
+  return tokenMatch ? tokenMatch[1] : ''
+}
+
+const headers = useRequestHeaders(['cookie'])
+const token = computed(() => {
+  // Server side
+  if (import.meta.server) {
+    return getTokenFromCookie(headers.cookie ?? "")
+  }
+
+  // Client side
+  return localStorage.getItem("token") ?? ""
+})
+
 // Fetch project data on page load
 const { data } = await useFetch(`/api/projects/${route.params.id}`, {
   headers: {
-    "Authorization": await _currentUser?.value?.getIdToken?.() ?? "",
+    "Authorization": token.value,
   },
 })
 
@@ -177,7 +193,7 @@ const saveProject = async () => {
       method: 'PUT',
       body: project.value,
       headers: {
-        "Authorization": await _currentUser?.value?.getIdToken?.() ?? "",
+        "Authorization": token.value,
       },
     })
   
@@ -197,7 +213,7 @@ const deleteProject = async (project: ProjectType) => {
       id: project.id,
     },
     headers: {
-      "Authorization": await _currentUser?.value?.getIdToken?.() ?? "",
+      "Authorization": token.value,
     },
   })
   console.log(data.value)
@@ -214,7 +230,7 @@ const deletePost = async (postId: string) => {
         postId
       },
       headers: {
-        "Authorization": await _currentUser?.value?.getIdToken?.() ?? "",
+        "Authorization": token.value,
       },
     })
   } catch (error) {

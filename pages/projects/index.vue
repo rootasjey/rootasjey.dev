@@ -1,30 +1,9 @@
 <template>
   <div class="max-w-[900px] rounded-xl p-8 flex items-center flex-col transition-all duration-500 overflow-y-auto">
-    <header class="mb-16 text-center flex flex-col items-center">
-      <div class="flex items-center gap-2 ml--3">
-        <UTooltip content="Go back" :_tooltip-content="{
-          side: 'right',
-        }">
-          <template #default>
-            <button opacity-50 flex items-center gap-2 @click="$router.back()">
-              <div class="i-ph:arrow-bend-down-left-bold"></div>
-            </button>
-          </template>
-          <template #content>
-            <button @click="$router.back()" bg="light dark:dark" text="dark dark:white" text-3 px-3 py-1 rounded-md m-0
-              border-1 border-dashed class="b-#3D3BF3">
-              Go back
-            </button>
-          </template>
-        </UTooltip>
-        <h1 class="font-title text-2xl font-600 text-gray-800 dark:text-gray-200">
-          Projects
-        </h1>
-      </div>
-      <h5 class="text-gray-800 dark:text-gray-200 text-12px opacity-50">
-        A collection of my creative work
-      </h5>
-    </header>
+    <PageHeader 
+      title="Projects" 
+      subtitle="A collection of my creative work"
+    />
 
     <div class="flex-1 flex flex-row gap-x-16 gap-y-12 flex-wrap">
       <div v-for="(projectsList, category) in categories" :key="category" flex flex-col class="w-1/4" min-w-32 max-h-96
@@ -47,7 +26,7 @@
                 <button class="i-icon-park-outline:enter-key hover:scale-110 active:scale-99 transition"></button>
               </NuxtLink>
 
-              <div v-if="_currentUser">
+              <div v-if="_token">
                 <UDialog v-model:open="project.isDeleteDialogOpen" :title="`Delete ${project.name}`"
                   description="Are you sure you want to delete this project?">
                   <template #trigger>
@@ -68,7 +47,11 @@
                 </UDialog>
               </div>
 
-              <UDropdownMenu :items="projectMenuItems(project)" size="xs" menu-label="" :_dropdown-menu-content="{
+              <UDropdownMenu 
+                v-if="projectMenuItems(project).length > 0" 
+                :items="projectMenuItems(project)" 
+                size="xs" menu-label="" 
+                :_dropdown-menu-content="{
                 class: 'w-52',
                 align: 'end',
                 side: 'bottom',
@@ -85,7 +68,7 @@
       </div>
     </div>
 
-    <div v-if="_currentUser" fixed bottom-12>
+    <div v-if="_token" fixed bottom-12>
       <UDialog v-model:open="_isDialogOpen" title="Create Project" description="Add a new project with a description">
         <template #trigger>
           <UButton btn="solid-gray">
@@ -160,10 +143,27 @@ useHead({
 const _name = ref('')
 const _description = ref('')
 const _category = ref('')
-const _currentUser = useCurrentUser()
 const _isDialogOpen = ref(false)
 
+const getTokenFromCookie = (cookieStr: string) => {
+  const tokenMatch = cookieStr?.match(/token=([^;]+)/)
+  return tokenMatch ? tokenMatch[1] : ''
+}
+
+const headers = useRequestHeaders(['cookie'])
+const _token = computed(() => {
+  // Server side
+  if (import.meta.server) {
+    return getTokenFromCookie(headers.cookie ?? "")
+  }
+
+  // Client side
+  return localStorage.getItem("token") ?? ""
+})
+
 const projectMenuItems = (project: ProjectType) => {
+  if (!_token.value) return []
+
   const items = [
     {
       label: 'Edit',
@@ -194,7 +194,7 @@ const projectMenuItems = (project: ProjectType) => {
 
 const { data } = await useFetch('/api/projects', {
   headers: {
-    "Authorization": await _currentUser?.value?.getIdToken?.() ?? "",
+    "Authorization": _token.value,
   },
 })
 const categories = toRefs(data.value ?? {})
@@ -214,7 +214,7 @@ const createProject = async ({ name, description, category }: CreateProjectType)
       category,
     },
     headers: {
-      "Authorization": await _currentUser?.value?.getIdToken?.() ?? "",
+      "Authorization": _token.value,
     },
   })
   console.log(data.value)
@@ -228,7 +228,7 @@ const deleteProject = async (project: ProjectType) => {
       id: project.id,
     },
     headers: {
-      "Authorization": await _currentUser?.value?.getIdToken?.() ?? "",
+      "Authorization": _token.value,
     },
   })
   console.log(data.value)

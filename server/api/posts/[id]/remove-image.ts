@@ -1,47 +1,41 @@
-import { getAuth } from 'firebase-admin/auth'
-import { getFirestore } from 'firebase-admin/firestore'
-import { getStorage } from 'firebase-admin/storage'
+// DELETE /api/posts/[id]/remove-image
+import { RecordId } from "surrealdb"
+import { useSurrealDB } from "~/composables/useSurrealDB"
+
 
 export default defineEventHandler(async (event) => {
-  const userIdToken = getHeader(event, "Authorization")
-  const decodedToken = await getAuth().verifyIdToken(userIdToken ?? "")
-  const userId = decodedToken.uid
+  const { db, connect } = useSurrealDB()
   const postId = event.context.params?.id
+  const body = await readBody(event)
 
   if (!postId) {
     throw createError({
       statusCode: 400,
-      statusMessage: 'Missing post id',
+      message: 'Post ID (`id`) is required',
     })
   }
 
-  const postDoc = await getFirestore()
-  .collection('posts')
-  .doc(postId)
-  .get()
-
-  if (postDoc.data()?.user_id !== userId) {
+  if (!body.name) {
     throw createError({
-      statusCode: 403,
-      statusMessage: 'You are not the author of this post',
+      statusCode: 400,
+      message: 'Post name is required',
     })
   }
 
-  const bucket = getStorage().bucket()
-  const storagePath = `posts/${postId}/cover`
-  
-  // Delete all files in the cover directory
-  await bucket.deleteFiles({
-    prefix: storagePath
-  })
+  await connect()
+  const rawToken = getHeader(event, "Authorization")
+  if (rawToken) {
+    const token = rawToken.replace('Bearer ', '').replace('token=', '')
+    await db.authenticate(token)
+  }
 
-  // Update post metadata to remove cover URL
-  await postDoc.ref.update({
+  const postRecordParts = postId.split(":")
+  const postRecordId = new RecordId(postRecordParts[0], postRecordParts[1])
+  const post = await db.merge(postRecordId, {
     image: {
-      alt: '',
-      src: '',
+      name: "",
+      url: "",
     },
-    updated_at: new Date(),
   })
 
   return { success: true }

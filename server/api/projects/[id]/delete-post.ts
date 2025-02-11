@@ -1,17 +1,9 @@
-// /api/projects/[id]/delete-post.ts
-import { getAuth } from 'firebase-admin/auth'
-import { getFirestore } from 'firebase-admin/firestore'
-import { getStorage } from 'firebase-admin/storage'
+// DELETE /api/projects/[id]/delete-post.ts
+import { RecordId } from 'surrealdb'
+import { useSurrealDB } from '~/composables/useSurrealDB'
 
-/**
- * Handles the deletion of a post for a specific project.
- * This function is the event handler for the DELETE /api/projects/[id]/delete-post endpoint.
- */
 export default defineEventHandler(async (event) => {
-  const userIdToken = getHeader(event, "Authorization")
-  const decodedToken = await getAuth().verifyIdToken(userIdToken ?? "")
-  const userId = decodedToken.uid
-  
+  const { db, connect, decodeJWT } = useSurrealDB()
   const projectId = event.context.params?.id
   if (!projectId) {
     throw createError({
@@ -20,50 +12,55 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  const db = getFirestore()
-  const projectDoc = await db
-  .collection("projects")
-  .doc(projectId)
-  .get()
+  const rawToken = getHeader(event, "Authorization")
+  if (!rawToken) {
+    throw createError({
+      statusCode: 401,
+      message: "Unauthorized",
+    })
+  }
 
-  const projectData = projectDoc.data()
-  if (!projectDoc.exists || !projectData) {
+  const token = rawToken.replace('Bearer ', '').replace('token=', '')
+  const decoded = decodeJWT(token)
+  const idParts = decoded.ID.split(":")
+  const userRecordId = new RecordId(idParts[0], idParts[1])
+
+  await connect()
+  await db.authenticate(token)
+
+  const projectRecordParts = projectId.split(":")
+  const projectRecordId = new RecordId(projectRecordParts[0], projectRecordParts[1])
+  const project = await db.select(projectRecordId)
+
+  if (!project) {
     throw createError({
       statusCode: 404,
       message: "Project not found",
     })
   }
 
-  if (projectData.user_id !== userId) {
+  if (!userRecordId.equals(project.author)) {
     throw createError({
       statusCode: 403,
       message: "You are not authorized to delete this post",
     })
   }
 
-  if (!projectData.has_post) {
+  if (!project.post) {
     throw createError({
       statusCode: 400,
-      message: "This project does not have a post",
+      message: "Project does not have a post",
     })
   }
 
-  await db
-  .collection("posts")
-  .doc(projectData.post_id)
-  .delete()
+  await db.delete(project.post as RecordId)
 
-  const storage = getStorage()
-  const bucket = storage.bucket()
-
-  // Delete the folder and all its contents located at the path
-  const folderPath = `posts/${projectData.post_id}`
-  await bucket.deleteFiles({ prefix: folderPath })
-
-  await projectDoc.ref
-  .update({
-    has_post: false,
-    post_id: "",
-    updated_at: new Date(),
+  await db.merge(projectRecordId, {
+    post: null,
   })
+
+  return {
+    success: true,
+    message: "Post deleted successfully"
+  }
 })

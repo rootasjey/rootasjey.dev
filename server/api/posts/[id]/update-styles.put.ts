@@ -1,15 +1,11 @@
 // PUT /api/posts/[id]/update-styles
-import { getAuth } from 'firebase-admin/auth'
-import { getFirestore } from 'firebase-admin/firestore'
+import { RecordId } from "surrealdb"
+import { useSurrealDB } from "~/composables/useSurrealDB"
 
 export default defineEventHandler(async (event) => {
-  const userIdToken = getHeader(event, "Authorization")
-  const decodedToken = await getAuth().verifyIdToken(userIdToken ?? "")
-  const userId = decodedToken.uid
-
+  const { db, connect } = useSurrealDB()
   const postId = event.context.params?.id
   const body = await readBody(event)
-  const db = getFirestore()
 
   if (!postId) {
     throw createError({
@@ -18,36 +14,32 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  const postToUpdate = await db.collection("posts")
-    .doc(postId)
-    .get()
-
-  if (!postToUpdate.exists) {
+  if (!body.styles) {
     throw createError({
-      statusCode: 404,
-      message: 'Post not found',
+      statusCode: 400,
+      message: 'Post styles is required',
     })
   }
 
-  if (postToUpdate.data()?.user_id !== userId) {
-    throw createError({
-      statusCode: 403,
-      message: 'You are not authorized to update this post',
-    })
+  await connect()
+  const rawToken = getHeader(event, "Authorization")
+  if (rawToken) {
+    const token = rawToken.replace('Bearer ', '').replace('token=', '')
+    await db.authenticate(token)
   }
 
-  const docIds = Object.keys(body)
+  let category = body.category ?? ""
+  category = category === "no category" ? "" : category.toLowerCase()
 
-  for await (const docId of docIds) {
-    await postToUpdate.ref
-      .collection("post_styles")
-      .doc(docId)
-      .update(body[docId])
-  }
+  const postRecordParts = postId.split(":")
+  const postRecordId = new RecordId(postRecordParts[0], postRecordParts[1])
+  const post = await db.merge(postRecordId, {
+    styles: body.styles,
+  })
 
   return {
     message: 'Post updated successfully',
+    post,
     success: true,
   }
 })
-

@@ -1,93 +1,48 @@
 // POST /api/posts/[id]/upload-image
-import { getAuth } from 'firebase-admin/auth'
-import { getFirestore } from 'firebase-admin/firestore'
-import { getStorage } from 'firebase-admin/storage'
+import { RecordId } from "surrealdb"
+import { useSurrealDB } from "~/composables/useSurrealDB"
+import { PostType } from "~/types/post"
 
 export default defineEventHandler(async (event) => {
-  const userIdToken = getHeader(event, "Authorization")
-  const decodedToken = await getAuth().verifyIdToken(userIdToken ?? "")
-  const userId = decodedToken.uid
+  const { db, connect } = useSurrealDB()
   const postId = event.context.params?.id
+  const body = await readBody(event)
 
   if (!postId) {
     throw createError({
       statusCode: 400,
-      statusMessage: 'Missing post id',
+      message: 'Post ID (`id`) is required',
     })
   }
 
-  const postDoc = await getFirestore()
-    .collection('posts')
-    .doc(postId)
-    .get()
-
-  if (postDoc.data()?.user_id !== userId) {
+  if (!body.name) {
     throw createError({
-      statusCode: 403,
-      statusMessage: 'You are not the author of this post',
+      statusCode: 400,
+      message: 'Post name is required',
     })
   }
 
-  const body = await readBody(event)
-  const base64Data = body.file.split(';base64,').pop()
-  const fileExtension = body.fileName.split('.').pop()
-  const placement = body.placement || 'cover'
-  const bucket = getStorage().bucket()
-
-  if (placement === 'cover') {
-    const storagePath = `posts/${postId}/cover`
-    
-    // Delete old files in the cover directory
-    await bucket.deleteFiles({
-      prefix: storagePath
-    })
-
-    const filePath = `posts/${postId}/cover/cover.${fileExtension}`
-    const file = bucket.file(filePath)
-
-    await file.save(Buffer.from(base64Data, 'base64'), {
-      contentType: body.type,
-    })
-
-    const [url] = await file.getSignedUrl({
-      action: 'read',
-      expires: '03-01-2500',
-    })
-
-    await postDoc.ref.update({
-      image: {
-        alt: `${postDoc.data()?.name} cover image`,
-        src: url,
-      },
-      updated_at: new Date(),
-    })
-
-    return { 
-      image: {
-        alt: `${postDoc.data()?.name} cover image`,
-        src: url,
-      }
-    }
+  await connect()
+  const rawToken = getHeader(event, "Authorization")
+  if (rawToken) {
+    const token = rawToken.replace('Bearer ', '').replace('token=', '')
+    await db.authenticate(token)
   }
 
-  // Handle post content image
-  const fileName: string = body.fileName.split('.')[0]
-  const filePath: string = `posts/${postId}/images/${fileName}.${fileExtension}`
-  const file = bucket.file(filePath)
-
-  await file.save(Buffer.from(base64Data, 'base64'), {
-    contentType: body.type,
-  })
-
-  const [url] = await file.getSignedUrl({
-    action: 'read',
-    expires: '03-01-2500',
-  })
-
-  return {
+  const postRecordParts = postId.split(":")
+  const postRecordId = new RecordId(postRecordParts[0], postRecordParts[1])
+  const post: Partial<PostType> = await db.merge(postRecordId, {
     image: {
-      alt: fileName,
-      src: url,
-    }
+      name: "",
+      url: "",
+    },
+  })
+
+  return { 
+    image: {
+      alt: post.image?.alt ?? "",
+      src: post.image?.src ?? "",
+    },
+    success: true, 
   }
 })
