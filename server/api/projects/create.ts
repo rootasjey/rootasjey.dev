@@ -30,8 +30,9 @@ export default defineEventHandler(async (event) => {
       src: "",
     },
     links: [],
+    technologies: [],
     slug: body.name.toLowerCase().replaceAll(" ", "-"),
-    visibility: "private",
+    visibility: "public",
   }
 
   const createdProject = await db.create("projects", project)
