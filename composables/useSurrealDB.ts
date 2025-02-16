@@ -17,6 +17,18 @@ export const useSurrealDB = () => {
     return res
   }
 
+  /**
+   * Check if token is still valid
+   * @param token JWT token
+   * @returns boolean true if token is still valid, false if token is expired
+   */
+  const checkTokenExpiration = (token: string) => {
+    const base64Url = token.split('.')[1]
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/')
+    const payload = JSON.parse(atob(base64))
+    return payload.exp * 1000 > Date.now()
+  }
+
   const decodeJWT = (token: string) => {
     const base64Payload = token.split('.')[1]
     const payload = Buffer.from(base64Payload, 'base64').toString('ascii')
@@ -52,6 +64,7 @@ export const useSurrealDB = () => {
 
   return {
     connect,
+    checkTokenExpiration,
     db,
     decodeJWT,
     signin,

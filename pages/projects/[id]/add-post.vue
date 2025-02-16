@@ -39,29 +39,15 @@
 
 <script lang="ts" setup>
 import type { ProjectType } from '~/types/project'
+import { useAuth } from '~/composables/useAuth'
+
+const { getValidToken } = useAuth()
 
 const route = useRoute()
 const router = useRouter()
 
 const _projectId = route.params.id as string
 const _isLoading = ref(false)
-
-
-const getTokenFromCookie = (cookieStr: string) => {
-  const tokenMatch = cookieStr?.match(/token=([^;]+)/)
-  return tokenMatch ? tokenMatch[1] : ''
-}
-
-const headers = useRequestHeaders(['cookie'])
-const token = computed(() => {
-  // Server side
-  if (import.meta.server) {
-    return getTokenFromCookie(headers.cookie ?? "")
-  }
-
-  // Client side
-  return localStorage.getItem("token") ?? ""
-})
 
 const {  data: project } = await useFetch<ProjectType>(`/api/projects/${_projectId}`)
 const _name = ref(`How I've built ${project?.value?.name}`)
@@ -78,7 +64,7 @@ const createPost = async () => {
         description: _description.value ?? "This jouney started at 2:00 AM...",
       },
       headers: {
-        'Authorization': token.value,
+        'Authorization': await getValidToken(),
       },
     })
   

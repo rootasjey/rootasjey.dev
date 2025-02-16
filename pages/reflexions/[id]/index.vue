@@ -16,7 +16,7 @@
             </button>
           </template>
         </UTooltip>
-        <UTooltip v-if="token" content="Lock edit" :_tooltip-content="{ side: 'right' }">
+        <UTooltip v-if="getToken()" content="Lock edit" :_tooltip-content="{ side: 'right' }">
           <template #default>
             <button opacity-50 flex items-center gap-2 @click="_canEdit = !_canEdit">
               <div :class="_canEdit ? 'i-icon-park-outline:lock' : 'i-icon-park-outline:unlock'"></div>
@@ -160,6 +160,9 @@
 <script lang="ts" setup>
 import type { PostType } from '~/types/post'
 import TiptapEditor from '~/components/TiptapEditor.vue'
+import { useAuth } from '~/composables/useAuth'
+
+const { getValidToken, getToken } = useAuth()
 
 const route = useRoute()
 let _updatePostContentTimer: NodeJS.Timeout
@@ -198,25 +201,9 @@ const _stylesMeta = ref({
   center: false,
 })
 
-const getTokenFromCookie = (cookieStr: string) => {
-  const tokenMatch = cookieStr?.match(/token=([^;]+)/)
-  return tokenMatch ? tokenMatch[1] : ''
-}
-
-const headers = useRequestHeaders(['cookie'])
-const token = computed(() => {
-  // Server side
-  if (import.meta.server) {
-    return getTokenFromCookie(headers.cookie ?? "")
-  }
-
-  // Client side
-  return localStorage.getItem("token") ?? ""
-})
-
 const { data: post } = await useFetch<PostType>(`/api/posts/${route.params.id}`, {
   headers: {
-    "Authorization": token.value ?? "",
+    "Authorization": await getValidToken(),
   },
 })
 
@@ -238,7 +225,7 @@ const updatePostContent = async (value: Object) => {
       content: value,
     },
     headers: {
-      "Authorization": localStorage.getItem("token") ?? "",
+      "Authorization": await getValidToken(),
     },
   })
 }
@@ -284,7 +271,7 @@ const updatePostStyles = async () => {
       },
     },
     headers: {
-      "Authorization": localStorage.getItem("token") ?? "",
+      "Authorization": await getValidToken(),
     },
   })
 }
@@ -304,7 +291,7 @@ const updatePostMeta = async () => {
       visibility: post.value?.visibility,
     },
     headers: {
-      "Authorization": localStorage.getItem("token") ?? "",
+      "Authorization": await getValidToken(),
     },
   })
 
@@ -343,7 +330,7 @@ const removeCoverImage = async () => {
   const { success } = await $fetch(`/api/posts/${route.params.id}/remove-image`, {
     method: "DELETE",
     headers: {
-      "Authorization": localStorage.getItem("token") ?? "",
+      "Authorization": await getValidToken(),
     },
   })
 
@@ -380,7 +367,7 @@ const handleFileSelect = async (event: Event) => {
           placement: _imageUploadPlacement.value,
         },
         headers: {
-          "Authorization": token.value ?? "",
+          "Authorization": await getValidToken(),
         },
       })
 

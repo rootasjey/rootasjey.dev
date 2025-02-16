@@ -7,7 +7,7 @@
     >
       <div>
         <UProgress v-if="_isLoading" :indeterminate="true" size="sm" color="primary" />
-        <UButton v-if="token && !_isLoading" btn="text" class="text-3"
+        <UButton v-if="getToken() && !_isLoading" btn="text" class="text-3"
           :label="_showDrafts ? 'Show only published posts' : 'Show drafts'" @click="_showDrafts = !_showDrafts" />
       </div>
     </PageHeader>
@@ -72,7 +72,7 @@
       </div>
     </div>
 
-    <div v-if="token" class="fixed left-0 bottom-12 flex justify-center w-100%">
+    <div v-if="getToken()" class="fixed left-0 bottom-12 flex justify-center w-100%">
       <UDialog v-model:open="_isCreateDialogOpen" title="Create Post" description="Add a new post with a description">
         <template #trigger>
           <UButton btn="solid-gray">
@@ -133,6 +133,9 @@
 
 <script lang="ts" setup>
 import type { CreatePostType, PostType } from '~/types/post'
+import { useAuth } from '~/composables/useAuth'
+
+const { getValidToken, getToken } = useAuth()
 
 useHead({
   title: "rootasjey • reflexions",
@@ -160,25 +163,9 @@ const _isLoading = ref(true)
 const _showDrafts = ref(false)
 const drafts = ref<PostType[]>([])
 
-const getTokenFromCookie = (cookieStr: string) => {
-  const tokenMatch = cookieStr?.match(/token=([^;]+)/)
-  return tokenMatch ? tokenMatch[1] : ''
-}
-
-const headers = useRequestHeaders(['cookie'])
-const token = computed(() => {
-  // Server side
-  if (import.meta.server) {
-    return getTokenFromCookie(headers.cookie ?? "")
-  }
-
-  // Client side
-  return localStorage.getItem("token") ?? ""
-})
-
 const { data } = await useFetch("/api/posts", {
   headers: {
-    "Authorization": token.value,
+    "Authorization": await getValidToken(),
   },
 })
 
@@ -195,7 +182,7 @@ const createPost = async ({ name, description, category }: CreatePostType) => {
       category,
     },
     headers: {
-      "Authorization": token.value,
+      "Authorization": await getValidToken(),
     },
   })
 }
@@ -218,7 +205,7 @@ const fetchDrafts = async () => {
   try {
     const data = await $fetch("/api/posts/drafts", {
       headers: {
-        "Authorization": token.value ?? "",
+        "Authorization": await getValidToken(),
       },
     })
   
@@ -244,7 +231,7 @@ watch(_showDrafts, async (show) => {
   
   const data = await $fetch("/api/posts/drafts", {
     headers: {
-      "Authorization": token.value ?? "",
+      "Authorization": await getValidToken(),
     },
   })
 

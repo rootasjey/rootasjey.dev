@@ -26,7 +26,7 @@
                 <button class="i-icon-park-outline:enter-key hover:scale-110 active:scale-99 transition"></button>
               </NuxtLink>
 
-              <div v-if="_token">
+              <div v-if="getToken()">
                 <UDialog v-model:open="project.isDeleteDialogOpen" :title="`Delete ${project.name}`"
                   description="Are you sure you want to delete this project?">
                   <template #trigger>
@@ -68,7 +68,7 @@
       </div>
     </div>
 
-    <div v-if="_token" fixed bottom-12>
+    <div v-if="getToken()" fixed bottom-12>
       <UDialog v-model:open="_isDialogOpen" title="Create Project" description="Add a new project with a description">
         <template #trigger>
           <UButton btn="solid-gray">
@@ -129,6 +129,9 @@
 
 <script lang="ts" setup>
 import type { CreateProjectType, ProjectLinkType, ProjectType } from '~/types/project'
+import { useAuth } from '~/composables/useAuth'
+
+const { getValidToken, getToken } = useAuth()
 
 useHead({
   title: "rootasjey • projects",
@@ -145,24 +148,8 @@ const _description = ref('')
 const _category = ref('')
 const _isDialogOpen = ref(false)
 
-const getTokenFromCookie = (cookieStr: string) => {
-  const tokenMatch = cookieStr?.match(/token=([^;]+)/)
-  return tokenMatch ? tokenMatch[1] : ''
-}
-
-const headers = useRequestHeaders(['cookie'])
-const _token = computed(() => {
-  // Server side
-  if (import.meta.server) {
-    return getTokenFromCookie(headers.cookie ?? "")
-  }
-
-  // Client side
-  return localStorage.getItem("token") ?? ""
-})
-
 const projectMenuItems = (project: ProjectType) => {
-  if (!_token.value) return []
+  if (!getToken()) return []
 
   const items = [
     {
@@ -192,12 +179,13 @@ const projectMenuItems = (project: ProjectType) => {
   return items
 }
 
+// const { data } = await useFetchWithAuth('/api/projects')
 const { data } = await useFetch('/api/projects', {
   headers: {
-    "Authorization": _token.value,
+    "Authorization": await getValidToken(),
   },
 })
-const categories = toRefs(data.value ?? {})
+const categories = toRefs(data?.value ?? {})
 
 const availableCategories = computed(() => {
   return Object.keys(categories ?? {})
@@ -205,7 +193,6 @@ const availableCategories = computed(() => {
 
 const createProject = async ({ name, description, category }: CreateProjectType) => {
   _isDialogOpen.value = false
-
   const { data } = await useFetch("/api/projects/create", {
     method: "POST",
     body: {
@@ -214,10 +201,9 @@ const createProject = async ({ name, description, category }: CreateProjectType)
       category,
     },
     headers: {
-      "Authorization": _token.value,
+      "Authorization": await getValidToken(),
     },
   })
-  console.log(data.value)
 }
 
 const deleteProject = async (project: ProjectType) => {
@@ -228,10 +214,9 @@ const deleteProject = async (project: ProjectType) => {
       id: project.id,
     },
     headers: {
-      "Authorization": _token.value,
+      "Authorization": await getValidToken(),
     },
   })
-  console.log(data.value)
 }
 
 const toggleAddCategory = () => {

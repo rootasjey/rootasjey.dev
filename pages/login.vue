@@ -45,6 +45,9 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useSurrealDB } from "~/composables/useSurrealDB"
+
+const { checkTokenExpiration } = useSurrealDB()
 
 const email = ref('')
 const password = ref('')
@@ -79,7 +82,6 @@ onMounted(async () => {
   // Redirect if user is already authenticated
   const token = localStorage.getItem('token')
   if (token && checkTokenExpiration(token)) {
-    console.log("OK")
     document.cookie = `token=${token}; path=/`
     router.push('/')
     return
@@ -90,15 +92,7 @@ onMounted(async () => {
   if (email && password) {
     email.value = savedEmail
     password.value = savedPassword
-    handleLogin()
   }
 })
-
-const checkTokenExpiration = (token) => {
-  const base64Url = token.split('.')[1]
-  const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/')
-  const payload = JSON.parse(window.atob(base64))
-  return payload.exp * 1000 > Date.now()
-}
 
 </script>
