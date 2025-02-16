@@ -5,7 +5,9 @@ import { useSurrealDB } from '~/composables/useSurrealDB'
 
 export default defineEventHandler(async (event) => {
   const { db, connect, decodeJWT } = useSurrealDB()
-  const id = event.context.params?.id
+  const body = await readBody(event)
+  const id = body.id
+
   if (!id) {
     throw createError({
       statusCode: 400,
@@ -45,6 +47,7 @@ export default defineEventHandler(async (event) => {
       message: "You are not authorized to delete this project",
     })
   }
+
   await db.delete(projectRecordId)
 
   return {
