@@ -1,3 +1,4 @@
+// pages/projects/index.vue
 <template>
   <div class="max-w-[900px] rounded-xl p-8 flex items-center flex-col transition-all duration-500 overflow-y-auto">
     <PageHeader 
@@ -6,14 +7,17 @@
     />
 
     <div class="flex-1 flex flex-row gap-x-16 gap-y-12 flex-wrap">
-      <div v-for="(projectsList, category) in categories" :key="category" flex flex-col class="w-1/4" min-w-32 max-h-96
+      <div v-for="(projectsList, category) in categories" :key="category" flex flex-col class="w-1/4 min-w-32 max-h-50vh"
         overflow-y-auto>
-        <h1 class="text-sm font-600 mb-4 opacity-20 hover:opacity-100 transition uppercase text-center">{{ category }}
+        <h1 class="text-sm font-600 mb-4 opacity-20 hover:opacity-100 transition uppercase text-center">
+          {{ category }}
         </h1>
         <hr mb-4 />
         <div v-for="project in projectsList.value" :key="project.name" class="mb-6 project-container">
           <div flex flex-row gap-2 items-center>
-            <h2 font-body text-3.5 font-500 opacity-100>{{ project.name }}</h2>
+            <NuxtLink :to="project.post ? `/reflexions/${project.post}` : ''">
+              <h2 font-body text-3.5 font-500 opacity-100>{{ project.name }}</h2>
+            </NuxtLink>
             <div class="project-link" flex flex-row gap-2 items-center>
               <NuxtLink v-if="project.links?.find((l: ProjectLinkType) => l.name === 'project')"
                 :href="project.links?.find((l: ProjectLinkType) => l.name === 'project')?.href" target="_blank">
@@ -167,7 +171,7 @@ const projectMenuItems = (project: ProjectType) => {
     }
   ]
 
-  if (!project.has_post) {
+  if (!project.post) {
     items.splice(1, 0, {
       label: "Add Post",
       onClick: () => {
@@ -179,7 +183,6 @@ const projectMenuItems = (project: ProjectType) => {
   return items
 }
 
-// const { data } = await useFetchWithAuth('/api/projects')
 const { data } = await useFetch('/api/projects', {
   headers: {
     "Authorization": await getValidToken(),

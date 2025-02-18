@@ -52,7 +52,19 @@ const props = defineProps({
   modelValue: {
     type: Object,
     required: false,
-    default: { "type": "doc", "content": [{ "type": "paragraph", "content": [{ "type": "text", "text": "I\'m running Tiptap with Vue.js. 🎉" }] }] },
+    default: { 
+      "type": "doc", "content": [
+        { 
+          "type": "paragraph", 
+          "content": [
+            { 
+              "type": "text", 
+              "text": "I\'m running Tiptap with Vue.js. 🎉" 
+            }
+          ]
+        }
+      ]
+    },
   },
 })
 
@@ -132,6 +144,10 @@ onBeforeUnmount(() => {
       margin-top: 0.25em;
       margin-bottom: 0.25em;
     }
+  }
+  
+  ul {
+    list-style: disc;
   }
 
   /* Heading styles */

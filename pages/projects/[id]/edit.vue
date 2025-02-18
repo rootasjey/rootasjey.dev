@@ -73,10 +73,10 @@
       <div class="grid grid-cols-3 items-center gap-4 max-w-md">
         <ULabel for="hasPost">Linked post</ULabel>
         <div class="max-w-sm flex flex-row flex-wrap">
-          <div v-if="project.has_post" class="flex flex-row gap-2 w-auto">
+          <div v-if="project.post" class="flex flex-row gap-2 w-auto">
             <UButton btn="soft" trailing="i-icon-park-outline:eyes"
-              @click="navigateTo(`/reflexions/${project.post_id}`)">
-              {{ project.post_id }}
+              @click="navigateTo(`/reflexions/${project.post}`)">
+              {{ project.post }}
             </UButton>
 
             <div v-if="getToken()">
@@ -144,12 +144,11 @@ const project = ref <ProjectType>({
   company: "",
   created_at: "",
   description: "",
-  has_post: false,
   id: "0",
   links: [],
   name: "",
   slug: "",
-  post_id: "",
+  post: "",
   updated_at: "",
   user_id: "0",
   visibility: "public",
@@ -207,8 +206,7 @@ const deleteProject = async (project: ProjectType) => {
 
 const deletePost = async (postId: string) => {
   try {
-    project.value.has_post = false
-    project.value.post_id = ""
+    project.value.post = ""
     
     await $fetch(`/api/projects/${route.params.id}/delete-post`, {
       method: 'PUT',
@@ -220,8 +218,7 @@ const deletePost = async (postId: string) => {
       },
     })
   } catch (error) {
-    project.value.has_post = true
-    project.value.post_id = postId
+    project.value.post = postId
     console.error(error)
   } finally {
     _isDeletePostDialogIsOpen.value = false

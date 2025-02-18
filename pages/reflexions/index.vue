@@ -1,4 +1,4 @@
-
+// pages/reflexions/index.vue
 <template>
   <div class="container mx-auto px-4 py-8 relative mt-[15vh]">
     <PageHeader 
@@ -46,14 +46,14 @@
     </div>
 
     <div
-      :class="posts.length > 1 ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 px-14' : 'grid grid-cols-1 gap-4 px-14'">
+      :class="posts.length > 2 ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 px-14' : 'grid grid-cols-1 gap-4 px-14'">
       <div v-for="post in posts" :key="post.id.toString()" class="max-w-xl">
         <ULink :to="`/reflexions/${post.id}`">
-          <h1 class="text-6xl font-600">{{ post.name }}</h1>
+          <h1 class="text-2xl font-600">{{ post.name }}</h1>
         </ULink>
-        <p class="text-gray-700 dark:text-gray-300">{{ post.description }}</p>
+        <h2 class="text-gray-700 dark:text-gray-500">{{ post.description }}</h2>
         <div class="flex justify-between items-center">
-          <span class="text-size-3 text-gray-500 dark:text-gray-400">{{ new Date(post.created_at).toLocaleString("fr", {
+          <span class="text-size-3 text-gray-500 dark:text-gray-600">{{ new Date(post.created_at).toLocaleString("fr", {
             month: "long",
             day: "numeric",
             year: "numeric",

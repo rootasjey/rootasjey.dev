@@ -1,3 +1,4 @@
+// pages/index.vue
 <template>
   <div class="w-[600px] rounded-xl p-8 flex flex-col transition-all duration-500 overflow-y-auto">
     <!-- Header -->
