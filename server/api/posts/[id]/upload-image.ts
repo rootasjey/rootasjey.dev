@@ -6,19 +6,17 @@ import { PostType } from "~/types/post"
 export default defineEventHandler(async (event) => {
   const { db, connect } = useSurrealDB()
   const postId = event.context.params?.id
-  const body = await readBody(event)
+  const formData = await readMultipartFormData(event)
+  
+  const file = formData?.find(item => item.name === 'file')?.data
+  const fileName = formData?.find(item => item.name === 'fileName')?.data.toString()
+  const type = formData?.find(item => item.name === 'type')?.data.toString()
+  // const placement = formData?.find(item => item.name === 'placement')?.data.toString()
 
-  if (!postId) {
+  if (!postId || !file || !fileName || !type) {
     throw createError({
       statusCode: 400,
-      message: 'Post ID (`id`) is required',
-    })
-  }
-
-  if (!body.name) {
-    throw createError({
-      statusCode: 400,
-      message: 'Post name is required',
+      message: 'Missing required fields',
     })
   }
 
@@ -29,12 +27,21 @@ export default defineEventHandler(async (event) => {
     await db.authenticate(token)
   }
 
+  const blob = new Blob([file], { type })
+  const uploadedBlob = await hubBlob().put(fileName, blob, {
+    addRandomSuffix: true,
+    prefix: 'images'
+  })
+
+  const imageUrl = `${uploadedBlob.pathname}`
+
   const postRecordParts = postId.split(":")
   const postRecordId = new RecordId(postRecordParts[0], postRecordParts[1])
   const post: Partial<PostType> = await db.merge(postRecordId, {
     image: {
-      name: "",
-      url: "",
+      name: fileName,
+      src: imageUrl,
+      alt: fileName,
     },
   })
 

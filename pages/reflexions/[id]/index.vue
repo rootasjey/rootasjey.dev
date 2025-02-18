@@ -123,7 +123,7 @@
         </div>
 
         <div v-if="post.image?.src" class="relative group">
-          <img v-if="post.image?.src" :src="post.image.src" class="w-full h-80 object-cover rounded-lg mt-4" />
+          <img v-if="post.image?.src" :src="`/${post.image.src}`" class="w-full h-80 object-cover rounded-lg mt-4" />
           <div class="flex gap-2 absolute top-1 right-1">
             <UButton v-if="_canEdit" icon @click="uploadCoverImage" btn="~" label="i-icon-park-outline:upload-picture"
               class="btn-glowing cursor-pointer opacity-0 group-hover:opacity-100 transition-all" />
@@ -335,7 +335,7 @@ const removeCoverImage = async () => {
   })
 
   if (success && post.value?.image) {
-    // post.value.image.src = ""
+    post.value.image.src = ""
     post.value.image.alt = ""
   }
 }
@@ -354,34 +354,31 @@ const handleFileSelect = async (event: Event) => {
   const file = (event.target as HTMLInputElement).files?.[0]
   if (!file) return
 
-  const reader = new FileReader()
-  reader.onload = async () => {
-    try {
-      _saving.value = true
-      const { image } = await $fetch(`/api/posts/${route.params.id}/upload-image`, {
-        method: 'POST',
-        body: {
-          file: reader.result,
-          fileName: file.name,
-          type: file.type,
-          placement: _imageUploadPlacement.value,
-        },
-        headers: {
-          "Authorization": await getValidToken(),
-        },
-      })
+  try {
+    _saving.value = true
+    const formData = new FormData()
+    formData.append('file', file)
+    formData.append('fileName', file.name)
+    formData.append('type', file.type)
+    formData.append('placement', _imageUploadPlacement.value)
 
-      if (post.value && image.src) {
-        post.value.image.src = image.src
-        post.value.image.alt = image.alt
-      }
-    } catch (error) {
-      console.error('Error uploading image:', error)
-    } finally {
-      _saving.value = false
+    const { image } = await $fetch(`/api/posts/${route.params.id}/upload-image`, {
+      method: 'POST',
+      body: formData,
+      headers: {
+        "Authorization": await getValidToken(),
+      },
+    })
+
+    if (post.value && image.src) {
+      post.value.image.src = image.src
+      post.value.image.alt = image.alt
     }
+  } catch (error) {
+    console.error('Error uploading image:', error)
+  } finally {
+    _saving.value = false
   }
-  reader.readAsDataURL(file)
 }
 
 useHead({

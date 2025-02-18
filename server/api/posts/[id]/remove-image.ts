@@ -1,24 +1,16 @@
 // DELETE /api/posts/[id]/remove-image
 import { RecordId } from "surrealdb"
 import { useSurrealDB } from "~/composables/useSurrealDB"
-
+import { PostType } from "~/types/post"
 
 export default defineEventHandler(async (event) => {
   const { db, connect } = useSurrealDB()
   const postId = event.context.params?.id
-  const body = await readBody(event)
 
   if (!postId) {
     throw createError({
       statusCode: 400,
       message: 'Post ID (`id`) is required',
-    })
-  }
-
-  if (!body.name) {
-    throw createError({
-      statusCode: 400,
-      message: 'Post name is required',
     })
   }
 
@@ -31,12 +23,28 @@ export default defineEventHandler(async (event) => {
 
   const postRecordParts = postId.split(":")
   const postRecordId = new RecordId(postRecordParts[0], postRecordParts[1])
-  const post = await db.merge(postRecordId, {
-    image: {
-      name: "",
-      url: "",
-    },
-  })
 
-  return { success: true }
+  const post: Partial<PostType> = await db.select(postRecordId)
+  if (!post.image?.src) {
+    throw createError({
+      statusCode: 400,
+      message: 'Post does not have an image',
+    })
+  }
+
+  try {
+    await hubBlob().delete(post.image.src)
+    await db.merge(postRecordId, {
+      image: {
+        alt: "",
+        src: "",
+      },
+    })
+  
+    return { success: true }
+  } catch (error) {
+    console.log(error)
+    return { error, success: false, }
+  }
+  
 })
