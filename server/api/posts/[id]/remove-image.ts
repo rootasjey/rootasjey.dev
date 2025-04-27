@@ -1,31 +1,41 @@
 // DELETE /api/posts/[id]/remove-image
-import { RecordId } from "surrealdb"
-import { useSurrealDB } from "~/composables/useSurrealDB"
-import { PostType } from "~/types/post"
-
 export default defineEventHandler(async (event) => {
-  const { db, connect } = useSurrealDB()
-  const postId = event.context.params?.id
+  const session = await requireUserSession(event)
+  const db = hubDatabase()
+  const postIdOrSlug = event.context.params?.id
 
-  if (!postId) {
+  if (!postIdOrSlug) {
     throw createError({
       statusCode: 400,
-      message: 'Post ID (`id`) is required',
+      message: 'Post ID or slug is required',
     })
   }
 
-  await connect()
-  const rawToken = getHeader(event, "Authorization")
-  if (rawToken) {
-    const token = rawToken.replace('Bearer ', '').replace('token=', '')
-    await db.authenticate(token)
+  const userId = session.user.id
+
+  // Find the post by ID or slug
+  const postStmt = db.prepare(`
+    SELECT * FROM posts WHERE id = ? OR slug = ? LIMIT 1
+  `)
+  
+  const post = await postStmt.bind(postIdOrSlug, postIdOrSlug).first()
+
+  if (!post) {
+    throw createError({
+      statusCode: 404,
+      message: 'Post not found',
+    })
   }
 
-  const postRecordParts = postId.split(":")
-  const postRecordId = new RecordId(postRecordParts[0], postRecordParts[1])
+  // Check if the user is the author of the post
+  if (post.author_id !== userId) {
+    throw createError({
+      statusCode: 403,
+      message: 'You are not authorized to update this post',
+    })
+  }
 
-  const post: Partial<PostType> = await db.select(postRecordId)
-  if (!post.image?.src) {
+  if (!post.image_src) {
     throw createError({
       statusCode: 400,
       message: 'Post does not have an image',
@@ -33,18 +43,27 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
-    await hubBlob().delete(post.image.src)
-    await db.merge(postRecordId, {
-      image: {
-        alt: "",
-        src: "",
-      },
-    })
-  
-    return { success: true }
+    await hubBlob().delete(post.image_src as string)
+    const updateStmt = db.prepare(`
+      UPDATE posts 
+      SET image_src = '', image_alt = '', updated_at = CURRENT_TIMESTAMP
+      WHERE id = ?
+    `)
+
+    await updateStmt.bind(post.id).run()
+
+    return { 
+      success: true,
+      message: 'Image removed successfully',
+      post,
+    }
   } catch (error) {
     console.log(error)
-    return { error, success: false, }
+    return {
+      error,
+      success: false,
+      message: 'Failed to remove image',
+      post,
+    }
   }
-  
 })

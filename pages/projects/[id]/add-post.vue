@@ -39,9 +39,6 @@
 
 <script lang="ts" setup>
 import type { ProjectType } from '~/types/project'
-import { useAuth } from '~/composables/useAuth'
-
-const { getValidToken } = useAuth()
 
 const route = useRoute()
 const router = useRouter()
@@ -62,9 +59,6 @@ const createPost = async () => {
       body: {
         name: _name.value || `How I've built ${project?.value?.name}`,
         description: _description.value ?? "This jouney started at 2:00 AM...",
-      },
-      headers: {
-        'Authorization': await getValidToken(),
       },
     })
   

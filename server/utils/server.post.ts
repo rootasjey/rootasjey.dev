@@ -1,40 +1,32 @@
-import { RecordId } from "surrealdb"
-
 /**
- * Creates a new post data object with default values.
+ * Creates a new post data object with default values for SQLite storage.
  *
  * @param body - The request body containing the post data.
  * @param userId - The ID of the user creating the post.
  * @returns A new post data object with default values.
  */
-export const createPostData = (body: any, userId: RecordId) => {
+export const createPostData = (body: any, userId: string | number) => {
   const name = body?.name || "New Post"
   return {
-    author: userId,
+    author_id: userId,
+    blob_path: "",
     category: body?.category ?? "",
-    content: {},
     description: body?.description ?? "",
-    image: {
-      alt: "",
-      src: "",
-    },
+    image_src: body?.image?.src ?? "",
+    image_alt: body?.image?.alt ?? "",
     language: "en",
-    links: [],
-    metrics: {
-      comments: 0,
-      likes: 0,
-      views: 0,
-    },
+    links: JSON.stringify([]),
+    metrics_comments: 0,
+    metrics_likes: 0,
+    metrics_views: 0,
     name,
-    project: undefined,
-    published_at: undefined,
     slug: name.toLowerCase().replaceAll(" ", "-"),
-    styles: {
+    styles: JSON.stringify({
       meta: {
-        align: undefined,
+        align: null,
       },
-    },
-    tags: [],
+    }),
+    tags: JSON.stringify([]),
     visibility: "private",
   }
 }

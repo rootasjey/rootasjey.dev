@@ -1,6 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  compatibilityDate: '2024-04-03',
+  compatibilityDate: "2025-01-27",
   devtools: { enabled: true },
   app: {
     head: {
@@ -20,11 +20,16 @@ export default defineNuxtConfig({
 
   hub: {
     blob: true,
+    cache: true,
+    database: true,
+    kv: true,
   },
 
   modules: [
     "@nuxthub/core",
+    "@nuxt/image",
     "@una-ui/nuxt",
+    "nuxt-auth-utils",
   ],
   unocss: {
     preflight: true,

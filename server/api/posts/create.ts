@@ -1,10 +1,10 @@
 // POST /api/posts/create
-import { RecordId } from 'surrealdb'
-import { useSurrealDB } from '~/composables/useSurrealDB'
 import { createPostData } from '~/server/utils/server.post'
 
 export default defineEventHandler(async (event) => {
-  const { db, connect, decodeJWT } = useSurrealDB()
+  const session = await requireUserSession(event)
+  const db = hubDatabase()
+  const blobStorage = hubBlob()
   const body = await readBody(event)
 
   if (!body.name) {
@@ -14,28 +14,41 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  await connect()
-  let userRecordId: RecordId = new RecordId("", "")
-  const rawToken = getHeader(event, "Authorization")
-  if (!rawToken) {
-    throw createError({
-      statusCode: 401,
-      message: "Unauthorized",
-    })
+  const userId = session.user.id
+  const postData = createPostData(body, userId)
+
+  // Post content blob
+  const postContentBlob = createPostFileContent()
+  const blob_path = `posts/${postData.slug}/content.json`
+
+  // Store the content in blob storage
+  await blobStorage.put(blob_path, JSON.stringify(postContentBlob))
+
+  // Insert the post into the SQLite database
+  const insertStmt = db.prepare(`
+    INSERT INTO posts (
+      author_id, blob_path, category, description, image_src, image_alt,
+      language, links, metrics_comments, metrics_likes, metrics_views,
+      name, slug, styles, tags, visibility
+    ) VALUES (
+      @author_id, @blob_path, @category, @description, @image_src, @image_alt,
+      @language, @links, @metrics_comments, @metrics_likes, @metrics_views,
+      @name, @slug, @styles, @tags, @visibility
+    )
+  `)
+
+  const result = await insertStmt.bind({
+    ...postData,
+    blob_path,
+  }).run()
+
+  // Return the created post with its new ID
+  return {
+    id: result.meta.last_row_id,
+    ...postData,
+    // Parse JSON strings back to objects for the response
+    links: JSON.parse(postData.links || '[]'),
+    styles: JSON.parse(postData.styles || '{}'),
+    tags: JSON.parse(postData.tags || '[]')
   }
-
-  const token = rawToken.replace('Bearer ', '').replace('token=', '')
-  const decoded = decodeJWT(token)
-  const idParts = decoded.ID.split(":")
-  userRecordId = new RecordId(idParts[0], idParts[1])
-  await db.authenticate(token)
-
-
-  const postData = createPostData(body, userRecordId)
-
-  // Create new record in SurrealDB posts table
-  const post = await db.create("posts", postData)
-  console.log("Created post response:", post)
-
-  return post
 })

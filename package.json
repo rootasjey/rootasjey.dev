@@ -4,29 +4,34 @@
   "type": "module",
   "scripts": {
     "build": "nuxt build",
-    "dev": "HOST=0.0.0.0 nuxt dev",
+    "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
-    "@tiptap/extension-bubble-menu": "^2.11.5",
-    "@tiptap/extension-image": "^2.11.5",
-    "@tiptap/extension-link": "^2.11.5",
-    "@tiptap/pm": "^2.11.5",
-    "@tiptap/starter-kit": "^2.11.5",
-    "@tiptap/suggestion": "^2.11.5",
-    "@tiptap/vue-3": "^2.11.5",
+    "@tiptap/extension-bubble-menu": "^2.11.7",
+    "@tiptap/extension-image": "^2.11.7",
+    "@tiptap/extension-link": "^2.11.7",
+    "@tiptap/pm": "^2.11.7",
+    "@tiptap/starter-kit": "^2.11.7",
+    "@tiptap/suggestion": "^2.11.7",
+    "@tiptap/vue-3": "^2.11.7",
+    "@una-ui/nuxt": "^0.51.6",
     "surrealdb": "^1.1.0",
     "tippy.js": "^6.3.7"
   },
   "devDependencies": {
     "@iconify-json/icon-park-outline": "^1.2.2",
-    "@iconify-json/line-md": "^1.2.5",
+    "@iconify-json/line-md": "^1.2.7",
+    "@iconify-json/lucide": "^1.2.37",
     "@iconify-json/ph": "^1.2.2",
-    "@nuxthub/core": "^0.8.15",
-    "@una-ui/nuxt": "^0.35.0-beta.1",
-    "nuxt": "^3.15.4",
-    "wrangler": "^3.106.0"
+    "@iconify-json/radix-icons": "^1.2.2",
+    "@iconify-json/tabler": "^1.2.17",
+    "@nuxt/image": "^1.10.0",
+    "@nuxthub/core": "^0.8.24",
+    "nuxt": "^3.16.2",
+    "nuxt-auth-utils": "^0.5.20",
+    "wrangler": "^4.12.0"
   }
 }

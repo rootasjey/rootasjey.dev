@@ -1,46 +1,67 @@
 // GET /api/projects/[id]
-import { RecordId } from 'surrealdb'
-import { useSurrealDB } from '~/composables/useSurrealDB'
-
 export default defineEventHandler(async (event) => {
-  const { db, connect, decodeJWT } = useSurrealDB()
-  const projectId = event.context.params?.id
-  if (!projectId) {
+  const db = hubDatabase()
+  const idOrSlug = event.context.params?.id
+
+  if (!idOrSlug) {
     throw createError({
       statusCode: 400,
-      message: 'Project ID is required',
+      message: 'Project ID or slug is required',
     })
   }
 
-  await connect()
-  let userRecordId = null
-
-  const rawToken = getHeader(event, "Authorization")
-  if (rawToken) {
-    const token = rawToken.replace('Bearer ', '').replace('token=', '')
-    const decoded = decodeJWT(token)
-    const idParts = decoded.ID.split(":")
-    userRecordId = new RecordId(idParts[0], idParts[1])
-    await db.authenticate(token)
+  // Check if we have a session (optional - for private projects)
+  let userId = null
+  try {
+    const session = await getUserSession(event)
+    if (session && session.user) {
+      userId = session.user.id
+    }
+  } catch (error) {
+    // No session, continue as anonymous user
   }
 
-  const projectRecordParts = projectId.split(":")
-  const projectRecordId = new RecordId(projectRecordParts[0], projectRecordParts[1])
-  const project = await db.select(projectRecordId)
+  // Query that can find a project by either ID or slug
+  const stmt = db.prepare(`
+    SELECT * FROM projects 
+    WHERE id = ? OR slug = ? 
+    LIMIT 1
+  `)
+  
+  const project = await stmt.bind(idOrSlug, idOrSlug).first()
 
   if (!project) {
     throw createError({
       statusCode: 404,
-      message: 'Project not found',
+      message: `Project ${idOrSlug} not found`,
     })
   }
 
-  if (project.visibility !== "public" && !userRecordId?.equals(project.author)) {
+  // Check visibility permissions
+  if (project.visibility !== "public" && project.author_id !== userId) {
     throw createError({
       statusCode: 403,
       message: 'You are not authorized to view this project',
     })
   }
+
+  // Parse JSON fields
+  if (typeof project.links === 'string') {
+    project.links = JSON.parse(project.links)
+  }
+  if (typeof project.technologies === 'string') {
+    project.technologies = JSON.parse(project.technologies)
+  }
+
+  // Reconstruct image object
+  project.image = {
+    alt: project.image_alt || "",
+    src: project.image_src || ""
+  }
+
+  // Remove redundant fields
+  delete project.image_alt
+  delete project.image_src
 
   return project
 })

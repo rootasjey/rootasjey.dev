@@ -1,40 +1,60 @@
 // POST /api/projects/create.ts
-import { RecordId } from 'surrealdb'
-import { useSurrealDB } from '~/composables/useSurrealDB'
-
 export default defineEventHandler(async (event) => {
-  const { db, connect, decodeJWT } = useSurrealDB()
-  const rawToken = getHeader(event, "Authorization")
-  if (!rawToken) {
-    throw createError({
-      statusCode: 401,
-      message: "Unauthorized",
-    })
-  }
-
-  const token = rawToken.replace('Bearer ', '').replace('token=', '')
-  const decoded = decodeJWT(token)
-  const idParts = decoded.ID.split(":")
-  const userRecordId = new RecordId(idParts[0], idParts[1])
-
-  await connect()
-  await db.authenticate(token)
+  const session = await requireUserSession(event)
+  const db = hubDatabase()
   const body = await readBody(event)
+  const blobStorage = hubBlob()
 
+  const userId = session.user.id
+
+  // Create a slug from the project name
+  const slug = body.name.toLowerCase().replaceAll(" ", "-")
+
+  // Post content blob
+  const postContentBlob = createPostFileContent()
+  const blob_path = `projects/${slug}/content.json`
+
+  // Store the content in blob storage
+  await blobStorage.put(blob_path, JSON.stringify(postContentBlob))
+
+  // Prepare the project data
   const project = {
-    ...body,
-    author: userRecordId,
-    company: "",
-    image: {
-      alt: "",
-      src: "",
-    },
-    links: [],
-    technologies: [],
-    slug: body.name.toLowerCase().replaceAll(" ", "-"),
-    visibility: "public",
+    author_id: userId,
+    blob_path,
+    category: body.category || "Uncategorized",
+    company: body.company || "",
+    created_at: new Date().toISOString(),
+    description: body.description || "",
+    image_alt: body.image?.alt || "",
+    image_src: body.image?.src || "",
+    links: JSON.stringify(body.links || []),
+    name: body.name,
+    slug: slug,
+    summary: body.summary || "",
+    technologies: JSON.stringify(body.technologies || []),
+    updated_at: new Date().toISOString(),
+    visibility: body.visibility || "public",
   }
 
-  const createdProject = await db.create("projects", project)
-  return createdProject
+  // Insert the project into the database
+  const insertStmt = db.prepare(`
+    INSERT INTO projects (
+      author_id, blob_path, category, company, created_at,
+      description, image_alt, image_src, links, name,
+      slug, summary, technologies, updated_at, visibility
+    ) VALUES (
+      @author_id, @blob_path, @category, @company, @created_at,
+      @description, @image_alt, @image_src, @links, @name,
+      @slug, @summary, @technologies, @updated_at, @visibility
+    )
+  `)
+
+  const result = await insertStmt.bind(project).run()
+
+  return {
+    id: result.meta.last_row_id,
+    ...project,
+    links: body.links || [],
+    technologies: body.technologies || [],
+  }
 })

@@ -7,7 +7,7 @@
     >
       <div>
         <UProgress v-if="_isLoading" :indeterminate="true" size="sm" color="primary" />
-        <UButton v-if="getToken() && !_isLoading" btn="text" class="text-3"
+        <UButton v-if="loggedIn && !_isLoading" btn="text" class="text-3"
           :label="_showDrafts ? 'Show only published posts' : 'Show drafts'" @click="_showDrafts = !_showDrafts" />
       </div>
     </PageHeader>
@@ -72,7 +72,7 @@
       </div>
     </div>
 
-    <div v-if="getToken()" class="fixed left-0 bottom-12 flex justify-center w-100%">
+    <div v-if="loggedIn" class="fixed left-0 bottom-12 flex justify-center w-100%">
       <UDialog v-model:open="_isCreateDialogOpen" title="Create Post" description="Add a new post with a description">
         <template #trigger>
           <UButton btn="solid-gray">
@@ -133,9 +133,7 @@
 
 <script lang="ts" setup>
 import type { CreatePostType, PostType } from '~/types/post'
-import { useAuth } from '~/composables/useAuth'
-
-const { getValidToken, getToken } = useAuth()
+const { loggedIn } = useUserSession()
 
 useHead({
   title: "rootasjey • reflexions",
@@ -163,13 +161,10 @@ const _isLoading = ref(true)
 const _showDrafts = ref(false)
 const drafts = ref<PostType[]>([])
 
-const { data } = await useFetch("/api/posts", {
-  headers: {
-    "Authorization": await getValidToken(),
-  },
-})
+const { data } = await useFetch("/api/posts")
 
-const posts = data.value as PostType[] ?? []
+const posts = data.value ?? []
+// const posts = data.value as PostType[] ?? []
 
 const createPost = async ({ name, description, category }: CreatePostType) => {
   _isCreateDialogOpen.value = false
@@ -180,9 +175,6 @@ const createPost = async ({ name, description, category }: CreatePostType) => {
       name,
       description,
       category,
-    },
-    headers: {
-      "Authorization": await getValidToken(),
     },
   })
 }
@@ -203,13 +195,9 @@ const fetchDrafts = async () => {
   }
 
   try {
-    const data = await $fetch("/api/posts/drafts", {
-      headers: {
-        "Authorization": await getValidToken(),
-      },
-    })
+    const draftData = await $fetch("/api/posts/drafts")
   
-    drafts.value = data as PostType[] ?? []
+    drafts.value = draftData as PostType[] ?? []
     _isLoading.value = false
   } catch (error) {
     console.error(error)
@@ -229,11 +217,7 @@ watch(_showDrafts, async (show) => {
     return
   }
   
-  const data = await $fetch("/api/posts/drafts", {
-    headers: {
-      "Authorization": await getValidToken(),
-    },
-  })
+  const data = await $fetch("/api/posts/drafts")
 
   drafts.value = data as PostType[] ?? []
 })

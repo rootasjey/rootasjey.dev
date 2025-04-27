@@ -30,7 +30,7 @@
                 <button class="i-icon-park-outline:enter-key hover:scale-110 active:scale-99 transition"></button>
               </NuxtLink>
 
-              <div v-if="getToken()">
+              <div v-if="loggedIn">
                 <UDialog v-model:open="project.isDeleteDialogOpen" :title="`Delete ${project.name}`"
                   description="Are you sure you want to delete this project?">
                   <template #trigger>
@@ -72,7 +72,7 @@
       </div>
     </div>
 
-    <div v-if="getToken()" fixed bottom-12>
+    <div v-if="loggedIn" fixed bottom-12>
       <UDialog v-model:open="_isDialogOpen" title="Create Project" description="Add a new project with a description">
         <template #trigger>
           <UButton btn="solid-gray">
@@ -133,9 +133,8 @@
 
 <script lang="ts" setup>
 import type { CreateProjectType, ProjectLinkType, ProjectType } from '~/types/project'
-import { useAuth } from '~/composables/useAuth'
+const { loggedIn } = useUserSession()
 
-const { getValidToken, getToken } = useAuth()
 
 useHead({
   title: "rootasjey • projects",
@@ -153,7 +152,7 @@ const _category = ref('')
 const _isDialogOpen = ref(false)
 
 const projectMenuItems = (project: ProjectType) => {
-  if (!getToken()) return []
+  if (!loggedIn) return []
 
   const items = [
     {
@@ -183,11 +182,7 @@ const projectMenuItems = (project: ProjectType) => {
   return items
 }
 
-const { data } = await useFetch('/api/projects', {
-  headers: {
-    "Authorization": await getValidToken(),
-  },
-})
+const { data } = await useFetch('/api/projects')
 const categories = toRefs(data?.value ?? {})
 
 const availableCategories = computed(() => {
@@ -203,9 +198,6 @@ const createProject = async ({ name, description, category }: CreateProjectType)
       description,
       category,
     },
-    headers: {
-      "Authorization": await getValidToken(),
-    },
   })
 }
 
@@ -215,9 +207,6 @@ const deleteProject = async (project: ProjectType) => {
     method: "DELETE",
     body: {
       id: project.id,
-    },
-    headers: {
-      "Authorization": await getValidToken(),
     },
   })
 }

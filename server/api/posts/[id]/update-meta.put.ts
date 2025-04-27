@@ -1,16 +1,14 @@
 // PUT /api/posts/[id]/update-meta
-import { RecordId } from "surrealdb"
-import { useSurrealDB } from "~/composables/useSurrealDB"
-
 export default defineEventHandler(async (event) => {
-  const { db, connect } = useSurrealDB()
-  const postId = event.context.params?.id
+  const session = await requireUserSession(event)
+  const db = hubDatabase()
+  const postIdOrSlug = event.context.params?.id
   const body = await readBody(event)
 
-  if (!postId) {
+  if (!postIdOrSlug) {
     throw createError({
       statusCode: 400,
-      message: 'Post ID (`id`) is required',
+      message: 'Post ID or slug is required',
     })
   }
 
@@ -21,31 +19,108 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  await connect()
-  const rawToken = getHeader(event, "Authorization")
-  if (rawToken) {
-    const token = rawToken.replace('Bearer ', '').replace('token=', '')
-    await db.authenticate(token)
+  const userId = session.user.id
+
+  const postStmt = db.prepare(`
+    SELECT * FROM posts WHERE id = ? OR slug = ? LIMIT 1
+  `)
+
+  const post = await postStmt.bind(postIdOrSlug, postIdOrSlug).first()
+
+  if (!post) {
+    throw createError({
+      statusCode: 404,
+      message: 'Post not found',
+    })
   }
 
+  // Check if the user is the author of the post
+  if (post.author_id !== userId) {
+    throw createError({
+      statusCode: 403,
+      message: 'You are not authorized to update this post',
+    })
+  }
+
+  // Generate slug if not provided
+  const slug = body.slug ?? body.name.toLowerCase().replaceAll(" ", "-")
+
+  const oldBlobPath = post.blob_path as string ?? ""
+  const newBlobPath = `posts/${slug}/content.json`
+
+  // Move the content blob to the new path if different
+  if (oldBlobPath !== newBlobPath) {
+    const blobStorage = hubBlob()
+    const oldBlobContent = await blobStorage.get(oldBlobPath)
+    if (oldBlobContent) {
+      await blobStorage.put(newBlobPath, oldBlobContent)
+      await blobStorage.delete(oldBlobPath)
+      post.blob_path = newBlobPath
+      body.blob_path = newBlobPath
+    }
+  }
+
+  // Process category
   let category = body.category ?? ""
   category = category === "no category" ? "" : category.toLowerCase()
 
-  const postRecordParts = postId.split(":")
-  const postRecordId = new RecordId(postRecordParts[0], postRecordParts[1])
-  const post = await db.merge(postRecordId, {
+  // Update the post metadata
+  const updateStmt = db.prepare(`
+    UPDATE posts 
+    SET 
+      category = ?,
+      description = ?,
+      language = ?,
+      name = ?,
+      visibility = ?,
+      slug = ?,
+      updated_at = CURRENT_TIMESTAMP
+    WHERE id = ?
+  `)
+  
+  await updateStmt.bind(
     category,
-    description: body.description ?? "",
-    language: body.language ?? "en",
-    name: body.name,
-    visibility: body.visibility ?? "public",
-    slug: body.slug ?? "",
-    // updated_at: new Date(),
-  })
+    body.description ?? "",
+    body.language ?? "en",
+    body.name,
+    body.visibility ?? "public",
+    body.slug ?? "",
+    post.id
+  ).run()
+
+  // Get the updated post
+  const updatedPostStmt = db.prepare(`
+    SELECT * FROM posts WHERE id = ? LIMIT 1
+  `)
+  
+  const updatedPost = await updatedPostStmt.bind(post.id).first()
+  if (!updatedPost) {
+    throw createError({
+      statusCode: 500,
+      message: 'Failed to update post',
+    })
+  }
+
+  // Format the response
+  const formattedPost = {
+    ...updatedPost,
+    // Parse JSON fields if they exist
+    links: typeof updatedPost.links === 'string' ? JSON.parse(updatedPost.links || '[]') : updatedPost.links,
+    tags: typeof updatedPost.tags === 'string' ? JSON.parse(updatedPost.tags || '[]') : updatedPost.tags,
+    styles: typeof updatedPost.styles === 'string' ? JSON.parse(updatedPost.styles || '{}') : updatedPost.styles,
+    image: {
+      alt: updatedPost.image_alt || "",
+      src: updatedPost.image_src || ""
+    }
+  }
+
+  // Remove redundant fields
+  // delete formattedPost.image_alt
+  // delete formattedPost.image_src
 
   return {
     message: 'Post updated successfully',
-    post,
+    post: formattedPost,
     success: true,
   }
 })

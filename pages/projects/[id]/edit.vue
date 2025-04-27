@@ -24,7 +24,7 @@
               Edit this project fields
             </h5>
 
-            <div v-if="getToken()">
+            <div v-if="loggedIn">
               <UDialog v-model:open="project.isDeleteDialogOpen" :title="`Delete ${project.name}`"
                 description="Are you sure you want to delete this project?">
                 <template #trigger>
@@ -79,7 +79,7 @@
               {{ project.post }}
             </UButton>
 
-            <div v-if="getToken()">
+            <div v-if="loggedIn">
               <UDialog v-model:open="_isDeletePostDialogIsOpen" :title="`Delete Post`"
                 :description="`Are you sure you want to delete the post associated with ${project.name} project?`">
                 <template #trigger>
@@ -132,9 +132,7 @@
 
 <script lang="ts" setup>
 import type { ProjectType } from '~/types/project'
-import { useAuth } from '~/composables/useAuth'
-
-const { getValidToken, getToken } = useAuth()
+const { loggedIn, user, fetch: refreshSession, session } = useUserSession()
 
 const route = useRoute()
 const _isDeletePostDialogIsOpen = ref(false)
@@ -155,11 +153,7 @@ const project = ref <ProjectType>({
 })
 
 // Fetch project data on page load
-const { data } = await useFetch(`/api/projects/${route.params.id}`, {
-  headers: {
-    "Authorization": await getValidToken(),
-  },
-})
+const { data } = await useFetch(`/api/projects/${route.params.id}`)
 
 // Populate form with existing data
 project.value = { ...data.value as ProjectType }
@@ -177,9 +171,6 @@ const saveProject = async () => {
     await $fetch(`/api/projects/${route.params.id}/update`, {
       method: 'PUT',
       body: project.value,
-      headers: {
-        "Authorization": await getValidToken(),
-      },
     })
   
     if (data.value) {
@@ -197,9 +188,6 @@ const deleteProject = async (project: ProjectType) => {
     body: {
       id: project.id,
     },
-    headers: {
-      "Authorization": await getValidToken(),
-    },
   })
   console.log(data.value)
 }
@@ -212,9 +200,6 @@ const deletePost = async (postId: string) => {
       method: 'PUT',
       body: {
         postId
-      },
-      headers: {
-        "Authorization": await getValidToken(),
       },
     })
   } catch (error) {

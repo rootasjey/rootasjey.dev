@@ -1,21 +1,30 @@
 // GET /api/projects
-import { useSurrealDB } from '~/composables/useSurrealDB'
 
 export default defineEventHandler(async (event) => {
-  const { db, connect } = useSurrealDB()
-  await connect()
+  const db = hubDatabase()
 
-  const [projects]: any[] = await db.query(`
+  const stmt = db.prepare(`
     SELECT * FROM projects WHERE visibility = 'public'
   `)
-
+  
+  const query = await stmt.all()
+  
   const projectByCategory: { [key: string]: any[] } = {}
-  for await (const project of projects) {
-    if (!projectByCategory[project.category]) {
-      projectByCategory[project.category] = []
+  for (const project of query.results) {
+    // Parse JSON fields if needed
+    if (typeof project.links === 'string') {
+      project.links = JSON.parse(project.links)
     }
-    projectByCategory[project.category].push(project)
-  }
+    if (typeof project.technologies === 'string') {
+      project.technologies = JSON.parse(project.technologies)
+    }
 
+    const category = project.category as string || 'Uncategorized'
+    if (!projectByCategory[category]) {
+      projectByCategory[category] = []
+    }
+    projectByCategory[category].push(project)
+  }
+  
   return projectByCategory
 })

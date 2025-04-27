@@ -5,20 +5,34 @@ import prefixes from '@una-ui/preset/prefixes'
 import {
   presetAttributify,
   presetIcons,
-  presetUno,
+  presetTagify,
+  presetWind3,
+  presetWebFonts,
   transformerDirectives,
   transformerVariantGroup,
 } from 'unocss'
 
 export default {
   presets: [
-    presetUno(),
+    presetWind3(),
     presetAttributify(),
     presetIcons({
       scale: 1.2,
       extraProperties: {
         'display': 'inline-block',
         'vertical-align': 'middle',
+      },
+    }),
+    presetTagify(),
+    presetWebFonts({
+      provider: 'fontshare',
+      fonts: {
+        title: 'Author',
+        text: 'Satoshi',
+        body: 'Chillax',
+        mono: 'Cabinet',
+        serif: 'Boska',
+        cursive: 'Pencerio',
       },
     }),
     presetUna(),

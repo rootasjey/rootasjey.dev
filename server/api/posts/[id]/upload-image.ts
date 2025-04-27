@@ -1,11 +1,9 @@
 // POST /api/posts/[id]/upload-image
-import { RecordId } from "surrealdb"
-import { useSurrealDB } from "~/composables/useSurrealDB"
-import { PostType } from "~/types/post"
-
 export default defineEventHandler(async (event) => {
-  const { db, connect } = useSurrealDB()
-  const postId = event.context.params?.id
+  const session = await requireUserSession(event)
+  const db = hubDatabase()
+
+  const postIdOrSlug = event.context.params?.id
   const formData = await readMultipartFormData(event)
   
   const file = formData?.find(item => item.name === 'file')?.data
@@ -13,20 +11,38 @@ export default defineEventHandler(async (event) => {
   const type = formData?.find(item => item.name === 'type')?.data.toString()
   // const placement = formData?.find(item => item.name === 'placement')?.data.toString()
 
-  if (!postId || !file || !fileName || !type) {
+  if (!postIdOrSlug || !file || !fileName || !type) {
     throw createError({
       statusCode: 400,
       message: 'Missing required fields',
     })
   }
 
-  await connect()
-  const rawToken = getHeader(event, "Authorization")
-  if (rawToken) {
-    const token = rawToken.replace('Bearer ', '').replace('token=', '')
-    await db.authenticate(token)
+  const userId = session.user.id
+
+  // Find the post by ID or slug
+  const postStmt = db.prepare(`
+    SELECT * FROM posts WHERE id = ? OR slug = ? LIMIT 1
+  `)
+
+  const post = await postStmt.bind(postIdOrSlug, postIdOrSlug).first()
+
+  if (!post) {
+    throw createError({
+      statusCode: 404,
+      message: 'Post not found',
+    })
   }
 
+  // Check if the user is the author of the post
+  if (post.author_id !== userId) {
+    throw createError({
+      statusCode: 403,
+      message: 'You are not authorized to update this post',
+    })
+  }
+
+  // Upload the image to blob storage
   const blob = new Blob([file], { type })
   const uploadedBlob = await hubBlob().put(fileName, blob, {
     addRandomSuffix: true,
@@ -35,20 +51,19 @@ export default defineEventHandler(async (event) => {
 
   const imageUrl = `${uploadedBlob.pathname}`
 
-  const postRecordParts = postId.split(":")
-  const postRecordId = new RecordId(postRecordParts[0], postRecordParts[1])
-  const post: Partial<PostType> = await db.merge(postRecordId, {
-    image: {
-      name: fileName,
-      src: imageUrl,
-      alt: fileName,
-    },
-  })
+  // Update the post with the new image information
+  const updateStmt = db.prepare(`
+    UPDATE posts 
+    SET image_src = ?, image_alt = ?, updated_at = CURRENT_TIMESTAMP
+    WHERE id = ?
+  `)
+
+  await updateStmt.bind(imageUrl, fileName, post.id).run()
 
   return { 
     image: {
-      alt: post.image?.alt ?? "",
-      src: post.image?.src ?? "",
+      alt: fileName,
+      src: imageUrl,
     },
     success: true, 
   }

@@ -16,7 +16,7 @@
             </button>
           </template>
         </UTooltip>
-        <UTooltip v-if="getToken()" content="Lock edit" :_tooltip-content="{ side: 'right' }">
+        <UTooltip v-if="loggedIn" content="Lock edit" :_tooltip-content="{ side: 'right' }">
           <template #default>
             <button opacity-50 flex items-center gap-2 @click="_canEdit = !_canEdit">
               <div :class="_canEdit ? 'i-icon-park-outline:lock' : 'i-icon-park-outline:unlock'"></div>
@@ -160,9 +160,8 @@
 <script lang="ts" setup>
 import type { PostType } from '~/types/post'
 import TiptapEditor from '~/components/TiptapEditor.vue'
-import { useAuth } from '~/composables/useAuth'
+const { loggedIn, user, fetch: refreshSession, session } = useUserSession()
 
-const { getValidToken, getToken } = useAuth()
 
 const route = useRoute()
 let _updatePostContentTimer: NodeJS.Timeout
@@ -201,11 +200,7 @@ const _stylesMeta = ref({
   center: false,
 })
 
-const { data: post } = await useFetch<PostType>(`/api/posts/${route.params.id}`, {
-  headers: {
-    "Authorization": await getValidToken(),
-  },
-})
+const { data: post } = await useFetch<PostType>(`/api/posts/${route.params.id}`)
 
 _selectedLanguage.value = _languages.value.find(l => l.value === post.value?.language) ?? _languages.value[0]
 _stylesMeta.value.center = post.value?.styles?.meta?.align === "center"
@@ -223,9 +218,6 @@ const updatePostContent = async (value: Object) => {
     method: "PUT",
     body: {
       content: value,
-    },
-    headers: {
-      "Authorization": await getValidToken(),
     },
   })
 }
@@ -270,9 +262,6 @@ const updatePostStyles = async () => {
         align: _stylesMeta.value.center ? "center" : "",
       },
     },
-    headers: {
-      "Authorization": await getValidToken(),
-    },
   })
 }
 
@@ -289,9 +278,6 @@ const updatePostMeta = async () => {
       name: post.value?.name,
       slug: post.value?.slug,
       visibility: post.value?.visibility,
-    },
-    headers: {
-      "Authorization": await getValidToken(),
     },
   })
 
@@ -329,9 +315,6 @@ const updateOnlyChangedFields = (updatedPost: PostType) => {
 const removeCoverImage = async () => {
   const { success } = await $fetch(`/api/posts/${route.params.id}/remove-image`, {
     method: "DELETE",
-    headers: {
-      "Authorization": await getValidToken(),
-    },
   })
 
   if (success && post.value?.image) {
@@ -365,9 +348,6 @@ const handleFileSelect = async (event: Event) => {
     const { image } = await $fetch(`/api/posts/${route.params.id}/upload-image`, {
       method: 'POST',
       body: formData,
-      headers: {
-        "Authorization": await getValidToken(),
-      },
     })
 
     if (post.value && image.src) {

@@ -1,10 +1,8 @@
 // DELETE /api/projects/:id
-// Delete a project from SurrealDB
-import { RecordId } from 'surrealdb'
-import { useSurrealDB } from '~/composables/useSurrealDB'
-
+// Delete a project from SQLite database
 export default defineEventHandler(async (event) => {
-  const { db, connect, decodeJWT } = useSurrealDB()
+  const session = await requireUserSession(event)
+  const db = hubDatabase()
   const body = await readBody(event)
   const id = body.id
 
@@ -15,24 +13,12 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  const rawToken = getHeader(event, "Authorization")
-  if (!rawToken) {
-    throw createError({
-      statusCode: 401,
-      message: "Unauthorized",
-    })
-  }
-
-  const token = rawToken.replace('Bearer ', '').replace('token=', '')
-  const decoded = decodeJWT(token)
-  const idParts = decoded.ID.split(":")
-  const userRecordId = new RecordId(idParts[0], idParts[1])
-
-  await connect()
-  await db.authenticate(token)
-  const projectRecordParts = id.split(":")
-  const projectRecordId = new RecordId(projectRecordParts[0], projectRecordParts[1])
-  const project = await db.select(projectRecordId)
+  // First, check if the project exists and belongs to the user
+  const projectStmt = db.prepare(`
+    SELECT * FROM projects WHERE id = ? LIMIT 1
+  `)
+  
+  const project = await projectStmt.bind(id).first()
 
   if (!project) {
     throw createError({
@@ -41,14 +27,20 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  if (!userRecordId.equals(project.author)) {
+  const userId = session.user.id
+  if (project.author_id !== userId) {
     throw createError({
       statusCode: 403,
       message: "You are not authorized to delete this project",
     })
   }
 
-  await db.delete(projectRecordId)
+  // Delete the project
+  const deleteStmt = db.prepare(`
+    DELETE FROM projects WHERE id = ?
+  `)
+  
+  await deleteStmt.bind(id).run()
 
   return {
     message: "Project deleted successfully",
