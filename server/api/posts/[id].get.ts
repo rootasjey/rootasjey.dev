@@ -5,8 +5,6 @@ export default defineEventHandler(async (event) => {
   const db = hubDatabase()
   const blobStorage = hubBlob()
 
-  console.log(`\n\n-------------\n fetch post: ${idOrSlug}`)
-
   if (!idOrSlug) {
     throw createError({
       statusCode: 400,
@@ -63,29 +61,12 @@ export default defineEventHandler(async (event) => {
   if (typeof post.styles === 'string') {
     post.styles = JSON.parse(post.styles)
   }
-  
-  console.log("\n\npost.blob_path: ", post.blob_path);
-  
-  // Fetch content from blob storage if available
-  if (post.blob_path && typeof post.blob_path === 'string') {
-    try {
-      const contentBlob = await blobStorage.get(post.blob_path)
-      if (contentBlob) {
-        const contentText = await contentBlob.text()
 
-        try { // Parse the JSON content
-          post.content = JSON.parse(contentText)
-          console.log(contentText)
-        } catch (parseError) {
-          console.error(`Failed to parse JSON content for post ${idOrSlug}:`, parseError)
-          // If parsing fails, use the raw text as fallback
-          post.content = contentText
-        }
-      }
-    } catch (error) {
-      console.error(`Failed to fetch content for post ${idOrSlug}:`, error)
-      post.content = null
-    }
+  // Fetch content from blob storage if available
+  const contentBlob = await blobStorage.get(post.blob_path as string)
+  if (contentBlob) {
+    const contentText = await contentBlob.text()
+    post.content = JSON.parse(contentText)
   }
 
   try { // Update view count
@@ -98,6 +79,6 @@ export default defineEventHandler(async (event) => {
   } catch (error) {
     console.error(`Failed to update view count for post ${idOrSlug}:`, error)
   }
-  
+
   return post
 })

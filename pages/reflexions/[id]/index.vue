@@ -1,6 +1,6 @@
 <template>
-  <div class="container mx-auto px-4 py-8 mt-[22vh] relative">
-    <header class="mb-16 text-center flex flex-col items-center">
+  <div class="container bg-[#F1F1F1] dark:bg-[#000] mx-auto px-0 relative pb-[42vh]">
+    <header class="min-h-screen text-center flex flex-col justify-center items-center">
       <!-- Top toolbar -->
       <div class="flex items-center gap-4 -ml-3">
         <UTooltip content="Go back" :_tooltip-content="{ side: 'right' }">
@@ -16,10 +16,11 @@
             </button>
           </template>
         </UTooltip>
+
         <UTooltip v-if="loggedIn" content="Lock edit" :_tooltip-content="{ side: 'right' }">
           <template #default>
             <button opacity-50 flex items-center gap-2 @click="_canEdit = !_canEdit">
-              <div :class="_canEdit ? 'i-icon-park-outline:lock' : 'i-icon-park-outline:unlock'"></div>
+              <div :class="_canEdit ? 'i-icon-park-outline:unlock' : 'i-icon-park-outline:lock'"></div>
             </button>
           </template>
           <template #content>
@@ -29,10 +30,40 @@
             </button>
           </template>
         </UTooltip>
+
+        <UTooltip v-if="loggedIn" content="Export to JSON" :_tooltip-content="{ side: 'right' }">
+          <template #default>
+            <button opacity-50 flex items-center gap-2 @click="exportPostToJson">
+              <div class="i-icon-park-outline:download-two"></div>
+            </button>
+          </template>
+          <template #content>
+            <button @click="exportPostToJson" bg="light dark:dark" text="dark dark:white" text-3 px-3 py-1
+              rounded-md border-1 border-dashed class="b-#3D3BF3">
+              Export to JSON
+            </button>
+          </template>
+        </UTooltip>
+
+        <!-- Import from JSON button -->
+        <UTooltip v-if="loggedIn && _canEdit" content="Import from JSON" :_tooltip-content="{ side: 'right' }">
+          <template #default>
+            <button opacity-50 flex items-center gap-2 @click="triggerJsonImport">
+              <div class="i-icon-park-outline:upload-two"></div>
+            </button>
+          </template>
+          <template #content>
+            <button @click="triggerJsonImport" bg="light dark:dark" text="dark dark:white" text-3 px-3 py-1
+              rounded-md border-1 border-dashed class="b-#3D3BF3">
+              Import from JSON
+            </button>
+          </template>
+        </UTooltip>
+        <!-- Hidden file input for JSON import -->
+        <input type="file" ref="_jsonFileInput" class="hidden" accept="application/json" @change="handleJsonFileSelect" />
       </div>
 
       <div v-if="post" class="mt-2">
-        <!-- <h1 class="text-6xl font-600 mb-4">{{ post.name }}</h1> -->
         <UInput v-model="post.name"
           :class="`text-6xl font-800 mb-4 p-0 overflow-y-hidden shadow-none ${_stylesMeta.center ? 'text-align-center' : ''}`"
           :readonly="!_canEdit" input="~" label="Name" type="textarea" :rows="1" autoresize />
@@ -63,7 +94,7 @@
             :class="_saving ? 'animate-spin text-muted' : 'text-lime-300'" />
         </div>
         <div :class="`flex items-center gap-2 mt-2 ${_stylesMeta.center ? 'justify-center' : 'justify-start'}`">
-          <span v-if="post.category && !_canEdit" class="px-2 py-1 rounded-full text-xs bg-gray-100 dark:bg-gray-800">
+          <span v-if="post.category && !_canEdit" class="px-2 py-1 rounded-full text-xs bg-gray-100 dark:bg-gray-800 shadow-sm">
             {{ post.category }}
           </span>
           <USelect v-if="_canEdit" v-model="post.category" :items="_categories">
@@ -135,24 +166,42 @@
       </div>
     </header>
 
-    <div class="w-full flex justify-center my-8">
-      <div class="w-full h-2">
-        <svg viewBox="0 0 300 10" preserveAspectRatio="none">
-          <path d="M 0 5 Q 15 0, 30 5 T 60 5 T 90 5 T 120 5 T 150 5 T 180 5 T 210 5 T 240 5 T 270 5 T 300 5"
-            stroke="currentColor" fill="none" class="text-gray-300 dark:text-gray-700" stroke-width="1" />
-        </svg>
-      </div>
+    <div class="w-full flex justify-center">
+      <div class="border-b b-dashed w-full"></div>
     </div>
 
-
-    <main v-if="post" class="max-w-2xl mx-auto pt-8 pb-70%">
+    <main v-if="post" class="max-w-2xl mx-auto pt-8">
       <client-only>
-        <tiptap-editor :can-edit="_canEdit" :model-value="post.content" @update:model-value="onUpdateEditorContent" />
+        <tiptap-editor :can-edit="true" :model-value="post.content" @update:model-value="onUpdateEditorContent" />
       </client-only>
     </main>
 
     <div v-else class="flex justify-center items-center h-60vh">
       <UProgress indeterminate />
+    </div>
+
+    <!-- Buttons navigation -->
+    <div class="flex justify-center gap-2 mt-24">
+      <button 
+        @click="$router.back()"
+        class="hover:border-1 border-dashed 
+          text-3 opacity-60 hover:opacity-100 font-600 
+          py-1 px-4 rounded flex gap-2 items-center 
+          hover:scale-105 transition-all 
+          active:scale-99 active:border-solid">
+        <div class="i-ph:arrow-bend-down-left-bold"></div>
+        <span>back</span>
+      </button>
+      <button 
+        @click="$router.back()"
+        class="hover:border-1 border-dashed 
+          text-3 opacity-60 hover:opacity-100 font-600 
+          py-1 px-4 rounded flex gap-2 items-center 
+          hover:scale-105 transition-all 
+          active:scale-99 active:border-solid">
+        <div class="i-ph:arrow-up-bold"></div>
+        <span>go to top</span>
+      </button>
     </div>
   </div>
 </template>
@@ -160,8 +209,7 @@
 <script lang="ts" setup>
 import type { PostType } from '~/types/post'
 import TiptapEditor from '~/components/TiptapEditor.vue'
-const { loggedIn, user, fetch: refreshSession, session } = useUserSession()
-
+const { loggedIn } = useUserSession()
 
 const route = useRoute()
 let _updatePostContentTimer: NodeJS.Timeout
@@ -171,6 +219,7 @@ const _saving = ref<boolean>()
 let _updatePostMetaTimer: NodeJS.Timeout
 let _updatePostStylesTimer: NodeJS.Timeout
 const _fileInput = ref<HTMLInputElement>()
+const _jsonFileInput = ref<HTMLInputElement>() // New ref for JSON import
 
 /** Specify where the uploaded image will be placed (e.g. as the post's cover or content). */
 const _imageUploadPlacement = ref<"cover" | "content">("cover")
@@ -207,6 +256,129 @@ _stylesMeta.value.center = post.value?.styles?.meta?.align === "center"
 
 /** True if the current user is the author of the post. */
 const _canEdit = ref(post.value?.canEdit ?? false)
+
+/**
+ * Export the current post to a JSON file and download it to the user's device
+ */
+const exportPostToJson = () => {
+  if (!post.value) return
+  
+  // Create a clean version of the post for export
+  const exportData = {
+    id: post.value.id,
+    name: post.value.name,
+    slug: post.value.slug,
+    description: post.value.description,
+    content: post.value.content,
+    category: post.value.category,
+    language: post.value.language,
+    visibility: post.value.visibility,
+    created_at: post.value.created_at,
+    updated_at: post.value.updated_at,
+    image: post.value.image,
+    styles: post.value.styles,
+  }
+  
+  // Convert to JSON string with pretty formatting
+  const jsonString = JSON.stringify(exportData, null, 2)
+  
+  // Create a blob with the JSON data
+  const blob = new Blob([jsonString], { type: 'application/json' })
+  
+  // Create a URL for the blob
+  const url = URL.createObjectURL(blob)
+  
+  // Create a temporary anchor element to trigger the download
+  const a = document.createElement('a')
+  a.href = url
+  a.download = `${post.value.slug || post.value.id}-${new Date().toISOString().split('T')[0]}.json`
+  
+  // Append to the document, click to download, then remove
+  document.body.appendChild(a)
+  a.click()
+  
+  // Clean up
+  setTimeout(() => {
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
+  }, 0)
+}
+
+/**
+ * Trigger the file input to select a JSON file for import
+ */
+const triggerJsonImport = () => {
+  if (!_canEdit) return
+  _jsonFileInput.value?.click()
+}
+
+/**
+ * Handle the selected JSON file and import its contents
+ */
+const handleJsonFileSelect = async (event: Event) => {
+  const file = (event.target as HTMLInputElement).files?.[0]
+  if (!file || !post.value || !_canEdit) return
+
+  try {
+    _saving.value = true
+    
+    // Read the file content
+    const fileContent = await file.text()
+    const importedData = JSON.parse(fileContent)
+    
+    // Update post metadata
+    if (importedData.name) post.value.name = importedData.name
+    if (importedData.description) post.value.description = importedData.description
+    if (importedData.category) {
+      post.value.category = importedData.category
+    }
+    if (importedData.language) {
+      post.value.language = importedData.language
+      _selectedLanguage.value = _languages.value.find(l => l.value === importedData.language) ?? _languages.value[0]
+    }
+    
+    // Update post content if available
+    if (importedData.content) {
+      post.value.content = importedData.content
+      await updatePostContent(importedData.content)
+    }
+    
+    // Update styles if available
+    if (importedData.styles) {
+      post.value.styles = importedData.styles
+      _stylesMeta.value.center = importedData.styles?.meta?.align === "center"
+      await updatePostStyles()
+    }
+    
+    // Update other metadata
+    await updatePostMeta()
+    
+    // Show success notification
+    useToast().toast({
+      title: 'Import successful',
+      description: 'The post has been updated with the imported data',
+      showProgress: true,
+      leading: 'i-icon-park-outline:check-one',
+      progress: "success"
+    })
+    
+  } catch (error) {
+    console.error('Error importing JSON:', error)
+    useToast().toast({
+      title: 'Import failed',
+      description: 'Failed to import the JSON file. Please check the file format.',
+      showProgress: true,
+      leading: 'i-icon-park-outline:close-one',
+      progress: "warning"
+    })
+  } finally {
+    _saving.value = false
+    // Reset the file input
+    if (_jsonFileInput.value) {
+      _jsonFileInput.value.value = ''
+    }
+  }
+}
 
 const onUpdateEditorContent = (value: Object) => {
   clearTimeout(_updatePostContentTimer)

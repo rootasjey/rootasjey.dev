@@ -70,48 +70,6 @@
         <UInput id="company" v-model="project.company" :una="{ inputWrapper: 'col-span-2' }" />
       </div>
 
-      <div class="grid grid-cols-3 items-center gap-4 max-w-md">
-        <ULabel for="hasPost">Linked post</ULabel>
-        <div class="max-w-sm flex flex-row flex-wrap">
-          <div v-if="project.post" class="flex flex-row gap-2 w-auto">
-            <UButton btn="soft" trailing="i-icon-park-outline:eyes"
-              @click="navigateTo(`/reflexions/${project.post}`)">
-              {{ project.post }}
-            </UButton>
-
-            <div v-if="loggedIn">
-              <UDialog v-model:open="_isDeletePostDialogIsOpen" :title="`Delete Post`"
-                :description="`Are you sure you want to delete the post associated with ${project.name} project?`">
-                <template #trigger>
-                  <UButton icon btn="ghost-red" label="i-icon-park-outline:delete-themes"
-                    @click="_isDeletePostDialogIsOpen = true" />
-                  <!-- <button
-                    class="i-icon-park-outline:delete-themes hover:scale-110 active:scale-99 transition -mt-1"></button> -->
-                </template>
-
-                <template #default>
-                  <div class="flex flex-col gap-2">
-                    <UButton btn="solid-gray" @click="_isDeletePostDialogIsOpen = false">
-                      Cancel
-                    </UButton>
-                    <UButton btn="solid-red" @click="deletePost(project.id)">
-                      Delete
-                    </UButton>
-                  </div>
-                </template>
-              </UDialog>
-            </div>
-          </div>
-
-          <div v-else>
-            <UButton btn="solid-gray" trailing="i-icon-park-outline:doc-add"
-              @click="navigateTo(`/projects/${project.id}/add-post`)">
-              Add Post
-            </UButton>
-          </div>
-        </div>
-      </div>
-
       <div class="grid grid-cols-3 items-center gap-4">
         <ULabel for="slug">Slug</ULabel>
         <UInput id="slug" v-model="project.slug" :una="{ inputWrapper: 'col-span-2' }" />
@@ -143,10 +101,13 @@ const project = ref <ProjectType>({
   created_at: "",
   description: "",
   id: "0",
+  image: {
+    alt: "",
+    src: "",
+  },
   links: [],
   name: "",
   slug: "",
-  post: "",
   updated_at: "",
   user_id: "0",
   visibility: "public",

@@ -1,42 +1,48 @@
-# Nuxt 3 Minimal Starter
+# rootasjey.dev
 
-Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+![rootasjey.dev](./screenshots/v5.light-home.jpeg)
 
-## Setup
+Welcome to my digital garden! 🌱
 
-Make sure to install the dependencies:
+This is my personal website where I showcase my work, thoughts, and experiments. It serves as a digital garden where I cultivate ideas and share my journey at the intersection of code and creativity.
+
+## What You'll Find Here
+
+* Projects: A collection of finished coding projects I've worked on, sometimes spanning years
+* Reflexions: Thoughts, insights, and contemplations - a garden of ideas in constant motion
+* Experiments: A playground for testing new ideas and breaking conventional boundaries
+
+
+## Tech Stack
+
+This website is built with:
+
+* [Nuxt 3](https://nuxt.com/) - Vue-based framework for building modern web applications
+* [UnaUI](https://unaui.com/) - UI component library
+* [NuxtHub](https://hub.nuxt.com/) - Serverless backend powered by Cloudflare
+
+## Development
 
 ```bash
-# yarn
-yarn install
-
-# npm
+# Install dependencies
 npm install
 
-# pnpm
-pnpm install
-```
-
-## Development Server
-
-Start the development server on http://localhost:3000
-
-```bash
+# Start the development server on http://localhost:3000:
 npm run dev
-```
 
-## Production
-
-Build the application for production:
-
-```bash
+# Build the application for production:
 npm run build
-```
 
-Locally preview production build:
-
-```bash
+# Locally preview production build:
 npm run preview
 ```
 
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Contact
+
+Feel free to reach out to me through the contact information available on the website.
+
+© 2023-2024 rootasjey. All rights reserved.

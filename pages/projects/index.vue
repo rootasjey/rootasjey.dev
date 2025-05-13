@@ -1,75 +1,130 @@
 // pages/projects/index.vue
 <template>
-  <div class="max-w-[900px] rounded-xl p-8 flex items-center flex-col transition-all duration-500 overflow-y-auto">
-    <PageHeader 
+  <div class="max-w-[900px] rounded-xl p-8 
+    flex items-center flex-col transition-all duration-500 overflow-y-auto
+    mt-[12vh]">
+    <!-- <PageHeader 
       title="Projects" 
       subtitle="A collection of my creative work"
-    />
+    /> -->
 
-    <div class="flex-1 flex flex-row gap-x-16 gap-y-12 flex-wrap">
-      <div v-for="(projectsList, category) in categories" :key="category" flex flex-col class="w-1/4 min-w-32 max-h-50vh"
-        overflow-y-auto>
-        <h1 class="text-sm font-600 mb-4 opacity-20 hover:opacity-100 transition uppercase text-center">
-          {{ category }}
+    <header class="w-full ml-6 mb-6 text-center flex flex-col items-start">
+      <div class="flex items-center gap-2 ml--3">
+        <UTooltip content="Go back" :_tooltip-content="{
+          side: 'right',
+        }">
+          <template #default>
+            <button class="opacity-50 flex items-center gap-2 hover:scale-110 focus:scale-90 transition-all" @click="$router.back()">
+              <div class="i-ph:arrow-bend-down-left-bold"></div>
+            </button>
+          </template>
+          <template #content>
+            <button @click="$router.back()" bg="light dark:dark" text="dark dark:white" text-3 px-3 py-1 rounded-md m-0
+              border-1 border-dashed class="b-#3D3BF3">
+              Go back
+            </button>
+          </template>
+        </UTooltip>
+        <h1 class="font-title text-2xl font-600 text-gray-800 dark:text-gray-200">
+          Projects
         </h1>
-        <hr mb-4 />
-        <div v-for="project in projectsList.value" :key="project.name" class="mb-6 project-container">
-          <div flex flex-row gap-2 items-center>
-            <NuxtLink :to="project.post ? `/reflexions/${project.post}` : ''">
-              <h2 font-body text-3.5 font-500 opacity-100>{{ project.name }}</h2>
-            </NuxtLink>
-            <div class="project-link" flex flex-row gap-2 items-center>
-              <NuxtLink v-if="project.links?.find((l: ProjectLinkType) => l.name === 'project')"
-                :href="project.links?.find((l: ProjectLinkType) => l.name === 'project')?.href" target="_blank">
-                <button
-                  class="i-ph:arrow-down-right-duotone rotate--90 hover:scale-110 active:scale-99 transition"></button>
-              </NuxtLink>
+      </div>
+      <h5 class="ml-4 text-gray-800 dark:text-gray-200 text-12px opacity-50">
+        A collection of my creative work
+      </h5>
 
-              <NuxtLink v-if="project.links?.find((l: ProjectLinkType) => l.name === 'post')"
-                :to="project.links?.find((l: ProjectLinkType) => l.name === 'post')?.href">
-                <button class="i-icon-park-outline:enter-key hover:scale-110 active:scale-99 transition"></button>
-              </NuxtLink>
+      <div class="colored-dots flex flex-row gap-2 ml-4 text-size-6 line-height-8">
+        <ULink v-for="(project, index) in projects" :key="project.id" 
+          :to="`#${project.id}`" 
+          :class="_colors[index]" class="hover:text-size-12 transition-all">•</ULink>
+      </div>
+    </header>
 
-              <div v-if="loggedIn">
-                <UDialog v-model:open="project.isDeleteDialogOpen" :title="`Delete ${project.name}`"
-                  description="Are you sure you want to delete this project?">
-                  <template #trigger>
-                    <button
-                      class="i-icon-park-outline:delete-themes hover:scale-110 active:scale-99 transition -mt-1"></button>
-                  </template>
-
-                  <template #default>
-                    <div class="flex flex-col gap-2">
-                      <UButton btn="solid-gray" @click="project.isDeleteDialogOpen = false">
-                        Cancel
-                      </UButton>
-                      <UButton btn="solid-red" @click="deleteProject(project)">
-                        Delete
-                      </UButton>
-                    </div>
-                  </template>
-                </UDialog>
+    <div class="flex flex-col">
+      <div v-for="(project, index) in projects" :key="project.id" 
+        :id="project.id"
+        class="project-container group 
+          w-full
+          flex flex-col p-3
+          border b-dashed b-transparent shadow-gray-200 rounded-xl 
+          hover:pl-6 
+        hover:border-gray-200 hover:shadow-md dark:hover:shadow-gray-800
+          transition-all duration-300">
+          <div class="flex flex-row justify-between items-center">
+            <div class="flex flex-row gap-2 items-center">
+              <div class="rounded-2 p-2">
+                <NuxtLink :to="`/projects/${project.slug}`">
+                  <h2 class="text-size-20 text-gray-600" :class="`${_colors[index]}`">{{ project.id }}</h2>
+                </NuxtLink>
               </div>
 
-              <UDropdownMenu 
-                v-if="projectMenuItems(project).length > 0" 
-                :items="projectMenuItems(project)" 
-                size="xs" menu-label="" 
-                :_dropdown-menu-content="{
-                class: 'w-52',
-                align: 'end',
-                side: 'bottom',
-              }" :_dropdown-menu-trigger="{
-                icon: true,
-                square: true,
-                class: 'dropdown-menu-icon p-1 w-auto h-auto hover:bg-transparent hover:scale-110 active:scale-99 transition',
-                label: 'i-lucide-ellipsis-vertical',
-              }" />
+              <div class="title-description">
+                <div class="flex flex-row gap-2 items-center">
+                  <NuxtLink :to="`/projects/${project.slug}`">
+                    <h2 class="font-text text-size-8 font-400 text-gray-600  dark:text-gray-300">
+                      {{ project.name }}
+                    </h2>
+                  </NuxtLink>
+                  <div class="project-link flex flex-row gap-2 items-center">
+                    <NuxtLink v-if="project.links?.find((l: ProjectLinkType) => l.name === 'project')"
+                      :href="project.links?.find((l: ProjectLinkType) => l.name === 'project')?.href" target="_blank">
+                      <button
+                        class="i-ph:arrow-down-right-duotone rotate--90 hover:scale-110 active:scale-99 transition"></button>
+                    </NuxtLink>
+
+                    <NuxtLink v-if="project.links?.find((l: ProjectLinkType) => l.name === 'post')"
+                      :to="project.links?.find((l: ProjectLinkType) => l.name === 'post')?.href">
+                      <button class="i-icon-park-outline:enter-key hover:scale-110 active:scale-99 transition"></button>
+                    </NuxtLink>
+
+                    <div v-if="loggedIn">
+                      <UDialog v-model:open="project.isDeleteDialogOpen" :title="`Delete ${project.name}`"
+                        description="Are you sure you want to delete this project?">
+                        <template #trigger>
+                          <button
+                            class="i-icon-park-outline:delete-themes hover:scale-110 active:scale-99 transition -mt-1"></button>
+                        </template>
+
+                        <template #default>
+                          <div class="flex flex-col gap-2">
+                            <UButton btn="solid-gray" @click="project.isDeleteDialogOpen = false">
+                              Cancel
+                            </UButton>
+                            <UButton btn="solid-red" @click="deleteProject(project)">
+                              Delete
+                            </UButton>
+                          </div>
+                        </template>
+                      </UDialog>
+                    </div>
+
+                    <UDropdownMenu 
+                      v-if="projectMenuItems(project).length > 0" 
+                      :items="projectMenuItems(project)" 
+                      size="xs" menu-label="" 
+                      :_dropdown-menu-content="{
+                      class: 'w-52',
+                      align: 'end',
+                      side: 'bottom',
+                    }" :_dropdown-menu-trigger="{
+                      icon: true,
+                      square: true,
+                      class: 'dropdown-menu-icon p-1 w-auto h-auto hover:bg-transparent hover:scale-110 active:scale-99 transition',
+                      label: 'i-lucide-ellipsis-vertical',
+                    }" />
+                  </div>
+                  </div>
+                  <span class="font-text text-3.5 font-400 text-gray-600 dark:text-gray-400 group-hover:text-gray-600 dark:group-hover:text-white transition-all">
+                    {{ project.description }}
+                  </span>
+                </div>
             </div>
+
+            <NuxtLink :to="`projects/${project.slug}`">
+              <i class="i-ph-caret-right text-size-12 opacity-0 group-hover:opacity-100 group-hover:mr-4 transition-all" />
+            </NuxtLink>
           </div>
-          <span font-text text-3.5 font-400 class="project-description">{{ project.description }}</span>
         </div>
-      </div>
     </div>
 
     <div v-if="loggedIn" fixed bottom-12>
@@ -151,8 +206,32 @@ const _description = ref('')
 const _category = ref('')
 const _isDialogOpen = ref(false)
 
+const _colors = [
+  'color-#8F87F1',
+  'color-#C68EFD',
+  'color-#E9A5F1',
+  'color-#FED2E2',
+  'color-#FFC6C6',
+  'color-#FDB7EA',
+  'color-#B7B1F2',
+  'color-#AFDDFF',
+  'color-#60B5FF',
+  'color-#FFCDB2',
+  'color-#FFB4A2',
+  'color-#E5989B',
+  'color-#B5828C',
+  'color-#FFC785',
+  'color-#F6F7C4',
+  'color-#A1EEBD',
+  'color-#7BD3EA',
+  'color-#9FB3DF',
+  'color-#9EC6F3',
+  'color-#BDDDE4',
+  'color-#FFF1D5',
+]
+
 const projectMenuItems = (project: ProjectType) => {
-  if (!loggedIn) return []
+  if (!loggedIn.value) return []
 
   const items = [
     {
@@ -170,20 +249,13 @@ const projectMenuItems = (project: ProjectType) => {
     }
   ]
 
-  if (!project.post) {
-    items.splice(1, 0, {
-      label: "Add Post",
-      onClick: () => {
-        navigateTo(`/projects/${project.id}/add-post`)
-      }
-    })
-  }
-
   return items
 }
 
 const { data } = await useFetch('/api/projects')
-const categories = toRefs(data?.value ?? {})
+const projects = (data?.value ?? []) as ProjectType[]
+// const categories = toRefs(data?.value ?? {})
+const categories = {}
 
 const availableCategories = computed(() => {
   return Object.keys(categories ?? {})
@@ -233,16 +305,7 @@ const toggleAddCategory = () => {
   transition: opacity 0.2s ease-in-out;
 }
 
-.project-description {
-  opacity: .3;
-  transition: opacity 0.2s ease-in-out;
-}
-
 .project-container:hover .project-link {
   opacity: 1;
-}
-
-.project-container:hover .project-description {
-  opacity: .7;
 }
 </style>

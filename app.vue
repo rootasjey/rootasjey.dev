@@ -1,8 +1,7 @@
 <template>
   <div class="min-h-screen w-full flex items-center justify-center">
-    <div class="">
-      <NuxtPage />
-    </div>
+    <NuxtPage />
+    <UToaster />
   </div>
 </template>
 

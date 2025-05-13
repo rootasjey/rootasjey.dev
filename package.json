@@ -18,7 +18,6 @@
     "@tiptap/suggestion": "^2.11.7",
     "@tiptap/vue-3": "^2.11.7",
     "@una-ui/nuxt": "^0.51.6",
-    "surrealdb": "^1.1.0",
     "tippy.js": "^6.3.7"
   },
   "devDependencies": {

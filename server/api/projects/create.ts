@@ -27,11 +27,10 @@ export default defineEventHandler(async (event) => {
     description: body.description || "",
     image_alt: body.image?.alt || "",
     image_src: body.image?.src || "",
-    links: JSON.stringify(body.links || []),
+    links: typeof body.links === 'object' ? JSON.stringify(body.links || []) : '[]',
     name: body.name,
-    slug: slug,
-    summary: body.summary || "",
-    technologies: JSON.stringify(body.technologies || []),
+    slug,
+    technologies: typeof body.technologies === 'object' ? JSON.stringify(body.technologies || []) : '[]',
     updated_at: new Date().toISOString(),
     visibility: body.visibility || "public",
   }
@@ -41,15 +40,13 @@ export default defineEventHandler(async (event) => {
     INSERT INTO projects (
       author_id, blob_path, category, company, created_at,
       description, image_alt, image_src, links, name,
-      slug, summary, technologies, updated_at, visibility
+      slug, technologies, updated_at, visibility
     ) VALUES (
-      @author_id, @blob_path, @category, @company, @created_at,
-      @description, @image_alt, @image_src, @links, @name,
-      @slug, @summary, @technologies, @updated_at, @visibility
+      ?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14
     )
   `)
 
-  const result = await insertStmt.bind(project).run()
+  const result = await insertStmt.bind(...Object.values(project)).run()
 
   return {
     id: result.meta.last_row_id,

@@ -35,6 +35,12 @@ export default defineEventHandler(async (event) => {
     })
   }
 
+  // Delete the project from blob storage
+  if (project.blob_path && typeof project.blob_path === 'string') {
+    const blobStorage = hubBlob()
+    await blobStorage.delete(project.blob_path)
+  }
+
   // Delete the project
   const deleteStmt = db.prepare(`
     DELETE FROM projects WHERE id = ?

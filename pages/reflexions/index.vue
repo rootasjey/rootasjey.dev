@@ -1,9 +1,9 @@
 // pages/reflexions/index.vue
 <template>
-  <div class="container mx-auto px-4 py-8 relative mt-[15vh]">
+  <div class="container mx-auto px-4 py-8 relative mt-[4vh]">
     <PageHeader 
       title="Reflexions" 
-      subtitle="A collection of my creative work"
+      subtitle="Thoughts and reflections on various topics"
     >
       <div>
         <UProgress v-if="_isLoading" :indeterminate="true" size="sm" color="primary" />
@@ -46,12 +46,12 @@
     </div>
 
     <div
-      :class="posts.length > 2 ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 px-14' : 'grid grid-cols-1 gap-4 px-14'">
+      :class="posts.length > 2 ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 px-14' : 'flex gap-6 px-14 justify-center'">
       <div v-for="post in posts" :key="post.id.toString()" class="max-w-xl">
-        <ULink :to="`/reflexions/${post.id}`">
-          <h1 class="text-2xl font-600">{{ post.name }}</h1>
+        <ULink :to="`/reflexions/${post.slug}`">
+          <h1 class="text-size-4 font-600">{{ post.name }}</h1>
         </ULink>
-        <h2 class="text-gray-700 dark:text-gray-500">{{ post.description }}</h2>
+        <h2 class="text-size-3 text-gray-400 dark:text-gray-500">{{ post.description }}</h2>
         <div class="flex justify-between items-center">
           <span class="text-size-3 text-gray-500 dark:text-gray-600">{{ new Date(post.created_at).toLocaleString("fr", {
             month: "long",
@@ -163,8 +163,8 @@ const drafts = ref<PostType[]>([])
 
 const { data } = await useFetch("/api/posts")
 
-const posts = data.value ?? []
-// const posts = data.value as PostType[] ?? []
+// const posts = data.value ?? []
+const posts = data.value as unknown as PostType[] ?? []
 
 const createPost = async ({ name, description, category }: CreatePostType) => {
   _isCreateDialogOpen.value = false
@@ -197,7 +197,7 @@ const fetchDrafts = async () => {
   try {
     const draftData = await $fetch("/api/posts/drafts")
   
-    drafts.value = draftData as PostType[] ?? []
+    drafts.value = draftData as unknown as PostType[] ?? []
     _isLoading.value = false
   } catch (error) {
     console.error(error)
@@ -219,7 +219,7 @@ watch(_showDrafts, async (show) => {
   
   const data = await $fetch("/api/posts/drafts")
 
-  drafts.value = data as PostType[] ?? []
+  drafts.value = data as unknown as PostType[] ?? []
 })
 
 </script>

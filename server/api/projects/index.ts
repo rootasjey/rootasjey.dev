@@ -1,15 +1,16 @@
 // GET /api/projects
 
+import { ProjectType } from "~/types/project"
+
 export default defineEventHandler(async (event) => {
   const db = hubDatabase()
 
   const stmt = db.prepare(`
     SELECT * FROM projects WHERE visibility = 'public'
   `)
-  
+
   const query = await stmt.all()
-  
-  const projectByCategory: { [key: string]: any[] } = {}
+
   for (const project of query.results) {
     // Parse JSON fields if needed
     if (typeof project.links === 'string') {
@@ -18,13 +19,7 @@ export default defineEventHandler(async (event) => {
     if (typeof project.technologies === 'string') {
       project.technologies = JSON.parse(project.technologies)
     }
-
-    const category = project.category as string || 'Uncategorized'
-    if (!projectByCategory[category]) {
-      projectByCategory[category] = []
-    }
-    projectByCategory[category].push(project)
   }
-  
-  return projectByCategory
+
+  return query.results as ProjectType[]
 })

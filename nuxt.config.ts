@@ -25,6 +25,20 @@ export default defineNuxtConfig({
     kv: true,
   },
 
+  image: {
+    providers: {
+      hubblob: {
+        name: 'hubblob',
+        provider: '~/providers/hubblob.ts',
+        options: {
+          baseURL: process.env.NODE_ENV === 'development'
+            ? process.env.HUB_BLOB_URL || 'http://localhost:3000'
+            : 'https://www.rootasjey.dev',
+        },
+      },
+    },
+  },
+
   modules: [
     "@nuxthub/core",
     "@nuxt/image",

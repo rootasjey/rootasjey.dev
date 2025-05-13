@@ -5,6 +5,12 @@ export default eventHandler(async (event) => {
     pathname: z.string().min(1)
   }).parse)
 
-  const imagePathname = `images/${pathname}`
+  let imagePathname = pathname
+  const query = getQuery(event) // Get query parameters for transformations
+
+  if (query.relatedTo === "projects") {
+    imagePathname = `projects/${query.slug}/${imagePathname}`
+  }
+
   return hubBlob().serve(event, imagePathname)
 })
