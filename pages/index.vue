@@ -1,5 +1,5 @@
-// pages/index.vue
 <template>
+  <!-- pages/index.vue -->
   <div class="w-[600px] rounded-xl p-8 flex flex-col transition-all duration-500 overflow-y-auto">
     <!-- Header -->
     <header class="mb-8 text-center">
@@ -48,9 +48,11 @@
 </template>
 
 <script setup>
+const fallbackData = { projects: 0, posts: 0, experiments: 0 }
+
 // Fetch '/api/how-many-items' to get the number of items in the database
 const { data } = await useFetch("/api/home/how-many-items")
-const navigation = useNavigation(data.value)
+const navigation = useNavigation(data.value ?? fallbackData)
 
 const greeting = computed(() => {
   const hour = new Date().getHours()

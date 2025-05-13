@@ -11,7 +11,7 @@
     />
 
     <div class="flex flex-col items-center justify-center">
-<!-- Video Player Section -->
+    <!-- Video Player Section -->
       <div class="video-container relative mb-8 w-full max-w-3xl rounded-4 overflow-hidden">
         <!-- Thumbnail with play button overlay -->
         <div v-if="!hasStartedPlaying" class="thumbnail-container relative cursor-pointer" @click="startPlaying">
@@ -48,6 +48,7 @@
               icon
               :label="isPlaying ? 'i-ph-pause' : 'i-ph-play'"
               size="sm"
+              class="dark:bg-pink-4 dark:text-pink-100 dark:hover:bg-pink-5 dark:hover:text-pink-100"
             />
             
             <UButton 
@@ -56,12 +57,13 @@
               icon
               label="i-ph-arrow-clockwise"
               size="sm"
+              class="dark:bg-[#687EFF] dark:text-white dark:hover:bg-[#1B56FD]"
             />
           </div>
         </div>
 
       <!-- Explanation Section -->
-      <div class="explanations max-w-2xl text-gray-700">
+      <div class="explanations max-w-2xl text-gray-700 dark:text-gray-300">
         <div class="border-b b-dashed w-full h-1 b-pink-600 mt-8 mb-12"></div>
         
         <h3 class="font-text text-16 font-200 mb-4">All my love for <i>Dispatches from Elsewhere</i> </h3>
@@ -75,10 +77,10 @@
         </p>
         
         <ol class="list-decimal pl-8 mb-8">
-          <li class="mb-2 color-[#8F87F1]">Collecting and curating visual elements that represent the show's aesthetic</li>
-          <li class="mb-2 color-[#8F87F1]">Composing a soundtrack that echoes the show's emotional landscape</li>
-          <li class="mb-2 color-[#8F87F1]">Editing the footage to create a narrative that invites curiosity</li>
-          <li class="mb-2 color-[#8F87F1]">Adding subtle visual effects to enhance the sense of wonder</li>
+          <li class="mb-2 color-[#8F87F1] dark:color-[#E9A5F1]">Collecting and curating visual elements that represent the show's aesthetic</li>
+          <li class="mb-2 color-[#8F87F1] dark:color-[#E9A5F1]">Composing a soundtrack that echoes the show's emotional landscape</li>
+          <li class="mb-2 color-[#8F87F1] dark:color-[#E9A5F1]">Editing the footage to create a narrative that invites curiosity</li>
+          <li class="mb-2 color-[#8F87F1] dark:color-[#E9A5F1]">Adding subtle visual effects to enhance the sense of wonder</li>
         </ol>
         
         <h4 class="text-size-8 font-200 mt-8 mb-4">Personal Reflections</h4>

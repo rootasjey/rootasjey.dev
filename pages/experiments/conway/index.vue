@@ -30,8 +30,11 @@
       <div class="controls flex gap-4 mb-8">
         <UButton 
          @click="toggleSimulation"
-         :btn="isRunning ? 'soft-red' : '~'"
-         :class="{ 'btn-glowing': !isRunning }"
+         :btn="isRunning ? '~' : '~'"
+         :class="{ 
+            'light:btn-glowing dark:bg-[#FF3EA5]': !isRunning, 
+            'bg-pink-6 dark:bg-[#15F5BA] dark:color-black': isRunning 
+          }"
          :label="isRunning ? 'Stop' : 'Start'"
          :trailing="isRunning ? 'i-ph-pause' : 'i-ph-play'"
         />
@@ -53,8 +56,8 @@
         </UButton>
       </div>
 
-      <div class="explanations max-w-2xl text-gray-700">
-        <div class="border-b b-dashed w-full h-1 b-blue mt-8 mb-12"></div>
+      <div class="explanations max-w-2xl text-gray-700 dark:text-gray-300">
+        <div class="border-b b-dashed w-full h-1 b-blue dark:b-[#FFAF61] mt-8 mb-12"></div>
         <h3 class="font-text text-16 font-200 mb-2">A little bit of explanation</h3>
         <p class="font-text font-400 text-gray-500 dark:text-gray-400">
           The Game of Life is a cellular automaton devised by mathematician John Conway in 1970.
@@ -62,10 +65,10 @@
         </p>
         <h4 class="text-size-8 font-200 mt-8 mb-1">RULES:</h4>
         <ol class="list-decimal pl-8">
-          <li class="color-[#FF3EA5]">Any live cell with fewer than two live neighbors dies (underpopulation)</li>
-          <li class="color-[#FF3EA5]" >Any live cell with more than three live neighbors dies (overpopulation)</li>
-          <li class="color-[#8F87F1]">Any live cell with two or three live neighbors lives on</li>
-          <li class="color-[#8F87F1]">Any dead cell with exactly three live neighbors becomes a live cell (reproduction)</li>
+          <li class="color-[#FF3EA5] dark:color-[#FFDB5C]">Any live cell with fewer than two live neighbors dies (underpopulation)</li>
+          <li class="color-[#FF3EA5] dark:color-[#FFDB5C]">Any live cell with more than three live neighbors dies (overpopulation)</li>
+          <li class="color-[#8F87F1] dark:color-[#00FF9C]">Any live cell with two or three live neighbors lives on</li>
+          <li class="color-[#8F87F1] dark:color-[#00FF9C]">Any dead cell with exactly three live neighbors becomes a live cell (reproduction)</li>
         </ol>
       </div>
     </div>
@@ -211,6 +214,15 @@ onBeforeUnmount(() => {
 
   &:hover {
     background-color: #e0e0e0;
+  }
+}
+
+.dark .cell {
+  background-color: #000;
+  border: 1px solid #444;
+
+  &:hover {
+    background-color: #333;
   }
 }
 
