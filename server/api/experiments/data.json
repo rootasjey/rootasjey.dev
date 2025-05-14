@@ -1,0 +1,14 @@
+[
+  {
+    "id": 1,
+    "name": "Conway's Game of Life",
+    "description": "A cellular automaton devised by the British mathematician John Horton Conway in 1970.",
+    "slug": "conway"
+  },
+  {
+    "id": 2,
+    "name": "Dispatches from Elsewhere",
+    "description": "A handmade video tribute to the TV show Dispatches from Elsewhere.",
+    "slug": "dispatches-from-elsewhere"
+  }
+]

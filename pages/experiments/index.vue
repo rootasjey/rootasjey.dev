@@ -31,7 +31,7 @@
           py-2 px-6 rounded-lg border b-dashed border-gray-200 dark:border-blue-300
         hover:shadow-sm hover:b-solid transition-all duration-300"
       >
-        <h3 class="text-xl font-bold">{{ experiment.title }}</h3>
+        <h3 class="text-xl font-bold">{{ experiment.name }}</h3>
         <p class="text-gray-600 dark:text-gray-200 text-size-2">{{ experiment.description }}</p>
       </ULink>
     </div>
