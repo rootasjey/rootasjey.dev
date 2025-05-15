@@ -95,3 +95,20 @@ FOR EACH ROW
 BEGIN
   UPDATE projects SET updated_at = CURRENT_TIMESTAMP WHERE id = OLD.id;
 END;
+
+-- Create the messages table
+CREATE TABLE IF NOT EXISTS messages (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  email TEXT NOT NULL,
+  message TEXT NOT NULL,
+  subject TEXT NOT NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+-- Trigger to update the updated_at timestamp whenever a message is modified
+CREATE TRIGGER IF NOT EXISTS update_messages_timestamp
+AFTER UPDATE ON messages
+FOR EACH ROW
+BEGIN
+  UPDATE messages SET updated_at = CURRENT_TIMESTAMP WHERE id = OLD.id;
+END;

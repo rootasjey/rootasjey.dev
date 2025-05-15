@@ -90,7 +90,7 @@
           :alt="project.image.alt || project.name" 
           class="w-full rounded-4 shadow-lg h-auto max-h-[500px] object-cover"
         />
-        <div class="flex justify-end gap-4 mt-2 mr-2">
+        <div v-if="loggedIn" class="flex justify-end gap-4 mt-2 mr-2">
           <button @click="removeImage" class="font-600 text-size-3 text-gray-500 hover:text-[#F75A5A]">Remove Image</button>
           <button @click="openFilePicker" class="font-600 text-size-3 text-gray-500 hover:text-[#3A59D1]">Change Image</button>
         </div>

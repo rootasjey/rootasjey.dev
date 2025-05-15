@@ -24,6 +24,13 @@
             minute: 'numeric',
           }) }}
         </h2>
+
+
+      <ULink to="/contact" class="text-size-3 font-500 hover:scale-102 active:scale-99 transition">
+        <span>• </span>
+        <span>contact me</span>
+        <span class="i-ph-envelope-simple-open-duotone ml-1"></span>
+      </ULink>
       </div>
 
         <div class="w-40 flex text-center justify-center my-2 mx-auto">
