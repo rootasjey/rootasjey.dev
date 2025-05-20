@@ -1,85 +1,110 @@
-// pages/reflexions/index.vue
 <template>
-  <div class="container mx-auto px-4 py-8 relative mt-[4vh]">
-    <ULink class="flex flex-col items-center justify-center" to="/">
-      <span class="i-ph-house-simple-duotone mx-auto text-center text-xl text-gray-600 dark:text-gray-400" />
-    </ULink>
-
-    <PageHeader 
-      title="Reflexions" 
-      subtitle="Thoughts and reflections on various topics"
-    >
+  <div class="w-[600px] rounded-xl p-8 pb-[38vh] flex flex-col transition-all duration-500 overflow-y-auto">
+    <!-- Header -->
+    <header class="mt-12 mb-8">
+      <div class="flex gap-2">
+        <ULink to="/" class="hover:scale-102 active:scale-99 transition">
+          <span class="i-ph-house-simple-duotone"></span>
+        </ULink>
+        <span>•</span>
+        <h1 class="font-body text-xl font-600 text-gray-800 dark:text-gray-200">
+          Reflexions
+        </h1>
+      </div>
+      <div class="w-40 flex text-center justify-center my-2">
+        <div class="w-full h-2">
+          <svg viewBox="0 0 300 10" preserveAspectRatio="none">
+            <path d="M 0 5 Q 15 0, 30 5 T 60 5 T 90 5 T 120 5 T 150 5 T 180 5 T 210 5 T 240 5 T 270 5 T 300 5"
+              stroke="currentColor" fill="none" class="text-gray-300 dark:text-gray-700" stroke-width="1" />
+          </svg>
+        </div>
+      </div>
+      <p class="text-gray-700 dark:text-gray-300 mb-4">
+        Thoughts and reflections on various topics
+      </p>
       <div>
         <UProgress v-if="_isLoading" :indeterminate="true" size="sm" color="primary" />
         <UButton v-if="loggedIn && !_isLoading" btn="text" class="text-3"
           :label="_showDrafts ? 'Show only published posts' : 'Show drafts'" @click="_showDrafts = !_showDrafts" />
       </div>
-    </PageHeader>
+    </header>
 
-    <div v-if="_showDrafts && drafts.length > 0" class="flex flex-wrap gap-8 px-14 mb-16">
-      <div v-for="draft in drafts" :key="draft.id.toString()" class="max-w-270px overflow-hidden">
-        <ULink :to="`/reflexions/${draft.id}`" class="flex items-start gap-2">
-          <span icon-base class="i-icon-park-outline:notebook-and-pen" />
-          <UTooltip content="Go back" :_tooltip-content="{
-            side: 'top',
-          }">
-            <template #default>
-              <h1 class="text-size-4 font-500 line-height-4.5 whitespace-nowrap overflow-hidden text-ellipsis dark:text-gray-300">
-                {{ draft.name }}
-              </h1>
-            </template>
-            <template #content>
-              <button @click="$router.push(`/reflexions/${draft.id}`)" bg="light dark:dark" text="dark dark:white" text-3 px-3 py-1 rounded-md
-                border-1 border-dashed class="b-#3D3BF3">
-                {{  draft.name }}
-              </button>
-            </template>
-          </UTooltip>
-        </ULink>
-        <p class="text-size-3 text-gray-700 dark:text-gray-400">{{ draft.description }}</p>
-        <div class="flex justify-between items-center">
-          <span class="text-size-3 text-gray-500 dark:text-gray-500">
-            {{ new Date(draft.updated_at).toLocaleString("fr", {
-            month: "long",
-            day: "numeric",
-            year: "numeric",
-            }) }}
-          </span>
+    <!-- Drafts Section -->
+    <section v-if="_showDrafts && drafts.length > 0" class="mb-12">
+      <h2 class="text-lg font-500 text-gray-800 dark:text-gray-200 mb-4">
+        <span class="i-icon-park-outline:notebook-and-pen mr-2"></span>
+        Drafts
+      </h2>
+      <div class="flex flex-col gap-6">
+        <div v-for="draft in drafts" :key="draft.id.toString()" class="border-b border-gray-200 dark:border-gray-800 pb-4">
+          <ULink :to="`/reflexions/${draft.id}`" class="flex items-start gap-2">
+            <h3 class="text-size-4 font-500 line-height-4.5 dark:text-gray-300">
+              {{ draft.name }}
+            </h3>
+          </ULink>
+          <p class="text-size-3 text-gray-700 dark:text-gray-400 mb-2">{{ draft.description }}</p>
+          <div class="flex justify-between items-center">
+            <span class="text-size-3 text-gray-500 dark:text-gray-500">
+              {{ new Date(draft.updated_at).toLocaleString("fr", {
+                month: "long",
+                day: "numeric",
+                year: "numeric",
+              }) }}
+            </span>
+          </div>
         </div>
       </div>
-    </div>
+    </section>
 
-    <div
-      :class="posts.length > 2 ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 px-14' : 'flex gap-6 px-14 justify-center'">
-      <div v-for="post in posts" :key="post.id.toString()" class="max-w-xl">
-        <ULink :to="`/reflexions/${post.slug}`">
-          <h1 class="text-size-4 font-600">{{ post.name }}</h1>
-        </ULink>
-        <h2 class="text-size-3 text-gray-400 dark:text-gray-500">{{ post.description }}</h2>
-        <div class="flex justify-between items-center">
-          <span class="text-size-3 text-gray-500 dark:text-gray-600">{{ new Date(post.created_at).toLocaleString("fr", {
-            month: "long",
-            day: "numeric",
-            year: "numeric",
-            }) }}</span>
+    <!-- Published Posts Section -->
+    <section v-if="posts.length > 0" class="mb-12">
+      <h2 class="text-lg font-500 text-gray-800 dark:text-gray-200 mb-4">
+        <span class="i-ph-article mr-2"></span>
+        Published
+      </h2>
+      <div class="flex flex-col gap-6">
+        <div v-for="post in posts" :key="post.id.toString()" class="border-b border-gray-200 dark:border-gray-800 pb-4">
+          <ULink :to="`/reflexions/${post.slug}`">
+            <h3 class="text-size-4 font-600 text-gray-800 dark:text-gray-200">{{ post.name }}</h3>
+          </ULink>
+          <p class="text-size-3 text-gray-700 dark:text-gray-400 mb-2">{{ post.description }}</p>
+          <div class="flex justify-between items-center">
+            <span class="text-size-3 text-gray-500 dark:text-gray-600">
+              {{ new Date(post.created_at).toLocaleString("fr", {
+                month: "long",
+                day: "numeric",
+                year: "numeric",
+              }) }}
+            </span>
+          </div>
         </div>
       </div>
-    </div>
+    </section>
 
-    <div v-if="posts?.length === 0 && drafts?.length === 0" class="flex flex-col items-center justify-center gap-0 max-w-xl mx-auto">
-      <div class="text-sm font-medium text-gray-500 dark:text-gray-400">
-        Because there's no published posts yet, here is a quote: <br />
+    <!-- Empty State -->
+    <section v-if="posts?.length === 0 && drafts?.length === 0" class="mb-12">
+      <h2 class="text-lg font-500 text-gray-800 dark:text-gray-200 mb-4">
+        <span class="i-ph-quotes mr-2"></span>
+        A Thought to Ponder
+      </h2>
+      <div class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
+        Because there's no published posts yet, here is a quote:
       </div>
-      <div class="text-2xl font-200 text-gray-400 dark:text-gray-500 text-center">
+      <div class="text-xl font-300 text-gray-600 dark:text-gray-400 italic">
         « Without leaps of imagination, or dreaming, we lose the excitement of possibilities. Dreaming, after all, is a
-        form of planning. » — Gloria Steinem
+        form of planning. »
       </div>
-    </div>
+      <div class="text-right text-gray-500 dark:text-gray-500 mt-2">
+        — Gloria Steinem
+      </div>
+    </section>
 
+    <!-- Create Post Button -->
     <div v-if="loggedIn" class="fixed left-0 bottom-12 flex justify-center w-100%">
       <UDialog v-model:open="_isCreateDialogOpen" title="Create Post" description="Add a new post with a description">
         <template #trigger>
-          <UButton btn="solid-gray">
+          <UButton btn="solid-gray" class="flex items-center gap-2">
+            <span class="i-ph-plus-circle"></span>
             Create Post
           </UButton>
         </template>
@@ -132,6 +157,15 @@
         </template>
       </UDialog>
     </div>
+
+    <Footer>
+      <template #links>
+        <ULink to="/projects" class="footer-button flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors">
+          <span class="i-ph-app-window text-size-3 -mt-1"></span>
+          <span class="font-500 text-size-3 relative -top-0.5">See projects</span>
+        </ULink>
+      </template>
+    </Footer>
   </div>
 </template>
 
@@ -225,5 +259,4 @@ watch(_showDrafts, async (show) => {
 
   drafts.value = data as unknown as PostType[] ?? []
 })
-
 </script>

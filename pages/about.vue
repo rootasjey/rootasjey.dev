@@ -155,22 +155,24 @@
         <span class="i-ph-handshake mr-2"></span>
         Let's Connect
       </h2>
+
       <p class="text-gray-700 dark:text-gray-300 mb-6">
         If any of this resonates with you, or if you're curious to learn more about my work and perspectives, 
-        I'd love to connect. You can reach out through my <ULink to="/contact" class="text-accent hover:underline">contact page</ULink> 
+        I'd love to connect. You can reach out through my 
+        <ULink to="/contact" class="arrow"><span>contact page</span></ULink> 
         or find me on the social platforms linked below.
       </p>
-      
+
       <div class="flex flex-wrap gap-4">
         <ULink to="https://github.com/rootasjey" target="_blank" rel="noopener noreferrer" 
            class="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
           <div class="i-ph-github-logo"></div>
           <span class="font-600 text-size-3">GitHub</span>
         </ULink>
-        <ULink to="https://twitter.com/rootasjey" target="_blank" rel="noopener noreferrer"
+        <ULink to="https://www.instagram.com/rootasjey" target="_blank" rel="noopener noreferrer"
            class="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
-          <div class="i-ph-twitter-logo"></div>
-          <span class="font-600 text-size-3">Twitter</span>
+          <div class="i-ph-instagram-logo"></div>
+          <span class="font-600 text-size-3">Instagram</span>
         </ULink>
         <ULink to="https://www.linkedin.com/in/jeremiecorpinot/" target="_blank" rel="noopener noreferrer"
            class="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
@@ -179,6 +181,8 @@
         </ULink>
       </div>
     </section>
+
+    <Footer />
   </div>
 </template>
 

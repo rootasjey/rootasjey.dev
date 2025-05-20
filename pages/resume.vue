@@ -338,8 +338,8 @@
         Let's Connect
       </h2>
       <p class="text-gray-700 dark:text-gray-300 mb-6">
-        Interested in working together or learning more about my experience? Feel free to reach out through my 
-        <ULink to="/contact" class="arrow"><span>contact page</span></ULink> 
+        Interested in working together or learning more about my experience? Feel free to reach out through 
+        <ULink to="/contact" class="arrow"><span>my contact page</span></ULink> 
         or connect with me on the platforms below.
       </p>
       
@@ -349,15 +349,15 @@
           <div class="i-ph-github-logo"></div>
           <span class="font-600 text-size-3">GitHub</span>
         </ULink>
-        <ULink to="https://www.linkedin.com/in/jeremiecorpinot/" target="_blank" rel="noopener noreferrer"
-           class="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
-          <div class="i-ph-linkedin-logo"></div>
-          <span class="font-600 text-size-3">LinkedIn</span>
-        </ULink>
         <ULink to="https://www.instagram.com/rootasjey" target="_blank" rel="noopener noreferrer"
            class="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
           <div class="i-ph-instagram-logo"></div>
           <span class="font-600 text-size-3">Instagram</span>
+        </ULink>
+        <ULink to="https://www.linkedin.com/in/jeremiecorpinot/" target="_blank" rel="noopener noreferrer"
+           class="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+          <div class="i-ph-linkedin-logo"></div>
+          <span class="font-600 text-size-3">LinkedIn</span>
         </ULink>
       </div>
     </section>
@@ -383,7 +383,7 @@
       <p class="text-gray-500 dark:text-gray-400">
         © <span class="font-600">Jérémie Corpinot</span>
         <span class="mx-1">&middot;</span>
-        <span class="font-600">2023</span>
+        <span class="font-600">{{ new Date().getFullYear()  }}</span>
       </p>
      </footer>
   </div>

@@ -19,6 +19,15 @@ export default defineEventHandler(async (event) => {
     if (typeof project.technologies === 'string') {
       project.technologies = JSON.parse(project.technologies)
     }
+
+    project.image = {
+      alt: project.image_alt || "",
+      src: project.image_src || ""
+    }
+
+    // Remove redundant fields
+    delete project.image_alt
+    delete project.image_src
   }
 
   return query.results as ProjectType[]

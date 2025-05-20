@@ -197,7 +197,7 @@
       </h2>
       <p class="text-gray-700 dark:text-gray-300 mb-6">
         Intéressé•e pour travailler ensemble ou en apprendre davantage sur mon parcours ? N'hésitez pas à me contacter via
-        <ULink to="/contact" class="arrow"><span>my page de contact</span></ULink> 
+        <ULink to="/contact" class="arrow"><span>ma page de contact</span></ULink> 
         ou via les liens ci-dessous.
       </p>
       
@@ -241,7 +241,7 @@
       <p class="text-gray-500 dark:text-gray-400">
         © <span class="font-600">Jérémie Corpinot</span>
         <span class="mx-1">&middot;</span>
-        <span class="font-600">2023</span>
+        <span class="font-600">{{ new Date().getFullYear()  }}</span>
       </p>
      </footer>
   </div>
