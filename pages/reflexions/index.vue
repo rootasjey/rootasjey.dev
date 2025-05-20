@@ -1,6 +1,10 @@
 // pages/reflexions/index.vue
 <template>
   <div class="container mx-auto px-4 py-8 relative mt-[4vh]">
+    <ULink class="flex flex-col items-center justify-center" to="/">
+      <span class="i-ph-house-simple-duotone mx-auto text-center text-xl text-gray-600 dark:text-gray-400" />
+    </ULink>
+
     <PageHeader 
       title="Reflexions" 
       subtitle="Thoughts and reflections on various topics"

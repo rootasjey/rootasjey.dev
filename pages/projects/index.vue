@@ -1,12 +1,72 @@
 // pages/projects/index.vue
 <template>
   <div class="max-w-[900px] rounded-xl p-8 
-    flex items-center flex-col transition-all duration-500 overflow-y-auto
-    mt-[12vh]">
-    <!-- <PageHeader 
-      title="Projects" 
-      subtitle="A collection of my creative work"
-    /> -->
+    flex flex-col transition-all duration-500 overflow-y-auto
+    mt-[12vh] pb-[38vh]">
+
+    <div class="flex gap-2">
+      <ULink class="flex flex-col ml-3" to="/">
+        <span class="i-ph-house-simple-duotone text-xl text-gray-600 dark:text-gray-400" />
+      </ULink>
+
+      <div v-if="loggedIn">
+        <UDialog v-model:open="_isDialogOpen" title="Create Project" description="Add a new project with a description">
+          <template #trigger>
+            <UButton 
+              label="i-ph-plus-bold" 
+              class="w-auto h-auto p-1" 
+              btn="ghost" size="xs" icon />
+          </template>
+
+          <div class="grid gap-4 py-4">
+            <div class="grid gap-2">
+              <div class="grid grid-cols-3 items-center gap-4">
+                <ULabel for="name">
+                  Name
+                </ULabel>
+                <UInput id="name" v-model="_name" :una="{
+                  inputWrapper: 'col-span-2',
+                }" />
+              </div>
+              <div class="grid grid-cols-3 items-center gap-4">
+                <ULabel for="description">
+                  Description
+                </ULabel>
+                <UInput id="description" v-model="_description" :una="{
+                  inputWrapper: 'col-span-2',
+                }" />
+              </div>
+              <div class="grid grid-cols-3 items-center gap-4">
+                <ULabel for="category">
+                  Category
+                </ULabel>
+                <div flex flex-row gap-2>
+                  <USelect id="category" :una="{
+                  }" v-model="_category" :items="availableCategories" placeholder="Select a category" />
+                  <UTooltip>
+                    <template #default>
+                      <UButton btn="outline" icon label="i-icon-park-outline:add-print" class=""
+                        @click="toggleAddCategory" />
+                    </template>
+                    <template #content>
+                      <button @click="toggleAddCategory" bg="light dark:dark" text="dark dark:white" text-3 px-3 py-1
+                        rounded-md m-0 border-1 border-dashed class="b-#3D3BF3">
+                        Add a new category
+                      </button>
+                    </template>
+                  </UTooltip>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <template #footer>
+            <UButton @click="createProject({ name: _name, description: _description, category: _category })" btn="solid"
+              label="Create project" />
+          </template>
+        </UDialog>
+      </div>
+    </div>
 
     <header class="w-full ml-6 mb-6 text-center flex flex-col items-start">
       <div class="flex items-center gap-2 ml--3">
@@ -125,63 +185,6 @@
             </NuxtLink>
           </div>
         </div>
-    </div>
-
-    <div v-if="loggedIn" fixed bottom-12>
-      <UDialog v-model:open="_isDialogOpen" title="Create Project" description="Add a new project with a description">
-        <template #trigger>
-          <UButton btn="solid-gray">
-            Create Project
-          </UButton>
-        </template>
-
-        <div class="grid gap-4 py-4">
-          <div class="grid gap-2">
-            <div class="grid grid-cols-3 items-center gap-4">
-              <ULabel for="name">
-                Name
-              </ULabel>
-              <UInput id="name" v-model="_name" :una="{
-                inputWrapper: 'col-span-2',
-              }" />
-            </div>
-            <div class="grid grid-cols-3 items-center gap-4">
-              <ULabel for="description">
-                Description
-              </ULabel>
-              <UInput id="description" v-model="_description" :una="{
-                inputWrapper: 'col-span-2',
-              }" />
-            </div>
-            <div class="grid grid-cols-3 items-center gap-4">
-              <ULabel for="category">
-                Category
-              </ULabel>
-              <div flex flex-row gap-2>
-                <USelect id="category" :una="{
-                }" v-model="_category" :items="availableCategories" placeholder="Select a category" />
-                <UTooltip>
-                  <template #default>
-                    <UButton btn="outline" icon label="i-icon-park-outline:add-print" class=""
-                      @click="toggleAddCategory" />
-                  </template>
-                  <template #content>
-                    <button @click="toggleAddCategory" bg="light dark:dark" text="dark dark:white" text-3 px-3 py-1
-                      rounded-md m-0 border-1 border-dashed class="b-#3D3BF3">
-                      Add a new category
-                    </button>
-                  </template>
-                </UTooltip>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <template #footer>
-          <UButton @click="createProject({ name: _name, description: _description, category: _category })" btn="solid"
-            label="Create project" />
-        </template>
-      </UDialog>
     </div>
   </div>
 </template>

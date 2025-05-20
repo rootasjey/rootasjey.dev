@@ -31,9 +31,13 @@
         My work spans from web applications to interactive experiments, always with a focus on user experience
         and clean, maintainable code.
       </p>
-      <p class="text-gray-700 dark:text-gray-300">
+      <p class="text-gray-700 dark:text-gray-300 mb-4">
         Whether you're interested in collaborating on a project, have questions about my work,
         or just want to say hello, I'd love to hear from you.
+      </p>
+      <p class="text-gray-700 dark:text-gray-300">
+        You can learn more <ULink to="/about" class="arrow"><span>about me</span></ULink> and 
+        <ULink to="/resume" class="arrow"><span>my work experiences.</span></ULink>
       </p>
     </section>
 
@@ -48,10 +52,10 @@
           <div class="i-ph-github-logo"></div>
           <span class="font-600 text-size-3">GitHub</span>
         </ULink>
-        <ULink to="https://twitter.com/rootasjey" target="_blank" rel="noopener noreferrer"
+        <ULink to="https://www.instagram.com/rootasjey" target="_blank" rel="noopener noreferrer"
            class="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
-          <div class="i-ph-twitter-logo"></div>
-          <span class="font-600 text-size-3">Twitter</span>
+          <div class="i-ph-instagram-logo"></div>
+          <span class="font-600 text-size-3">Instagram</span>
         </ULink>
         <ULink to="https://www.linkedin.com/in/jeremiecorpinot/" target="_blank" rel="noopener noreferrer"
            class="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
@@ -70,7 +74,7 @@
       <form 
         @submit.prevent="handleSubmit" 
         v-if="!submitted"
-        class="flex flex-col gap-4 p-4 py-6 rounded-lg bg-gray-100 dark:bg-gray-800">
+        class="flex flex-col gap-4 p-4 py-6 rounded-lg border border-primary b-dashed dark:border dark:border-gray-700 dark:b-dashed">
         <div>
           <label for="email" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
           <input 
@@ -105,8 +109,9 @@
         </div>
         
         <UButton 
+          btn="soft"
           type="submit" 
-          class="px-6 py-2 bg-accent text-white rounded-lg hover:bg-accent-dark transition-colors"
+          class="px-6 py-2 dark:bg-teal dark:text-black dark:hover:bg-teal-5 transition-colors"
           :disabled="submitting"
         >
           {{ submitting ? 'Sending...' : 'Send Message' }}

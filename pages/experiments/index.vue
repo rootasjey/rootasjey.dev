@@ -1,7 +1,7 @@
 <template>
   <div class="container mx-auto px-4 py-8">
     <ULink class="flex flex-col items-center justify-center" to="/">
-      <span class="i-ph-flask mx-auto text-center text-xl text-gray-600 dark:text-gray-400" />
+      <span class="i-ph-house-simple-duotone mx-auto text-center text-xl text-gray-600 dark:text-gray-400" />
     </ULink>
 
     <PageHeader 
