@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-[#F1F1F1] dark:bg-[#000] w-full min-h-screen">
+  <div class="frame">
     <article class=" max-w-4xl mx-auto px-4 py-8 my-24 space-y-8">
       <!-- Header -->
        <header class="mb-16 text-center flex flex-col items-center">
@@ -64,18 +64,18 @@
           />
         </div>
 
-        <div class="flex items-center gap-2 ml--3">
+        <div class="flex items-center gap-2">
           <h1 class="font-body text-size-18 font-600 text-gray-800 dark:text-gray-200">
             {{ project.name }}
           </h1>
         </div>
-        <h5 class="text-gray-800 dark:text-gray-200 text-12px opacity-50">
+        <h5 class="-mt-2 text-gray-800 dark:text-gray-200 text-12px opacity-50">
           {{ project.description }}
         </h5>
-        <div class="flex gap-4 items-center">
-          <a href="#" class="text-[#8E7DBE] dark:text-[#AFDDFF] text-3 hover:underline">GitHub</a>
+        <div class="flex gap-4 items-center font-500">
+          <a href="#" class="dark:text-[#AFDDFF] text-3 hover:underline">GitHub</a>
           <span>•</span>
-          <a href="#" class="text-[#F75A5A] text-3 hover:underline">See it live <i class="i-ph-rocket-launch-duotone" /> </a>
+          <a href="#" class="text-3 hover:underline">See it live <i class="i-ph-rocket-launch-duotone" /> </a>
         </div>
       </header>
 
@@ -97,25 +97,15 @@
       </div>
 
       <client-only>
-        <div class="pt-8 max-w-3xl mx-auto text-size-8 font-text text-gray-800 dark:text-gray-200">
+        <div class="w-500px pt-8 mx-auto text-gray-700 dark:text-gray-300">
           <tiptap-editor :can-edit="loggedIn" :model-value="project.content" @update:model-value="onUpdateEditorContent" />
         </div>
       </client-only>
-
-      <!-- Buttons navigation -->
-      <div class="flex gap-2 mt-8">
-        <button 
-          @click="$router.back()"
-          class="hover:border-1 border-dashed b-amber 
-            text-3 opacity-60 hover:opacity-100 font-600 
-            py-1 px-4 rounded flex gap-2 items-center 
-            hover:scale-105 transition-all 
-            active:scale-99 active:border-solid">
-          <div class="i-ph:arrow-bend-down-left-bold"></div>
-          <span>back</span>
-        </button>
-      </div>
     </article>
+
+    <div class="w-500px mx-auto">
+      <Footer />
+    </div>
   </div>
 </template>
 
@@ -204,4 +194,24 @@ const updateProjectContent = async (value: Object) => {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+
+.frame {
+  border-radius: 0.75rem;
+  padding: 2rem;
+  padding-bottom: 38vh;
+  display: flex;
+  flex-direction: column;
+  transition-property: all;
+  transition-duration: 500ms;
+  overflow-y: auto;
+
+  background-color: #f1f1f1;
+  width: 100%;
+  min-height: 100vh;
+}
+
+.dark .frame {
+  background-color: #000;
+}
+</style>

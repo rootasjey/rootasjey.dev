@@ -1,5 +1,5 @@
 <template>
-  <div class="w-[600px] rounded-xl p-8 pb-[38vh] flex flex-col transition-all duration-500 overflow-y-auto">
+  <div class="frame">
     <!-- Header -->
     <header class="mt-12 mb-8">
       <div class="flex gap-2">
@@ -192,3 +192,17 @@ definePageMeta({
   description: 'A deeper look into who I am, what I value, and how I approach life and work.'
 })
 </script>
+
+<style scoped>
+.frame {
+  width: 600px;
+  border-radius: 0.75rem;
+  padding: 2rem;
+  padding-bottom: 38vh;
+  display: flex;
+  flex-direction: column;
+  transition-property: all;
+  transition-duration: 500ms;
+  overflow-y: auto;
+}
+</style>

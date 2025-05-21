@@ -1,207 +1,191 @@
 <template>
-  <div class="container bg-[#F1F1F1] dark:bg-[#000] mx-auto px-0 relative pb-[42vh]">
-    <header class="min-h-screen text-center flex flex-col justify-center items-center">
-      <!-- Top toolbar -->
-      <div class="flex items-center gap-4 -ml-3">
-        <UTooltip content="Go back" :_tooltip-content="{ side: 'right' }">
-          <template #default>
-            <button opacity-50 flex items-center gap-2 @click="$router.back()">
-              <div class="i-ph:arrow-bend-down-left-bold"></div>
-            </button>
-          </template>
-          <template #content>
-            <button @click="$router.back()" bg="light dark:dark" text="dark dark:white" text-3 px-3 py-1 rounded-md
-              border-1 border-dashed class="b-#3D3BF3">
-              Go back
-            </button>
-          </template>
-        </UTooltip>
-
-        <UTooltip v-if="loggedIn" content="Lock edit" :_tooltip-content="{ side: 'right' }">
-          <template #default>
-            <button opacity-50 flex items-center gap-2 @click="_canEdit = !_canEdit">
-              <div :class="_canEdit ? 'i-icon-park-outline:unlock' : 'i-icon-park-outline:lock'"></div>
-            </button>
-          </template>
-          <template #content>
-            <button @click="_canEdit = !_canEdit" bg="light dark:dark" text="dark dark:white" text-3 px-3 py-1
-              rounded-md border-1 border-dashed class="b-#3D3BF3">
-              {{ _canEdit ? "Lock edit" : "Unlock edit" }}
-            </button>
-          </template>
-        </UTooltip>
-
-        <UTooltip v-if="loggedIn" content="Export to JSON" :_tooltip-content="{ side: 'right' }">
-          <template #default>
-            <button opacity-50 flex items-center gap-2 @click="exportPostToJson">
-              <div class="i-icon-park-outline:download-two"></div>
-            </button>
-          </template>
-          <template #content>
-            <button @click="exportPostToJson" bg="light dark:dark" text="dark dark:white" text-3 px-3 py-1
-              rounded-md border-1 border-dashed class="b-#3D3BF3">
-              Export to JSON
-            </button>
-          </template>
-        </UTooltip>
-
-        <!-- Import from JSON button -->
-        <UTooltip v-if="loggedIn && _canEdit" content="Import from JSON" :_tooltip-content="{ side: 'right' }">
-          <template #default>
-            <button opacity-50 flex items-center gap-2 @click="triggerJsonImport">
-              <div class="i-icon-park-outline:upload-two"></div>
-            </button>
-          </template>
-          <template #content>
-            <button @click="triggerJsonImport" bg="light dark:dark" text="dark dark:white" text-3 px-3 py-1
-              rounded-md border-1 border-dashed class="b-#3D3BF3">
-              Import from JSON
-            </button>
-          </template>
-        </UTooltip>
-        <!-- Hidden file input for JSON import -->
-        <input type="file" ref="_jsonFileInput" class="hidden" accept="application/json" @change="handleJsonFileSelect" />
-      </div>
-
-      <div v-if="post" class="mt-2">
-        <UInput v-model="post.name"
-          :class="`text-6xl font-800 mb-4 p-0 overflow-y-hidden shadow-none ${_stylesMeta.center ? 'text-align-center' : ''}`"
-          :readonly="!_canEdit" input="~" label="Name" type="textarea" :rows="1" autoresize />
-
-        <UInput v-model="post.description"
-          :class="`text-gray-700 dark:text-gray-300 -mt-4 -ml-2.5 shadow-none ${_stylesMeta.center ? 'text-align-center' : ''}`"
-          :readonly="!_canEdit" input="~" label="Description" />
-
-        <div :class="`flex items-center gap-2 ${_stylesMeta.center ? 'justify-center' : 'justify-start'}`">
-          <span class="text-size-3 text-gray-500 dark:text-gray-400">
-            {{ new Date(post.created_at).toLocaleString("fr", {
-            month: "long",
-            day: "numeric",
-            year: "numeric",
-            }) }}
-          </span>
-          <span class="text-size-3 text-gray-500 dark:text-gray-600 dark:hover:text-gray-400 transition">
-            • Last updated on {{ new Date(post.updated_at).toLocaleString("fr", {
-            month: "long",
-            day: "numeric",
-            year: "numeric",
-            hour: "numeric",
-            minute: "numeric",
-            second: "numeric",
-            }) }}
-          </span>
-          <UIcon :name="_saving === undefined ? '' : _saving ? 'i-loading' : 'i-check'"
-            :class="_saving ? 'animate-spin text-muted' : 'text-lime-300'" />
-        </div>
-        <div :class="`flex items-center gap-2 mt-2 ${_stylesMeta.center ? 'justify-center' : 'justify-start'}`">
-          <span v-if="post.category && !_canEdit" class="px-2 py-1 rounded-full text-xs bg-gray-100 dark:bg-gray-800 shadow-sm">
-            {{ post.category }}
-          </span>
-          <USelect v-if="_canEdit" v-model="post.category" :items="_categories">
-            <template #trigger>
-              <UIcon name="i-icon-park-outline:movie-board" v-if="post.category === 'cinema'" />
-              <UIcon name="i-icon-park-outline:computer" v-else-if="post.category === 'development'" />
-              <UIcon name="i-icon-park-outline:music" v-else-if="post.category === 'music'" />
-              <UIcon name="i-icon-park-outline:book" v-else-if="post.category === 'literature'" />
-              <UIcon name="i-icon-park-outline:tag" v-else />
-            </template>
-          </USelect>
-          <USelect v-if="_canEdit" v-model="post.visibility" :items="_visibilities">
-            <template #trigger>
-              <UIcon name="i-icon-park-outline:preview-close" v-if="post.visibility === 'private'" />
-              <UIcon name="i-icon-park-outline:preview-open" v-else-if="post.visibility === 'public'" />
-              <UIcon name="i-icon-park-outline:ad-product" v-else-if="post.visibility === 'project:private'" />
-              <UIcon name="i-icon-park-outline:badge" v-else-if="post.visibility === 'project:public'" />
-              <UIcon name="i-icon-park-outline:preview-close" v-else />
-            </template>
-          </USelect>
-
-          <USelect :items="_languages" v-if="_canEdit" v-model="_selectedLanguage" item-attribute="label"
-            value-attribute="value" />
-
-          <UTooltip v-if="!post.image?.src && _canEdit" content="Upload cover image">
+  <div class="frame">
+    <article>
+      <header class="min-h-95vh 
+        m-4 border-1 b-dashed rounded-2 border-gray-200 dark:border-gray-800
+        text-center flex flex-col justify-center items-center">
+        <!-- Top toolbar -->
+        <div class="flex items-center gap-4 -ml-3">
+          <UTooltip content="Go back" :_tooltip-content="{ side: 'right' }">
             <template #default>
-              <button opacity-50 flex items-center gap-2 @click="uploadCoverImage" :disabled="!_canEdit">
-                <div class="i-icon-park-outline:upload-picture"></div>
+              <button opacity-50 flex items-center gap-2 @click="$router.back()">
+                <div class="i-ph:arrow-bend-down-left-bold"></div>
+              </button>
+            </template>
+            <template #content>
+              <button @click="$router.back()" bg="light dark:dark" text="dark dark:white" text-3 px-3 py-1 rounded-md
+                border-1 border-dashed class="b-#3D3BF3">
+                Go back
               </button>
             </template>
           </UTooltip>
 
-          <!-- Hidden file input -->
-          <input type="file" ref="_fileInput" class="hidden" accept="image/*" @change="handleFileSelect" />
-
-          <UPopover v-if="_canEdit" :disabled="!_canEdit">
-            <template #trigger>
-              <UButton v-if="_canEdit" btn="outline-white" leading="i-icon-park-outline:edit" label="edit slug" />
-            </template>
+          <UTooltip v-if="loggedIn" content="Lock edit" :_tooltip-content="{ side: 'right' }">
             <template #default>
-              <div>
-                <div class="space-y-1">
-                  <h4 class="font-medium leading-none">
-                    Update slug
-                  </h4>
-                  <p class="text-xs text-muted">
-                    The slug is the part of the URL that identifies the post.
-                  </p>
-                </div>
-                <UInput v-model="post.slug" label="Slug" class="mt-2" />
-              </div>
+              <button opacity-50 flex items-center gap-2 @click="_canEdit = !_canEdit">
+                <div :class="_canEdit ? 'i-icon-park-outline:unlock' : 'i-icon-park-outline:lock'"></div>
+              </button>
             </template>
-          </UPopover>
+            <template #content>
+              <button @click="_canEdit = !_canEdit" bg="light dark:dark" text="dark dark:white" text-3 px-3 py-1
+                rounded-md border-1 border-dashed class="b-#3D3BF3">
+                {{ _canEdit ? "Lock edit" : "Unlock edit" }}
+              </button>
+            </template>
+          </UTooltip>
 
-          <UToggle v-if="_canEdit" label="i-icon-park-outline:center-alignment" v-model:pressed="_stylesMeta.center"
-            toggle-on="soft-blue" toggle-off="soft-gray" />
+          <UTooltip v-if="loggedIn" content="Export to JSON" :_tooltip-content="{ side: 'right' }">
+            <template #default>
+              <button opacity-50 flex items-center gap-2 @click="exportPostToJson">
+                <div class="i-icon-park-outline:download-two"></div>
+              </button>
+            </template>
+            <template #content>
+              <button @click="exportPostToJson" bg="light dark:dark" text="dark dark:white" text-3 px-3 py-1
+                rounded-md border-1 border-dashed class="b-#3D3BF3">
+                Export to JSON
+              </button>
+            </template>
+          </UTooltip>
+
+          <!-- Import from JSON button -->
+          <UTooltip v-if="loggedIn && _canEdit" content="Import from JSON" :_tooltip-content="{ side: 'right' }">
+            <template #default>
+              <button opacity-50 flex items-center gap-2 @click="triggerJsonImport">
+                <div class="i-icon-park-outline:upload-two"></div>
+              </button>
+            </template>
+            <template #content>
+              <button @click="triggerJsonImport" bg="light dark:dark" text="dark dark:white" text-3 px-3 py-1
+                rounded-md border-1 border-dashed class="b-#3D3BF3">
+                Import from JSON
+              </button>
+            </template>
+          </UTooltip>
+          <!-- Hidden file input for JSON import -->
+          <input type="file" ref="_jsonFileInput" class="hidden" accept="application/json" @change="handleJsonFileSelect" />
         </div>
 
-        <div v-if="post.image?.src" class="relative group">
-          <img v-if="post.image?.src" :src="`/${post.image.src}`" class="w-full h-80 object-cover rounded-lg mt-4" />
-          <div class="flex gap-2 absolute top-1 right-1">
-            <UButton v-if="_canEdit" icon @click="uploadCoverImage" btn="~" label="i-icon-park-outline:upload-picture"
-              class="btn-glowing cursor-pointer opacity-0 group-hover:opacity-100 transition-all" />
+        <div v-if="post" class="mt-2">
+          <UInput v-model="post.name"
+            :class="`text-6xl font-800 mb-4 p-0 overflow-y-hidden shadow-none ${_stylesMeta.center ? 'text-align-center' : ''}`"
+            :readonly="!_canEdit" input="~" label="Name" type="textarea" :rows="1" autoresize />
 
-            <UButton v-if="_canEdit" icon @click="removeCoverImage" btn="~" label="i-icon-park-outline:delete"
-              class="btn-glowing cursor-pointer opacity-0 group-hover:opacity-100 transition-all" />
+          <UInput v-model="post.description"
+            :class="`text-gray-700 dark:text-gray-300 -mt-4 -ml-2.5 shadow-none ${_stylesMeta.center ? 'text-align-center' : ''}`"
+            :readonly="!_canEdit" input="~" label="Description" />
+
+          <div :class="`flex items-center gap-2 ${_stylesMeta.center ? 'justify-center' : 'justify-start'}`">
+            <span class="text-size-3 text-gray-500 dark:text-gray-400">
+              {{ new Date(post.created_at).toLocaleString("fr", {
+              month: "long",
+              day: "numeric",
+              year: "numeric",
+              }) }}
+            </span>
+            <span class="text-size-3 text-gray-500 dark:text-gray-600 dark:hover:text-gray-400 transition">
+              • Last updated on {{ new Date(post.updated_at).toLocaleString("fr", {
+              month: "long",
+              day: "numeric",
+              year: "numeric",
+              hour: "numeric",
+              minute: "numeric",
+              second: "numeric",
+              }) }}
+            </span>
+            <UIcon :name="_saving === undefined ? '' : _saving ? 'i-loading' : 'i-check'"
+              :class="_saving ? 'animate-spin text-muted' : 'text-lime-300'" />
+          </div>
+          <div :class="`flex items-center gap-2 mt-2 ${_stylesMeta.center ? 'justify-center' : 'justify-start'}`">
+            <span v-if="post.category && !_canEdit" class="px-2 py-1 rounded-full text-xs bg-gray-100 dark:bg-gray-800 shadow-sm">
+              {{ post.category }}
+            </span>
+            <USelect v-if="_canEdit" v-model="post.category" :items="_categories">
+              <template #trigger>
+                <UIcon name="i-icon-park-outline:movie-board" v-if="post.category === 'cinema'" />
+                <UIcon name="i-icon-park-outline:computer" v-else-if="post.category === 'development'" />
+                <UIcon name="i-icon-park-outline:music" v-else-if="post.category === 'music'" />
+                <UIcon name="i-icon-park-outline:book" v-else-if="post.category === 'literature'" />
+                <UIcon name="i-icon-park-outline:tag" v-else />
+              </template>
+            </USelect>
+            <USelect v-if="_canEdit" v-model="post.visibility" :items="_visibilities">
+              <template #trigger>
+                <UIcon name="i-icon-park-outline:preview-close" v-if="post.visibility === 'private'" />
+                <UIcon name="i-icon-park-outline:preview-open" v-else-if="post.visibility === 'public'" />
+                <UIcon name="i-icon-park-outline:ad-product" v-else-if="post.visibility === 'project:private'" />
+                <UIcon name="i-icon-park-outline:badge" v-else-if="post.visibility === 'project:public'" />
+                <UIcon name="i-icon-park-outline:preview-close" v-else />
+              </template>
+            </USelect>
+
+            <USelect :items="_languages" v-if="_canEdit" v-model="_selectedLanguage" item-attribute="label"
+              value-attribute="value" />
+
+            <UTooltip v-if="!post.image?.src && _canEdit" content="Upload cover image">
+              <template #default>
+                <button opacity-50 flex items-center gap-2 @click="uploadCoverImage" :disabled="!_canEdit">
+                  <div class="i-icon-park-outline:upload-picture"></div>
+                </button>
+              </template>
+            </UTooltip>
+
+            <!-- Hidden file input -->
+            <input type="file" ref="_fileInput" class="hidden" accept="image/*" @change="handleFileSelect" />
+
+            <UPopover v-if="_canEdit" :disabled="!_canEdit">
+              <template #trigger>
+                <UButton v-if="_canEdit" btn="outline-white" leading="i-icon-park-outline:edit" label="edit slug" />
+              </template>
+              <template #default>
+                <div>
+                  <div class="space-y-1">
+                    <h4 class="font-medium leading-none">
+                      Update slug
+                    </h4>
+                    <p class="text-xs text-muted">
+                      The slug is the part of the URL that identifies the post.
+                    </p>
+                  </div>
+                  <UInput v-model="post.slug" label="Slug" class="mt-2" />
+                </div>
+              </template>
+            </UPopover>
+
+            <UToggle v-if="_canEdit" label="i-icon-park-outline:center-alignment" v-model:pressed="_stylesMeta.center"
+              toggle-on="soft-blue" toggle-off="soft-gray" />
+          </div>
+
+          <div v-if="post.image?.src" class="relative group">
+            <img v-if="post.image?.src" :src="`/${post.image.src}`" class="w-full h-80 object-cover rounded-lg mt-4" />
+            <div class="flex gap-2 absolute top-1 right-1">
+              <UButton v-if="_canEdit" icon @click="uploadCoverImage" btn="~" label="i-icon-park-outline:upload-picture"
+                class="btn-glowing cursor-pointer opacity-0 group-hover:opacity-100 transition-all" />
+
+              <UButton v-if="_canEdit" icon @click="removeCoverImage" btn="~" label="i-icon-park-outline:delete"
+                class="btn-glowing cursor-pointer opacity-0 group-hover:opacity-100 transition-all" />
+            </div>
           </div>
         </div>
+      </header>
+
+      <!-- <div class="w-full flex justify-center">
+        <div class="border-b b-dashed w-full"></div>
+      </div> -->
+
+      <main v-if="post" class="w-500px pt-8 mx-auto text-gray-700 dark:text-gray-300">
+        <client-only>
+          <tiptap-editor :can-edit="true" :model-value="post.content" @update:model-value="onUpdateEditorContent" />
+        </client-only>
+      </main>
+
+      <div v-else class="flex justify-center items-center h-60vh">
+        <UProgress indeterminate />
       </div>
-    </header>
+    </article>
 
-    <div class="w-full flex justify-center">
-      <div class="border-b b-dashed w-full"></div>
-    </div>
-
-    <main v-if="post" class="max-w-2xl mx-auto pt-8">
-      <client-only>
-        <tiptap-editor :can-edit="true" :model-value="post.content" @update:model-value="onUpdateEditorContent" />
-      </client-only>
-    </main>
-
-    <div v-else class="flex justify-center items-center h-60vh">
-      <UProgress indeterminate />
-    </div>
-
-    <!-- Buttons navigation -->
-    <div class="flex justify-center gap-2 mt-24">
-      <button 
-        @click="$router.back()"
-        class="hover:border-1 border-dashed 
-          text-3 opacity-60 hover:opacity-100 font-600 
-          py-1 px-4 rounded flex gap-2 items-center 
-          hover:scale-105 transition-all 
-          active:scale-99 active:border-solid">
-        <div class="i-ph:arrow-bend-down-left-bold"></div>
-        <span>back</span>
-      </button>
-      <button 
-        @click="$router.back()"
-        class="hover:border-1 border-dashed 
-          text-3 opacity-60 hover:opacity-100 font-600 
-          py-1 px-4 rounded flex gap-2 items-center 
-          hover:scale-105 transition-all 
-          active:scale-99 active:border-solid">
-        <div class="i-ph:arrow-up-bold"></div>
-        <span>go to top</span>
-      </button>
+    <div class="w-500px mx-auto">
+      <Footer />
     </div>
   </div>
 </template>
@@ -543,3 +527,23 @@ useHead({
   ],
 })
 </script>
+
+<style scoped>
+
+.frame {
+  padding: 0;
+  padding-bottom: 38vh;
+  display: flex;
+  flex-direction: column;
+  transition-property: all;
+  overflow-y: auto;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+
+  width: 100%;
+  background-color: #F1F1F1;
+}
+
+.dark .frame {
+  background-color: #111;
+}
+</style>

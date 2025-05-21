@@ -19,24 +19,83 @@
           </svg>
         </div>
       </div>
-      <p class="text-gray-700 dark:text-gray-300 mb-4">
+      <p class="text-gray-700 dark:text-gray-300">
         Thoughts and reflections on various topics
       </p>
       <div>
         <UProgress v-if="_isLoading" :indeterminate="true" size="sm" color="primary" />
-        <UButton v-if="loggedIn && !_isLoading" btn="text" class="text-3"
-          :label="_showDrafts ? 'Show only published posts' : 'Show drafts'" @click="_showDrafts = !_showDrafts" />
+
+        <!-- Create Post Button -->
+        <div v-if="loggedIn">
+          <UDialog v-model:open="_isCreateDialogOpen" title="Create Post" description="Add a new post with a description">
+            <template #trigger>
+              <UButton btn="text" size="xs" class="-ml-4 flex items-center gap-2 dark:text-amber-400">
+                <span>Add a post</span>
+              </UButton>
+            </template>
+
+            <div class="grid gap-4 py-4">
+              <div class="grid gap-2">
+                <div class="grid grid-cols-3 items-center gap-4">
+                  <ULabel for="name">
+                    Name
+                  </ULabel>
+                  <UInput id="name" v-model="_name" :una="{
+                    inputWrapper: 'col-span-2',
+                  }" />
+                </div>
+                <div class="grid grid-cols-3 items-center gap-4">
+                  <ULabel for="description">
+                    Description
+                  </ULabel>
+                  <UInput id="description" v-model="_description" :una="{
+                    inputWrapper: 'col-span-2',
+                  }" />
+                </div>
+                <div class="grid grid-cols-3 items-center gap-4">
+                  <ULabel for="category">
+                    Category
+                  </ULabel>
+                  <div flex flex-row gap-2>
+                    <USelect id="category" :una="{
+                    }" v-model="_category" :items="_categories" placeholder="Select a category" />
+                    <UTooltip>
+                      <template #default>
+                        <UButton btn="outline" icon label="i-icon-park-outline:add-print" class=""
+                          @click="toggleAddCategory" />
+                      </template>
+                      <template #content>
+                        <button @click="toggleAddCategory" bg="light dark:dark" text="dark dark:white" text-3 px-3 py-1
+                          rounded-md m-0 border-1 border-dashed class="b-#3D3BF3">
+                          Add a new category
+                        </button>
+                      </template>
+                    </UTooltip>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <template #footer>
+              <UButton @click="createPost({ name: _name, description: _description, category: _category })" btn="solid"
+                label="Create post" />
+            </template>
+          </UDialog>
+        </div>
       </div>
     </header>
 
     <!-- Drafts Section -->
-    <section v-if="_showDrafts && drafts.length > 0" class="mb-12">
-      <h2 class="text-lg font-500 text-gray-800 dark:text-gray-200 mb-4">
-        <span class="i-icon-park-outline:notebook-and-pen mr-2"></span>
-        Drafts
-      </h2>
+    <section v-if="loggedIn" class="mb-6">
+      <UButton btn="text" class="p-0 flex gap-3 font-500 text-gray-800 dark:text-gray-200 mb-4"
+        @click="_showDrafts = !_showDrafts">
+        <span class="i-icon-park-outline:notebook-and-pen text-3"></span>
+        <span class="text-3">Drafts</span>
+        <span v-if="!_showDrafts" class="text-3">••• <i class="ml-2">(show)</i></span>
+        <span v-else class="text-3">••• <i class="ml-2">(hide)</i></span>
+      </UButton>
       <div class="flex flex-col gap-6">
-        <div v-for="draft in drafts" :key="draft.id.toString()" class="border-b border-gray-200 dark:border-gray-800 pb-4">
+        <div v-if="_showDrafts && drafts.length > 0" v-for="draft in drafts" :key="draft.id.toString()" class="border-b border-gray-200 dark:border-gray-800 pb-4">
           <ULink :to="`/reflexions/${draft.id}`" class="flex items-start gap-2">
             <h3 class="text-size-4 font-500 line-height-4.5 dark:text-gray-300">
               {{ draft.name }}
@@ -58,14 +117,14 @@
 
     <!-- Published Posts Section -->
     <section v-if="posts.length > 0" class="mb-12">
-      <h2 class="text-lg font-500 text-gray-800 dark:text-gray-200 mb-4">
+      <h2 class="text-3 font-500 text-gray-800 dark:text-gray-200 mb-4">
         <span class="i-ph-article mr-2"></span>
         Published
       </h2>
       <div class="flex flex-col gap-6">
         <div v-for="post in posts" :key="post.id.toString()" class="border-b border-gray-200 dark:border-gray-800 pb-4">
           <ULink :to="`/reflexions/${post.slug}`">
-            <h3 class="text-size-4 font-600 text-gray-800 dark:text-gray-200">{{ post.name }}</h3>
+            <h3 class="text-size-3.5 font-600 text-gray-800 dark:text-gray-200">{{ post.name }}</h3>
           </ULink>
           <p class="text-size-3 text-gray-700 dark:text-gray-400 mb-2">{{ post.description }}</p>
           <div class="flex justify-between items-center">
@@ -98,65 +157,6 @@
         — Gloria Steinem
       </div>
     </section>
-
-    <!-- Create Post Button -->
-    <div v-if="loggedIn" class="fixed left-0 bottom-12 flex justify-center w-100%">
-      <UDialog v-model:open="_isCreateDialogOpen" title="Create Post" description="Add a new post with a description">
-        <template #trigger>
-          <UButton btn="solid-gray" class="flex items-center gap-2">
-            <span class="i-ph-plus-circle"></span>
-            Create Post
-          </UButton>
-        </template>
-
-        <div class="grid gap-4 py-4">
-          <div class="grid gap-2">
-            <div class="grid grid-cols-3 items-center gap-4">
-              <ULabel for="name">
-                Name
-              </ULabel>
-              <UInput id="name" v-model="_name" :una="{
-                inputWrapper: 'col-span-2',
-              }" />
-            </div>
-            <div class="grid grid-cols-3 items-center gap-4">
-              <ULabel for="description">
-                Description
-              </ULabel>
-              <UInput id="description" v-model="_description" :una="{
-                inputWrapper: 'col-span-2',
-              }" />
-            </div>
-            <div class="grid grid-cols-3 items-center gap-4">
-              <ULabel for="category">
-                Category
-              </ULabel>
-              <div flex flex-row gap-2>
-                <USelect id="category" :una="{
-                }" v-model="_category" :items="_categories" placeholder="Select a category" />
-                <UTooltip>
-                  <template #default>
-                    <UButton btn="outline" icon label="i-icon-park-outline:add-print" class=""
-                      @click="toggleAddCategory" />
-                  </template>
-                  <template #content>
-                    <button @click="toggleAddCategory" bg="light dark:dark" text="dark dark:white" text-3 px-3 py-1
-                      rounded-md m-0 border-1 border-dashed class="b-#3D3BF3">
-                      Add a new category
-                    </button>
-                  </template>
-                </UTooltip>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <template #footer>
-          <UButton @click="createPost({ name: _name, description: _description, category: _category })" btn="solid"
-            label="Create post" />
-        </template>
-      </UDialog>
-    </div>
 
     <Footer>
       <template #links>

@@ -16,7 +16,7 @@
       </div>
 
       <p class="text-gray-500 dark:text-gray-400 mt-2">
-        © <span class="font-600">Jeremie Corpinot</span>
+        © <span class="font-600">Jérémie Corpinot</span>
         <span class="mx-1">&middot;</span>
         <span class="font-600">{{ new Date().getFullYear() }}</span>
       </p>

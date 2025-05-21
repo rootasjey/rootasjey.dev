@@ -1,8 +1,8 @@
 <template>
-  <div class="container mx-auto px-4 py-8 pb-24">
+  <div class="frame">
     <ULink class="flex flex-col items-center justify-center mt-6" 
-      to="/experiments">
-      <span class="i-ph-flask mx-auto text-center text-md text-gray-600 dark:text-gray-400" />
+    to="/">
+      <span class="i-ph-house-simple-duotone"></span>
     </ULink>
 
     <PageHeader 
@@ -57,21 +57,27 @@
       </div>
 
       <div class="explanations max-w-2xl text-gray-700 dark:text-gray-300">
-        <div class="border-b b-dashed w-full h-1 b-blue dark:b-[#FFAF61] mt-8 mb-12"></div>
-        <h3 class="font-text text-16 font-200 mb-2">A little bit of explanation</h3>
-        <p class="font-text font-400 text-gray-500 dark:text-gray-400">
+        <div class="border-b b-dashed w-full h-1 dark:b-[#FFAF61] mt-8 mb-12"></div>
+        <h1 class="font-body text-xl font-600 text-gray-800 dark:text-gray-200 mb-2">
+          A little bit of explanation
+        </h1>
+        <!-- <h3 class="font-text text-16 font-200 mb-2">A little bit of explanation</h3> -->
+        <p class="text-gray-700 dark:text-gray-300 mb-4">
           The Game of Life is a cellular automaton devised by mathematician John Conway in 1970.
           It's a zero-player game, meaning its evolution is determined by its initial state.
         </p>
-        <h4 class="text-size-8 font-200 mt-8 mb-1">RULES:</h4>
-        <ol class="list-decimal pl-8">
-          <li class="color-[#FF3EA5] dark:color-[#FFDB5C]">Any live cell with fewer than two live neighbors dies (underpopulation)</li>
-          <li class="color-[#FF3EA5] dark:color-[#FFDB5C]">Any live cell with more than three live neighbors dies (overpopulation)</li>
-          <li class="color-[#8F87F1] dark:color-[#00FF9C]">Any live cell with two or three live neighbors lives on</li>
-          <li class="color-[#8F87F1] dark:color-[#00FF9C]">Any dead cell with exactly three live neighbors becomes a live cell (reproduction)</li>
+        <div class="border-b b-dashed my-6" />
+        <h4 class="mb-1">Rules:</h4>
+        <ol class="list-decimal pl-8 text-size-3.5 font-500">
+          <li class="color-gray-600 dark:color-[#FFDB5C]">Any live cell with fewer than two live neighbors <span class="color-[#FF3EA5] dark:color-[#FFDB5C]">dies</span> (underpopulation)</li>
+          <li class="color-gray-600 dark:color-[#FFDB5C]">Any live cell with more than three live neighbors <span class="color-[#FF3EA5] dark:color-[#FFDB5C]">dies</span> (overpopulation)</li>
+          <li class="color-gray-600 dark:color-[#00FF9C]">Any live cell with two or three live neighbors <span class="color-[#8F87F1] dark:color-[#00FF9C]">lives on</span></li>
+          <li class="color-gray-600 dark:color-[#00FF9C]">Any dead cell with exactly three live neighbors <span class="color-[#8F87F1] dark:color-[#00FF9C]">becomes a live cell</span> (reproduction)</li>
         </ol>
       </div>
     </div>
+
+    <Footer />
   </div>
 </template>
 
@@ -198,6 +204,18 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
+.frame {
+  width: 600px;
+  border-radius: 0.75rem;
+  padding: 2rem;
+  padding-bottom: 38vh;
+  display: flex;
+  flex-direction: column;
+  transition-property: all;
+  transition-duration: 500ms;
+  overflow-y: auto;
+}
+
 .grid-container {
   border: 0px solid #ccc;
 }

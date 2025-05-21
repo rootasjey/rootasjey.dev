@@ -1,8 +1,8 @@
 <template>
-  <div class="container mx-auto px-4 py-8 pb-24">
+  <div class="frame">
     <ULink class="flex flex-col items-center justify-center mt-6" 
-      to="/experiments">
-      <span class="i-ph-flask mx-auto text-center text-md text-gray-600 dark:text-gray-400" />
+      to="/">
+      <span class="i-ph-house-simple-duotone"></span>
     </ULink>
 
     <PageHeader 
@@ -64,31 +64,38 @@
 
       <!-- Explanation Section -->
       <div class="explanations max-w-2xl text-gray-700 dark:text-gray-300">
-        <div class="border-b b-dashed w-full h-1 b-pink-600 mt-8 mb-12"></div>
+        <div class="border-b b-dashed w-full h-1 dark:b-pink-600 mt-8 mb-12"></div>
         
-        <h3 class="font-text text-16 font-200 mb-4">All my love for <i>Dispatches from Elsewhere</i> </h3>
-        <p class="font-text font-400 text-gray-500 dark:text-gray-400 mb-6">
+        <h3 class="font-body text-size-6 font-600 mb-4">The well of creativity</h3>
+
+        <p class="text-gray-700 dark:text-gray-300">
           "Dispatches from Elsewhere" is a fascinating TV show created by Jason Segel that follows four ordinary people who stumble onto a puzzle hiding just behind the veil of everyday life. The show explores themes of identity, connection, and the extraordinary nature of ordinary lives.
         </p>
         
-        <h4 class="text-size-8 font-200 mt-8 mb-4">The Making Process</h4>
-        <p class="font-text font-400 text-gray-500 dark:text-gray-400 mb-6">
+        <h4 class="font-500 mt-16 mb-4">
+          <i class="i-ph-hammer-duotone dark:text-pink-400" />
+          The Making Process
+        </h4>
+        <p class="text-gray-700 dark:text-gray-300 mb-6">
           Creating this tribute video was a journey in itself. I wanted to capture the essence of the show's magical realism and its ability to find wonder in the mundane. The process involved:
         </p>
         
         <ol class="list-decimal pl-8 mb-8">
-          <li class="mb-2 color-[#8F87F1] dark:color-[#E9A5F1]">Collecting and curating visual elements that represent the show's aesthetic</li>
-          <li class="mb-2 color-[#8F87F1] dark:color-[#E9A5F1]">Composing a soundtrack that echoes the show's emotional landscape</li>
-          <li class="mb-2 color-[#8F87F1] dark:color-[#E9A5F1]">Editing the footage to create a narrative that invites curiosity</li>
-          <li class="mb-2 color-[#8F87F1] dark:color-[#E9A5F1]">Adding subtle visual effects to enhance the sense of wonder</li>
+          <li class="mb-2 color-[#7d5fff] dark:color-[#E9A5F1]">Collecting and curating visual elements that represent the show's aesthetic</li>
+          <li class="mb-2 color-[#7d5fff] dark:color-[#E9A5F1]">Composing a soundtrack that echoes the show's emotional landscape</li>
+          <li class="mb-2 color-[#7d5fff] dark:color-[#E9A5F1]">Editing the footage to create a narrative that invites curiosity</li>
+          <li class="mb-2 color-[#7d5fff] dark:color-[#E9A5F1]">Adding subtle visual effects to enhance the sense of wonder</li>
         </ol>
         
-        <h4 class="text-size-8 font-200 mt-8 mb-4">Personal Reflections</h4>
-        <p class="font-text font-400 text-gray-500 dark:text-gray-400">
+        <h4 class="font-500 mt-16 mb-4"><i class="i-ph-brain" /> Personal Reflections</h4>
+
+        <p class="text-gray-700 dark:text-gray-300 mb-4">
           What drew me to "Dispatches from Elsewhere" was its celebration of human connection and the extraordinary potential hidden within ordinary lives. The show reminds us that magic exists in the everyday if we're willing to look for it. This video tribute is my way of extending that invitation to others—to see the world through a lens of possibility and wonder.
         </p>
       </div>
     </div>
+
+    <Footer />
   </div>
 </template>
 
@@ -186,6 +193,19 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
+
+.frame {
+  width: 600px;
+  border-radius: 0.75rem;
+  padding: 2rem;
+  padding-bottom: 38vh;
+  display: flex;
+  flex-direction: column;
+  transition-property: all;
+  transition-duration: 500ms;
+  overflow-y: auto;
+}
+
 .video-container {
   box-shadow: 0 0 16px rgba(0, 0, 0, 0.5);
 }
