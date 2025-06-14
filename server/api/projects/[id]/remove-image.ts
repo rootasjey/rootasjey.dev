@@ -28,7 +28,7 @@ export default defineEventHandler(async (event) => {
   }
 
   // Check if the user is the author of the project
-  if (project.author_id !== userId) {
+  if (project.user_id !== userId) {
     throw createError({
       statusCode: 403,
       message: 'You are not authorized to update this project',

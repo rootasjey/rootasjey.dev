@@ -17,7 +17,7 @@
     "@tiptap/starter-kit": "^2.11.7",
     "@tiptap/suggestion": "^2.11.7",
     "@tiptap/vue-3": "^2.11.7",
-    "@una-ui/nuxt": "^0.51.6",
+    "@una-ui/nuxt": "^0.55.1",
     "tippy.js": "^6.3.7"
   },
   "devDependencies": {

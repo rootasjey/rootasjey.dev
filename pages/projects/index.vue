@@ -96,10 +96,31 @@
     </header>
 
     <!-- Loading State -->
-    <section v-if="projects.length === 0" class="mb-12">
+    <section v-if="status === 'pending'" class="mb-12">
       <div class="flex flex-col items-center justify-center py-8">
         <span class="i-ph-spinner-gap animate-spin text-3xl text-gray-400 dark:text-gray-600 mb-4"></span>
         <p class="text-gray-600 dark:text-gray-400">Loading projects...</p>
+      </div>
+    </section>
+
+    <!-- Empty State -->
+    <section v-if="projects.length === 0 && status !== 'pending'" class="mb-12">
+      <div class="flex flex-col items-center justify-center py-16">
+        <div class="mb-6">
+          <span class="i-ph-app-window text-2xl text-gray-300 dark:text-gray-600"></span>
+        </div>
+        <h3 class="text-xl font-600 text-gray-700 dark:text-gray-300 mb-2">
+          No projects yet
+        </h3>
+        <p class="text-gray-500 dark:text-gray-400 text-center mb-6 max-w-md">
+          This is where my creative projects will live. Check back soon for updates!
+        </p>
+        <div v-if="loggedIn" class="flex gap-3">
+          <UButton @click="_isDialogOpen = true" btn="solid" size="sm">
+            <span class="i-ph-plus mr-2"></span>
+            Create your first project
+          </UButton>
+        </div>
       </div>
     </section>
 

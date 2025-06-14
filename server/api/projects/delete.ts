@@ -28,7 +28,7 @@ export default defineEventHandler(async (event) => {
   }
 
   const userId = session.user.id
-  if (project.author_id !== userId) {
+  if (project.user_id !== userId) {
     throw createError({
       statusCode: 403,
       message: "You are not authorized to delete this project",

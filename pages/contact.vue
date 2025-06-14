@@ -117,7 +117,7 @@
           {{ submitting ? 'Sending...' : 'Send Message' }}
         </UButton>
         
-        <p v-if="formStatus" class="text-center" :class="formStatus.type === 'success' ? 'text-green-500' : 'text-red-500'">
+        <p v-if="formStatus && submitted" class="text-center" :class="formStatus.type === 'success' ? 'text-green-500' : 'text-red-500'">
           {{ formStatus.message }}
         </p>
       </form>

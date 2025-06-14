@@ -68,7 +68,7 @@
         
         <h3 class="font-body text-size-6 font-600 mb-4">The well of creativity</h3>
 
-        <p class="text-gray-700 dark:text-gray-300">
+        <p>
           "Dispatches from Elsewhere" is a fascinating TV show created by Jason Segel that follows four ordinary people who stumble onto a puzzle hiding just behind the veil of everyday life. The show explores themes of identity, connection, and the extraordinary nature of ordinary lives.
         </p>
         
@@ -76,7 +76,7 @@
           <i class="i-ph-hammer-duotone dark:text-pink-400" />
           The Making Process
         </h4>
-        <p class="text-gray-700 dark:text-gray-300 mb-6">
+        <p class="mb-6">
           Creating this tribute video was a journey in itself. I wanted to capture the essence of the show's magical realism and its ability to find wonder in the mundane. The process involved:
         </p>
         

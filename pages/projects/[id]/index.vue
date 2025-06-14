@@ -39,6 +39,20 @@
             </template>
           </UTooltip>
 
+          <UTooltip v-if="loggedIn" content="Export to JSON" :_tooltip-content="{ side: 'right' }">
+            <template #default>
+              <button opacity-50 flex items-center gap-2 @click="exportPostToJson">
+                <div class="i-icon-park-outline:download-two"></div>
+              </button>
+            </template>
+            <template #content>
+              <button @click="exportPostToJson" bg="light dark:dark" text="dark dark:white" text-3 px-3 py-1
+                rounded-md border-1 border-dashed class="b-#3D3BF3">
+                Export to JSON
+              </button>
+            </template>
+          </UTooltip>
+
           <UTooltip content="Upload cover image" v-if="loggedIn && !project.image.src">
             <template #default>
               <UButton 
@@ -192,6 +206,57 @@ const updateProjectContent = async (value: Object) => {
     },
   })
 }
+
+
+/**
+ * Export the current post to a JSON file and download it to the user's device
+ */
+const exportPostToJson = () => {
+  if (!project.value) return
+  
+  // Create a clean version of the post for export
+  const exportData = {
+    category: project.value.category,
+    company: project.value.company,
+    content: project.value.content,
+    created_at: project.value.created_at,
+    description: project.value.description,
+    id: project.value.id,
+    image: project.value.image,
+    links: project.value.links,
+    name: project.value.name,
+    slug: project.value.slug,
+    post: project.value.post,
+    user_id: project.value.user_id,
+    updated_at: project.value.updated_at,
+    visibility: project.value.visibility,
+  }
+  
+  // Convert to JSON string with pretty formatting
+  const jsonString = JSON.stringify(exportData, null, 2)
+  
+  // Create a blob with the JSON data
+  const blob = new Blob([jsonString], { type: 'application/json' })
+  
+  // Create a URL for the blob
+  const url = URL.createObjectURL(blob)
+  
+  // Create a temporary anchor element to trigger the download
+  const a = document.createElement('a')
+  a.href = url
+  a.download = `${project.value.slug || project.value.id}-${new Date().toISOString().split('T')[0]}.json`
+  
+  // Append to the document, click to download, then remove
+  document.body.appendChild(a)
+  a.click()
+  
+  // Clean up
+  setTimeout(() => {
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
+  }, 0)
+}
+
 </script>
 
 <style scoped>

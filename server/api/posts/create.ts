@@ -1,5 +1,5 @@
 // POST /api/posts/create
-import { createPostData } from '~/server/utils/server.post'
+import { createPostData } from '~/server/utils/post'
 
 export default defineEventHandler(async (event) => {
   const session = await requireUserSession(event)
@@ -38,16 +38,15 @@ export default defineEventHandler(async (event) => {
 
   const insertStmt = db.prepare(`
     INSERT INTO posts (
-      author_id, blob_path, category, description, image_src, image_alt,
+      blob_path, category, description, image_src, image_alt,
       language, links, metrics_comments, metrics_likes, metrics_views,
-      name, slug, styles, tags, visibility
+      name, slug, styles, tags, user_id, visibility
     ) VALUES (
       ?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?16
     )
   `)
 
   const result = await insertStmt.bind(
-    postData.author_id,
     postData.blob_path,
     postData.category,
     postData.description,
@@ -62,6 +61,7 @@ export default defineEventHandler(async (event) => {
     postData.slug,
     postData.styles,
     postData.tags,
+    postData.user_id,
     postData.visibility
   ).run()
 

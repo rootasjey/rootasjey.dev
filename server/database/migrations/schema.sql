@@ -1,20 +1,22 @@
 -- Create the users table
 CREATE TABLE IF NOT EXISTS users (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  name TEXT NOT NULL,
-  email TEXT NOT NULL UNIQUE,
-  password TEXT NOT NULL,
-  biography TEXT,
-  job TEXT,
-  language TEXT,
-  location TEXT,
-  socials TEXT,
+  biography TEXT DEFAULT "",
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  email TEXT NOT NULL UNIQUE,
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  job TEXT DEFAULT "",
+  language TEXT DEFAULT "en",
+  location TEXT DEFAULT "",
+  name TEXT NOT NULL UNIQUE,
+  password TEXT NOT NULL,
+  role TEXT NOT NULL DEFAULT 'user',
+  socials TEXT DEFAULT "[]",
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Create index for email lookups
 CREATE UNIQUE INDEX IF NOT EXISTS idx_users_email ON users (email);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_users_name ON users (name);
 
 -- Trigger to update the updated_at timestamp whenever a row is modified
 CREATE TRIGGER IF NOT EXISTS update_users_timestamp
@@ -27,7 +29,6 @@ END;
 -- Create the posts table
 CREATE TABLE IF NOT EXISTS posts (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  author_id INTEGER NOT NULL,
   blob_path TEXT,
   category TEXT,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -45,9 +46,10 @@ CREATE TABLE IF NOT EXISTS posts (
   styles TEXT,
   tags TEXT,
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  user_id INTEGER NOT NULL,
   visibility TEXT DEFAULT 'private',
   
-  FOREIGN KEY (author_id) REFERENCES users(id)
+  FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
 -- Create unique index for slug
@@ -64,7 +66,6 @@ END;
 -- Create the projects table
 CREATE TABLE IF NOT EXISTS projects (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  author_id INTEGER NOT NULL,
   blob_path TEXT,
   category TEXT,
   company TEXT,
@@ -81,8 +82,9 @@ CREATE TABLE IF NOT EXISTS projects (
   technologies TEXT,
   visibility TEXT DEFAULT 'private',
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  user_id INTEGER NOT NULL,
   
-  FOREIGN KEY (author_id) REFERENCES users(id)
+  FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
 -- Create unique index for slug
@@ -99,12 +101,20 @@ END;
 -- Create the messages table
 CREATE TABLE IF NOT EXISTS messages (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  email TEXT NOT NULL,
   message TEXT NOT NULL,
   subject TEXT NOT NULL,
+  sender_email TEXT NOT NULL,
+  read BOOLEAN DEFAULT FALSE,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Create index for faster filtering by read status
+CREATE INDEX IF NOT EXISTS idx_messages_read ON messages(read);
+
+-- Create composite index for common queries (read status + created_at for sorting)
+CREATE INDEX IF NOT EXISTS idx_messages_read_created_at ON messages(read, created_at DESC);
+
 -- Trigger to update the updated_at timestamp whenever a message is modified
 CREATE TRIGGER IF NOT EXISTS update_messages_timestamp
 AFTER UPDATE ON messages

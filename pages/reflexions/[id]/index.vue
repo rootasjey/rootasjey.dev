@@ -4,78 +4,16 @@
       <header class="min-h-95vh 
         m-4 border-1 b-dashed rounded-2 border-gray-200 dark:border-gray-800
         text-center flex flex-col justify-center items-center">
-        <!-- Top toolbar -->
-        <div class="flex items-center gap-4 -ml-3">
-          <UTooltip content="Go back" :_tooltip-content="{ side: 'right' }">
-            <template #default>
-              <button opacity-50 flex items-center gap-2 @click="$router.back()">
-                <div class="i-ph:arrow-bend-down-left-bold"></div>
-              </button>
-            </template>
-            <template #content>
-              <button @click="$router.back()" bg="light dark:dark" text="dark dark:white" text-3 px-3 py-1 rounded-md
-                border-1 border-dashed class="b-#3D3BF3">
-                Go back
-              </button>
-            </template>
-          </UTooltip>
-
-          <UTooltip v-if="loggedIn" content="Lock edit" :_tooltip-content="{ side: 'right' }">
-            <template #default>
-              <button opacity-50 flex items-center gap-2 @click="_canEdit = !_canEdit">
-                <div :class="_canEdit ? 'i-icon-park-outline:unlock' : 'i-icon-park-outline:lock'"></div>
-              </button>
-            </template>
-            <template #content>
-              <button @click="_canEdit = !_canEdit" bg="light dark:dark" text="dark dark:white" text-3 px-3 py-1
-                rounded-md border-1 border-dashed class="b-#3D3BF3">
-                {{ _canEdit ? "Lock edit" : "Unlock edit" }}
-              </button>
-            </template>
-          </UTooltip>
-
-          <UTooltip v-if="loggedIn" content="Export to JSON" :_tooltip-content="{ side: 'right' }">
-            <template #default>
-              <button opacity-50 flex items-center gap-2 @click="exportPostToJson">
-                <div class="i-icon-park-outline:download-two"></div>
-              </button>
-            </template>
-            <template #content>
-              <button @click="exportPostToJson" bg="light dark:dark" text="dark dark:white" text-3 px-3 py-1
-                rounded-md border-1 border-dashed class="b-#3D3BF3">
-                Export to JSON
-              </button>
-            </template>
-          </UTooltip>
-
-          <!-- Import from JSON button -->
-          <UTooltip v-if="loggedIn && _canEdit" content="Import from JSON" :_tooltip-content="{ side: 'right' }">
-            <template #default>
-              <button opacity-50 flex items-center gap-2 @click="triggerJsonImport">
-                <div class="i-icon-park-outline:upload-two"></div>
-              </button>
-            </template>
-            <template #content>
-              <button @click="triggerJsonImport" bg="light dark:dark" text="dark dark:white" text-3 px-3 py-1
-                rounded-md border-1 border-dashed class="b-#3D3BF3">
-                Import from JSON
-              </button>
-            </template>
-          </UTooltip>
-          <!-- Hidden file input for JSON import -->
-          <input type="file" ref="_jsonFileInput" class="hidden" accept="application/json" @change="handleJsonFileSelect" />
-        </div>
-
         <div v-if="post" class="mt-2">
           <UInput v-model="post.name"
-            :class="`text-6xl font-800 mb-4 p-0 overflow-y-hidden shadow-none ${_stylesMeta.center ? 'text-align-center' : ''}`"
+            class="text-6xl font-800 min-h-0 mb-8 p-0 overflow-y-hidden shadow-none text-align-center"
             :readonly="!_canEdit" input="~" label="Name" type="textarea" :rows="1" autoresize />
 
           <UInput v-model="post.description"
-            :class="`text-gray-700 dark:text-gray-300 -mt-4 -ml-2.5 shadow-none ${_stylesMeta.center ? 'text-align-center' : ''}`"
+            class="text-gray-700 dark:text-gray-300 -mt-4 -ml-2.5 shadow-none text-align-center"
             :readonly="!_canEdit" input="~" label="Description" />
 
-          <div :class="`flex items-center gap-2 ${_stylesMeta.center ? 'justify-center' : 'justify-start'}`">
+          <div :class="`flex items-center gap-2 justify-center`">
             <span class="text-size-3 text-gray-500 dark:text-gray-400">
               {{ new Date(post.created_at).toLocaleString("fr", {
               month: "long",
@@ -96,37 +34,59 @@
             <UIcon :name="_saving === undefined ? '' : _saving ? 'i-loading' : 'i-check'"
               :class="_saving ? 'animate-spin text-muted' : 'text-lime-300'" />
           </div>
-          <div :class="`flex items-center gap-2 mt-2 ${_stylesMeta.center ? 'justify-center' : 'justify-start'}`">
+          <div class="flex items-center gap-2 mt-2 justify-center">
             <span v-if="post.category && !_canEdit" class="px-2 py-1 rounded-full text-xs bg-gray-100 dark:bg-gray-800 shadow-sm">
               {{ post.category }}
             </span>
-            <USelect v-if="_canEdit" v-model="post.category" :items="_categories">
-              <template #trigger>
-                <UIcon name="i-icon-park-outline:movie-board" v-if="post.category === 'cinema'" />
-                <UIcon name="i-icon-park-outline:computer" v-else-if="post.category === 'development'" />
-                <UIcon name="i-icon-park-outline:music" v-else-if="post.category === 'music'" />
-                <UIcon name="i-icon-park-outline:book" v-else-if="post.category === 'literature'" />
-                <UIcon name="i-icon-park-outline:tag" v-else />
-              </template>
-            </USelect>
-            <USelect v-if="_canEdit" v-model="post.visibility" :items="_visibilities">
-              <template #trigger>
-                <UIcon name="i-icon-park-outline:preview-close" v-if="post.visibility === 'private'" />
-                <UIcon name="i-icon-park-outline:preview-open" v-else-if="post.visibility === 'public'" />
-                <UIcon name="i-icon-park-outline:ad-product" v-else-if="post.visibility === 'project:private'" />
-                <UIcon name="i-icon-park-outline:badge" v-else-if="post.visibility === 'project:public'" />
-                <UIcon name="i-icon-park-outline:preview-close" v-else />
+
+            <div class="max-w-20">
+              <USelect v-if="_canEdit" v-model="post.category" :items="_categories">
+                <template #trigger>
+                  <UIcon name="i-icon-park-outline:movie-board" v-if="post.category === 'cinema'" />
+                  <UIcon name="i-icon-park-outline:computer" v-else-if="post.category === 'development'" />
+                  <UIcon name="i-icon-park-outline:music" v-else-if="post.category === 'music'" />
+                  <UIcon name="i-icon-park-outline:book" v-else-if="post.category === 'literature'" />
+                  <UIcon name="i-icon-park-outline:tag" v-else />
+                </template>
+              </USelect>
+            </div>
+
+            <div class="max-w-20">
+              <USelect v-if="_canEdit" v-model="post.visibility" :items="_visibilities">
+                <template #trigger>
+                  <UIcon name="i-icon-park-outline:preview-close" v-if="post.visibility === 'private'" />
+                  <UIcon name="i-icon-park-outline:preview-open" v-else-if="post.visibility === 'public'" />
+                  <UIcon name="i-icon-park-outline:preview-close" v-else />
+                </template>
+              </USelect>
+            </div>
+
+            <USelect v-if="_canEdit"
+              :items="_languages" 
+              v-model="_selectedLanguage" 
+              item-key="label"
+              value-key="label"
+              label="Choose the post language"
+            >
+              <template #label="{ label }">
+                <div class="flex items-center gap-2">
+                  <UIcon name="i-ph-globe-stand" />
+                  <span>{{ label }}</span>
+                </div>
               </template>
             </USelect>
 
-            <USelect :items="_languages" v-if="_canEdit" v-model="_selectedLanguage" item-attribute="label"
-              value-attribute="value" />
-
-            <UTooltip v-if="!post.image?.src && _canEdit" content="Upload cover image">
+            <UTooltip v-if="!post.image?.src && _canEdit">
               <template #default>
-                <button opacity-50 flex items-center gap-2 @click="uploadCoverImage" :disabled="!_canEdit">
+                <UButton @click="uploadCoverImage" :disabled="!_canEdit" btn="outline-gray">
                   <div class="i-icon-park-outline:upload-picture"></div>
-                </button>
+                </UButton>
+              </template>
+
+              <template #content>
+                <div class="px-2 py-1">
+                  <p>Upload a cover image for your post.</p>
+                </div>
               </template>
             </UTooltip>
 
@@ -151,9 +111,6 @@
                 </div>
               </template>
             </UPopover>
-
-            <UToggle v-if="_canEdit" label="i-icon-park-outline:center-alignment" v-model:pressed="_stylesMeta.center"
-              toggle-on="soft-blue" toggle-off="soft-gray" />
           </div>
 
           <div v-if="post.image?.src" class="relative group">
@@ -169,11 +126,7 @@
         </div>
       </header>
 
-      <!-- <div class="w-full flex justify-center">
-        <div class="border-b b-dashed w-full"></div>
-      </div> -->
-
-      <main v-if="post" class="w-500px pt-8 mx-auto text-gray-700 dark:text-gray-300">
+      <main v-if="post" class="w-500px md:w-xl pt-8 mx-auto">
         <client-only>
           <tiptap-editor :can-edit="true" :model-value="post.content" @update:model-value="onUpdateEditorContent" />
         </client-only>
@@ -184,8 +137,72 @@
       </div>
     </article>
 
-    <div class="w-500px mx-auto">
+    <div class="w-500px md:w-xl mx-auto">
       <Footer />
+    </div>
+
+    <!-- Edit toolbar -->
+    <div class="fixed w-full bottom-8 flex justify-center items-center">
+      <div class="flex gap-4 backdrop-blur border dark:bg-black shadow-2xl p-2 rounded-4">
+        <UTooltip content="Go back">
+          <template #default>
+            <button opacity-50 flex items-center gap-2 @click="$router.back()">
+              <div class="i-ph:arrow-bend-down-left-bold"></div>
+            </button>
+          </template>
+          <template #content>
+            <button @click="$router.back()" bg="light dark:dark" text="dark dark:white" text-3 px-3 py-1 rounded-md
+              border-1 border-dashed class="b-#3D3BF3">
+              Go back
+            </button>
+          </template>
+        </UTooltip>
+
+        <UTooltip v-if="loggedIn" content="Lock edit">
+          <template #default>
+            <button opacity-50 flex items-center gap-2 @click="_canEdit = !_canEdit">
+              <div :class="_canEdit ? 'i-icon-park-outline:unlock' : 'i-icon-park-outline:lock'"></div>
+            </button>
+          </template>
+          <template #content>
+            <button @click="_canEdit = !_canEdit" bg="light dark:dark" text="dark dark:white" text-3 px-3 py-1
+              rounded-md border-1 border-dashed class="b-#3D3BF3">
+              {{ _canEdit ? "Lock edit" : "Unlock edit" }}
+            </button>
+          </template>
+        </UTooltip>
+
+        <UTooltip v-if="loggedIn" content="Export to JSON">
+          <template #default>
+            <button opacity-50 flex items-center gap-2 @click="exportPostToJson">
+              <div class="i-icon-park-outline:download-two"></div>
+            </button>
+          </template>
+          <template #content>
+            <button @click="exportPostToJson" bg="light dark:dark" text="dark dark:white" text-3 px-3 py-1
+              rounded-md border-1 border-dashed class="b-#3D3BF3">
+              Export to JSON
+            </button>
+          </template>
+        </UTooltip>
+
+        <!-- Import from JSON button -->
+        <UTooltip v-if="loggedIn && _canEdit" content="Import from JSON">
+          <template #default>
+            <button opacity-50 flex items-center gap-2 @click="triggerJsonImport">
+              <div class="i-icon-park-outline:upload-two"></div>
+            </button>
+          </template>
+          <template #content>
+            <button @click="triggerJsonImport" bg="light dark:dark" text="dark dark:white" text-3 px-3 py-1
+              rounded-md border-1 border-dashed class="b-#3D3BF3">
+              Import from JSON
+            </button>
+          </template>
+        </UTooltip>
+        <!-- Hidden file input for JSON import -->
+        <input type="file" ref="_jsonFileInput" class="hidden" accept="application/json" @change="handleJsonFileSelect" />
+      </div>
     </div>
   </div>
 </template>
@@ -226,7 +243,7 @@ const _languages = ref([
 const _selectedLanguage = ref(_languages.value[0])
 
 const _visibilities = ref([
-  "private", "project:private", "project:public", "public",
+  "private", "public",
 ])
 
 const _stylesMeta = ref({
@@ -234,6 +251,12 @@ const _stylesMeta = ref({
 })
 
 const { data: post } = await useFetch<PostType>(`/api/posts/${route.params.id}`)
+
+// console.log(`post.content: (type: ${typeof post.value?.content}) `, post.value?.content)
+// if (post.value) {
+//   post.value.content = JSON.parse(post.value?.content as string ?? "") ?? ""
+// }
+
 
 _selectedLanguage.value = _languages.value.find(l => l.value === post.value?.language) ?? _languages.value[0]
 _stylesMeta.value.center = post.value?.styles?.meta?.align === "center"

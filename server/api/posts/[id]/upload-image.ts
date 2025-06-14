@@ -35,7 +35,7 @@ export default defineEventHandler(async (event) => {
   }
 
   // Check if the user is the author of the post
-  if (post.author_id !== userId) {
+  if (post.user_id !== userId) {
     throw createError({
       statusCode: 403,
       message: 'You are not authorized to update this post',

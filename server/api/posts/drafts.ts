@@ -11,7 +11,7 @@ export default defineEventHandler(async (event) => {
   // Query to get drafts (private posts) for the authenticated user
   const stmt = db.prepare(`
     SELECT * FROM posts 
-    WHERE author_id = ? AND (visibility = 'private' OR visibility = 'project:private')
+    WHERE user_id = ? AND (visibility = 'private' OR visibility = 'project:private')
     ORDER BY created_at DESC
     LIMIT 25
   `)

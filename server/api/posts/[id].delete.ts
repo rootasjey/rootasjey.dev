@@ -32,7 +32,7 @@ export default defineEventHandler(async (event) => {
 
   const post = query.results[0]
 
-  if (post.author_id !== userId) {
+  if (post.user_id !== userId) {
     throw createError({
       statusCode: 403,
       message: "You are not authorized to delete this post",

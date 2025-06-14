@@ -3,7 +3,7 @@
     <footer class="mt-16 text-size-3">
       <div class="footer-buttons flex gap-4">
         <ULink to="/" class="footer-button flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors">
-          <span class="i-ph-arrow-arc-left-duotone text-size-4 mr-2"></span>
+          <span class="i-ph-house-simple-duotone text-size-4 mr-2"></span>
           <span class="font-500">Back to home</span>
         </ULink>
         <UButton btn="~" @click="scrollToTop"

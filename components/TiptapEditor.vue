@@ -50,10 +50,11 @@ const props = defineProps({
     },
   },
   modelValue: {
-    type: Object,
+    type: String,
     required: false,
-    default: { 
-      "type": "doc", "content": [
+    default: `{
+      "type": "doc",
+      "content": [
         { 
           "type": "paragraph", 
           "content": [
@@ -64,7 +65,7 @@ const props = defineProps({
           ]
         }
       ]
-    },
+    }`,
   },
 })
 
@@ -94,7 +95,7 @@ const editor = new Editor({
       },
     }),
   ],
-  content: props.modelValue,
+  content: typeof props.modelValue === "string" ? JSON.parse(props.modelValue) : props.modelValue,
   onUpdate: () => {
     emit("update:modelValue", editor.getJSON())
   },
@@ -160,6 +161,7 @@ onBeforeUnmount(() => {
     line-height: 1.1;
     margin-top: 2.5rem;
     text-wrap: pretty;
+    font-family: "Chillax";
   }
 
   h1,
@@ -169,22 +171,28 @@ onBeforeUnmount(() => {
   }
 
   h1 {
-    font-size: 3rem;
+    font-size: 4rem;
     font-weight: 700;
   }
 
   h2 {
-    font-size: 2.0rem;
+    font-size: 3.0rem;
   }
 
   h3 {
-    font-size: 1.1rem;
+    font-size: 1.5rem; /* 24px */
+    font-weight: 600;
   }
 
   h4,
   h5,
   h6 {
     font-size: 1rem;
+  }
+
+  /* Paragraph styles */
+  p {
+    color: #1E1E2E;
   }
 
   /* Code and preformatted text styles */

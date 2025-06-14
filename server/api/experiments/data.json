@@ -10,5 +10,23 @@
     "name": "Dispatches from Elsewhere",
     "description": "A handmade video tribute to the TV show Dispatches from Elsewhere.",
     "slug": "dispatches-from-elsewhere"
+  },
+  {
+    "id": 3,
+    "name": "Trombidex",
+    "description": "A pokedex web app.",
+    "slug": "trombidex"
+  },
+  {
+    "id": 4,
+    "name": "Inbox",
+    "description": "A useless inbox user interface.",
+    "slug": "dispatches-from-elsewhere"
+  },
+  {
+    "id": 5,
+    "name": "Memocards",
+    "description": "A memory card game to help me remember various knowledge.",
+    "slug": "trombidex"
   }
 ]

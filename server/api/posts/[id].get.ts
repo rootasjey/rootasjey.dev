@@ -44,7 +44,7 @@ export default defineEventHandler(async (event) => {
   }
 
   // Check visibility permissions
-  if (post.visibility !== "public" && post.author_id !== userId) {
+  if (post.visibility !== "public" && post.user_id !== userId) {
     throw createError({
       statusCode: 403,
       message: 'You are not authorized to view this post',

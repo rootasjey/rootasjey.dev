@@ -19,7 +19,6 @@ export default defineEventHandler(async (event) => {
 
   // Prepare the project data
   const project = {
-    author_id: userId,
     blob_path,
     category: body.category || "Uncategorized",
     company: body.company || "",
@@ -32,15 +31,16 @@ export default defineEventHandler(async (event) => {
     slug,
     technologies: typeof body.technologies === 'object' ? JSON.stringify(body.technologies || []) : '[]',
     updated_at: new Date().toISOString(),
+    user_id: userId,
     visibility: body.visibility || "public",
   }
 
   // Insert the project into the database
   const insertStmt = db.prepare(`
     INSERT INTO projects (
-      author_id, blob_path, category, company, created_at,
+      blob_path, category, company, created_at,
       description, image_alt, image_src, links, name,
-      slug, technologies, updated_at, visibility
+      slug, technologies, updated_at, user_id, visibility
     ) VALUES (
       ?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14
     )

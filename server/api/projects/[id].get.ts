@@ -39,7 +39,7 @@ export default defineEventHandler(async (event) => {
   }
 
   // Check visibility permissions
-  if (project.visibility !== "public" && project.author_id !== userId) {
+  if (project.visibility !== "public" && project.user_id !== userId) {
     throw createError({
       statusCode: 403,
       message: 'You are not authorized to view this project',

@@ -8,7 +8,6 @@
 export const createPostData = (body: any, userId: string | number) => {
   const name = body?.name || "New Post"
   return {
-    author_id: userId,
     blob_path: "",
     category: body?.category ?? "",
     description: body?.description ?? "",
@@ -27,6 +26,7 @@ export const createPostData = (body: any, userId: string | number) => {
       },
     }),
     tags: JSON.stringify([]),
+    user_id: userId,
     visibility: "private",
   }
 }
@@ -51,27 +51,4 @@ export const createPostFileContent = () => {
       },
     ],
   })
-}
-
-/**
- * Creates a metadata object for a post file.
- *
- * @param postId - The ID of the post.
- * @param userId - The ID of the user who created the post.
- * @returns An object containing the file metadata.
- */
-export const createPostFileMetadata = ({
-  postId = "", 
-  userId = "",
-  projectId = "",
-}) => {
-  return {
-    contentType: "application/json",
-    metadata: {
-      contentType: "application/json",
-      post_id: postId,
-      project_id: projectId,
-      user_id: userId,
-    },
-  }
 }
