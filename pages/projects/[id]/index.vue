@@ -3,81 +3,6 @@
     <article class=" max-w-4xl mx-auto px-4 py-8 my-24 space-y-8">
       <!-- Header -->
        <header class="mb-16 text-center flex flex-col items-center">
-        <div class="flex items-center gap-4">
-          <UTooltip
-            content="Go back"
-          :_tooltip-content="{
-            side: 'right',
-          }">
-            <template #default>
-              <button opacity-50 flex items-center gap-2 @click="$router.back()">
-                <div class="i-ph:arrow-bend-down-left-bold"></div>
-              </button>
-            </template>
-            <template #content>
-              <button @click="$router.back()" bg="light dark:dark" text="dark dark:white" text-3 px-3 py-1 rounded-md border-1 border-dashed class="b-#3D3BF3">
-                Go back
-              </button>
-            </template>
-          </UTooltip>
-
-          <UTooltip
-           v-if="loggedIn"
-            content="Edit project"
-          :_tooltip-content="{
-            side: 'right',
-          }">
-            <template #default>
-              <button opacity-50 flex items-center gap-2 @click="navigateTo(`/projects/${project.id}/edit`)">
-                <div class="i-ph:pencil"></div>
-              </button>
-            </template>
-            <template #content>
-              <button @click="navigateTo(`/projects/${project.id}/edit`)" bg="light dark:dark" text="dark dark:white" text-3 px-3 py-1 rounded-md border-1 border-dashed class="b-#3D3BF3">
-                Edit project's metadata
-              </button>
-            </template>
-          </UTooltip>
-
-          <UTooltip v-if="loggedIn" content="Export to JSON" :_tooltip-content="{ side: 'right' }">
-            <template #default>
-              <button opacity-50 flex items-center gap-2 @click="exportPostToJson">
-                <div class="i-icon-park-outline:download-two"></div>
-              </button>
-            </template>
-            <template #content>
-              <button @click="exportPostToJson" bg="light dark:dark" text="dark dark:white" text-3 px-3 py-1
-                rounded-md border-1 border-dashed class="b-#3D3BF3">
-                Export to JSON
-              </button>
-            </template>
-          </UTooltip>
-
-          <UTooltip content="Upload cover image" v-if="loggedIn && !project.image.src">
-            <template #default>
-              <UButton 
-                icon
-                btn="ghost-gray"
-                label="i-icon-park-outline-upload-picture"
-                @click="openFilePicker"
-              />
-            </template>
-            <template #content>
-              <button bg="light dark:dark" text="dark dark:white" text-3 px-3 py-1 rounded-md border-1 border-dashed class="b-#3D3BF3">
-                Upload cover image
-              </button>
-            </template>
-          </UTooltip>
-
-          <input 
-            type="file" 
-            ref="fileInput" 
-            accept="image/*" 
-            class="hidden" 
-            @change="handleFileChange" 
-          />
-        </div>
-
         <div class="flex items-center gap-2">
           <h1 class="font-body text-size-18 font-600 text-gray-800 dark:text-gray-200">
             {{ project.name }}
@@ -120,6 +45,75 @@
     <div class="w-500px mx-auto">
       <Footer />
     </div>
+
+    <!-- Edit toolbar -->
+    <div class="fixed w-full bottom-8 flex justify-center items-center">
+      <div class="flex gap-4 backdrop-blur border bg-white/40 dark:bg-black/20 shadow-2xl p-2 rounded-4">
+        <UTooltip content="Go back">
+          <template #default>
+            <button opacity-50 flex items-center gap-2 @click="$router.back()">
+              <div class="i-ph:arrow-bend-down-left-bold"></div>
+            </button>
+          </template>
+          <template #content>
+            <button @click="$router.back()" bg="light dark:dark" text="dark dark:white" text-3 px-3 py-1 rounded-md border-1 border-dashed class="b-#3D3BF3">
+              Go back
+            </button>
+          </template>
+        </UTooltip>
+
+        <UTooltip v-if="loggedIn" content="Edit project">
+          <template #default>
+            <button opacity-50 flex items-center gap-2 @click="navigateTo(`/projects/${project.id}/edit`)">
+              <div class="i-ph:pencil"></div>
+            </button>
+          </template>
+          <template #content>
+            <button @click="navigateTo(`/projects/${project.id}/edit`)" bg="light dark:dark" text="dark dark:white" text-3 px-3 py-1 rounded-md border-1 border-dashed class="b-#3D3BF3">
+              Edit project's metadata
+            </button>
+          </template>
+        </UTooltip>
+
+        <UTooltip v-if="loggedIn" content="Export to JSON">
+          <template #default>
+            <button opacity-50 flex items-center gap-2 @click="exportPostToJson">
+              <div class="i-icon-park-outline:download-two"></div>
+            </button>
+          </template>
+          <template #content>
+            <button @click="exportPostToJson" bg="light dark:dark" text="dark dark:white" text-3 px-3 py-1
+              rounded-md border-1 border-dashed class="b-#3D3BF3">
+              Export to JSON
+            </button>
+          </template>
+        </UTooltip>
+
+        <UTooltip content="Upload cover image" v-if="loggedIn && !project.image.src">
+          <template #default>
+            <UButton 
+              icon
+              btn="ghost-gray"
+              label="i-icon-park-outline-upload-picture"
+              @click="openFilePicker"
+            />
+          </template>
+          <template #content>
+            <button bg="light dark:dark" text="dark dark:white" text-3 px-3 py-1 rounded-md border-1 border-dashed class="b-#3D3BF3">
+              Upload cover image
+            </button>
+          </template>
+        </UTooltip>
+
+        <input 
+          type="file" 
+          ref="fileInput" 
+          accept="image/*" 
+          class="hidden" 
+          @change="handleFileChange" 
+        />
+      </div>
+    </div>
   </div>
 </template>
 
@@ -135,11 +129,7 @@ let _updatePostContentTimer: NodeJS.Timeout
 
 const id = route.params.id
 const { data } = await useFetch(`/api/projects/${id}`)
-
 const project = ref((data.value ?? {}) as ProjectType)
-if (typeof project.value?.content === "string") {
-  project.value.content = JSON.parse(project.value.content)
-}
 
 const openFilePicker = () => {
   fileInput.value?.click()

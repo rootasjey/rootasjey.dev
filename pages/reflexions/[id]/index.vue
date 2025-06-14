@@ -252,12 +252,6 @@ const _stylesMeta = ref({
 
 const { data: post } = await useFetch<PostType>(`/api/posts/${route.params.id}`)
 
-// console.log(`post.content: (type: ${typeof post.value?.content}) `, post.value?.content)
-// if (post.value) {
-//   post.value.content = JSON.parse(post.value?.content as string ?? "") ?? ""
-// }
-
-
 _selectedLanguage.value = _languages.value.find(l => l.value === post.value?.language) ?? _languages.value[0]
 _stylesMeta.value.center = post.value?.styles?.meta?.align === "center"
 

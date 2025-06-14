@@ -37,7 +37,7 @@ export const createPostData = (body: any, userId: string | number) => {
  * @returns A JSON string representing the post content.
  */
 export const createPostFileContent = () => {
-  return JSON.stringify({
+  return {
     "type": "doc",
     "content": [
       {
@@ -50,5 +50,5 @@ export const createPostFileContent = () => {
         ],
       },
     ],
-  })
+  }
 }

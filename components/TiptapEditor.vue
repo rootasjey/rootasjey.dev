@@ -50,9 +50,9 @@ const props = defineProps({
     },
   },
   modelValue: {
-    type: String,
+    type: Object,
     required: false,
-    default: `{
+    default: {
       "type": "doc",
       "content": [
         { 
@@ -65,7 +65,7 @@ const props = defineProps({
           ]
         }
       ]
-    }`,
+    },
   },
 })
 

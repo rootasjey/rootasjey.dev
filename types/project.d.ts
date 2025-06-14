@@ -7,7 +7,7 @@ export type CreateProjectType = {
 export type ProjectType = {
   category: string
   company: string
-  content?: string
+  content?: object
   created_at: string
   description: string
   id: string

@@ -11,7 +11,7 @@ export type PostType = {
   /** True if the user is the author of the post. */
   canEdit: boolean
   /** Post content in JSON format. */
-  content?: string
+  content?: object
   created_at: string
   description: string
   category: string
