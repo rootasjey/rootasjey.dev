@@ -2,7 +2,7 @@
   <div class="frame">
     <article>
       <header class="min-h-95vh 
-        m-4 border-1 b-dashed rounded-2 border-gray-200 dark:border-gray-800
+        m-4 border-1 b-dashed rounded-2 border-gray-200 dark:border-gray-400
         text-center flex flex-col justify-center items-center">
         <div v-if="post" class="mt-2">
           <UInput v-model="post.name"
@@ -114,7 +114,12 @@
           </div>
 
           <div v-if="post.image?.src" class="relative group">
-            <img v-if="post.image?.src" :src="`/${post.image.src}`" class="w-full h-80 object-cover rounded-lg mt-4" />
+            <NuxtImg 
+              provider="hubblob"
+              v-if="post.image?.src" 
+              :src="`/${post.image.src}/original.${post.image.ext}`" 
+              class="w-full h-80 object-cover rounded-lg mt-4" 
+            />
             <div class="flex gap-2 absolute top-1 right-1">
               <UButton v-if="_canEdit" icon @click="uploadCoverImage" btn="~" label="i-icon-park-outline:upload-picture"
                 class="btn-glowing cursor-pointer opacity-0 group-hover:opacity-100 transition-all" />

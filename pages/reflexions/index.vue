@@ -206,8 +206,7 @@ const posts = data.value as unknown as PostType[] ?? []
 
 const createPost = async ({ name, description, category }: CreatePostType) => {
   _isCreateDialogOpen.value = false
-
-  const { data } = await useFetch("/api/posts/create", {
+  await useFetch("/api/posts", {
     method: "POST",
     body: {
       name,

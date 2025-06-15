@@ -1,51 +1,32 @@
 // DELETE /api/posts/[id]/cover
+import { PostType } from "~/types/post"
 
 export default defineEventHandler(async (event) => {
   const session = await requireUserSession(event)
-  const db = hubDatabase()
-  const postIdOrSlug = getRouterParam(event, 'id')
-
-  if (!postIdOrSlug) {
-    throw createError({
-      statusCode: 400,
-      message: 'Post ID or slug is required',
-    })
-  }
-
   const userId = session.user.id
+  const postIdOrSlug = getRouterParam(event, 'id')
+  const db = hubDatabase()
 
-  const post = await db
+  let post: PostType | null = await db
   .prepare(`SELECT * FROM posts WHERE id = ? OR slug = ? LIMIT 1`)
   .bind(postIdOrSlug, postIdOrSlug)
   .first()
 
-  if (!post) {
-    throw createError({
-      statusCode: 404,
-      message: 'Post not found',
-    })
-  }
-
-  if (post.user_id !== userId) {
-    throw createError({
-      statusCode: 403,
-      message: 'You are not authorized to update this post',
-    })
-  }
-
-  if (!post.image_src) {
-    throw createError({
-      statusCode: 400,
-      message: 'Post does not have an image',
-    })
-  }
+  handleErrors({ post, userId })
+  post = post as PostType
 
   try {
-    await hubBlob().delete(post.image_src as string)
+    const prefix = post.image_src as string
+    const blobList = await hubBlob().list({ prefix })
+    
+    for (const blobItem of blobList.blobs) {
+      await hubBlob().delete(blobItem.pathname)
+    }
+
     await db
     .prepare(`
       UPDATE posts 
-      SET image_src = '', image_alt = '', updated_at = CURRENT_TIMESTAMP
+      SET image_src = '', image_alt = '', image_ext = '', updated_at = CURRENT_TIMESTAMP
       WHERE id = ?
     `)
     .bind(post.id)
@@ -66,3 +47,31 @@ export default defineEventHandler(async (event) => {
     }
   }
 })
+
+type HandleErrorsProps = {
+  post: PostType | null
+  userId: number
+}
+
+const handleErrors = ({ post, userId }: HandleErrorsProps) => {
+  if (!post) {
+    throw createError({
+      statusCode: 404,
+      message: 'Post not found',
+    })
+  }
+
+  if (post.user_id !== userId) {
+    throw createError({
+      statusCode: 403,
+      message: 'You are not authorized to update this post',
+    })
+  }
+
+  if (!post.image_src) {
+    throw createError({
+      statusCode: 400,
+      message: 'Post does not have an image',
+    })
+  }
+}

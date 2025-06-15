@@ -56,5 +56,16 @@ export default defineEventHandler(async (event) => {
     console.error(`Failed to update view count for post ${idOrSlug}:`, error)
   }
 
+  post.image = {
+    alt: post.image_alt || "",
+    ext: post.image_ext || "",
+    src: post.image_src || ""
+  }
+
+  // Remove redundant fields
+  delete post.image_alt
+  delete post.image_ext
+  delete post.image_src
+
   return post
 })

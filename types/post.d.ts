@@ -1,5 +1,3 @@
-import type { RecordId } from "surrealdb"
-
 export type CreatePostType = {
   category: string
   description: string
@@ -19,9 +17,11 @@ export type PostType = {
   isDeleteDialogOpen?: boolean
   image: {
     alt: string
+    ext: string
     src: string
   }
   image_alt?: string
+  image_ext?: string
   image_src?: string
   language: string
   styles?: {
@@ -39,6 +39,7 @@ export type PostType = {
   slug: string
   tags: string[]
   updated_at: string
+  user_id: number
   visibility: string
 }
 

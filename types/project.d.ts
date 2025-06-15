@@ -5,18 +5,21 @@ export type CreateProjectType = {
 }
 
 export type ProjectType = {
+  article?: object
+  blob_path: string
   category: string
   company: string
-  article?: object
   created_at: string
   description: string
   id: string
   image: {
     alt: string
+    ext: string
     src: string
   }
-  image_alt: string
-  image_src: string
+  image_alt?: string
+  image_ext?: string
+  image_src?: string
   isDeleteDialogOpen?: boolean
   links: ProjectLinkType[] & never[]
   name: string
@@ -24,7 +27,7 @@ export type ProjectType = {
   slug: string
   technologies: string[]
   updated_at: string
-  user_id: string
+  user_id: number
   visibility: string
 }
 

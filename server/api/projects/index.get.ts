@@ -13,11 +13,13 @@ export default defineEventHandler(async (event) => {
 
     project.image = {
       alt: project.image_alt || "",
-      src: project.image_src || ""
+      ext: project.image_ext || "",
+      src: project.image_src || "",
     }
 
     // Remove redundant fields
     delete project.image_alt
+    delete project.image_ext
     delete project.image_src
   }
 

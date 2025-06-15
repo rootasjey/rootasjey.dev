@@ -15,12 +15,17 @@ export const getImage: ProviderGetImage = (
   const operations = operationsGenerator(modifiers).replaceAll(/[/]/g, '&')
   let url = joinURL(baseURL, src + (operations ? '?' + operations : ''))
 
-  if (src.startsWith("/projects/")) {
+  if (src.startsWith("/projects/") || src.startsWith("/posts/")) {
     const parts = src.split("/")
-    const slug = parts[2]
+    const category = parts[1]
     const filename = parts[parts.length - 1]
+    let slug = ""
+    for (let i = 2; i < parts.length - 1; i++) {
+      slug += parts[i]
+      if (i < parts.length - 2) { slug += '/' }
+    }
     
-    url = joinURL(baseURL, `/images/${filename}?relatedTo=projects&slug=${slug}`)
+    url = joinURL(baseURL, `/images/${filename}?relatedTo=${category}&slug=${slug}`)
     if (operations) {
       url += '&' + operations
     }

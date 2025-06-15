@@ -25,7 +25,7 @@
       <div v-if="project.image.src" >
         <NuxtImg 
           provider="hubblob"
-          :src="project.image.src" 
+          :src="`/${project.image.src}/original.${project.image.ext}`" 
           :alt="project.image.alt || project.name" 
           class="w-full rounded-4 shadow-lg h-auto max-h-[500px] object-cover"
         />

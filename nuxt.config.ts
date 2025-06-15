@@ -7,7 +7,7 @@ export default defineNuxtConfig({
       htmlAttrs: {
         lang: "en",
       },
-      title: "rootasjey.dev",
+      title: "rootasjey",
       meta: [
         { name: "viewport", content: "width=device-width, initial-scale=1" },
         { name: "description", content: "Exploring the intersection of code & creativity" },
@@ -30,21 +30,11 @@ export default defineNuxtConfig({
       hubblob: {
         name: 'hubblob',
         provider: '~/providers/hubblob.ts',
-        options: {
-          baseURL: process.env.NODE_ENV === 'development'
-            ? process.env.HUB_BLOB_URL || 'http://localhost:3000'
-            : 'https://www.rootasjey.dev',
-        },
       },
     },
   },
 
-  modules: [
-    "@nuxthub/core",
-    "@nuxt/image",
-    "@una-ui/nuxt",
-    "nuxt-auth-utils",
-  ],
+  modules: ["@nuxthub/core", "@nuxt/image", "@una-ui/nuxt", "nuxt-auth-utils", "@pinia/nuxt"],
   unocss: {
     preflight: true,
     icons: {

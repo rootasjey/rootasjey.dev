@@ -253,6 +253,12 @@ onBeforeUnmount(() => {
   }
 }
 
+.dark .tiptap {
+  p {
+    color: #fff;
+  }
+}
+
 </style>
 
 <style scoped>

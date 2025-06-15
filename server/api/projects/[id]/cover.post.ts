@@ -1,10 +1,14 @@
 // POST /api/project/[id]/cover
 
+import { Jimp } from "jimp";
+
 export default defineEventHandler(async (event) => {
   const session = await requireUserSession(event)
+  const userId = session.user.id
   const projectIdOrSlug = getRouterParam(event, 'id')
   const formData = await readMultipartFormData(event)
   const db = hubDatabase()
+  const hb = hubBlob()
   
   const file = formData?.find(item => item.name === 'file')?.data
   const fileName = formData?.find(item => item.name === 'fileName')?.data.toString()
@@ -17,7 +21,14 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  const userId = session.user.id
+  // Check if the file is an image
+  if (type !== 'image/jpeg' && type !== 'image/png' && type !== 'image/bmp' 
+    && type !== 'image/tiff' && type !== 'image/x-ms-bmp' && type !== 'image/gif') {
+    throw createError({
+      statusCode: 400,
+      message: 'File must be an image',
+    })
+  }
 
   const project = await db
   .prepare(`SELECT * FROM projects WHERE id = ? OR slug = ? LIMIT 1`)
@@ -38,27 +49,67 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  // Upload the image to blob storage
+  const extension = type.split('/')[1]
+  const coverFolder = `projects/${project.slug}/cover`
+
+  // Process the original image with Jimp
+  const originalImage = await Jimp.fromBuffer(file)
+
+  const sizes = [
+    { width: 160, suffix: 'xxs' },
+    { width: 320, suffix: 'xs' },
+    { width: 640, suffix: 'sm' },
+    { width: 1024, suffix: 'md' },
+    { width: 1920, suffix: 'lg' },
+    // Original size will be stored as 'original'
+  ]
+  
+  // Store all generated pathnames
+  const generatedVariants = []
+
+  // Upload original image
   const blob = new Blob([file], { type })
-  const uploadedBlob = await hubBlob().put(fileName, blob, {
-    addRandomSuffix: true,
-    prefix: `projects/${project.slug}`
+  const originalBlob = await hb.put(`original.${extension}`, blob, {
+    prefix: coverFolder,
   })
 
-  const imagePathname = `${uploadedBlob.pathname}`
+  generatedVariants.push({
+    size: 'original',
+    width: originalImage.width,
+    height: originalImage.height,
+    pathname: originalBlob.pathname
+  })
+
+  // Generate and upload resized versions
+  for (const size of sizes) {
+    const resized = originalImage.clone().resize({ w: size.width })
+    const buffer = await resized.getBuffer(type)
+    const blob = new Blob([buffer], { type })
+    const response = await hb
+      .put(`${coverFolder}/${size.suffix}.${extension}`, blob, {
+        addRandomSuffix: false,
+      })
+
+    generatedVariants.push({
+      size: size.suffix,
+      width: resized.width,
+      height: resized.height,
+      pathname: response.pathname
+    })
+  }
 
   await db.prepare(`
     UPDATE projects 
-    SET image_src = ?, image_alt = ?, updated_at = CURRENT_TIMESTAMP
+    SET image_src = ?, image_alt = ?, image_ext = ?, updated_at = CURRENT_TIMESTAMP
     WHERE id = ?
   `)
-  .bind(imagePathname, fileName, project.id)
+  .bind(coverFolder, fileName, extension, project.id)
   .run()
 
   return { 
     image: {
       alt: fileName,
-      src: imagePathname,
+      src: coverFolder,
     },
     success: true, 
   }

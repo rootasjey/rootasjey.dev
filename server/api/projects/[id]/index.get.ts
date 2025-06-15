@@ -1,3 +1,5 @@
+import { ProjectType } from "~/types/project"
+
 // GET /api/projects/[id]
 export default defineEventHandler(async (event) => {
   const db = hubDatabase()
@@ -19,7 +21,7 @@ export default defineEventHandler(async (event) => {
     }
   } catch (error) { /* No session, continue as anonymous user */ }
 
-  const project = await db
+  const project: ProjectType | null = await db
   .prepare(`SELECT * FROM projects WHERE id = ? OR slug = ? LIMIT 1`)
   .bind(idOrSlug, idOrSlug)
   .first()
@@ -73,11 +75,13 @@ export default defineEventHandler(async (event) => {
 
   project.image = {
     alt: project.image_alt || "",
+    ext: project.image_ext || "",
     src: project.image_src || ""
   }
 
   // Remove redundant fields
   delete project.image_alt
+  delete project.image_ext
   delete project.image_src
 
   return project

@@ -147,7 +147,7 @@
               class="w-full h-32 overflow-hidden">
               <NuxtImg 
                 provider="hubblob"
-                :src="project.image.src" 
+                :src="`/${project.image.src}/xs.${project.image.ext}`" 
                 :alt="project.image.alt || project.name" 
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform"
               />
