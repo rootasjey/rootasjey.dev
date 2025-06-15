@@ -91,7 +91,7 @@
             </UTooltip>
 
             <!-- Hidden file input -->
-            <input type="file" ref="_fileInput" class="hidden" accept="image/*" @change="handleFileSelect" />
+            <input type="file" ref="_fileInput" class="hidden" accept="image/*" @change="handleCoverSelect" />
 
             <UPopover v-if="_canEdit" :disabled="!_canEdit">
               <template #trigger>
@@ -128,7 +128,7 @@
 
       <main v-if="post" class="w-500px md:w-xl pt-8 mx-auto">
         <client-only>
-          <tiptap-editor :can-edit="true" :model-value="post.content" @update:model-value="onUpdateEditorContent" />
+          <tiptap-editor :can-edit="true" :model-value="post.article" @update:model-value="onUpdateEditor" />
         </client-only>
       </main>
 
@@ -213,17 +213,13 @@ import TiptapEditor from '~/components/TiptapEditor.vue'
 const { loggedIn } = useUserSession()
 
 const route = useRoute()
-let _updatePostContentTimer: NodeJS.Timeout
+let _articleTimer: NodeJS.Timeout
 
 /** True if data is being saved. */
 const _saving = ref<boolean>()
 let _updatePostMetaTimer: NodeJS.Timeout
-let _updatePostStylesTimer: NodeJS.Timeout
 const _fileInput = ref<HTMLInputElement>()
 const _jsonFileInput = ref<HTMLInputElement>() // New ref for JSON import
-
-/** Specify where the uploaded image will be placed (e.g. as the post's cover or content). */
-const _imageUploadPlacement = ref<"cover" | "content">("cover")
 
 const _categories = ref([
   "cinema", "no category", "development", "literature", "music",
@@ -246,14 +242,9 @@ const _visibilities = ref([
   "private", "public",
 ])
 
-const _stylesMeta = ref({
-  center: false,
-})
-
 const { data: post } = await useFetch<PostType>(`/api/posts/${route.params.id}`)
 
 _selectedLanguage.value = _languages.value.find(l => l.value === post.value?.language) ?? _languages.value[0]
-_stylesMeta.value.center = post.value?.styles?.meta?.align === "center"
 
 /** True if the current user is the author of the post. */
 const _canEdit = ref(post.value?.canEdit ?? false)
@@ -270,14 +261,13 @@ const exportPostToJson = () => {
     name: post.value.name,
     slug: post.value.slug,
     description: post.value.description,
-    content: post.value.content,
+    article: post.value.article,
     category: post.value.category,
     language: post.value.language,
     visibility: post.value.visibility,
     created_at: post.value.created_at,
     updated_at: post.value.updated_at,
     image: post.value.image,
-    styles: post.value.styles,
   }
   
   // Convert to JSON string with pretty formatting
@@ -338,23 +328,13 @@ const handleJsonFileSelect = async (event: Event) => {
       _selectedLanguage.value = _languages.value.find(l => l.value === importedData.language) ?? _languages.value[0]
     }
     
-    // Update post content if available
-    if (importedData.content) {
-      post.value.content = importedData.content
-      await updatePostContent(importedData.content)
+    if (importedData.article) {
+      post.value.article = importedData.article
+      await updatePostArticle(importedData.article)
     }
     
-    // Update styles if available
-    if (importedData.styles) {
-      post.value.styles = importedData.styles
-      _stylesMeta.value.center = importedData.styles?.meta?.align === "center"
-      await updatePostStyles()
-    }
+    await updatePost()
     
-    // Update other metadata
-    await updatePostMeta()
-    
-    // Show success notification
     useToast().toast({
       title: 'Import successful',
       description: 'The post has been updated with the imported data',
@@ -381,16 +361,16 @@ const handleJsonFileSelect = async (event: Event) => {
   }
 }
 
-const onUpdateEditorContent = (value: Object) => {
-  clearTimeout(_updatePostContentTimer)
-  _updatePostContentTimer = setTimeout(() => updatePostContent(value), 2000)
+const onUpdateEditor = (value: Object) => {
+  clearTimeout(_articleTimer)
+  _articleTimer = setTimeout(() => updatePostArticle(value), 2000)
 }
 
-const updatePostContent = async (value: Object) => {
-  await $fetch(`/api/posts/${route.params.id}/update-content`, {
+const updatePostArticle = async (value: Object) => {
+  await $fetch(`/api/posts/${route.params.id}/article`, {
     method: "PUT",
     body: {
-      content: value,
+      article: value,
     },
   })
 }
@@ -415,34 +395,15 @@ watch(
   ],
   () => {
     clearTimeout(_updatePostMetaTimer)
-    _updatePostMetaTimer = setTimeout(updatePostMeta, 2000)
+    _updatePostMetaTimer = setTimeout(updatePost, 2000)
   },
 )
 
-watch(
-  () => _stylesMeta.value.center,
-  () => {
-    clearTimeout(_updatePostStylesTimer)
-    _updatePostStylesTimer = setTimeout(updatePostStyles, 1000)
-  },
-)
-
-const updatePostStyles = async () => {
-  await $fetch(`/api/posts/${route.params.id}/update-styles`, {
-    method: "PUT",
-    body: {
-      meta: {
-        align: _stylesMeta.value.center ? "center" : "",
-      },
-    },
-  })
-}
-
-const updatePostMeta = async () => {
+const updatePost = async () => {
   _saving.value = true
 
   const { post: updatedPost } = await $fetch<{post: PostType}>(
-    `/api/posts/${route.params.id}/update-meta`, {
+    `/api/posts/${route.params.id}/`, {
     method: "PUT",
     body: {
       category: post.value?.category,
@@ -486,7 +447,7 @@ const updateOnlyChangedFields = (updatedPost: PostType) => {
 }
 
 const removeCoverImage = async () => {
-  const { success } = await $fetch(`/api/posts/${route.params.id}/remove-image`, {
+  const { success } = await $fetch(`/api/posts/${route.params.id}/cover`, {
     method: "DELETE",
   })
 
@@ -497,16 +458,10 @@ const removeCoverImage = async () => {
 }
 
 const uploadCoverImage = () => {
-  _imageUploadPlacement.value = "cover"
   _fileInput.value?.click()
 }
 
-const uploadContentImage = () => {
-  _imageUploadPlacement.value = "content"
-  _fileInput.value?.click()
-}
-
-const handleFileSelect = async (event: Event) => {
+const handleCoverSelect = async (event: Event) => {
   const file = (event.target as HTMLInputElement).files?.[0]
   if (!file) return
 
@@ -516,9 +471,8 @@ const handleFileSelect = async (event: Event) => {
     formData.append('file', file)
     formData.append('fileName', file.name)
     formData.append('type', file.type)
-    formData.append('placement', _imageUploadPlacement.value)
 
-    const { image } = await $fetch(`/api/posts/${route.params.id}/upload-image`, {
+    const { image } = await $fetch(`/api/posts/${route.params.id}/cover`, {
       method: 'POST',
       body: formData,
     })

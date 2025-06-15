@@ -1,23 +1,20 @@
-// POST /api/projects/create.ts
+// POST /api/projects
+
 export default defineEventHandler(async (event) => {
   const session = await requireUserSession(event)
   const db = hubDatabase()
   const body = await readBody(event)
   const blobStorage = hubBlob()
-
   const userId = session.user.id
 
   // Create a slug from the project name
   const slug = body.name.toLowerCase().replaceAll(" ", "-")
 
-  // Post content blob
-  const postContentBlob = createPostFileContent()
-  const blob_path = `projects/${slug}/content.json`
+  const articleBlob = createArticle()
+  const blob_path = `projects/${slug}/article.json`
 
-  // Store the content in blob storage
-  await blobStorage.put(blob_path, JSON.stringify(postContentBlob))
+  await blobStorage.put(blob_path, JSON.stringify(articleBlob))
 
-  // Prepare the project data
   const project = {
     blob_path,
     category: body.category || "Uncategorized",
@@ -35,7 +32,6 @@ export default defineEventHandler(async (event) => {
     visibility: body.visibility || "public",
   }
 
-  // Insert the project into the database
   const insertStmt = db.prepare(`
     INSERT INTO projects (
       blob_path, category, company, created_at,
@@ -46,7 +42,9 @@ export default defineEventHandler(async (event) => {
     )
   `)
 
-  const result = await insertStmt.bind(...Object.values(project)).run()
+  const result = await insertStmt
+  .bind(...Object.values(project))
+  .run()
 
   return {
     id: result.meta.last_row_id,

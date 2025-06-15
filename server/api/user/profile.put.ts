@@ -13,19 +13,10 @@ const updateProfileSchema = z.object({
 
 export default eventHandler(async (event) => {
   try {
-    // Check authentication
     const session = await requireUserSession(event)
-    if (!session.user?.id) {
-      throw createError({
-        statusCode: 401,
-        statusMessage: 'Authentication required'
-      })
-    }
-
     const userId = session.user.id
     const body = await readBody(event)
 
-    // Validate input data
     const validationResult = updateProfileSchema.safeParse(body)
     if (!validationResult.success) {
       throw createError({
@@ -37,7 +28,6 @@ export default eventHandler(async (event) => {
 
     const updateData = validationResult.data
 
-    // Validate socials JSON if provided
     if (updateData.socials) {
       try {
         JSON.parse(updateData.socials)
@@ -80,7 +70,10 @@ export default eventHandler(async (event) => {
     const db = hubDatabase()
     
     try {
-      await db.prepare(updateQuery).bind(...updateValues).run()
+      await db
+      .prepare(updateQuery)
+      .bind(...updateValues)
+      .run()
     } catch (error: any) {
       // Handle unique constraint violations
       if (error.code === 'SQLITE_CONSTRAINT_UNIQUE') {
@@ -106,11 +99,14 @@ export default eventHandler(async (event) => {
     }
 
     // Fetch updated user data
-    const userRecord = await db.prepare(`
+    const userRecord = await db
+    .prepare(`
       SELECT id, name, email, biography, job, location, language, socials, created_at, updated_at
       FROM users 
       WHERE id = ?
-    `).bind(userId).run()
+    `)
+    .bind(userId)
+    .run()
 
 
     if (!userRecord.success) {

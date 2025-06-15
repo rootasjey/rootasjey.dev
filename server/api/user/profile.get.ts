@@ -2,24 +2,18 @@ import { User } from "#auth-utils"
 
 export default eventHandler(async (event) => {
   try {
-    // Check authentication
     const session = await requireUserSession(event)
-    if (!session.user?.id) {
-      throw createError({
-        statusCode: 401,
-        statusMessage: 'Authentication required'
-      })
-    }
-
     const userId = session.user.id
 
-    // Fetch user profile data
     const db = hubDatabase()
-    const userRecord = await db.prepare(`
+    const userRecord = await db
+    .prepare(`
       SELECT id, name, email, biography, job, location, language, socials, created_at, updated_at
       FROM users 
       WHERE id = ?
-    `).bind(userId).run()
+    `)
+    .bind(userId)
+    .run()
 
     if (!userRecord.success) {
       throw createError({
@@ -36,10 +30,7 @@ export default eventHandler(async (event) => {
     }
 
   } catch (error: any) {
-    if (error.statusCode) {
-      throw error
-    }
-
+    if (error.statusCode) { throw error }
     console.error('Error fetching user profile:', error)
     throw createError({
       statusCode: 500,

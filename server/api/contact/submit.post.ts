@@ -1,8 +1,6 @@
 // POST /api/contact/submit
-// Handles contact form submissions and saves them to the messages table
 
 export default defineEventHandler(async (event) => {
-  // Get the form data from the request body
   const body = await readBody(event)
   
   // Validate the required fields
@@ -15,7 +13,8 @@ export default defineEventHandler(async (event) => {
 
   try {
     const db = hubDatabase()
-    const result = await db.prepare(`
+    const result = await db
+    .prepare(`
       INSERT INTO messages (sender_email, subject, message)
       VALUES (?, ?, ?)
     `)

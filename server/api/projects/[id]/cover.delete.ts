@@ -1,8 +1,9 @@
-// DELETE /api/projects/[id]/remove-image
+// DELETE /api/projects/[id]/cover
+
 export default defineEventHandler(async (event) => {
   const session = await requireUserSession(event)
   const db = hubDatabase()
-  const projectIdOrSlug = event.context.params?.id
+  const projectIdOrSlug = getRouterParam(event, 'id')
 
   if (!projectIdOrSlug) {
     throw createError({
@@ -13,12 +14,10 @@ export default defineEventHandler(async (event) => {
 
   const userId = session.user.id
 
-  // Find the project by ID or slug
-  const projectStmt = db.prepare(`
-    SELECT * FROM projects WHERE id = ? OR slug = ? LIMIT 1
-  `)
-  
-  const project = await projectStmt.bind(projectIdOrSlug, projectIdOrSlug).first()
+  const project = await db
+  .prepare(`SELECT * FROM projects WHERE id = ? OR slug = ? LIMIT 1`)
+  .bind(projectIdOrSlug, projectIdOrSlug)
+  .first()
 
   if (!project) {
     throw createError({
@@ -27,7 +26,6 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  // Check if the user is the author of the project
   if (project.user_id !== userId) {
     throw createError({
       statusCode: 403,
@@ -44,13 +42,13 @@ export default defineEventHandler(async (event) => {
 
   try {
     await hubBlob().delete(project.image_src as string)
-    const updateStmt = db.prepare(`
+    await db.prepare(`
       UPDATE projects 
       SET image_src = '', image_alt = '', updated_at = CURRENT_TIMESTAMP
       WHERE id = ?
     `)
-
-    await updateStmt.bind(project.id).run()
+    .bind(project.id)
+    .run()
 
     return { 
       error: null,

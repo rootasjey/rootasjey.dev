@@ -2,15 +2,7 @@
 import data from "~/server/api/experiments/data.json"
 
 export default eventHandler(async (event) => {
-  // Get user session (you'll need to implement this based on your auth system)
-  const session = await getUserSession(event)
-  
-  if (!session?.user) {
-    throw createError({
-      statusCode: 401,
-      statusMessage: 'Unauthorized'
-    })
-  }
+  const session = await requireUserSession(event)
 
   try {
     const db = await hubDatabase()

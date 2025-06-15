@@ -144,13 +144,9 @@ const saveProject = async () => {
 
 const deleteProject = async (project: ProjectType) => {
   project.isDeleteDialogOpen = false
-  const { data } = await useFetch("/api/projects/delete", {
+  await useFetch(`/api/projects/${project.id}`, {
     method: "DELETE",
-    body: {
-      id: project.id,
-    },
   })
-  console.log(data.value)
 }
 
 const deletePost = async (postId: string) => {

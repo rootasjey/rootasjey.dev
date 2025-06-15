@@ -1,8 +1,9 @@
-// DELETE /api/posts/[id]/remove-image
+// DELETE /api/posts/[id]/cover
+
 export default defineEventHandler(async (event) => {
   const session = await requireUserSession(event)
   const db = hubDatabase()
-  const postIdOrSlug = event.context.params?.id
+  const postIdOrSlug = getRouterParam(event, 'id')
 
   if (!postIdOrSlug) {
     throw createError({
@@ -13,12 +14,10 @@ export default defineEventHandler(async (event) => {
 
   const userId = session.user.id
 
-  // Find the post by ID or slug
-  const postStmt = db.prepare(`
-    SELECT * FROM posts WHERE id = ? OR slug = ? LIMIT 1
-  `)
-  
-  const post = await postStmt.bind(postIdOrSlug, postIdOrSlug).first()
+  const post = await db
+  .prepare(`SELECT * FROM posts WHERE id = ? OR slug = ? LIMIT 1`)
+  .bind(postIdOrSlug, postIdOrSlug)
+  .first()
 
   if (!post) {
     throw createError({
@@ -27,7 +26,6 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  // Check if the user is the author of the post
   if (post.user_id !== userId) {
     throw createError({
       statusCode: 403,
@@ -44,13 +42,14 @@ export default defineEventHandler(async (event) => {
 
   try {
     await hubBlob().delete(post.image_src as string)
-    const updateStmt = db.prepare(`
+    await db
+    .prepare(`
       UPDATE posts 
       SET image_src = '', image_alt = '', updated_at = CURRENT_TIMESTAMP
       WHERE id = ?
     `)
-
-    await updateStmt.bind(post.id).run()
+    .bind(post.id)
+    .run()
 
     return { 
       success: true,

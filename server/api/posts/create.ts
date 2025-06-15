@@ -17,26 +17,17 @@ export default defineEventHandler(async (event) => {
   const userId = session.user.id
   const postData = createPostData(body, userId)
 
-  // Post content blob
-  const postContentBlob = createPostFileContent()
-  const blob_path = `posts/${postData.slug}/content.json`
+  const articleBlob = createArticle()
+  const blob_path = `posts/${postData.slug}/article.json`
   
-  // Store the content in blob storage
-  await blobStorage.put(blob_path, JSON.stringify(postContentBlob))
+  await blobStorage.put(blob_path, JSON.stringify(articleBlob))
   postData.blob_path = blob_path
   
-  // Ensure all object fields are stringified
-  if (typeof postData.links === 'object') {
-    postData.links = JSON.stringify(postData.links)
-  }
-  if (typeof postData.styles === 'object') {
-    postData.styles = JSON.stringify(postData.styles)
-  }
-  if (typeof postData.tags === 'object') {
-    postData.tags = JSON.stringify(postData.tags)
-  }
+  if (typeof postData.links   === 'object') { postData.links = JSON.stringify(postData.links) }
+  if (typeof postData.styles  === 'object') { postData.styles = JSON.stringify(postData.styles) }
+  if (typeof postData.tags    === 'object') { postData.tags = JSON.stringify(postData.tags) }
 
-  const insertStmt = db.prepare(`
+  const result = await db.prepare(`
     INSERT INTO posts (
       blob_path, category, description, image_src, image_alt,
       language, links, metrics_comments, metrics_likes, metrics_views,
@@ -45,8 +36,7 @@ export default defineEventHandler(async (event) => {
       ?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?16
     )
   `)
-
-  const result = await insertStmt.bind(
+  .bind(
     postData.blob_path,
     postData.category,
     postData.description,
@@ -68,9 +58,8 @@ export default defineEventHandler(async (event) => {
   return {
     id: result.meta.last_row_id,
     ...postData,
-    // Parse JSON strings back to objects for the response
-    links: typeof postData.links === 'string' ? JSON.parse(postData.links) : postData.links,
-    styles: typeof postData.styles === 'string' ? JSON.parse(postData.styles) : postData.styles,
-    tags: typeof postData.tags === 'string' ? JSON.parse(postData.tags) : postData.tags
+    links:  typeof postData.links   === 'string' ? JSON.parse(postData.links)   : postData.links,
+    styles: typeof postData.styles  === 'string' ? JSON.parse(postData.styles)  : postData.styles,
+    tags:   typeof postData.tags    === 'string' ? JSON.parse(postData.tags)    : postData.tags,
   }
 })

@@ -1,18 +1,21 @@
-// PUT /api/projects/[id]/update
+// PUT /api/projects/[id]/index.put.ts
+
+import { ProjectType } from "~/types/project"
+
 export default defineEventHandler(async (event) => {
   const session = await requireUserSession(event)
   const db = hubDatabase()
 
   await checkParamOk(event)
-  const projectIdOrSlug = event.context.params?.id
+  const projectIdOrSlug = getRouterParam(event, 'id')
   const body = await readBody(event)
   const userId = session.user.id
 
-  const projectStmt = db.prepare(`
-    SELECT * FROM projects WHERE id = ? OR slug = ? LIMIT 1
-  `)
+  const project = await db
+  .prepare(`SELECT * FROM projects WHERE id = ? OR slug = ? LIMIT 1`)
+  .bind(projectIdOrSlug, projectIdOrSlug)
+  .first()
 
-  const project = await projectStmt.bind(projectIdOrSlug, projectIdOrSlug).first()
   if (!project) {
     throw createError({
       statusCode: 404,
@@ -20,7 +23,6 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  // Check if the user is the author of the project
   if (project.user_id !== userId) {
     throw createError({
       statusCode: 403,
@@ -28,27 +30,23 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-
   // Generate slug if not provided
   const slug = body.slug ?? body.name.toLowerCase().replaceAll(" ", "-")
-
   const oldBlobPath = project.blob_path as string ?? ""
-  const newBlobPath = `projects/${slug}/content.json`
+  const newBlobPath = `projects/${slug}/article.json`
 
-  // Move the content blob to the new path if different
   if (oldBlobPath !== newBlobPath) {
     const blobStorage = hubBlob()
-    const oldBlobContent = await blobStorage.get(oldBlobPath)
-    if (oldBlobContent) {
-      await blobStorage.put(newBlobPath, oldBlobContent)
+    const oldBlobArticle = await blobStorage.get(oldBlobPath)
+    if (oldBlobArticle) {
+      await blobStorage.put(newBlobPath, oldBlobArticle)
       await blobStorage.delete(oldBlobPath)
       project.blob_path = newBlobPath
       body.blob_path = newBlobPath
     }
   }
 
-  // Update the project
-  const updateStmt = db.prepare(`
+  await db.prepare(`
     UPDATE projects 
     SET 
       name = ?,
@@ -61,8 +59,7 @@ export default defineEventHandler(async (event) => {
       updated_at = CURRENT_TIMESTAMP
     WHERE id = ?
   `)
-  
-  await updateStmt.bind(
+  .bind(
     body.name,
     body.blob_path ?? project.blob_path,
     body.description ?? "",
@@ -71,14 +68,14 @@ export default defineEventHandler(async (event) => {
     slug,
     body.visibility ?? "private",
     project.id
-  ).run()
+  )
+  .run()
 
-  // Get the updated project
-  const updatedProjectStmt = db.prepare(`
-    SELECT * FROM projects WHERE id = ? LIMIT 1
-  `)
-  
-  const updatedProject = await updatedProjectStmt.bind(project.id).first()
+  const updatedProject = await db
+  .prepare(`SELECT * FROM projects WHERE id = ? LIMIT 1`)
+  .bind(project.id)
+  .first()
+
   if (!updatedProject) {
     throw createError({
       statusCode: 500,
@@ -86,23 +83,18 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  // Format the response
-  const formattedProject = {
+  const formattedProject: Partial<ProjectType> = {
     ...updatedProject,
-    // Parse JSON fields if they exist
     links: typeof updatedProject.links === 'string' ? JSON.parse(updatedProject.links || '[]') : updatedProject.links,
     technologies: typeof updatedProject.technologies === 'string' ? JSON.parse(updatedProject.technologies || '[]') : updatedProject.technologies,
-    // Reconstruct image object
     image: {
-      alt: updatedProject.image_alt || "",
-      src: updatedProject.image_src || ""
+      alt: updatedProject.image_alt as string || "",
+      src: updatedProject.image_src as string || ""
     }
   }
 
   // Remove redundant fields
-  // @ts-ignore
   delete formattedProject.image_alt
-  // @ts-ignore
   delete formattedProject.image_src
 
   return {

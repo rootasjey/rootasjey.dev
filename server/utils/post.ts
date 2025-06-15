@@ -32,11 +32,11 @@ export const createPostData = (body: any, userId: string | number) => {
 }
 
 /**
- * Creates a new post file content object in JSON format.
+ * Creates a new article in JSON format.
  *
  * @returns A JSON string representing the post content.
  */
-export const createPostFileContent = () => {
+export const createArticle = () => {
   return {
     "type": "doc",
     "content": [

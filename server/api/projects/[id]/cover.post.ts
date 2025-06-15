@@ -1,17 +1,16 @@
-// POST /api/posts/[id]/upload-image
+// POST /api/project/[id]/cover
+
 export default defineEventHandler(async (event) => {
   const session = await requireUserSession(event)
-  const db = hubDatabase()
-
-  const postIdOrSlug = event.context.params?.id
+  const projectIdOrSlug = getRouterParam(event, 'id')
   const formData = await readMultipartFormData(event)
+  const db = hubDatabase()
   
   const file = formData?.find(item => item.name === 'file')?.data
   const fileName = formData?.find(item => item.name === 'fileName')?.data.toString()
   const type = formData?.find(item => item.name === 'type')?.data.toString()
-  // const placement = formData?.find(item => item.name === 'placement')?.data.toString()
 
-  if (!postIdOrSlug || !file || !fileName || !type) {
+  if (!projectIdOrSlug || !file || !fileName || !type) {
     throw createError({
       statusCode: 400,
       message: 'Missing required fields',
@@ -20,25 +19,22 @@ export default defineEventHandler(async (event) => {
 
   const userId = session.user.id
 
-  // Find the post by ID or slug
-  const postStmt = db.prepare(`
-    SELECT * FROM posts WHERE id = ? OR slug = ? LIMIT 1
-  `)
+  const project = await db
+  .prepare(`SELECT * FROM projects WHERE id = ? OR slug = ? LIMIT 1`)
+  .bind(projectIdOrSlug, projectIdOrSlug)
+  .first()
 
-  const post = await postStmt.bind(postIdOrSlug, postIdOrSlug).first()
-
-  if (!post) {
+  if (!project) {
     throw createError({
       statusCode: 404,
-      message: 'Post not found',
+      message: 'Project not found',
     })
   }
 
-  // Check if the user is the author of the post
-  if (post.user_id !== userId) {
+  if (project.user_id !== userId) {
     throw createError({
       statusCode: 403,
-      message: 'You are not authorized to update this post',
+      message: 'You are not authorized to update this project',
     })
   }
 
@@ -46,19 +42,18 @@ export default defineEventHandler(async (event) => {
   const blob = new Blob([file], { type })
   const uploadedBlob = await hubBlob().put(fileName, blob, {
     addRandomSuffix: true,
-    prefix: `posts/${post.slug}`
+    prefix: `projects/${project.slug}`
   })
 
   const imagePathname = `${uploadedBlob.pathname}`
 
-  // Update the post with the new image information
-  const updateStmt = db.prepare(`
-    UPDATE posts 
+  await db.prepare(`
+    UPDATE projects 
     SET image_src = ?, image_alt = ?, updated_at = CURRENT_TIMESTAMP
     WHERE id = ?
   `)
-
-  await updateStmt.bind(imagePathname, fileName, post.id).run()
+  .bind(imagePathname, fileName, project.id)
+  .run()
 
   return { 
     image: {

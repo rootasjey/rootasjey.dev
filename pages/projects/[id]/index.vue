@@ -37,7 +37,7 @@
 
       <client-only>
         <div class="w-500px pt-8 mx-auto text-gray-700 dark:text-gray-300">
-          <tiptap-editor :can-edit="loggedIn" :model-value="project.content" @update:model-value="onUpdateEditorContent" />
+          <tiptap-editor :can-edit="loggedIn" :model-value="project.article" @update:model-value="onUpdateEditor" />
         </div>
       </client-only>
     </article>
@@ -110,7 +110,7 @@
           ref="fileInput" 
           accept="image/*" 
           class="hidden" 
-          @change="handleFileChange" 
+          @change="handleCoverSelect" 
         />
       </div>
     </div>
@@ -125,7 +125,7 @@ const route = useRoute()
 const fileInput = ref<HTMLInputElement | null>(null)
 const isUploading = ref(false)
 
-let _updatePostContentTimer: NodeJS.Timeout
+let _articleTimer: NodeJS.Timeout
 
 const id = route.params.id
 const { data } = await useFetch(`/api/projects/${id}`)
@@ -139,7 +139,7 @@ const removeImage = async () => {
   project.value.image.src = ''
   project.value.image.alt = ''
 
-  const response = await $fetch(`/api/projects/${id}/remove-image`, {
+  const response = await $fetch(`/api/projects/${id}/cover`, {
     method: "DELETE",
   })
 
@@ -148,7 +148,7 @@ const removeImage = async () => {
   }
 }
 
-const handleFileChange = async (event: Event) => {
+const handleCoverSelect = async (event: Event) => {
   const target = event.target as HTMLInputElement
   const file = target.files?.[0]
   
@@ -162,9 +162,9 @@ const handleFileChange = async (event: Event) => {
     formData.append('fileName', file.name)
     formData.append('type', file.type)
     
-    const response = await $fetch(`/api/projects/${id}/upload-image`, {
+    const response = await $fetch(`/api/projects/${id}/cover`, {
       method: 'POST',
-      body: formData
+      body: formData,
     })
     
     if (response.success) {
@@ -183,16 +183,16 @@ const handleFileChange = async (event: Event) => {
   }
 }
 
-const onUpdateEditorContent = (value: Object) => {
-  clearTimeout(_updatePostContentTimer)
-  _updatePostContentTimer = setTimeout(() => updateProjectContent(value), 2000)
+const onUpdateEditor = (value: Object) => {
+  clearTimeout(_articleTimer)
+  _articleTimer = setTimeout(() => updateProjectArticle(value), 2000)
 }
 
-const updateProjectContent = async (value: Object) => {
-  await $fetch(`/api/projects/${route.params.id}/update-content`, {
+const updateProjectArticle = async (value: Object) => {
+  await $fetch(`/api/projects/${route.params.id}/article`, {
     method: "PUT",
     body: {
-      content: value,
+      article: value,
     },
   })
 }
@@ -208,7 +208,7 @@ const exportPostToJson = () => {
   const exportData = {
     category: project.value.category,
     company: project.value.company,
-    content: project.value.content,
+    article: project.value.article,
     created_at: project.value.created_at,
     description: project.value.description,
     id: project.value.id,

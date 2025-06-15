@@ -1,10 +1,9 @@
 // DELETE /api/projects/:id
-// Delete a project from SQLite database
+
 export default defineEventHandler(async (event) => {
   const session = await requireUserSession(event)
   const db = hubDatabase()
-  const body = await readBody(event)
-  const id = body.id
+  const id = getRouterParam(event, 'id')
 
   if (!id) {
     throw createError({
@@ -13,12 +12,10 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  // First, check if the project exists and belongs to the user
-  const projectStmt = db.prepare(`
-    SELECT * FROM projects WHERE id = ? LIMIT 1
-  `)
-  
-  const project = await projectStmt.bind(id).first()
+  const project = await db
+  .prepare(`SELECT * FROM projects WHERE id = ? LIMIT 1`)
+  .bind(id)
+  .first()
 
   if (!project) {
     throw createError({
@@ -35,21 +32,19 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  // Delete the project from blob storage
   if (project.blob_path && typeof project.blob_path === 'string') {
     const blobStorage = hubBlob()
     await blobStorage.delete(project.blob_path)
   }
 
-  // Delete the project
-  const deleteStmt = db.prepare(`
-    DELETE FROM projects WHERE id = ?
-  `)
-  
-  await deleteStmt.bind(id).run()
+  await db
+  .prepare(`DELETE FROM projects WHERE id = ?`)
+  .bind(id)
+  .run()
 
   return {
+    success: true,
     message: "Project deleted successfully",
-    id,
+    project,
   }
 })

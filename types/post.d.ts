@@ -10,8 +10,8 @@ export type PostType = {
   author: RecordId
   /** True if the user is the author of the post. */
   canEdit: boolean
-  /** Post content in JSON format. */
-  content?: object
+  /** Post article in JSON format. */
+  article?: object
   created_at: string
   description: string
   category: string
@@ -21,6 +21,8 @@ export type PostType = {
     alt: string
     src: string
   }
+  image_alt?: string
+  image_src?: string
   language: string
   styles?: {
     meta?: {

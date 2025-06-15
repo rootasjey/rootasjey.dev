@@ -1,12 +1,11 @@
 // DELETE /api/posts/:id
-// Delete a post from SQLite database and its associated blob file
+
 export default defineEventHandler(async (event) => {
   const session = await requireUserSession(event)
   const db = hubDatabase()
   const blobStorage = hubBlob()
 
-  const idOrSlug = event.context.params?.id
-  
+  const idOrSlug = getRouterParam(event, 'id')
   if (!idOrSlug) {
     throw createError({
       statusCode: 400,
@@ -16,21 +15,17 @@ export default defineEventHandler(async (event) => {
 
   const userId = session.user.id
 
-  // First, check if the post exists and belongs to the user
-  const postStmt = db.prepare(`
-    SELECT * FROM posts WHERE id = ? OR slug = ? LIMIT 1
-  `)
-  
-  const query = await postStmt.bind(idOrSlug, idOrSlug).all()
+  const post = await db
+  .prepare(`SELECT * FROM posts WHERE id = ? OR slug = ? LIMIT 1`)
+  .bind(idOrSlug, idOrSlug)
+  .first()
 
-  if (!query.success) {
+  if (!post) {
     throw createError({
       statusCode: 404,
       message: 'Post not found.',
     })
   }
-
-  const post = query.results[0]
 
   if (post.user_id !== userId) {
     throw createError({
@@ -39,7 +34,6 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  // Delete the blob file if it exists
   if (post.blob_path) {
     try {
       await blobStorage.delete(post.blob_path as string)
@@ -49,12 +43,10 @@ export default defineEventHandler(async (event) => {
     }
   }
 
-  // Delete the post from the database
-  const deleteStmt = db.prepare(`
-    DELETE FROM posts WHERE id = ?
-  `)
-  
-  await deleteStmt.bind(post.id).run()
+  await db
+  .prepare(`DELETE FROM posts WHERE id = ?`)
+  .bind(post.id)
+  .run()
 
   return {
     message: "Post deleted successfully",

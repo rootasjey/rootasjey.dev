@@ -307,7 +307,7 @@ const availableCategories = computed(() => {
 
 const createProject = async ({ name, description, category }: CreateProjectType) => {
   _isDialogOpen.value = false
-  const { data } = await useFetch("/api/projects/create", {
+  await useFetch("/api/projects", {
     method: "POST",
     body: {
       name,
@@ -319,11 +319,8 @@ const createProject = async ({ name, description, category }: CreateProjectType)
 
 const deleteProject = async (project: ProjectType) => {
   project.isDeleteDialogOpen = false
-  const { data } = await useFetch("/api/projects/delete", {
+  await useFetch(`/api/projects/${project.id}`, {
     method: "DELETE",
-    body: {
-      id: project.id,
-    },
   })
 }
 

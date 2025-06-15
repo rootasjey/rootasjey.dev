@@ -18,6 +18,7 @@
     "@tiptap/suggestion": "^2.14.0",
     "@tiptap/vue-3": "^2.14.0",
     "@una-ui/nuxt": "^0.59.0",
+    "jimp": "^1.6.0",
     "tippy.js": "^6.3.7"
   },
   "devDependencies": {

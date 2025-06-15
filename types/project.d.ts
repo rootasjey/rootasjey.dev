@@ -7,7 +7,7 @@ export type CreateProjectType = {
 export type ProjectType = {
   category: string
   company: string
-  content?: object
+  article?: object
   created_at: string
   description: string
   id: string
@@ -15,11 +15,14 @@ export type ProjectType = {
     alt: string
     src: string
   }
+  image_alt: string
+  image_src: string
   isDeleteDialogOpen?: boolean
   links: ProjectLinkType[] & never[]
   name: string
   post?: string
   slug: string
+  technologies: string[]
   updated_at: string
   user_id: string
   visibility: string
