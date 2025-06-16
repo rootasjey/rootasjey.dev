@@ -5,7 +5,7 @@
  * @param userId - The ID of the user creating the post.
  * @returns A new post data object with default values.
  */
-export const createPostData = (body: any, userId: string | number) => {
+export const createPostData = (body: any, userId: number) => {
   const name = body?.name || "New Post"
   return {
     blob_path: "",

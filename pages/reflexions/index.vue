@@ -1,295 +1,162 @@
 <template>
   <div class="w-[600px] rounded-xl p-8 pb-[38vh] flex flex-col transition-all duration-500 overflow-y-auto">
-    <!-- Header -->
-    <header class="mt-12 mb-8">
-      <div class="flex gap-2">
-        <ULink to="/" class="hover:scale-102 active:scale-99 transition">
-          <span class="i-ph-house-simple-duotone"></span>
-        </ULink>
-        <span>•</span>
-        <h1 class="font-body text-xl font-600 text-gray-800 dark:text-gray-200">
-          Reflexions
-        </h1>
-      </div>
-      <div class="w-40 flex text-center justify-center my-2">
-        <div class="w-full h-2">
-          <svg viewBox="0 0 300 10" preserveAspectRatio="none">
-            <path d="M 0 5 Q 15 0, 30 5 T 60 5 T 90 5 T 120 5 T 150 5 T 180 5 T 210 5 T 240 5 T 270 5 T 300 5"
-              stroke="currentColor" fill="none" class="text-gray-300 dark:text-gray-700" stroke-width="1" />
-          </svg>
-        </div>
-      </div>
-      <p class="text-gray-700 dark:text-gray-300">
-        Thoughts and reflections on various topics
-      </p>
-        <UProgress v-if="_isLoading" :indeterminate="true" size="sm" color="primary" />
-
-        <!-- Create Post Button -->
-        <div v-if="loggedIn">
-          <UDialog v-model:open="_isCreateDialogOpen" title="Create Post" description="Add a new post with a description">
-            <template #trigger>
-              <UButton btn="text" size="xs" class="-ml-4 flex items-center gap-2 dark:text-amber-400">
-                <span>Add a post</span>
-              </UButton>
-            </template>
-
-            <div class="grid gap-4 py-4">
-              <div class="grid gap-2">
-                <div class="grid grid-cols-3 items-center gap-4">
-                  <ULabel for="name">
-                    Name
-                  </ULabel>
-                  <UInput id="name" v-model="_name" :una="{
-                    inputWrapper: 'col-span-2',
-                  }" />
-                </div>
-                <div class="grid grid-cols-3 items-center gap-4">
-                  <ULabel for="description">
-                    Description
-                  </ULabel>
-                  <UInput id="description" v-model="_description" :una="{
-                    inputWrapper: 'col-span-2',
-                  }" />
-                </div>
-                <div class="grid grid-cols-3 items-center gap-4">
-                  <ULabel for="category">
-                    Category
-                  </ULabel>
-                  <div flex flex-row gap-2>
-                    <USelect id="category" :una="{
-                    }" v-model="_category" :items="_categories" placeholder="Select a category" />
-                    <UTooltip>
-                      <template #default>
-                        <UButton btn="outline" icon label="i-icon-park-outline:add-print" class=""
-                          @click="toggleAddCategory" />
-                      </template>
-                      <template #content>
-                        <button @click="toggleAddCategory" bg="light dark:dark" text="dark dark:white" text-3 px-3 py-1
-                          rounded-md m-0 border-1 border-dashed class="b-#3D3BF3">
-                          Add a new category
-                        </button>
-                      </template>
-                    </UTooltip>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <template #footer>
-              <UButton @click="createPost({ name: _name, description: _description, category: _category })" btn="solid"
-                label="Create post" />
-            </template>
-          </UDialog>
-        </div>
-
-         <!-- Edit Post Dialog -->
-        <div v-if="loggedIn">
-          <UDialog v-model:open="_isEditDialogOpen" title="Edit Post" description="Update post information">
-            <div class="grid gap-4 py-4">
-              <div class="grid gap-2">
-                <div class="grid grid-cols-3 items-center gap-4">
-                  <ULabel for="edit-name">
-                    Name
-                  </ULabel>
-                  <UInput id="edit-name" v-model="_editName" :una="{
-                    inputWrapper: 'col-span-2',
-                  }" />
-                </div>
-                <div class="grid grid-cols-3 items-center gap-4">
-                  <ULabel for="edit-description">
-                    Description
-                  </ULabel>
-                  <UInput id="edit-description" v-model="_editDescription" :una="{
-                    inputWrapper: 'col-span-2',
-                  }" />
-                </div>
-                <div class="grid grid-cols-3 items-center gap-4">
-                  <ULabel for="edit-category">
-                    Category
-                  </ULabel>
-                  <div flex flex-row gap-2>
-                    <USelect id="edit-category" :una="{
-                    }" v-model="_editCategory" :items="_categories" placeholder="Select a category" />
-                    <UTooltip>
-                      <template #default>
-                        <UButton btn="outline" icon label="i-icon-park-outline:add-print" class=""
-                          @click="toggleAddCategory" />
-                      </template>
-                      <template #content>
-                        <button @click="toggleAddCategory" bg="light dark:dark" text="dark dark:white" text-3 px-3 py-1
-                          rounded-md m-0 border-1 border-dashed class="b-#3D3BF3">
-                          Add a new category
-                        </button>
-                      </template>
-                    </UTooltip>
-                  </div>
-                </div>
-                <div class="grid grid-cols-3 items-center gap-4">
-                  <ULabel for="edit-visibility">
-                    Visibility
-                  </ULabel>
-                  <USelect 
-                    id="edit-visibility" 
-                    v-model="_editVisibility" 
-                    item-key="label"
-                    value-key="label"
-                    :items="[
-                      { label: 'Private', value: 'private' },
-                      { label: 'Public', value: 'public' },
-                      { label: 'Draft', value: 'draft' }
-                    ]" 
-                    
-                  />
-                </div>
-              </div>
-            </div>
-
-            <template #footer>
-              <div class="flex gap-2 justify-end">
-                <UButton @click="_isEditDialogOpen = false" btn="outline" label="Cancel" />
-                <UButton @click="updatePost" btn="solid" label="Update post" />
-              </div>
-            </template>
-          </UDialog>
-        </div>
-
-        <!-- Delete Confirmation Dialog -->
-        <div v-if="loggedIn">
-          <UDialog v-model:open="_isDeleteDialogOpen" title="Delete Post" description="This action cannot be undone.">
-            <div class="py-4">
-              <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                Are you sure you want to delete 
-                <span class="font-semibold text-gray-900 dark:text-gray-100">"{{ _deletingPost?.name }}"</span>?
-              </p>
-              <p class="text-sm text-gray-500 dark:text-gray-500">
-                This will permanently remove the post and all its content. This action cannot be undone.
-              </p>
-            </div>
-
-            <template #footer>
-              <div class="flex gap-2 justify-end">
-                <UButton @click="_isDeleteDialogOpen = false" btn="outline" label="Cancel" />
-                <UButton @click="confirmDeletePost" btn="solid-red" label="Delete Post" />
-              </div>
-            </template>
-          </UDialog>
-      </div>
-    </header>
+    <PostHeader
+      :is-loading="isAnyLoading"
+      :error="combinedErrorMessage"
+      :categories="categoryManagement.allCategories.value"
+      :show-dialogs="loggedIn"
+      :create-dialog-model="dialogs.createDialogModel.value"
+      :edit-dialog-model="dialogs.editDialogModel.value"
+      :delete-dialog-model="dialogs.deleteDialogModel.value"
+      :editing-post="dialogs.editingPost.value"
+      :deleting-post="dialogs.deletingPost.value"
+      @create-post="handleCreatePost"
+      @update-post="handleUpdatePost"
+      @delete-post="handleDeletePost"
+      @add-category="handleAddCategory"
+      @retry-error="handleRetryError"
+      @update:create-dialog-model="dialogs.createDialogModel.value = $event"
+      @update:edit-dialog-model="dialogs.editDialogModel.value = $event"
+      @update:delete-dialog-model="dialogs.deleteDialogModel.value = $event"
+    />
 
     <!-- Drafts Section -->
-    <section v-if="loggedIn" class="mb-6">
-      <UButton btn="text" class="p-0 flex gap-3 font-500 text-gray-800 dark:text-gray-200 mb-4"
-        @click="_showDrafts = !_showDrafts">
-        <span class="i-icon-park-outline:notebook-and-pen text-3"></span>
-        <span class="text-3">Drafts</span>
-        <span v-if="!_showDrafts" class="text-3">••• <i class="ml-2">(show)</i></span>
-        <span v-else class="text-3">••• <i class="ml-2">(hide)</i></span>
-      </UButton>
-      
-      <div class="flex flex-col gap-6">
-        <div 
-          v-if="_showDrafts && drafts.length > 0" 
-          v-for="draft in drafts" :key="draft.id.toString()" 
-          class="border-b border-gray-200 dark:border-gray-800 pb-4 flex justify-between items-start">
-          <div class="flex flex-col">
-            <ULink :to="`/reflexions/${draft.id}`" class="flex items-start gap-2">
-              <h3 class="text-size-4 font-500 line-height-4.5 dark:text-gray-300">
-                {{ draft.name }}
-              </h3>
-            </ULink>
-            <p class="text-size-3 text-gray-700 dark:text-gray-400 mb-2">{{ draft.description }}</p>
-            <div class="flex justify-between items-center">
-              <span class="text-size-3 text-gray-500 dark:text-gray-500">
-                {{ new Date(draft.updated_at).toLocaleString("fr", {
-                  month: "long",
-                  day: "numeric",
-                  year: "numeric",
-                }) }}
-              </span>
-            </div>
-          </div>
-          <UDropdownMenu 
-            v-if="loggedIn && postMenuItems(draft).length > 0" 
-            :items="postMenuItems(draft)" 
-            size="xs" menu-label="" 
-            :_dropdown-menu-content="{
-              class: 'w-52',
-              align: 'end',
-              side: 'bottom',
-            }" 
-            :_dropdown-menu-trigger="{
-              icon: true,
-              square: true,
-              class: 'dropdown-menu-icon p-1 w-auto h-auto hover:bg-transparent hover:scale-110 active:scale-99 transition',
-              label: 'i-lucide-ellipsis-vertical',
-            }" 
-          />
+    <PostSection
+      v-if="loggedIn"
+      :posts="drafts.list.value"
+      title="Drafts"
+      section-type="Draft"
+      icon="i-icon-park-outline:notebook-and-pen"
+      icon-color="#f59e0b"
+      :collapsible="true"
+      :expanded="drafts.showDrafts.value"
+      :is-loading="drafts.isFetchingDrafts.value"
+      :error="drafts.draftsError.value"
+      :show-draft-badge="true"
+      :show-status-indicator="true"
+      :show-refresh-action="true"
+      :show-add-action="true"
+      empty-state-title="No drafts yet"
+      empty-state-description="Start writing a new post to create your first draft."
+      empty-action-text="Write New Post"
+      empty-action-icon="i-lucide-pen-tool"
+      @toggle="drafts.toggleDrafts"
+      @refresh="drafts.refreshDrafts"
+      @add="dialogs.openCreateDialog"
+      @retry="drafts.retryFetchDrafts"
+      @empty-action="dialogs.openCreateDialog"
+      @edit="dialogs.openEditDialog"
+      @delete="dialogs.openDeleteDialog"
+      @publish="handlePublishDraft"
+      @duplicate="handleDuplicatePost"
+    >
+      <template #actions="{ posts: draftPosts, isLoading }">
+        <div class="flex items-center gap-2">
+          <UButton
+            size="xs"
+            btn="ghost dark:soft-gray"
+            class="dark:color-#f59e0b"
+            :loading="isLoading"
+            @click="drafts.refreshDrafts"
+          >
+            <UIcon name="i-ph-arrows-counter-clockwise-duotone" />
+            <span>Refresh</span>
+          </UButton>
+          
+          <UButton
+            size="xs"
+            btn="ghost dark:soft-gray"
+            class="dark:color-#f59e0b"
+            @click="dialogs.openCreateDialog"
+          >
+            <UIcon name="i-lucide-pen-tool" />
+            <span>New Draft</span>
+          </UButton>
+
+          <UButton
+            v-if="draftPosts.length > 0"
+            size="xs"
+            btn="ghost dark:soft-gray"
+            class="dark:color-#f59e0b"
+            @click="handleBulkArchiveDrafts"
+          >
+            <UIcon name="i-lucide-archive" />
+            <span>Archive</span>
+          </UButton>
         </div>
-      </div>
-    </section>
+      </template>
+
+      <template #footer="{ posts: draftPosts, totalCount }">
+        <div v-if="totalCount > 0" class="text-xs text-gray-500 dark:text-gray-400 text-center">
+          {{ totalCount }} draft{{ totalCount === 1 ? '' : 's' }} • 
+          Last updated {{ formatLastUpdated(draftPosts) }}
+        </div>
+      </template>
+    </PostSection>
 
     <!-- Published Posts Section -->
-    <section v-if="posts.length > 0" class="mb-12">
-      <h2 class="text-3 font-500 text-gray-800 dark:text-gray-200 mb-4">
-        <span class="i-ph-article mr-2"></span>
-        Published
-      </h2>
-      <div class="flex flex-col gap-6">
-        <div v-for="post in posts" :key="post.id.toString()" 
-          class="border-b border-gray-200 dark:border-gray-800 pb-4 flex justify-between items-start">
-          <div class="flex flex-col">
-            <ULink :to="`/reflexions/${post.slug}`">
-              <h3 class="text-size-3.5 font-600 text-gray-800 dark:text-gray-200">{{ post.name }}</h3>
-            </ULink>
-            <p class="text-size-3 text-gray-700 dark:text-gray-400 mb-2">{{ post.description }}</p>
-            <div class="flex justify-between items-center">
-              <span class="text-size-3 text-gray-500 dark:text-gray-600">
-                {{ new Date(post.created_at).toLocaleString("fr", {
-                  month: "long",
-                  day: "numeric",
-                  year: "numeric",
-                }) }}
-              </span>
-            </div>
-          </div>
+    <PostSection
+      :posts="posts.list.value"
+      title="Published"
+      section-type="Post"
+      icon="i-ph-article"
+      icon-color="#3b82f6"
+      :is-loading="posts.isLoading.value"
+      :error="posts.error.value"
+      :show-category="true"
+      :show-word-count="true"
+      :show-draft-badge="false"
+      :show-refresh-action="true"
+      empty-state-title="No published posts yet"
+      empty-state-description="Your published posts will appear here once you start sharing your thoughts with the world."
+      empty-action-text="Publish First Post"
+      empty-action-icon="i-lucide-send"
+      @refresh="posts.fetchPosts"
+      @retry="posts.fetchPosts"
+      @empty-action="dialogs.openCreateDialog"
+      @edit="dialogs.openEditDialog"
+      @delete="dialogs.openDeleteDialog"
+      @unpublish="handleUnpublishPost"
+      @duplicate="handleDuplicatePost"
+      @archive="handleArchivePost"
+      @share="handleSharePost"
+      @export="handleExportPost"
+      @view-stats="handleViewStats"
+    >
+      <template #actions="{ posts: publishedPosts }">
+        <div class="flex items-center gap-2">
+          <UButton
+            btn="ghost dark:soft-gray"
+            size="xs"
+            class="dark:color-#3b82f6"
+            :loading="posts.isLoading.value"
+            @click="posts.fetchPosts"
+          >
+            <UIcon name="i-ph-arrows-counter-clockwise-duotone" />
+            <span>Refresh</span>
+          </UButton>
 
-          <UDropdownMenu 
-            v-if="loggedIn && postMenuItems(post).length > 0" 
-            :items="postMenuItems(post)" 
-            size="xs" menu-label="" 
-            :_dropdown-menu-content="{
-              class: 'w-52',
-              align: 'end',
-              side: 'bottom',
-            }" 
-            :_dropdown-menu-trigger="{
-              icon: true,
-              square: true,
-              class: 'dropdown-menu-icon p-1 w-auto h-auto hover:bg-transparent hover:scale-110 active:scale-99 transition',
-              label: 'i-lucide-ellipsis-vertical',
-            }" 
-          />
+          <UButton
+            v-if="publishedPosts.length > 0"
+            btn="ghost dark:soft-gray"
+            size="xs"
+            class="dark:color-#3b82f6"
+            @click="handleBulkExport"
+          >
+            <UIcon name="i-lucide-download" />
+            <span>Export All</span>
+          </UButton>
         </div>
-      </div>
-    </section>
+      </template>
 
-    <!-- Empty State -->
-    <section v-if="posts?.length === 0 && drafts?.length === 0" class="mb-12">
-      <h2 class="text-lg font-500 text-gray-800 dark:text-gray-200 mb-4">
-        <span class="i-ph-quotes mr-2"></span>
-        A Thought to Ponder
-      </h2>
-      <div class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
-        Because there's no published posts yet, here is a quote:
-      </div>
-      <div class="text-xl font-300 text-gray-600 dark:text-gray-400 italic">
-        « Without leaps of imagination, or dreaming, we lose the excitement of possibilities. Dreaming, after all, is a
-        form of planning. »
-      </div>
-      <div class="text-right text-gray-500 dark:text-gray-500 mt-2">
-        — Gloria Steinem
-      </div>
-    </section>
+      <template #footer="{ totalCount }">
+        <div v-if="totalCount > 0" class="text-xs text-gray-500 dark:text-gray-400 text-center">
+          {{ totalCount }} published post{{ totalCount === 1 ? '' : 's' }}
+        </div>
+      </template>
+    </PostSection>
+
+    <PostEmptyState v-if="!hasAnyContent && !isAnyLoading" />
 
     <Footer>
       <template #links>
@@ -314,226 +181,376 @@ useHead({
 })
 
 import type { CreatePostType, PostType } from '~/types/post'
+
 const { loggedIn } = useUserSession()
+const dialogs = usePostDialogs()
+const drafts = useDrafts({ autoFetch: true })
+const posts = usePosts()
 
-const _name = ref('')
-const _description = ref('')
-const _category = ref('')
-const _isCreateDialogOpen = ref(false)
-const _categories = ref([
-  "Tech",
-  "Development",
-  "Cinema",
-  "Literature",
-  "Music",
-])
+const hasAnyContent = computed(() => 
+  posts.hasPosts.value || drafts.hasDrafts.value
+)
 
-// Edit dialog reactive variables
-const _isEditDialogOpen = ref(false)
-const _editName = ref('')
-const _editDescription = ref('')
-const _editCategory = ref('')
-const _editVisibility = ref({ label: 'Public', value: 'public' })
-const _editingPost = ref<PostType | null>(null)
+const isAnyLoading = computed(() => 
+  posts.isAnyLoading.value || drafts.isFetchingDrafts.value
+)
 
-// Delete dialog reactive variables
-const _isDeleteDialogOpen = ref(false)
-const _deletingPost = ref<PostType | null>(null)
+const hasAnyError = computed(() => 
+  posts.error.value || drafts.draftsError.value
+)
 
-const _isLoading = ref(true)
-const _showDrafts = ref(false)
-const drafts = ref<PostType[]>([])
+const categoryManagement = usePostCategories({
+  defaultCategories: [
+    "Tech",
+    "Development",
+    "Cinema", 
+    "Literature",
+    "Music",
+  ],
+  autoSave: true,
+  caseSensitive: false
+})
 
-const { data } = await useFetch("/api/posts")
+const combinedErrorMessage = computed(() => {
+  const errors = []
+  if (posts.error.value) errors.push(posts.error.value)
+  if (drafts.draftsError.value) errors.push(drafts.draftsError.value)
+  return errors.length > 0 ? errors.join('; ') : null
+})
 
-const posts = ref(data.value as unknown as PostType[] ?? [])
-
-const postMenuItems = (post: PostType) => {
-  if (!loggedIn.value) return []
-
-  const items = [
-    {
-      label: 'Edit',
-      onClick: () => openEditDialog(post),
-    },
-    {
-      label: 'Delete',
-      onClick: () => openDeleteDialog(post),
-    }
-  ]
-
-  return items
+const handleRetryError = () => {
+  if (posts.error.value) {
+    posts.fetchPosts()
+  }
+  if (drafts.draftsError.value) {
+    drafts.retryFetchDrafts()
+  }
 }
 
-const createPost = async ({ name, description, category }: CreatePostType) => {
-  _isCreateDialogOpen.value = false
-  await useFetch("/api/posts", {
-    method: "POST",
-    body: {
-      name,
-      description,
-      category,
-    },
+const handleAddCategory = (newCategory: string) => {
+  const result = categoryManagement.addCategory(newCategory)
+  if (result.success) {
+    toast({
+      title: 'Category added',
+      description: `Added category: ${result.category}`,
+      duration: 5000,
+      showProgress: true,
+      toast: 'soft-success',
+    })
+    return
+  }
+
+  // Handle error
+  console.error(`Failed to add category: ${result.error}`)
+  toast({
+    title: 'Failed to add category',
+    description: result.error,
+    duration: 5000,
+    showProgress: true,
+    toast: 'soft-error'
   })
 }
 
-const toggleAddCategory = () => {
+const handleCreatePost = async (postData: CreatePostType) => {
+  try {
+    const newPost = await posts.createPost(postData)
+    
+    // Track category usage
+    if (newPost && postData.category) {
+      categoryManagement.incrementCategoryUsage(postData.category)
+    }
+    
+    if (newPost && newPost.visibility === 'draft') {
+      drafts.addDraft(newPost)
+    }
+  } catch (error: any) {
+    console.error('Create post failed:', error)
+    toast({
+      title: 'Failed to create post',
+      description: error && error.message ? error.message : 'Unknown error',
+      duration: 5000,
+      showProgress: true,
+      toast: 'soft-error'
+    })
+  }
 }
 
-const fetchDrafts = async () => {
-  if (!_showDrafts.value) {
-    _isLoading.value = false
+const handleUpdatePost = async (updateData: { 
+  id: number
+  name: string
+  description: string
+  category: string
+  visibility: string
+}) => {
+  try {
+    const updatedPost = await posts.updatePost(updateData.id, updateData)
+
+    if (updatedPost) {
+      // Handle cross-composable state sync
+      if (updateData.visibility === 'draft') {
+        // Add/update in drafts, remove from posts (handled by postManagement)
+        drafts.updateDraft(updatedPost.id, updatedPost)
+      } else {
+        // Remove from drafts if published, add to posts (handled by postManagement)
+        drafts.removeDraft(updatedPost.id)
+      }
+      
+      if (updatedPost.category) {
+        categoryManagement.incrementCategoryUsage(updatedPost.category)
+      }
+    }
+
+    // Track category usage
+  } catch (error: any) {
+    console.error('Update post failed:', error)
+    toast({
+      title: 'Failed to update post',
+      description: error && error.message ? error.message : 'Unknown error',
+      duration: 5000,
+      showProgress: true,
+      toast: 'soft-error'
+    })
+  }
+}
+
+const handleDeletePost = async (post: PostType) => {
+  try {
+    await posts.deletePost(post.id as number)
+    
+    // Remove from drafts if it was a draft
+    if (post.visibility === 'draft') {
+      drafts.removeDraft(post.id)
+    }
+  } catch (error: any) {
+    console.error('Delete post failed:', error)
+    toast({
+      title: 'Failed to delete post',
+      description: error && error.message ? error.message : 'Unknown error',
+      duration: 5000,
+      showProgress: true,
+      toast: 'soft-error'
+    })
+  }
+}
+
+const handleDuplicatePost = async (post: PostType) => {
+  try {
+    handleCreatePost({
+      name: `${post.name} (Copy-${new Date().getTime()})`,
+      description: post.description,
+      category: post.category,
+    })
+  } catch (error: any) {
+    console.error('Failed to duplicate post:', error)
+    toast({
+      title: 'Failed to duplicate post',
+      description: error && error.message ? error.message : 'Unknown error',
+      duration: 5000,
+      showProgress: true,
+      toast: 'soft-error'
+    })
+  }
+}
+
+const handlePublishDraft = async (draft: PostType) => {
+  try {
+    await handleUpdatePost({
+      id: draft.id as number,
+      name: draft.name,
+      description: draft.description,
+      category: draft.category,
+      visibility: 'public'
+    })
+  } catch (error: any) {
+    console.error('Failed to publish draft:', error)
+    toast({
+      title: 'Failed to publish draft',
+      description: error && error.message ? error.message : 'Unknown error',
+      duration: 5000,
+      showProgress: true,
+      toast: 'soft-error'
+    })
+  }
+}
+
+const handleUnpublishPost = async (post: PostType) => {
+  try {
+    await handleUpdatePost({
+      id: post.id,
+      name: post.name,
+      description: post.description,
+      category: post.category,
+      visibility: 'draft'
+    })
+    
+    // Move from published to drafts
+    drafts.addDraft({ ...post, visibility: 'draft' })
+  } catch (error: any) {
+    console.error('Failed to unpublish post:', error)
+    toast({
+      title: 'Failed to unpublish post',
+      description: error && error.message ? error.message : 'Unknown error',
+      duration: 5000,
+      showProgress: true,
+      toast: 'soft-error'
+    })
+  }
+}
+
+const handleArchivePost = async (post: PostType) => {
+  try {
+    handleUpdatePost({
+      id: post.id,
+      name: post.name,
+      description: post.description,
+      category: post.category,
+      visibility: 'archive',
+    })
+  } catch (error: any) {
+    console.error('Failed to archive post:', error)
+    toast({
+      title: 'Failed to archive post',
+      description: error && error.message ? error.message : 'Unknown error',
+      duration: 5000,
+      showProgress: true,
+      toast: 'soft-error'
+    })
+  }
+}
+
+const handleSharePost = (post: PostType) => {
+  const url = `${window.location.origin}/reflexions/${post.slug}`
+  
+  if (navigator.share) {
+    navigator.share({
+      title: post.name,
+      text: post.description,
+      url: url
+    })
     return
   }
 
-  try {
-    const draftData = await $fetch("/api/posts/drafts")
+  // Fallback: copy to clipboard
+  navigator.clipboard.writeText(url).then(() => {
+    toast({
+      title: 'Link copied to clipboard',
+      duration: 5000,
+      showProgress: true,
+      toast: 'soft-success'
+    })
+  })
+}
+
+const handleExportPost = (post: PostType) => {
+  const exportData = {
+    name: post.name,
+    description: post.description,
+    category: post.category,
+    content: post.article,
+    created_at: post.created_at,
+    updated_at: post.updated_at
+  }
   
-    drafts.value = draftData as unknown as PostType[] ?? []
-    _isLoading.value = false
-  } catch (error) {
-    console.error(error)
-    _isLoading.value = false
-  }
+  const blob = new Blob([JSON.stringify(exportData, null, 2)], {
+    type: 'application/json'
+  })
+  
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = `${post.slug || post.id}-export.json`
+  document.body.appendChild(a)
+  a.click()
+  document.body.removeChild(a)
+  URL.revokeObjectURL(url)
+
+  toast({
+    title: 'Post exported',
+    duration: 5000,
+    showProgress: true,
+    toast: 'soft-success'
+  })
 }
 
-const openDeleteDialog = (post: PostType) => {
-  _deletingPost.value = post
-  _isDeleteDialogOpen.value = true
-}
-
-const openEditDialog = (post: PostType) => {
-  _editingPost.value = post
-  _editName.value = post.name
-  _editDescription.value = post.description
-  _editCategory.value = post.category
-  _editVisibility.value = convertVisibility(post.visibility)
-  _isEditDialogOpen.value = true
-}
-
-const convertVisibility = (visibility: string) => {
-  switch (visibility) {
-    case 'public':
-      return { label: 'Public', value: 'public' }
-    case 'private':
-      return { label: 'Private', value: 'private' }
-    case 'draft':
-      return { label: 'Draft', value: 'draft' }
-    default:
-      return { label: 'Public', value: 'public' }
-  }
-}
-
-const updatePost = async () => {
-  if (!_editingPost.value) return
-
+const handleBulkArchiveDrafts = async () => {
+  const confirmArchive = confirm('Archive all drafts? This will make them private.')
+  if (!confirmArchive) return
+  
   try {
-    await $fetch("/api/posts/" + _editingPost.value.id, {
-      method: "PUT",
-      body: {
-        name: _editName.value,
-        description: _editDescription.value,
-        category: _editCategory.value,
-        visibility: _editVisibility.value.value,
-      },
-    })
-
-    // Update the post in the local arrays
-    const updatePostInArray = (posts: PostType[]) => {
-      const index = posts.findIndex(p => p.id === _editingPost.value?.id)
-      if (index !== -1) {
-        posts[index] = {
-          ...posts[index],
-          name: _editName.value,
-          description: _editDescription.value,
-          category: _editCategory.value,
-          visibility: _editVisibility.value.value,
-        }
-      }
+    for (const draft of drafts.list.value) {
+      handleUpdatePost({
+        id: draft.id,
+        name: draft.name,
+        description: draft.description,
+        category: draft.category,
+        visibility: 'private',
+      })
     }
-
-    // Update in published posts
-    if (posts.value) {
-      updatePostInArray(posts.value)
-    }
-
-    // Update in drafts if present
-    if (drafts.value) {
-      updatePostInArray(drafts.value)
-    }
-
-    // Close dialog and reset form
-    _isEditDialogOpen.value = false
-    resetEditForm()
-
-    // Optional: Show success message
-    // You can add a toast notification here if you have one set up
-
-  } catch (error) {
-    console.error('Failed to update post:', error)
-    // Optional: Show error message
-  }
-}
-
-
-const confirmDeletePost = async () => {
-  if (!_deletingPost.value) return
-
-  try {
-    await $fetch("/api/posts/" + _deletingPost.value.id, {
-      method: "DELETE",
-    })
-
-    // Remove from local arrays
-    if (posts.value) {
-      const index = posts.value.findIndex(p => p.id === _deletingPost.value?.id)
-      if (index !== -1) {
-        posts.value.splice(index, 1)
-      }
-    }
-
-    if (drafts.value) {
-      const index = drafts.value.findIndex(p => p.id === _deletingPost.value?.id)
-      if (index !== -1) {
-        drafts.value.splice(index, 1)
-      }
-    }
-
-    // Close dialog and reset
-    _isDeleteDialogOpen.value = false
-    _deletingPost.value = null
-
-    // Optional: Show success message
     
+    // Clear drafts after archiving
+    drafts.clearAllDrafts()
   } catch (error) {
-    console.error('Failed to delete post:', error)
-    // Optional: Show error message
-    // Keep dialog open on error so user can retry
+    console.error('Failed to archive drafts:', error)
   }
 }
 
-const resetEditForm = () => {
-  _editingPost.value = null
-  _editName.value = ''
-  _editDescription.value = ''
-  _editCategory.value = ''
-  _editVisibility.value = convertVisibility('private')
+const handleBulkExport = () => {
+  const exportData = posts.list.value.map(post => ({
+    name: post.name,
+    description: post.description,
+    category: post.category,
+    content: post.article,
+    created_at: post.created_at,
+    updated_at: post.updated_at
+  }))
+  
+  const blob = new Blob([JSON.stringify(exportData, null, 2)], {
+    type: 'application/json'
+  })
+  
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = `all-posts-export-${new Date().toISOString().split('T')[0]}.json`
+  document.body.appendChild(a)
+  a.click()
+  document.body.removeChild(a)
+  URL.revokeObjectURL(url)
 }
 
-onMounted(() => {
-  _showDrafts.value = localStorage.getItem('show_drafts') === 'true'
-  fetchDrafts()
+const formatLastUpdated = (posts: PostType[]) => {
+  if (posts.length === 0) return 'never'
+  
+  const latestUpdate = Math.max(...posts.map(p => new Date(p.updated_at).getTime()))
+  const date = new Date(latestUpdate)
+  const now = new Date()
+  const diffInHours = (now.getTime() - date.getTime()) / (1000 * 60 * 60)
+  
+  if (diffInHours < 1) return 'just now'
+  if (diffInHours < 24) return `${Math.floor(diffInHours)}h ago`
+  if (diffInHours < 24 * 7) return `${Math.floor(diffInHours / 24)}d ago`
+  
+  return date.toLocaleDateString()
+}
+
+const handleViewStats = (post: PostType) => {
+  // Navigate to stats page or open stats modal
+  navigateTo(`/reflexions/${post.slug}/stats`)
+}
+
+onBeforeRouteLeave(() => {
+  if (dialogs.hasOpenDialog.value) {
+    dialogs.closeAllDialogs()
+  }
 })
 
-watch(_showDrafts, async (show) => {
-  localStorage.setItem('show_drafts', show.toString())
-  if (!show || _isLoading.value) {
-    drafts.value = []
-    return
+onBeforeRouteLeave((leaveGuard) => {
+  if (dialogs.hasOpenDialog.value) {
+    const answer = window.confirm(
+      'You have an open dialog. Are you sure you want to leave?'
+    )
+    // cancel the navigation and stay on the same page
+    if (!answer) return false
   }
-  
-  const data = await $fetch("/api/posts/drafts")
-
-  drafts.value = data as unknown as PostType[] ?? []
 })
 </script>

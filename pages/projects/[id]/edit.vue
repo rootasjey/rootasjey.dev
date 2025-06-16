@@ -96,6 +96,7 @@ const route = useRoute()
 const _isDeletePostDialogIsOpen = ref(false)
 
 const project = ref <ProjectType>({
+  blob_path: "",
   category: "",
   company: "",
   created_at: "",
@@ -103,13 +104,15 @@ const project = ref <ProjectType>({
   id: "0",
   image: {
     alt: "",
+    ext: "",
     src: "",
   },
   links: [],
   name: "",
   slug: "",
+  technologies: [],
   updated_at: "",
-  user_id: "0",
+  user_id: 0,
   visibility: "public",
 })
 

@@ -1,5 +1,6 @@
 // POST /api/posts/create
 import { createPostData } from '~/server/utils/post'
+import { PostType } from '~/types/post'
 
 export default defineEventHandler(async (event) => {
   const session = await requireUserSession(event)
@@ -55,11 +56,15 @@ export default defineEventHandler(async (event) => {
     postData.visibility
   ).run()
 
-  return {
+  const createdPost = result.results[0]
+
+  const newPost: Partial<PostType> = {
     id: result.meta.last_row_id,
     ...postData,
+    ...createdPost,
     links:  typeof postData.links   === 'string' ? JSON.parse(postData.links)   : postData.links,
     styles: typeof postData.styles  === 'string' ? JSON.parse(postData.styles)  : postData.styles,
     tags:   typeof postData.tags    === 'string' ? JSON.parse(postData.tags)    : postData.tags,
   }
+  return newPost
 })

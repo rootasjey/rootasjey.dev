@@ -10,11 +10,11 @@ export type PostType = {
   /** Blob path to the article. */
   blob_path?: string
   /** True if the user is the author of the post. */
-  canEdit: boolean
+  canEdit?: boolean
   created_at: string
   description: string
   category: string
-  id: string | RecordId
+  id: number
   isDeleteDialogOpen?: boolean
   image: {
     alt: string
