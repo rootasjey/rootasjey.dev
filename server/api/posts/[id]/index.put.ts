@@ -1,4 +1,4 @@
-// PUT /api/posts/[id]/update-meta
+// PUT /api/posts/[id]/index.put.ts
 
 import { PostType } from "~/types/post"
 
@@ -107,12 +107,14 @@ export default defineEventHandler(async (event) => {
     styles: typeof updatedPost.styles === 'string' ? JSON.parse(updatedPost.styles || '{}') : updatedPost.styles,
     image: {
       alt: updatedPost.image_alt as string || "",
+      ext: updatedPost.image_ext as string || "",
       src: updatedPost.image_src as string || ""
     }
   }
 
   // Remove redundant fields
   delete formattedPost.image_alt
+  delete formattedPost.image_ext
   delete formattedPost.image_src
 
   return {

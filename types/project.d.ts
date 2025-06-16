@@ -6,6 +6,7 @@ export type CreateProjectType = {
 
 export type ProjectType = {
   article?: object
+  /** Blob path to the article. */
   blob_path: string
   category: string
   company: string

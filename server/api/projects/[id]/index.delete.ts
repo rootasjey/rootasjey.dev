@@ -1,5 +1,7 @@
 // DELETE /api/projects/:id
 
+import { ProjectType } from "~/types/project"
+
 export default defineEventHandler(async (event) => {
   const session = await requireUserSession(event)
   const db = hubDatabase()
@@ -12,7 +14,7 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  const project = await db
+  const project: ProjectType | null = await db
   .prepare(`SELECT * FROM projects WHERE id = ? LIMIT 1`)
   .bind(id)
   .first()
@@ -35,6 +37,21 @@ export default defineEventHandler(async (event) => {
   if (project.blob_path && typeof project.blob_path === 'string') {
     const blobStorage = hubBlob()
     await blobStorage.delete(project.blob_path)
+  }
+
+  // Delete images cover if it exists
+  if (project.image_src) {
+    try {
+      const prefix = project.image_src as string
+      const blobList = await hubBlob().list({ prefix })
+      
+      for (const blobItem of blobList.blobs) {
+        await hubBlob().delete(blobItem.pathname)
+      }
+    } catch (error) {
+      console.error(`Failed to delete image cover at ${project.image_src}:`, error)
+      // Continue with project deletion even if image cover deletion fails
+    }
   }
 
   await db

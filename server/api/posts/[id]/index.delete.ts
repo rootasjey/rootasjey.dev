@@ -1,5 +1,7 @@
 // DELETE /api/posts/:id
 
+import { PostType } from "~/types/post"
+
 export default defineEventHandler(async (event) => {
   const session = await requireUserSession(event)
   const db = hubDatabase()
@@ -15,7 +17,7 @@ export default defineEventHandler(async (event) => {
 
   const userId = session.user.id
 
-  const post = await db
+  const post: PostType | null = await db
   .prepare(`SELECT * FROM posts WHERE id = ? OR slug = ? LIMIT 1`)
   .bind(idOrSlug, idOrSlug)
   .first()
@@ -40,6 +42,21 @@ export default defineEventHandler(async (event) => {
     } catch (error) {
       console.error(`Failed to delete blob file at ${post.blob_path}:`, error)
       // Continue with post deletion even if blob deletion fails
+    }
+  }
+
+  // Delete images cover if it exists
+  if (post.image_src) {
+    try {
+      const prefix = post.image_src as string
+      const blobList = await hubBlob().list({ prefix })
+      
+      for (const blobItem of blobList.blobs) {
+        await hubBlob().delete(blobItem.pathname)
+      }
+    } catch (error) {
+      console.error(`Failed to delete image cover at ${post.image_src}:`, error)
+      // Continue with post deletion even if image cover deletion fails
     }
   }
 
