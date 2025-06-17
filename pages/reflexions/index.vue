@@ -28,6 +28,7 @@
       section-type="Draft"
       icon="i-icon-park-outline:notebook-and-pen"
       icon-color="#f59e0b"
+      menu-variant="minimal"
       :collapsible="true"
       :expanded="drafts.showDrafts.value"
       :is-loading="drafts.isFetchingDrafts.value"
@@ -54,7 +55,7 @@
         <div class="flex items-center gap-2">
           <UButton
             size="xs"
-            btn="ghost dark:soft-gray"
+            btn="soft-gray"
             class="dark:color-#f59e0b"
             :loading="isLoading"
             @click="drafts.refreshDrafts"
@@ -65,7 +66,7 @@
           
           <UButton
             size="xs"
-            btn="ghost dark:soft-gray"
+            btn="soft-gray"
             class="dark:color-#f59e0b"
             @click="dialogs.openCreateDialog"
           >
@@ -76,7 +77,7 @@
           <UButton
             v-if="draftPosts.length > 0"
             size="xs"
-            btn="ghost dark:soft-gray"
+            btn="soft-gray"
             class="dark:color-#f59e0b"
             @click="actions.handleBulkArchiveDrafts"
           >
@@ -126,7 +127,7 @@
       <template #actions="{ posts: publishedPosts }">
         <div class="flex items-center gap-2">
           <UButton
-            btn="ghost dark:soft-gray"
+            btn="soft-gray"
             size="xs"
             class="dark:color-#3b82f6"
             :loading="posts.isLoading.value"
@@ -138,7 +139,7 @@
 
           <UButton
             v-if="publishedPosts.length > 0"
-            btn="ghost dark:soft-gray"
+            btn="soft-gray"
             size="xs"
             class="dark:color-#3b82f6"
             @click="actions.handleBulkExport"

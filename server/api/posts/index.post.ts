@@ -56,15 +56,24 @@ export default defineEventHandler(async (event) => {
     postData.visibility
   ).run()
 
-  const createdPost = result.results[0]
+  const createdPost: PostType | null = await db
+  .prepare(`SELECT * FROM posts WHERE id = ?1`)
+  .bind(result.meta.last_row_id)
+  .first()
 
-  const newPost: Partial<PostType> = {
-    id: result.meta.last_row_id,
-    ...postData,
-    ...createdPost,
-    links:  typeof postData.links   === 'string' ? JSON.parse(postData.links)   : postData.links,
-    styles: typeof postData.styles  === 'string' ? JSON.parse(postData.styles)  : postData.styles,
-    tags:   typeof postData.tags    === 'string' ? JSON.parse(postData.tags)    : postData.tags,
+  if (!createdPost) {
+    throw createError({
+      statusCode: 500,
+      message: 'Failed to fetch created post.',
+    })
   }
+
+  const newPost: PostType = {
+    ...createdPost,
+    links:  typeof createdPost.links   === 'string' ? JSON.parse(createdPost.links)   : createdPost.links,
+    styles: typeof createdPost.styles  === 'string' ? JSON.parse(createdPost.styles)  : createdPost.styles,
+    tags:   typeof createdPost.tags    === 'string' ? JSON.parse(createdPost.tags)    : createdPost.tags,
+  }
+
   return newPost
 })

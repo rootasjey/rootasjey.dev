@@ -27,7 +27,7 @@ export const createPostData = (body: any, userId: number) => {
     }),
     tags: JSON.stringify([]),
     user_id: userId,
-    visibility: "private",
+    visibility: body?.visibility ?? "private",
   }
 }
 

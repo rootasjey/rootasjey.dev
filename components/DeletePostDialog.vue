@@ -38,7 +38,7 @@
         <UButton 
           ref="cancelButtonRef"
           @click="handleCancel" 
-          btn="outline" 
+          btn="ghost-gray" 
           label="Cancel"
           :disabled="isLoading"
         />

@@ -121,14 +121,14 @@ export const useDrafts = (options: UseDraftsOptions = {}) => {
     list.value.unshift(draft)
   }
 
-  const updateDraft = (draftId: string | number, updates: Partial<PostType>) => {
+  const updateDraft = (draftId: number, updates: Partial<PostType>) => {
     const index = list.value.findIndex(d => d.id === draftId)
     if (index !== -1) {
       list.value[index] = { ...list.value[index], ...updates }
     }
   }
 
-  const removeDraft = (draftId: string | number) => {
+  const removeDraft = (draftId: number) => {
     const index = list.value.findIndex(d => d.id === draftId)
     if (index !== -1) {
       list.value.splice(index, 1)

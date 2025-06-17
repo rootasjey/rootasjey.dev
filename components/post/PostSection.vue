@@ -138,7 +138,7 @@
       <div v-else-if="posts.length > 0" :class="listClasses">
         <PostItem
           v-for="post in displayedPosts"
-          :key="post.id.toString()"
+          :key="post.id"
           :post="post"
           :variant="itemVariant"
           :menu-variant="menuVariant"
@@ -173,26 +173,22 @@
       </div>
 
       <!-- Empty State -->
-      <div v-else class="text-center py-12">
+      <div v-else>
         <slot name="empty" :section-type="sectionType">
-          <div class="text-gray-400 dark:text-gray-600 mb-4">
-            <span :class="emptyStateIcon" class="text-6xl" />
-          </div>
-          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-1">
             {{ emptyStateTitle }}
           </h3>
-          <p class="text-gray-600 dark:text-gray-400 mb-6 max-w-md mx-auto">
+          <p class="text-size-3 text-gray-600 dark:text-gray-400 mb-6 max-w-md">
             {{ emptyStateDescription }}
           </p>
           <UButton
             v-if="showEmptyAction"
-            btn="solid"
-            size="sm"
-            icon
-            :label="emptyActionIcon"
+            btn="solid-gray"
+            size="xs"
             @click="handleEmptyAction"
           >
-            {{ emptyActionText }}
+          <span>{{ emptyActionText }}</span>
+          <UIcon :name="emptyActionIcon" />
           </UButton>
         </slot>
       </div>

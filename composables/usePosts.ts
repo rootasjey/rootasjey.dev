@@ -67,11 +67,11 @@ export const usePosts = (options: UsePostManagementOptions = {}) => {
       const newPost = await $fetch('/api/posts', {
         method: 'POST',
         body: postData,
-      }) as PostType
+      })
 
       // Only add to posts array if it's published (not draft)
-      if (newPost.visibility !== 'draft') {
-        list.value.unshift(newPost)
+      if (newPost.visibility !== 'private') {
+        list.value.unshift(newPost as PostType)
       }
 
       return newPost
@@ -89,27 +89,24 @@ export const usePosts = (options: UsePostManagementOptions = {}) => {
     error.value = null
 
     try {
-      const updatedPost = await $fetch(`/api/posts/${postId}`, {
+      const { post: updatedPost, success, message } = await $fetch(`/api/posts/${postId}`, {
         method: 'PUT',
         body: updateData,
-      }) as PostType
+      })
+
+      if (!success) throw new Error(message)
 
       // Handle visibility changes
       const postIndex = list.value.findIndex(p => p.id === postId)
       
-      if (updatedPost.visibility === 'draft') {
-        // Remove from published posts if changed to draft
-        if (postIndex !== -1) {
-          list.value.splice(postIndex, 1)
-        }
-      } else {
-        // Update or add to published posts
-        if (postIndex !== -1) {
-          list.value[postIndex] = { ...list.value[postIndex], ...updatedPost }
-        } else {
-          // Was a draft, now published - add to posts
-          list.value.unshift(updatedPost)
-        }
+      // Remove from published posts if changed to draft
+      if (updatedPost.visibility === 'private' && postIndex !== -1) {
+        list.value.splice(postIndex, 1)
+      } else if (updatedPost.visibility !== 'private') {
+        postIndex !== -1 
+          // Update or add to published posts
+          ? list.value[postIndex] = { ...list.value[postIndex], ...updatedPost }
+          : list.value.unshift(updatedPost) // Was a draft, now published - add to posts
       }
 
       return updatedPost
@@ -157,7 +154,7 @@ export const usePosts = (options: UsePostManagementOptions = {}) => {
 
   // Optimistic updates for better UX
   const addPostOptimistically = (post: PostType) => {
-    if (post.visibility !== 'draft') {
+    if (post.visibility !== 'private') {
       list.value.unshift(post)
     }
   }

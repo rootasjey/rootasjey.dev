@@ -41,7 +41,7 @@ export function usePostActions(dependencies: {
         categoryManagement.incrementCategoryUsage(postData.category)
       }
       
-      if (newPost && newPost.visibility === 'draft') {
+      if (newPost && newPost.visibility === 'private') {
         drafts.addDraft(newPost)
       }
     } catch (error: any) {
@@ -61,24 +61,21 @@ export function usePostActions(dependencies: {
     name: string
     description: string
     category: string
-    visibility: string
+    visibility: 'public' | 'private' | 'archive'
   }) => {
     try {
       const updatedPost = await posts.updatePost(updateData.id, updateData)
+      if (!updatedPost) return
 
-      if (updatedPost) {
-        // Handle cross-composable state sync
-        if (updateData.visibility === 'draft') {
-          // Add/update in drafts, remove from posts (handled by postManagement)
-          drafts.updateDraft(updatedPost.id, updatedPost)
-        } else {
-          // Remove from drafts if published, add to posts (handled by postManagement)
-          drafts.removeDraft(updatedPost.id)
-        }
-        
-        if (updatedPost.category) {
-          categoryManagement.incrementCategoryUsage(updatedPost.category)
-        }
+      // Handle cross-composable state sync
+      // Add/update in drafts, remove from posts (handled by postManagement)
+      // Remove from drafts if published, add to posts (handled by postManagement)
+      updateData.visibility === 'private'
+        ? drafts.updateDraft(updatedPost.id, updatedPost)
+        : drafts.removeDraft(updatedPost.id)
+      
+      if (updatedPost.category) {
+        categoryManagement.incrementCategoryUsage(updatedPost.category)
       }
     } catch (error: any) {
       console.error('Update post failed:', error)
@@ -96,8 +93,7 @@ export function usePostActions(dependencies: {
     try {
       await posts.deletePost(post.id as number)
       
-      // Remove from drafts if it was a draft
-      if (post.visibility === 'draft') {
+      if (post.visibility === 'private') {
         drafts.removeDraft(post.id)
       }
     } catch (error: any) {
@@ -118,6 +114,7 @@ export function usePostActions(dependencies: {
         name: `${post.name} (Copy-${new Date().getTime()})`,
         description: post.description,
         category: post.category,
+        visibility: post.visibility,
       })
     } catch (error: any) {
       console.error('Failed to duplicate post:', error)
@@ -134,7 +131,7 @@ export function usePostActions(dependencies: {
   const handlePublishDraft = async (draft: PostType) => {
     try {
       await handleUpdatePost({
-        id: draft.id as number,
+        id: draft.id,
         name: draft.name,
         description: draft.description,
         category: draft.category,
@@ -159,11 +156,11 @@ export function usePostActions(dependencies: {
         name: post.name,
         description: post.description,
         category: post.category,
-        visibility: 'draft'
+        visibility: 'private'
       })
       
       // Move from published to drafts
-      drafts.addDraft({ ...post, visibility: 'draft' })
+      drafts.addDraft({ ...post, visibility: 'private' })
     } catch (error: any) {
       console.error('Failed to unpublish post:', error)
       toast({

@@ -1,11 +1,5 @@
 <template>
   <UDialog v-model:open="isOpen" title="Create Post" description="Add a new post with a description">
-    <!-- <template #trigger>
-      <UButton btn="text" size="xs" class="-ml-4 flex items-center gap-2 dark:text-amber-400">
-        <span>Add a post</span>
-      </UButton>
-    </template> -->
-
     <div class="grid gap-4 py-4">
       <div class="grid gap-2">
         <!-- Name Field -->
@@ -117,7 +111,7 @@
       <div class="flex gap-2 justify-end">
         <UButton 
           @click="handleCancel" 
-          btn="outline" 
+          btn="ghost-gray" 
           label="Cancel"
           :disabled="isLoading"
         />
@@ -125,7 +119,7 @@
           @click="handleCreatePost" 
           :loading="isLoading"
           :disabled="!isFormValid || isLoading"
-          btn="solid"
+          btn="soft"
           label="Create post" 
         />
       </div>

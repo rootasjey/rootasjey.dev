@@ -109,7 +109,7 @@ export default defineEventHandler(async (event) => {
     }
   }
 
-  const updatedPost = await db
+  const updatedPost: PostType | null = await db
   .prepare(`SELECT * FROM posts WHERE id = ? LIMIT 1`)
   .bind(post.id)
   .first()
@@ -121,7 +121,7 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  const formattedPost: Partial<PostType> = {
+  const formattedPost: PostType = {
     ...updatedPost,
     links:  typeof updatedPost.links  === 'string' ? JSON.parse(updatedPost.links || '[]') : updatedPost.links,
     tags:   typeof updatedPost.tags   === 'string' ? JSON.parse(updatedPost.tags || '[]') : updatedPost.tags,

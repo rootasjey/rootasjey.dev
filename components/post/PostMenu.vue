@@ -80,9 +80,9 @@ const isLoading = ref(false)
 const loadingAction = ref<string | null>(null)
 
 // Computed properties
-const isDraft = computed(() => props.post.visibility === 'draft')
+const isDraft = computed(() => props.post.visibility === 'private')
 const isPublished = computed(() => props.post.visibility === 'public')
-const isPrivate = computed(() => props.post.visibility === 'private')
+const isArchived = computed(() => props.post.visibility === 'archive')
 
 // Default menu items based on post state and user permissions
 const defaultMenuItems = computed((): MenuItem[] => {
@@ -94,7 +94,7 @@ const defaultMenuItems = computed((): MenuItem[] => {
     icon: 'i-lucide-edit-3',
     shortcut: 'E',
     onClick: () => handleEdit(),
-    visible: true
+    visible: true,
   })
 
   // Publishing actions
@@ -104,14 +104,14 @@ const defaultMenuItems = computed((): MenuItem[] => {
       icon: 'i-lucide-send',
       shortcut: 'P',
       onClick: () => handlePublish(),
-      visible: true
+      visible: true,
     })
   } else if (isPublished.value) {
     items.push({
       label: 'Unpublish',
       icon: 'i-lucide-eye-off',
       onClick: () => handleUnpublish(),
-      visible: true
+      visible: true,
     })
   }
 
@@ -124,7 +124,7 @@ const defaultMenuItems = computed((): MenuItem[] => {
     icon: 'i-lucide-copy',
     shortcut: 'D',
     onClick: () => handleDuplicate(),
-    visible: true
+    visible: true,
   })
 
   if (isPublished.value) {
@@ -132,14 +132,14 @@ const defaultMenuItems = computed((): MenuItem[] => {
       label: 'Share',
       icon: 'i-lucide-share-2',
       onClick: () => handleShare(),
-      visible: true
+      visible: true,
     })
 
     items.push({
       label: 'View Stats',
       icon: 'i-lucide-bar-chart-3',
       onClick: () => handleViewStats(),
-      visible: true
+      visible: true,
     })
   }
 
@@ -151,7 +151,7 @@ const defaultMenuItems = computed((): MenuItem[] => {
     label: 'Export',
     icon: 'i-lucide-download',
     onClick: () => handleExport(),
-    visible: true
+    visible: true,
   })
 
   // Archive (for published posts)
@@ -160,7 +160,7 @@ const defaultMenuItems = computed((): MenuItem[] => {
       label: 'Archive',
       icon: 'i-lucide-archive',
       onClick: () => handleArchive(),
-      visible: true
+      visible: true,
     })
   }
 
@@ -174,7 +174,7 @@ const defaultMenuItems = computed((): MenuItem[] => {
     shortcut: '⌫',
     onClick: () => handleDelete(),
     destructive: true,
-    visible: true
+    visible: true,
   })
 
   return items
@@ -204,7 +204,6 @@ const formattedMenuItems = computed(() => {
     .filter(item => item.visible !== false)
     .map(item => {
       if (item.separator) {
-        // return { type: 'separator' }
         return {}
       }
 
@@ -267,7 +266,7 @@ const dropdownTriggerProps = computed(() => {
     case 'minimal':
       return {
         ...baseProps,
-        class: 'p-1 w-6 h-6 hover:bg-gray-100 dark:hover:bg-gray-800 hover:scale-105 active:scale-95 transition-all',
+        class: 'p-1 w-6 h-6 shadow-none ring-0 hover:bg-gray-100 dark:hover:bg-gray-800 hover:scale-105 active:scale-95 transition-all',
         label: 'i-lucide-more-horizontal'
       }
     case 'compact':
@@ -388,12 +387,11 @@ defineExpose({
   executeAction: executeWithLoading
 })
 
-// Lifecycle
-onMounted(() => {
-  document.addEventListener('keydown', handleKeydown)
-})
+// onMounted(() => {
+//   document.addEventListener('keydown', handleKeydown)
+// })
 
-onUnmounted(() => {
-  document.removeEventListener('keydown', handleKeydown)
-})
+// onUnmounted(() => {
+//   document.removeEventListener('keydown', handleKeydown)
+// })
 </script>

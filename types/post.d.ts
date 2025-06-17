@@ -2,6 +2,7 @@ export type CreatePostType = {
   category: string
   description: string
   name: string
+  visibility?: 'public' | 'private' | 'archive'
 }
 
 export type PostType = {
@@ -30,7 +31,7 @@ export type PostType = {
       align: 'start' | 'center'
     }
   }
-  links: PostLinkType[] & never[]
+  links: PostLinkType[]
   metrics: {
     comments: number
     likes: number
@@ -41,7 +42,7 @@ export type PostType = {
   tags: string[]
   updated_at: string
   user_id: number
-  visibility: string
+  visibility: 'public' | 'private' | 'archive'
 }
 
 export type PostLinkType = {

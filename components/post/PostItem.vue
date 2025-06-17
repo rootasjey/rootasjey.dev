@@ -1,17 +1,17 @@
 <template>
   <article 
     class="pb-4 flex justify-between items-start 
-      group border b-gray-900 b-dashed transition 
+      group border dark:b-gray-900 b-dashed transition 
+      hover:scale-101 active:scale-99 
       hover:bg-gray-50/50 dark:hover:bg-transparent 
       dark:hover:border-gray-600 rounded-lg p-4 -m-2"
     :class="itemClasses"
   >
     <!-- Main Content -->
-    <div class="flex flex-col flex-1 min-w-0">
+    <ULink :to="postUrl" :disabled="linkDisabled" 
+      class="flex flex-col flex-1 min-w-0">
       <!-- Title with Link -->
-      <component 
-        :is="linkComponent" 
-        :to="postUrl" 
+      <div
         :class="titleLinkClasses"
         class="flex items-start gap-2 mb-1"
       >
@@ -39,7 +39,7 @@
         >
           Draft
         </UBadge>
-      </component>
+      </div>
 
       <!-- Description -->
       <p 
@@ -129,7 +129,7 @@
       <div v-if="$slots.footer" class="mt-2">
         <slot name="footer" :post="post" />
       </div>
-    </div>
+    </ULink>
   </article>
 </template>
 
@@ -189,16 +189,12 @@ const props = withDefaults(defineProps<PostItemProps>(), {
 const emit = defineEmits<PostItemEmits>()
 
 // Computed properties
-const isDraft = computed(() => props.post.visibility === 'draft')
+const isDraft = computed(() => props.post.visibility === 'private')
 const isPublished = computed(() => props.post.visibility === 'public')
 
 const postUrl = computed(() => {
   if (props.linkDisabled) return undefined
   return `/reflexions/${props.post.slug || props.post.id}`
-})
-
-const linkComponent = computed(() => {
-  return props.linkDisabled ? 'div' : 'ULink'
 })
 
 // Styling based on variant and state
@@ -233,7 +229,7 @@ const titleClasses = computed(() => {
 
 const titleLinkClasses = computed(() => {
   if (props.linkDisabled) return ''
-  return 'hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer'
+  return 'hover:text-blue-600 dark:hover:text-blue-400'
 })
 
 const statusIndicatorClasses = computed(() => {

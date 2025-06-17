@@ -9,12 +9,9 @@
         reflexions
       </h1>
     </div>
-    <p class="text-gray-700 dark:text-gray-300">
+    <p class="text-gray-700 dark:text-gray-500">
       Thoughts and reflections on various topics
     </p>
-    
-    <!-- Loading indicator -->
-    <UProgress v-if="isLoading" :indeterminate="true" size="sm" color="green" />
 
     <!-- Error message display -->
     <div v-if="error" class="mt-2 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md">
