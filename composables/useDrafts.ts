@@ -3,12 +3,15 @@ import type { PostType } from '~/types/post'
 interface UseDraftsOptions {
   autoFetch?: boolean
   storageKey?: string
+  /** Disable the composable if the user is not logged in. */
+  disabled?: boolean
 }
 
 export const useDrafts = (options: UseDraftsOptions = {}) => {
   const { 
     autoFetch = false, 
-    storageKey = 'show_drafts' 
+    storageKey = 'show_drafts',
+    disabled = false,
   } = options
 
   // State
@@ -64,6 +67,11 @@ export const useDrafts = (options: UseDraftsOptions = {}) => {
 
   // Draft fetching
   const fetchDrafts = async (force = false) => {
+    if (disabled) { 
+      console.warn('No user is logged in so the fetching of drafts is skipped.')
+      return list.value 
+    }
+
     // Skip if already fetching
     if (isFetchingDrafts.value) return list.value
 

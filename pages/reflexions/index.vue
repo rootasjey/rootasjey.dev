@@ -172,7 +172,7 @@
 
 <script lang="ts" setup>
 useHead({
-  title: "rootasjey • reflexions",
+  title: "root • reflexions",
   meta: [
     {
       name: 'description',
@@ -181,11 +181,11 @@ useHead({
   ],
 })
 
-import type { CreatePostType, PostType } from '~/types/post'
+import type { PostType } from '~/types/post'
 
 const { loggedIn } = useUserSession()
 const dialogs = usePostDialogs()
-const drafts = useDrafts({ autoFetch: true })
+const drafts = useDrafts({ autoFetch: loggedIn.value, disabled: !loggedIn.value })
 const posts = usePosts()
 
 const categories = usePostCategories({

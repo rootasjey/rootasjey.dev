@@ -117,7 +117,7 @@
             id="edit-visibility" 
             v-model="form.visibility" 
             item-key="label"
-            value-key="value"
+            value-key="label"
             :items="visibilityOptions" 
             placeholder="Select visibility"
             @change="markAsChanged"
@@ -184,7 +184,7 @@ const form = reactive({
   name: '',
   description: '',
   category: '',
-  visibility: 'public'
+  visibility: { label: 'Private', value: 'private' },
 })
 
 // Original form state for change detection
@@ -192,7 +192,7 @@ const originalForm = reactive({
   name: '',
   description: '',
   category: '',
-  visibility: 'public'
+  visibility: { label: 'Private', value: 'private' },
 })
 
 // Validation state
@@ -247,7 +247,7 @@ const populateForm = (post: PostType) => {
   form.name = post.name || ''
   form.description = post.description || ''
   form.category = post.category || ''
-  form.visibility = post.visibility || 'public'
+  form.visibility = convertVisibility(post.visibility)
   
   // Store original values for change detection
   originalForm.name = form.name
@@ -260,15 +260,19 @@ const populateForm = (post: PostType) => {
   errors.name = ''
 }
 
+const convertVisibility = (visibility: string) => {
+  return visibilityOptions.find(option => option.value === visibility.toLowerCase()) || { label: 'Private', value: 'private' }
+}
+
 const resetForm = () => {
   form.name = ''
   form.description = ''
   form.category = ''
-  form.visibility = 'public'
+  form.visibility = {  label: 'Private', value: 'private' }
   originalForm.name = ''
   originalForm.description = ''
   originalForm.category = ''
-  originalForm.visibility = 'public'
+  originalForm.visibility = { label: 'Private', value: 'private' }
   errors.name = ''
   hasChanges.value = false
   isAddingCategory.value = false
@@ -315,7 +319,7 @@ const handleUpdatePost = async () => {
       name: form.name.trim(),
       description: form.description.trim(),
       category: form.category,
-      visibility: form.visibility
+      visibility: form.visibility.value,
     }
 
     emit('update-post', updateData)

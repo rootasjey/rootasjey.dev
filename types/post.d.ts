@@ -3,6 +3,7 @@ export type CreatePostType = {
   description: string
   name: string
   visibility?: 'public' | 'private' | 'archive'
+  tags?: string[]
 }
 
 export type PostType = {

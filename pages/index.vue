@@ -1,84 +1,105 @@
 <template>
   <!-- pages/index.vue -->
-  <div class="w-[600px] rounded-xl p-8 flex flex-col transition-all duration-500 overflow-y-auto">
+  <div class="p-2 md:p-8 flex flex-col items-center min-h-screen">
     <!-- Header -->
-    <header class="mb-8 text-center">
-      <ULink to="/about" class="font-body text-xl font-600 text-gray-800 dark:text-gray-200">
-        rootasjey
-      </ULink>
-      <h5 class="text-gray-800 dark:text-gray-200 text-12px opacity-50">
-        Exploring the intersection of code & creativity
+    <header class="w-[820px] mt-24 md:mt-42 mb-8 text-center">
+      <h1 class="font-body text-6xl font-600 mb-6 text-gray-800 dark:text-gray-200">
+        ...at the intersection of code, art, and the motivation to build something meaningful.
+      </h1>
+      <h4 class="text-size-5 font-300 mb-4 text-gray-800 dark:text-gray-200">
+        Drawing inspiration from the world around us, I'm on a journey to create meaningful experiences through code.
+        I'm passionate about building fun things, and I'm always looking for new ways to learn and grow.
+      </h4>
+      <h5 class="text-size-5 font-300 mb-4 text-gray-800 dark:text-gray-200">
+        I like deconstructive thinking, self-reflexion and thought experiments. 
+        I prefer collaboration over hierarchy, sharing over locking, incitation over coercion. 
+        Life is like a movie which we take on course and won't see the end, and I'll try to share as much love as I can.
       </h5>
-
-      <!-- Greeting -->
-      <div class="flex justify-center items-center gap-2">
-        <UTooltip content="Go back" :_tooltip-content="{
-          side: 'right',
-        }">
-          <template #default>
-            <div :class="timeIcon" 
-              class="cursor-pointer hover:scale-120 hover:accent-rose active:scale-99 transition" 
-              @click="$colorMode.preference = $colorMode.value === 'dark' ? 'light' : 'dark'" 
-              @click.right="$colorMode.preference = 'system'"
-            />
-          </template>
-          <template #content>
-            <button @click="$colorMode.preference = 'system'" bg="light dark:dark" text="dark dark:white" text-3 px-3 py-1 rounded-md m-0
-              border-1 border-dashed class="b-#3D3BF3">
-              System theme
-            </button>
-          </template>
-        </UTooltip>
-
-        <ULink to="/meteo" class="text-size-3 font-500 text-gray-800 dark:text-gray-200">
-          {{ greeting }}
-        </ULink>
-
-        <ULink to="/time" class="text-size-3 font-500 text-gray-800 dark:text-gray-200">
-           • {{ new Date().toLocaleDateString("fr-FR", { 
-            weekday: 'long',
-            month: 'long',
-            day: 'numeric',
-            year: 'numeric',
-            hour: 'numeric',
-            minute: 'numeric',
-          }) }}
-        </ULink>
-
-        <ULink to="/contact" class="text-size-3 font-500 hover:scale-102 active:scale-99 transition">
-          <span>• </span>
-          <span>contact me</span>
-          <span class="i-ph-envelope-simple-open-duotone ml-1"></span>
-        </ULink>
-      </div>
-
-        <div class="w-40 flex text-center justify-center my-2 mx-auto">
-          <div class="w-full h-2">
-          <svg viewBox="0 0 300 10" preserveAspectRatio="none">
-            <path d="M 0 5 Q 15 0, 30 5 T 60 5 T 90 5 T 120 5 T 150 5 T 180 5 T 210 5 T 240 5 T 270 5 T 300 5"
-              stroke="currentColor" fill="none" class="text-gray-300 dark:text-gray-700" stroke-width="1" />
-          </svg>
-        </div>
-      </div>
     </header>
 
-    <!-- Navigation Sections -->
-    <nav class="flex-1 flex flex-col gap-2">
-      <NavSection 
-        v-for="item in navigation"
-        :key="item.title"
-        v-bind="item"
-      />
-    </nav>
+    <!-- Latest Posts Grid -->
+    <section class="w-[860px] mt-24 mb-12">
+      <h2 class="font-title text-4 font-600 mb-6 text-gray-800 dark:text-gray-200">
+        Latest Posts
+      </h2>
+      
+      <div v-if="posts.isLoading.value" class="text-center py-8">
+        <div class="text-gray-600 dark:text-gray-400">Loading posts...</div>
+      </div>
+      
+      <div v-else-if="posts.error.value" class="text-center py-8">
+        <div class="text-red-600 dark:text-red-400">Error loading posts</div>
+      </div>
+      
+      <div v-else-if="posts.list.value.length > 0" 
+           class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+        <article 
+          v-for="post in posts.list.value.slice(0, 3)" 
+          :key="post.id || post.slug"
+          class="border b-gray-1 hover:b-gray-2 overflow-hidden flex flex-col justify-between"
+        >
+          <!-- Post Content -->
+          <div class="p-4">
+            <!-- Post Category -->
+            <div class="flex flex-wrap gap-2 mb-2">
+              <span class=" text-xs font-medium text-gray-600 dark:text-gray-400">
+                {{ post.category }}
+              </span>
+            </div>
+
+            <h3 class="font-body text-size-8 font-700 line-height-tight mb-4 text-gray-800 dark:text-gray-200 line-clamp-6">
+              {{ post.name }}
+            </h3>
+            
+            <p v-if="post.description" 
+               class="text-gray-600 dark:text-gray-400 text-sm mb-3 line-clamp-12">
+              {{ post.description }}
+            </p>
+          </div>
+
+            <!-- Post Meta -->
+            <div class="p-4">
+              <div class="text-xs text-gray-500 dark:text-gray-500">
+                <time v-if="post.created_at" :datetime="post.created_at">
+                  {{ formatDate(post.created_at) }}
+                </time>
+              </div>
+              
+              <!-- Read More Link -->
+              <NuxtLink 
+                :to="`/reflexions/${post.slug}`"
+                class="inline-block hover:text-blue-800 dark:hover:text-blue-300 text-sm font-500 transition-colors"
+              >
+                Read more →
+              </NuxtLink>
+            </div>
+        </article>
+      </div>
+      
+      <div v-else class="text-center py-8">
+        <div class="text-gray-600 dark:text-gray-400">No posts available</div>
+      </div>
+      
+      <!-- View All Posts Link -->
+      <div v-if="posts.data && posts.data.length > 6" class="text-center mt-8">
+        <NuxtLink 
+          to="/posts"
+          class="inline-block bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-500 transition-colors"
+        >
+          View All Posts
+        </NuxtLink>
+      </div>
+    </section>
   </div>
 </template>
 
 <script setup>
-const fallbackData = { projects: 0, posts: 0, experiments: 0 }
 
 // Fetch '/api/how-many-items' to get the number of items in the database
 const { data } = await useFetch("/api/home/how-many-items")
+const posts = usePosts()
 const navigation = useNavigation(data.value ?? fallbackData)
+const fallbackData = { projects: 0, posts: 0, experiments: 0 }
 
 const greeting = computed(() => {
   const hour = new Date().getHours()
@@ -97,5 +118,15 @@ const timeIcon = computed(() => {
   if (hour >= 17 && hour < 22) return 'i-ph:sun-horizon-bold'
   return 'i-line-md:moon-rising-twotone-loop'
 })
+
+// Helper function to format dates
+const formatDate = (dateString) => {
+  const date = new Date(dateString)
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
+  })
+}
 
 </script>

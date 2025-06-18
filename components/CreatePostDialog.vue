@@ -104,6 +104,100 @@
             </UTooltip>
           </div>
         </div>
+
+        <!-- Tags Field -->
+        <div class="grid grid-cols-3 items-center gap-4">
+          <ULabel for="create-tags" class="text-right">
+            Tags
+          </ULabel>
+          <div class="col-span-2 flex flex-row gap-2">
+            <!-- Tag Select (shown when not adding new tag) -->
+            <UCombobox 
+              v-if="!isAddingCategory"
+              v-model="form.tags" 
+              :items="frameworks" 
+              by="value"
+              multiple
+              id="create-tags" 
+              :_combobox-input="{
+                placeholder: 'Select a tag...',
+              }"
+              :_combobox-list="{
+                class: 'w-300px',
+                align: 'start',
+              }"
+              class="flex-1"
+            >
+              <template #trigger>
+                {{ form.tags?.length > 0
+                  ? form.tags.map((val) => {
+                    const tag = frameworks.find(f => f.value === val)
+                    return tag ? tag.label : val
+                  }).join(", ")
+                  : "Select tags..." }}
+              </template>
+              <template #item="{ item, selected }">
+                <UCheckbox
+                  :model-value="selected"
+                  tabindex="-1"
+                  aria-hidden="true"
+                />
+                {{ item.label }}
+              </template>
+            </UCombobox>
+            
+            <!-- New Tag Input (shown when adding new tag) -->
+            <UInput
+              v-else
+              id="new-tag-input"
+              ref="newCategoryInputRef"
+              v-model="newCategoryName"
+              placeholder="Enter new tag name"
+              class="flex-1"
+              @keyup.enter="handleAddCategory"
+              @keyup.escape="cancelAddCategory"
+            />
+
+            <!-- Add Category Button -->
+            <UTooltip>
+              <template #default>
+                <UButton 
+                  v-if="!isAddingCategory"
+                  btn="outline" 
+                  icon 
+                  label="i-icon-park-outline:add-print"
+                  @click="startAddingCategory"
+                  aria-label="Add new tag"
+                />
+                <!-- Save/Cancel buttons when adding tag -->
+                <div v-else class="flex gap-1">
+                  <UButton
+                    btn="outline"
+                    icon
+                    label="i-lucide-check"
+                    size="xs"
+                    @click="handleAddCategory"
+                    :disabled="!newCategoryName.trim()"
+                    aria-label="Save new category"
+                  />
+                  <UButton
+                    btn="outline"
+                    icon
+                    label="i-lucide-x"
+                    size="xs"
+                    @click="cancelAddCategory"
+                    aria-label="Cancel adding tag"
+                  />
+                </div>
+              </template>
+              <template #content>
+                <div class="bg-light dark:bg-dark text-dark dark:text-white text-sm px-3 py-1 rounded-md border border-dashed border-[#3D3BF3]">
+                  {{ isAddingCategory ? 'Save new category' : 'Add a new category' }}
+                </div>
+              </template>
+            </UTooltip>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -152,11 +246,20 @@ const emit = defineEmits<Emits>()
 const nameInputRef = ref<HTMLInputElement>()
 const newCategoryInputRef = ref<HTMLInputElement>()
 
+const frameworks = [
+  { value: 'next.js', label: 'Next.js' },
+  { value: 'sveltekit', label: 'SvelteKit' },
+  { value: 'nuxt', label: 'Nuxt' },
+  { value: 'remix', label: 'Remix' },
+  { value: 'astro', label: 'Astro' },
+]
+
 // Form state
 const form = reactive({
   name: '',
   description: '',
-  category: ''
+  category: '',
+  tags: [],
 })
 
 // Validation state
@@ -223,6 +326,7 @@ const handleCreatePost = async () => {
       description: form.description.trim(),
       category: form.category
     }
+    console.log(form.tags)
 
     emit('create-post', postData)
     
@@ -276,6 +380,7 @@ watch(isOpen, (newValue) => {
 
 // Keyboard shortcuts
 onMounted(() => {
+  console.log(`categories: `, props.categories)
   const handleKeydown = (event: KeyboardEvent) => {
     if (!isOpen.value) return
     

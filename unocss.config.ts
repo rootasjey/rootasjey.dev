@@ -27,12 +27,11 @@ export default {
     presetWebFonts({
       provider: 'fontshare',
       fonts: {
-        title: 'Author',
+        title: 'Khand',
         text: 'Satoshi',
-        body: 'Chillax',
-        mono: 'Cabinet',
-        serif: 'Boska',
-        cursive: 'Pencerio',
+        body: 'Pilcrow Rounded',
+        serif: 'Pencerio',
+        capital: 'General Sans',
       },
     }),
     presetUna(),
