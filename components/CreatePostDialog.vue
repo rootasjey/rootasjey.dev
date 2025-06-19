@@ -1,5 +1,5 @@
 <template>
-  <UDialog v-model:open="isOpen" title="Create Post" description="Add a new post with a description">
+  <UDialog v-model:open="isOpen" title="Create Post" description="Add a new post with tags">
     <div class="grid gap-4 py-4">
       <div class="grid gap-2">
         <!-- Name Field -->
@@ -36,167 +36,36 @@
           />
         </div>
 
-        <!-- Category Field -->
-        <div class="grid grid-cols-3 items-center gap-4">
-          <ULabel for="create-category" class="text-right">
-            Category
+        <!-- Tags Field -->
+        <div class="grid grid-cols-3 items-start gap-4 mb-2">
+          <ULabel for="create-tags" class="text-right pt-2">
+            Tags *
           </ULabel>
-          <div class="col-span-2 flex flex-row gap-2">
-            <!-- Category Select (shown when not adding new category) -->
-            <USelect 
-              v-if="!isAddingCategory"
-              id="create-category" 
-              v-model="form.category" 
-              :items="categories" 
-              placeholder="Select a category"
-              class="flex-1"
+          <div class="col-span-2">
+            <TagInput
+              id="create-tags"
+              v-model="form.tags"
+              placeholder="Select or add tags..."
             />
-            
-            <!-- New Category Input (shown when adding new category) -->
-            <UInput
-              v-else
-              id="new-category-input"
-              ref="newCategoryInputRef"
-              v-model="newCategoryName"
-              placeholder="Enter new category name"
-              class="flex-1"
-              @keyup.enter="handleAddCategory"
-              @keyup.escape="cancelAddCategory"
-            />
-
-            <!-- Add Category Button -->
-            <UTooltip>
-              <template #default>
-                <UButton 
-                  v-if="!isAddingCategory"
-                  btn="outline" 
-                  icon 
-                  label="i-icon-park-outline:add-print"
-                  @click="startAddingCategory"
-                  aria-label="Add new category"
-                />
-                <!-- Save/Cancel buttons when adding category -->
-                <div v-else class="flex gap-1">
-                  <UButton
-                    btn="outline"
-                    icon
-                    label="i-lucide-check"
-                    size="xs"
-                    @click="handleAddCategory"
-                    :disabled="!newCategoryName.trim()"
-                    aria-label="Save new category"
-                  />
-                  <UButton
-                    btn="outline"
-                    icon
-                    label="i-lucide-x"
-                    size="xs"
-                    @click="cancelAddCategory"
-                    aria-label="Cancel adding category"
-                  />
-                </div>
-              </template>
-              <template #content>
-                <div class="bg-light dark:bg-dark text-dark dark:text-white text-sm px-3 py-1 rounded-md border border-dashed border-[#3D3BF3]">
-                  {{ isAddingCategory ? 'Save new category' : 'Add a new category' }}
-                </div>
-              </template>
-            </UTooltip>
+            <p v-if="errors.tags" id="tags-error" class="text-red-500 text-sm mt-1" role="alert">
+              {{ errors.tags }}
+            </p>
           </div>
         </div>
 
-        <!-- Tags Field -->
+        <!-- Visibility Field -->
         <div class="grid grid-cols-3 items-center gap-4">
-          <ULabel for="create-tags" class="text-right">
-            Tags
+          <ULabel for="create-visibility" class="text-right">
+            Visibility
           </ULabel>
-          <div class="col-span-2 flex flex-row gap-2">
-            <!-- Tag Select (shown when not adding new tag) -->
-            <UCombobox 
-              v-if="!isAddingCategory"
-              v-model="form.tags" 
-              :items="frameworks" 
-              by="value"
-              multiple
-              id="create-tags" 
-              :_combobox-input="{
-                placeholder: 'Select a tag...',
-              }"
-              :_combobox-list="{
-                class: 'w-300px',
-                align: 'start',
-              }"
-              class="flex-1"
-            >
-              <template #trigger>
-                {{ form.tags?.length > 0
-                  ? form.tags.map((val) => {
-                    const tag = frameworks.find(f => f.value === val)
-                    return tag ? tag.label : val
-                  }).join(", ")
-                  : "Select tags..." }}
-              </template>
-              <template #item="{ item, selected }">
-                <UCheckbox
-                  :model-value="selected"
-                  tabindex="-1"
-                  aria-hidden="true"
-                />
-                {{ item.label }}
-              </template>
-            </UCombobox>
-            
-            <!-- New Tag Input (shown when adding new tag) -->
-            <UInput
-              v-else
-              id="new-tag-input"
-              ref="newCategoryInputRef"
-              v-model="newCategoryName"
-              placeholder="Enter new tag name"
-              class="flex-1"
-              @keyup.enter="handleAddCategory"
-              @keyup.escape="cancelAddCategory"
-            />
-
-            <!-- Add Category Button -->
-            <UTooltip>
-              <template #default>
-                <UButton 
-                  v-if="!isAddingCategory"
-                  btn="outline" 
-                  icon 
-                  label="i-icon-park-outline:add-print"
-                  @click="startAddingCategory"
-                  aria-label="Add new tag"
-                />
-                <!-- Save/Cancel buttons when adding tag -->
-                <div v-else class="flex gap-1">
-                  <UButton
-                    btn="outline"
-                    icon
-                    label="i-lucide-check"
-                    size="xs"
-                    @click="handleAddCategory"
-                    :disabled="!newCategoryName.trim()"
-                    aria-label="Save new category"
-                  />
-                  <UButton
-                    btn="outline"
-                    icon
-                    label="i-lucide-x"
-                    size="xs"
-                    @click="cancelAddCategory"
-                    aria-label="Cancel adding tag"
-                  />
-                </div>
-              </template>
-              <template #content>
-                <div class="bg-light dark:bg-dark text-dark dark:text-white text-sm px-3 py-1 rounded-md border border-dashed border-[#3D3BF3]">
-                  {{ isAddingCategory ? 'Save new category' : 'Add a new category' }}
-                </div>
-              </template>
-            </UTooltip>
-          </div>
+          <USelect 
+            id="create-visibility" 
+            v-model="form.visibility" 
+            item-key="label"
+            value-key="label"
+            :items="visibilityOptions" 
+            placeholder="Select visibility"
+          />
         </div>
       </div>
     </div>
@@ -213,7 +82,7 @@
           @click="handleCreatePost" 
           :loading="isLoading"
           :disabled="!isFormValid || isLoading"
-          btn="soft"
+          btn="soft dark:solid-white"
           label="Create post" 
         />
       </div>
@@ -226,51 +95,48 @@ import type { CreatePostType } from '~/types/post'
 
 interface Props {
   modelValue?: boolean
-  categories?: string[]
 }
 
 interface Emits {
   (e: 'update:modelValue', value: boolean): void
   (e: 'create-post', post: CreatePostType): void
-  (e: 'add-category', category: string): void
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  modelValue: false,
-  categories: () => []
+  modelValue: false
 })
 
 const emit = defineEmits<Emits>()
 
+// Use tags composable
+const { getPrimaryTag, getSecondaryTags, incrementPostTagsUsage } = useTags()
+
 // Refs for focus management
 const nameInputRef = ref<HTMLInputElement>()
-const newCategoryInputRef = ref<HTMLInputElement>()
-
-const frameworks = [
-  { value: 'next.js', label: 'Next.js' },
-  { value: 'sveltekit', label: 'SvelteKit' },
-  { value: 'nuxt', label: 'Nuxt' },
-  { value: 'remix', label: 'Remix' },
-  { value: 'astro', label: 'Astro' },
-]
 
 // Form state
 const form = reactive({
   name: '',
   description: '',
-  category: '',
-  tags: [],
+  tags: [] as string[],
+  visibility: { label: 'Private', value: 'private' },
 })
 
 // Validation state
 const errors = reactive({
-  name: ''
+  name: '',
+  tags: ''
 })
 
 // UI state
 const isLoading = ref(false)
-const isAddingCategory = ref(false)
-const newCategoryName = ref('')
+
+// Visibility options
+const visibilityOptions = [
+  { label: 'Private', value: 'private' },
+  { label: 'Public', value: 'public' },
+  { label: 'Draft', value: 'draft' }
+]
 
 // Computed
 const isOpen = computed({
@@ -279,7 +145,10 @@ const isOpen = computed({
 })
 
 const isFormValid = computed(() => {
-  return form.name.trim().length > 0 && !errors.name
+  return form.name.trim().length > 0 && 
+         form.tags.length > 0 && 
+         !errors.name && 
+         !errors.tags
 })
 
 // Methods
@@ -292,13 +161,20 @@ const validateName = () => {
   }
 }
 
+const validateTags = () => {
+  errors.tags = ''
+  if (!form.tags || form.tags.length === 0) {
+    errors.tags = 'At least one tag is required'
+  }
+}
+
 const resetForm = () => {
   form.name = ''
   form.description = ''
-  form.category = ''
+  form.tags = []
+  form.visibility = { label: 'Private', value: 'private' }
   errors.name = ''
-  isAddingCategory.value = false
-  newCategoryName.value = ''
+  errors.tags = ''
 }
 
 const handleCancel = () => {
@@ -309,6 +185,7 @@ const handleCancel = () => {
 const handleCreatePost = async () => {
   // Validate before submitting
   validateName()
+  validateTags()
   
   if (!isFormValid.value) {
     // Focus the first invalid field
@@ -324,9 +201,12 @@ const handleCreatePost = async () => {
     const postData: CreatePostType = {
       name: form.name.trim(),
       description: form.description.trim(),
-      category: form.category
+      tags: form.tags,
+      visibility: form.visibility.value as 'public' | 'private' | 'archive',
     }
-    console.log(form.tags)
+
+    // Update tag usage statistics
+    incrementPostTagsUsage(form.tags)
 
     emit('create-post', postData)
     
@@ -342,32 +222,6 @@ const handleCreatePost = async () => {
   }
 }
 
-const startAddingCategory = () => {
-  isAddingCategory.value = true
-  nextTick(() => {
-    newCategoryInputRef.value?.focus()
-  })
-}
-
-const handleAddCategory = () => {
-  const categoryName = newCategoryName.value.trim()
-  if (!categoryName) return
-
-  // Emit the new category to parent
-  emit('add-category', categoryName)
-  
-  // Set the new category as selected
-  form.category = categoryName
-  
-  // Reset add category state
-  cancelAddCategory()
-}
-
-const cancelAddCategory = () => {
-  isAddingCategory.value = false
-  newCategoryName.value = ''
-}
-
 // Focus management
 watch(isOpen, (newValue) => {
   if (newValue) {
@@ -380,7 +234,6 @@ watch(isOpen, (newValue) => {
 
 // Keyboard shortcuts
 onMounted(() => {
-  console.log(`categories: `, props.categories)
   const handleKeydown = (event: KeyboardEvent) => {
     if (!isOpen.value) return
     

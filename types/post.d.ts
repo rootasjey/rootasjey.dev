@@ -1,5 +1,4 @@
 export type CreatePostType = {
-  category: string
   description: string
   name: string
   visibility?: 'public' | 'private' | 'archive'
@@ -15,7 +14,6 @@ export type PostType = {
   canEdit?: boolean
   created_at: string
   description: string
-  category: string
   id: number
   isDeleteDialogOpen?: boolean
   image: {
@@ -39,6 +37,10 @@ export type PostType = {
     views: number
   }
   name: string
+  /** Computed property: first tag as primary tag */
+  primaryTag?: string
+  /** Computed property: remaining tags after primary */
+  secondaryTags?: string[]
   slug: string
   tags: string[]
   updated_at: string

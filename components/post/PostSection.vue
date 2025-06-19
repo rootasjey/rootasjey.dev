@@ -142,8 +142,8 @@
           :post="post"
           :variant="itemVariant"
           :menu-variant="menuVariant"
-          :show-category="showCategory"
-          :show-tags="showTags"
+          :show-primary-tag="showPrimaryTag"
+          :show-secondary-tags="showSecondaryTags"
           :show-word-count="showWordCount"
           :show-draft-badge="showDraftBadge"
           :show-status-indicator="showStatusIndicator"
@@ -225,8 +225,8 @@ interface PostSectionProps {
   // Post item configuration
   itemVariant?: 'default' | 'compact' | 'detailed'
   menuVariant?: 'default' | 'minimal' | 'compact'
-  showCategory?: boolean
-  showTags?: boolean
+  showPrimaryTag?: boolean
+  showSecondaryTags?: boolean
   showWordCount?: boolean
   showDraftBadge?: boolean
   showStatusIndicator?: boolean
@@ -285,8 +285,8 @@ const props = withDefaults(defineProps<PostSectionProps>(), {
   variant: 'default',
   itemVariant: 'default',
   menuVariant: 'default',
-  showCategory: true,
-  showTags: false,
+  showPrimaryTag: true,
+  showSecondaryTags: false,
   showWordCount: false,
   showDraftBadge: true,
   showStatusIndicator: false,

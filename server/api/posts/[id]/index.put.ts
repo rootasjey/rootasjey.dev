@@ -1,6 +1,15 @@
 // PUT /api/posts/[id]/index.put.ts
-
+import { z } from 'zod'
 import { PostType } from "~/types/post"
+
+const updatePostSchema = z.object({
+  name: z.string().min(1).max(255).optional(),
+  description: z.string().max(1000).optional(),
+  tags: z.array(z.string().min(1).max(50)).max(20).optional(),
+  language: z.enum(['en', 'fr']).optional(),
+  slug: z.string().min(1).max(255).optional(),
+  visibility: z.enum(['public', 'private', 'archive']).optional(),
+})
 
 export default defineEventHandler(async (event) => {
   const session = await requireUserSession(event)
@@ -10,6 +19,7 @@ export default defineEventHandler(async (event) => {
   const db = hubDatabase()
 
   handleParamErrors({ postIdOrSlug, body })
+  const validatedBody = updatePostSchema.parse(body)
 
   let post: PostType | null = await db
   .prepare(`SELECT * FROM posts WHERE id = ? OR slug = ? LIMIT 1`)
@@ -23,38 +33,119 @@ export default defineEventHandler(async (event) => {
   const shouldUpdateSlug = body.slug !== undefined
   const newSlug = shouldUpdateSlug ? body.slug : post.slug
 
-  let category = body.category ?? ""
-  category = category === "no category" ? "" : category.toLowerCase()
+  // Check for slug uniqueness if slug is being updated
+  if (validatedBody.slug && validatedBody.slug !== post.slug) {
+    const slugExists = await db.prepare(`
+      SELECT id FROM posts WHERE slug = ? AND id != ?
+    `)
+    .bind(validatedBody.slug, post.id)
+    .first()
 
-  // Build dynamic SQL query based on whether slug should be updated
-  let updateQuery = `
-    UPDATE posts 
-    SET 
-      category = ?,
-      description = ?,
-      language = ?,
-      name = ?,
-      visibility = ?`
-  
-  const updateParams = [
-    category,
-    body.description ?? "",
-    body.language ?? "en",
-    body.name,
-    body.visibility ?? "public"
-  ]
-
-  if (shouldUpdateSlug) {
-    updateQuery += `, slug = ?`
-    updateParams.push(newSlug)
+    if (slugExists) {
+      throw createError({
+        statusCode: 409,
+        statusMessage: 'Slug already exists'
+      })
+    }
   }
 
-  updateQuery += `, updated_at = CURRENT_TIMESTAMP WHERE id = ?`
-  updateParams.push(post.id)
+  // Prepare update data
+  const updateData: Record<string, any> = {}
+  const updateFields: string[] = []
+  const updateValues: any[] = []
 
-  await db.prepare(updateQuery)
-    .bind(...updateParams)
-    .run()
+  // Handle each field that might be updated
+  if (validatedBody.name !== undefined) {
+    updateFields.push('name = ?')
+    updateValues.push(validatedBody.name)
+    updateData.name = validatedBody.name
+  }
+
+  if (validatedBody.description !== undefined) {
+    updateFields.push('description = ?')
+    updateValues.push(validatedBody.description)
+    updateData.description = validatedBody.description
+  }
+
+  if (validatedBody.tags !== undefined) {
+    // Convert tags array to JSON string for storage
+    const tagsJson = JSON.stringify(validatedBody.tags)
+    updateFields.push('tags = ?')
+    updateValues.push(tagsJson)
+    updateData.tags = validatedBody.tags
+  }
+
+  if (validatedBody.language !== undefined) {
+    updateFields.push('language = ?')
+    updateValues.push(validatedBody.language)
+    updateData.language = validatedBody.language
+  }
+
+  if (validatedBody.slug !== undefined) {
+    updateFields.push('slug = ?')
+    updateValues.push(validatedBody.slug)
+    updateData.slug = validatedBody.slug
+  }
+
+  if (validatedBody.visibility !== undefined) {
+    updateFields.push('visibility = ?')
+    updateValues.push(validatedBody.visibility)
+    updateData.visibility = validatedBody.visibility
+
+    // Set published_at when changing to public
+    if (validatedBody.visibility === 'public' && post.visibility !== 'public') {
+      updateFields.push('published_at = ?')
+      updateValues.push(new Date().toISOString())
+      updateData.published_at = new Date().toISOString()
+    }
+    // Clear published_at when changing from public
+    else if (validatedBody.visibility !== 'public' && post.visibility === 'public') {
+      updateFields.push('published_at = ?')
+      updateValues.push(null)
+      updateData.published_at = null
+    }
+  }
+
+  // Only proceed if there are fields to update
+  if (updateFields.length === 0) {
+    const tags: string[] =  post.tags ? JSON.parse(post.tags as unknown as string) : []
+    return {
+      success: true,
+      message: 'No changes to update',
+      post: {
+        ...post,
+        tags,
+        canEdit: true
+      }
+    }
+  }
+
+   // Add updated_at timestamp
+  updateFields.push('updated_at = ?')
+  updateValues.push(new Date().toISOString())
+
+  // Add WHERE clause values
+  updateValues.push(post.id, userId)
+
+  // Execute update
+  const updateQuery = `
+    UPDATE posts 
+    SET ${updateFields.join(', ')} 
+    WHERE id = ? AND user_id = ?
+  `
+
+  const updateResult = await db
+  .prepare(updateQuery)
+  .bind(...updateValues)
+  .run()
+
+  if (!updateResult.success) {
+    throw createError({
+      statusCode: 500,
+      statusMessage: updateResult.error,
+    })
+  }
+
 
   // Handle blob files relocation only if slug is being updated
   if (shouldUpdateSlug && post.slug !== newSlug) {

@@ -30,16 +30,15 @@ export default defineEventHandler(async (event) => {
 
   const result = await db.prepare(`
     INSERT INTO posts (
-      blob_path, category, description, image_src, image_alt,
+      blob_path, description, image_src, image_alt,
       language, links, metrics_comments, metrics_likes, metrics_views,
       name, slug, styles, tags, user_id, visibility
     ) VALUES (
-      ?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?16
+      ?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15
     )
   `)
   .bind(
     postData.blob_path,
-    postData.category,
     postData.description,
     postData.image_src,
     postData.image_alt,

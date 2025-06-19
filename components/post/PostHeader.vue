@@ -37,19 +37,15 @@
       <CreatePostDialog
         :model-value="createDialogModel"
         @update:model-value="$emit('update:createDialogModel', $event)"
-        :categories="categories"
         @create-post="$emit('create-post', $event)"
-        @add-category="$emit('add-category', $event)"
       />
 
       <!-- Edit Post Dialog -->
       <EditPostDialog
         :model-value="editDialogModel"
         @update:model-value="$emit('update:editDialogModel', $event)"
-        :categories="categories"
         :post="editingPost"
         @update-post="$emit('update-post', $event)"
-        @add-category="$emit('add-category', $event)"
       />
 
       <!-- Delete Confirmation Dialog -->
@@ -69,7 +65,6 @@ import type { PostType } from '~/types/post'
 interface Props {
   isLoading?: boolean
   error?: string | null
-  categories?: string[]
   showDialogs?: boolean
   createDialogModel?: boolean
   editDialogModel?: boolean
@@ -81,7 +76,6 @@ interface Props {
 withDefaults(defineProps<Props>(), {
   isLoading: false,
   error: null,
-  categories: () => [],
   showDialogs: false,
   createDialogModel: false,
   editDialogModel: false,
@@ -94,7 +88,6 @@ defineEmits<{
   'create-post': [postData: any]
   'update-post': [updateData: any]
   'delete-post': [post: PostType]
-  'add-category': [category: string]
   'retry-error': []
   'update:createDialogModel': [modelValue: boolean]
   'update:editDialogModel': [modelValue: boolean]

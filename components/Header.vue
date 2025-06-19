@@ -5,10 +5,13 @@
     <div class="navigation flex justify-center items-center gap-6 
       absolute left-1/2 -translate-x-1/2
       text-size-3.5 font-600 color-gray-800 dark:color-gray-200">
-      <ULink to="/" label="Home" />
-      <ULink to="/reflexions" label="Reflexions" />
-      <ULink to="/projects" label="Projects" />
-      <ULink to="/experiments" label="Experiments" />
+      <ULink 
+        v-for="link in links" 
+        :key="link.label" 
+        :to="link.to" 
+        :label="link.label"  
+        :class="$route.path === link.to ? 'active' : ''"
+      />
     </div>
 
     <div class="flex items-center gap-2">
@@ -47,6 +50,24 @@
 </template>
 
 <script lang="ts" setup>
+const links = [
+  {
+    label: 'Home',
+    to: '/',
+  },
+  {
+    label: 'Reflexions',
+    to: '/reflexions',
+  },
+  {
+    label: 'Projects',
+    to: '/projects',
+  },
+  {
+    label: 'Experiments',
+    to: '/experiments',
+  },
+]
 
 const timeIcon = computed(() => {
   const hour = new Date().getHours()
@@ -58,3 +79,32 @@ const timeIcon = computed(() => {
 })
 
 </script>
+
+<style scoped>
+.navigation {
+  a {
+    position: relative;
+    text-decoration: none;
+  }
+
+  a::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 4px;
+    border-radius: 4px;
+    background-color: #eee;
+    bottom: -7px;
+    left: 0;
+    transform-origin: right;
+    transform: scaleX(0);
+    transition: transform .3s ease-in-out;
+  }
+
+  a:hover::before, a.active::before {
+    transform-origin: left;
+    transform: scaleX(1);
+  }
+
+}
+</style>

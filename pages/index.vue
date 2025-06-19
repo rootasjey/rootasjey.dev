@@ -1,8 +1,8 @@
 <template>
   <!-- pages/index.vue -->
   <div class="p-2 md:p-8 flex flex-col items-center min-h-screen">
-    <!-- Header -->
-    <header class="w-[820px] mt-24 md:mt-42 mb-8 text-center">
+    <!-- Hero Section -->
+    <section class="w-[820px] mt-24 md:mt-42 mb-8 text-center">
       <h1 class="font-body text-6xl font-600 mb-6 text-gray-800 dark:text-gray-200">
         ...at the intersection of code, art, and the motivation to build something meaningful.
       </h1>
@@ -15,7 +15,7 @@
         I prefer collaboration over hierarchy, sharing over locking, incitation over coercion. 
         Life is like a movie which we take on course and won't see the end, and I'll try to share as much love as I can.
       </h5>
-    </header>
+    </section>
 
     <!-- Latest Posts Grid -->
     <section class="w-[860px] mt-24 mb-12">
@@ -33,47 +33,7 @@
       
       <div v-else-if="posts.list.value.length > 0" 
            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-        <article 
-          v-for="post in posts.list.value.slice(0, 3)" 
-          :key="post.id || post.slug"
-          class="border b-gray-1 hover:b-gray-2 overflow-hidden flex flex-col justify-between"
-        >
-          <!-- Post Content -->
-          <div class="p-4">
-            <!-- Post Category -->
-            <div class="flex flex-wrap gap-2 mb-2">
-              <span class=" text-xs font-medium text-gray-600 dark:text-gray-400">
-                {{ post.category }}
-              </span>
-            </div>
-
-            <h3 class="font-body text-size-8 font-700 line-height-tight mb-4 text-gray-800 dark:text-gray-200 line-clamp-6">
-              {{ post.name }}
-            </h3>
-            
-            <p v-if="post.description" 
-               class="text-gray-600 dark:text-gray-400 text-sm mb-3 line-clamp-12">
-              {{ post.description }}
-            </p>
-          </div>
-
-            <!-- Post Meta -->
-            <div class="p-4">
-              <div class="text-xs text-gray-500 dark:text-gray-500">
-                <time v-if="post.created_at" :datetime="post.created_at">
-                  {{ formatDate(post.created_at) }}
-                </time>
-              </div>
-              
-              <!-- Read More Link -->
-              <NuxtLink 
-                :to="`/reflexions/${post.slug}`"
-                class="inline-block hover:text-blue-800 dark:hover:text-blue-300 text-sm font-500 transition-colors"
-              >
-                Read more →
-              </NuxtLink>
-            </div>
-        </article>
+        <PostCard v-for="post in posts.list.value.slice(2)" :key="post.id" :post="post" />
       </div>
       
       <div v-else class="text-center py-8">

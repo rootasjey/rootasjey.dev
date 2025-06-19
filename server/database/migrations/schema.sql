@@ -30,7 +30,6 @@ END;
 CREATE TABLE IF NOT EXISTS posts (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   blob_path TEXT,
-  category TEXT,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   description TEXT,
   image_alt TEXT,

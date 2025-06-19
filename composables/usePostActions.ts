@@ -4,16 +4,16 @@ export function usePostActions(dependencies: {
   posts: ReturnType<typeof usePosts>
   drafts: ReturnType<typeof useDrafts>
   dialogs: ReturnType<typeof usePostDialogs>
-  categories: ReturnType<typeof usePostCategories>
+  tags: ReturnType<typeof useTags>
 }) {
-  const { posts, drafts, dialogs, categories: categoryManagement } = dependencies
+  const { posts, drafts, dialogs, tags: tagManagement } = dependencies
 
-  const handleAddCategory = (newCategory: string) => {
-    const result = categoryManagement.addCategory(newCategory)
+  const handleAddTag = (newTag: string) => {
+    const result = tagManagement.addTag(newTag)
     if (result.success) {
       toast({
-        title: 'Category added',
-        description: `Added category: ${result.category}`,
+        title: 'Tag added',
+        description: `Added tag: ${result.tag}`,
         duration: 5000,
         showProgress: true,
         toast: 'soft-success',
@@ -22,9 +22,9 @@ export function usePostActions(dependencies: {
     }
 
     // Handle error
-    console.error(`Failed to add category: ${result.error}`)
+    console.error(`Failed to add tag: ${result.error}`)
     toast({
-      title: 'Failed to add category',
+      title: 'Failed to add tag',
       description: result.error,
       duration: 5000,
       showProgress: true,
@@ -36,9 +36,9 @@ export function usePostActions(dependencies: {
     try {
       const newPost = await posts.createPost(postData)
       
-      // Track category usage
-      if (newPost && postData.category) {
-        categoryManagement.incrementCategoryUsage(postData.category)
+      // Track tag usage
+      if (newPost && postData.tags && postData.tags.length > 0) {
+        tagManagement.incrementPostTagsUsage(postData.tags)
       }
       
       if (newPost && newPost.visibility === 'private') {
@@ -60,12 +60,27 @@ export function usePostActions(dependencies: {
     id: number
     name: string
     description: string
-    category: string
+    tags: string[]
     visibility: 'public' | 'private' | 'archive'
   }) => {
     try {
+      // Get the original post to track tag usage changes
+      const originalPost = posts.list.value.find(p => p.id === updateData.id) || 
+                          drafts.list.value.find(p => p.id === updateData.id)
+
       const updatedPost = await posts.updatePost(updateData.id, updateData)
       if (!updatedPost) return
+
+      // Handle tag usage tracking
+      if (originalPost && originalPost.tags) {
+        // Decrement usage for old tags
+        tagManagement.decrementPostTagsUsage(originalPost.tags)
+      }
+      
+      if (updatedPost.tags && updatedPost.tags.length > 0) {
+        // Increment usage for new tags
+        tagManagement.incrementPostTagsUsage(updatedPost.tags)
+      }
 
       // Handle cross-composable state sync
       // Add/update in drafts, remove from posts (handled by postManagement)
@@ -74,9 +89,6 @@ export function usePostActions(dependencies: {
         ? drafts.updateDraft(updatedPost.id, updatedPost)
         : drafts.removeDraft(updatedPost.id)
       
-      if (updatedPost.category) {
-        categoryManagement.incrementCategoryUsage(updatedPost.category)
-      }
     } catch (error: any) {
       console.error('Update post failed:', error)
       toast({
@@ -92,6 +104,11 @@ export function usePostActions(dependencies: {
   const handleDeletePost = async (post: PostType) => {
     try {
       await posts.deletePost(post.id as number)
+      
+      // Decrement tag usage when deleting post
+      if (post.tags && post.tags.length > 0) {
+        tagManagement.decrementPostTagsUsage(post.tags)
+      }
       
       if (post.visibility === 'private') {
         drafts.removeDraft(post.id)
@@ -113,7 +130,7 @@ export function usePostActions(dependencies: {
       await handleCreatePost({
         name: `${post.name} (Copy-${new Date().getTime()})`,
         description: post.description,
-        category: post.category,
+        tags: post.tags ? [...post.tags] : [], // Copy tags array
         visibility: post.visibility,
       })
     } catch (error: any) {
@@ -134,7 +151,7 @@ export function usePostActions(dependencies: {
         id: draft.id,
         name: draft.name,
         description: draft.description,
-        category: draft.category,
+        tags: draft.tags || [],
         visibility: 'public'
       })
     } catch (error: any) {
@@ -155,7 +172,7 @@ export function usePostActions(dependencies: {
         id: post.id,
         name: post.name,
         description: post.description,
-        category: post.category,
+        tags: post.tags || [],
         visibility: 'private'
       })
       
@@ -179,7 +196,7 @@ export function usePostActions(dependencies: {
         id: post.id,
         name: post.name,
         description: post.description,
-        category: post.category,
+        tags: post.tags || [],
         visibility: 'archive',
       })
     } catch (error: any) {
@@ -221,7 +238,7 @@ export function usePostActions(dependencies: {
     const exportData = {
       name: post.name,
       description: post.description,
-      category: post.category,
+      tags: post.tags || [],
       content: post.article,
       created_at: post.created_at,
       updated_at: post.updated_at
@@ -258,7 +275,7 @@ export function usePostActions(dependencies: {
           id: draft.id,
           name: draft.name,
           description: draft.description,
-          category: draft.category,
+          tags: draft.tags || [],
           visibility: 'private',
         })
       }
@@ -274,7 +291,7 @@ export function usePostActions(dependencies: {
     const exportData = posts.list.value.map(post => ({
       name: post.name,
       description: post.description,
-      category: post.category,
+      tags: post.tags || [],
       content: post.article,
       created_at: post.created_at,
       updated_at: post.updated_at
@@ -323,6 +340,19 @@ export function usePostActions(dependencies: {
     }
   }
 
+  // Tag-specific utility functions
+  const getPostPrimaryTag = (post: PostType): string | undefined => {
+    return tagManagement.getPrimaryTag(post.tags)
+  }
+
+  const getPostSecondaryTags = (post: PostType): string[] => {
+    return tagManagement.getSecondaryTags(post.tags)
+  }
+
+  const hasPostSecondaryTags = (post: PostType): boolean => {
+    return tagManagement.hasSecondaryTags(post.tags)
+  }
+
   return {
     // CRUD operations
     handleCreatePost,
@@ -346,7 +376,12 @@ export function usePostActions(dependencies: {
     // Helpers
     formatLastUpdated,
     handleViewStats,
-    handleAddCategory,
+    handleAddTag,
     handleRetryError,
+    
+    // Tag utilities
+    getPostPrimaryTag,
+    getPostSecondaryTags,
+    hasPostSecondaryTags,
   }
 }

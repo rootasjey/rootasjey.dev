@@ -38,73 +38,21 @@
           />
         </div>
 
-        <!-- Category Field -->
-        <div class="grid grid-cols-3 items-center gap-4">
-          <ULabel for="edit-category" class="text-right">
-            Category
+        <!-- Tags Field -->
+        <div class="grid grid-cols-3 items-start gap-4 mb-4">
+          <ULabel for="edit-tags" class="text-right pt-2">
+            Tags *
           </ULabel>
-          <div class="col-span-2 flex flex-row gap-2">
-            <!-- Category Select (shown when not adding new category) -->
-            <USelect 
-              v-if="!isAddingCategory"
-              id="edit-category" 
-              v-model="form.category" 
-              :items="categories" 
-              placeholder="Select a category"
-              class="flex-1"
-              @change="markAsChanged"
+          <div class="col-span-2">
+            <TagInput
+              id="edit-tags"
+              v-model="form.tags"
+              placeholder="Select or add tags..."
+              @update:model-value="markAsChanged"
             />
-            
-            <!-- New Category Input (shown when adding new category) -->
-            <UInput
-              v-else
-              id="edit-new-category-input"
-              ref="newCategoryInputRef"
-              v-model="newCategoryName"
-              placeholder="Enter new category name"
-              class="flex-1"
-              @keyup.enter="handleAddCategory"
-              @keyup.escape="cancelAddCategory"
-            />
-
-            <!-- Add Category Button -->
-            <UTooltip>
-              <template #default>
-                <UButton 
-                  v-if="!isAddingCategory"
-                  btn="outline" 
-                  icon 
-                  label="i-icon-park-outline:add-print"
-                  @click="startAddingCategory"
-                  aria-label="Add new category"
-                />
-                <!-- Save/Cancel buttons when adding category -->
-                <div v-else class="flex gap-1">
-                  <UButton
-                    btn="outline"
-                    icon
-                    label="i-lucide-check"
-                    size="xs"
-                    @click="handleAddCategory"
-                    :disabled="!newCategoryName.trim()"
-                    aria-label="Save new category"
-                  />
-                  <UButton
-                    btn="outline"
-                    icon
-                    label="i-lucide-x"
-                    size="xs"
-                    @click="cancelAddCategory"
-                    aria-label="Cancel adding category"
-                  />
-                </div>
-              </template>
-              <template #content>
-                <div class="bg-light dark:bg-dark text-dark dark:text-white text-sm px-3 py-1 rounded-md border border-dashed border-[#3D3BF3]">
-                  {{ isAddingCategory ? 'Save new category' : 'Add a new category' }}
-                </div>
-              </template>
-            </UTooltip>
+            <p v-if="errors.tags" id="edit-tags-error" class="text-red-500 text-sm mt-1" role="alert">
+              {{ errors.tags }}
+            </p>
           </div>
         </div>
 
@@ -130,7 +78,7 @@
       <div class="flex gap-2 justify-end">
         <UButton 
           @click="handleCancel" 
-          btn="outline" 
+          btn="text-gray" 
           label="Cancel"
           :disabled="isLoading"
         />
@@ -138,7 +86,7 @@
           @click="handleUpdatePost" 
           :loading="isLoading"
           :disabled="!isFormValid || !hasChanges || isLoading"
-          btn="solid"
+          btn="soft-gray"
           :label="hasChanges ? 'Update post' : 'No changes'"
         />
       </div>
@@ -151,7 +99,6 @@ import type { PostType } from '~/types/post'
 
 interface Props {
   modelValue?: boolean
-  categories?: string[]
   post?: PostType | null
 }
 
@@ -161,29 +108,29 @@ interface Emits {
     id: number
     name: string
     description: string
-    category: string
+    tags: string[]
     visibility: string
   }): void
-  (e: 'add-category', category: string): void
 }
 
 const props = withDefaults(defineProps<Props>(), {
   modelValue: false,
-  categories: () => [],
   post: null
 })
 
 const emit = defineEmits<Emits>()
 
+// Use tags composable
+const { getPrimaryTag, getSecondaryTags, incrementPostTagsUsage, decrementPostTagsUsage } = useTags()
+
 // Refs for focus management
 const nameInputRef = ref<HTMLInputElement>()
-const newCategoryInputRef = ref<HTMLInputElement>()
 
 // Form state
 const form = reactive({
   name: '',
   description: '',
-  category: '',
+  tags: [] as string[],
   visibility: { label: 'Private', value: 'private' },
 })
 
@@ -191,19 +138,18 @@ const form = reactive({
 const originalForm = reactive({
   name: '',
   description: '',
-  category: '',
+  tags: [] as string[],
   visibility: { label: 'Private', value: 'private' },
 })
 
 // Validation state
 const errors = reactive({
-  name: ''
+  name: '',
+  tags: ''
 })
 
 // UI state
 const isLoading = ref(false)
-const isAddingCategory = ref(false)
-const newCategoryName = ref('')
 const hasChanges = ref(false)
 
 // Visibility options
@@ -220,7 +166,10 @@ const isOpen = computed({
 })
 
 const isFormValid = computed(() => {
-  return form.name.trim().length > 0 && !errors.name
+  return form.name.trim().length > 0 && 
+         form.tags.length > 0 && 
+         !errors.name && 
+         !errors.tags
 })
 
 // Methods
@@ -233,12 +182,22 @@ const validateName = () => {
   }
 }
 
+const validateTags = () => {
+  errors.tags = ''
+  if (!form.tags || form.tags.length === 0) {
+    errors.tags = 'At least one tag is required'
+  }
+}
+
 const markAsChanged = () => {
+  // Validate tags when they change
+  validateTags()
+  
   // Check if current form differs from original
   hasChanges.value = (
     form.name !== originalForm.name ||
     form.description !== originalForm.description ||
-    form.category !== originalForm.category ||
+    JSON.stringify(form.tags) !== JSON.stringify(originalForm.tags) ||
     form.visibility !== originalForm.visibility
   )
 }
@@ -246,18 +205,19 @@ const markAsChanged = () => {
 const populateForm = (post: PostType) => {
   form.name = post.name || ''
   form.description = post.description || ''
-  form.category = post.category || ''
+  form.tags = Array.isArray(post.tags) ? [...post.tags] : []
   form.visibility = convertVisibility(post.visibility)
   
   // Store original values for change detection
   originalForm.name = form.name
   originalForm.description = form.description
-  originalForm.category = form.category
+  originalForm.tags = [...form.tags]
   originalForm.visibility = form.visibility
   
   // Reset change detection
   hasChanges.value = false
   errors.name = ''
+  errors.tags = ''
 }
 
 const convertVisibility = (visibility: string) => {
@@ -267,16 +227,15 @@ const convertVisibility = (visibility: string) => {
 const resetForm = () => {
   form.name = ''
   form.description = ''
-  form.category = ''
-  form.visibility = {  label: 'Private', value: 'private' }
+  form.tags = []
+  form.visibility = { label: 'Private', value: 'private' }
   originalForm.name = ''
   originalForm.description = ''
-  originalForm.category = ''
+  originalForm.tags = []
   originalForm.visibility = { label: 'Private', value: 'private' }
   errors.name = ''
+  errors.tags = ''
   hasChanges.value = false
-  isAddingCategory.value = false
-  newCategoryName.value = ''
 }
 
 const handleCancel = () => {
@@ -297,6 +256,7 @@ const handleCancel = () => {
 const handleUpdatePost = async () => {
   // Validate before submitting
   validateName()
+  validateTags()
   
   if (!isFormValid.value) {
     // Focus the first invalid field
@@ -314,11 +274,22 @@ const handleUpdatePost = async () => {
   isLoading.value = true
 
   try {
+    // Update tag usage statistics
+    // Decrement usage for old tags
+    if (originalForm.tags.length > 0) {
+      decrementPostTagsUsage(originalForm.tags)
+    }
+    
+    // Increment usage for new tags
+    if (form.tags.length > 0) {
+      incrementPostTagsUsage(form.tags)
+    }
+
     const updateData = {
       id: props.post.id,
       name: form.name.trim(),
       description: form.description.trim(),
-      category: form.category,
+      tags: form.tags,
       visibility: form.visibility.value,
     }
 
@@ -327,7 +298,7 @@ const handleUpdatePost = async () => {
     // Update original form state to reflect saved changes
     originalForm.name = form.name
     originalForm.description = form.description
-    originalForm.category = form.category
+    originalForm.tags = [...form.tags]
     originalForm.visibility = form.visibility
     hasChanges.value = false
     
@@ -335,37 +306,17 @@ const handleUpdatePost = async () => {
     
   } catch (error) {
     console.error('Failed to update post:', error)
+    // Revert tag usage changes on error
+    if (originalForm.tags.length > 0) {
+      incrementPostTagsUsage(originalForm.tags)
+    }
+    if (form.tags.length > 0) {
+      decrementPostTagsUsage(form.tags)
+    }
     // You could add a toast notification here for error feedback
   } finally {
     isLoading.value = false
   }
-}
-
-const startAddingCategory = () => {
-  isAddingCategory.value = true
-  nextTick(() => {
-    newCategoryInputRef.value?.focus()
-  })
-}
-
-const handleAddCategory = () => {
-  const categoryName = newCategoryName.value.trim()
-  if (!categoryName) return
-
-  // Emit the new category to parent
-  emit('add-category', categoryName)
-  
-  // Set the new category as selected
-  form.category = categoryName
-  markAsChanged()
-  
-  // Reset add category state
-  cancelAddCategory()
-}
-
-const cancelAddCategory = () => {
-  isAddingCategory.value = false
-  newCategoryName.value = ''
 }
 
 // Watchers

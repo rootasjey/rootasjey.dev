@@ -3,7 +3,6 @@
     <PostHeader
       :is-loading="isAnyLoading"
       :error="combinedErrorMessage"
-      :categories="categories.allCategories.value"
       :show-dialogs="loggedIn"
       :create-dialog-model="dialogs.createDialogModel.value"
       :edit-dialog-model="dialogs.editDialogModel.value"
@@ -13,7 +12,6 @@
       @create-post="actions.handleCreatePost"
       @update-post="actions.handleUpdatePost"
       @delete-post="actions.handleDeletePost"
-      @add-category="actions.handleAddCategory"
       @retry-error="actions.handleRetryError"
       @update:create-dialog-model="dialogs.createDialogModel.value = $event"
       @update:edit-dialog-model="dialogs.editDialogModel.value = $event"
@@ -37,6 +35,8 @@
       :show-status-indicator="true"
       :show-refresh-action="true"
       :show-add-action="true"
+      :show-primary-tag="true"
+      :show-secondary-tags="true"
       empty-state-title="No drafts yet"
       empty-state-description="Start writing a new post to create your first draft."
       empty-action-text="Write New Post"
@@ -104,7 +104,8 @@
       icon-color="#3b82f6"
       :is-loading="posts.isLoading.value"
       :error="posts.error.value"
-      :show-category="true"
+      :show-primary-tag="true"
+      :show-secondary-tags="true"
       :show-word-count="true"
       :show-draft-badge="false"
       :show-refresh-action="true"
@@ -147,17 +148,104 @@
             <UIcon name="i-lucide-download" />
             <span>Export All</span>
           </UButton>
+
+          <!-- Tag Management Button -->
+          <UButton
+            v-if="loggedIn"
+            btn="soft-gray"
+            size="xs"
+            class="dark:color-#3b82f6"
+            @click="showTagManagement = true"
+          >
+            <UIcon name="i-lucide-tags" />
+            <span>Manage Tags</span>
+          </UButton>
         </div>
       </template>
 
       <template #footer="{ totalCount }">
         <div v-if="totalCount > 0" class="text-xs text-gray-500 dark:text-gray-400 text-center">
           {{ totalCount }} published post{{ totalCount === 1 ? '' : 's' }}
+          <span v-if="tags.totalTags.value > 0" class="mx-2">•</span>
+          <span v-if="tags.totalTags.value > 0">
+            {{ tags.totalTags.value }} tag{{ tags.totalTags.value === 1 ? '' : 's' }} available
+          </span>
         </div>
       </template>
     </PostSection>
 
     <PostEmptyState v-if="!hasAnyContent && !isAnyLoading" />
+
+    <!-- Tag Management Modal -->
+    <UDialog v-model:open="showTagManagement" title="Tag Management" description="Manage your post tags">
+      <div class="space-y-4">
+        <!-- Tag Statistics -->
+        <div class="grid grid-cols-2 gap-4">
+          <div class="bg-gray-50 dark:bg-gray-800 p-3 rounded-lg">
+            <div class="text-sm font-medium text-gray-700 dark:text-gray-300">Total Tags</div>
+            <div class="text-2xl font-bold text-gray-900 dark:text-white">{{ tagStats.total }}</div>
+          </div>
+          <div class="bg-gray-50 dark:bg-gray-800 p-3 rounded-lg">
+            <div class="text-sm font-medium text-gray-700 dark:text-gray-300">Custom Tags</div>
+            <div class="text-2xl font-bold text-gray-900 dark:text-white">{{ tagStats.custom }}</div>
+          </div>
+        </div>
+
+        <!-- Popular Tags -->
+        <div v-if="tags.popularTags.value.length > 0">
+          <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Popular Tags</h4>
+          <div class="flex flex-wrap gap-2">
+            <UBadge
+              v-for="tag in tags.popularTags.value.slice(0, 10)"
+              :key="tag"
+              :label="`${tag} (${tags.getTagUsage(tag)})`"
+              color="blue"
+              variant="outline"
+              size="sm"
+            />
+          </div>
+        </div>
+
+        <!-- Unused Tags -->
+        <div v-if="tags.unusedTags.value.length > 0">
+          <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Unused Tags</h4>
+          <div class="flex flex-wrap gap-2">
+            <UBadge
+              v-for="tag in tags.unusedTags.value.slice(0, 10)"
+              :key="tag"
+              :label="tag"
+              color="gray"
+              variant="outline"
+              size="sm"
+            />
+          </div>
+          <UButton
+            v-if="tags.unusedTags.value.length > 0"
+            btn="outline"
+            size="xs"
+            class="mt-2"
+            @click="handleClearUnusedTags"
+          >
+            Clear Unused Tags
+          </UButton>
+        </div>
+      </div>
+
+      <template #footer>
+        <div class="flex gap-2 justify-end">
+          <UButton 
+            @click="showTagManagement = false" 
+            btn="outline" 
+            label="Close"
+          />
+          <UButton 
+            @click="handleExportTags" 
+            btn="soft"
+            label="Export Tags" 
+          />
+        </div>
+      </template>
+    </UDialog>
 
     <Footer>
       <template #links>
@@ -188,13 +276,23 @@ const dialogs = usePostDialogs()
 const drafts = useDrafts({ autoFetch: loggedIn.value, disabled: !loggedIn.value })
 const posts = usePosts()
 
-const categories = usePostCategories({
-  defaultCategories: [
-    "Tech",
-    "Development",
-    "Cinema", 
+const tags = useTags({
+  defaultTags: [
+    "JavaScript",
+    "TypeScript",
+    "Vue",
+    "Nuxt",
+    "CSS",
+    "HTML",
+    "Node.js",
+    "Tutorial",
+    "Tips",
+    "Review",
+    "Cinema",
     "Literature",
     "Music",
+    "Tech",
+    "Development"
   ],
   autoSave: true,
   caseSensitive: false
@@ -204,8 +302,11 @@ const actions = usePostActions({
   posts,
   drafts,
   dialogs,
-  categories,
+  tags,
 })
+
+// UI state
+const showTagManagement = ref(false)
 
 const hasAnyContent = computed(() => 
   posts.hasPosts.value || drafts.hasDrafts.value
@@ -225,6 +326,48 @@ const combinedErrorMessage = computed(() => {
   if (drafts.draftsError.value) errors.push(drafts.draftsError.value)
   return errors.length > 0 ? errors.join('; ') : null
 })
+
+const tagStats = computed(() => tags.getTagStats())
+
+// Tag management methods
+const handleClearUnusedTags = () => {
+  const confirmClear = confirm('Remove all unused tags? This action cannot be undone.')
+  if (!confirmClear) return
+  
+  const removedTags = tags.clearUnusedTags()
+  
+  toast({
+    title: 'Unused tags cleared',
+    description: `Removed ${removedTags.length} unused tags`,
+    duration: 5000,
+    showProgress: true,
+    toast: 'soft-success'
+  })
+}
+
+const handleExportTags = () => {
+  const exportData = tags.exportTags()
+  
+  const blob = new Blob([JSON.stringify(exportData, null, 2)], {
+    type: 'application/json'
+  })
+  
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = `tags-export-${new Date().toISOString().split('T')[0]}.json`
+  document.body.appendChild(a)
+  a.click()
+  document.body.removeChild(a)
+  URL.revokeObjectURL(url)
+
+  toast({
+    title: 'Tags exported',
+    duration: 5000,
+    showProgress: true,
+    toast: 'soft-success'
+  })
+}
 
 onBeforeRouteLeave(() => {
   if (dialogs.hasOpenDialog.value) {

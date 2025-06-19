@@ -51,7 +51,7 @@
 
       <!-- Metadata Row -->
       <div class="flex items-center justify-between gap-4 text-size-3">
-        <!-- Date and Author Info -->
+        <!-- Date and Tag Info -->
         <div class="flex items-center gap-3 text-gray-500 dark:text-gray-500 min-w-0">
           <!-- Date -->
           <time 
@@ -62,16 +62,16 @@
             {{ dateFormatted.relative }}
           </time>
 
-          <!-- Category -->
-          <div v-if="post.category && showCategory" class="flex items-center gap-1 min-w-0">
+          <!-- Primary Tag -->
+          <div v-if="primaryTag && showPrimaryTag" class="flex items-center gap-1 min-w-0">
             <span class="text-gray-400 dark:text-gray-600">•</span>
             <UBadge 
               variant="soft" 
-              color="gray" 
+              color="blue" 
               size="xs"
               class="truncate"
             >
-              {{ post.category }}
+              {{ primaryTag }}
             </UBadge>
           </div>
 
@@ -104,10 +104,10 @@
         </div>
       </div>
 
-      <!-- Tags (if any) -->
-      <div v-if="post.tags && post.tags.length > 0 && showTags" class="flex flex-wrap gap-1 mt-2">
+      <!-- Secondary Tags (if any) -->
+      <div v-if="secondaryTags.length > 0 && showSecondaryTags" class="flex flex-wrap gap-1 mt-2">
         <UBadge 
-          v-for="tag in visibleTags" 
+          v-for="tag in visibleSecondaryTags" 
           :key="tag"
           variant="outline" 
           color="gray" 
@@ -116,12 +116,12 @@
           {{ tag }}
         </UBadge>
         <UBadge 
-          v-if="hiddenTagsCount > 0"
+          v-if="hiddenSecondaryTagsCount > 0"
           variant="soft" 
           color="gray" 
           size="xs"
         >
-          +{{ hiddenTagsCount }}
+          +{{ hiddenSecondaryTagsCount }}
         </UBadge>
       </div>
 
@@ -140,12 +140,12 @@ interface PostItemProps {
   post: PostType
   variant?: 'default' | 'compact' | 'detailed'
   showMenu?: boolean
-  showCategory?: boolean
-  showTags?: boolean
+  showPrimaryTag?: boolean
+  showSecondaryTags?: boolean
   showWordCount?: boolean
   showDraftBadge?: boolean
   showStatusIndicator?: boolean
-  maxTags?: number
+  maxSecondaryTags?: number
   dateFormat?: 'relative' | 'absolute' | 'both'
   linkDisabled?: boolean
   menuVariant?: 'default' | 'minimal' | 'compact'
@@ -175,18 +175,21 @@ interface PostItemEmits {
 const props = withDefaults(defineProps<PostItemProps>(), {
   variant: 'default',
   showMenu: true,
-  showCategory: true,
-  showTags: false,
+  showPrimaryTag: true,
+  showSecondaryTags: false,
   showWordCount: false,
   showDraftBadge: true,
   showStatusIndicator: false,
-  maxTags: 3,
+  maxSecondaryTags: 3,
   dateFormat: 'relative',
   linkDisabled: false,
   menuItems: () => []
 })
 
 const emit = defineEmits<PostItemEmits>()
+
+// Get tags composable for tag utilities
+const { getPrimaryTag, getSecondaryTags } = useTags()
 
 // Computed properties
 const isDraft = computed(() => props.post.visibility === 'private')
@@ -195,6 +198,23 @@ const isPublished = computed(() => props.post.visibility === 'public')
 const postUrl = computed(() => {
   if (props.linkDisabled) return undefined
   return `/reflexions/${props.post.slug || props.post.id}`
+})
+
+// Tag-related computed properties
+const primaryTag = computed(() => {
+  return getPrimaryTag(props.post.tags)
+})
+
+const secondaryTags = computed(() => {
+  return getSecondaryTags(props.post.tags)
+})
+
+const visibleSecondaryTags = computed(() => {
+  return secondaryTags.value.slice(0, props.maxSecondaryTags)
+})
+
+const hiddenSecondaryTagsCount = computed(() => {
+  return Math.max(0, secondaryTags.value.length - props.maxSecondaryTags)
 })
 
 // Styling based on variant and state
@@ -279,17 +299,6 @@ const dateFormatted = computed(() => {
   }
   
   return { iso, full, relative }
-})
-
-// Tags handling
-const visibleTags = computed(() => {
-  if (!props.post.tags) return []
-  return props.post.tags.slice(0, props.maxTags)
-})
-
-const hiddenTagsCount = computed(() => {
-  if (!props.post.tags) return 0
-  return Math.max(0, props.post.tags.length - props.maxTags)
 })
 
 // Word count estimation (if article content is available)

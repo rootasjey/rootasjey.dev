@@ -34,23 +34,23 @@
             <UIcon :name="_saving === undefined ? '' : _saving ? 'i-loading' : 'i-check'"
               :class="_saving ? 'animate-spin text-muted' : 'text-lime-300'" />
           </div>
+          
           <div class="flex items-center gap-2 mt-2 justify-center">
-            <span v-if="post.category && !_canEdit" class="px-2 py-1 rounded-full text-xs bg-gray-100 dark:bg-gray-800 shadow-sm">
-              {{ post.category }}
-            </span>
+            <!-- Primary Tag Display/Edit -->
+            <div v-if="!_canEdit && primaryTag" class="px-2 py-1 rounded-full text-xs bg-blue-100 dark:bg-blue-900 shadow-sm">
+              {{ primaryTag }}
+            </div>
 
-            <div class="max-w-20">
-              <USelect v-if="_canEdit" v-model="post.category" :items="_categories">
+            <div class="max-w-40" v-if="_canEdit">
+              <USelect v-model="_selectedPrimaryTag" :items="_availableTags" placeholder="Primary tag">
                 <template #trigger>
-                  <UIcon name="i-icon-park-outline:movie-board" v-if="post.category === 'cinema'" />
-                  <UIcon name="i-icon-park-outline:computer" v-else-if="post.category === 'development'" />
-                  <UIcon name="i-icon-park-outline:music" v-else-if="post.category === 'music'" />
-                  <UIcon name="i-icon-park-outline:book" v-else-if="post.category === 'literature'" />
-                  <UIcon name="i-icon-park-outline:tag" v-else />
+                  <UIcon name="i-lucide-tag" v-if="_selectedPrimaryTag" />
+                  <UIcon name="i-lucide-plus" v-else />
                 </template>
               </USelect>
             </div>
 
+            <!-- Visibility Control -->
             <div class="max-w-20">
               <USelect v-if="_canEdit" v-model="post.visibility" :items="_visibilities">
                 <template #trigger>
@@ -61,6 +61,7 @@
               </USelect>
             </div>
 
+            <!-- Language Selection -->
             <USelect v-if="_canEdit"
               :items="_languages" 
               v-model="_selectedLanguage" 
@@ -76,6 +77,7 @@
               </template>
             </USelect>
 
+            <!-- Cover Image Upload -->
             <UTooltip v-if="!post.image?.src && _canEdit">
               <template #default>
                 <UButton @click="uploadCoverImage" :disabled="!_canEdit" btn="outline-gray">
@@ -93,6 +95,7 @@
             <!-- Hidden file input -->
             <input type="file" ref="_fileInput" class="hidden" accept="image/*" @change="handleCoverSelect" />
 
+            <!-- Slug Editor -->
             <UPopover v-if="_canEdit" :disabled="!_canEdit">
               <template #trigger>
                 <UButton v-if="_canEdit" btn="outline-white" leading="i-icon-park-outline:edit" label="edit slug" />
@@ -111,8 +114,37 @@
                 </div>
               </template>
             </UPopover>
+
+            <!-- Tags Management Button -->
+            <UTooltip v-if="_canEdit">
+              <template #default>
+                <UButton @click="_showTagsDialog = true" :disabled="!_canEdit" btn="outline-gray">
+                  <div class="i-lucide-tags"></div>
+                </UButton>
+              </template>
+
+              <template #content>
+                <div class="px-2 py-1">
+                  <p>Manage post tags</p>
+                </div>
+              </template>
+            </UTooltip>
           </div>
 
+          <!-- Secondary Tags Display -->
+          <div v-if="secondaryTags.length > 0" class="flex flex-wrap gap-2 mt-3 justify-center">
+            <UBadge
+              v-for="tag in secondaryTags"
+              :key="tag"
+              variant="outline"
+              color="gray"
+              size="sm"
+            >
+              {{ tag }}
+            </UBadge>
+          </div>
+
+          <!-- Cover Image Display -->
           <div v-if="post.image?.src" class="relative group">
             <NuxtImg 
               provider="hubblob"
@@ -145,6 +177,49 @@
     <div class="w-500px md:w-xl mx-auto">
       <Footer />
     </div>
+
+    <!-- Tags Management Dialog -->
+    <UDialog v-model:open="_showTagsDialog" title="Manage Post Tags" description="Edit tags for this post">
+      <div class="space-y-4">
+        <!-- Tag Input Component -->
+        <TagInput
+          v-model="_postTags"
+          placeholder="Add tags..."
+        />
+        
+        <!-- Quick Tag Suggestions -->
+        <div v-if="_suggestedTags.length > 0">
+          <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Suggested Tags</h4>
+          <div class="flex flex-wrap gap-2">
+            <UButton
+              v-for="tag in _suggestedTags"
+              :key="tag"
+              btn="outline"
+              size="xs"
+              @click="addSuggestedTag(tag)"
+              :disabled="_postTags.includes(tag)"
+            >
+              {{ tag }}
+            </UButton>
+          </div>
+        </div>
+      </div>
+
+      <template #footer>
+        <div class="flex gap-2 justify-end">
+          <UButton 
+            @click="cancelTagsEdit" 
+            btn="outline" 
+            label="Cancel"
+          />
+          <UButton 
+            @click="saveTagsEdit" 
+            btn="solid"
+            label="Save Tags" 
+          />
+        </div>
+      </template>
+    </UDialog>
 
     <!-- Edit toolbar -->
     <div class="fixed w-full bottom-8 flex justify-center items-center">
@@ -224,11 +299,13 @@ let _articleTimer: NodeJS.Timeout
 const _saving = ref<boolean>()
 let _updatePostMetaTimer: NodeJS.Timeout
 const _fileInput = ref<HTMLInputElement>()
-const _jsonFileInput = ref<HTMLInputElement>() // New ref for JSON import
+const _jsonFileInput = ref<HTMLInputElement>()
 
-const _categories = ref([
-  "cinema", "no category", "development", "literature", "music",
-])
+// Tags management
+const { allTags, addTag, getSuggestedTags, getPrimaryTag, getSecondaryTags } = useTags()
+const _showTagsDialog = ref(false)
+const _postTags = ref<string[]>([])
+const _selectedPrimaryTag = ref('')
 
 const _languages = ref([
   {
@@ -254,6 +331,93 @@ _selectedLanguage.value = _languages.value.find(l => l.value === post.value?.lan
 /** True if the current user is the author of the post. */
 const _canEdit = ref(post.value?.canEdit ?? false)
 
+// Initialize tags from post
+if (post.value?.tags) {
+  _postTags.value = [...post.value.tags]
+  _selectedPrimaryTag.value = getPrimaryTag(post.value.tags) || ''
+}
+
+// Computed properties for tags
+const _availableTags = computed(() => {
+  return allTags.value.map(tag => ({ label: tag, value: tag }))
+})
+
+const primaryTag = computed(() => {
+  return getPrimaryTag(post.value?.tags || [])
+})
+
+const secondaryTags = computed(() => {
+  return getSecondaryTags(post.value?.tags || [])
+})
+
+const _suggestedTags = computed(() => {
+  if (!post.value?.name && !post.value?.description) return []
+  
+  const content = `${post.value?.name || ''} ${post.value?.description || ''}`.toLowerCase()
+  return getSuggestedTags(content, 5).filter(tag => !_postTags.value.includes(tag))
+})
+
+// Tags management methods
+const addSuggestedTag = (tag: string) => {
+  if (!_postTags.value.includes(tag)) {
+    _postTags.value.push(tag)
+  }
+}
+
+const cancelTagsEdit = () => {
+  // Reset to original tags
+  if (post.value?.tags) {
+    _postTags.value = [...post.value.tags]
+  }
+  _showTagsDialog.value = false
+}
+
+const saveTagsEdit = async () => {
+  if (!post.value) return
+  
+  try {
+    _saving.value = true
+    
+    // Update post tags
+    post.value.tags = [..._postTags.value]
+    
+    // Update primary tag selection
+    _selectedPrimaryTag.value = getPrimaryTag(_postTags.value) || ''
+    
+    // Add new tags to global tags list
+    _postTags.value.forEach(tag => {
+      if (!allTags.value.includes(tag)) {
+        addTag(tag)
+      }
+    })
+    
+    // Save to server
+    await updatePost()
+    
+    _showTagsDialog.value = false
+    
+    useToast().toast({
+      title: 'Tags updated',
+      description: 'Post tags have been successfully updated',
+      showProgress: true,
+      leading: 'i-lucide-check',
+      progress: "success"
+    })
+    
+  } catch (error) {
+    console.error('Error updating tags:', error)
+    useToast().toast({
+      title: 'Update failed',
+      description: 'Failed to update post tags',
+      showProgress: true,
+      leading: 'i-lucide-x',
+      progress: "warning"
+    })
+  } finally {
+    _saving.value = false
+  }
+}
+
 /**
  * Export the current post to a JSON file and download it to the user's device
  */
@@ -267,7 +431,7 @@ const exportPostToJson = () => {
     slug: post.value.slug,
     description: post.value.description,
     article: post.value.article,
-    category: post.value.category,
+    tags: post.value.tags,
     language: post.value.language,
     visibility: post.value.visibility,
     created_at: post.value.created_at,
@@ -325,8 +489,17 @@ const handleJsonFileSelect = async (event: Event) => {
     // Update post metadata
     if (importedData.name) post.value.name = importedData.name
     if (importedData.description) post.value.description = importedData.description
-    if (importedData.category) {
-      post.value.category = importedData.category
+    if (importedData.tags && Array.isArray(importedData.tags)) {
+      post.value.tags = importedData.tags
+      _postTags.value = [...importedData.tags]
+      _selectedPrimaryTag.value = getPrimaryTag(importedData.tags) || ''
+      
+      // Add imported tags to global tags list
+      importedData.tags.forEach((tag: string) => {
+        if (!allTags.value.includes(tag)) {
+          addTag(tag)
+        }
+      })
     }
     if (importedData.language) {
       post.value.language = importedData.language
@@ -344,7 +517,7 @@ const handleJsonFileSelect = async (event: Event) => {
       title: 'Import successful',
       description: 'The post has been updated with the imported data',
       showProgress: true,
-      leading: 'i-icon-park-outline:check-one',
+      leading: 'i-lucide-check',
       progress: "success"
     })
     
@@ -354,7 +527,7 @@ const handleJsonFileSelect = async (event: Event) => {
       title: 'Import failed',
       description: 'Failed to import the JSON file. Please check the file format.',
       showProgress: true,
-      leading: 'i-icon-park-outline:close-one',
+      leading: 'i-lucide-x',
       progress: "warning"
     })
   } finally {
@@ -381,11 +554,11 @@ const updatePostArticle = async (value: Object) => {
 }
 
 /**
- * Watches for changes in the post's name, description, category, 
+ * Watches for changes in the post's name, description, tags, 
  * slug, visibility, and selected language. 
  * When any of these values change, 
  * it clears the _updatePostMetaTimer and sets a new timer 
- * to call the updatePostMeta function after a 500ms delay. 
+ * to call the updatePost function after a 2000ms delay. 
  * This allows for debouncing of updates to the post's metadata, 
  * preventing excessive API calls.
  */
@@ -393,16 +566,31 @@ watch(
   [
     () => post.value?.name, 
     () => post.value?.description, 
-    () => post.value?.category, 
+    () => post.value?.tags, 
     () => post.value?.slug, 
     () => post.value?.visibility,
     () => _selectedLanguage.value,
+    () => _selectedPrimaryTag.value,
   ],
   () => {
     clearTimeout(_updatePostMetaTimer)
     _updatePostMetaTimer = setTimeout(updatePost, 2000)
   },
 )
+
+// Watch for primary tag changes and update post tags
+watch(_selectedPrimaryTag, (newPrimaryTag) => {
+  if (!post.value || !_canEdit.value) return
+  
+  const currentTags = post.value.tags || []
+  const secondaryTags = getSecondaryTags(currentTags)
+  
+  // Rebuild tags array with new primary tag first
+  const newTags = newPrimaryTag ? [newPrimaryTag, ...secondaryTags] : secondaryTags
+  
+  post.value.tags = newTags
+  _postTags.value = [...newTags]
+})
 
 const updatePost = async () => {
   _saving.value = true
@@ -411,7 +599,7 @@ const updatePost = async () => {
     `/api/posts/${route.params.id}/`, {
     method: "PUT",
     body: {
-      category: post.value?.category,
+      tags: post.value?.tags,
       description: post.value?.description,
       language: _selectedLanguage.value.value,
       name: post.value?.name,
@@ -424,31 +612,6 @@ const updatePost = async () => {
   if (!post.value) return
 
   post.value.updated_at = updatedPost.updated_at
-  // updateOnlyChangedFields(updatedPost)
-}
-
-const updateOnlyChangedFields = (updatedPost: PostType) => {
-  if (!post.value) return
-  
-  if (updatedPost.category !== post.value?.category) {
-    post.value.category = updatedPost.category
-  }
-  if (updatedPost.description !== post.value?.description) {
-    post.value.description = updatedPost.description
-  }
-  if (updatedPost.language !== post.value?.language) {
-    post.value.language = updatedPost.language
-    _selectedLanguage.value = _languages.value.find(l => l.value === updatedPost.language) ?? _languages.value[0]
-  }
-  if (updatedPost.name !== post.value?.name) {
-    post.value.name = updatedPost.name
-  }
-  if (updatedPost.slug !== post.value?.slug) {
-    post.value.slug = updatedPost.slug
-  }
-  if (updatedPost.visibility !== post.value?.visibility) {
-    post.value.visibility = updatedPost.visibility
-  }
 }
 
 const removeCoverImage = async () => {

@@ -4,7 +4,7 @@ interface UpdatePostType {
   id: number
   name: string
   description: string
-  category: string
+  tags: string[]
   visibility: string
 }
 
