@@ -1,14 +1,15 @@
 export type CreateProjectType = {
-  category: string
-  description: string
+  company?: string
+  description?: string
   name: string
+  tags?: string[]
+  visibility?: "public" | "private"
 }
 
 export type ProjectType = {
   article?: object
   /** Blob path to the article. */
   blob_path: string
-  category: string
   company: string
   created_at: string
   description: string
@@ -25,8 +26,12 @@ export type ProjectType = {
   links: ProjectLinkType[] & never[]
   name: string
   post?: string
+  /** Computed property: first tag as primary tag */
+  primaryTag?: string
+  /** Computed property: remaining tags after primary */
+  secondaryTags?: string[]
   slug: string
-  technologies: string[]
+  tags: string[]
   updated_at: string
   user_id: number
   visibility: string

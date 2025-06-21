@@ -1,8 +1,10 @@
 <template>
-  <div class="w-[600px] rounded-xl p-8 pb-[38vh] flex flex-col transition-all duration-500 overflow-y-auto">
+  <div class="w-[600px] mt-24 rounded-xl p-8 pb-[38vh] flex flex-col transition-all duration-500 overflow-y-auto">
     <section class="mb-12">
       <h1 class="font-600">Jérémie Corpinot</h1>
-      <h2 class="color-gray-600 font-500 dark:color-gray-500">8 ans • dévelopeur web & mobile</h2>
+      <h2 class="color-gray-600 font-500 dark:color-gray-500">
+        {{ new Date().getFullYear() - new Date(2015) }} ans • dévelopeur web & mobile
+      </h2>
       <h2 class="color-gray-400 dark:color-gray-600">Yvelines, France</h2>
     </section>
 

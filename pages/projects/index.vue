@@ -28,65 +28,17 @@
         A collection of my creative work
       </p>
 
-
-        <!-- Add project button for logged in users -->
-        <div v-if="loggedIn">
-          <UDialog v-model:open="_isDialogOpen" title="Create Project" description="Add a new project with a description">
-            <template #trigger>
-              <UButton btn="text" size="xs" class="-ml-4 dark:text-amber-400">
-                <span>Add a project</span>
-                <!-- <span class="i-ph-plus-duotone"></span> -->
-              </UButton>
-            </template>
-
-            <div class="grid gap-4 py-4">
-              <div class="grid gap-2">
-                <div class="grid grid-cols-3 items-center gap-4">
-                  <ULabel for="name">
-                    Name
-                  </ULabel>
-                  <UInput id="name" v-model="_name" :una="{
-                    inputWrapper: 'col-span-2',
-                  }" />
-                </div>
-                <div class="grid grid-cols-3 items-center gap-4">
-                  <ULabel for="description">
-                    Description
-                  </ULabel>
-                  <UInput id="description" v-model="_description" :una="{
-                    inputWrapper: 'col-span-2',
-                  }" />
-                </div>
-                <div class="grid grid-cols-3 items-center gap-4">
-                  <ULabel for="category">
-                    Category
-                  </ULabel>
-                  <div flex flex-row gap-2>
-                    <USelect id="category" :una="{
-                    }" v-model="_category" :items="availableCategories" placeholder="Select a category" />
-                    <UTooltip>
-                      <template #default>
-                        <UButton btn="outline" icon label="i-icon-park-outline:add-print" class=""
-                          @click="toggleAddCategory" />
-                      </template>
-                      <template #content>
-                        <button @click="toggleAddCategory" bg="light dark:dark" text="dark dark:white" text-3 px-3 py-1
-                          rounded-md m-0 border-1 border-dashed class="b-#3D3BF3">
-                          Add a new category
-                        </button>
-                      </template>
-                    </UTooltip>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <template #footer>
-              <UButton @click="createProject({ name: _name, description: _description, category: _category })" btn="solid"
-                label="Create project" />
-            </template>
-          </UDialog>
-        </div>
+      <!-- Add project button for logged in users -->
+      <div v-if="loggedIn">
+        <UButton 
+          @click="isCreateDialogOpen = true" 
+          btn="text" 
+          size="xs" 
+          class="-ml-4 dark:text-amber-400"
+        >
+          <span>Add a project</span>
+        </UButton>
+      </div>
 
       <div class="colored-dots flex flex-row gap-2 text-size-6 line-height-8">
         <ULink v-for="(project, index) in projects" :key="project.id" 
@@ -116,7 +68,7 @@
           This is where my creative projects will live. Check back soon for updates!
         </p>
         <div v-if="loggedIn" class="flex gap-3">
-          <UButton @click="_isDialogOpen = true" btn="solid" size="sm">
+          <UButton @click="isCreateDialogOpen = true" btn="solid" size="sm">
             <span class="i-ph-plus mr-2"></span>
             Create your first project
           </UButton>
@@ -195,11 +147,17 @@
                 {{ project.description }}
               </p>
               
+              <!-- Tags Display -->
+              <div class="mt-2 mb-2">
+                <TagDisplay 
+                  v-if="project.tags && project.tags.length > 0"
+                  :tags="project.tags" 
+                  display-mode="primary-count"
+                  :primary-tag-color="_colors[index]?.replace('color-', '') || 'blue'"
+                />
+              </div>
+              
               <div class="mt-auto pt-2 flex justify-between items-center">
-                <span :class="`${_colors[index]} text-xs font-medium`">
-                  {{ project.category || 'Project' }}
-                </span>
-                
                 <NuxtLink :to="`projects/${project.slug}`" class="flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
                   <span class="text-size-2 flex items-center">
                     <span class="i-ph-arrow-right"></span>
@@ -226,6 +184,12 @@
       </div>
     </section>
 
+    <!-- Create Project Dialog -->
+    <CreateProjectDialog 
+      v-model="isCreateDialogOpen"
+      @create-project="handleCreateProject"
+    />
+
     <Footer />
   </div>
 </template>
@@ -234,9 +198,8 @@
 import type { CreateProjectType, ProjectLinkType, ProjectType } from '~/types/project'
 const { loggedIn } = useUserSession()
 
-
 useHead({
-  title: "rootasjey • projects",
+  title: "root • projects",
   meta: [
     {
       name: 'description',
@@ -245,10 +208,8 @@ useHead({
   ],
 })
 
-const _name = ref('')
-const _description = ref('')
-const _category = ref('')
-const _isDialogOpen = ref(false)
+// Dialog state
+const isCreateDialogOpen = ref(false)
 
 const _colors = [
   'color-#8F87F1',
@@ -296,41 +257,61 @@ const projectMenuItems = (project: ProjectType) => {
   return items
 }
 
-const { data, status } = await useFetch('/api/projects')
+const { data, status, refresh } = await useFetch('/api/projects')
 const projects = (data?.value ?? []) as ProjectType[]
-// const categories = toRefs(data?.value ?? {})
-const categories = {}
 
-const availableCategories = computed(() => {
-  return Object.keys(categories ?? {})
-})
+const handleCreateProject = async (projectData: CreateProjectType) => {
+  try {
+    await $fetch("/api/projects", {
+      method: "POST",
+      body: projectData,
+    })
+    
+    // Refresh the projects list
+    await refresh()
+    
+    // Show success message (optional)
+    console.log('Project created successfully')
+  } catch (error) {
+    console.error('Failed to create project:', error)
+    // You could add a toast notification here for error feedback
+  }
+}
 
-const createProject = async ({ name, description, category }: CreateProjectType) => {
-  _isDialogOpen.value = false
-  await useFetch("/api/projects", {
-    method: "POST",
-    body: {
-      name,
-      description,
-      category,
-    },
-  })
+const updateProject = async (projectId: string, projectData: Partial<ProjectType>) => {
+  try {
+    await $fetch(`/api/projects/${projectId}`, {
+      method: "PUT",
+      body: projectData,
+    })
+    
+    // Refresh the projects list
+    await refresh()
+    
+    // Show success message (optional)
+    console.log('Project updated successfully')
+  } catch (error) {
+    console.error('Failed to update project:', error)
+    // You could add a toast notification here for error feedback
+  }
 }
 
 const deleteProject = async (project: ProjectType) => {
   project.isDeleteDialogOpen = false
-  await useFetch(`/api/projects/${project.id}`, {
-    method: "DELETE",
-  })
-}
-
-const toggleAddCategory = () => {
-  // const category = prompt('Enter a new category')
-  // if (category) {
-  //   categories.value[category] = []
-  // }
-  // console.log(categories.value)
-  // return category
+  try {
+    await $fetch(`/api/projects/${project.id}`, {
+      method: "DELETE",
+    })
+    
+    // Refresh the projects list
+    await refresh()
+    
+    // Show success message (optional)
+    console.log('Project deleted successfully')
+  } catch (error) {
+    console.error('Failed to delete project:', error)
+    // You could add a toast notification here for error feedback
+  }
 }
 </script>
 

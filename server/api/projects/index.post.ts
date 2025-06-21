@@ -17,7 +17,6 @@ export default defineEventHandler(async (event) => {
 
   const project = {
     blob_path,
-    category: body.category || "Uncategorized",
     company: body.company || "",
     created_at: new Date().toISOString(),
     description: body.description || "",
@@ -26,7 +25,7 @@ export default defineEventHandler(async (event) => {
     links: typeof body.links === 'object' ? JSON.stringify(body.links || []) : '[]',
     name: body.name,
     slug,
-    technologies: typeof body.technologies === 'object' ? JSON.stringify(body.technologies || []) : '[]',
+    tags: typeof body.tags === 'object' ? JSON.stringify(body.tags || []) : '[]',
     updated_at: new Date().toISOString(),
     user_id: userId,
     visibility: body.visibility || "public",
@@ -34,11 +33,11 @@ export default defineEventHandler(async (event) => {
 
   const insertStmt = db.prepare(`
     INSERT INTO projects (
-      blob_path, category, company, created_at,
+      blob_path, company, created_at,
       description, image_alt, image_src, links, name,
-      slug, technologies, updated_at, user_id, visibility
+      slug, tags, updated_at, user_id, visibility
     ) VALUES (
-      ?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14
+      ?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13
     )
   `)
 
@@ -50,6 +49,6 @@ export default defineEventHandler(async (event) => {
     id: result.meta.last_row_id,
     ...project,
     links: body.links || [],
-    technologies: body.technologies || [],
+    tags: body.tags || [],
   }
 })

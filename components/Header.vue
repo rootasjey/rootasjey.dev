@@ -1,6 +1,9 @@
 <template>
   <div class="fixed top-0 w-full px-6 py-2 flex justify-between items-center backdrop-blur-lg z-3">
-    <ULink to="/" label="root" class="text-size-4 font-700 font-body" />
+    <ULink to="/" label="root" 
+      class="text-size-4 font-700 font-body transition-all duration-300 hover:text-shadow-glow" 
+      @click="scrollToTopLogo"
+    />
 
     <div class="navigation flex justify-center items-center gap-6 
       absolute left-1/2 -translate-x-1/2
@@ -50,6 +53,8 @@
 </template>
 
 <script lang="ts" setup>
+const route = useRoute()
+
 const links = [
   {
     label: 'Home',
@@ -78,6 +83,15 @@ const timeIcon = computed(() => {
   return 'i-line-md:moon-rising-twotone-loop'
 })
 
+const scrollToTopLogo = () => {
+  if (route.path !== "/") return
+  if (window.scrollY === 0) return
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth'
+  })
+}
+
 </script>
 
 <style scoped>
@@ -93,7 +107,7 @@ const timeIcon = computed(() => {
     width: 100%;
     height: 4px;
     border-radius: 4px;
-    background-color: #eee;
+    background-color: #000;
     bottom: -7px;
     left: 0;
     transform-origin: right;
@@ -105,6 +119,31 @@ const timeIcon = computed(() => {
     transform-origin: left;
     transform: scaleX(1);
   }
+}
 
+.dark  {
+  .navigation {
+    a::before {
+      background-color: #eee;
+    }
+  }
+}
+
+.hover\:text-shadow-glow:hover {
+  text-shadow: 
+    2px 2px 0px #FFAAAA,
+    4px 4px 0px #FE5D26,
+    6px 6px 0px #00CAFF,
+    6px 6px 0px #4300FF;
+  transform: translateX(-2px) translateY(-2px);
+}
+
+/* For dark mode */
+.dark .hover\:text-shadow-glow:hover {
+  text-shadow: 
+    2px 2px 0px #6DE1D2,
+    4px 4px 0px #1B56FD,
+    6px 6px 0px #FDFAF6,
+    6px 6px 0px #FFB8E0;
 }
 </style>

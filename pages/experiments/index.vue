@@ -79,7 +79,7 @@
 
 <script lang="ts" setup>
 useHead({
-  title: "rootasjey • experiments",
+  title: "root • experiments",
   meta: [
     {
       name: 'description',

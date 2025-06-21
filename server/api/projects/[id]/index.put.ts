@@ -29,14 +29,14 @@ export default defineEventHandler(async (event) => {
     SET 
       name = ?,
       description = ?,
-      category = ?,
+      tags = ?,
       company = ?,
       visibility = ?`
   
   const updateParams = [
     body.name,
     body.description ?? "",
-    body.category ?? "default",
+    typeof body.tags === 'object' ? JSON.stringify(body.tags || []) : '[]',
     body.company ?? "",
     body.visibility ?? "private"
   ]
@@ -120,7 +120,7 @@ export default defineEventHandler(async (event) => {
   const formattedProject: Partial<ProjectType> = {
     ...updatedProject,
     links: typeof updatedProject.links === 'string' ? JSON.parse(updatedProject.links || '[]') : updatedProject.links,
-    technologies: typeof updatedProject.technologies === 'string' ? JSON.parse(updatedProject.technologies || '[]') : updatedProject.technologies,
+    tags: typeof updatedProject.tags === 'string' ? JSON.parse(updatedProject.tags || '[]') : updatedProject.tags,
     image: {
       alt: updatedProject.image_alt as string || "",
       ext:  updatedProject.image_ext as string || "",
@@ -175,4 +175,3 @@ async function handleProjectErrors(project: any, userId?: number) {
     })
   }
 }
-

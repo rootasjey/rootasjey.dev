@@ -206,7 +206,7 @@ const exportPostToJson = () => {
   
   // Create a clean version of the post for export
   const exportData = {
-    category: project.value.category,
+    tags: project.value.tags,
     company: project.value.company,
     article: project.value.article,
     created_at: project.value.created_at,
