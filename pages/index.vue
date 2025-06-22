@@ -37,6 +37,16 @@
 
 <script setup>
 
+useHead({
+  title: "root",
+  meta: [
+    {
+      name: 'description',
+      content: 'A curated collection of creative endeavors, experiments, and meaningful builds.',
+    },
+  ],
+})
+
 // Fetch '/api/how-many-items' to get the number of items in the database
 const { data } = await useFetch("/api/home/how-many-items")
 const navigation = useNavigation(data.value ?? fallbackData)

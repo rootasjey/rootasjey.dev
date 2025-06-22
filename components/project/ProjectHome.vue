@@ -18,18 +18,25 @@
     <div v-else-if="projects && projects.length > 0" 
       class="flex flex-wrap gap-0"
     >
-      <ULink v-for="project in projects.slice(0, 6)" :key="project.id" :to="`/projects/${project.slug}`"
-        class="w-36 h-36 border b-dashed flex items-center justify-center
-        hover:b-solid hover:b-2 hover:border-blue-400 dark:hover:border-blue-300 transition-all"
+      <ULink v-for="project in projects.slice(0, 5)" :key="project.id" :to="`/projects/${project.slug}`"
+        class="w-36 h-36 border flex items-center justify-center
+        hover:b-solid hover:b-4 hover:border-blue-400 dark:hover:border-blue-300 transition-all"
       >
         <UIcon :name="iconProjects[project.slug]" size="16" />
       </ULink>
+
       <ULink key="more-projects" to="/projects"
-        class="w-36 h-36 border b-dashed flex flex-col items-center justify-center gap-2
-        hover:b-solid hover:b-2 hover:border-blue-400 dark:hover:border-blue-300 transition-all"
+        class="w-36 h-36 border flex flex-col items-center justify-center gap-2
+        hover:b-solid hover:b-4 hover:border-blue-400 dark:hover:border-blue-300 transition-all"
       >
-        <h3 class="text-size-6 font-600 text-center text-gray-600">all projects</h3>
-        <UIcon name="i-ph-arrow-right-duotone" size="4" />
+        <h3 class="text-size-8 font-600 text-center text-gray-600">all...</h3>
+      </ULink>
+
+      <ULink key="more-projects" to="/projects"
+        class="w-36 h-36 border flex flex-col items-center justify-center gap-2
+        hover:b-solid hover:b-4 hover:border-blue-400 dark:hover:border-blue-300 transition-all"
+      >
+        <h3 class="text-size-8 font-600 text-center text-gray-600">projects</h3>
       </ULink>
     </div>
     

@@ -247,14 +247,7 @@
       </template>
     </UDialog>
 
-    <Footer>
-      <template #links>
-        <ULink to="/projects" class="footer-button flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors">
-          <span class="i-ph-app-window text-size-3 -mt-1"></span>
-          <span class="font-500 text-size-3 relative -top-0.5">See projects</span>
-        </ULink>
-      </template>
-    </Footer>
+    <Footer />
   </div>
 </template>
 

@@ -131,7 +131,7 @@
       </div>
     </section>
 
-    <Footer />
+    <Footer class="mt-24" />
   </div>
 </template>
 

@@ -1,74 +1,67 @@
 <template>
-  <div class="w-[900px] rounded-xl p-8 
-    flex flex-col transition-all duration-500 overflow-y-auto
-    mt-[12vh] pb-[38vh]">
-
-    <!-- Header -->
-    <header class="mb-8">
-      <div class="flex gap-2">
-        <ULink to="/" class="hover:scale-102 active:scale-99 transition">
-          <span class="i-ph-house-simple-duotone"></span>
-        </ULink>
-        <span>•</span>
-        <h1 class="font-body text-xl font-600 text-gray-800 dark:text-gray-200">
+  <div class="w-full bg-[#F1F1F1] flex flex-col items-center min-h-screen">
+    <!-- Hero Section -->
+    <section class="w-[820px] mt-24 md:mt-42 mb-12 text-center p-2 md:p-8">
+      <div class="flex items-center justify-center gap-3 mb-6">
+        <h1 class="font-body text-6xl font-600 text-gray-800 dark:text-gray-200">
           Projects
         </h1>
       </div>
       
-      <div class="w-40 flex text-center justify-center my-2">
-        <div class="w-full h-2">
-          <svg viewBox="0 0 300 10" preserveAspectRatio="none">
-            <path d="M 0 5 Q 15 0, 30 5 T 60 5 T 90 5 T 120 5 T 150 5 T 180 5 T 210 5 T 240 5 T 270 5 T 300 5"
-              stroke="currentColor" fill="none" class="text-gray-300 dark:text-gray-700" stroke-width="1" />
-          </svg>
-        </div>
-      </div>
-      
-      <p class="text-gray-700 dark:text-gray-300">
-        A collection of my creative work
-      </p>
+      <h4 class="text-size-5 font-300 mb-6 text-gray-800 dark:text-gray-200 max-w-2xl mx-auto">
+        A curated collection of creative endeavors. 
+        Each project represents a step in the journey of learning, creating, and sharing.
+      </h4>
+      <h4 class="text-size-5 font-300 mb-6 text-gray-800 dark:text-gray-200 max-w-2xl mx-auto">
+        I tagged them according to their technologies and for which company they were made.
+        Most of my projects are open source. Feel free to explore and contribute.
+      </h4>
 
-      <!-- Add project button for logged in users -->
-      <div v-if="loggedIn">
+      <div v-if="loggedIn" class="mb-8">
         <UButton 
           @click="isCreateDialogOpen = true" 
-          btn="text" 
+          btn="soft" 
           size="xs" 
-          class="-ml-4 dark:text-amber-400"
+          class="hover:scale-101 active:scale-99 transition"
         >
+          <span class="i-ph-plus mr-2"></span>
           <span>Add a project</span>
         </UButton>
       </div>
 
-      <div class="colored-dots flex flex-row gap-2 text-size-6 line-height-8">
+      <!-- Project navigation dots -->
+      <div class="colored-dots flex flex-row gap-3 justify-center mb-8">
         <ULink v-for="(project, index) in projects" :key="project.id" 
           :to="`#${project.id}`" 
-          :class="_colors[index]" class="hover:text-size-12 transition-all">•</ULink>
+          :style="{ color: _colors[index]?.replace('color-', '') || '#8F87F1' }" 
+          class="hover:scale-150 transition-all duration-300 text-xl opacity-70 hover:opacity-100">
+          •
+        </ULink>
       </div>
-    </header>
+    </section>
 
     <!-- Loading State -->
-    <section v-if="status === 'pending'" class="mb-12">
-      <div class="flex flex-col items-center justify-center py-8">
-        <span class="i-ph-spinner-gap animate-spin text-3xl text-gray-400 dark:text-gray-600 mb-4"></span>
-        <p class="text-gray-600 dark:text-gray-400">Loading projects...</p>
+    <section v-if="status === 'pending'" class="w-[820px] mb-12">
+      <div class="flex flex-col items-center justify-center py-16">
+        <span class="i-ph-spinner-gap animate-spin text-4xl text-gray-400 dark:text-gray-600 mb-6"></span>
+        <p class="text-size-4 font-300 text-gray-600 dark:text-gray-400">Loading projects...</p>
       </div>
     </section>
 
     <!-- Empty State -->
-    <section v-if="projects.length === 0 && status !== 'pending'" class="mb-12">
-      <div class="flex flex-col items-center justify-center py-16">
-        <div class="mb-6">
-          <span class="i-ph-app-window text-2xl text-gray-300 dark:text-gray-600"></span>
+    <section v-else-if="projects.length === 0" class="w-[820px] mb-12">
+      <div class="flex flex-col items-center justify-center py-24">
+        <div class="mb-8 opacity-50">
+          <span class="i-ph-app-window text-6xl text-gray-300 dark:text-gray-600"></span>
         </div>
-        <h3 class="text-xl font-600 text-gray-700 dark:text-gray-300 mb-2">
+        <h3 class="text-4xl font-600 text-gray-700 dark:text-gray-300 mb-4">
           No projects yet
         </h3>
-        <p class="text-gray-500 dark:text-gray-400 text-center mb-6 max-w-md">
-          This is where my creative projects will live. Check back soon for updates!
+        <p class="text-size-4 font-300 text-gray-500 dark:text-gray-400 text-center mb-8 max-w-md">
+          This space awaits the birth of new ideas. Every great project starts with a single step.
         </p>
-        <div v-if="loggedIn" class="flex gap-3">
-          <UButton @click="isCreateDialogOpen = true" btn="solid" size="sm">
+        <div v-if="loggedIn">
+          <UButton @click="isCreateDialogOpen = true" btn="solid" size="md" class="hover:scale-105 transition-transform">
             <span class="i-ph-plus mr-2"></span>
             Create your first project
           </UButton>
@@ -76,111 +69,89 @@
       </div>
     </section>
 
-    <!-- Projects List -->
-    <section v-else class="my-8">
-      <h2 class="text-3 font-500 text-gray-800 dark:text-gray-200 mb-4">
-        <span class="i-ph-folder-open -mt-1 mr-2"></span>
-        Available Projects
-      </h2>
-      
-      <div class="flex flex-row flex-wrap gap-4">
-        <div v-for="(project, index) in projects" :key="project.id" 
+    <!-- Projects Grid -->
+    <section v-else class="w-full max-w-6xl px-4 mb-24">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <article v-for="(project, index) in projects" :key="project.id" 
           :id="project.id"
-          class="project-container group 
-            w-64 h-72
-            flex flex-col
-            bg-white dark:bg-gray-900 
-            rounded-lg border border-gray-200 dark:border-gray-800
-            hover:shadow-sm hover:border-gray-300 dark:hover:border-gray-700
-            transition-all duration-300 overflow-hidden">
-            
-            <!-- Project Image (if available) -->
-            <ULink v-if="project.image && project.image.src" :to="`/projects/${project.slug}`" 
-              class="w-full h-32 overflow-hidden">
-              <NuxtImg 
-                provider="hubblob"
-                :src="`/${project.image.src}/xs.${project.image.ext}`" 
-                :alt="project.image.alt || project.name" 
-                class="w-full h-full object-cover group-hover:scale-105 transition-transform"
-              />
-            </ULink>
-            
-            <!-- Project Content -->
-            <div class="flex flex-col p-4 flex-grow">
-              <div class="flex flex-row justify-between items-start mb-2">
-                <NuxtLink :to="`/projects/${project.slug}`" class="flex-grow">
-                  <h3 class="text-lg font-bold text-gray-800 dark:text-gray-200 line-clamp-2">
-                    {{ project.name }}
-                  </h3>
-                </NuxtLink>
-                
-                <div class="project-link flex flex-row gap-1 items-center">
-                  <NuxtLink v-if="project.links?.find((l: ProjectLinkType) => l.name === 'project')"
-                    :href="project.links?.find((l: ProjectLinkType) => l.name === 'project')?.href" target="_blank">
-                    <button
-                      class="i-ph:arrow-down-right-duotone rotate--90 hover:scale-110 active:scale-99 transition"></button>
-                  </NuxtLink>
-
-                  <NuxtLink v-if="project.links?.find((l: ProjectLinkType) => l.name === 'post')"
-                    :to="project.links?.find((l: ProjectLinkType) => l.name === 'post')?.href">
-                    <button class="i-icon-park-outline:enter-key hover:scale-110 active:scale-99 transition"></button>
-                  </NuxtLink>
-
-                  <UDropdownMenu 
-                    v-if="loggedIn && projectMenuItems(project).length > 0" 
-                    :items="projectMenuItems(project)" 
-                    size="xs" menu-label="" 
-                    :_dropdown-menu-content="{
-                    class: 'w-52',
-                    align: 'end',
-                    side: 'bottom',
-                  }" :_dropdown-menu-trigger="{
-                    icon: true,
-                    square: true,
-                    class: 'dropdown-menu-icon p-1 w-auto h-auto hover:bg-transparent hover:scale-110 active:scale-99 transition',
-                    label: 'i-lucide-ellipsis-vertical',
-                  }" />
+          class="group flex flex-col gap-2">
+          <div class="flex gap-2">
+            <div class="w-6 h-6 rounded-1 shadow relative overflow-hidden">
+              <UDropdownMenu 
+                v-if="loggedIn && projectMenuItems(project).length > 0" 
+                :items="projectMenuItems(project)" 
+                size="xs" menu-label="" 
+                :_dropdown-menu-content="{
+                  class: 'w-52',
+                  align: 'end',
+                  side: 'bottom',
+                }"
+              >
+                <div class="cursor-pointer 
+                  w-full h-full flex items-center justify-center
+                hover:scale-110 active:scale-99 transition"
+                >
+                  <NuxtImg 
+                    v-if="project.image && project.image.src"
+                    provider="hubblob"
+                    :src="`/${project.image.src}/xs.${project.image.ext}`" 
+                    :alt="project.image.alt || project.name" 
+                    class="w-full h-full object-cover"
+                  />
+                  <div v-else class="flex items-center justify-center">
+                    <UIcon name="i-ph-armchair-duotone" />
+                  </div>
                 </div>
-              </div>
-              
-              <p class="text-gray-600 dark:text-gray-400 text-size-3 line-clamp-3 flex-grow">
+              </UDropdownMenu>
+            </div>
+
+            <NuxtLink :to="`/projects/${project.slug}`" class="block mb-3">
+              <h3 class="font-text font-700 text-size-4  text-gray-800 dark:text-gray-200 line-clamp-2 group-hover:text-gray-600 dark:group-hover:text-gray-300 transition-colors">
+                {{ project.name }}
+              </h3>
+            </NuxtLink>
+
+            <!-- Action buttons overlay -->
+            <div class="flex items-start gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <NuxtLink v-if="project.links?.find((l: ProjectLinkType) => l.name === 'project')"
+                :href="project.links?.find((l: ProjectLinkType) => l.name === 'project')?.href" target="_blank"
+                class="w-6 h-6 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:scale-110 transition-transform">
+                <span class="i-ph:arrow-up-right text-sm"></span>
+              </NuxtLink>
+            </div>
+          </div>
+          
+          <!-- Project Content -->
+          <ULink v-if="project.description" :to="`/projects/${project.slug}`" class="hover:scale-101 active:scale-99 transition-transform">
+            <div class="p-6 bg-white dark:bg-gray-800 rounded-4">
+              <p class="font-capital text-size-4 font-500 line-clamp-3 leading-relaxed text-gray-800 dark:text-gray-400 ">
                 {{ project.description }}
               </p>
               
-              <!-- Tags Display -->
-              <div class="mt-2 mb-2">
-                <TagDisplay 
-                  v-if="project.tags && project.tags.length > 0"
-                  :tags="project.tags" 
-                  display-mode="primary-count"
-                  :primary-tag-color="_colors[index]?.replace('color-', '') || 'blue'"
-                />
-              </div>
-              
-              <div class="mt-auto pt-2 flex justify-between items-center">
-                <NuxtLink :to="`projects/${project.slug}`" class="flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
-                  <span class="text-size-2 flex items-center">
-                    <span class="i-ph-arrow-right"></span>
-                  </span>
-                </NuxtLink>
-              </div>
+              <TagDisplay 
+                v-if="project.tags && project.tags.length > 0"
+                :tags="project.tags" 
+                display-mode="primary-count"
+                :primary-tag-color="_colors[index]?.replace('color-', '') || 'blue'"
+              />
             </div>
-            
-            <!-- Delete Dialog (only for logged in users) -->
-            <UDialog v-if="loggedIn" v-model:open="project.isDeleteDialogOpen" :title="`Delete ${project.name}`"
-              description="Are you sure you want to delete this project?">
-              <template #default>
-                <div class="flex flex-col gap-2">
-                  <UButton btn="solid-gray" @click="project.isDeleteDialogOpen = false">
-                    Cancel
-                  </UButton>
-                  <UButton btn="solid-red" @click="deleteProject(project)">
-                    Delete
-                  </UButton>
-                </div>
-              </template>
-            </UDialog>
-        </div>
+          </ULink>
+          
+          <!-- Delete Dialog -->
+          <UDialog v-if="loggedIn" v-model:open="project.isDeleteDialogOpen" :title="`Delete ${project.name}`"
+            description="Are you sure you want to delete this project? This action cannot be undone.">
+            <template #default>
+              <div class="flex flex-col gap-3 pt-4">
+                <UButton btn="solid-gray" @click="project.isDeleteDialogOpen = false" class="w-full">
+                  Cancel
+                </UButton>
+                <UButton btn="solid-red" @click="deleteProject(project)" class="w-full">
+                  Delete Project
+                </UButton>
+              </div>
+            </template>
+          </UDialog>
+        </article>
       </div>
     </section>
 
@@ -190,7 +161,7 @@
       @create-project="handleCreateProject"
     />
 
-    <Footer />
+    <Footer class="mt-24 mb-42 w-[1100px]" />
   </div>
 </template>
 
@@ -203,7 +174,7 @@ useHead({
   meta: [
     {
       name: 'description',
-      content: 'A collection of my creative work',
+      content: 'A curated collection of creative endeavors, experiments, and meaningful builds.',
     },
   ],
 })
@@ -238,14 +209,14 @@ const _colors = [
 const projectMenuItems = (project: ProjectType) => {
   if (!loggedIn.value) return []
 
-  const items = [
+  return [
     {
       label: 'Edit',
       onClick: () => {
         navigateTo(`/projects/${project.id}/edit`)
       }
     },
-    {}, // to add a separator between items (label or items should be null).
+    {},
     {
       label: 'Delete',
       onClick: () => {
@@ -253,8 +224,6 @@ const projectMenuItems = (project: ProjectType) => {
       }
     }
   ]
-
-  return items
 }
 
 const { data, status, refresh } = await useFetch('/api/projects')
@@ -267,14 +236,10 @@ const handleCreateProject = async (projectData: CreateProjectType) => {
       body: projectData,
     })
     
-    // Refresh the projects list
     await refresh()
-    
-    // Show success message (optional)
     console.log('Project created successfully')
   } catch (error) {
     console.error('Failed to create project:', error)
-    // You could add a toast notification here for error feedback
   }
 }
 
@@ -285,14 +250,10 @@ const updateProject = async (projectId: string, projectData: Partial<ProjectType
       body: projectData,
     })
     
-    // Refresh the projects list
     await refresh()
-    
-    // Show success message (optional)
     console.log('Project updated successfully')
   } catch (error) {
     console.error('Failed to update project:', error)
-    // You could add a toast notification here for error feedback
   }
 }
 
@@ -303,31 +264,28 @@ const deleteProject = async (project: ProjectType) => {
       method: "DELETE",
     })
     
-    // Refresh the projects list
     await refresh()
-    
-    // Show success message (optional)
     console.log('Project deleted successfully')
   } catch (error) {
     console.error('Failed to delete project:', error)
-    // You could add a toast notification here for error feedback
   }
 }
 </script>
 
-<style>
-.dropdown-menu-icon {
-  box-shadow: none;
-}
-</style>
-
 <style scoped>
-.project-link {
-  opacity: 0;
-  transition: opacity 0.2s ease-in-out;
+.dark .project-card {
+  background-color: rgba(17, 24, 39, 0.5);
+  border-color: rgb(31, 41, 55);
+
+  &:hover {
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    border-color: rgb(55, 65, 81);
+  }
 }
 
-.project-container:hover .project-link {
-  opacity: 1;
+@supports (backdrop-filter: blur(10px)) {
+  .project-card {
+    backdrop-filter: blur(10px);
+  }
 }
 </style>

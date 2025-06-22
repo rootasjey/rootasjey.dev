@@ -272,13 +272,13 @@ const showOptionalFields = ref(false)
 
 onMounted(async () => {
   if (loggedIn.value) {
-    await navigateTo('/')
+    await navigateTo('/user')
   }
 })
 
 watch(loggedIn, (newValue) => {
   if (newValue) {
-    navigateTo('/')
+    navigateTo('/user')
   }
 })
 

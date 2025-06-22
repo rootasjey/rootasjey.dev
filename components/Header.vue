@@ -137,6 +137,10 @@ const scrollToTopLogo = () => {
     6px 6px 0px #4300FF;
   transform: translateX(-2px) translateY(-2px);
 }
+.hover\:text-shadow-glow:active {
+  text-shadow: none;
+  transform: translateX(-2px) translateY(-2px);
+}
 
 /* For dark mode */
 .dark .hover\:text-shadow-glow:hover {

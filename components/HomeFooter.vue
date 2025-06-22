@@ -8,15 +8,20 @@
       <span>•</span>
       <NuxtLink to="/resume" target="_blank">resume</NuxtLink>
     </div>
+    <div class="text-center">
+      <p class="font-600 text-gray-500 dark:text-gray-400 mr-5">
+        A personal space to share passions, projects, and knowledge.
+      </p>
+    </div>
     <div class="socials">
       <NuxtLink to="https://github.com/rootasjey" target="_blank" rel="noopener noreferrer" >
-        <UIcon name="i-ph-github-logo" />
+        <UIcon name="i-ph-github-logo-bold" />
       </NuxtLink>
       <NuxtLink  to="https://www.linkedin.com/in/jeremiecorpinot/" target="_blank" rel="noopener noreferrer">
-        <UIcon name="i-ph-linkedin-logo" />
+        <UIcon name="i-ph-linkedin-logo-bold" />
       </NuxtLink>
       <NuxtLink to="https://www.instagram.com/rootasjey" target="_blank" rel="noopener noreferrer">
-        <UIcon name="i-ph-instagram-logo" />
+        <UIcon name="i-ph-instagram-logo-bold" />
       </NuxtLink>
     </div>
     <div class="copyright">
@@ -39,8 +44,6 @@
 
 .links {
   margin-top: -4rem;
-  /* margin-bottom: 4rem; */
-  margin-bottom: 1rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -66,6 +69,7 @@
   justify-content: center;
   align-items: center;
   gap: 1rem;
+  margin-top: 0.5rem;
   margin-bottom: 4rem;
   
   > a {
