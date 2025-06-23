@@ -42,18 +42,39 @@
         label="i-ph-magnifying-glass-bold"
       />
 
-      <UButton
-        to="/login"
-        btn="ghost-gray"
-        label="Sign in"
-        class="font-600 h-auto py-1 px-3"
-      />
+      <div>
+        <UButton
+          v-if="!loggedIn"
+          to="/login"
+          btn="ghost-gray"
+          label="Sign in"
+          class="font-600 h-auto py-1 px-3"
+        />
+
+        <UDropdownMenu
+          v-else
+          :items="userMenuItems"
+          size="xs"
+          menu-label=""
+          :_dropdown-menu-content="{
+            class: 'w-44',
+            align: 'end',
+            side: 'bottom',
+          }"
+        >
+          <div class="cursor-pointer w-5 h-5 rounded-full overflow-hidden flex items-center justify-center hover:scale-105 transition">
+            <svg viewBox="0 0 36 36" fill="none" role="img" xmlns="http://www.w3.org/2000/svg" width="80" height="80"><mask id=":ru4:" maskUnits="userSpaceOnUse" x="0" y="0" width="36" height="36"><rect width="36" height="36" rx="72" fill="#FFFFFF"></rect></mask><g mask="url(#:ru4:)"><rect width="36" height="36" fill="#ff005b"></rect><rect x="0" y="0" width="36" height="36" transform="translate(9 -5) rotate(219 18 18) scale(1)" fill="#ffb238" rx="6"></rect><g transform="translate(4.5 -4) rotate(9 18 18)"><path d="M15 19c2 1 4 1 6 0" stroke="#000000" fill="none" stroke-linecap="round"></path><rect x="10" y="14" width="1.5" height="2" rx="1" stroke="none" fill="#000000"></rect><rect x="24" y="14" width="1.5" height="2" rx="1" stroke="none" fill="#000000"></rect></g></g></svg>
+          </div>
+        </UDropdownMenu>
+      </div>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
+const { loggedIn, clear } = useUserSession()
 const route = useRoute()
+const router = useRouter()
 
 const links = [
   {
@@ -71,6 +92,21 @@ const links = [
   {
     label: 'Experiments',
     to: '/experiments',
+  },
+]
+
+const userMenuItems = [
+  {
+    label: 'Profile',
+    onClick: () => router.push('/user'),
+  },
+  {},
+  {
+    label: 'Logout',
+    onClick: () => {
+      clear()
+      router.replace("/")
+    },
   },
 ]
 
@@ -137,6 +173,7 @@ const scrollToTopLogo = () => {
     6px 6px 0px #4300FF;
   transform: translateX(-2px) translateY(-2px);
 }
+
 .hover\:text-shadow-glow:active {
   text-shadow: none;
   transform: translateX(-2px) translateY(-2px);
@@ -145,9 +182,13 @@ const scrollToTopLogo = () => {
 /* For dark mode */
 .dark .hover\:text-shadow-glow:hover {
   text-shadow: 
-    2px 2px 0px #6DE1D2,
-    4px 4px 0px #1B56FD,
-    6px 6px 0px #FDFAF6,
-    6px 6px 0px #FFB8E0;
+    2px 2px 0px #093FB4,
+    4px 4px 0px #FFFCFB,
+    6px 6px 0px #ED3500,
+    6px 6px 0px #FFD8D8;
+}
+
+.dark .hover\:text-shadow-glow:active {
+  text-shadow: none;
 }
 </style>

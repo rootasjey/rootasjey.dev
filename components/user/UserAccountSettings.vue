@@ -7,9 +7,9 @@
     
     <div class="space-y-4">
       <UButton 
-        btn="soft-orange"
+        btn="soft-blue"
         size="sm"
-        class="px-6"
+        class="px-12"
         @click="$emit('signOut')"
       >
         <span class="i-ph-sign-out-bold"></span>

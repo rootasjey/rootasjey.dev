@@ -56,12 +56,21 @@ defineProps<Props>();
   transform: translateX(-2px) translateY(-2px);
 }
 
+.hover\:text-shadow-glow:active {
+  text-shadow: none;
+}
+
 /* For dark mode */
 .dark .hover\:text-shadow-glow:hover {
   text-shadow: 
-    2px 2px 0px #6DE1D2,
-    4px 4px 0px #1B56FD,
-    6px 6px 0px #FDFAF6,
-    6px 6px 0px #FFB8E0;
+    2px 2px 0px #093FB4,
+    4px 4px 0px #FFFCFB,
+    6px 6px 0px #ED3500,
+    6px 6px 0px #FFD8D8;
 }
+
+.dark .hover\:text-shadow-glow:active {
+  text-shadow: none;
+}
+
 </style>

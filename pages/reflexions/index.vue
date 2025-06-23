@@ -1,5 +1,5 @@
 <template>
-  <div class="w-[600px] rounded-xl p-8 pb-[38vh] flex flex-col transition-all duration-500 overflow-y-auto">
+  <div class="w-full flex flex-col items-center min-h-screen">
     <PostHeader
       :is-loading="isAnyLoading"
       :error="combinedErrorMessage"
@@ -21,6 +21,7 @@
     <!-- Drafts Section -->
     <PostSection
       v-if="loggedIn"
+      class="w-[720px]"
       :posts="drafts.list.value"
       title="Drafts"
       section-type="Draft"
@@ -100,8 +101,10 @@
       :posts="posts.list.value"
       title="Published"
       section-type="Post"
+      class="w-[720px]"
       icon="i-ph-article"
       icon-color="#3b82f6"
+      menu-variant="minimal"
       :is-loading="posts.isLoading.value"
       :error="posts.error.value"
       :show-primary-tag="true"
@@ -247,7 +250,7 @@
       </template>
     </UDialog>
 
-    <Footer />
+    <Footer class="mt-24 mb-36 w-[720px] mx-auto" />
   </div>
 </template>
 

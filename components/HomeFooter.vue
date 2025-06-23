@@ -113,5 +113,9 @@
     color: rgb(156, 163, 175);
     border-color: rgb(55, 65, 81);
   }
+
+  .frame {
+    border-color: rgb(55, 65, 81);
+  }
 }
 </style>

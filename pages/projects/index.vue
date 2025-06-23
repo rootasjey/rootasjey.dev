@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full bg-[#F1F1F1] flex flex-col items-center min-h-screen">
+  <div class="w-full bg-[#F1F1F1] dark:bg-[#000] flex flex-col items-center min-h-screen">
     <!-- Hero Section -->
     <section class="w-[820px] mt-24 md:mt-42 mb-12 text-center p-2 md:p-8">
       <div class="flex items-center justify-center gap-3 mb-6">
@@ -22,7 +22,7 @@
           @click="isCreateDialogOpen = true" 
           btn="soft" 
           size="xs" 
-          class="hover:scale-101 active:scale-99 transition"
+          class="hover:scale-101 active:scale-99 transition dark:bg-gray-800 dark:text-gray-200"
         >
           <span class="i-ph-plus mr-2"></span>
           <span>Add a project</span>
@@ -88,6 +88,7 @@
                 }"
               >
                 <div class="cursor-pointer 
+                  dark:bg-[#222831]
                   w-full h-full flex items-center justify-center
                 hover:scale-110 active:scale-99 transition"
                 >
@@ -123,7 +124,7 @@
           
           <!-- Project Content -->
           <ULink v-if="project.description" :to="`/projects/${project.slug}`" class="hover:scale-101 active:scale-99 transition-transform">
-            <div class="p-6 bg-white dark:bg-gray-800 rounded-4">
+            <div class="p-6 bg-white dark:bg-gray-900 rounded-4">
               <p class="font-capital text-size-4 font-500 line-clamp-3 leading-relaxed text-gray-800 dark:text-gray-400 ">
                 {{ project.description }}
               </p>
@@ -227,7 +228,7 @@ const projectMenuItems = (project: ProjectType) => {
 }
 
 const { data, status, refresh } = await useFetch('/api/projects')
-const projects = (data?.value ?? []) as ProjectType[]
+const projects = data.value?.projects as ProjectType[]
 
 const handleCreateProject = async (projectData: CreateProjectType) => {
   try {

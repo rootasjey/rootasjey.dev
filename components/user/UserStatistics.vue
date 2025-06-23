@@ -6,7 +6,7 @@
     </h2>
     
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-      <div class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+      <div class="bg-white dark:bg-black rounded-lg p-4 border border-gray-200 dark:border-gray-700">
         <div class="flex items-center gap-3">
           <div class="i-ph-image text-blue-500 text-xl"></div>
           <div>
@@ -16,7 +16,7 @@
         </div>
       </div>
       
-      <div class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+      <div class="bg-white dark:bg-black rounded-lg p-4 border border-gray-200 dark:border-gray-700">
         <div class="flex items-center gap-3">
           <div class="i-ph-folder text-green-500 text-xl"></div>
           <div>
@@ -26,7 +26,7 @@
         </div>
       </div>
       
-      <div class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+      <div class="bg-white dark:bg-black rounded-lg p-4 border border-gray-200 dark:border-gray-700">
         <div class="flex items-center gap-3">
           <div class="i-ph-upload text-purple-500 text-xl"></div>
           <div>

@@ -1,42 +1,60 @@
 <template>
-  <div class="frame">
-    <header class="mt-12 mb-8">
-      <div class="flex gap-2">
-        <ULink to="/" class="hover:scale-102 active:scale-99 transition">
-          <span class="i-ph-house-simple-duotone"></span>
-        </ULink>
-        <span>•</span>
-        <h1 class="font-body text-xl font-600 text-gray-800 dark:text-gray-200">
+  <div class="w-full flex flex-col items-center min-h-screen">
+    <!-- Hero Section -->
+    <section class="w-[820px] mt-24 md:mt-42 mb-12 text-center p-2 md:p-8">
+      <div class="flex items-center justify-center gap-3 mb-6">
+        <h1 class="font-body text-6xl font-600 text-gray-800 dark:text-gray-200">
           User Profile
         </h1>
       </div>
-      <div class="w-40 flex text-center justify-center my-2">
-        <div class="w-full h-2">
-          <svg viewBox="0 0 300 10" preserveAspectRatio="none">
-            <path d="M 0 5 Q 15 0, 30 5 T 60 5 T 90 5 T 120 5 T 150 5 T 180 5 T 210 5 T 240 5 T 270 5 T 300 5"
-              stroke="currentColor" fill="none" class="text-gray-300 dark:text-gray-700" stroke-width="1" />
-          </svg>
-        </div>
-      </div>
-    </header>
+      <h4 class="text-size-5 font-300 mb-6 text-gray-800 dark:text-gray-200 max-w-2xl mx-auto">
+        Manage your personal information, view your stats, and explore your recent activities.
+      </h4>
+    </section>
 
-    <UserInfo 
-      v-if="loggedIn && user" 
-      :user="user" 
-      :is-editing="isEditing" 
-      :is-saving="isSaving"
-      :edit-form="editForm"
-      :profile-data="profileData"
-      :form-errors="formErrors"
-      @start-editing="startEditing" 
-      @save-profile="saveProfile" 
-      @cancel-editing="cancelEditing"
-    />
-    <UserStatistics v-if="loggedIn"  :user-stats="userStats" />
-    <UserRecentActivities v-if="loggedIn" :recent-activity="recentActivity" />
-    <UserAccountSettings v-if="loggedIn" @sign-out="handleSignOut" />
-    <UserNoLoggedIn v-if="!loggedIn" />
-    <Footer />
+    <!-- Loading State -->
+    <section v-if="status === 'pending'" class="w-[820px] mb-12">
+      <div class="flex flex-col items-center justify-center py-16">
+        <span class="i-ph-spinner-gap animate-spin text-4xl text-gray-400 dark:text-gray-600 mb-6"></span>
+        <p class="text-size-4 font-300 text-gray-600 dark:text-gray-400">Loading profile...</p>
+      </div>
+    </section>
+
+    <!-- Not Logged In State -->
+    <section v-else-if="!loggedIn" class="w-[820px] mb-12">
+      <div class="flex flex-col items-center justify-center py-24">
+        <div class="mb-8 opacity-50">
+          <span class="i-ph-user-circle text-6xl text-gray-300 dark:text-gray-600"></span>
+        </div>
+        <h3 class="text-4xl font-600 text-gray-700 dark:text-gray-300 mb-4">
+          Not signed in
+        </h3>
+        <p class="text-size-4 font-300 text-gray-500 dark:text-gray-400 text-center mb-8 max-w-md">
+          Please sign in to view and manage your profile.
+        </p>
+      </div>
+    </section>
+
+    <section v-else class="w-[720px] flex flex-col gap-8 my-8">
+      <UserInfo 
+        v-if="user"
+        :user="user" 
+        :is-editing="isEditing" 
+        :is-saving="isSaving"
+        :edit-form="editForm"
+        :profile-data="profileData"
+        :form-errors="formErrors"
+        @start-editing="startEditing" 
+        @save-profile="saveProfile" 
+        @cancel-editing="cancelEditing"
+      />
+
+      <UserStatistics :user-stats="userStats" />
+      <UserRecentActivities :recent-activity="recentActivity" />
+      <UserAccountSettings @sign-out="handleSignOut" />
+    </section>
+
+    <Footer class="w-[720px] mt-24 mb-36" />
   </div>
 </template>
 
@@ -45,6 +63,9 @@ import type { User } from '#auth-utils'
 
 const { loggedIn, user, clear } = useUserSession()
 const { toast } = useToast()
+
+// Loading status for async fetches
+const status = ref<'pending' | 'done'>('pending')
 
 // Profile editing state
 const isEditing = ref(false)
@@ -237,17 +258,21 @@ const saveProfile = async () => {
   }
 }
 
-onMounted(() => {
+onMounted(async () => {
   if (loggedIn.value) {
-    fetchUserProfile()
-    fetchUserStats()
+    status.value = 'pending'
+    await Promise.all([fetchUserProfile(), fetchUserStats()])
+    status.value = 'done'
+  } else {
+    status.value = 'done'
   }
 })
 
-watch(loggedIn, (newValue) => {
+watch(loggedIn, async (newValue) => {
   if (newValue) {
-    fetchUserProfile()
-    fetchUserStats()
+    status.value = 'pending'
+    await Promise.all([fetchUserProfile(), fetchUserStats()])
+    status.value = 'done'
     return
   }
 
@@ -274,22 +299,4 @@ watch(loggedIn, (newValue) => {
 </script>
 
 <style scoped>
-.frame {
-  width: 600px;
-  border-radius: 0.75rem;
-  padding: 2rem;
-  padding-bottom: 38vh;
-  display: flex;
-  flex-direction: column;
-  transition-property: all;
-  transition-duration: 500ms;
-  overflow-y: auto;
-}
-
-@media (max-width: 768px) {
-  .frame {
-    width: 100%;
-    padding: 1rem;
-  }
-}
 </style>

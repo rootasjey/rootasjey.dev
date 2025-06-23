@@ -29,14 +29,14 @@
         class="w-36 h-36 border flex flex-col items-center justify-center gap-2
         hover:b-solid hover:b-4 hover:border-blue-400 dark:hover:border-blue-300 transition-all"
       >
-        <h3 class="text-size-8 font-600 text-center text-gray-600">all...</h3>
+        <h3 class="text-size-8 font-600 text-center text-gray-600 dark:text-gray-300">all...</h3>
       </ULink>
 
       <ULink key="more-projects" to="/projects"
         class="w-36 h-36 border flex flex-col items-center justify-center gap-2
         hover:b-solid hover:b-4 hover:border-blue-400 dark:hover:border-blue-300 transition-all"
       >
-        <h3 class="text-size-8 font-600 text-center text-gray-600">projects</h3>
+        <h3 class="text-size-8 font-600 text-center text-gray-600 dark:text-gray-300">projects</h3>
       </ULink>
     </div>
     

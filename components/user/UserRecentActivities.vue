@@ -9,7 +9,7 @@
       <div 
         v-for="activity in recentActivity" 
         :key="activity.id"
-        class="flex items-center gap-3 p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700"
+        class="flex items-center gap-3 p-3 bg-white dark:bg-black rounded-lg border border-gray-200 dark:border-gray-700"
       >
         <div :class="activity.icon" class="text-lg" :style="`color: ${activity.color}`"></div>
         <div class="flex-1">

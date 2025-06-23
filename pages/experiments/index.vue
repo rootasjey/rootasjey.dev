@@ -1,29 +1,46 @@
 <template>
   <!-- Experiments -->
-  <div class="w-[600px] rounded-xl p-8 pb-[38vh] flex flex-col transition-all duration-500 overflow-y-auto">
-    <!-- Header -->
-    <header class="mt-12 mb-8">
-      <div class="flex gap-2">
-        <ULink to="/" class="hover:scale-102 active:scale-99 transition">
-          <span class="i-ph-house-simple-duotone"></span>
-        </ULink>
-        <span>•</span>
-        <h1 class="font-body text-xl font-600 text-gray-800 dark:text-gray-200">
+  <div class="w-full flex flex-col items-center min-h-screen">
+    <!-- Hero Section -->
+    <section class="w-[820px] mt-24 md:mt-42 mb-12 text-center p-2 md:p-8">
+      <div class="flex items-center justify-center gap-3 mb-6">
+        <h1 class="font-body text-6xl font-600 text-gray-800 dark:text-gray-200">
           Experiments
         </h1>
       </div>
-      <div class="w-40 flex text-center justify-center my-2">
-        <div class="w-full h-2">
-          <svg viewBox="0 0 300 10" preserveAspectRatio="none">
-            <path d="M 0 5 Q 15 0, 30 5 T 60 5 T 90 5 T 120 5 T 150 5 T 180 5 T 210 5 T 240 5 T 270 5 T 300 5"
-              stroke="currentColor" fill="none" class="text-gray-300 dark:text-gray-700" stroke-width="1" />
-          </svg>
-        </div>
+      
+      <h4 class="text-size-5 font-300 mb-6 text-gray-800 dark:text-gray-200 max-w-2xl mx-auto">
+        A playground for innovative coding experiments and creative explorations.
+        Each experiment represents a journey into uncharted territories of technology and creativity.
+      </h4>
+      <h4 class="text-size-5 font-300 mb-6 text-gray-800 dark:text-gray-200 max-w-2xl mx-auto">
+        From interactive demos to technical prototypes, these experiments push the boundaries
+        of what's possible. Dive in and explore the future of web development.
+      </h4>
+    </section>
+
+    <!-- Loading State -->
+    <section v-if="status === 'pending'" class="w-[820px] mb-12">
+      <div class="flex flex-col items-center justify-center py-16">
+        <span class="i-ph-spinner-gap animate-spin text-4xl text-gray-400 dark:text-gray-600 mb-6"></span>
+        <p class="text-size-4 font-300 text-gray-600 dark:text-gray-400">Loading experiments...</p>
       </div>
-      <p class="text-gray-700 dark:text-gray-300 mb-4">
-        Unleash your curiosity and explore a new world
-      </p>
-    </header>
+    </section>
+
+    <!-- Empty State -->
+    <section v-else-if="experiments?.length === 0" class="w-[820px] mb-12">
+      <div class="flex flex-col items-center justify-center py-24">
+        <div class="mb-8 opacity-50">
+          <span class="i-ph-flask text-6xl text-gray-300 dark:text-gray-600"></span>
+        </div>
+        <h3 class="text-4xl font-600 text-gray-700 dark:text-gray-300 mb-4">
+          No experiments yet
+        </h3>
+        <p class="text-size-4 font-300 text-gray-500 dark:text-gray-400 text-center mb-8 max-w-md">
+          This laboratory awaits the spark of innovation. Every breakthrough begins with a single experiment.
+        </p>
+      </div>
+    </section>
 
     <!-- Loading State -->
     <section v-if="status === 'pending'" class="mb-12">
@@ -63,17 +80,11 @@
           class="experiment-card">
           <h3 class="name">{{ experiment.name }}</h3>
           <p class="description">{{ experiment.description }}</p>
-          <!-- <div class="flex justify-end mt-2">
-            <span class="text-gray-400 dark:text-gray-600 text-size-2 flex items-center">
-              <span class="i-ph-arrow-right mr-1"></span>
-              Try it out
-            </span>
-          </div> -->
         </ULink>
       </div>
     </section>
 
-    <Footer />
+    <Footer class="mt-24 mb-36" />
   </div>
 </template>
 

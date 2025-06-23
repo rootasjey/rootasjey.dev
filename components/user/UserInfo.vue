@@ -15,13 +15,23 @@
         <span class="i-ph-pencil"></span>
         Edit Profile
       </UButton>
+      <UButton 
+        v-else
+        btn="soft-blue"
+        size="sm"
+        class="px-6"
+        @click="$emit('cancelEditing')"
+      >
+        <span class="i-ph-x-bold"></span>
+        Cancel editing
+      </UButton>
     </div>
     
-    <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-6 mb-6">
+    <div class="bg-gray-50 dark:bg-black dark:border rounded-lg p-6 mb-6">
       <!-- View Mode -->
       <div v-if="!isEditing" class="flex items-center gap-4">
         <div class="w-16 h-16 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center">
-          <span class="i-ph-user text-white text-2xl"></span>
+           <svg viewBox="0 0 36 36" fill="none" role="img" xmlns="http://www.w3.org/2000/svg" width="80" height="80"><mask id=":ru4:" maskUnits="userSpaceOnUse" x="0" y="0" width="36" height="36"><rect width="36" height="36" rx="72" fill="#FFFFFF"></rect></mask><g mask="url(#:ru4:)"><rect width="36" height="36" fill="#ff005b"></rect><rect x="0" y="0" width="36" height="36" transform="translate(9 -5) rotate(219 18 18) scale(1)" fill="#ffb238" rx="6"></rect><g transform="translate(4.5 -4) rotate(9 18 18)"><path d="M15 19c2 1 4 1 6 0" stroke="#000000" fill="none" stroke-linecap="round"></path><rect x="10" y="14" width="1.5" height="2" rx="1" stroke="none" fill="#000000"></rect><rect x="24" y="14" width="1.5" height="2" rx="1" stroke="none" fill="#000000"></rect></g></g></svg>
         </div>
         <div class="flex-1">
           <h3 class="text-md font-600 text-gray-800 dark:text-gray-200">
@@ -52,7 +62,7 @@
             <input
               v-model="editForm.name"
               type="text"
-              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-black text-gray-900 dark:text-gray-100"
               :class="{ 'border-red-500': formErrors.name }"
             />
             <p v-if="formErrors.name" class="text-red-500 text-xs mt-1">{{ formErrors.name }}</p>
@@ -63,7 +73,7 @@
             <input
               v-model="editForm.email"
               type="email"
-              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-black text-gray-900 dark:text-gray-100"
               :class="{ 'border-red-500': formErrors.email }"
             />
             <p v-if="formErrors.email" class="text-red-500 text-xs mt-1">{{ formErrors.email }}</p>
@@ -75,7 +85,7 @@
           <textarea
             v-model="editForm.biography"
             rows="3"
-            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+            class="w-full px-3 py-2 outline-blue-500/40 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-black text-gray-900 dark:text-gray-100"
             :class="{ 'border-red-500': formErrors.biography }"
             placeholder="Tell us about yourself..."
           ></textarea>
@@ -88,7 +98,7 @@
             <input
               v-model="editForm.job"
               type="text"
-              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-black text-gray-900 dark:text-gray-100"
               placeholder="e.g. Software Developer"
             />
           </div>
@@ -98,7 +108,7 @@
             <input
               v-model="editForm.location"
               type="text"
-              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-black text-gray-900 dark:text-gray-100"
               placeholder="e.g. New York, USA"
             />
           </div>
@@ -108,7 +118,7 @@
           <label class="block text-sm font-500 text-gray-700 dark:text-gray-300 mb-1">Language</label>
           <select
             v-model="editForm.language"
-            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-black text-gray-900 dark:text-gray-100"
           >
             <option value="">Select Language</option>
             <option value="en">English</option>
@@ -136,6 +146,7 @@
             type="submit"
             btn="soft"
             size="sm"
+            class="dark:bg-blue-500/40 px-8 dark:text-blue-200 dark:hover:bg-blue-500/60"
             :disabled="isSaving"
           >
             <span v-if="isSaving" class="i-ph-spinner animate-spin"></span>

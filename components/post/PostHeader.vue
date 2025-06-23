@@ -1,17 +1,21 @@
 <template>
-  <header class="mt-12 mb-8 border-b b-dashed border-gray-200 dark:border-gray-700 pb-6">
-    <div class="flex gap-2">
-      <ULink to="/" class="hover:scale-102 active:scale-99 transition">
-        <span class="i-ph-house-simple-duotone"></span>
-      </ULink>
-      <span>•</span>
-      <h1 class="font-body text-xl font-600 text-gray-800 dark:text-gray-200">
-        reflexions
-      </h1>
+  <header class="w-[820px] mt-24 md:mt-42 mb-12 text-center p-2 md:p-8">
+    <div>
+      <div class="flex items-center justify-center gap-3 mb-6">
+        <h1 class="font-body text-6xl font-600 text-gray-800 dark:text-gray-200">
+          Experiments
+        </h1>
+      </div>
+      
+      <h4 class="text-size-5 font-300 mb-6 text-gray-800 dark:text-gray-200 max-w-2xl mx-auto">
+        A playground for innovative coding experiments and creative explorations.
+        Each experiment represents a journey into uncharted territories of technology and creativity.
+      </h4>
+      <h4 class="text-size-5 font-300 mb-6 text-gray-800 dark:text-gray-200 max-w-2xl mx-auto">
+        From interactive demos to technical prototypes, these experiments push the boundaries
+        of what's possible. Dive in and explore the future of web development.
+      </h4>
     </div>
-    <p class="text-gray-700 dark:text-gray-500">
-      Thoughts and reflections on various topics
-    </p>
 
     <!-- Error message display -->
     <div v-if="error" class="mt-2 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md">

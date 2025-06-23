@@ -1,31 +1,21 @@
 <template>
   <div class="frame">
-    <!-- Header -->
-    <header class="mt-12 mb-8">
-      <div class="flex gap-2">
-        <ULink to="/" class="hover:scale-102 active:scale-99 transition">
-          <span class="i-ph-house-simple-duotone"></span>
-        </ULink>
-        <span>•</span>
-        <h1 class="font-body text-xl font-600 text-gray-800 dark:text-gray-200">
-          {{ isLogin ? 'Sign in' : 'Sign up' }}
-        </h1>
-      </div>
-      <div class="w-40 flex text-center justify-center my-2">
-        <div class="w-full h-2">
-          <svg viewBox="0 0 300 10" preserveAspectRatio="none">
-            <path d="M 0 5 Q 15 0, 30 5 T 60 5 T 90 5 T 120 5 T 150 5 T 180 5 T 210 5 T 240 5 T 270 5 T 300 5"
-              stroke="currentColor" fill="none" class="text-gray-300 dark:text-gray-700" stroke-width="1" />
-          </svg>
-        </div>
-      </div>
-      <p class="text-gray-700 dark:text-gray-300 text-sm opacity-75">
-        {{ isLogin ? 'Welcome back' : 'Create your account' }}
-      </p>
-    </header>
+    <!-- Hero Section -->
+    <section class="w-full max-w-2xl mt-12 md:mt-24 mb-8 text-center p-2 md:p-8 ">
+      <h1 class="font-body text-6xl font-600 mb-6 text-gray-800 dark:text-gray-200">
+        {{ isLogin ? 'Sign in' : 'Sign up' }}
+      </h1>
+      <h5 v-if="isLogin" class="text-size-5 font-300 mb-4 text-gray-800 dark:text-gray-200">
+        Welcome back! It's a shinny day <UIcon name="i-ph-sun" /> <br />
+        Log back into your user account.
+      </h5>
+      <h5 v-else class="text-size-5 font-300 mb-4 text-gray-800 dark:text-gray-200">
+        Hello new comers. Create your new account.
+      </h5>
+    </section>
 
     <!-- Login/Register Form -->
-    <section class="mb-12">
+    <section class="w-full max-w-md mb-24">
       <form @submit.prevent="handleSubmit" class="space-y-6">
         <!-- Name field (only for registration) -->
         <div v-if="!isLogin">
@@ -53,7 +43,7 @@
         </div>
 
         <div>
-          <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label for="email" class="block text-sm font-medium dark:text-gray-300 mb-2">
             <span class="i-ph-envelope mr-2"></span>
             Email <span class="text-[#EC7FA9] dark:text-[#FFB8E0]">*</span>
           </label>
@@ -63,6 +53,7 @@
             type="email"
             placeholder="your@email.com"
             required
+            size="lg"
             class="w-full"
             :ui="{ 
               base: 'transition duration-200',
@@ -77,7 +68,7 @@
         </div>
 
         <div>
-          <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label for="password" class="block text-sm font-medium dark:text-gray-300 mb-2">
             <span class="i-ph-lock mr-2"></span>
             Password <span class="text-[#EC7FA9] dark:text-[#FFB8E0]">*</span>
           </label>
@@ -87,6 +78,7 @@
             type="password"
             placeholder="Enter your password"
             required
+            size="lg"
             class="w-full"
             :ui="{ 
               base: 'transition duration-200',
@@ -192,10 +184,11 @@
         <div class="pt-4">
           <UButton
             type="submit"
-            btn="solid dark:solid-pink"
+            btn="solid-black dark:solid-pink"
             :loading="isSubmitting"
             :disabled="isSubmitting"
-            class="w-full"
+            size="md"
+            class="w-full hover:scale-101 active:scale-99 transition"
           >
           {{ isLogin ? 'Sign in' : 'Sign up' }}
           <span :class="isLogin ? 'i-ph-sign-in-bold' : 'i-ph-user-plus'"></span>
@@ -206,8 +199,7 @@
         <UAlert
           v-if="error"
           class="mt-4"
-          color="red"
-          variant="soft"
+          alert="soft-pink"
           title="Authentication Error"
           icon="i-ph-warning-circle"
           :close-button="{ icon: 'i-ph-x', color: 'gray' }"
@@ -220,8 +212,7 @@
         <UAlert
           v-if="successMessage"
           class="mt-4"
-          color="green"
-          variant="soft"
+          alert="soft-blue"
           title="Success"
           icon="i-ph-check-circle"
           :close-button="{ icon: 'i-ph-x', color: 'gray' }"
@@ -235,9 +226,9 @@
           <UButton
             type="button"
             @click="toggleMode"
-            btn="text-green"
+            btn="text-black"
             size="sm"
-            :class="randomColors.getTextColorClasses()"
+            class="hover:scale-103 active:scale-99 transition"
           >
             {{ isLogin ? 'Need an account? Sign up' : 'Already have an account? Sign in' }}
           </UButton>
@@ -252,7 +243,6 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 const { loggedIn, fetch: refreshSession } = useUserSession()
-const randomColors = useRandomColors()
 
 // Form fields
 const name = ref('')
@@ -373,14 +363,12 @@ const handleSubmit = async () => {
 
 <style scoped>
 .frame {
-  width: 500px;
-  border-radius: 0.75rem;
+  width: 100%;
   padding: 2rem;
   padding-bottom: 38vh;
   display: flex;
   flex-direction: column;
-  transition-property: all;
-  transition-duration: 500ms;
-  overflow-y: auto;
+  align-items: center;
+  min-height: 100vh;
 }
 </style>

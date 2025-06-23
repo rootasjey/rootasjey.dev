@@ -21,13 +21,13 @@
 
     <ProjectHome 
       :projects="projects" 
-      :projectsLoading="projectsLoading" 
-      :projectsError="projectsStatus === 'error'" 
+      :projectsLoading="projectStatus === 'pending'" 
+      :projectsError="projectStatus === 'error'" 
     />
 
     <ExperimentHome
     :experiments="experiments"
-    :experimentLoading="experimentLoading"
+    :experimentLoading="false"
     :experimentError="experimentStatus === 'error'"
     />
 
@@ -48,19 +48,21 @@ useHead({
 })
 
 // Fetch '/api/how-many-items' to get the number of items in the database
-const { data } = await useFetch("/api/home/how-many-items")
-const navigation = useNavigation(data.value ?? fallbackData)
+// const { data } = await useFetch("/api/home/how-many-items")
+// const navigation = useNavigation(data.value ?? fallbackData)
+// const fallbackData = { projects: 0, posts: 0, experiments: 0 }
 const posts = usePosts()
-const fallbackData = { projects: 0, posts: 0, experiments: 0 }
 
 const { data: experiments, status: experimentStatus } = await useFetch('/api/experiments')
 
-const { data: projects, pending: projectsLoading, status: projectStatus, error: projectsError } = await useFetch('/api/projects', {
+const { data: projectData, status: projectStatus } = await useFetch('/api/projects', {
   query: {
     visibility: 'public',
     limit: 6
   }
 })
+
+const projects = projectData.value.projects
 
 const greeting = computed(() => {
   const hour = new Date().getHours()
@@ -69,15 +71,6 @@ const greeting = computed(() => {
   if (hour >= 12 && hour < 17) return 'Good afternoon'
   if (hour >= 17 && hour < 22) return 'Good evening'
   return 'Good night'
-})
-
-const timeIcon = computed(() => {
-  const hour = new Date().getHours()
-  
-  if (hour >= 5 && hour < 12) return 'i-ph-sun-horizon'
-  if (hour >= 12 && hour < 17) return 'i-line-md:moon-to-sunny-outline-loop-transition'
-  if (hour >= 17 && hour < 22) return 'i-ph:sun-horizon-bold'
-  return 'i-line-md:moon-rising-twotone-loop'
 })
 
 // Helper function to format dates
