@@ -3,7 +3,7 @@ export type CreateProjectType = {
   description?: string
   name: string
   tags?: string[]
-  visibility?: "public" | "private"
+  status?: 'active' | 'completed' | 'archived' | 'on-hold'
 }
 
 export type ProjectType = {
@@ -31,10 +31,10 @@ export type ProjectType = {
   /** Computed property: remaining tags after primary */
   secondaryTags?: string[]
   slug: string
+  status: 'active' | 'completed' | 'archived' | 'on-hold'
   tags: string[]
   updated_at: string
   user_id: number
-  visibility: string
 }
 
 export type ProjectLinkType = {

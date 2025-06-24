@@ -6,7 +6,7 @@ export default defineEventHandler(async (event) => {
   const query = await hubDatabase()
   .prepare(`
     SELECT * FROM posts 
-    WHERE visibility = 'public' OR visibility = 'project:public'
+    WHERE status = 'published'
     ORDER BY created_at DESC
     LIMIT 25
   `)

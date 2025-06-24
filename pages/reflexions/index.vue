@@ -177,7 +177,7 @@
       </template>
     </PostSection>
 
-    <PostEmptyState v-if="!hasAnyContent && !isAnyLoading" />
+    <PostEmptyState v-if="!hasAnyContent && !isAnyLoading" class="w-3xl mt-12" />
 
     <!-- Tag Management Modal -->
     <UDialog v-model:open="showTagManagement" title="Tag Management" description="Manage your post tags">

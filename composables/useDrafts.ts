@@ -34,7 +34,7 @@ export const useDrafts = (options: UseDraftsOptions = {}) => {
   const shouldShowDraftsSection = computed(() => showDrafts.value && hasDrafts.value)
   const isDraftsEmpty = computed(() => showDrafts.value && !hasDrafts.value && !isFetchingDrafts.value)
 
-  // Draft visibility status for UI
+  // Draft status status for UI
   const draftsVisibilityStatus = computed(() => {
     if (!showDrafts.value) return 'hidden'
     if (isFetchingDrafts.value) return 'loading'
@@ -98,14 +98,14 @@ export const useDrafts = (options: UseDraftsOptions = {}) => {
     }
   }
 
-  // Draft visibility management
+  // Draft status management
   const toggleDrafts = async () => {
-    const newVisibility = !showDrafts.value
-    showDrafts.value = newVisibility
-    saveDraftPreferences(newVisibility)
+    const newStatus = !showDrafts.value
+    showDrafts.value = newStatus
+    saveDraftPreferences(newStatus)
 
     // Fetch drafts when showing them
-    if (newVisibility) {
+    if (newStatus) {
       await fetchDrafts()
     }
   }
@@ -152,7 +152,7 @@ export const useDrafts = (options: UseDraftsOptions = {}) => {
     const index = list.value.findIndex(d => d.id === draftId)
     if (index !== -1) {
       const [draft] = list.value.splice(index, 1)
-      return { ...draft, visibility: 'public' }
+      return { ...draft, status: 'published' }
     }
     return null
   }

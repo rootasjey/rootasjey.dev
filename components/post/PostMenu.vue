@@ -80,9 +80,9 @@ const isLoading = ref(false)
 const loadingAction = ref<string | null>(null)
 
 // Computed properties
-const isDraft = computed(() => props.post.visibility === 'private')
-const isPublished = computed(() => props.post.visibility === 'public')
-const isArchived = computed(() => props.post.visibility === 'archive')
+const isDraft = computed(() => props.post.status === 'draft')
+const isPublished = computed(() => props.post.status === 'published')
+const isArchived = computed(() => props.post.status === 'archived')
 
 // Default menu items based on post state and user permissions
 const defaultMenuItems = computed((): MenuItem[] => {

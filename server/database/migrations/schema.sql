@@ -1,16 +1,19 @@
 -- Create the users table
 CREATE TABLE IF NOT EXISTS users (
+  avatar TEXT DEFAULT "",
   biography TEXT DEFAULT "",
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-  email TEXT NOT NULL UNIQUE,
+  email TEXT NOT NULL UNIQUE COLLATE NOCASE,
+  email_verified BOOLEAN DEFAULT FALSE,
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   job TEXT DEFAULT "",
-  language TEXT DEFAULT "en",
+  language TEXT DEFAULT "en" CHECK (language IN ('en', 'fr', 'es', 'de', 'it')),
+  last_login_at DATETIME,
   location TEXT DEFAULT "",
-  name TEXT NOT NULL UNIQUE,
+  name TEXT NOT NULL UNIQUE COLLATE NOCASE,
   password TEXT NOT NULL,
-  role TEXT NOT NULL DEFAULT 'user',
-  socials TEXT DEFAULT "[]",
+  role TEXT NOT NULL DEFAULT 'user' CHECK (role IN ('user', 'admin', 'moderator')),
+  socials TEXT DEFAULT "[]" CHECK (json_valid(socials)),
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -35,24 +38,24 @@ CREATE TABLE IF NOT EXISTS posts (
   image_alt TEXT,
   image_ext TEXT,
   image_src TEXT,
-  language TEXT,
-  links TEXT,
-  metrics_comments INTEGER DEFAULT 0,
-  metrics_likes INTEGER DEFAULT 0,
-  metrics_views INTEGER DEFAULT 0,
+  language TEXT DEFAULT "en" CHECK (language IN ('en', 'fr', 'es', 'de', 'it')),
+  links TEXT DEFAULT "{}" CHECK (json_valid(links)),
+  metrics_comments INTEGER DEFAULT 0 CHECK (metrics_comments >= 0),
+  metrics_likes INTEGER DEFAULT 0 CHECK (metrics_likes >= 0),
+  metrics_views INTEGER DEFAULT 0 CHECK (metrics_views >= 0),
   name TEXT NOT NULL,
   published_at DATETIME,
   slug TEXT NOT NULL UNIQUE,
-  styles TEXT DEFAULT "{}",
-  tags TEXT DEFAULT "[]",
+  status TEXT DEFAULT 'draft' CHECK (status IN ('draft', 'published', 'archived')),
+  styles TEXT DEFAULT "{}" CHECK (json_valid(styles)),
+  tags TEXT DEFAULT "[]" CHECK (json_valid(tags)),
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   user_id INTEGER NOT NULL,
-  visibility TEXT DEFAULT 'private',
   
-  FOREIGN KEY (user_id) REFERENCES users(id)
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
--- Create unique index for slug
+-- Create unique index for posts table
 CREATE UNIQUE INDEX IF NOT EXISTS idx_posts_unique_slug ON posts (slug);
 
 -- Trigger to update the updated_at timestamp whenever a post is modified
@@ -70,24 +73,27 @@ CREATE TABLE IF NOT EXISTS projects (
   company TEXT,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   description TEXT,
+  end_date DATETIME,
   image_alt TEXT,
   image_ext TEXT,
   image_src TEXT,
-  links TEXT,
-  metrics_comments INTEGER DEFAULT 0,
-  metrics_likes INTEGER DEFAULT 0,
-  metrics_views INTEGER DEFAULT 0,
+  links TEXT DEFAULT "{}" CHECK (json_valid(links)),
+  metrics_comments INTEGER DEFAULT 0 CHECK (metrics_comments >= 0),
+  metrics_likes INTEGER DEFAULT 0 CHECK (metrics_likes >= 0),
+  metrics_views INTEGER DEFAULT 0 CHECK (metrics_views >= 0),
   name TEXT NOT NULL,
   slug TEXT NOT NULL UNIQUE,
-  tags TEXT DEFAULT "[]",
-  visibility TEXT DEFAULT 'private',
+  tags TEXT DEFAULT "[]" CHECK (json_valid(tags)),
+  start_date DATETIME,
+  status TEXT DEFAULT 'active' CHECK (status IN ('active', 'completed', 'archived', 'on-hold')),
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   user_id INTEGER NOT NULL,
   
-  FOREIGN KEY (user_id) REFERENCES users(id)
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  CHECK (end_date IS NULL OR start_date IS NULL OR end_date >= start_date)
 );
 
--- Create unique index for slug
+-- Create unique index for projects table
 CREATE UNIQUE INDEX IF NOT EXISTS idx_projects_unique_slug ON projects (slug);
 
 -- Trigger to update the updated_at timestamp whenever a project is modified
@@ -100,12 +106,15 @@ END;
 
 -- Create the messages table
 CREATE TABLE IF NOT EXISTS messages (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  message TEXT NOT NULL,
-  subject TEXT NOT NULL,
-  sender_email TEXT NOT NULL,
-  read BOOLEAN DEFAULT FALSE,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  ip_address TEXT,
+  message TEXT NOT NULL,
+  priority TEXT DEFAULT 'normal' CHECK (priority IN ('low', 'normal', 'high', 'urgent')),
+  read BOOLEAN DEFAULT FALSE,
+  sender_email TEXT NOT NULL,
+  spam BOOLEAN DEFAULT FALSE,
+  subject TEXT NOT NULL,
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 

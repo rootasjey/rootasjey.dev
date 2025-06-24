@@ -17,18 +17,19 @@
       </h5>
     </section>
 
-    <PostHome :posts="posts" />
+    <PostHome :posts="posts" v-if="posts.list.value.length" />
 
     <ProjectHome 
+      v-if="projects.length"
       :projects="projects" 
       :projectsLoading="projectStatus === 'pending'" 
       :projectsError="projectStatus === 'error'" 
     />
 
     <ExperimentHome
-    :experiments="experiments"
-    :experimentLoading="false"
-    :experimentError="experimentStatus === 'error'"
+      :experiments="experiments"
+      :experimentLoading="false"
+      :experimentError="experimentStatus === 'error'"
     />
 
     <HomeFooter class="mt-36" />

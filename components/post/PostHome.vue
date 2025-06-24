@@ -17,7 +17,7 @@
     
     <div v-else-if="posts.list.value.length > 0" 
           class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-      <PostCard v-for="post in posts.list.value.slice(2)" :key="post.id" :post="post" />
+      <PostCard v-for="post in posts.list.value" :key="post.id" :post="post" />
     </div>
     
     <div v-else class="text-center py-8">
@@ -32,6 +32,6 @@ interface Props {
   posts: PostsComposable
 }
 
-defineProps<Props>();
+const props = defineProps<Props>();
 
 </script>

@@ -1,7 +1,7 @@
 export type CreatePostType = {
   description: string
   name: string
-  visibility?: 'public' | 'private' | 'archive'
+  status?: 'draft' | 'published' | 'archived'
   tags?: string[]
 }
 
@@ -39,13 +39,18 @@ export type PostType = {
   name: string
   /** Computed property: first tag as primary tag */
   primaryTag?: string
+  published_at?: string
   /** Computed property: remaining tags after primary */
   secondaryTags?: string[]
   slug: string
+  status: 'draft' | 'published' | 'archived'
   tags: string[]
   updated_at: string
   user_id: number
-  visibility: 'public' | 'private' | 'archive'
+  user?: {
+    name?: string
+    avatar?: string
+  }
 }
 
 export type PostLinkType = {

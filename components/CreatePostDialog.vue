@@ -53,18 +53,18 @@
           </div>
         </div>
 
-        <!-- Visibility Field -->
+        <!-- Status Field -->
         <div class="grid grid-cols-3 items-center gap-4">
-          <ULabel for="create-visibility" class="text-right">
-            Visibility
+          <ULabel for="create-status" class="text-right">
+            Status
           </ULabel>
           <USelect 
-            id="create-visibility" 
-            v-model="form.visibility" 
+            id="create-status" 
+            v-model="form.status" 
             item-key="label"
             value-key="label"
-            :items="visibilityOptions" 
-            placeholder="Select visibility"
+            :items="statusOptions" 
+            placeholder="Select status"
           />
         </div>
       </div>
@@ -119,7 +119,7 @@ const form = reactive({
   name: '',
   description: '',
   tags: [] as string[],
-  visibility: { label: 'Private', value: 'private' },
+  status: { label: 'Draft', value: 'draft' },
 })
 
 // Validation state
@@ -131,11 +131,11 @@ const errors = reactive({
 // UI state
 const isLoading = ref(false)
 
-// Visibility options
-const visibilityOptions = [
-  { label: 'Private', value: 'private' },
-  { label: 'Public', value: 'public' },
-  { label: 'Draft', value: 'draft' }
+// Status options
+const statusOptions = [
+  { label: 'Draft', value: 'draft' },
+  { label: 'Published', value: 'published' },
+  { label: 'Archived', value: 'archived' }
 ]
 
 // Computed
@@ -172,7 +172,7 @@ const resetForm = () => {
   form.name = ''
   form.description = ''
   form.tags = []
-  form.visibility = { label: 'Private', value: 'private' }
+  form.status = { label: 'Draft', value: 'draft' }
   errors.name = ''
   errors.tags = ''
 }
@@ -202,7 +202,7 @@ const handleCreatePost = async () => {
       name: form.name.trim(),
       description: form.description.trim(),
       tags: form.tags,
-      visibility: form.visibility.value as 'public' | 'private' | 'archive',
+      status: form.status.value as 'draft' | 'published' | 'archived',
     }
 
     // Update tag usage statistics

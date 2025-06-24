@@ -192,8 +192,8 @@ const emit = defineEmits<PostItemEmits>()
 const { getPrimaryTag, getSecondaryTags } = useTags()
 
 // Computed properties
-const isDraft = computed(() => props.post.visibility === 'private')
-const isPublished = computed(() => props.post.visibility === 'public')
+const isDraft = computed(() => props.post.status === 'draft')
+const isPublished = computed(() => props.post.status === 'published')
 
 const postUrl = computed(() => {
   if (props.linkDisabled) return undefined

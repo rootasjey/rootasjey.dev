@@ -66,18 +66,18 @@
           </div>
         </div>
 
-        <!-- Visibility Field -->
+        <!-- Status Field -->
         <div class="grid grid-cols-3 items-center gap-4">
-          <ULabel for="create-visibility" class="text-right">
-            Visibility
+          <ULabel for="create-status" class="text-right">
+            Status
           </ULabel>
           <USelect 
-            id="create-visibility" 
-            v-model="form.visibility" 
+            id="create-status" 
+            v-model="form.status" 
             item-key="label"
             value-key="label"
-            :items="visibilityOptions" 
-            placeholder="Select visibility"
+            :items="statusOptions" 
+            placeholder="Select status"
           />
         </div>
       </div>
@@ -133,7 +133,7 @@ const form = reactive({
   description: '',
   company: '',
   tags: [] as string[],
-  visibility: { label: 'Private', value: 'private' },
+  status: { label: 'Active', value: 'active' },
 })
 
 // Validation state
@@ -145,10 +145,12 @@ const errors = reactive({
 // UI state
 const isLoading = ref(false)
 
-// Visibility options
-const visibilityOptions = [
-  { label: 'Private', value: 'private' },
-  { label: 'Public', value: 'public' },
+// Status options
+const statusOptions = [
+  { label: 'Active', value: 'active' },
+  { label: 'Archived', value: 'archived' },
+  { label: 'Completed', value: 'completed' },
+  { label: 'On-hold', value: 'on-hold' },
 ]
 
 // Computed
@@ -186,7 +188,7 @@ const resetForm = () => {
   form.description = ''
   form.company = ''
   form.tags = []
-  form.visibility = { label: 'Private', value: 'private' }
+  form.status = form.status = statusOptions.find(o => o.value === 'active') || statusOptions[0]
   errors.name = ''
   errors.tags = ''
 }
@@ -217,7 +219,9 @@ const handleCreateProject = async () => {
       description: form.description.trim(),
       company: form.company.trim(),
       tags: form.tags,
-      visibility: form.visibility.value as 'public' | 'private',
+      status: (['active', 'completed', 'archived', 'on-hold'] as const).includes(form.status.value as any) 
+        ? form.status.value as 'active' | 'completed' | 'archived' | 'on-hold'
+        : 'active',
     }
 
     // Update tag usage statistics

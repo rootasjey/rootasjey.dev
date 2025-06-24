@@ -5,7 +5,7 @@ interface UpdatePostType {
   name: string
   description: string
   tags: string[]
-  visibility: string
+  status?: 'draft' | 'published' | 'archived'
 }
 
 interface UsePostManagementOptions {
@@ -70,7 +70,7 @@ export const usePosts = (options: UsePostManagementOptions = {}) => {
       })
 
       // Only add to posts array if it's published (not draft)
-      if (newPost.visibility !== 'private') {
+      if (newPost.status !== 'draft') {
         list.value.unshift(newPost as PostType)
       }
 
@@ -96,13 +96,13 @@ export const usePosts = (options: UsePostManagementOptions = {}) => {
 
       if (!success) throw new Error(message)
 
-      // Handle visibility changes
+      // Handle status changes
       const postIndex = list.value.findIndex(p => p.id === postId)
       
       // Remove from published posts if changed to draft
-      if (updatedPost.visibility === 'private' && postIndex !== -1) {
+      if (updatedPost.status === 'draft' && postIndex !== -1) {
         list.value.splice(postIndex, 1)
-      } else if (updatedPost.visibility !== 'private') {
+      } else if (updatedPost.status !== 'draft') {
         postIndex !== -1 
           // Update or add to published posts
           ? list.value[postIndex] = { ...list.value[postIndex], ...updatedPost }
@@ -154,7 +154,7 @@ export const usePosts = (options: UsePostManagementOptions = {}) => {
 
   // Optimistic updates for better UX
   const addPostOptimistically = (post: PostType) => {
-    if (post.visibility !== 'private') {
+    if (post.status !== 'draft') {
       list.value.unshift(post)
     }
   }

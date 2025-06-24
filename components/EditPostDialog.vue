@@ -56,18 +56,18 @@
           </div>
         </div>
 
-        <!-- Visibility Field -->
+        <!-- Status Field -->
         <div class="grid grid-cols-3 items-center gap-4">
-          <ULabel for="edit-visibility" class="text-right">
-            Visibility
+          <ULabel for="edit-status" class="text-right">
+            Status
           </ULabel>
           <USelect 
-            id="edit-visibility" 
-            v-model="form.visibility" 
+            id="edit-status" 
+            v-model="form.status" 
             item-key="label"
             value-key="label"
             :items="visibilityOptions" 
-            placeholder="Select visibility"
+            placeholder="Select status"
             @change="markAsChanged"
           />
         </div>
@@ -109,7 +109,7 @@ interface Emits {
     name: string
     description: string
     tags: string[]
-    visibility: string
+    status: 'draft' | 'published' | 'archived'
   }): void
 }
 
@@ -131,7 +131,7 @@ const form = reactive({
   name: '',
   description: '',
   tags: [] as string[],
-  visibility: { label: 'Private', value: 'private' },
+  status: { label: 'Draft', value: 'draft' },
 })
 
 // Original form state for change detection
@@ -139,7 +139,7 @@ const originalForm = reactive({
   name: '',
   description: '',
   tags: [] as string[],
-  visibility: { label: 'Private', value: 'private' },
+  status: { label: 'Draft', value: 'draft' },
 })
 
 // Validation state
@@ -152,11 +152,11 @@ const errors = reactive({
 const isLoading = ref(false)
 const hasChanges = ref(false)
 
-// Visibility options
+// Status options
 const visibilityOptions = [
-  { label: 'Private', value: 'private' },
-  { label: 'Public', value: 'public' },
-  { label: 'Draft', value: 'draft' }
+  { label: 'Draft', value: 'draft' },
+  { label: 'Published', value: 'publihsed' },
+  { label: 'Archived', value: 'archived' }
 ]
 
 // Computed
@@ -198,7 +198,7 @@ const markAsChanged = () => {
     form.name !== originalForm.name ||
     form.description !== originalForm.description ||
     JSON.stringify(form.tags) !== JSON.stringify(originalForm.tags) ||
-    form.visibility !== originalForm.visibility
+    form.status !== originalForm.status
   )
 }
 
@@ -206,13 +206,13 @@ const populateForm = (post: PostType) => {
   form.name = post.name || ''
   form.description = post.description || ''
   form.tags = Array.isArray(post.tags) ? [...post.tags] : []
-  form.visibility = convertVisibility(post.visibility)
+  form.status = convertVisibility(post.status)
   
   // Store original values for change detection
   originalForm.name = form.name
   originalForm.description = form.description
   originalForm.tags = [...form.tags]
-  originalForm.visibility = form.visibility
+  originalForm.status = form.status
   
   // Reset change detection
   hasChanges.value = false
@@ -221,18 +221,18 @@ const populateForm = (post: PostType) => {
 }
 
 const convertVisibility = (visibility: string) => {
-  return visibilityOptions.find(option => option.value === visibility.toLowerCase()) || { label: 'Private', value: 'private' }
+  return visibilityOptions.find(option => option.value === visibility.toLowerCase()) || { label: 'Draft', value: 'draft' }
 }
 
 const resetForm = () => {
   form.name = ''
   form.description = ''
   form.tags = []
-  form.visibility = { label: 'Private', value: 'private' }
+  form.status = { label: 'Draft', value: 'draft' }
   originalForm.name = ''
   originalForm.description = ''
   originalForm.tags = []
-  originalForm.visibility = { label: 'Private', value: 'private' }
+  originalForm.status = { label: 'Draft', value: 'draft' }
   errors.name = ''
   errors.tags = ''
   hasChanges.value = false
@@ -290,7 +290,7 @@ const handleUpdatePost = async () => {
       name: form.name.trim(),
       description: form.description.trim(),
       tags: form.tags,
-      visibility: form.visibility.value,
+      status: form.status.value as 'draft' | 'published' | 'archived',
     }
 
     emit('update-post', updateData)
@@ -299,7 +299,7 @@ const handleUpdatePost = async () => {
     originalForm.name = form.name
     originalForm.description = form.description
     originalForm.tags = [...form.tags]
-    originalForm.visibility = form.visibility
+    originalForm.status = form.status
     hasChanges.value = false
     
     isOpen.value = false

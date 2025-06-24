@@ -8,7 +8,7 @@ const updatePostSchema = z.object({
   tags: z.array(z.string().min(1).max(50)).max(20).optional(),
   language: z.enum(['en', 'fr']).optional(),
   slug: z.string().min(1).max(255).optional(),
-  visibility: z.enum(['public', 'private', 'archive']).optional(),
+  status: z.enum(['draft', 'published', 'archived']).optional(),
 })
 
 export default defineEventHandler(async (event) => {
@@ -87,19 +87,19 @@ export default defineEventHandler(async (event) => {
     updateData.slug = validatedBody.slug
   }
 
-  if (validatedBody.visibility !== undefined) {
-    updateFields.push('visibility = ?')
-    updateValues.push(validatedBody.visibility)
-    updateData.visibility = validatedBody.visibility
+  if (validatedBody.status !== undefined) {
+    updateFields.push('status = ?')
+    updateValues.push(validatedBody.status)
+    updateData.status = validatedBody.status
 
-    // Set published_at when changing to public
-    if (validatedBody.visibility === 'public' && post.visibility !== 'public') {
+    // Set published_at when changing to published
+    if (validatedBody.status === 'published' && post.status !== 'published') {
       updateFields.push('published_at = ?')
       updateValues.push(new Date().toISOString())
       updateData.published_at = new Date().toISOString()
     }
-    // Clear published_at when changing from public
-    else if (validatedBody.visibility !== 'public' && post.visibility === 'public') {
+    // Clear published_at when changing from published
+    else if (validatedBody.status !== 'published' && post.status === 'published') {
       updateFields.push('published_at = ?')
       updateValues.push(null)
       updateData.published_at = null

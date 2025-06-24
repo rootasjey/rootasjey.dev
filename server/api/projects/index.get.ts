@@ -6,12 +6,12 @@ export default defineEventHandler(async (event) => {
   const query = getQuery(event)
   const limit = parseInt((query.limit as string) ?? '50', 10)
   const offset = parseInt((query.offset as string) ?? '0', 10)
-  const visibility = query.visibility ?? 'public'
 
   const session = await getUserSession(event)
 
-  let sql = `SELECT * FROM projects WHERE (visibility = ?${session?.user?.id ? ' OR user_id = ?' : ''})`
-  const params = [visibility]
+  // Build SQL query to exclude archived projects unless user owns them
+  let sql = `SELECT * FROM projects WHERE (status != 'archived'${session?.user?.id ? ' OR user_id = ?' : ''})`
+  const params = []
   
   if (session?.user?.id) {
     params.push(session.user.id)
@@ -32,8 +32,8 @@ export default defineEventHandler(async (event) => {
     if (typeof project.links === 'string') {
       try { project.links = JSON.parse(project.links) } catch { project.links = [] }
     }
-    if (typeof project.technologies === 'string') {
-      try { project.technologies = JSON.parse(project.technologies) } catch { project.technologies = [] }
+    if (typeof project.tags === 'string') {
+      try { project.tags = JSON.parse(project.tags) } catch { project.tags = [] }
     }
 
     project.image = {
@@ -48,10 +48,11 @@ export default defineEventHandler(async (event) => {
     delete project.image_src
   }
 
-  // Get total count for pagination
-  const countSql = `SELECT COUNT(*) as count FROM projects WHERE (visibility = ?${session?.user?.id ? ' OR user_id = ?' : ''})`
-  const countParams = [visibility]
+  // Get total count for pagination with same filtering logic
+  const countSql = `SELECT COUNT(*) as count FROM projects WHERE (status != 'archived'${session?.user?.id ? ' OR user_id = ?' : ''})`
+  const countParams = []
   if (session?.user?.id) countParams.push(session.user.id)
+  
   const countResponse = await hubDatabase()
     .prepare(countSql)
     .bind(...countParams)

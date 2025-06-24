@@ -18,8 +18,17 @@ export default defineEventHandler(async (event) => {
     if (session && session.user) { userId = session.user.id }
   } catch (error) { /* No session, continue as anonymous user */}
 
-  const post = await db
-  .prepare(`SELECT * FROM posts WHERE id = ? OR slug = ? LIMIT 1`)
+   const post = await db
+  .prepare(`
+    SELECT 
+      p.*,
+      u.name as user_name,
+      u.avatar as user_avatar
+    FROM posts p
+    JOIN users u ON p.user_id = u.id
+    WHERE p.id = ? OR p.slug = ? 
+    LIMIT 1
+  `)
   .bind(idOrSlug, idOrSlug)
   .first()
 
@@ -30,7 +39,7 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  if (post.visibility !== "public" && post.user_id !== userId) {
+  if (post.status !== "published" && post.user_id !== userId) {
     throw createError({
       statusCode: 403,
       message: 'You are not authorized to view this post',
@@ -68,6 +77,11 @@ export default defineEventHandler(async (event) => {
     views: post.metrics_views || 0,
   }
 
+  post.user = {
+    name: post.user_name || "",
+    avatar: post.user_avatar || ""
+  }
+
   // Remove redundant fields
   delete post.image_alt
   delete post.image_ext
@@ -77,5 +91,8 @@ export default defineEventHandler(async (event) => {
   delete post.metrics_likes
   delete post.metrics_views
 
+  delete post.user_name
+  delete post.user_avatar
+  
   return post
 })

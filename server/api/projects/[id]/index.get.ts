@@ -33,7 +33,7 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  if (project.visibility !== "public" && project.user_id !== userId) {
+  if (project.status === "archived" && project.user_id !== userId) {
     throw createError({
       statusCode: 403,
       message: 'You are not authorized to view this project',
@@ -71,7 +71,7 @@ export default defineEventHandler(async (event) => {
   }
 
   if (typeof project.links === 'string') { project.links = JSON.parse(project.links) }
-  if (typeof project.technologies === 'string') { project.technologies = JSON.parse(project.technologies) }
+  if (typeof project.tags === 'string') { project.tags = JSON.parse(project.tags) }
 
   project.image = {
     alt: project.image_alt || "",

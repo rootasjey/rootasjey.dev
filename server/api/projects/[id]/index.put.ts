@@ -31,14 +31,14 @@ export default defineEventHandler(async (event) => {
       description = ?,
       tags = ?,
       company = ?,
-      visibility = ?`
+      status = ?`
   
   const updateParams = [
     body.name,
     body.description ?? "",
     typeof body.tags === 'object' ? JSON.stringify(body.tags || []) : '[]',
     body.company ?? "",
-    body.visibility ?? "private"
+    body.status ?? "active"
   ]
 
   if (shouldUpdateSlug) {

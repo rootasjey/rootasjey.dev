@@ -219,7 +219,7 @@ const exportPostToJson = () => {
     post: project.value.post,
     user_id: project.value.user_id,
     updated_at: project.value.updated_at,
-    visibility: project.value.visibility,
+    status: project.value.status,
   }
   
   // Convert to JSON string with pretty formatting

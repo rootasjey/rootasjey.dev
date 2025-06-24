@@ -41,7 +41,7 @@ export function usePostActions(dependencies: {
         tagManagement.incrementPostTagsUsage(postData.tags)
       }
       
-      if (newPost && newPost.visibility === 'private') {
+      if (newPost && newPost.status === 'draft') {
         drafts.addDraft(newPost)
       }
     } catch (error: any) {
@@ -61,7 +61,7 @@ export function usePostActions(dependencies: {
     name: string
     description: string
     tags: string[]
-    visibility: 'public' | 'private' | 'archive'
+    status: 'draft' | 'published' | 'archived'
   }) => {
     try {
       // Get the original post to track tag usage changes
@@ -85,7 +85,7 @@ export function usePostActions(dependencies: {
       // Handle cross-composable state sync
       // Add/update in drafts, remove from posts (handled by postManagement)
       // Remove from drafts if published, add to posts (handled by postManagement)
-      updateData.visibility === 'private'
+      updateData.status === 'draft'
         ? drafts.updateDraft(updatedPost.id, updatedPost)
         : drafts.removeDraft(updatedPost.id)
       
@@ -110,7 +110,7 @@ export function usePostActions(dependencies: {
         tagManagement.decrementPostTagsUsage(post.tags)
       }
       
-      if (post.visibility === 'private') {
+      if (post.status === 'draft') {
         drafts.removeDraft(post.id)
       }
     } catch (error: any) {
@@ -131,7 +131,7 @@ export function usePostActions(dependencies: {
         name: `${post.name} (Copy-${new Date().getTime()})`,
         description: post.description,
         tags: post.tags ? [...post.tags] : [], // Copy tags array
-        visibility: post.visibility,
+        status: post.status,
       })
     } catch (error: any) {
       console.error('Failed to duplicate post:', error)
@@ -152,7 +152,7 @@ export function usePostActions(dependencies: {
         name: draft.name,
         description: draft.description,
         tags: draft.tags || [],
-        visibility: 'public'
+        status: 'published',
       })
     } catch (error: any) {
       console.error('Failed to publish draft:', error)
@@ -173,11 +173,11 @@ export function usePostActions(dependencies: {
         name: post.name,
         description: post.description,
         tags: post.tags || [],
-        visibility: 'private'
+        status: 'draft'
       })
       
       // Move from published to drafts
-      drafts.addDraft({ ...post, visibility: 'private' })
+      drafts.addDraft({ ...post, status: 'draft' })
     } catch (error: any) {
       console.error('Failed to unpublish post:', error)
       toast({
@@ -197,7 +197,7 @@ export function usePostActions(dependencies: {
         name: post.name,
         description: post.description,
         tags: post.tags || [],
-        visibility: 'archive',
+        status: 'archived',
       })
     } catch (error: any) {
       console.error('Failed to archive post:', error)
@@ -276,7 +276,7 @@ export function usePostActions(dependencies: {
           name: draft.name,
           description: draft.description,
           tags: draft.tags || [],
-          visibility: 'private',
+          status: 'draft',
         })
       }
       

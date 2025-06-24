@@ -8,7 +8,7 @@ export default defineEventHandler(async (event) => {
   
   const rows = await db.prepare(`
     SELECT * FROM posts 
-    WHERE user_id = ? AND (visibility = 'private')
+    WHERE user_id = ? AND (status = 'draft')
     ORDER BY created_at DESC
     LIMIT 25
   `)

@@ -1,39 +1,17 @@
 <template>
   <div class="frame">
     <article>
-      <header class="min-h-95vh 
-        m-4 border-1 b-dashed rounded-2 border-gray-200 dark:border-gray-400
-        text-center flex flex-col justify-center items-center">
-        <div v-if="post" class="mt-2">
+      <header v-if="post" class="mt-24
+        w-full text-center flex flex-col justify-center items-center">
+        
+        <div class="w-md mt-2">
           <UInput v-model="post.name"
-            class="text-6xl font-800 min-h-0 mb-8 p-0 overflow-y-hidden shadow-none text-align-center"
+            class="font-text text-xl font-800 min-h-0 mb-2 p-0 overflow-y-hidden shadow-none text-align-center"
             :readonly="!_canEdit" input="~" label="Name" type="textarea" :rows="1" autoresize />
 
           <UInput v-model="post.description"
-            class="text-gray-700 dark:text-gray-300 -mt-4 -ml-2.5 shadow-none text-align-center"
-            :readonly="!_canEdit" input="~" label="Description" />
-
-          <div :class="`flex items-center gap-2 justify-center`">
-            <span class="text-size-3 text-gray-500 dark:text-gray-400">
-              {{ new Date(post.created_at).toLocaleString("fr", {
-              month: "long",
-              day: "numeric",
-              year: "numeric",
-              }) }}
-            </span>
-            <span class="text-size-3 text-gray-500 dark:text-gray-600 dark:hover:text-gray-400 transition">
-              • Last updated on {{ new Date(post.updated_at).toLocaleString("fr", {
-              month: "long",
-              day: "numeric",
-              year: "numeric",
-              hour: "numeric",
-              minute: "numeric",
-              second: "numeric",
-              }) }}
-            </span>
-            <UIcon :name="_saving === undefined ? '' : _saving ? 'i-loading' : 'i-check'"
-              :class="_saving ? 'animate-spin text-muted' : 'text-lime-300'" />
-          </div>
+            class="font-text text-gray-700 dark:text-gray-300 shadow-none text-align-center"
+            :readonly="!_canEdit" input="~" label="Description" type="textarea" autoresize />
           
           <div class="flex items-center gap-2 mt-2 justify-center">
             <!-- Primary Tag Display/Edit -->
@@ -50,13 +28,13 @@
               </USelect>
             </div>
 
-            <!-- Visibility Control -->
+            <!-- Status Control -->
             <div class="max-w-20">
-              <USelect v-if="_canEdit" v-model="post.visibility" :items="_visibilities">
+              <USelect v-if="_canEdit" v-model="post.status" :items="_visibilities">
                 <template #trigger>
-                  <UIcon name="i-icon-park-outline:preview-close" v-if="post.visibility === 'private'" />
-                  <UIcon name="i-icon-park-outline:preview-open" v-else-if="post.visibility === 'public'" />
-                  <UIcon name="i-icon-park-outline:preview-close" v-else />
+                  <UIcon name="i-icon-park-outline:preview-close" v-if="post.status === 'draft'" />
+                  <UIcon name="i-icon-park-outline:preview-open" v-else-if="post.status === 'published'" />
+                  <UIcon name="i-ph-archive" v-else />
                 </template>
               </USelect>
             </div>
@@ -143,27 +121,70 @@
               {{ tag }}
             </UBadge>
           </div>
+        </div>
 
-          <!-- Cover Image Display -->
-          <div v-if="post.image?.src" class="relative group">
-            <NuxtImg 
-              provider="hubblob"
-              v-if="post.image?.src" 
-              :src="`/${post.image.src}/original.${post.image.ext}`" 
-              class="w-full h-80 object-cover rounded-lg mt-4" 
-            />
-            <div class="flex gap-2 absolute top-1 right-1">
-              <UButton v-if="_canEdit" icon @click="uploadCoverImage" btn="~" label="i-icon-park-outline:upload-picture"
-                class="btn-glowing cursor-pointer opacity-0 group-hover:opacity-100 transition-all" />
+        <div class="w-md mt-4 flex justify-between pt-4 border-t-2 dark:border-gray-800">
+          <div class="flex gap-4 items-center">
+            <div class="w-8 h-8 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center">
+              <svg viewBox="0 0 36 36" fill="none" role="img" xmlns="http://www.w3.org/2000/svg" width="80" height="80"><mask :id="`avatar-mask-${post.id}`" maskUnits="userSpaceOnUse" x="0" y="0" width="36" height="36"><rect width="36" height="36" rx="72" fill="#FFFFFF"></rect></mask><g mask="url(#:ru4:)"><rect width="36" height="36" fill="#ff005b"></rect><rect x="0" y="0" width="36" height="36" transform="translate(9 -5) rotate(219 18 18) scale(1)" fill="#ffb238" rx="6"></rect><g transform="translate(4.5 -4) rotate(9 18 18)"><path d="M15 19c2 1 4 1 6 0" stroke="#000000" fill="none" stroke-linecap="round"></path><rect x="10" y="14" width="1.5" height="2" rx="1" stroke="none" fill="#000000"></rect><rect x="24" y="14" width="1.5" height="2" rx="1" stroke="none" fill="#000000"></rect></g></g></svg>
+            </div>
+            <div class="text-align-start flex flex-col">
+              <h4>{{ post.user?.name }}</h4>
+              <span class="text-size-3 text-gray-500 dark:text-gray-400">
+                {{ formatPublishedDate(post.published_at ?? post.updated_at) }}
+              </span>
 
-              <UButton v-if="_canEdit" icon @click="removeCoverImage" btn="~" label="i-icon-park-outline:delete"
-                class="btn-glowing cursor-pointer opacity-0 group-hover:opacity-100 transition-all" />
+              <div class="flex items-center gap-2 justify-center">
+                <span class="text-size-3 text-gray-500 dark:text-gray-500 dark:hover:text-gray-200 transition">
+                  Last updated on {{ formatUpdatedDate(post.updated_at ?? post.created_at) }}
+                </span>
+                <UIcon :name="_saving === undefined ? '' : _saving ? 'i-loading' : 'i-check'"
+                  :class="_saving ? 'animate-spin text-muted' : 'text-lime-300'" />
+              </div>
             </div>
           </div>
+
+          <div class="flex">
+            <UButton 
+              icon
+              label="i-ph-chat"
+              btn="ghost-gray"
+              class="hover:scale-102 active:scale-99 transition"
+            />
+            <UButton 
+              icon
+              label="i-lucide-share"
+              btn="ghost-gray"
+              class="hover:scale-102 active:scale-99 transition"
+            />
+          </div>
+        </div>
+
+        <!-- Cover Image Display -->
+        <div v-if="post.image?.src" class="relative group">
+          <NuxtImg 
+            provider="hubblob"
+            :src="`/${post.image.src}/original.${post.image.ext}`" 
+            class="w-full h-80 object-cover rounded-lg mt-4" 
+          />
+          <div class="flex gap-2 absolute top-1 right-1">
+            <UButton v-if="_canEdit" icon @click="uploadCoverImage" btn="~" label="i-icon-park-outline:upload-picture"
+              class="btn-glowing cursor-pointer opacity-0 group-hover:opacity-100 transition-all" />
+
+            <UButton v-if="_canEdit" icon @click="removeCoverImage" btn="~" label="i-icon-park-outline:delete"
+              class="btn-glowing cursor-pointer opacity-0 group-hover:opacity-100 transition-all" />
+          </div>
+        </div>
+        
+        <div v-else class="mb-8 mt-8 w-md">
+          <div class="border-b b-dashed b-b-amber"></div>
+          <div class="border-b b-dashed b-b-blue relative top-2"></div>
+          <!-- <div class="wavy-line wavy-line-blue" data-text="xxxxxxxxxxxxxx"></div>
+          <div class="relative -top-12 wavy-line wavy-line-yellow" data-text="xxxxxxxxxxxxxx"></div> -->
         </div>
       </header>
 
-      <main v-if="post" class="w-500px md:w-xl pt-8 mx-auto">
+      <main v-if="post" class="md:w-xl pt-8 mx-auto">
         <client-only>
           <tiptap-editor :can-edit="true" :model-value="post.article" @update:model-value="onUpdateEditor" />
         </client-only>
@@ -174,7 +195,7 @@
       </div>
     </article>
 
-    <div class="w-500px md:w-xl mx-auto">
+    <div class="mt-32 w-500px md:w-xl mx-auto">
       <Footer />
     </div>
 
@@ -433,7 +454,7 @@ const exportPostToJson = () => {
     article: post.value.article,
     tags: post.value.tags,
     language: post.value.language,
-    visibility: post.value.visibility,
+    status: post.value.status,
     created_at: post.value.created_at,
     updated_at: post.value.updated_at,
     image: post.value.image,
@@ -553,9 +574,34 @@ const updatePostArticle = async (value: Object) => {
   })
 }
 
+const formatPublishedDate = (date: string | Date): string => {
+  if (!date) return "Unknown Date"
+  const dateObj = new Date(date)
+  const options: Intl.DateTimeFormatOptions = { 
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  }
+  return dateObj.toLocaleString('fr', options)
+}
+
+const formatUpdatedDate = (date: string | Date): string => {
+  if (!date) return "Unknown Date"
+  const dateObj = new Date(date)
+  const options: Intl.DateTimeFormatOptions = {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+  }
+  return dateObj.toLocaleString('fr', options)
+}
+
 /**
  * Watches for changes in the post's name, description, tags, 
- * slug, visibility, and selected language. 
+ * slug, status, and selected language. 
  * When any of these values change, 
  * it clears the _updatePostMetaTimer and sets a new timer 
  * to call the updatePost function after a 2000ms delay. 
@@ -568,7 +614,7 @@ watch(
     () => post.value?.description, 
     () => post.value?.tags, 
     () => post.value?.slug, 
-    () => post.value?.visibility,
+    () => post.value?.status,
     () => _selectedLanguage.value,
     () => _selectedPrimaryTag.value,
   ],
@@ -604,7 +650,7 @@ const updatePost = async () => {
       language: _selectedLanguage.value.value,
       name: post.value?.name,
       slug: post.value?.slug,
-      visibility: post.value?.visibility,
+      status: post.value?.status,
     },
   })
 
