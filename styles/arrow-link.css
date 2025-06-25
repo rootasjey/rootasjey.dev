@@ -1,5 +1,5 @@
 
-section a.arrow {
+a.arrow {
   --color: #646b8c;
   position: relative;
   text-decoration: none;
@@ -8,7 +8,7 @@ section a.arrow {
   padding: 0.2rem 0;
 }
 
-section a.arrow {
+a.arrow {
   &:nth-child(1) {
     --color: #0099FF;
   }
@@ -29,7 +29,7 @@ section a.arrow {
   }
 }
 
-.dark section a.arrow {
+.dark a.arrow {
   &:nth-child(1) {
     --color: #FFC534;
   }
@@ -47,7 +47,7 @@ section a.arrow {
   }
 }
 
-section a.arrow::before {
+a.arrow::before {
   --line-width: 115%;
   --line-height: 1px;
   --line-easing: ease;
@@ -64,27 +64,27 @@ section a.arrow::before {
   transition: transform var(--line-transition-duration) var(--line-easing);
   z-index: 1;
 }
-section a.arrow:hover::before {
+a.arrow:hover::before {
   transform-origin: left;
   transform: scaleX(1);
 }
-section a.arrow:hover span {
+a.arrow:hover span {
   --deg: -45deg;
 }
-section a.arrow:hover span::before {
+a.arrow:hover span::before {
   transform: rotate(var(--deg));
 }
-section a.arrow:hover span::after {
+a.arrow:hover span::after {
   transform: translateX(-1px) rotate(var(--deg));
 }
-section a.arrow span {
+a.arrow span {
   --line-arrow-width: 1px;
   --line-arrow-height: 6px;
   --line-arrow-easing: cubic-bezier(0.3, 1.5, 0.5, 1);
   --line-arrow-transition-duration: 200ms;
   --line-arrow-transition-delay: 240ms;
 }
-section a.arrow span::before, section a.arrow span::after {
+a.arrow span::before, a.arrow span::after {
   content: "";
   position: absolute;
   right: -18%;
@@ -94,13 +94,13 @@ section a.arrow span::before, section a.arrow span::after {
   transition-delay: var(--line-arrow-transition-delay);
   z-index: 2;
 }
-section a.arrow span::before {
+a.arrow span::before {
   width: var(--line-arrow-width);
   height: var(--line-arrow-height);
   transform-origin: 0% 100%;
   transform: rotate(-90deg);
 }
-section a.arrow span::after {
+a.arrow span::after {
   height: var(--line-arrow-width);
   width: var(--line-arrow-height);
   transform-origin: 100% 0%;

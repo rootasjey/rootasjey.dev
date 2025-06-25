@@ -22,7 +22,16 @@ export default defineEventHandler(async (event) => {
   } catch (error) { /* No session, continue as anonymous user */ }
 
   const project: ProjectType | null = await db
-  .prepare(`SELECT * FROM projects WHERE id = ? OR slug = ? LIMIT 1`)
+  .prepare(`
+    SELECT 
+      p.*,
+      u.avatar as user_avatar,
+      u.name as user_name
+    FROM projects p
+    JOIN users u ON p.user_id = u.id
+    WHERE p.id = ? OR p.slug = ?
+    LIMIT 1
+  `)
   .bind(idOrSlug, idOrSlug)
   .first()
 
@@ -79,10 +88,28 @@ export default defineEventHandler(async (event) => {
     src: project.image_src || ""
   }
 
+  project.metrics = {
+    comments: project.metrics_comments || 0,
+    likes: project.metrics_likes || 0,
+    views: project.metrics_views || 0,
+  }
+
+  project.user = {
+    name: project.user_name || "",
+    avatar: project.user_avatar || ""
+  }
+
   // Remove redundant fields
   delete project.image_alt
   delete project.image_ext
   delete project.image_src
+
+  delete project.metrics_comments
+  delete project.metrics_likes
+  delete project.metrics_views
+
+  delete project.user_name
+  delete project.user_avatar
 
   return project
 })

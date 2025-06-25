@@ -37,7 +37,6 @@
 </template>
 
 <script setup>
-
 useHead({
   title: "root",
   meta: [

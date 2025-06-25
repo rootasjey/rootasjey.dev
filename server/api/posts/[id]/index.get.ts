@@ -1,5 +1,7 @@
 // GET /api/posts/:id
 
+import { PostType } from "~/types/post"
+
 export default defineEventHandler(async (event) => {
   const idOrSlug = getRouterParam(event, 'id')
   const db = hubDatabase()
@@ -18,12 +20,12 @@ export default defineEventHandler(async (event) => {
     if (session && session.user) { userId = session.user.id }
   } catch (error) { /* No session, continue as anonymous user */}
 
-   const post = await db
+   const post: PostType | null = await db
   .prepare(`
     SELECT 
       p.*,
-      u.name as user_name,
-      u.avatar as user_avatar
+      u.avatar as user_avatar,
+      u.name as user_name
     FROM posts p
     JOIN users u ON p.user_id = u.id
     WHERE p.id = ? OR p.slug = ? 
@@ -93,6 +95,6 @@ export default defineEventHandler(async (event) => {
 
   delete post.user_name
   delete post.user_avatar
-  
+
   return post
 })

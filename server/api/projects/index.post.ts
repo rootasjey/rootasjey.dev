@@ -28,14 +28,14 @@ export default defineEventHandler(async (event) => {
     tags: typeof body.tags === 'object' ? JSON.stringify(body.tags || []) : '[]',
     updated_at: new Date().toISOString(),
     user_id: userId,
-    visibility: body.visibility || "public",
+    status: body.status || "active",
   }
 
   const insertStmt = db.prepare(`
     INSERT INTO projects (
       blob_path, company, created_at,
       description, image_alt, image_src, links, name,
-      slug, tags, updated_at, user_id, visibility
+      slug, tags, updated_at, user_id, status
     ) VALUES (
       ?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13
     )

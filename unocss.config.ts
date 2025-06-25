@@ -31,7 +31,7 @@ export default {
         text: 'Satoshi',
         body: 'Pilcrow Rounded',
         serif: 'Pencerio',
-        capital: 'General Sans',
+        sense: 'General Sans',
       },
     }),
     presetUna(),
@@ -39,9 +39,8 @@ export default {
   shortcuts: [
     {
       "btn-glowing": "from-primary-500 via-primary-600 to-primary-700 bg-gradient-to-r text-white shadow-lg shadow-primary-500/50 hover:bg-gradient-to-br dark:shadow-lg dark:shadow-primary-800/80 dark:focus:ring-primary-800",
-    },
-    {
       "btn-glowing-outline": "border border-primary-600 text-primary-600 hover:bg-primary-600 hover:text-white dark:border-primary-500 dark:text-primary-500 dark:hover:bg-primary-500 dark:hover:text-white",
+      "social-btn": "flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors",
     },
   ],
   extractors: [

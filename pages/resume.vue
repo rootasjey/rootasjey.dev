@@ -1,24 +1,15 @@
 <template>
-  <div class="w-[600px] mt-12 rounded-xl p-8 pb-[38vh] flex flex-col transition-all duration-500 overflow-y-auto">
-    <!-- Header -->
-    <header class="mt-12 mb-8">
-      <div class="flex gap-2 items-center border-b b-dashed pb-4">
-        <ULink to="/" class="hover:scale-102 active:scale-99 transition">
-          <span class="i-ph-house-simple-duotone"></span>
-        </ULink>
-        <span>•</span>
-        <h1 class="font-body text-xl font-600 text-gray-800 dark:text-gray-200">
-          resume
-        </h1>
-      </div>
+  <div class="frame">
+    <header>
+      <h1>Resume</h1>
     </header>
 
-    <section class="mb-12">
+    <section class="w-full">
       <h1 class="font-600">Jérémie Corpinot</h1>
-      <h2 class="color-gray-600 font-500 dark:color-gray-500">
+      <p class="color-gray-600 font-500 dark:color-gray-500">
         {{ new Date().getFullYear() - new Date(2015) }} years • software developer
-      </h2>
-      <h2 class="color-gray-400 dark:color-gray-600">Yvelines, France</h2>
+      </p>
+      <p class="color-gray-400 dark:color-gray-600">Yvelines, France</p>
     </section>
 
     <!-- Introduction -->
@@ -36,7 +27,7 @@
     </section>
 
     <!-- Skills -->
-    <section class="mb-12">
+    <section>
       <h2 class="text-lg font-500 text-gray-800 dark:text-gray-200 mb-4">
         <span class="i-ph-code mr-2"></span>
         Technical Skills
@@ -337,30 +328,14 @@
         or connect with me on the platforms below.
       </p>
       
-      <div class="flex flex-wrap gap-4">
-        <ULink to="https://github.com/rootasjey" target="_blank" rel="noopener noreferrer" 
-           class="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
-          <div class="i-ph-github-logo"></div>
-          <span class="font-600 text-size-3">GitHub</span>
-        </ULink>
-        <ULink to="https://www.instagram.com/rootasjey" target="_blank" rel="noopener noreferrer"
-           class="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
-          <div class="i-ph-instagram-logo"></div>
-          <span class="font-600 text-size-3">Instagram</span>
-        </ULink>
-        <ULink to="https://www.linkedin.com/in/jeremiecorpinot/" target="_blank" rel="noopener noreferrer"
-           class="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
-          <div class="i-ph-linkedin-logo"></div>
-          <span class="font-600 text-size-3">LinkedIn</span>
-        </ULink>
-      </div>
+      <SocialLinks />
     </section>
 
     <!-- Footer -->
-     <footer class="mt-16 text-size-3">
+     <footer class="w-2xl mt-16 text-size-3">
       <div class="flex gap-4">
         <ULink to="/" class="footer-button">
-          <span class="i-ph-arrow-arc-left-duotone text-size-4 mr-2"></span>
+          <span class="i-ph-house-simple text-size-3 mr-2"></span>
           <span class="font-500">Back to home</span>
         </ULink>
         <UButton btn="~"
@@ -398,6 +373,76 @@ const scrollToTop = () => {
 </script>
 
 <style scoped>
+.frame {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  padding-bottom: 12rem;
+
+  > header {
+    width: 42rem;
+    margin-top: 3rem;
+    margin-bottom: 3rem;
+    text-align: center;
+    padding: 0.5rem;
+    
+    border-bottom: 1px dashed rgba(var(--una-gray-200), 1);
+
+    @media (min-width: 768px) {
+      padding: 2rem;
+      margin-top: 6rem;
+    }
+
+    > h1 {
+      font-family: "Pilcrow Rounded";
+      font-size: 3.75rem;
+      line-height: 1;
+      font-weight: 600;
+      --un-text-opacity: 1;
+      color: rgba(var(--una-gray-800), var(--un-text-opacity));
+      margin-bottom: 1.5rem;
+    }
+
+    > h4 {
+      font-size: 1.25rem;
+      font-weight: 300;
+      margin-bottom: 1.5rem;
+      --un-text-opacity: 1;
+      color: rgba(var(--una-gray-800), var(--un-text-opacity));
+      max-width: 42rem; /* 672px */
+      margin-left: auto;
+      margin-right: auto;
+    }
+  }
+
+
+  > section {
+    width: 100%;
+    max-width: 42rem;
+    margin-bottom: 3rem;
+
+    > p:not(:last-child) {
+      --un-text-opacity: 1;
+      color: rgba(var(--una-gray-700), var(--un-text-opacity));
+      margin-bottom: 1rem;
+    }
+
+    > h2 {
+      font-size: 1.125rem;
+      line-height: 1.75rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      --un-text-opacity: 1;
+      color: rgba(var(--una-gray-800), var(--un-text-opacity));
+      margin-bottom: 1rem;
+    }
+  }
+}
+
 .workexperience > div {
   padding-bottom: 1.5rem;
   border-bottom: 1px dashed rgba(var(--una-gray-200), 1);
@@ -423,21 +468,17 @@ const scrollToTop = () => {
     font-size: 0.75rem; /* 12px */
     line-height: 1rem; /* 16px */
     --un-text-opacity: 1;
-    color: rgba(var(--una-gray-700), var(--un-text-opacity))
-      /* rgba(var(--una-gray-700) / <alpha-value>) */;
+    color: rgba(var(--una-gray-700), var(--un-text-opacity));
     --un-bg-opacity: 1;
-    background-color: rgba(var(--una-gray-100), var(--un-bg-opacity))
-    /* rgba(var(--una-gray-100) / <alpha-value>) */;
+    background-color: rgba(var(--una-gray-100), var(--un-bg-opacity));
   }
 }
 .dark .tags {
   span {
     --un-text-opacity: 1;
-    color: rgba(var(--una-gray-300), var(--un-text-opacity))
-      /* rgba(var(--una-gray-300) / <alpha-value>) */;
+    color: rgba(var(--una-gray-300), var(--un-text-opacity));
     --un-bg-opacity: 1;
-    background-color: rgba(var(--una-gray-800), var(--un-bg-opacity))
-    /* rgba(var(--una-gray-800) / <alpha-value>) */;
+    background-color: rgba(var(--una-gray-800), var(--un-bg-opacity));
   }
 }
 

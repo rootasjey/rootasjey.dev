@@ -24,6 +24,14 @@ export type ProjectType = {
   image_src?: string
   isDeleteDialogOpen?: boolean
   links: ProjectLinkType[] & never[]
+  metrics?: {
+    comments: number
+    likes: number
+    views: number
+  }
+  metrics_comments?: number
+  metrics_likes?: number
+  metrics_views?: number
   name: string
   post?: string
   /** Computed property: first tag as primary tag */
@@ -35,6 +43,12 @@ export type ProjectType = {
   tags: string[]
   updated_at: string
   user_id: number
+  user?: {
+    avatar?: string
+    name?: string
+  }
+  user_avatar?: string
+  user_name?: string
 }
 
 export type ProjectLinkType = {

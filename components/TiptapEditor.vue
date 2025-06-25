@@ -1,13 +1,33 @@
 <template>
   <div>
-    <bubble-menu :editor="editor" :tippy-options="{ duration: 100 }" v-if="editor">
+    <bubble-menu :editor="editor" :tippy-options="{ duration: 100, maxWidth: 'none' }" v-if="editor">
       <div class="bubble-menu">
+        <UButton 
+          @click="() => toggleHeading(editor, 1)" 
+          :class="{ 'is-active': editor.isActive('heading', { level: 1 }) }"
+          icon btn="~" label="i-lucide-heading-1" 
+        />
+        <UButton 
+          @click="() => toggleHeading(editor, 2)" 
+          :class="{ 'is-active': editor.isActive('heading', { level: 2 }) }"
+          icon btn="~" label="i-lucide-heading-2" 
+        />
+        <UButton 
+          @click="() => toggleHeading(editor, 3)" 
+          :class="{ 'is-active': editor.isActive('heading', { level: 3 }) }"
+          icon btn="~" label="i-lucide-heading-3" 
+        />
+        <UButton 
+          @click="() => toggleHeading(editor, 4)" 
+          :class="{ 'is-active': editor.isActive('heading', { level: 4 }) }"
+          icon btn="~" label="i-lucide-heading-4" 
+        />
         <UButton @click="editor.chain().focus().toggleBold().run()" :class="{ 'is-active': editor.isActive('bold') }"
-          icon btn="~" label="i-icon-park-outline:text-bold" />
+          icon btn="~" label="i-lucide-bold" />
         <UButton @click="editor.chain().focus().toggleItalic().run()"
-          :class="{ 'is-active': editor.isActive('italic') }" icon btn="~" label="i-icon-park-outline:text-italic" />
+          :class="{ 'is-active': editor.isActive('italic') }" icon btn="~" label="i-lucide-italic" />
         <UButton @click="editor.chain().focus().toggleStrike().run()"
-          :class="{ 'is-active': editor.isActive('strike') }" icon btn="~" label="i-icon-park-outline:strikethrough" />
+          :class="{ 'is-active': editor.isActive('strike') }" icon btn="~" label="i-lucide-strikethrough" />
 
         <UPopover :popper-class="['!p-2']">
           <template #trigger>
@@ -39,6 +59,8 @@ import Link from '@tiptap/extension-link'
 import Image from '@tiptap/extension-image'
 import SlashCommands from './commands/commands'
 import suggestion from './commands/suggestion'
+
+type Level = 1 | 2 | 3 | 4 | 5 | 6
 
 const props = defineProps({
   canEdit: {
@@ -117,6 +139,17 @@ const setLink = () => {
   linkUrl.value = ''
 }
 
+const toggleHeading = (editor: Editor | null, level: Level) => {
+  if (!editor) return
+
+  if (editor.isActive("heading", { level })) {
+    editor.chain().focus().setNode("paragraph").run()
+  } else {
+    editor.chain().focus().toggleNode("heading", "paragraph", { level }).run()
+  }
+}
+
+
 onBeforeUnmount(() => {
   editor.destroy()
 })
@@ -125,12 +158,19 @@ onBeforeUnmount(() => {
 
 <style>
 .tiptap:focus-visible {
-  outline: 1px dashed #2C7FFF;
-  border-radius: 0.25rem;
+  outline: 1px dashed transparent;
+  border-radius: 0rem;
   outline-offset: 1.20rem;
 }
 
+.dark .tiptap:focus-visible {
+  outline: 1px dashed transparent;
+  border-radius: 0rem;
+}
+
 .tiptap {
+  transition: all 0.3s ease;
+  
   :first-child {
     margin-top: 0;
   }
@@ -145,6 +185,11 @@ onBeforeUnmount(() => {
       margin-top: 0.25em;
       margin-bottom: 0.25em;
     }
+  }
+
+  ol {
+    list-style: decimal-leading-zero;
+    margin-left: 1.75rem;
   }
   
   ul {
@@ -161,7 +206,7 @@ onBeforeUnmount(() => {
     line-height: 1.1;
     margin-top: 2.5rem;
     text-wrap: pretty;
-    font-family: "Chillax";
+    font-family: "Khand";
   }
 
   h1,
@@ -255,7 +300,7 @@ onBeforeUnmount(() => {
 
 .dark .tiptap {
   p {
-    color: #fff;
+    color: #ABADBA;
   }
 }
 
@@ -279,7 +324,8 @@ onBeforeUnmount(() => {
     transition: background-color 0.3s ease;
 
     &:hover {
-      background-color: var(--c-border);
+      background-color: transparent;
+      /* background-color: var(--c-border); */
     }
 
     &.is-active {

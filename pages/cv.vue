@@ -203,30 +203,14 @@
         ou via les liens ci-dessous.
       </p>
       
-      <div class="flex flex-wrap gap-4">
-        <ULink to="https://github.com/rootasjey" target="_blank" rel="noopener noreferrer" 
-           class="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
-          <div class="i-ph-github-logo"></div>
-          <span class="font-600 text-size-3">GitHub</span>
-        </ULink>
-        <ULink to="https://www.linkedin.com/in/jeremiecorpinot/" target="_blank" rel="noopener noreferrer"
-           class="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
-          <div class="i-ph-linkedin-logo"></div>
-          <span class="font-600 text-size-3">LinkedIn</span>
-        </ULink>
-        <ULink to="https://www.instagram.com/rootasjey" target="_blank" rel="noopener noreferrer"
-           class="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
-          <div class="i-ph-instagram-logo"></div>
-          <span class="font-600 text-size-3">Instagram</span>
-        </ULink>
-      </div>
+      <SocialLinks />
     </section>
 
     <!-- Footer -->
      <footer class="mt-16 text-size-3">
       <div class="flex gap-4">
         <ULink to="/" class="footer-button">
-          <span class="i-ph-arrow-arc-left-duotone text-size-4 mr-2"></span>
+          <span class="i-ph-house-simple text-size-3 mr-2"></span>
           <span class="font-500">Back to home</span>
         </ULink>
         <UButton btn="~"

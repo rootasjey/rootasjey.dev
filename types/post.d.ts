@@ -36,6 +36,9 @@ export type PostType = {
     likes: number
     views: number
   }
+  metrics_comments?: number
+  metrics_likes?: number
+  metrics_views?: number
   name: string
   /** Computed property: first tag as primary tag */
   primaryTag?: string
@@ -48,9 +51,11 @@ export type PostType = {
   updated_at: string
   user_id: number
   user?: {
-    name?: string
     avatar?: string
+    name?: string
   }
+  user_avatar?: string
+  user_name?: string
 }
 
 export type PostLinkType = {

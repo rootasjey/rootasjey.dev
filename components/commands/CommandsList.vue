@@ -102,11 +102,11 @@ defineExpose({
 
     &:hover,
     &:hover.is-selected {
-      background-color: #574964;
+      background-color: #eee;
     }
 
     &.is-selected {
-      background-color: #212121;
+      background-color: #eee;
     }
   }
 }
@@ -114,9 +114,14 @@ defineExpose({
 .dark {
   .dropdown-menu {
     background: #000;
-    /* background: #212121; */
     border: 1px solid #6466f19a;
     box-shadow: 0rem 0.5rem 1rem rgba(100, 102, 241, 0.2);
+
+    button {
+      &.is-selected {
+        background-color: #212121;
+      }
+    }
   }
 }
 </style>

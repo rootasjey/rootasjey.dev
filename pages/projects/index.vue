@@ -49,21 +49,20 @@
     </section>
 
     <!-- Empty State -->
-    <section v-else-if="projects.length === 0" class="w-[820px] mb-12">
+    <section v-else-if="projects.length === 0" class="w-2xl -mt-24 mb-12">
       <div class="flex flex-col items-center justify-center py-24">
-        <div class="mb-8 opacity-50">
-          <span class="i-ph-app-window text-6xl text-gray-300 dark:text-gray-600"></span>
-        </div>
-        <h3 class="text-4xl font-600 text-gray-700 dark:text-gray-300 mb-4">
+        <div class="w-full mb-8 border-b b-dashed b-cyan" />
+        <h3 class="text-size-4 font-600 text-gray-700 dark:text-gray-300 mb-1">
           No projects yet
         </h3>
-        <p class="text-size-4 font-300 text-gray-500 dark:text-gray-400 text-center mb-8 max-w-md">
+        <p class="text-size-4 font-300 text-center mb-4 max-w-md text-gray-500 dark:text-gray-400">
           This space awaits the birth of new ideas. Every great project starts with a single step.
         </p>
         <div v-if="loggedIn">
-          <UButton @click="isCreateDialogOpen = true" btn="solid" size="md" class="hover:scale-105 transition-transform">
-            <span class="i-ph-plus mr-2"></span>
-            Create your first project
+          <UButton @click="isCreateDialogOpen = true" btn="soft-blue" size="sm" 
+            class="hover:scale-101 active:scale-99 transition-transform">
+            <UIcon name="i-ph-plus" />
+            <span>Create your first project</span>
           </UButton>
         </div>
       </div>
@@ -114,8 +113,8 @@
 
             <!-- Action buttons overlay -->
             <div class="flex items-start gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              <NuxtLink v-if="project.links?.find((l: ProjectLinkType) => l.name === 'project')"
-                :href="project.links?.find((l: ProjectLinkType) => l.name === 'project')?.href" target="_blank"
+              <NuxtLink v-if="extractProjectLink(project)"
+                :href="extractProjectLink(project)" target="_blank"
                 class="w-6 h-6 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:scale-110 transition-transform">
                 <span class="i-ph:arrow-up-right text-sm"></span>
               </NuxtLink>
@@ -270,6 +269,11 @@ const deleteProject = async (project: ProjectType) => {
   } catch (error) {
     console.error('Failed to delete project:', error)
   }
+}
+
+const extractProjectLink = (project: ProjectType) => {
+  const link = project.links?.find((l: ProjectLinkType) => l.name === 'project')
+  return link?.href || ''
 }
 </script>
 

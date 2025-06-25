@@ -1,73 +1,27 @@
 <template>
-  <div class="w-[600px] rounded-xl p-8 pb-[38vh] flex flex-col transition-all duration-500 overflow-y-auto">
-    <!-- Header -->
-    <header class="mt-12 mb-8">
-      <div class="flex gap-2">
-        <ULink to="/" class="hover:scale-102 active:scale-99 transition">
-          <span class="i-ph-house-simple-duotone"></span>
-        </ULink>
-        <span>•</span>
-        <h1 class="font-body text-xl font-600 text-gray-800 dark:text-gray-200">
-          Contact
-        </h1>
-      </div>
-      <div class="w-40 flex text-center justify-center my-2">
-        <div class="w-full h-2">
-          <svg viewBox="0 0 300 10" preserveAspectRatio="none">
-            <path d="M 0 5 Q 15 0, 30 5 T 60 5 T 90 5 T 120 5 T 150 5 T 180 5 T 210 5 T 240 5 T 270 5 T 300 5"
-              stroke="currentColor" fill="none" class="text-gray-300 dark:text-gray-700" stroke-width="1" />
-          </svg>
-        </div>
-      </div>
-    </header>
+  <div class="frame">
+    <header>
+      <h1>Contact</h1>
 
-    <!-- About Section -->
-    <section class="mb-16">
-      <h2 class="text-lg font-500 text-gray-800 dark:text-gray-200 mb-4">
-        About Me
-      </h2>
-      <p class="text-gray-700 dark:text-gray-300 mb-4">
+      <h4>
         I'm a creative developer based in France, exploring the intersection of code and creativity.
         My work spans from web applications to interactive experiments, always with a focus on user experience
         and clean, maintainable code.
-      </p>
-      <p class="text-gray-700 dark:text-gray-300 mb-4">
+      </h4>
+      <h4>
         Whether you're interested in collaborating on a project, have questions about my work,
         or just want to say hello, I'd love to hear from you.
-      </p>
-      <p class="text-gray-700 dark:text-gray-300">
-        You can learn more <ULink to="/about" class="arrow"><span>about me</span></ULink> and 
-        <ULink to="/resume" class="arrow"><span>my work experiences.</span></ULink>
-      </p>
-    </section>
-
+        You can learn more <ULink to="/about" class="arrow font-400"><span>about me</span></ULink> and 
+        <ULink to="/resume" class="arrow font-400"><span>my work experiences.</span></ULink>
+      </h4>
+    </header>
+    
     <!-- Social Links -->
-    <section class="mb-16">
-      <h2 class="text-lg font-500 text-gray-800 dark:text-gray-200 mb-4">
-        Connect
-      </h2>
-      <div class="flex flex-wrap gap-4">
-        <ULink to="https://github.com/rootasjey" target="_blank" rel="noopener noreferrer" 
-           class="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
-          <div class="i-ph-github-logo"></div>
-          <span class="font-600 text-size-3">GitHub</span>
-        </ULink>
-        <ULink to="https://www.instagram.com/rootasjey" target="_blank" rel="noopener noreferrer"
-           class="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
-          <div class="i-ph-instagram-logo"></div>
-          <span class="font-600 text-size-3">Instagram</span>
-        </ULink>
-        <ULink to="https://www.linkedin.com/in/jeremiecorpinot/" target="_blank" rel="noopener noreferrer"
-           class="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
-          <div class="i-ph-linkedin-logo"></div>
-          <span class="font-600 text-size-3">LinkedIn</span>
-        </ULink>
-      </div>
-    </section>
+     <SocialLinks class="w-2xl mb-6" />
 
     <!-- Contact Form -->
     <section>
-      <h2 class="text-lg font-500 text-gray-800 dark:text-gray-200 mb-4">
+      <h2>
         Send a bottle
       </h2>
       <span class="i-ph-bottle"></span>
@@ -131,7 +85,7 @@
       </div>
     </section>
 
-    <Footer class="mt-24" />
+    <Footer class="mt-24 w-2xl" />
   </div>
 </template>
 
@@ -185,3 +139,90 @@ const handleSubmit = async () => {
   }
 }
 </script>
+
+<style scoped>
+.frame {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  padding-bottom: 12rem;
+
+  > header {
+    width: 42rem;
+    margin-top: 3rem;
+    margin-bottom: 3rem;
+    text-align: center;
+    padding: 0.5rem;
+    
+    @media (min-width: 768px) {
+      padding: 2rem;
+      margin-top: 6rem;
+    }
+
+    > h1 {
+      font-family: "Pilcrow Rounded";
+      font-size: 3.75rem;
+      line-height: 1;
+      font-weight: 600;
+      --un-text-opacity: 1;
+      color: rgba(var(--una-gray-800), var(--un-text-opacity));
+      margin-bottom: 1.5rem;
+    }
+
+    > h4 {
+      font-size: 1.25rem;
+      font-weight: 300;
+      margin-bottom: 1.5rem;
+      --un-text-opacity: 1;
+      color: rgba(var(--una-gray-800), var(--un-text-opacity));
+      max-width: 42rem; /* 672px */
+      margin-left: auto;
+      margin-right: auto;
+    }
+  }
+
+  > section {
+    max-width: 42rem;
+    margin-bottom: 3rem;
+    width: 100%;
+
+    > p:not(:last-child) {
+      --un-text-opacity: 1;
+      color: rgba(var(--una-gray-700), var(--un-text-opacity));
+      margin-bottom: 1rem;
+    }
+
+    > h2 {
+      font-size: 1.125rem;
+      line-height: 1.75rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      --un-text-opacity: 1;
+      color: rgba(var(--una-gray-800), var(--un-text-opacity));
+      margin-bottom: 1rem;
+    }
+  }
+}
+
+.dark .frame {
+  > header {
+    > h1, > h4 {
+      color: rgba(var(--una-gray-200), 1);
+    }
+  }
+
+  > section {
+    > h2 {
+      color: rgba(var(--una-gray-200), 1);
+    }
+
+    > p {
+      color: rgba(var(--una-gray-300), 1);
+    }
+  }
+}
+</style>

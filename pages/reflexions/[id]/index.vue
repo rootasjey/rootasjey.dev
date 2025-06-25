@@ -179,8 +179,6 @@
         <div v-else class="mb-8 mt-8 w-md">
           <div class="border-b b-dashed b-b-amber"></div>
           <div class="border-b b-dashed b-b-blue relative top-2"></div>
-          <!-- <div class="wavy-line wavy-line-blue" data-text="xxxxxxxxxxxxxx"></div>
-          <div class="relative -top-12 wavy-line wavy-line-yellow" data-text="xxxxxxxxxxxxxx"></div> -->
         </div>
       </header>
 
