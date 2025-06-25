@@ -32,9 +32,9 @@
       </NuxtLink>
     </div>
     <div class="copyright">
-      © <span class="font-600">Jérémie Corpinot</span>
-        <span class="mx-1">&middot;</span>
-        <span class="font-600">{{ new Date().getFullYear() }}</span>
+      <span>© Jérémie Corpinot</span>
+      <span>&middot;</span>
+      <span>{{ new Date().getFullYear() }}</span>
     </div>
   </footer>
 </template>
@@ -97,13 +97,12 @@ footer {
     padding-top: 1rem;
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
     justify-content: center;
     align-items: center;
+    gap: 0.25rem;
 
     @media (min-width: 768px) {
       flex-direction: row;
-      justify-content: space-between;
       padding-top: 0.5rem;
     }
   }

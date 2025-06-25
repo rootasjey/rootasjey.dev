@@ -13,7 +13,8 @@ export type ProjectType = {
   company: string
   created_at: string
   description: string
-  id: string
+  end_date?: string
+  id: number
   image: {
     alt: string
     ext: string
@@ -39,6 +40,7 @@ export type ProjectType = {
   /** Computed property: remaining tags after primary */
   secondaryTags?: string[]
   slug: string
+  start_date?: string
   status: 'active' | 'completed' | 'archived' | 'on-hold'
   tags: string[]
   updated_at: string

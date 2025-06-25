@@ -72,7 +72,7 @@
     <section v-else class="w-full max-w-6xl px-4 mb-24">
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         <article v-for="(project, index) in projects" :key="project.id" 
-          :id="project.id"
+          :id="project.id.toString()"
           class="group flex flex-col gap-2">
           <div class="flex gap-2">
             <div class="w-6 h-6 rounded-1 shadow relative overflow-hidden">
@@ -123,7 +123,7 @@
           
           <!-- Project Content -->
           <ULink v-if="project.description" :to="`/projects/${project.slug}`" class="hover:scale-101 active:scale-99 transition-transform">
-            <div class="p-6 bg-white dark:bg-gray-900 rounded-4">
+            <div class="relative p-6 bg-white dark:bg-gray-900 rounded-4">
               <p class="font-capital text-size-4 font-500 line-clamp-3 leading-relaxed text-gray-800 dark:text-gray-400 ">
                 {{ project.description }}
               </p>
@@ -134,6 +134,22 @@
                 display-mode="primary-count"
                 :primary-tag-color="_colors[index]?.replace('color-', '') || 'blue'"
               />
+
+              <UDropdownMenu 
+                v-if="loggedIn && projectMenuItems(project).length > 0" 
+                :items="projectMenuItems(project)" 
+                size="xs" menu-label="" 
+                :_dropdown-menu-content="{
+                  class: 'w-52',
+                  align: 'end',
+                  side: 'bottom',
+                }"
+              >
+                <UIcon 
+                  name="i-ph-dots-three-vertical-bold" 
+                  class="absolute bottom-4 right-4"
+                />
+              </UDropdownMenu>
             </div>
           </ULink>
           
@@ -162,6 +178,12 @@
     />
 
     <Footer class="mt-24 mb-42 w-[1100px]" />
+
+    <EditProjectDialog
+      v-model="isEditDialogOpen"
+      :project="projectToEdit"
+      @update-project="handleUpdateProjectDialog"
+    />
   </div>
 </template>
 
@@ -206,6 +228,29 @@ const _colors = [
   'color-#FFF1D5',
 ]
 
+const isEditDialogOpen = ref(false)
+const projectToEdit = ref<ProjectType | null>(null)
+
+// Handler to open the edit dialog
+const openEditDialog = (project: ProjectType) => {
+  projectToEdit.value = project
+  isEditDialogOpen.value = true
+}
+
+// Handler for dialog update event
+const handleUpdateProjectDialog = async (updateData: any) => {
+  await updateProject(updateData.id, {
+    name: updateData.name,
+    description: updateData.description,
+    company: updateData.company,
+    tags: updateData.tags,
+    status: updateData.status,
+    start_date: updateData.startDate,
+    end_date: updateData.endDate,
+  })
+  isEditDialogOpen.value = false
+  projectToEdit.value = null
+}
 const projectMenuItems = (project: ProjectType) => {
   if (!loggedIn.value) return []
 
@@ -213,7 +258,7 @@ const projectMenuItems = (project: ProjectType) => {
     {
       label: 'Edit',
       onClick: () => {
-        navigateTo(`/projects/${project.id}/edit`)
+        openEditDialog(project)
       }
     },
     {},
