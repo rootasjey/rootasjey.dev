@@ -14,7 +14,6 @@
               v-model="form.name" 
               :class="{ 'border-red-500': errors.name }"
               placeholder="Enter project name"
-              @blur="validateName"
               aria-describedby="name-error"
             />
             <p v-if="errors.name" id="name-error" class="text-red-500 text-sm mt-1" role="alert">
@@ -250,6 +249,9 @@ watch(isOpen, (newValue) => {
     })
   }
 })
+
+watch(() => form.name, validateName)
+watch(() => form.tags, validateTags)
 
 // Keyboard shortcuts
 onMounted(() => {

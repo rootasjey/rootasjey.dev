@@ -132,6 +132,7 @@
                 v-if="project.tags && project.tags.length > 0"
                 :tags="project.tags" 
                 display-mode="primary-count"
+                class="mt-2"
                 :primary-tag-color="_colors[index]?.replace('color-', '') || 'blue'"
               />
 

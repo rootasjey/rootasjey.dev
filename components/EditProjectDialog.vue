@@ -15,7 +15,6 @@
               :class="{ 'border-red-500': errors.name }"
               placeholder="Enter project name"
               @blur="validateName"
-              @input="markAsChanged"
               aria-describedby="edit-name-error"
             />
             <p v-if="errors.name" id="edit-name-error" class="text-red-500 text-sm mt-1" role="alert">
@@ -34,7 +33,6 @@
             type="textarea"
             v-model="form.description" 
             placeholder="Enter project description"
-            @input="markAsChanged"
             :una="{ inputWrapper: 'col-span-2' }"
           />
         </div>
@@ -48,7 +46,6 @@
             id="edit-company" 
             v-model="form.company" 
             placeholder="Enter company name"
-            @input="markAsChanged"
             :una="{ inputWrapper: 'col-span-2' }"
           />
         </div>
@@ -63,7 +60,6 @@
               id="edit-tags"
               v-model="form.tags"
               placeholder="Select or add tags..."
-              @update:model-value="markAsChanged"
             />
             <p v-if="errors.tags" id="edit-tags-error" class="text-red-500 text-sm mt-1" role="alert">
               {{ errors.tags }}
@@ -83,7 +79,6 @@
             value-key="label"
             :items="statusOptions" 
             placeholder="Select status"
-            @change="markAsChanged"
           />
         </div>
 
@@ -96,7 +91,6 @@
             id="edit-start-date" 
             v-model="form.startDate" 
             type="date"
-            @input="markAsChanged"
             :una="{ inputWrapper: 'col-span-2' }"
           />
         </div>
@@ -112,7 +106,6 @@
               v-model="form.endDate" 
               type="date"
               :class="{ 'border-red-500': errors.endDate }"
-              @input="markAsChanged"
               aria-describedby="edit-end-date-error"
             />
             <p v-if="errors.endDate" id="edit-end-date-error" class="text-red-500 text-sm mt-1" role="alert">
@@ -266,11 +259,10 @@ const validateDates = () => {
 }
 
 const markAsChanged = () => {
-  // Validate tags and dates when they change
+  validateName()
   validateTags()
   validateDates()
   
-  // Check if current form differs from original
   hasChanges.value = (
     form.name !== originalForm.name ||
     form.description !== originalForm.description ||
@@ -445,6 +437,10 @@ watch(isOpen, (newValue) => {
       nameInputRef.value?.focus()
     })
   }
+})
+
+watch(form, () => {
+  markAsChanged()
 })
 
 // Keyboard shortcuts
