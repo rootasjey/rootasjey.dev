@@ -242,12 +242,10 @@
 
     <!-- Edit toolbar -->
     <div class="fixed w-full bottom-8 flex justify-center items-center">
-      <div class="flex gap-4 backdrop-blur border dark:bg-black shadow-2xl p-2 rounded-4">
+      <div class="flex gap-1 backdrop-blur border dark:bg-black shadow-2xl p-2 rounded-4">
         <UTooltip content="Go back">
           <template #default>
-            <button opacity-50 flex items-center gap-2 @click="$router.back()">
-              <div class="i-ph:arrow-bend-down-left-bold"></div>
-            </button>
+            <UButton btn="ghost-gray" icon label="i-ph:arrow-bend-down-left-bold" class="" @click="$router.back()" />
           </template>
           <template #content>
             <button @click="$router.back()" bg="light dark:dark" text="dark dark:white" text-3 px-3 py-1 rounded-md
@@ -259,28 +257,27 @@
 
         <UTooltip v-if="loggedIn" content="Lock edit">
           <template #default>
-            <button opacity-50 flex items-center gap-2 @click="_canEdit = !_canEdit">
-              <div :class="_canEdit ? 'i-icon-park-outline:unlock' : 'i-icon-park-outline:lock'"></div>
-            </button>
+            <UButton btn="ghost-gray" icon @click="_canEdit = !_canEdit">
+              <UIcon v-if="_canEdit" name="i-ph-eye-bold" />
+              <UIcon v-else name="i-ph-pencil-bold" />
+            </UButton>
           </template>
           <template #content>
             <button @click="_canEdit = !_canEdit" bg="light dark:dark" text="dark dark:white" text-3 px-3 py-1
               rounded-md border-1 border-dashed class="b-#3D3BF3">
-              {{ _canEdit ? "Lock edit" : "Unlock edit" }}
+              {{ _canEdit ? "View as readonly" : "Edit metadata" }}
             </button>
           </template>
         </UTooltip>
 
         <UTooltip v-if="loggedIn" content="Export to JSON">
           <template #default>
-            <button opacity-50 flex items-center gap-2 @click="exportPostToJson">
-              <div class="i-icon-park-outline:download-two"></div>
-            </button>
+            <UButton btn="ghost-gray" icon label="i-ph-download-simple-bold" @click="exportPostToJson" />
           </template>
           <template #content>
             <button @click="exportPostToJson" bg="light dark:dark" text="dark dark:white" text-3 px-3 py-1
               rounded-md border-1 border-dashed class="b-#3D3BF3">
-              Export to JSON
+              Download (JSON)
             </button>
           </template>
         </UTooltip>
@@ -308,7 +305,6 @@
 
 <script lang="ts" setup>
 import type { PostType } from '~/types/post'
-import TiptapEditor from '~/components/TiptapEditor.vue'
 const { loggedIn } = useUserSession()
 
 const route = useRoute()

@@ -1,7 +1,7 @@
 <template>
   <section class="w-[860px] mt-24 mb-12">
     <div class="mb-6">
-      <ULink to="/posts" class="font-title text-4 font-600 text-gray-800 dark:text-gray-200">
+      <ULink to="/reflexions" class="font-title text-4 font-600 text-gray-800 dark:text-gray-200">
         <span>Latest Reflexions</span>
         <UIcon name="i-ph-arrow-right-duotone" size="4" class="ml-2" />
       </ULink>

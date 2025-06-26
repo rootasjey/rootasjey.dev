@@ -149,7 +149,6 @@ const toggleHeading = (editor: Editor | null, level: Level) => {
   }
 }
 
-
 onBeforeUnmount(() => {
   editor.destroy()
 })

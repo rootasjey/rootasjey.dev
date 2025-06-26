@@ -426,7 +426,6 @@ const scrollToTop = () => {
     > p:not(:last-child) {
       --un-text-opacity: 1;
       color: rgba(var(--una-gray-700), var(--un-text-opacity));
-      margin-bottom: 1rem;
     }
 
     > h2 {

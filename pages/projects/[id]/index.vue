@@ -200,7 +200,7 @@
           <template #default>
             <UButton icon btn="ghost-gray" @click="_canEdit = !_canEdit">
               <UIcon v-if="!_canEdit" name="i-ph:pencil" />
-              <UIcon v-else name="i-ph-eye" />
+              <UIcon v-else name="i-ph-eye-bold" />
             </UButton>
           </template>
           <template #content>

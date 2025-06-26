@@ -6,7 +6,7 @@
       <span>•</span>
       <NuxtLink to="/contact">contact</NuxtLink>
       <span>•</span>
-      <NuxtLink to="/resume" target="_blank">resume</NuxtLink>
+      <NuxtLink to="/resume">resume</NuxtLink>
     </div>
     <div class="font-sense font-400 mt-2 text-center text-gray-500 dark:text-gray-400">
       <p>
@@ -28,7 +28,7 @@
         <UIcon name="i-ph-linkedin-logo-bold" />
       </NuxtLink>
       <NuxtLink to="https://www.instagram.com/rootasjey" target="_blank" rel="noopener noreferrer">
-  f   <UIcon name="i-ph-instagram-logo-bold" />
+     <UIcon name="i-ph-instagram-logo-bold" />
       </NuxtLink>
     </div>
     <div class="copyright">

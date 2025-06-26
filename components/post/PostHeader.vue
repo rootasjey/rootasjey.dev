@@ -3,17 +3,12 @@
     <div>
       <div class="flex items-center justify-center gap-3 mb-6">
         <h1 class="font-body text-6xl font-600 text-gray-800 dark:text-gray-200">
-          Experiments
+          Reflexions
         </h1>
       </div>
       
       <h4 class="text-size-5 font-300 mb-6 text-gray-800 dark:text-gray-200 max-w-2xl mx-auto">
-        A playground for innovative coding experiments and creative explorations.
-        Each experiment represents a journey into uncharted territories of technology and creativity.
-      </h4>
-      <h4 class="text-size-5 font-300 mb-6 text-gray-800 dark:text-gray-200 max-w-2xl mx-auto">
-        From interactive demos to technical prototypes, these experiments push the boundaries
-        of what's possible. Dive in and explore the future of web development.
+        Inner thoughts, shared with the world.
       </h4>
     </div>
 
