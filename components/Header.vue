@@ -40,6 +40,7 @@
         icon
         btn="ghost-gray"
         label="i-ph-magnifying-glass-bold"
+        @click="showSearch = true"
       />
 
       <div>
@@ -69,12 +70,17 @@
       </div>
     </div>
   </div>
+  <SearchBox 
+    :model-value="showSearch" 
+    @update:model-value="showSearch = $event"
+  />
 </template>
 
 <script lang="ts" setup>
 const { loggedIn, clear } = useUserSession()
 const route = useRoute()
 const router = useRouter()
+const showSearch = ref(false)
 
 const links = [
   {
