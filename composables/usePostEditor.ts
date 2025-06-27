@@ -76,7 +76,7 @@ export function usePostEditor() {
       await fetchPost()
       return
     }
-    error.value = 'Post ID is required to load post data.'
+    error.value = 'Post slug is required to load post data.'
     useToast().toast({
       title: 'Error',
       description: error.value,

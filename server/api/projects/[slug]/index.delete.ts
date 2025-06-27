@@ -1,22 +1,22 @@
-// DELETE /api/projects/:id
+// DELETE /api/projects/:slug
 
 import { ProjectType } from "~/types/project"
 
 export default defineEventHandler(async (event) => {
   const session = await requireUserSession(event)
   const db = hubDatabase()
-  const id = getRouterParam(event, 'id')
+  const slug = decodeURIComponent(getRouterParam(event, 'slug') ?? '')
 
-  if (!id) {
+  if (!slug) {
     throw createError({
       statusCode: 400,
-      message: 'Project ID (`id`) is required.',
+      message: 'Project slug is required.',
     })
   }
 
   const project: ProjectType | null = await db
-  .prepare(`SELECT * FROM projects WHERE id = ? LIMIT 1`)
-  .bind(id)
+  .prepare(`SELECT * FROM projects WHERE slug = ? LIMIT 1`)
+  .bind(slug)
   .first()
 
   if (!project) {
@@ -56,7 +56,7 @@ export default defineEventHandler(async (event) => {
 
   await db
   .prepare(`DELETE FROM projects WHERE id = ?`)
-  .bind(id)
+  .bind(project.id)
   .run()
 
   return {

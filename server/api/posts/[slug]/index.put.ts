@@ -1,4 +1,4 @@
-// PUT /api/posts/[id]/index.put.ts
+// PUT /api/posts/[slug]/index.put.ts
 import { z } from 'zod'
 import { PostType } from "~/types/post"
 
@@ -14,16 +14,16 @@ const updatePostSchema = z.object({
 export default defineEventHandler(async (event) => {
   const session = await requireUserSession(event)
   const userId = session.user.id
-  const postIdOrSlug = decodeURIComponent(getRouterParam(event, 'id') ?? '')
+  const slug = decodeURIComponent(getRouterParam(event, 'slug') ?? '')
   const body = await readBody(event)
   const db = hubDatabase()
 
-  handleParamErrors({ postIdOrSlug, body })
+  handleParamErrors({ slug, body })
   const validatedBody = updatePostSchema.parse(body)
 
   let post: PostType | null = await db
-  .prepare(`SELECT * FROM posts WHERE id = ? OR slug = ? LIMIT 1`)
-  .bind(postIdOrSlug, postIdOrSlug)
+  .prepare(`SELECT * FROM posts WHERE slug = ? LIMIT 1`)
+  .bind(slug)
   .first()
 
   handlePostErrors(post, userId)
@@ -236,11 +236,11 @@ export default defineEventHandler(async (event) => {
   }
 })
 
-const handleParamErrors = ({ postIdOrSlug, body }: { postIdOrSlug?: string, body: any }) => {
-  if (!postIdOrSlug) {
+const handleParamErrors = ({ slug, body }: { slug?: string, body: any }) => {
+  if (!slug) {
     throw createError({
       statusCode: 400,
-      message: 'Post ID or slug is required',
+      message: 'Post slug is required',
     })
   }
 

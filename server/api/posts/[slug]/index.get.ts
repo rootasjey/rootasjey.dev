@@ -1,16 +1,16 @@
-// GET /api/posts/:id
+// GET /api/posts/:slug
 
 import { PostType } from "~/types/post"
 
 export default defineEventHandler(async (event) => {
-  const idOrSlug = decodeURIComponent(getRouterParam(event, 'id') ?? '')
+  const slug = decodeURIComponent(getRouterParam(event, 'slug') ?? '')
   const db = hubDatabase()
   const blobStorage = hubBlob()
 
-  if (!idOrSlug) {
+  if (!slug) {
     throw createError({
       statusCode: 400,
-      message: 'Post ID or slug is required',
+      message: 'Post slug is required',
     })
   }
 
@@ -28,19 +28,16 @@ export default defineEventHandler(async (event) => {
       u.name as user_name
     FROM posts p
     JOIN users u ON p.user_id = u.id
-    WHERE p.id = ? OR p.slug = ? 
+    WHERE p.slug = ? 
     LIMIT 1
   `)
-  .bind(idOrSlug, idOrSlug)
+  .bind(slug)
   .first()
-
-  console.log(`[0 • API] Fetching post with ID or slug: ${idOrSlug}`, post)
-  console.log(`[1 • API] decoded slug: ${decodeURIComponent(idOrSlug)}`)
 
   if (!post) {
     throw createError({
       statusCode: 404,
-      message: `Post "${idOrSlug}" not found`
+      message: `Post "${slug}" not found`
     })
   }
 
@@ -67,7 +64,7 @@ export default defineEventHandler(async (event) => {
     .bind(post.id)
     .run()
   } catch (error) {
-    console.error(`Failed to update view count for post ${idOrSlug}:`, error)
+    console.error(`Failed to update view count for post ${slug}:`, error)
   }
 
   post.image = {

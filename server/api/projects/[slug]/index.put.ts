@@ -1,4 +1,4 @@
-// PUT /api/projects/[id]/index.put.ts
+// PUT /api/projects/[slug]/index.put.ts
 
 import { ProjectType } from "~/types/project"
 
@@ -6,14 +6,13 @@ export default defineEventHandler(async (event) => {
   const session = await requireUserSession(event)
   const db = hubDatabase()
 
-  await handleParamErrors(event)
-  const projectIdOrSlug = getRouterParam(event, 'id')
+  const slug = decodeURIComponent(getRouterParam(event, 'slug') ?? '')
   const body = await readBody(event)
   const userId = session.user.id
 
   let project: ProjectType | null = await db
-  .prepare(`SELECT * FROM projects WHERE id = ? OR slug = ? LIMIT 1`)
-  .bind(projectIdOrSlug, projectIdOrSlug)
+  .prepare(`SELECT * FROM projects WHERE slug = ? LIMIT 1`)
+  .bind(slug)
   .first()
 
   handleProjectErrors(project, userId)
@@ -141,12 +140,12 @@ export default defineEventHandler(async (event) => {
 })
 
 async function handleParamErrors(event: any) {
-  const projectIdOrSlug = getRouterParam(event, 'id')
+  const slug = getRouterParam(event, 'id')
 
-  if (!projectIdOrSlug) {
+  if (!slug) {
     throw createError({
       statusCode: 400,
-      message: 'Project ID or slug is required',
+      message: 'Project slug is required',
     })
   }
 

@@ -1,15 +1,15 @@
-// DELETE /api/posts/[id]/cover
+// DELETE /api/posts/[slug]/cover
 import { PostType } from "~/types/post"
 
 export default defineEventHandler(async (event) => {
   const session = await requireUserSession(event)
   const userId = session.user.id
-  const postIdOrSlug = decodeURIComponent(getRouterParam(event, 'id') ?? '')
+  const slug = decodeURIComponent(getRouterParam(event, 'slug') ?? '')
   const db = hubDatabase()
 
   let post: PostType | null = await db
-  .prepare(`SELECT * FROM posts WHERE id = ? OR slug = ? LIMIT 1`)
-  .bind(postIdOrSlug, postIdOrSlug)
+  .prepare(`SELECT * FROM posts WHERE slug = ? LIMIT 1`)
+  .bind(slug)
   .first()
 
   handleErrors({ post, userId })

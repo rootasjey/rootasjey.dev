@@ -1,15 +1,15 @@
-// PUT /api/posts/[id]/article
+// PUT /api/posts/[slug]/article
 
 export default defineEventHandler(async (event) => {
   const session = await requireUserSession(event)
   const db = hubDatabase()
-  const postIdOrSlug = decodeURIComponent(getRouterParam(event, 'id') ?? '')
+  const slug = decodeURIComponent(getRouterParam(event, 'slug') ?? '')
   const body = await readBody(event)
 
-  if (!postIdOrSlug) {
+  if (!slug) {
     throw createError({
       statusCode: 400,
-      message: 'Post ID or slug is required',
+      message: 'Post slug is required',
     })
   }
 
@@ -22,8 +22,8 @@ export default defineEventHandler(async (event) => {
 
   const userId = session.user.id
   const post = await db
-  .prepare(`SELECT * FROM posts WHERE id = ? OR slug = ? LIMIT 1`)
-  .bind(postIdOrSlug, postIdOrSlug)
+  .prepare(`SELECT * FROM posts WHERE slug = ? LIMIT 1`)
+  .bind(slug)
   .first()
 
   if (!post) {

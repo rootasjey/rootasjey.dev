@@ -1,4 +1,4 @@
-// DELETE /api/posts/:id
+// DELETE /api/posts/:slug
 
 import { PostType } from "~/types/post"
 
@@ -7,19 +7,19 @@ export default defineEventHandler(async (event) => {
   const db = hubDatabase()
   const blobStorage = hubBlob()
 
-  const idOrSlug = decodeURIComponent(getRouterParam(event, 'id') ?? '')
-  if (!idOrSlug) {
+  const slug = decodeURIComponent(getRouterParam(event, 'slug') ?? '')
+  if (!slug) {
     throw createError({
       statusCode: 400,
-      message: 'Post ID or slug is required.',
+      message: 'Post slug is required.',
     })
   }
 
   const userId = session.user.id
 
   const post: PostType | null = await db
-  .prepare(`SELECT * FROM posts WHERE id = ? OR slug = ? LIMIT 1`)
-  .bind(idOrSlug, idOrSlug)
+  .prepare(`SELECT * FROM posts WHERE slug = ? LIMIT 1`)
+  .bind(slug)
   .first()
 
   if (!post) {
@@ -61,8 +61,8 @@ export default defineEventHandler(async (event) => {
   }
 
   await db
-  .prepare(`DELETE FROM posts WHERE id = ?`)
-  .bind(post.id)
+  .prepare(`DELETE FROM posts WHERE slug = ?`)
+  .bind(post.slug)
   .run()
 
   return {

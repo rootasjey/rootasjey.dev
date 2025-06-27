@@ -1,15 +1,15 @@
 import { ProjectType } from "~/types/project"
 
-// GET /api/projects/[id]
+// GET /api/projects/[slug]
 export default defineEventHandler(async (event) => {
   const db = hubDatabase()
   const blobStorage = hubBlob()
-  const idOrSlug = decodeURIComponent(getRouterParam(event, 'id') ?? '')
+  const slug = decodeURIComponent(getRouterParam(event, 'slug') ?? '')
 
-  if (!idOrSlug) {
+  if (!slug) {
     throw createError({
       statusCode: 400,
-      message: 'Project ID or slug is required',
+      message: 'Project slug is required',
     })
   }
 
@@ -29,16 +29,16 @@ export default defineEventHandler(async (event) => {
       u.name as user_name
     FROM projects p
     JOIN users u ON p.user_id = u.id
-    WHERE p.id = ? OR p.slug = ?
+    WHERE p.slug = ?
     LIMIT 1
   `)
-  .bind(idOrSlug, idOrSlug)
+  .bind(slug)
   .first()
 
   if (!project) {
     throw createError({
       statusCode: 404,
-      message: `Project ${idOrSlug} not found`,
+      message: `Project ${slug} not found`,
     })
   }
 
@@ -48,8 +48,6 @@ export default defineEventHandler(async (event) => {
       message: 'You are not authorized to view this project',
     })
   }
-
-  const slug = project.slug
 
   if (!project.blob_path) {
     const newArticleBlob = createArticle()
@@ -76,7 +74,7 @@ export default defineEventHandler(async (event) => {
     .bind(project.id)
     .run()
   } catch (error) {
-    console.error(`Failed to update view count for project ${idOrSlug}:`, error)
+    console.error(`Failed to update view count for project ${slug}:`, error)
   }
 
   if (typeof project.links === 'string') { project.links = JSON.parse(project.links) }

@@ -61,6 +61,7 @@ export function usePostActions(dependencies: {
     name: string
     description: string
     tags: string[]
+    slug: string
     status: 'draft' | 'published' | 'archived'
   }) => {
     try {
@@ -68,7 +69,7 @@ export function usePostActions(dependencies: {
       const originalPost = posts.list.value.find(p => p.id === updateData.id) || 
                           drafts.list.value.find(p => p.id === updateData.id)
 
-      const updatedPost = await posts.updatePost(updateData.id, updateData)
+      const updatedPost = await posts.updatePost(updateData.slug, updateData)
       if (!updatedPost) return
 
       // Handle tag usage tracking
@@ -103,7 +104,7 @@ export function usePostActions(dependencies: {
 
   const handleDeletePost = async (post: PostType) => {
     try {
-      await posts.deletePost(post.id as number)
+      await posts.deletePost(post.slug)
       
       // Decrement tag usage when deleting post
       if (post.tags && post.tags.length > 0) {
@@ -152,6 +153,7 @@ export function usePostActions(dependencies: {
         name: draft.name,
         description: draft.description,
         tags: draft.tags || [],
+        slug: draft.slug || '',
         status: 'published',
       })
     } catch (error: any) {
@@ -173,6 +175,7 @@ export function usePostActions(dependencies: {
         name: post.name,
         description: post.description,
         tags: post.tags || [],
+        slug: post.slug || '',
         status: 'draft'
       })
       
@@ -197,6 +200,7 @@ export function usePostActions(dependencies: {
         name: post.name,
         description: post.description,
         tags: post.tags || [],
+        slug: post.slug || '',
         status: 'archived',
       })
     } catch (error: any) {
@@ -276,6 +280,7 @@ export function usePostActions(dependencies: {
           name: draft.name,
           description: draft.description,
           tags: draft.tags || [],
+          slug: draft.slug || '',
           status: 'draft',
         })
       }

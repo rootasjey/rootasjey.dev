@@ -1,15 +1,15 @@
-// DELETE /api/projects/[id]/cover
+// DELETE /api/projects/[slug]/cover
 import { ProjectType } from "~/types/project"
 
 export default defineEventHandler(async (event) => {
   const session = await requireUserSession(event)
   const userId = session.user.id
-  const projectIdOrSlug = decodeURIComponent(getRouterParam(event, 'id') ?? '')
+  const slug = decodeURIComponent(getRouterParam(event, 'slug') ?? '')
   const db = hubDatabase()
 
   let project: ProjectType | null = await db
-  .prepare(`SELECT * FROM projects WHERE id = ? OR slug = ? LIMIT 1`)
-  .bind(projectIdOrSlug, projectIdOrSlug)
+  .prepare(`SELECT * FROM projects WHERE slug = ? LIMIT 1`)
+  .bind(slug)
   .first()
 
   handleErrors({ project, userId })

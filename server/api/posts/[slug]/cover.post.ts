@@ -1,20 +1,21 @@
-// POST /api/project/[id]/cover
+// POST /api/posts/[slug]/cover
 
-import { Jimp } from "jimp";
+import { Jimp } from "jimp"
 
 export default defineEventHandler(async (event) => {
   const session = await requireUserSession(event)
   const userId = session.user.id
-  const projectIdOrSlug = decodeURIComponent(getRouterParam(event, 'id') ?? '')
-  const formData = await readMultipartFormData(event)
   const db = hubDatabase()
   const hb = hubBlob()
+
+  const slug = decodeURIComponent(getRouterParam(event, 'slug') ?? '')
+  const formData = await readMultipartFormData(event)
   
   const file = formData?.find(item => item.name === 'file')?.data
   const fileName = formData?.find(item => item.name === 'fileName')?.data.toString()
   const type = formData?.find(item => item.name === 'type')?.data.toString()
 
-  if (!projectIdOrSlug || !file || !fileName || !type) {
+  if (!slug || !file || !fileName || !type) {
     throw createError({
       statusCode: 400,
       message: 'Missing required fields',
@@ -30,27 +31,27 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  const project = await db
-  .prepare(`SELECT * FROM projects WHERE id = ? OR slug = ? LIMIT 1`)
-  .bind(projectIdOrSlug, projectIdOrSlug)
+  const post = await db
+  .prepare(`SELECT * FROM posts WHERE slug = ? LIMIT 1`)
+  .bind(slug)
   .first()
 
-  if (!project) {
+  if (!post) {
     throw createError({
       statusCode: 404,
-      message: 'Project not found',
+      message: 'Post not found',
     })
   }
 
-  if (project.user_id !== userId) {
+  if (post.user_id !== userId) {
     throw createError({
       statusCode: 403,
-      message: 'You are not authorized to update this project',
+      message: 'You are not authorized to update this post',
     })
   }
 
   const extension = type.split('/')[1]
-  const coverFolder = `projects/${project.slug}/cover`
+  const coverFolder = `posts/${post.slug}/cover`
 
   // Process the original image with Jimp
   const originalImage = await Jimp.fromBuffer(file)
@@ -99,11 +100,11 @@ export default defineEventHandler(async (event) => {
   }
 
   await db.prepare(`
-    UPDATE projects 
+    UPDATE posts 
     SET image_src = ?, image_alt = ?, image_ext = ?, updated_at = CURRENT_TIMESTAMP
     WHERE id = ?
   `)
-  .bind(coverFolder, fileName, extension, project.id)
+  .bind(coverFolder, fileName, extension, post.id)
   .run()
 
   return { 

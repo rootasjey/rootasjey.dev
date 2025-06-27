@@ -105,19 +105,19 @@
               </UDropdownMenu>
             </div>
 
-            <NuxtLink :to="`/projects/${project.slug}`" class="block mb-3">
+            <ULink :to="`/projects/${project.slug}`" class="block mb-3">
               <h3 class="font-text font-700 text-size-4  text-gray-800 dark:text-gray-200 line-clamp-2 group-hover:text-gray-600 dark:group-hover:text-gray-300 transition-colors">
                 {{ project.name }}
               </h3>
-            </NuxtLink>
+            </ULink>
 
             <!-- Action buttons overlay -->
             <div class="flex items-start gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              <NuxtLink v-if="extractProjectLink(project)"
+              <ULink v-if="extractProjectLink(project)"
                 :href="extractProjectLink(project)" target="_blank"
                 class="w-6 h-6 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:scale-110 transition-transform">
                 <span class="i-ph:arrow-up-right text-sm"></span>
-              </NuxtLink>
+              </ULink>
             </div>
           </div>
           

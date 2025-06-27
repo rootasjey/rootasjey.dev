@@ -1,15 +1,15 @@
-// PUT /api/projects/[id]/article
+// PUT /api/projects/[slug]/article
 
 export default defineEventHandler(async (event) => {
   const session = await requireUserSession(event)
   const db = hubDatabase()
-  const projectIdOrSlug = decodeURIComponent(getRouterParam(event, 'id') ?? '')
+  const slug = decodeURIComponent(getRouterParam(event, 'slug') ?? '')
   const body = await readBody(event)
 
-  if (!projectIdOrSlug) {
+  if (!slug) {
     throw createError({
       statusCode: 400,
-      message: "Project's ID or slug is required",
+      message: "Project's slug is required",
     })
   }
 
@@ -23,8 +23,8 @@ export default defineEventHandler(async (event) => {
   const userId = session.user.id
 
   const project = await db
-  .prepare(`SELECT * FROM projects WHERE id = ? OR slug = ? LIMIT 1`)
-  .bind(projectIdOrSlug, projectIdOrSlug)
+  .prepare(`SELECT * FROM projects WHERE slug = ? LIMIT 1`)
+  .bind(slug)
   .first()
 
   if (!project) {

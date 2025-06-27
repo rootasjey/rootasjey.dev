@@ -1,7 +1,7 @@
 import type { CreatePostType, PostType } from '~/types/post'
 
 interface UpdatePostType {
-  id: number
+  slug: string // changed from id: number
   name: string
   description: string
   tags: string[]
@@ -82,22 +82,26 @@ export const usePosts = (options: UsePostManagementOptions = {}) => {
     }
   }
 
-  const updatePost = async (postId: number, updateData: Partial<UpdatePostType>) => {
+  const updatePost = async (postSlug: string, updateData: Partial<UpdatePostType>) => {
     if (isUpdating.value) return
 
     isUpdating.value = true
     error.value = null
 
     try {
-      const { post: updatedPost, success, message } = await $fetch(`/api/posts/${postId}`, {
-        method: 'PUT',
+      let updatedPost = await $fetch(`/api/posts/${postSlug}`, {
+        method: 'PUT' as any,
         body: updateData,
       })
-
-      if (!success) throw new Error(message)
-
+      // If the response is an array, use the first element
+      if (Array.isArray(updatedPost)) {
+        updatedPost = updatedPost[0]
+      }
+      if (!updatedPost || typeof updatedPost !== 'object' || !('status' in updatedPost)) {
+        throw new Error('Invalid response from update post API')
+      }
       // Handle status changes
-      const postIndex = list.value.findIndex(p => p.id === postId)
+      const postIndex = list.value.findIndex(p => p.slug === postSlug)
       
       // Remove from published posts if changed to draft
       if (updatedPost.status === 'draft' && postIndex !== -1) {
@@ -117,19 +121,19 @@ export const usePosts = (options: UsePostManagementOptions = {}) => {
     }
   }
 
-  const deletePost = async (postId: number) => {
+  const deletePost = async (postSlug: string) => {
     if (isDeleting.value) return
 
     isDeleting.value = true
     error.value = null
 
     try {
-      await $fetch(`/api/posts/${postId}`, {
-        method: 'DELETE',
+      await $fetch(`/api/posts/${postSlug}`, {
+        method: 'DELETE' as any,
       })
 
       // Remove from published posts
-      const postIndex = list.value.findIndex(p => p.id === postId)
+      const postIndex = list.value.findIndex(p => p.slug === postSlug)
       if (postIndex !== -1) {
         list.value.splice(postIndex, 1)
       }
@@ -144,8 +148,8 @@ export const usePosts = (options: UsePostManagementOptions = {}) => {
   }
 
   // Utility functions
-  const findPostById = (postId: string | number): PostType | undefined => {
-    return list.value.find(p => p.id === postId)
+  const findPostBySlug = (postSlug: string): PostType | undefined => {
+    return list.value.find(p => p.slug === postSlug)
   }
 
   const refreshPosts = async () => {
@@ -159,15 +163,15 @@ export const usePosts = (options: UsePostManagementOptions = {}) => {
     }
   }
 
-  const removePostOptimistically = (postId: string | number) => {
-    const postIndex = list.value.findIndex(p => p.id === postId)
+  const removePostOptimistically = (postSlug: string) => {
+    const postIndex = list.value.findIndex(p => p.slug === postSlug)
     if (postIndex !== -1) {
       list.value.splice(postIndex, 1)
     }
   }
 
-  const updatePostOptimistically = (postId: string | number, updateData: Partial<PostType>) => {
-    const postIndex = list.value.findIndex(p => p.id === postId)
+  const updatePostOptimistically = (postSlug: string, updateData: Partial<PostType>) => {
+    const postIndex = list.value.findIndex(p => p.slug === postSlug)
     if (postIndex !== -1) {
       list.value[postIndex] = { ...list.value[postIndex], ...updateData }
     }
@@ -209,7 +213,7 @@ export const usePosts = (options: UsePostManagementOptions = {}) => {
     refreshPosts,
 
     // Utilities
-    findPostById,
+    findPostBySlug,
     addPostOptimistically,
     removePostOptimistically,
     updatePostOptimistically,
