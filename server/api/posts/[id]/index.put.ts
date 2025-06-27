@@ -14,7 +14,7 @@ const updatePostSchema = z.object({
 export default defineEventHandler(async (event) => {
   const session = await requireUserSession(event)
   const userId = session.user.id
-  const postIdOrSlug = getRouterParam(event, 'id')
+  const postIdOrSlug = decodeURIComponent(getRouterParam(event, 'id') ?? '')
   const body = await readBody(event)
   const db = hubDatabase()
 

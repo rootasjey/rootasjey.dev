@@ -7,7 +7,7 @@ export default defineEventHandler(async (event) => {
   const db = hubDatabase()
   const blobStorage = hubBlob()
 
-  const idOrSlug = getRouterParam(event, 'id')
+  const idOrSlug = decodeURIComponent(getRouterParam(event, 'id') ?? '')
   if (!idOrSlug) {
     throw createError({
       statusCode: 400,

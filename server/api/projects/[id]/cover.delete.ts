@@ -4,7 +4,7 @@ import { ProjectType } from "~/types/project"
 export default defineEventHandler(async (event) => {
   const session = await requireUserSession(event)
   const userId = session.user.id
-  const projectIdOrSlug = getRouterParam(event, 'id')
+  const projectIdOrSlug = decodeURIComponent(getRouterParam(event, 'id') ?? '')
   const db = hubDatabase()
 
   let project: ProjectType | null = await db

@@ -8,7 +8,7 @@ export default defineEventHandler(async (event) => {
   const db = hubDatabase()
   const hb = hubBlob()
 
-  const postIdOrSlug = event.context.params?.id
+  const postIdOrSlug = decodeURIComponent(getRouterParam(event, 'id') ?? '')
   const formData = await readMultipartFormData(event)
   
   const file = formData?.find(item => item.name === 'file')?.data

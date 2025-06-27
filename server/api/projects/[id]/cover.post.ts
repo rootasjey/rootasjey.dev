@@ -5,7 +5,7 @@ import { Jimp } from "jimp";
 export default defineEventHandler(async (event) => {
   const session = await requireUserSession(event)
   const userId = session.user.id
-  const projectIdOrSlug = getRouterParam(event, 'id')
+  const projectIdOrSlug = decodeURIComponent(getRouterParam(event, 'id') ?? '')
   const formData = await readMultipartFormData(event)
   const db = hubDatabase()
   const hb = hubBlob()

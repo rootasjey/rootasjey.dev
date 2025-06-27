@@ -3,7 +3,7 @@
 import { PostType } from "~/types/post"
 
 export default defineEventHandler(async (event) => {
-  const idOrSlug = getRouterParam(event, 'id')
+  const idOrSlug = decodeURIComponent(getRouterParam(event, 'id') ?? '')
   const db = hubDatabase()
   const blobStorage = hubBlob()
 
@@ -33,6 +33,9 @@ export default defineEventHandler(async (event) => {
   `)
   .bind(idOrSlug, idOrSlug)
   .first()
+
+  console.log(`[0 • API] Fetching post with ID or slug: ${idOrSlug}`, post)
+  console.log(`[1 • API] decoded slug: ${decodeURIComponent(idOrSlug)}`)
 
   if (!post) {
     throw createError({

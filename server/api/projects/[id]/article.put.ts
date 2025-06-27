@@ -3,7 +3,7 @@
 export default defineEventHandler(async (event) => {
   const session = await requireUserSession(event)
   const db = hubDatabase()
-  const projectIdOrSlug = getRouterParam(event, 'id')
+  const projectIdOrSlug = decodeURIComponent(getRouterParam(event, 'id') ?? '')
   const body = await readBody(event)
 
   if (!projectIdOrSlug) {
