@@ -32,15 +32,16 @@
             </div>
 
             <!-- Status Control -->
-            <!-- <div class="max-w-20">
-              <USelect v-if="_canEdit" v-model="project.status" :items="_visibilities">
+            <div class="max-w-20">
+              <USelect v-if="_canEdit" v-model="project.status" :items="availableStatuses" item-key="label">
                 <template #trigger>
-                  <UIcon name="i-icon-park-outline:preview-close" v-if="project.status === 'draft'" />
-                  <UIcon name="i-icon-park-outline:preview-open" v-else-if="project.status === 'published'" />
-                  <UIcon name="i-ph-archive" v-else />
+                  <UIcon name="i-ph-rocket-launch" v-if="project.status === 'active'" />
+                  <UIcon name="i-ph-rocket" v-else-if="project.status === 'completed'" />
+                  <UIcon name="i-ph-hourglass" v-else-if="project.status === 'on-hold'" />
+                  <UIcon name="i-ph-archive" v-else-if="project.status === 'archived'" />
                 </template>
               </USelect>
-            </div> -->
+            </div>
 
             <!-- Cover Image Upload -->
             <UTooltip v-if="!project.image?.src && _canEdit">
@@ -261,6 +262,13 @@ const { loggedIn, user } = useUserSession()
 const route = useRoute()
 const { allTags, addTag, getSuggestedTags, getPrimaryTag, getSecondaryTags } = useTags()
 
+const availableStatuses = [
+  { label: 'Active', value: 'active' },
+  { label: 'Completed', value: 'completed' },
+  { label: 'On Hold', value: 'on-hold' },
+  { label: 'Archived', value: 'archived' },
+]
+
 const fileInput = ref<HTMLInputElement | null>(null)
 const isUploading = ref(false)
 let _articleTimer: NodeJS.Timeout
@@ -420,6 +428,7 @@ const formatDate = (date: string | Date): string => {
     minute: '2-digit',
     second: '2-digit',
   }
+
   return dateObj.toLocaleString('fr', options)
 }
 

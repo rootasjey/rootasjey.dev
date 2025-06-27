@@ -20,7 +20,7 @@
             </div>
 
             <div class="max-w-40" v-if="_canEdit">
-              <USelect v-model="_selectedPrimaryTag" :items="_availableTags" placeholder="Primary tag">
+              <USelect v-model="_selectedPrimaryTag" :items="availableTags" item-key="label" placeholder="Primary tag">
                 <template #trigger>
                   <UIcon name="i-lucide-tag" v-if="_selectedPrimaryTag" />
                   <UIcon name="i-lucide-plus" v-else />
@@ -30,7 +30,7 @@
 
             <!-- Status Control -->
             <div class="max-w-20">
-              <USelect v-if="_canEdit" v-model="post.status" :items="_visibilities">
+              <USelect v-if="_canEdit" v-model="post.status" :items="availableStatuses" item-key="label">
                 <template #trigger>
                   <UIcon name="i-icon-park-outline:preview-close" v-if="post.status === 'draft'" />
                   <UIcon name="i-icon-park-outline:preview-open" v-else-if="post.status === 'published'" />
@@ -333,11 +333,13 @@ const _languages = ref([
   },
 ])
 
-const _selectedLanguage = ref(_languages.value[0])
+const availableStatuses = [
+  { label: 'Draft', value: 'draft' },
+  { label: 'Published', value: 'published' },
+  { label: 'Archived', value: 'archived' },
+]
 
-const _visibilities = ref([
-  "private", "public",
-])
+const _selectedLanguage = ref(_languages.value[0])
 
 const { data: post } = await useFetch<PostType>(`/api/posts/${route.params.id}`)
 
@@ -353,7 +355,7 @@ if (post.value?.tags) {
 }
 
 // Computed properties for tags
-const _availableTags = computed(() => {
+const availableTags = computed(() => {
   return allTags.value.map(tag => ({ label: tag, value: tag }))
 })
 
