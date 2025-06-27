@@ -264,7 +264,6 @@ const { allTags, addTag, getSuggestedTags, getPrimaryTag, getSecondaryTags } = u
 const fileInput = ref<HTMLInputElement | null>(null)
 const isUploading = ref(false)
 let _articleTimer: NodeJS.Timeout
-const _canEdit = computed(() => loggedIn.value && project.value?.user_id === user.value?.id)
 const _saving = ref(false)
 const _showTagsDialog = ref(false)
 const _selectedPrimaryTag = ref('')
@@ -274,6 +273,7 @@ const id = route.params.id
 const { data } = await useFetch(`/api/projects/${id}`)
 const project = ref((data.value ?? {}) as ProjectType)
 
+const _canEdit = ref<boolean>(loggedIn.value && project.value?.user_id === user.value?.id)
 
 // Initialize tags from project
 if (project.value?.tags) {

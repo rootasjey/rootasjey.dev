@@ -43,7 +43,27 @@
           </div>
         </UButton>
       </div>
-      <div v-else-if="query && !loading && !error" class="search-no-results">
+
+      <div v-if="isOpen && !query && !loading && !error" class="search-placeholder px-6 py-8 text-center">
+        <div class="mb-4 text-gray-500">
+          <UIcon name="search" class="text-3xl mb-2" />
+          <div class="text-lg font-semibold">What are you looking for?</div>
+          <div class="text-sm">Try searching for a topic, a subject, or tag.</div>
+        </div>
+        <div v-if="suggestions.length" class="flex flex-wrap justify-center gap-2 mt-4">
+          <UButton
+            v-for="suggestion in suggestions"
+            :key="suggestion.text"
+            btn="soft-gray"
+            class="search-suggestion"
+            @click="selectSuggestion(suggestion.text)"
+          >
+            <UIcon :name="suggestion.icon" class="mr-1" />
+            {{ suggestion.text }}
+          </UButton>
+        </div>
+      </div>
+      <div v-if="results.length === 0 && query && !loading && !error" class="search-no-results">
         No results found.
       </div>
     </div>
@@ -86,6 +106,19 @@ const focusInput = () => {
     const input = document.querySelector('input[autofocus]')
     if (input) (input as HTMLInputElement).focus()
   })
+}
+
+const suggestions = ref([
+  { icon: 'i-ph-code', text: 'Tech stack' },
+  { icon: 'i-ph-knife', text: 'Curious suicide & deaths' },
+  { icon: 'i-ph-robot', text: 'AI' },
+  { icon: 'i-ph-video', text: 'Video Montage' },
+  { icon: 'i-ph-heart', text: 'Gatsby' },
+])
+
+const selectSuggestion = (suggestion: string) => {
+  query.value = suggestion;
+  search(query.value);
 }
 
 watch(isOpen, (open) => {

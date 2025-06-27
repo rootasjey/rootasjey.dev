@@ -3,30 +3,45 @@
     "id": 1,
     "name": "Conway's Game of Life",
     "description": "A cellular automaton devised by the British mathematician John Horton Conway in 1970.",
-    "slug": "conway"
+    "slug": "conway",
+    "tags": ["game", "life", "conway", "cellular automaton"],
+    "created_at": "2025-02-01T12:00:00Z",
+    "updated_at": "2025-02-01T12:00:00Z"
   },
   {
     "id": 2,
     "name": "Dispatches from Elsewhere",
-    "description": "A handmade video tribute to the TV show Dispatches from Elsewhere.",
-    "slug": "dispatches-from-elsewhere"
+    "description": "A handmade video montage tribute to the TV show Dispatches from Elsewhere.",
+    "slug": "dispatches-from-elsewhere",
+    "tags": ["video", "montage", "tribute", "tv show"],
+    "created_at": "2023-10-01T12:00:00Z",
+    "updated_at": "2023-10-01T12:00:00Z"
   },
   {
     "id": 3,
     "name": "Trombidex",
     "description": "A pokedex web app.",
-    "slug": "trombidex"
+    "slug": "trombidex",
+    "tags": ["pokedex", "web app", "game"],
+    "created_at": "2024-10-01T12:00:00Z",
+    "updated_at": "2024-10-01T12:00:00Z"
   },
   {
     "id": 4,
     "name": "Inbox",
     "description": "A useless inbox user interface.",
-    "slug": "dispatches-from-elsewhere"
+    "slug": "dispatches-from-elsewhere",
+    "tags": ["firebase", "flutter", "inbox", "ui", "user interface", "web app"],
+    "created_at": "2023-03-01T12:00:00Z",
+    "updated_at": "2023-03-01T12:00:00Z"
   },
   {
     "id": 5,
     "name": "Memocards",
     "description": "A memory card game to help me remember various knowledge.",
-    "slug": "trombidex"
+    "slug": "memocards",
+    "tags": ["game", "memory", "cards", "knowledge"],
+    "created_at": "2025-05-01T12:00:00Z",
+    "updated_at": "2025-05-01T12:00:00Z"
   }
 ]
