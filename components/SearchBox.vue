@@ -21,14 +21,18 @@
       />
     </template>
 
-    <div class="min-h-[36vh] max-h-[80vh] overflow-y-auto">
+    <div class="min-h-[36vh] max-h-[80vh] overflow-y-auto" ref="resultsContainer">
       <div v-if="loading" class="search-loading">Searching...</div>
       <div v-if="error" class="search-error">{{ error }}</div>
       <div v-if="results.length > 0" class="search-results">
-        <UButton v-for="item in results" :key="item.type + '-' + item.id" 
+        <UButton v-for="(item, idx) in results" :key="item.type + '-' + item.id" 
           btn="soft-gray"
           class="search-result"
+          :class="{ active: idx === activeIndex }"
           :to="getLinkTo(item)"
+          @click="isOpen = false"
+          @mouseover="activeIndex = idx"
+          @focus="activeIndex = idx"
         >
           <UIcon :name="getIconName(item.type)" />
           <span class="search-type">{{ item.type }}</span>
@@ -47,7 +51,6 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue"
 import type { SearchResult } from "~/types/search"
 
 const query = ref("")
@@ -72,6 +75,28 @@ const emit = defineEmits<Emits>()
 const isOpen = computed({
   get: () => props.modelValue,
   set: (value: boolean) => emit('update:modelValue', value)
+})
+
+const activeIndex = ref(-1)
+const resultsContainer = ref<HTMLElement | null>(null)
+
+const focusInput = () => {
+  // Focus the input when dialog opens
+  nextTick(() => {
+    const input = document.querySelector('input[autofocus]')
+    if (input) (input as HTMLInputElement).focus()
+  })
+}
+
+watch(isOpen, (open) => {
+  if (open) {
+    activeIndex.value = -1
+    focusInput()
+  }
+})
+
+watch(results, () => {
+  activeIndex.value = results.value.length > 0 ? 0 : -1
 })
 
 const onInput = () => {
@@ -109,6 +134,50 @@ const getIconName = (type: string) => {
   if (type === 'experiment') return 'i-ph-test-tube'
   return 'i-ph-question'
 }
+
+const onKeydown = (e: KeyboardEvent) => {
+  if (!isOpen.value) return
+
+  if (["ArrowDown", "ArrowUp", "Enter", "Escape"].includes(e.key)) {
+    e.preventDefault()
+  }
+
+  if (e.key === "ArrowDown") {
+    if (results.value.length === 0) return
+    activeIndex.value = (activeIndex.value + 1) % results.value.length
+    scrollActiveIntoView()
+  } else if (e.key === "ArrowUp") {
+    if (results.value.length === 0) return
+    activeIndex.value = (activeIndex.value - 1 + results.value.length) % results.value.length
+    scrollActiveIntoView()
+  } else if (e.key === "Enter") {
+    if (activeIndex.value >= 0 && results.value[activeIndex.value]) {
+      const link = getLinkTo(results.value[activeIndex.value])
+      navigateTo(link)
+      isOpen.value = false
+    }
+  } else if (e.key === "Escape") {
+    isOpen.value = false
+  }
+}
+
+const scrollActiveIntoView = () => {
+  nextTick(() => {
+    const container = resultsContainer.value
+    if (!container) return
+    const activeEl = container.querySelector('.search-result.active')
+    if (activeEl && activeEl instanceof HTMLElement) {
+      activeEl.scrollIntoView({ block: 'nearest' })
+    }
+  })
+}
+
+onMounted(() => {
+  window.addEventListener('keydown', onKeydown)
+})
+onBeforeUnmount(() => {
+  window.removeEventListener('keydown', onKeydown)
+})
 </script>
 
 <style scoped>
@@ -145,6 +214,10 @@ const getIconName = (type: string) => {
       white-space: nowrap;
       overflow: hidden;
     }
+  }
+
+  .search-result.active {
+    outline: 2px solid #a3bffa;
   }
 }
 

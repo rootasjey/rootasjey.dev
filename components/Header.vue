@@ -134,6 +134,21 @@ const scrollToTopLogo = () => {
   })
 }
 
+onMounted(() => {
+  const handler = (e: KeyboardEvent) => {
+    // Cmd+K (Mac) or Ctrl+K (Win/Linux)
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+      e.preventDefault()
+      showSearch.value = true
+    }
+  }
+
+  window.addEventListener('keydown', handler)
+  onUnmounted(() => {
+    window.removeEventListener('keydown', handler)
+  })
+})
+
 </script>
 
 <style scoped>

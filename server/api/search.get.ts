@@ -1,7 +1,7 @@
 import { PostType } from "~/types/post"
 import { ProjectType } from "~/types/project"
 import data from '~/server/api/experiments/data.json'
-import { ExperimentSearchType } from "~/types/experiment"
+import { ExperimentSearchType, ExperimentType } from "~/types/experiment"
 
 type ProjectSearchType = ProjectType & { type: "project" }
 type SearchResult = (PostType & { type: "post" }) | ProjectSearchType | ExperimentSearchType
@@ -100,8 +100,8 @@ export default defineEventHandler(async (event) => {
   })
 
   // Search experiments (in-memory, case-insensitive substring match)
-  const experiments: SearchResult[] = (Array.isArray(data) ? data : []).filter((exp: any) => {
-    const qLower = search.toLowerCase()
+  const qLower = search.toLowerCase()
+  const experiments: SearchResult[] = (Array.isArray(data) ? data : []).filter((exp: ExperimentType) => {
     return (
       (exp.name && exp.name.toLowerCase().includes(qLower)) ||
       (exp.description && exp.description.toLowerCase().includes(qLower))
