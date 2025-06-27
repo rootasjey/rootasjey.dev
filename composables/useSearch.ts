@@ -1,15 +1,5 @@
 import { ref } from "vue"
-
-type SearchResult = {
-  id: number
-  name: string
-  description: string
-  tags: string[]
-  slug: string
-  created_at: string
-  updated_at: string
-  type: "post" | "project"
-}
+import type { SearchResult } from "~/types/search"
 
 export function useSearch() {
   const results = ref<SearchResult[]>([])
@@ -30,7 +20,10 @@ export function useSearch() {
         params: { q: query },
       })
       if (fetchError.value) throw fetchError.value
-      results.value = data.value?.results || []
+      results.value = (data.value?.results || []).map((item: any) => ({
+        ...item,
+        id: Number(item.id),
+      }))
       total.value = data.value?.total || 0
     } catch (err: any) {
       error.value = err.message || "Search failed"
