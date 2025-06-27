@@ -5,7 +5,7 @@
       'group block p-4 rounded-lg transition-all duration-300 hover:translate-x-1 dark:hover:border border-dashed active:scale-99 active:border-solid',
       {
         'hover:bg-[#3D3BF3]/5 hover:text-[#3D3BF3] dark:hover:b-[#A1EEBD]': title === 'projects',
-        'hover:bg-[#FAB12F]/5 hover:text-[#FAB12F] dark:hover:b-[#FAB12F]': title === 'reflexions',
+        'hover:bg-[#FAB12F]/5 hover:text-[#FAB12F] dark:hover:b-[#FAB12F]': title === 'posts',
         'hover:bg-[#CB9DF0]/5 hover:text-[#CB9DF0] dark:hover:b-[#CB9DF0]': title === 'experiments',
       }
     ]"
@@ -15,12 +15,12 @@
         'text-xl text-gray-400 transition-colors duration-300',
         {
           'group-hover:text-[#3D3BF3] dark:group-hover:text-[#A1EEBD]': title === 'projects',
-          'group-hover:text-[#FAB12F]': title === 'reflexions',
+          'group-hover:text-[#FAB12F]': title === 'posts',
           'group-hover:text-[#CB9DF0]': title === 'experiments',
 
           // We need to define the icon class as static values for unocss to get them.
           'i-ph:laptop': title === 'projects',
-          'i-ph-brain': title === 'reflexions',
+          'i-ph-brain': title === 'posts',
           'i-ph-flask': title === 'experiments',
         }
       ]" />

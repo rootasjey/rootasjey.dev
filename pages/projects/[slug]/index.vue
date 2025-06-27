@@ -277,8 +277,8 @@ const _showTagsDialog = ref(false)
 const _selectedPrimaryTag = ref('')
 const _projectTags = ref<string[]>([])
 
-const id = route.params.id
-const { data } = await useFetch(`/api/projects/${id}`)
+const slug = route.params.slug
+const { data } = await useFetch(`/api/projects/${slug}`)
 const project = ref((data.value ?? {}) as ProjectType)
 
 const _canEdit = ref<boolean>(loggedIn.value && project.value?.user_id === user.value?.id)
@@ -297,7 +297,7 @@ const removeImage = async () => {
   project.value.image.src = ''
   project.value.image.alt = ''
 
-  const response = await $fetch(`/api/projects/${id}/cover`, {
+  const response = await $fetch(`/api/projects/${slug}/cover`, {
     method: "DELETE",
   })
 
@@ -320,7 +320,7 @@ const handleCoverSelect = async (event: Event) => {
     formData.append('fileName', file.name)
     formData.append('type', file.type)
     
-    const response = await $fetch(`/api/projects/${id}/cover`, {
+    const response = await $fetch(`/api/projects/${slug}/cover`, {
       method: 'POST',
       body: formData,
     })
@@ -347,7 +347,7 @@ const onUpdateEditor = (value: Object) => {
 }
 
 const updateProjectArticle = async (value: Object) => {
-  await $fetch(`/api/projects/${route.params.id}/article`, {
+  await $fetch(`/api/projects/${slug}/article`, {
     method: "PUT",
     body: {
       article: value,

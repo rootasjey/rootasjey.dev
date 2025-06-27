@@ -1,6 +1,6 @@
 # rootasjey.dev
 
-![rootasjey.dev](./screenshots/v5.light-home.jpeg)
+![rootasjey.dev](./screenshots/v6.light-home.png)
 
 Welcome to my digital garden! 🌱
 
@@ -9,7 +9,7 @@ This is my personal website where I showcase my work, thoughts, and experiments.
 ## What You'll Find Here
 
 * Projects: A collection of finished coding projects I've worked on, sometimes spanning years
-* Reflexions: Thoughts, insights, and contemplations - a garden of ideas in constant motion
+* Posts: Thoughts, insights, and contemplations - a garden of ideas in constant motion
 * Experiments: A playground for testing new ideas and breaking conventional boundaries
 
 

@@ -212,7 +212,7 @@ export function usePostActions(dependencies: {
   }
 
   const handleSharePost = (post: PostType) => {
-    const url = `${window.location.origin}/reflexions/${post.slug}`
+    const url = `${window.location.origin}/posts/${post.slug}`
     
     if (navigator.share) {
       navigator.share({
@@ -328,7 +328,7 @@ export function usePostActions(dependencies: {
 
   const handleViewStats = (post: PostType) => {
     // Navigate to stats page or open stats modal
-    navigateTo(`/reflexions/${post.slug}/stats`)
+    navigateTo(`/posts/${post.slug}/stats`)
   }
 
   const handleRetryError = () => {

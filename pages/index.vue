@@ -11,22 +11,22 @@
         I'm passionate about building fun things, and I'm always looking for new ways to learn and grow.
       </h4>
       <h5 class="text-size-5 font-300 mb-4 text-gray-800 dark:text-gray-200">
-        I like deconstructive thinking, self-reflexion and thought experiments. 
+        I like deconstructive thinking, reflections and thought experiments. 
         I prefer collaboration over hierarchy, sharing over locking, incitation over coercion. 
         Life is like a movie which we take on course and won't see the end, and I'll try to share as much love as I can.
       </h5>
     </section>
 
-    <PostHome :posts="posts" v-if="posts.list.value.length" />
+    <PostsHome :posts="posts" v-if="posts.list.value.length" />
 
-    <ProjectHome 
+    <ProjectsHome 
       v-if="projects.length"
       :projects="projects" 
       :projectsLoading="projectStatus === 'pending'" 
       :projectsError="projectStatus === 'error'" 
     />
 
-    <ExperimentHome
+    <ExperimentsHome
       :experiments="experiments"
       :experimentLoading="false"
       :experimentError="experimentStatus === 'error'"

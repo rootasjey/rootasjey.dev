@@ -9,11 +9,11 @@ export const useNavigation = (countMap: { [key: string]: number } = {}) => {
       color: '#3D3BF3'
     },
     {
-      title: "reflexions",
+      title: "posts",
       count: countMap["posts"] ?? 0,
       subtitle: "Thoughts, insights, and contemplations of the past. A garden of ideas in constant move.",
       icon: 'i-ph-brain',
-      to: '/reflexions',
+      to: '/posts',
       color: '#FAB12F'
     },
     {

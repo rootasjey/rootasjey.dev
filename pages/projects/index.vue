@@ -31,8 +31,8 @@
 
       <!-- Project navigation dots -->
       <div class="colored-dots flex flex-row gap-3 justify-center mb-8">
-        <ULink v-for="(project, index) in projects" :key="project.id" 
-          :to="`#${project.id}`" 
+        <ULink v-for="(project, index) in projects" :key="project.slug" 
+          :to="`#${project.slug}`" 
           :style="{ color: _colors[index]?.replace('color-', '') || '#8F87F1' }" 
           class="hover:scale-150 transition-all duration-300 text-xl opacity-70 hover:opacity-100">
           •

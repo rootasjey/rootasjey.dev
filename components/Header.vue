@@ -88,8 +88,8 @@ const links = [
     to: '/',
   },
   {
-    label: 'Reflexions',
-    to: '/reflexions',
+    label: 'Posts',
+    to: '/posts',
   },
   {
     label: 'Projects',

@@ -1,6 +1,6 @@
 <template>
   <div class="w-full flex flex-col items-center min-h-screen">
-    <PostHeader
+    <PostsHeader
       :is-loading="isAnyLoading"
       :error="combinedErrorMessage"
       :show-dialogs="loggedIn"
@@ -19,7 +19,7 @@
     />
 
     <!-- Drafts Section -->
-    <PostSection
+    <PostsSection
       v-if="loggedIn"
       class="w-[720px]"
       :posts="drafts.list.value"
@@ -94,10 +94,10 @@
           Last updated {{ actions.formatLastUpdated(draftPosts) }}
         </div>
       </template>
-    </PostSection>
+    </PostsSection>
 
     <!-- Published Posts Section -->
-    <PostSection
+    <PostsSection
       :posts="posts.list.value"
       title="Published"
       section-type="Post"
@@ -175,9 +175,9 @@
           </span>
         </div>
       </template>
-    </PostSection>
+    </PostsSection>
 
-    <PostEmptyState v-if="!hasAnyContent && !isAnyLoading" class="w-3xl mt-12" />
+    <PostsEmptyState v-if="!hasAnyContent && !isAnyLoading" class="w-3xl mt-12" />
 
     <!-- Tag Management Modal -->
     <UDialog v-model:open="showTagManagement" title="Tag Management" description="Manage your post tags">
@@ -256,7 +256,7 @@
 
 <script lang="ts" setup>
 useHead({
-  title: "root • reflexions",
+  title: "root • posts",
   meta: [
     {
       name: 'description',
@@ -264,8 +264,6 @@ useHead({
     },
   ],
 })
-
-import type { PostType } from '~/types/post'
 
 const { loggedIn } = useUserSession()
 const dialogs = usePostDialogs()

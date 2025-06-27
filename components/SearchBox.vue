@@ -151,7 +151,7 @@ const onClickSearchX = () => {
 
 const getLinkTo = (item: SearchResult) => {
   if (item.type === "post") {
-    return `/reflexions/${item.slug}`
+    return `/posts/${item.slug}`
   } else if (item.type === "project") {
     return `/projects/${item.slug}`
   } else if (item.type === "experiment") {

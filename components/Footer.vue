@@ -10,9 +10,9 @@
         <span class="i-ph-house-simple-duotone text-size-4 mr-2"></span>
         <span class="font-500">Back to home</span>
       </ULink>
-      <ULink v-if="route.path !== '/reflexions'" to="/reflexions" class="footer-button flex items-center text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors">
+      <ULink v-if="route.path !== '/posts'" to="/posts" class="footer-button flex items-center text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors">
         <span class="i-ph-brain text-size-4 mr-2"></span>
-        <span class="font-500">Reflexions</span>
+        <span class="font-500">Posts</span>
       </ULink>
       <ULink v-if="route.path !== '/projects'" to="/projects" class="footer-button flex items-center text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors">
         <span class="i-ph-app-window text-size-4 mr-2"></span>

@@ -197,7 +197,7 @@ const isPublished = computed(() => props.post.status === 'published')
 
 const postUrl = computed(() => {
   if (props.linkDisabled) return undefined
-  return `/reflexions/${props.post.slug || props.post.id}`
+  return `/posts/${props.post.slug}`
 })
 
 // Tag-related computed properties
