@@ -122,6 +122,7 @@ useHead({
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 
   width: 100%;
+  min-height: 100vh;
   background-color: #F1F1F1;
 }
 

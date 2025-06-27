@@ -8,7 +8,8 @@
 
       <UInput v-model="post.description"
         class="font-text text-gray-700 dark:text-gray-300 shadow-none text-align-center"
-        :readonly="!canEdit" input="~" label="Description" type="textarea" autoresize
+        :readonly="!canEdit" input="~" label="Description" type="textarea"
+        autoresize placeholder="Write a brief description of your post" 
         @update:model-value="val => emitUpdate('description', val)" />
       
       <div class="flex items-center gap-2 mt-2 justify-center">
