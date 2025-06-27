@@ -1,6 +1,3 @@
-import { ref, computed, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { useTags } from '~/composables/useTags'
 import type { PostType } from '~/types/post'
 
 export function usePostEditor() {
@@ -24,11 +21,13 @@ export function usePostEditor() {
     { label: 'English', value: 'en' },
     { label: 'Français', value: 'fr' },
   ])
+  
   const availableStatuses = [
     { label: 'Draft', value: 'draft' },
     { label: 'Published', value: 'published' },
     { label: 'Archived', value: 'archived' },
   ]
+
   const selectedLanguage = ref(languages.value[0])
 
   // Initialize tags from post
@@ -104,12 +103,14 @@ export function usePostEditor() {
       postTags.value.push(tag)
     }
   }
+  
   const cancelTagsEdit = () => {
     if (post.value?.tags) {
       postTags.value = [...post.value.tags]
     }
     showTagsDialog.value = false
   }
+  
   const saveTagsEdit = async () => {
     if (!post.value) return
     try {
@@ -170,10 +171,12 @@ export function usePostEditor() {
       URL.revokeObjectURL(url)
     }, 0)
   }
+  
   const triggerJsonImport = () => {
     if (!canEdit.value) return
     jsonFileInput.value?.click()
   }
+  
   const handleJsonFileSelect = async (event: Event) => {
     const file = (event.target as HTMLInputElement).files?.[0]
     if (!file || !post.value || !canEdit.value) return
