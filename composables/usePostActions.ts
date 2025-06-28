@@ -1,46 +1,60 @@
-import type { CreatePostType, PostType } from '~/types/post'
+import type { ApiTag, CreatePostType, PostType } from '~/types/post'
 
 export function usePostActions(dependencies: {
   posts: ReturnType<typeof usePosts>
   drafts: ReturnType<typeof useDrafts>
   dialogs: ReturnType<typeof usePostDialogs>
-  tags: ReturnType<typeof useTags>
+  tags: ReturnType<typeof useApiTags>
 }) {
   const { posts, drafts, dialogs, tags: tagManagement } = dependencies
 
-  const handleAddTag = (newTag: string) => {
-    const result = tagManagement.addTag(newTag)
-    if (result.success) {
+  // Add a tag via API
+  const handleAddTag = async (newTag: string, category = 'general') => {
+    try {
+      const tag = await tagManagement.createTag(newTag, category)
+      if (tag) {
+        toast({
+          title: 'Tag added',
+          description: `Added tag: ${tag.name}`,
+          duration: 5000,
+          showProgress: true,
+          toast: 'soft-success',
+        })
+      }
+    } catch (e: any) {
+      const errorMsg = e?.data?.message || e?.message || 'Unknown error'
+      console.error(`Failed to add tag: ${errorMsg}`)
       toast({
-        title: 'Tag added',
-        description: `Added tag: ${result.tag}`,
+        title: 'Failed to add tag',
+        description: errorMsg,
         duration: 5000,
         showProgress: true,
-        toast: 'soft-success',
+        toast: 'soft-error'
       })
-      return
     }
-
-    // Handle error
-    console.error(`Failed to add tag: ${result.error}`)
-    toast({
-      title: 'Failed to add tag',
-      description: result.error,
-      duration: 5000,
-      showProgress: true,
-      toast: 'soft-error'
-    })
   }
 
+  // Helper to extract tag IDs from tag objects or string[]
+  const extractTagIds = (tags: ApiTag[] | string[] | undefined): number[] => {
+    if (!tags) return []
+    if (typeof tags[0] === 'object') {
+      return (tags as ApiTag[]).map(t => t.id)
+    }
+    // If tags are strings, you may want to map them to tag objects here
+    return []
+  }
+
+  // Create a post and assign tags via API
   const handleCreatePost = async (postData: CreatePostType) => {
     try {
-      const newPost = await posts.createPost(postData)
-      
-      // Track tag usage
-      if (newPost && postData.tags && postData.tags.length > 0) {
-        tagManagement.incrementPostTagsUsage(postData.tags)
+      // Extract tag IDs from tag objects
+      const tagIds = extractTagIds(postData.tags)
+      // Remove tagIds from payload, only send post fields
+      const { tags, ...postPayload } = postData
+      const newPost = await posts.createPost(postPayload)
+      if (newPost && tagIds.length > 0) {
+        await tagManagement.assignPostTags(newPost.id, tagIds)
       }
-      
       if (newPost && newPost.status === 'draft') {
         drafts.addDraft(newPost)
       }
@@ -56,40 +70,26 @@ export function usePostActions(dependencies: {
     }
   }
 
-  const handleUpdatePost = async (updateData: { 
+  // Update a post and assign tags via API
+  const handleUpdatePost = async (updateData: {
     id: number
     name: string
     description: string
-    tags: string[]
+    tags?: ApiTag[]
     slug: string
     status: 'draft' | 'published' | 'archived'
   }) => {
     try {
-      // Get the original post to track tag usage changes
-      const originalPost = posts.list.value.find(p => p.id === updateData.id) || 
-                          drafts.list.value.find(p => p.id === updateData.id)
-
-      const updatedPost = await posts.updatePost(updateData.slug, updateData)
+      const tagIds = extractTagIds(updateData.tags)
+      const { tags, ...updatePayload } = updateData
+      const updatedPost = await posts.updatePost(updateData.slug, updatePayload)
       if (!updatedPost) return
-
-      // Handle tag usage tracking
-      if (originalPost && originalPost.tags) {
-        // Decrement usage for old tags
-        tagManagement.decrementPostTagsUsage(originalPost.tags)
+      if (tagIds.length > 0) {
+        await tagManagement.assignPostTags(updatedPost.id, tagIds)
       }
-      
-      if (updatedPost.tags && updatedPost.tags.length > 0) {
-        // Increment usage for new tags
-        tagManagement.incrementPostTagsUsage(updatedPost.tags)
-      }
-
-      // Handle cross-composable state sync
-      // Add/update in drafts, remove from posts (handled by postManagement)
-      // Remove from drafts if published, add to posts (handled by postManagement)
       updateData.status === 'draft'
         ? drafts.updateDraft(updatedPost.id, updatedPost)
         : drafts.removeDraft(updatedPost.id)
-      
     } catch (error: any) {
       console.error('Update post failed:', error)
       toast({
@@ -105,11 +105,6 @@ export function usePostActions(dependencies: {
   const handleDeletePost = async (post: PostType) => {
     try {
       await posts.deletePost(post.slug)
-      
-      // Decrement tag usage when deleting post
-      if (post.tags && post.tags.length > 0) {
-        tagManagement.decrementPostTagsUsage(post.tags)
-      }
       
       if (post.status === 'draft') {
         drafts.removeDraft(post.id)
@@ -345,17 +340,17 @@ export function usePostActions(dependencies: {
     }
   }
 
-  // Tag-specific utility functions
-  const getPostPrimaryTag = (post: PostType): string | undefined => {
-    return tagManagement.getPrimaryTag(post.tags)
+  // Tag-specific utility functions (adapt as needed for tag objects)
+  const getPostPrimaryTag = (post: PostType & { tags?: ApiTag[] }): ApiTag | undefined => {
+    return Array.isArray(post.tags) && post.tags.length > 0 ? post.tags[0] : undefined
   }
 
-  const getPostSecondaryTags = (post: PostType): string[] => {
-    return tagManagement.getSecondaryTags(post.tags)
+  const getPostSecondaryTags = (post: PostType & { tags?: ApiTag[] }): ApiTag[] => {
+    return Array.isArray(post.tags) && post.tags.length > 1 ? post.tags.slice(1) : []
   }
 
-  const hasPostSecondaryTags = (post: PostType): boolean => {
-    return tagManagement.hasSecondaryTags(post.tags)
+  const hasPostSecondaryTags = (post: PostType & { tags?: ApiTag[] }): boolean => {
+    return Array.isArray(post.tags) && post.tags.length > 1
   }
 
   return {

@@ -104,6 +104,7 @@
 
 <script setup lang="ts">
 import type { CreateProjectType } from '~/types/project'
+import type { ApiTag } from '~/types/post'
 
 interface Props {
   modelValue?: boolean
@@ -120,9 +121,6 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<Emits>()
 
-// Use tags composable
-const { getPrimaryTag, getSecondaryTags, incrementPostTagsUsage } = useTags()
-
 // Refs for focus management
 const nameInputRef = ref<HTMLInputElement>()
 
@@ -131,7 +129,7 @@ const form = reactive({
   name: '',
   description: '',
   company: '',
-  tags: [] as string[],
+  tags: [] as ApiTag[],
   status: { label: 'Active', value: 'active' },
 })
 
@@ -201,17 +199,13 @@ const handleCreateProject = async () => {
   // Validate before submitting
   validateName()
   validateTags()
-  
   if (!isFormValid.value) {
-    // Focus the first invalid field
     if (errors.name) {
       nameInputRef.value?.focus()
     }
     return
   }
-
   isLoading.value = true
-
   try {
     const projectData: CreateProjectType = {
       name: form.name.trim(),
@@ -222,19 +216,11 @@ const handleCreateProject = async () => {
         ? form.status.value as 'active' | 'completed' | 'archived' | 'on-hold'
         : 'active',
     }
-
-    // Update tag usage statistics
-    incrementPostTagsUsage(form.tags)
-
     emit('create-project', projectData)
-    
-    // Reset form only on successful creation
     resetForm()
     isOpen.value = false
-    
   } catch (error) {
     console.error('Failed to create project:', error)
-    // You could add a toast notification here for error feedback
   } finally {
     isLoading.value = false
   }

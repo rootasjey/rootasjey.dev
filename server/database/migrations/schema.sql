@@ -48,7 +48,6 @@ CREATE TABLE IF NOT EXISTS posts (
   slug TEXT NOT NULL UNIQUE,
   status TEXT DEFAULT 'draft' CHECK (status IN ('draft', 'published', 'archived')),
   styles TEXT DEFAULT "{}" CHECK (json_valid(styles)),
-  tags TEXT DEFAULT "[]" CHECK (json_valid(tags)),
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   user_id INTEGER NOT NULL,
   
@@ -83,7 +82,6 @@ CREATE TABLE IF NOT EXISTS projects (
   metrics_views INTEGER DEFAULT 0 CHECK (metrics_views >= 0),
   name TEXT NOT NULL,
   slug TEXT NOT NULL UNIQUE,
-  tags TEXT DEFAULT "[]" CHECK (json_valid(tags)),
   start_date DATETIME,
   status TEXT DEFAULT 'active' CHECK (status IN ('active', 'completed', 'archived', 'on-hold')),
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -103,6 +101,41 @@ FOR EACH ROW
 BEGIN
   UPDATE projects SET updated_at = CURRENT_TIMESTAMP WHERE id = OLD.id;
 END;
+
+-- Create the tags table
+CREATE TABLE IF NOT EXISTS tags (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT NOT NULL UNIQUE COLLATE NOCASE,
+  category TEXT DEFAULT 'general',
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Trigger to update the updated_at timestamp whenever a tag is modified
+CREATE TRIGGER IF NOT EXISTS update_tags_timestamp
+AFTER UPDATE ON tags
+FOR EACH ROW
+BEGIN
+  UPDATE tags SET updated_at = CURRENT_TIMESTAMP WHERE id = OLD.id;
+END;
+
+-- Create the post_tags table (many-to-many)
+CREATE TABLE IF NOT EXISTS post_tags (
+  post_id INTEGER NOT NULL,
+  tag_id INTEGER NOT NULL,
+  PRIMARY KEY (post_id, tag_id),
+  FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE,
+  FOREIGN KEY (tag_id) REFERENCES tags(id) ON DELETE CASCADE
+);
+
+-- Create the project_tags table (many-to-many)
+CREATE TABLE IF NOT EXISTS project_tags (
+  project_id INTEGER NOT NULL,
+  tag_id INTEGER NOT NULL,
+  PRIMARY KEY (project_id, tag_id),
+  FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
+  FOREIGN KEY (tag_id) REFERENCES tags(id) ON DELETE CASCADE
+);
 
 -- Create the messages table
 CREATE TABLE IF NOT EXISTS messages (

@@ -91,7 +91,8 @@
 </template>
 
 <script setup lang="ts">
-import type { CreatePostType } from '~/types/post'
+import { useApiTags } from '~/composables/useApiTags'
+import type { ApiTag, CreatePostType } from '~/types/post'
 
 interface Props {
   modelValue?: boolean
@@ -108,8 +109,8 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<Emits>()
 
-// Use tags composable
-const { getPrimaryTag, getSecondaryTags, incrementPostTagsUsage } = useTags()
+// Use API tags composable
+const tagsApi = useApiTags()
 
 // Refs for focus management
 const nameInputRef = ref<HTMLInputElement>()
@@ -118,7 +119,7 @@ const nameInputRef = ref<HTMLInputElement>()
 const form = reactive({
   name: '',
   description: '',
-  tags: [] as string[],
+  tags: [] as ApiTag[],
   status: { label: 'Draft', value: 'draft' },
 })
 
@@ -186,17 +187,13 @@ const handleCreatePost = async () => {
   // Validate before submitting
   validateName()
   validateTags()
-  
   if (!isFormValid.value) {
-    // Focus the first invalid field
     if (errors.name) {
       nameInputRef.value?.focus()
     }
     return
   }
-
   isLoading.value = true
-
   try {
     const postData: CreatePostType = {
       name: form.name.trim(),
@@ -204,19 +201,11 @@ const handleCreatePost = async () => {
       tags: form.tags,
       status: form.status.value as 'draft' | 'published' | 'archived',
     }
-
-    // Update tag usage statistics
-    incrementPostTagsUsage(form.tags)
-
     emit('create-post', postData)
-    
-    // Reset form only on successful creation
     resetForm()
     isOpen.value = false
-    
   } catch (error) {
     console.error('Failed to create post:', error)
-    // You could add a toast notification here for error feedback
   } finally {
     isLoading.value = false
   }

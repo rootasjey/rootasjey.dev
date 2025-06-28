@@ -1,28 +1,48 @@
+import { useApiTags } from '~/composables/useApiTags'
 import type { ProjectType } from '~/types/project'
+import type { ApiTag } from '~/types/post'
 
 export function useProjectPage(slug: string) {
   const { loggedIn, user } = useUserSession()
-  const { allTags, getPrimaryTag, getSecondaryTags } = useTags()
+  const {
+    tags: allTags,
+    fetchTags,
+    fetchProjectTags,
+    assignProjectTags,
+  } = useApiTags()
   const fileInput = ref<HTMLInputElement | null>(null)
   const isUploading = ref(false)
   let _articleTimer: NodeJS.Timeout
   const saving = ref(false)
   const showTagsDialog = ref(false)
-  const selectedPrimaryTag = ref('')
-  const projectTags = ref<string[]>([])
+  const selectedPrimaryTag = ref<ApiTag | null>(null)
+  const projectTags = ref<ApiTag[]>([])
 
   // Project, loading, and error state
   const project = ref<ProjectType | undefined>(undefined)
   const loading = ref(true)
   const error = ref<string | null>(null)
 
-  // Fetch project data
+  // Tag helpers
+  function getPrimaryTag(tags: ApiTag[]): ApiTag | undefined {
+    return tags.find(t => t.category === 'primary')
+  }
+  function getSecondaryTags(tags: ApiTag[]): ApiTag[] {
+    return tags.filter(t => t.category !== 'primary')
+  }
+
+  // Fetch project data and tags
   const fetchProject = async () => {
     loading.value = true
     error.value = null
     try {
+      await fetchTags()
       const data = await $fetch(`/api/projects/${slug}`)
-      project.value = data as ProjectType
+      project.value = data as unknown as ProjectType
+      // Fetch tags for this project from API
+      const apiTags = await fetchProjectTags(project.value.id)
+      projectTags.value = apiTags
+      selectedPrimaryTag.value = getPrimaryTag(apiTags) || null
     } catch (err: any) {
       error.value = err?.message || 'Failed to load project.'
       project.value = undefined
@@ -35,11 +55,6 @@ export function useProjectPage(slug: string) {
   fetchProject()
 
   const canEdit = ref<boolean>(loggedIn.value && project.value?.user_id === user.value?.id)
-
-  if (project.value?.tags) {
-    projectTags.value = [...project.value.tags]
-    selectedPrimaryTag.value = getPrimaryTag(project.value.tags) || ''
-  }
 
   const openFilePicker = () => fileInput.value?.click()
 
@@ -119,17 +134,37 @@ export function useProjectPage(slug: string) {
     }, 0)
   }
 
-  const availableTags = computed(() => allTags.value.map(tag => ({ label: tag, value: tag })))
-  const primaryTag = computed(() => getPrimaryTag(project.value?.tags || []))
-  const secondaryTags = computed(() => getSecondaryTags(project.value?.tags || []))
+  const availableTags = computed(() => allTags.value.map(tag => ({ label: tag.name, value: tag.id, tag })))
+  const primaryTag = computed(() => getPrimaryTag(projectTags.value))
+  const secondaryTags = computed(() => getSecondaryTags(projectTags.value))
 
-  const formatDate = (date: string | Date): string => {
-    if (!date) return 'Unknown Date'
-    const dateObj = new Date(date)
-    const options: Intl.DateTimeFormatOptions = {
-      year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit',
+  // Tag management methods
+  const saveTagsEdit = async () => {
+    if (!project.value) return
+    try {
+      saving.value = true
+      await assignProjectTags(project.value.id, projectTags.value.map((t: ApiTag) => t.id))
+      project.value.tags = [...projectTags.value]
+      selectedPrimaryTag.value = getPrimaryTag(projectTags.value) || null
+      showTagsDialog.value = false
+      useToast().toast({
+        title: 'Tags updated',
+        description: 'Project tags have been successfully updated',
+        showProgress: true,
+        leading: 'i-lucide-check',
+        progress: 'success',
+      })
+    } catch (error) {
+      useToast().toast({
+        title: 'Update failed',
+        description: 'Failed to update project tags',
+        showProgress: true,
+        leading: 'i-lucide-x',
+        progress: 'warning',
+      })
+    } finally {
+      saving.value = false
     }
-    return dateObj.toLocaleString('fr', options)
   }
 
   const toggleCanEdit = () => {
@@ -160,6 +195,15 @@ export function useProjectPage(slug: string) {
     updateProject(project.value)
   }
 
+  const formatDate = (date: string | Date): string => {
+    if (!date) return 'Unknown Date'
+    const dateObj = new Date(date)
+    const options: Intl.DateTimeFormatOptions = {
+      year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit',
+    }
+    return dateObj.toLocaleString('fr', options)
+  }
+
   return {
     // State
     loggedIn,
@@ -181,6 +225,7 @@ export function useProjectPage(slug: string) {
     secondaryTags,
 
     // Methods
+    saveTagsEdit,
     exportProjectToJson,
     fetchProject,
     formatDate,

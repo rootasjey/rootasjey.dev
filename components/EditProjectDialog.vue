@@ -137,6 +137,7 @@
 </template>
 
 <script setup lang="ts">
+import type { ApiTag } from '~/types/post'
 import type { ProjectType } from '~/types/project'
 
 interface Props {
@@ -151,7 +152,7 @@ interface Emits {
     name: string
     description: string
     company: string
-    tags: string[]
+    tags: ApiTag[]
     status: 'active' | 'completed' | 'archived' | 'on-hold'
     startDate: string
     endDate: string
@@ -165,9 +166,6 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<Emits>()
 
-// Use tags composable
-const { getPrimaryTag, getSecondaryTags, incrementPostTagsUsage, decrementPostTagsUsage } = useTags()
-
 // Refs for focus management
 const nameInputRef = ref<HTMLInputElement>()
 
@@ -176,7 +174,7 @@ const form = reactive({
   name: '',
   description: '',
   company: '',
-  tags: [] as string[],
+  tags: [] as ApiTag[],
   status: { label: 'Active', value: 'active' },
   startDate: '',
   endDate: '',
@@ -187,7 +185,7 @@ const originalForm = reactive({
   name: '',
   description: '',
   company: '',
-  tags: [] as string[],
+  tags: [] as ApiTag[],
   status: { label: 'Active', value: 'active' },
   startDate: '',
   endDate: '',
@@ -369,17 +367,6 @@ const handleUpdateProject = async () => {
   isLoading.value = true
 
   try {
-    // Update tag usage statistics
-    // Decrement usage for old tags
-    if (originalForm.tags.length > 0) {
-      decrementPostTagsUsage(originalForm.tags)
-    }
-    
-    // Increment usage for new tags
-    if (form.tags.length > 0) {
-      incrementPostTagsUsage(form.tags)
-    }
-
     const updateData = {
       id: props.project.id,
       name: form.name.trim(),
@@ -407,14 +394,12 @@ const handleUpdateProject = async () => {
     
   } catch (error) {
     console.error('Failed to update project:', error)
-    // Revert tag usage changes on error
-    if (originalForm.tags.length > 0) {
-      incrementPostTagsUsage(originalForm.tags)
-    }
-    if (form.tags.length > 0) {
-      decrementPostTagsUsage(form.tags)
-    }
-    // You could add a toast notification here for error feedback
+    useToast().toast({
+      title: 'Error',
+      description: 'Failed to update project. Please try again.',
+      toast: 'error',
+      duration: 3000,
+    })
   } finally {
     isLoading.value = false
   }

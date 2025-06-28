@@ -1,8 +1,17 @@
+
+export interface ApiTag {
+  id: number
+  name: string
+  category: string
+  created_at: string
+  updated_at: string
+}
+
 export type CreatePostType = {
   description: string
   name: string
   status?: 'draft' | 'published' | 'archived'
-  tags?: string[]
+  tags?: ApiTag[]
 }
 
 export type PostType = {
@@ -41,13 +50,13 @@ export type PostType = {
   metrics_views?: number
   name: string
   /** Computed property: first tag as primary tag */
-  primaryTag?: string
+  primaryTag?: ApiTag
   published_at?: string
   /** Computed property: remaining tags after primary */
-  secondaryTags?: string[]
+  secondaryTags?: ApiTag[]
   slug: string
   status: 'draft' | 'published' | 'archived'
-  tags: string[]
+  tags: ApiTag[]
   updated_at: string
   user_id: number
   user?: {

@@ -95,7 +95,7 @@
 </template>
 
 <script setup lang="ts">
-import type { PostType } from '~/types/post'
+import type { ApiTag, PostType } from '~/types/post'
 
 interface Props {
   modelValue?: boolean
@@ -108,7 +108,7 @@ interface Emits {
     id: number
     name: string
     description: string
-    tags: string[]
+    tags: ApiTag[]
     status: 'draft' | 'published' | 'archived'
   }): void
 }
@@ -120,9 +120,6 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<Emits>()
 
-// Use tags composable
-const { getPrimaryTag, getSecondaryTags, incrementPostTagsUsage, decrementPostTagsUsage } = useTags()
-
 // Refs for focus management
 const nameInputRef = ref<HTMLInputElement>()
 
@@ -130,7 +127,7 @@ const nameInputRef = ref<HTMLInputElement>()
 const form = reactive({
   name: '',
   description: '',
-  tags: [] as string[],
+  tags: [] as ApiTag[],
   status: { label: 'Draft', value: 'draft' },
 })
 
@@ -138,7 +135,7 @@ const form = reactive({
 const originalForm = reactive({
   name: '',
   description: '',
-  tags: [] as string[],
+  tags: [] as ApiTag[],
   status: { label: 'Draft', value: 'draft' },
 })
 
@@ -155,7 +152,7 @@ const hasChanges = ref(false)
 // Status options
 const visibilityOptions = [
   { label: 'Draft', value: 'draft' },
-  { label: 'Published', value: 'publihsed' },
+  { label: 'Published', value: 'published' },
   { label: 'Archived', value: 'archived' }
 ]
 
@@ -221,7 +218,7 @@ const populateForm = (post: PostType) => {
 }
 
 const convertVisibility = (visibility: string) => {
-  return visibilityOptions.find(option => option.value === visibility.toLowerCase()) || { label: 'Draft', value: 'draft' }
+  return visibilityOptions.find(option => option.value === visibility) || { label: 'Draft', value: 'draft' }
 }
 
 const resetForm = () => {
@@ -274,17 +271,6 @@ const handleUpdatePost = async () => {
   isLoading.value = true
 
   try {
-    // Update tag usage statistics
-    // Decrement usage for old tags
-    if (originalForm.tags.length > 0) {
-      decrementPostTagsUsage(originalForm.tags)
-    }
-    
-    // Increment usage for new tags
-    if (form.tags.length > 0) {
-      incrementPostTagsUsage(form.tags)
-    }
-
     const updateData = {
       id: props.post.id,
       name: form.name.trim(),
@@ -306,14 +292,13 @@ const handleUpdatePost = async () => {
     
   } catch (error) {
     console.error('Failed to update post:', error)
-    // Revert tag usage changes on error
-    if (originalForm.tags.length > 0) {
-      incrementPostTagsUsage(originalForm.tags)
-    }
-    if (form.tags.length > 0) {
-      decrementPostTagsUsage(form.tags)
-    }
     // You could add a toast notification here for error feedback
+    useToast().toast({
+      title: 'Error',
+      description: 'Failed to update post. Please try again.',
+      toast: 'error',
+      duration: 3000,
+    })
   } finally {
     isLoading.value = false
   }

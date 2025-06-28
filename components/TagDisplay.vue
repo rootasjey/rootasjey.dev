@@ -3,7 +3,7 @@
     <!-- Primary Tag Only (for narrow views) -->
     <div v-if="displayMode === 'primary-only' && primaryTag" class="primary-tag-only">
       <UBadge 
-        :label="primaryTag" 
+        :label="primaryTag.name" 
         :color="primaryTagColor"
         variant="subtle"
         size="sm"
@@ -16,7 +16,7 @@
         <!-- Primary tag with special styling -->
         <UBadge 
           v-if="primaryTag"
-          :label="primaryTag" 
+          :label="primaryTag.name" 
           :color="primaryTagColor"
           closable
           size="sm"
@@ -30,8 +30,8 @@
         <!-- Secondary tags -->
         <UBadge 
           v-for="tag in secondaryTags"
-          :key="tag"
-          :label="tag" 
+          :key="tag.name"
+          :label="tag.name" 
           :color="secondaryTagColor"
           closable
           variant="outline"
@@ -51,7 +51,7 @@
     <!-- Primary + Count (for medium views) -->
     <div v-else-if="displayMode === 'primary-count' && primaryTag" class="primary-with-count">
       <UBadge 
-        :label="primaryTag" 
+        :label="primaryTag.name" 
         :color="primaryTagColor"
         variant="subtle"
         size="sm"
@@ -64,8 +64,10 @@
 </template>
 
 <script setup lang="ts">
+import type { ApiTag } from '~/types/post'
+
 interface Props {
-  tags: string[]
+  tags: ApiTag[]
   displayMode?: 'primary-only' | 'all' | 'primary-count'
   primaryTagColor?: string
   secondaryTagColor?: string
@@ -74,8 +76,8 @@ interface Props {
 }
 
 interface Emits {
-  (e: 'tag:remove', tag: string): void
-  (e: 'tag:click', tag: string): void
+  (e: 'tag:remove', tag: ApiTag): void
+  (e: 'tag:click', tag: ApiTag): void
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -88,11 +90,9 @@ const props = withDefaults(defineProps<Props>(), {
 
 defineEmits<Emits>()
 
-const { getPrimaryTag, getSecondaryTags } = useTags()
-
-const primaryTag = computed(() => getPrimaryTag(props.tags))
+const primaryTag = computed(() => props.tags[0] || null)
 const secondaryTags = computed(() => {
-  const secondary = getSecondaryTags(props.tags)
+  const secondary = props.tags.slice(1)
   return props.maxVisibleTags > 0 ? secondary.slice(0, props.maxVisibleTags) : secondary
 })
 </script>

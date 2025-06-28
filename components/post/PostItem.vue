@@ -71,7 +71,7 @@
               size="xs"
               class="truncate"
             >
-              {{ primaryTag }}
+              {{ primaryTag.name }}
             </UBadge>
           </div>
 
@@ -108,12 +108,12 @@
       <div v-if="secondaryTags.length > 0 && showSecondaryTags" class="flex flex-wrap gap-1 mt-2">
         <UBadge 
           v-for="tag in visibleSecondaryTags" 
-          :key="tag"
+          :key="tag.name"
           variant="outline" 
           color="gray" 
           size="xs"
         >
-          {{ tag }}
+          {{ tag.name }}
         </UBadge>
         <UBadge 
           v-if="hiddenSecondaryTagsCount > 0"
@@ -188,9 +188,6 @@ const props = withDefaults(defineProps<PostItemProps>(), {
 
 const emit = defineEmits<PostItemEmits>()
 
-// Get tags composable for tag utilities
-const { getPrimaryTag, getSecondaryTags } = useTags()
-
 // Computed properties
 const isDraft = computed(() => props.post.status === 'draft')
 const isPublished = computed(() => props.post.status === 'published')
@@ -200,13 +197,22 @@ const postUrl = computed(() => {
   return `/posts/${props.post.slug}`
 })
 
-// Tag-related computed properties
 const primaryTag = computed(() => {
-  return getPrimaryTag(props.post.tags)
+  if (!props.post.tags || props.post.tags.length === 0) return null
+  // Return the first tag as primary
+  return props.post.tags.length > 0 ? props.post.tags[0] : null
 })
 
 const secondaryTags = computed(() => {
-  return getSecondaryTags(props.post.tags)
+  if (!props.post.tags || props.post.tags.length === 0) return []
+  // Return all tags except the first one
+  if (props.post.tags.length === 1) return []
+  // Slice to get secondary tags, excluding the primary tag
+  if (props.maxSecondaryTags <= 0) return props.post.tags.slice(1)
+  // Limit the number of secondary tags to maxSecondaryTags
+  if (props.post.tags.length <= props.maxSecondaryTags) return props.post.tags.slice(1, props.post.tags.length)
+  // Otherwise, return all secondary tags
+  return props.post.tags.slice(1)
 })
 
 const visibleSecondaryTags = computed(() => {

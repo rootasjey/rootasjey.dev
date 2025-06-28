@@ -169,9 +169,9 @@
       <template #footer="{ totalCount }">
         <div v-if="totalCount > 0" class="text-xs text-gray-500 dark:text-gray-400 text-center">
           {{ totalCount }} published post{{ totalCount === 1 ? '' : 's' }}
-          <span v-if="tags.totalTags.value > 0" class="mx-2">•</span>
-          <span v-if="tags.totalTags.value > 0">
-            {{ tags.totalTags.value }} tag{{ tags.totalTags.value === 1 ? '' : 's' }} available
+          <span v-if="tags.tags.value.length > 0" class="mx-2">•</span>
+          <span v-if="tags.tags.value.length > 0">
+            {{ tags.tags.value.length }} tag{{ tags.tags.value.length === 1 ? '' : 's' }} available
           </span>
         </div>
       </template>
@@ -195,13 +195,13 @@
         </div>
 
         <!-- Popular Tags -->
-        <div v-if="tags.popularTags.value.length > 0">
+        <div v-if="popularTags.length > 0">
           <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Popular Tags</h4>
           <div class="flex flex-wrap gap-2">
             <UBadge
-              v-for="tag in tags.popularTags.value.slice(0, 10)"
-              :key="tag"
-              :label="`${tag} (${tags.getTagUsage(tag)})`"
+              v-for="tag in popularTags.slice(0, 10)"
+              :key="tag.name"
+              :label="`${tag} (${getTagUsage(tag)})`"
               color="blue"
               variant="outline"
               size="sm"
@@ -210,20 +210,20 @@
         </div>
 
         <!-- Unused Tags -->
-        <div v-if="tags.unusedTags.value.length > 0">
+        <div v-if="unusedTags.length > 0">
           <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Unused Tags</h4>
           <div class="flex flex-wrap gap-2">
             <UBadge
-              v-for="tag in tags.unusedTags.value.slice(0, 10)"
-              :key="tag"
-              :label="tag"
+              v-for="tag in unusedTags.slice(0, 10)"
+              :key="tag.name"
+              :label="tag.name"
               color="gray"
               variant="outline"
               size="sm"
             />
           </div>
           <UButton
-            v-if="tags.unusedTags.value.length > 0"
+            v-if="unusedTags.length > 0"
             btn="outline"
             size="xs"
             class="mt-2"
@@ -255,6 +255,8 @@
 </template>
 
 <script lang="ts" setup>
+import type { ApiTag } from '~/types/post'
+
 useHead({
   title: "root • posts",
   meta: [
@@ -270,27 +272,42 @@ const dialogs = usePostDialogs()
 const drafts = useDrafts({ autoFetch: loggedIn.value, disabled: !loggedIn.value })
 const posts = usePosts()
 
-const tags = useTags({
-  defaultTags: [
-    "JavaScript",
-    "TypeScript",
-    "Vue",
-    "Nuxt",
-    "CSS",
-    "HTML",
-    "Node.js",
-    "Tutorial",
-    "Tips",
-    "Review",
-    "Cinema",
-    "Literature",
-    "Music",
-    "Tech",
-    "Development"
-  ],
-  autoSave: true,
-  caseSensitive: false
+const tags = useApiTags()
+await tags.fetchTags()
+console.log('Fetched tags:', tags.tags.value)
+
+// Tag statistics and helpers for API-driven tags
+const tagStats = computed(() => {
+  const all = tags.tags.value
+  return {
+    total: all.length,
+    custom: all.filter(t => t.category === 'custom').length,
+  }
 })
+
+const popularTags = computed(() => {
+  // Count tag usage in all posts
+  const tagCounts: Record<number, number> = {}
+  posts.list.value.forEach(post => {
+    post.tags?.forEach(tag => {
+      tagCounts[tag.id] = (tagCounts[tag.id] || 0) + 1
+    })
+  })
+  // Sort tags by usage
+  return tags.tags.value
+    .map(tag => ({ ...tag, count: tagCounts[tag.id] || 0 }))
+    .sort((a, b) => b.count - a.count)
+    .filter(t => t.count > 0)
+})
+
+const unusedTags = computed(() => {
+  const usedTagIds = new Set(posts.list.value.flatMap(post => post.tags?.map(t => t.id) || []))
+  return tags.tags.value.filter(tag => !usedTagIds.has(tag.id))
+})
+
+const getTagUsage = (tag: ApiTag) => {
+  return posts.list.value.reduce((acc, post) => acc + (post.tags?.some(t => t.id === tag.id) ? 1 : 0), 0)
+}
 
 const actions = usePostActions({
   posts,
@@ -321,18 +338,18 @@ const combinedErrorMessage = computed(() => {
   return errors.length > 0 ? errors.join('; ') : null
 })
 
-const tagStats = computed(() => tags.getTagStats())
-
 // Tag management methods
-const handleClearUnusedTags = () => {
+const handleClearUnusedTags = async () => {
   const confirmClear = confirm('Remove all unused tags? This action cannot be undone.')
   if (!confirmClear) return
-  
-  const removedTags = tags.clearUnusedTags()
-  
+  const unused = unusedTags.value
+  for (const tag of unused) {
+    await tags.deleteTag(tag.id)
+  }
+  tags.fetchTags()
   toast({
     title: 'Unused tags cleared',
-    description: `Removed ${removedTags.length} unused tags`,
+    description: `Removed ${unused.length} unused tags`,
     duration: 5000,
     showProgress: true,
     toast: 'soft-success'
@@ -340,12 +357,10 @@ const handleClearUnusedTags = () => {
 }
 
 const handleExportTags = () => {
-  const exportData = tags.exportTags()
-  
+  const exportData = tags.tags.value
   const blob = new Blob([JSON.stringify(exportData, null, 2)], {
     type: 'application/json'
   })
-  
   const url = URL.createObjectURL(blob)
   const a = document.createElement('a')
   a.href = url
@@ -354,7 +369,6 @@ const handleExportTags = () => {
   a.click()
   document.body.removeChild(a)
   URL.revokeObjectURL(url)
-
   toast({
     title: 'Tags exported',
     duration: 5000,

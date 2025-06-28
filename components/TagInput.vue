@@ -6,7 +6,6 @@
         type="text"
         :placeholder="placeholder"
         @keydown="handleKeydown"
-        @blur="handleBlur"
       />
       <p class="form-help">
         Press <UKbd label="Enter" /> or <UKbd label="," /> to add tags. The first tag will be your primary tag.
@@ -21,13 +20,16 @@
 </template>
 
 <script setup lang="ts">
+import { useApiTags } from '~/composables/useApiTags'
+import type { ApiTag } from '~/types/post'
+
 interface Props {
-  modelValue: string[]
+  modelValue: ApiTag[]
   placeholder?: string
 }
 
 interface Emits {
-  (e: 'update:modelValue', value: string[]): void
+  (e: 'update:modelValue', value: ApiTag[]): void
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -36,12 +38,12 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<Emits>()
 
-const { allTags, addTag } = useTags()
+const tagsApi = useApiTags()
 
 // Reactive state
 const inputValue = ref('')
-const primaryTag = ref<string>('')
-const additionalTags = ref<string[]>([])
+const primaryTag = ref<ApiTag | null>(null)
+const additionalTags = ref<ApiTag[]>([])
 
 // Initialize from modelValue
 watchImmediate(() => props.modelValue, (newTags) => {
@@ -49,66 +51,59 @@ watchImmediate(() => props.modelValue, (newTags) => {
     primaryTag.value = newTags[0]
     additionalTags.value = newTags.slice(1)
   } else {
-    primaryTag.value = ''
+    primaryTag.value = null
     additionalTags.value = []
   }
 })
 
 // Computed
 const allCurrentTags = computed(() => {
-  const tags = []
+  const tags: ApiTag[] = []
   if (primaryTag.value) tags.push(primaryTag.value)
   tags.push(...additionalTags.value)
   return tags
 })
 
 // Methods
-const handleKeydown = (event: KeyboardEvent) => {
+const handleKeydown = async (event: KeyboardEvent) => {
   if (event.key === 'Enter' || event.key === ',') {
     event.preventDefault()
-    addTagFromInput()
+    await addTagFromInput()
   } else if (event.key === 'Backspace' && inputValue.value === '') {
-    // Remove last tag when backspacing on empty input
     removeLastTag()
   }
 }
 
-const handleBlur = () => {
-  // Add tag on blur if there's content
-  if (inputValue.value.trim()) {
-    addTagFromInput()
-  }
-}
-
-const addTagFromInput = () => {
-  const tagValue = inputValue.value.trim().replace(/,$/, '') // Remove trailing comma
-  
+const addTagFromInput = async () => {
+  const tagValue = inputValue.value.trim().replace(/,$/, '')
   if (!tagValue) return
-  
-  // Check if tag already exists
-  if (allCurrentTags.value.includes(tagValue)) {
+  // Check if tag already exists (by name)
+  if (allCurrentTags.value.some(t => t.name.toLowerCase() === tagValue.toLowerCase())) {
     inputValue.value = ''
     return
   }
-  
+
+  // Try to find existing tag in API
+  let tag = tagsApi.tags.value.find(t => t.name.toLowerCase() === tagValue.toLowerCase())
+  if (!tag) {
+    const created = await tagsApi.createTag(tagValue)
+    if (!created) return
+    tag = created
+  }
+
   // Add as primary tag if none exists, otherwise as additional tag
   if (!primaryTag.value) {
-    primaryTag.value = tagValue
+    primaryTag.value = tag
   } else {
-    additionalTags.value.push(tagValue)
+    additionalTags.value.push(tag)
   }
-  
-  // Add to global tags if it's new
-  if (!allTags.value.includes(tagValue)) {
-    addTag(tagValue)
-  }
-  
+
   inputValue.value = ''
   emitUpdate()
 }
 
-const removeTag = (tagToRemove: string) => {
-  if (tagToRemove === primaryTag.value) {
+const removeTag = (tagToRemove: ApiTag) => {
+  if (primaryTag.value && tagToRemove.id === primaryTag.value.id) {
     removePrimaryTag()
   } else {
     removeAdditionalTag(tagToRemove)
@@ -117,17 +112,16 @@ const removeTag = (tagToRemove: string) => {
 }
 
 const removePrimaryTag = () => {
-  // Move first additional tag to primary, or clear primary
   if (additionalTags.value.length > 0) {
-    primaryTag.value = additionalTags.value.shift() || ''
+    primaryTag.value = additionalTags.value.shift() || null
   } else {
-    primaryTag.value = ''
+    primaryTag.value = null
   }
   emitUpdate()
 }
 
-const removeAdditionalTag = (tag: string) => {
-  const index = additionalTags.value.indexOf(tag)
+const removeAdditionalTag = (tag: ApiTag) => {
+  const index = additionalTags.value.findIndex(t => t.id === tag.id)
   if (index > -1) {
     additionalTags.value.splice(index, 1)
     emitUpdate()
@@ -138,22 +132,21 @@ const removeLastTag = () => {
   if (additionalTags.value.length > 0) {
     additionalTags.value.pop()
   } else if (primaryTag.value) {
-    primaryTag.value = ''
+    primaryTag.value = null
   }
   emitUpdate()
 }
 
-const setPrimaryTag = (tag: string) => {
-  if (primaryTag.value === tag) return
-
+const setPrimaryTag = (tag: ApiTag) => {
+  if (primaryTag.value && primaryTag.value.id === tag.id) return
   // Remove from additional tags if it exists
-  if (additionalTags.value.includes(tag)) {
-    removeAdditionalTag(tag)
+  const idx = additionalTags.value.findIndex(t => t.id === tag.id)
+  if (idx > -1) {
+    additionalTags.value.splice(idx, 1)
   }
-
-  additionalTags.value.push(primaryTag.value)
-
-  // Set as primary tag
+  if (primaryTag.value) {
+    additionalTags.value.unshift(primaryTag.value)
+  }
   primaryTag.value = tag
   emitUpdate()
 }

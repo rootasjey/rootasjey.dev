@@ -1,8 +1,10 @@
+import type { ApiTag } from './post'
+
 export type CreateProjectType = {
   company?: string
   description?: string
   name: string
-  tags?: string[]
+  tags?: ApiTag[]
   status?: 'active' | 'completed' | 'archived' | 'on-hold'
 }
 
@@ -36,13 +38,13 @@ export type ProjectType = {
   name: string
   post?: string
   /** Computed property: first tag as primary tag */
-  primaryTag?: string
+  primaryTag?: ApiTag
   /** Computed property: remaining tags after primary */
-  secondaryTags?: string[]
+  secondaryTags?: ApiTag[]
   slug: string
   start_date?: string
   status: 'active' | 'completed' | 'archived' | 'on-hold'
-  tags: string[]
+  tags: ApiTag[]
   updated_at: string
   user_id: number
   user?: {

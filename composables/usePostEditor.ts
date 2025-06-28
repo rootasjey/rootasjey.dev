@@ -1,4 +1,18 @@
-import type { PostType } from '~/types/post'
+import { useApiTags } from '~/composables/useApiTags'
+import type { PostType, ApiTag } from '~/types/post'
+
+// Tag helpers
+function getPrimaryTag(tags: ApiTag[]): ApiTag | undefined {
+  return tags.find(t => t.category === 'primary')
+}
+function getSecondaryTags(tags: ApiTag[]): ApiTag[] {
+  return tags.filter(t => t.category !== 'primary')
+}
+function getSuggestedTags(content: string, limit = 5, allTags: ApiTag[] = []): ApiTag[] {
+  if (!content) return []
+  const lower = content.toLowerCase()
+  return allTags.filter(tag => lower.includes(tag.name.toLowerCase())).slice(0, limit)
+}
 
 export function usePostEditor() {
   const { loggedIn, user } = useUserSession()
@@ -11,11 +25,16 @@ export function usePostEditor() {
   const post = ref<PostType | undefined>(undefined)
   const canEdit = ref(false)
 
-  // Tags management
-  const { allTags, addTag, getSuggestedTags, getPrimaryTag, getSecondaryTags } = useTags()
+  // Tags management (API-driven)
+  const {
+    tags: allTags,
+    fetchTags,
+    createTag,
+    assignPostTags,
+  } = useApiTags()
   const showTagsDialog = ref(false)
-  const postTags = ref<string[]>([])
-  const selectedPrimaryTag = ref('')
+  const postTags = ref<ApiTag[]>([])
+  const selectedPrimaryTag = ref<ApiTag | null>(null)
 
   const languages = ref([
     { label: 'English', value: 'en' },
@@ -30,29 +49,24 @@ export function usePostEditor() {
 
   const selectedLanguage = ref(languages.value[0])
 
-  // Initialize tags from post
-  if (post.value?.tags) {
-    postTags.value = [...post.value.tags]
-    selectedPrimaryTag.value = getPrimaryTag(post.value.tags) || ''
-  }
-
   // Loading and error state
   const loading = ref(true)
   const error = ref<string | null>(null)
 
+  // Fetch post and tags
   const fetchPost = async () => {
     loading.value = true
     error.value = null
     try {
+      await fetchTags()
       const fetchedPost = await $fetch<PostType>(`/api/posts/${route.params.slug}`)
       post.value = fetchedPost
       selectedLanguage.value = languages.value.find(l => l.value === fetchedPost.language) ?? languages.value[0]
       canEdit.value = fetchedPost.user_id === user.value?.id
-
-      if (fetchedPost.tags) {
-        postTags.value = [...fetchedPost.tags]
-        selectedPrimaryTag.value = getPrimaryTag(fetchedPost.tags) || ''
-      }
+      // Fetch tags for this post from API
+      const apiTags = await $fetch<ApiTag[]>(`/api/posts/${route.params.slug}/tags`)
+      postTags.value = apiTags
+      selectedPrimaryTag.value = getPrimaryTag(apiTags) || null
       if (!fetchedPost) {
         error.value = 'Post not found.'
       }
@@ -87,40 +101,47 @@ export function usePostEditor() {
   }
   initializePost()
 
+  // Initialize tags from post
+  watch(
+    () => post.value?.tags,
+    (tags) => {
+      postTags.value = tags ? [...tags] : []
+      selectedPrimaryTag.value = getPrimaryTag(postTags.value) || null
+    },
+    { immediate: true }
+  )
+
   // Computed properties for tags
-  const availableTags = computed(() => allTags.value.map(tag => ({ label: tag, value: tag })))
-  const primaryTag = computed(() => getPrimaryTag(post.value?.tags || []))
-  const secondaryTags = computed(() => getSecondaryTags(post.value?.tags || []))
+  const availableTags = computed(() => allTags.value.map(tag => ({ label: tag.name, value: tag.id, tag })))
+  const primaryTag = computed(() => getPrimaryTag(postTags.value))
+  const secondaryTags = computed(() => getSecondaryTags(postTags.value))
   const suggestedTags = computed(() => {
     if (!post.value?.name && !post.value?.description) return []
     const content = `${post.value?.name || ''} ${post.value?.description || ''}`.toLowerCase()
-    return getSuggestedTags(content, 5).filter(tag => !postTags.value.includes(tag))
+    return getSuggestedTags(content, 5, allTags.value).filter((tag: ApiTag) => !postTags.value.some(t => t.id === tag.id))
   })
 
   // Tags management methods
-  const addSuggestedTag = (tag: string) => {
-    if (!postTags.value.includes(tag)) {
+  const addSuggestedTag = (tag: ApiTag) => {
+    if (!postTags.value.some(t => t.id === tag.id)) {
       postTags.value.push(tag)
     }
   }
-  
   const cancelTagsEdit = () => {
     if (post.value?.tags) {
       postTags.value = [...post.value.tags]
+      selectedPrimaryTag.value = getPrimaryTag(post.value.tags) || null
     }
     showTagsDialog.value = false
   }
-  
   const saveTagsEdit = async () => {
     if (!post.value) return
     try {
       saving.value = true
+      // Assign tags via API
+      await assignPostTags(post.value.id, postTags.value.map(t => t.id))
       post.value.tags = [...postTags.value]
-      selectedPrimaryTag.value = getPrimaryTag(postTags.value) || ''
-      postTags.value.forEach(tag => {
-        if (!allTags.value.includes(tag)) addTag(tag)
-      })
-      await updatePost()
+      selectedPrimaryTag.value = getPrimaryTag(postTags.value) || null
       showTagsDialog.value = false
       useToast().toast({
         title: 'Tags updated',
@@ -187,12 +208,17 @@ export function usePostEditor() {
       if (importedData.name) post.value.name = importedData.name
       if (importedData.description) post.value.description = importedData.description
       if (importedData.tags && Array.isArray(importedData.tags)) {
-        post.value.tags = importedData.tags
-        postTags.value = [...importedData.tags]
-        selectedPrimaryTag.value = getPrimaryTag(importedData.tags) || ''
-        importedData.tags.forEach((tag: string) => {
-          if (!allTags.value.includes(tag)) addTag(tag)
-        })
+        // If tags are string[] (legacy), convert to ApiTag[]
+        let importedTags: ApiTag[] = []
+        if (typeof importedData.tags[0] === 'string') {
+          // Try to match by name from allTags
+          importedTags = importedData.tags.map((tagName: string) => allTags.value.find(t => t.name === tagName)).filter(Boolean)
+        } else {
+          importedTags = importedData.tags
+        }
+        post.value.tags = importedTags
+        postTags.value = [...importedTags]
+        selectedPrimaryTag.value = getPrimaryTag(importedTags) || null
       }
       if (importedData.language) {
         post.value.language = importedData.language
@@ -254,11 +280,11 @@ export function usePostEditor() {
   )
   watch(selectedPrimaryTag, (newPrimaryTag) => {
     if (!post.value || !canEdit.value) return
-    const currentTags = post.value.tags || []
-    const secondaryTags = getSecondaryTags(currentTags)
-    const newTags = newPrimaryTag ? [newPrimaryTag, ...secondaryTags] : secondaryTags
-    post.value.tags = newTags
+    const currentTags = postTags.value || []
+    const secondary = getSecondaryTags(currentTags)
+    const newTags = newPrimaryTag ? [newPrimaryTag, ...secondary] : secondary
     postTags.value = [...newTags]
+    post.value.tags = [...newTags]
   })
 
   // Update post meta
@@ -268,7 +294,7 @@ export function usePostEditor() {
       `/api/posts/${route.params.slug}/`, {
         method: 'PUT',
         body: {
-          tags: post.value?.tags,
+          tags: postTags.value.map(t => t.id), // send tag IDs
           description: post.value?.description,
           language: selectedLanguage.value.value,
           name: post.value?.name,
@@ -323,7 +349,7 @@ export function usePostEditor() {
     if (!post.value) return
     post.value[field] = value
   }
-  function onPrimaryTagUpdate(val: string) {
+  function onPrimaryTagUpdate(val: ApiTag | null) {
     selectedPrimaryTag.value = val
   }
   function onLanguageUpdate(val: any) {
