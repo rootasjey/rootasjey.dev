@@ -19,7 +19,7 @@
         </div>
 
         <div class="max-w-40" v-if="canEdit">
-          <USelect v-model="selectedPrimaryTagLocal" :items="availableTags || []" item-key="label" placeholder="Primary tag">
+          <USelect v-model="selectedPrimaryTagLocal" :items="availableTags || []" item-key="name" placeholder="Primary tag">
             <template #trigger>
               <UIcon name="i-lucide-tag" v-if="selectedPrimaryTagLocal" />
               <UIcon name="i-lucide-plus" v-else />
@@ -112,7 +112,7 @@
       <div v-if="secondaryTags.length > 0" class="flex flex-wrap gap-2 mt-3 justify-center">
         <UBadge
           v-for="tag in secondaryTags"
-          :key="tag"
+          :key="tag.name"
           variant="outline"
           color="gray"
           size="sm"
@@ -186,6 +186,7 @@
 <script lang="ts" setup>
 import { ref, computed, watch } from 'vue'
 import type { PostType } from '~/types/post'
+import type { ApiTag } from '~/types/tag'
 
 type LabelValue = {
   label: string;
@@ -195,10 +196,10 @@ type LabelValue = {
 interface Props {
   post?: PostType;
   canEdit: boolean;
-  availableTags: LabelValue[];
+  availableTags: ApiTag[];
   availableStatuses: LabelValue[];
   languages: LabelValue[];
-  selectedPrimaryTag: string;
+  selectedPrimaryTag: ApiTag | null;
   selectedLanguage: LabelValue | null;
   saving?: boolean;
 }

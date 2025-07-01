@@ -1,12 +1,4 @@
-import type { CreatePostType, PostType } from '~/types/post'
-
-interface UpdatePostType {
-  slug: string // changed from id: number
-  name: string
-  description: string
-  tags: string[]
-  status?: 'draft' | 'published' | 'archived'
-}
+import type { CreatePostPayload, PostType, UpdatePostPayload } from '~/types/post'
 
 interface UsePostManagementOptions {
   autoFetch?: boolean
@@ -57,7 +49,7 @@ export const usePosts = (options: UsePostManagementOptions = {}) => {
     }
   }
 
-  const createPost = async (postData: CreatePostType) => {
+  const createPost = async (payload: CreatePostPayload) => {
     if (isCreating.value) return
 
     isCreating.value = true
@@ -66,7 +58,7 @@ export const usePosts = (options: UsePostManagementOptions = {}) => {
     try {
       const newPost = await $fetch('/api/posts', {
         method: 'POST',
-        body: postData,
+        body: payload,
       })
 
       // Only add to posts array if it's published (not draft)
@@ -82,26 +74,20 @@ export const usePosts = (options: UsePostManagementOptions = {}) => {
     }
   }
 
-  const updatePost = async (postSlug: string, updateData: Partial<UpdatePostType>) => {
+  const updatePost = async (payload: UpdatePostPayload) => {
     if (isUpdating.value) return
 
     isUpdating.value = true
     error.value = null
 
     try {
-      let updatedPost = await $fetch(`/api/posts/${postSlug}`, {
-        method: 'PUT' as any,
-        body: updateData,
+      const { post: updatedPost } = await $fetch<{ post: PostType }>(`/api/posts/${payload.id}`, {
+        method: "PUT",
+        body: payload,
       })
-      // If the response is an array, use the first element
-      if (Array.isArray(updatedPost)) {
-        updatedPost = updatedPost[0]
-      }
-      if (!updatedPost || typeof updatedPost !== 'object' || !('status' in updatedPost)) {
-        throw new Error('Invalid response from update post API')
-      }
+      
       // Handle status changes
-      const postIndex = list.value.findIndex(p => p.slug === postSlug)
+      const postIndex = list.value.findIndex(p => p.id === payload.id)
       
       // Remove from published posts if changed to draft
       if (updatedPost.status === 'draft' && postIndex !== -1) {

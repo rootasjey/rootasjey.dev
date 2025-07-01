@@ -2,7 +2,7 @@
 
 import { z } from 'zod'
 import { ProjectType } from "~/types/project"
-import type { ApiTag } from "~/types/post"
+import type { ApiTag } from '~/types/tag'
 import { upsertProjectTags } from '~/server/utils/tags'
 import { getProjectByIdentifier } from '~/server/utils/project'
 
@@ -11,8 +11,7 @@ const updateProjectSchema = z.object({
   description: z.string().max(1000).optional(),
   company: z.string().max(255).optional(),
   status: z.enum(['active', 'completed', 'archived', 'on-hold']).optional(),
-  slug: z.string().min(1).max(255),
-  newSlug: z.string().min(1).max(255).optional(),
+  slug: z.string().min(1).max(255).optional(),
   image_src: z.string().max(255).optional(),
   image_alt: z.string().max(255).optional(),
   links: z.union([z.string(), z.array(z.any())]).optional(),
@@ -27,6 +26,7 @@ export default defineEventHandler(async (event) => {
   const db = hubDatabase()
   const identifier = decodeURIComponent(getRouterParam(event, 'identifier') ?? '')
   const userId = session.user.id
+  const isNumericId = typeof identifier === "number" || /^\d+$/.test(String(identifier))
 
   if (!identifier) {
     throw createError({
@@ -35,24 +35,31 @@ export default defineEventHandler(async (event) => {
     })
   }
 
+  if (!isNumericId) {
+    throw createError({
+      statusCode: 400,
+      message: `Project identifier must be a numeric ID for this endpoint, received: ${identifier}`,
+    })
+  }
+
   const validatedBody = await readValidatedBody(event, updateProjectSchema.parse)
-  let project: ProjectType | null = await getProjectByIdentifier(db, identifier)
+  let project = await getProjectByIdentifier(db, identifier)
 
   handleProjectErrors(project, userId)
   project = project as ProjectType
 
   // Check for slug uniqueness if slug is being updated
-  if (validatedBody.newSlug && validatedBody.newSlug !== project.slug) {
+  if (validatedBody.slug && validatedBody.slug !== project.slug) {
     const slugExists = await db.prepare(`
       SELECT id FROM projects WHERE slug = ? AND id != ?
     `)
-    .bind(validatedBody.newSlug, project.id)
+    .bind(validatedBody.slug, project.id)
     .first()
 
     if (slugExists) {
       throw createError({
         statusCode: 409,
-        statusMessage: `Slug "${validatedBody.newSlug}" already exists for another project.`,
+        statusMessage: `Slug "${validatedBody.slug}" already exists for another project.`,
       })
     }
   }
@@ -77,9 +84,9 @@ export default defineEventHandler(async (event) => {
     updateFields.push('status = ?')
     updateValues.push(validatedBody.status)
   }
-  if (validatedBody.newSlug !== undefined) {
+  if (validatedBody.slug !== undefined) {
     updateFields.push('slug = ?')
-    updateValues.push(validatedBody.newSlug)
+    updateValues.push(validatedBody.slug)
   }
   if (validatedBody.image_src !== undefined) {
     updateFields.push('image_src = ?')

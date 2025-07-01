@@ -64,7 +64,7 @@
 </template>
 
 <script setup lang="ts">
-import type { ApiTag } from '~/types/post'
+import type { ApiTag } from '~/types/tag'
 
 interface Props {
   tags: ApiTag[]

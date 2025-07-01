@@ -189,7 +189,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { CreateProjectType, ProjectLinkType, ProjectType } from '~/types/project'
+import type { CreateProjectPayload, ProjectLink, ProjectType } from '~/types/project'
 const { loggedIn } = useUserSession()
 
 useHead({
@@ -275,11 +275,11 @@ const projectMenuItems = (project: ProjectType) => {
 const { data, status, refresh } = await useFetch('/api/projects')
 const projects = data.value?.projects as ProjectType[]
 
-const handleCreateProject = async (projectData: CreateProjectType) => {
+const handleCreateProject = async (payload: CreateProjectPayload) => {
   try {
     await $fetch("/api/projects", {
       method: "POST",
-      body: projectData,
+      body: payload,
     })
     
     await refresh()
@@ -289,11 +289,11 @@ const handleCreateProject = async (projectData: CreateProjectType) => {
   }
 }
 
-const updateProject = async (projectId: string, projectData: Partial<ProjectType>) => {
+const updateProject = async (projectId: string, payload: Partial<ProjectType>) => {
   try {
     await $fetch(`/api/projects/${projectId}`, {
       method: "PUT",
-      body: projectData,
+      body: payload,
     })
     
     await refresh()
@@ -311,14 +311,13 @@ const deleteProject = async (project: ProjectType) => {
     })
     
     await refresh()
-    console.log('Project deleted successfully')
   } catch (error) {
     console.error('Failed to delete project:', error)
   }
 }
 
 const extractProjectLink = (project: ProjectType) => {
-  const link = project.links?.find((l: ProjectLinkType) => l.name === 'project')
+  const link = project.links?.find((l: ProjectLink) => l.name === 'project')
   return link?.href || ''
 }
 </script>

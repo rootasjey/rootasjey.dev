@@ -1,12 +1,4 @@
-import type { ApiTag } from './post'
-
-export type CreateProjectType = {
-  company?: string
-  description?: string
-  name: string
-  tags?: ApiTag[]
-  status?: 'active' | 'completed' | 'archived' | 'on-hold'
-}
+import type { ApiTag, Tag } from './tag'
 
 export type ProjectType = {
   article?: object
@@ -26,7 +18,7 @@ export type ProjectType = {
   image_ext?: string
   image_src?: string
   isDeleteDialogOpen?: boolean
-  links: ProjectLinkType[] & never[]
+  links: ProjectLink[] & never[]
   metrics?: {
     comments: number
     likes: number
@@ -55,7 +47,31 @@ export type ProjectType = {
   user_name?: string
 }
 
-export type ProjectLinkType = {
+export type ProjectLink = {
   href: string
   name: string
+}
+
+// ------
+// Payload types for creating and updating projects
+// ------
+
+export type CreateProjectPayload = {
+  company?: string
+  description?: string
+  name: string
+  tags?: Tag[]
+  status?: 'active' | 'completed' | 'archived' | 'on-hold'
+}
+
+export type UpdateProjectPayload = {
+  company?: string
+  description?: string
+  endDate?: string
+  id: number
+  name?: string
+  slug?: string
+  startDate?: string
+  status?: 'active' | 'completed' | 'archived' | 'on-hold'
+  tags?: Tag[]
 }

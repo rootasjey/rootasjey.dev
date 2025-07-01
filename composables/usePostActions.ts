@@ -1,4 +1,5 @@
-import type { ApiTag, CreatePostType, PostType } from '~/types/post'
+import type { CreatePostPayload, PostType } from '~/types/post'
+import type { ApiTag, Tag } from '~/types/tag'
 
 export function usePostActions(dependencies: {
   posts: ReturnType<typeof usePosts>
@@ -12,15 +13,14 @@ export function usePostActions(dependencies: {
   const handleAddTag = async (newTag: string, category = 'general') => {
     try {
       const tag = await tagManagement.createTag(newTag, category)
-      if (tag) {
-        toast({
-          title: 'Tag added',
-          description: `Added tag: ${tag.name}`,
-          duration: 5000,
-          showProgress: true,
-          toast: 'soft-success',
-        })
-      }
+      if (!tag) return
+      toast({
+        title: 'Tag added',
+        description: `Added tag: ${tag.name}`,
+        duration: 5000,
+        showProgress: true,
+        toast: 'soft-success',
+      })
     } catch (e: any) {
       const errorMsg = e?.data?.message || e?.message || 'Unknown error'
       console.error(`Failed to add tag: ${errorMsg}`)
@@ -34,27 +34,10 @@ export function usePostActions(dependencies: {
     }
   }
 
-  // Helper to extract tag IDs from tag objects or string[]
-  const extractTagIds = (tags: ApiTag[] | string[] | undefined): number[] => {
-    if (!tags) return []
-    if (typeof tags[0] === 'object') {
-      return (tags as ApiTag[]).map(t => t.id)
-    }
-    // If tags are strings, you may want to map them to tag objects here
-    return []
-  }
-
   // Create a post and assign tags via API
-  const handleCreatePost = async (postData: CreatePostType) => {
+  const handleCreatePost = async (postData: CreatePostPayload) => {
     try {
-      // Extract tag IDs from tag objects
-      const tagIds = extractTagIds(postData.tags)
-      // Remove tagIds from payload, only send post fields
-      const { tags, ...postPayload } = postData
-      const newPost = await posts.createPost(postPayload)
-      if (newPost && tagIds.length > 0) {
-        await tagManagement.assignPostTags(newPost.id, tagIds)
-      }
+      const newPost = await posts.createPost(postData)
       if (newPost && newPost.status === 'draft') {
         drafts.addDraft(newPost)
       }
@@ -75,18 +58,14 @@ export function usePostActions(dependencies: {
     id: number
     name: string
     description: string
-    tags?: ApiTag[]
-    slug: string
+    tags?: Tag[]
+    slug?: string
     status: 'draft' | 'published' | 'archived'
   }) => {
     try {
-      const tagIds = extractTagIds(updateData.tags)
-      const { tags, ...updatePayload } = updateData
-      const updatedPost = await posts.updatePost(updateData.slug, updatePayload)
+      const updatedPost = await posts.updatePost(updateData)
       if (!updatedPost) return
-      if (tagIds.length > 0) {
-        await tagManagement.assignPostTags(updatedPost.id, tagIds)
-      }
+
       updateData.status === 'draft'
         ? drafts.updateDraft(updatedPost.id, updatedPost)
         : drafts.removeDraft(updatedPost.id)

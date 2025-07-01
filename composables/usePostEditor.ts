@@ -1,5 +1,6 @@
 import { useApiTags } from '~/composables/useApiTags'
-import type { PostType, ApiTag } from '~/types/post'
+import type { ApiTag } from '~/types/tag'
+import type { PostType } from '~/types/post'
 
 // Tag helpers
 function getPrimaryTag(tags: ApiTag[]): ApiTag | undefined {
@@ -112,7 +113,7 @@ export function usePostEditor() {
   )
 
   // Computed properties for tags
-  const availableTags = computed(() => allTags.value.map(tag => ({ label: tag.name, value: tag.id, tag })))
+  const availableTags = computed(() => allTags.value)
   const primaryTag = computed(() => getPrimaryTag(postTags.value))
   const secondaryTags = computed(() => getSecondaryTags(postTags.value))
   const suggestedTags = computed(() => {

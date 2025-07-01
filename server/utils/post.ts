@@ -1,3 +1,5 @@
+import { PostType } from "~/types/post"
+
 /**
  * Creates a new post data object with default values for SQLite storage.
  *
@@ -68,5 +70,5 @@ export async function getPostByIdentifier(db: any, identifier: string | number) 
     LIMIT 1
   `
   const value = isNumericId ? Number(identifier) : identifier
-  return await db.prepare(query).bind(value).first()
+  return await db.prepare(query).bind(value).first() as PostType | null
 }

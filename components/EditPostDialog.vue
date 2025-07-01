@@ -5,7 +5,10 @@
         <!-- Name Field -->
         <div class="grid grid-cols-3 items-center gap-4">
           <ULabel for="edit-name" class="text-right">
-            Name *
+            Name 
+            <UIcon name="i-ph-star-four" class="inline-block ml-1" 
+              :class="{ 'text-pink-600': errors.name, 'text-lime-600': !errors.name }"
+              title="Post name is required and should be descriptive."/>
           </ULabel>
           <div class="col-span-2">
             <UInput 
@@ -37,11 +40,37 @@
             :una="{ inputWrapper: 'col-span-2' }"
           />
         </div>
+        
+        <!-- Slug Field -->
+        <div class="grid grid-cols-3 items-center gap-4">
+          <ULabel for="edit-slug" class="text-right">
+            Slug 
+            <UIcon name="i-ph-star-four" class="inline-block ml-1" 
+              :class="{ 'text-pink-600': errors.slug, 'text-lime-600': !errors.slug }"
+              title="Slug is used in the URL. It should be unique and descriptive."/>
+          </ULabel>
+          <UInput 
+            id="edit-slug" 
+            ref="slugInputRef"
+            v-model="form.slug" 
+            :class="{ 'border-red-500': errors.slug }"
+            placeholder="Enter post slug"
+            @input="markAsChanged"
+            :una="{ inputWrapper: 'col-span-2' }"
+            aria-describedby="edit-slug-error"
+          />
+          <p v-if="errors.slug" id="edit-slug-error" class="text-red-500 text-sm mt-1" role="alert">
+            {{ errors.slug }}
+          </p>
+        </div>
 
         <!-- Tags Field -->
         <div class="grid grid-cols-3 items-start gap-4 mb-4">
           <ULabel for="edit-tags" class="text-right pt-2">
-            Tags *
+            Tags 
+            <UIcon name="i-ph-star-four" class="inline-block ml-1" 
+              :class="{ 'text-pink-600': errors.tags, 'text-lime-600': !errors.tags }"
+              title="You must categorize your post with at least one tag."/>
           </ULabel>
           <div class="col-span-2">
             <TagInput
@@ -95,7 +124,8 @@
 </template>
 
 <script setup lang="ts">
-import type { ApiTag, PostType } from '~/types/post'
+import type { PostType, UpdatePostPayload } from '~/types/post'
+import type { ApiTag } from '~/types/tag'
 
 interface Props {
   modelValue?: boolean
@@ -104,13 +134,7 @@ interface Props {
 
 interface Emits {
   (e: 'update:modelValue', value: boolean): void
-  (e: 'update-post', data: { 
-    id: number
-    name: string
-    description: string
-    tags: ApiTag[]
-    status: 'draft' | 'published' | 'archived'
-  }): void
+  (e: 'update-post', post: UpdatePostPayload): void
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -122,27 +146,31 @@ const emit = defineEmits<Emits>()
 
 // Refs for focus management
 const nameInputRef = ref<HTMLInputElement>()
+const slugInputRef = ref<HTMLInputElement>()
 
 // Form state
 const form = reactive({
   name: '',
   description: '',
-  tags: [] as ApiTag[],
+  slug: '',
   status: { label: 'Draft', value: 'draft' },
+  tags: [] as ApiTag[],
 })
 
 // Original form state for change detection
 const originalForm = reactive({
   name: '',
   description: '',
-  tags: [] as ApiTag[],
+  slug: '',
   status: { label: 'Draft', value: 'draft' },
+  tags: [] as ApiTag[],
 })
 
 // Validation state
 const errors = reactive({
   name: '',
-  tags: ''
+  slug: '',
+  tags: '',
 })
 
 // UI state
@@ -165,6 +193,7 @@ const isOpen = computed({
 const isFormValid = computed(() => {
   return form.name.trim().length > 0 && 
          form.tags.length > 0 && 
+         form.slug &&
          !errors.name && 
          !errors.tags
 })
@@ -186,34 +215,48 @@ const validateTags = () => {
   }
 }
 
+const validateSlug = () => {
+  if (!form.slug.trim()) {
+    errors.slug = 'Slug is required'
+  } else if (form.slug.trim().length < 3) {
+    errors.slug = 'Slug must be at least 3 characters'
+  } else {
+    errors.slug = ''
+  }
+}
+
 const markAsChanged = () => {
-  // Validate tags when they change
   validateTags()
+  validateSlug()
   
   // Check if current form differs from original
   hasChanges.value = (
     form.name !== originalForm.name ||
     form.description !== originalForm.description ||
-    JSON.stringify(form.tags) !== JSON.stringify(originalForm.tags) ||
-    form.status !== originalForm.status
+    form.slug !== originalForm.slug ||
+    form.status !== originalForm.status ||
+    JSON.stringify(form.tags) !== JSON.stringify(originalForm.tags)
   )
 }
 
 const populateForm = (post: PostType) => {
   form.name = post.name || ''
   form.description = post.description || ''
-  form.tags = Array.isArray(post.tags) ? [...post.tags] : []
+  form.slug = post.slug || ''
   form.status = convertVisibility(post.status)
+  form.tags = Array.isArray(post.tags) ? [...post.tags] : []
   
   // Store original values for change detection
   originalForm.name = form.name
   originalForm.description = form.description
-  originalForm.tags = [...form.tags]
+  originalForm.slug = form.slug
   originalForm.status = form.status
+  originalForm.tags = [...form.tags]
   
   // Reset change detection
   hasChanges.value = false
   errors.name = ''
+  errors.slug = ''
   errors.tags = ''
 }
 
@@ -228,10 +271,13 @@ const resetForm = () => {
   form.status = { label: 'Draft', value: 'draft' }
   originalForm.name = ''
   originalForm.description = ''
-  originalForm.tags = []
+  originalForm.slug = ''
   originalForm.status = { label: 'Draft', value: 'draft' }
+  originalForm.tags = []
+
   errors.name = ''
   errors.tags = ''
+
   hasChanges.value = false
 }
 
@@ -253,12 +299,16 @@ const handleCancel = () => {
 const handleUpdatePost = async () => {
   // Validate before submitting
   validateName()
+  validateSlug()
   validateTags()
   
   if (!isFormValid.value) {
     // Focus the first invalid field
     if (errors.name) {
       nameInputRef.value?.focus()
+    }
+    if (errors.slug) {
+      slugInputRef.value?.focus()
     }
     return
   }
@@ -275,8 +325,12 @@ const handleUpdatePost = async () => {
       id: props.post.id,
       name: form.name.trim(),
       description: form.description.trim(),
-      tags: form.tags,
+      slug: originalForm.slug.trim() !== form.slug.trim() ? form.slug.trim() : undefined,
       status: form.status.value as 'draft' | 'published' | 'archived',
+      tags: form.tags.map(tag => ({
+        name: tag.name,
+        category: tag.category ?? '',
+      })),
     }
 
     emit('update-post', updateData)
@@ -284,8 +338,9 @@ const handleUpdatePost = async () => {
     // Update original form state to reflect saved changes
     originalForm.name = form.name
     originalForm.description = form.description
-    originalForm.tags = [...form.tags]
+    originalForm.slug = form.slug
     originalForm.status = form.status
+    originalForm.tags = [...form.tags]
     hasChanges.value = false
     
     isOpen.value = false

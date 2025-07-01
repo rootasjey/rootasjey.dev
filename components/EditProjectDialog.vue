@@ -137,8 +137,8 @@
 </template>
 
 <script setup lang="ts">
-import type { ApiTag } from '~/types/post'
-import type { ProjectType } from '~/types/project'
+import type { ApiTag } from '~/types/tag'
+import type { ProjectType, UpdateProjectPayload } from '~/types/project'
 
 interface Props {
   modelValue?: boolean
@@ -147,16 +147,7 @@ interface Props {
 
 interface Emits {
   (e: 'update:modelValue', value: boolean): void
-  (e: 'update-project', data: { 
-    id: number
-    name: string
-    description: string
-    company: string
-    tags: ApiTag[]
-    status: 'active' | 'completed' | 'archived' | 'on-hold'
-    startDate: string
-    endDate: string
-  }): void
+  (e: 'update-project', payload: UpdateProjectPayload): void
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -367,18 +358,21 @@ const handleUpdateProject = async () => {
   isLoading.value = true
 
   try {
-    const updateData = {
-      id: props.project.id,
-      name: form.name.trim(),
-      description: form.description.trim(),
+    const payload = {
       company: form.company.trim(),
-      tags: form.tags,
-      status: form.status.value as 'active' | 'completed' | 'archived' | 'on-hold',
-      startDate: form.startDate,
+      description: form.description.trim(),
+      id: props.project.id,
       endDate: form.endDate,
+      name: form.name.trim(),
+      startDate: form.startDate,
+      status: form.status.value as 'active' | 'completed' | 'archived' | 'on-hold',
+      tags: form.tags.map(tag => ({
+        name: tag.name,
+        category: tag.category ?? '',
+      })),
     }
 
-    emit('update-project', updateData)
+    emit('update-project', payload)
     
     // Update original form state to reflect saved changes
     originalForm.name = form.name

@@ -92,7 +92,8 @@
 
 <script setup lang="ts">
 import { useApiTags } from '~/composables/useApiTags'
-import type { ApiTag, CreatePostType } from '~/types/post'
+import type { CreatePostPayload } from '~/types/post'
+import { ApiTag } from '~/types/tag'
 
 interface Props {
   modelValue?: boolean
@@ -100,7 +101,7 @@ interface Props {
 
 interface Emits {
   (e: 'update:modelValue', value: boolean): void
-  (e: 'create-post', post: CreatePostType): void
+  (e: 'create-post', post: CreatePostPayload): void
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -195,12 +196,16 @@ const handleCreatePost = async () => {
   }
   isLoading.value = true
   try {
-    const postData: CreatePostType = {
+    const postData: CreatePostPayload = {
       name: form.name.trim(),
       description: form.description.trim(),
-      tags: form.tags,
       status: form.status.value as 'draft' | 'published' | 'archived',
+      tags: form.tags.map(tag => ({
+        name: tag.name,
+        category: tag.category ?? ''
+      })),
     }
+    
     emit('create-post', postData)
     resetForm()
     isOpen.value = false

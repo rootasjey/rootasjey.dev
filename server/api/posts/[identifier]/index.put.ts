@@ -1,6 +1,7 @@
 // PUT /api/posts/[identifier]/index.put.ts
 import { z } from 'zod'
-import { ApiTag, PostType } from "~/types/post"
+import { ApiTag } from '~/types/tag'
+import { PostType } from "~/types/post"
 import { upsertPostTags } from '~/server/utils/tags'
 import { getPostByIdentifier } from '~/server/utils/post'
 
@@ -12,8 +13,7 @@ const updatePostSchema = z.object({
     category: z.string().max(50).optional()
   })).max(20).optional(),
   language: z.enum(['en', 'fr']).optional(),
-  slug: z.string().min(1).max(255),
-  newSlug: z.string().min(1).max(255).optional(),
+  slug: z.string().min(1).max(255).optional(),
   status: z.enum(['draft', 'published', 'archived']).optional(),
 })
 
@@ -23,6 +23,8 @@ export default defineEventHandler(async (event) => {
   const identifier = decodeURIComponent(getRouterParam(event, 'identifier') ?? '')
   const db = hubDatabase()
 
+  const isNumericId = typeof identifier === "number" || /^\d+$/.test(String(identifier))
+
   if (!identifier) {
     throw createError({
       statusCode: 400,
@@ -30,24 +32,31 @@ export default defineEventHandler(async (event) => {
     })
   }
 
+  if (!isNumericId) {
+    throw createError({
+      statusCode: 400,
+      message: `Post identifier must be a numeric ID for this endpoint, received: ${identifier}`,
+    })
+  }
+
   const validatedBody = await readValidatedBody(event, updatePostSchema.parse)
-  let post: PostType | null = await getPostByIdentifier(db, identifier)
+  let post = await getPostByIdentifier(db, identifier)
 
   handlePostErrors(post, userId)
   post = post as PostType
 
   // Check for slug uniqueness if slug is being updated
-  if (validatedBody.newSlug && validatedBody.newSlug !== post.slug) {
+  if (validatedBody.slug && validatedBody.slug !== post.slug) {
     const slugExists = await db.prepare(`
       SELECT id FROM posts WHERE slug = ? AND id != ?
     `)
-    .bind(validatedBody.newSlug, post.id)
+    .bind(validatedBody.slug, post.id)
     .first()
 
     if (slugExists) {
       throw createError({
         statusCode: 409,
-        statusMessage: `Slug "${validatedBody.newSlug}" already exists for another post.`,
+        statusMessage: `Slug "${validatedBody.slug}" already exists for another post.`,
       })
     }
   }

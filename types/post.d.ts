@@ -1,18 +1,4 @@
-
-export interface ApiTag {
-  id: number
-  name: string
-  category: string
-  created_at: string
-  updated_at: string
-}
-
-export type CreatePostType = {
-  description: string
-  name: string
-  status?: 'draft' | 'published' | 'archived'
-  tags?: ApiTag[]
-}
+import type { ApiTag, Tag } from "./tag"
 
 export type PostType = {
   /** Post article in JSON format. */
@@ -39,7 +25,7 @@ export type PostType = {
       align: 'start' | 'center'
     }
   }
-  links: PostLinkType[]
+  links: PostLink[]
   metrics: {
     comments: number
     likes: number
@@ -67,7 +53,28 @@ export type PostType = {
   user_name?: string
 }
 
-export type PostLinkType = {
+export type PostLink = {
   href: string
   name: string
 }
+
+// ------
+// Payload types for creating and updating posts
+// ------
+
+export type CreatePostPayload = {
+  description: string
+  name: string
+  status?: 'draft' | 'published' | 'archived'
+  tags?: Tag[]
+}
+
+interface UpdatePostPayload {
+  description: string
+  id: number
+  name: string
+  slug?: string
+  status?: 'draft' | 'published' | 'archived'
+  tags?: Tag[]
+}
+

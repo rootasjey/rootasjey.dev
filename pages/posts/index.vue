@@ -255,7 +255,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { ApiTag } from '~/types/post'
+import type { ApiTag } from '~/types/tag'
 
 useHead({
   title: "root • posts",
@@ -274,7 +274,6 @@ const posts = usePosts()
 
 const tags = useApiTags()
 await tags.fetchTags()
-console.log('Fetched tags:', tags.tags.value)
 
 // Tag statistics and helpers for API-driven tags
 const tagStats = computed(() => {

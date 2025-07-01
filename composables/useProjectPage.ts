@@ -1,6 +1,6 @@
 import { useApiTags } from '~/composables/useApiTags'
+import type { ApiTag } from '~/types/tag'
 import type { ProjectType } from '~/types/project'
-import type { ApiTag } from '~/types/post'
 
 export function useProjectPage(slug: string) {
   const { loggedIn, user } = useUserSession()
@@ -173,12 +173,12 @@ export function useProjectPage(slug: string) {
     project.value.user_id = canEdit.value ? user.value?.id ?? -1 : -1
   }
 
-  const updateProject = async (updatedProject: ProjectType) => {
+  const updateProject = async (payload: ProjectType) => {
     if (!project.value) return
-    project.value = updatedProject
+    project.value = payload
 
     try {
-      await $fetch(`/api/projects/${slug}`, { method: 'PUT', body: project.value })
+      await $fetch(`/api/projects/${payload.id}`, { method: 'PUT', body: payload })
     }
     catch (error) {
       console.error('Failed to update project:', error)

@@ -1,7 +1,6 @@
 // server/utils/tags.ts
 // Utility to upsert tags and update post_tags join table
-
-import { ApiTag } from "~/types/post";
+import type { ApiTag } from '~/types/tag'
 
 /**
  * Upsert tags and update post_tags join table for a post.

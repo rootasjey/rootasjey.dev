@@ -12,7 +12,7 @@
         <div class="flex flex-wrap gap-2">
           <UButton
             v-for="tag in suggestedTags"
-            :key="tag"
+            :key="tag.id"
             btn="outline"
             size="xs"
             @click="onAddSuggestedTag(tag)"
@@ -42,12 +42,15 @@
 
 <script lang="ts" setup>
 import { ref, watch, toRefs } from 'vue'
+import type { ApiTag } from '~/types/tag'
 
-const props = defineProps({
-  show: Boolean,
-  postTags: { type: Array as PropType<string[]>, default: () => [] },
-  suggestedTags: { type: Array as PropType<string[]>, default: () => [] },
-})
+interface Props {
+  show: boolean
+  postTags: ApiTag[]
+  suggestedTags?: ApiTag[]
+}
+
+const props = defineProps<Props>()
 const emit = defineEmits(['update:show', 'save', 'cancel', 'addSuggestedTag'])
 
 const { show, postTags } = toRefs(props)
@@ -72,7 +75,7 @@ function onCancel() {
   emit('cancel')
   showLocal.value = false
 }
-function onAddSuggestedTag(tag: string) {
+function onAddSuggestedTag(tag: ApiTag) {
   emit('addSuggestedTag', tag)
 }
 </script>

@@ -35,10 +35,10 @@
 </template>
 
 <script lang="ts" setup>
-import type { ExperimentType } from '~/types/experiment';
+import type { Experiment } from '~/types/experiment';
 
 interface Props {
-  experiments: ExperimentType[];
+  experiments: Experiment[];
   experimentLoading: boolean;
   experimentError: boolean;
 }

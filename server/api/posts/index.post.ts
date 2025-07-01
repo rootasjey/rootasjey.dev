@@ -1,6 +1,7 @@
 // POST /api/posts/create
 import { createPostData } from '~/server/utils/post'
-import { ApiTag, PostType } from '~/types/post'
+import type { ApiTag } from '~/types/tag'
+import { PostType } from '~/types/post'
 import { upsertPostTags } from '~/server/utils/tags'
 
 export default defineEventHandler(async (event) => {

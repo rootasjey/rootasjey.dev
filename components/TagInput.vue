@@ -20,8 +20,7 @@
 </template>
 
 <script setup lang="ts">
-import { useApiTags } from '~/composables/useApiTags'
-import type { ApiTag } from '~/types/post'
+import type { ApiTag } from '~/types/tag'
 
 interface Props {
   modelValue: ApiTag[]
@@ -38,12 +37,13 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<Emits>()
 
-const tagsApi = useApiTags()
-
 // Reactive state
 const inputValue = ref('')
 const primaryTag = ref<ApiTag | null>(null)
 const additionalTags = ref<ApiTag[]>([])
+
+// For generating unique negative ids for new tags
+let tempTagId = -1
 
 // Initialize from modelValue
 watchImmediate(() => props.modelValue, (newTags) => {
@@ -65,16 +65,16 @@ const allCurrentTags = computed(() => {
 })
 
 // Methods
-const handleKeydown = async (event: KeyboardEvent) => {
+const handleKeydown = (event: KeyboardEvent) => {
   if (event.key === 'Enter' || event.key === ',') {
     event.preventDefault()
-    await addTagFromInput()
+    addTagFromInput()
   } else if (event.key === 'Backspace' && inputValue.value === '') {
     removeLastTag()
   }
 }
 
-const addTagFromInput = async () => {
+const addTagFromInput = () => {
   const tagValue = inputValue.value.trim().replace(/,$/, '')
   if (!tagValue) return
   // Check if tag already exists (by name)
@@ -83,12 +83,14 @@ const addTagFromInput = async () => {
     return
   }
 
-  // Try to find existing tag in API
-  let tag = tagsApi.tags.value.find(t => t.name.toLowerCase() === tagValue.toLowerCase())
-  if (!tag) {
-    const created = await tagsApi.createTag(tagValue)
-    if (!created) return
-    tag = created
+  // Create a local ApiTag object with a unique negative id and required fields
+  const now = new Date().toISOString()
+  const tag: ApiTag = {
+    id: tempTagId--,
+    name: tagValue,
+    category: '',
+    created_at: now,
+    updated_at: now
   }
 
   // Add as primary tag if none exists, otherwise as additional tag
@@ -103,7 +105,7 @@ const addTagFromInput = async () => {
 }
 
 const removeTag = (tagToRemove: ApiTag) => {
-  if (primaryTag.value && tagToRemove.id === primaryTag.value.id) {
+  if (primaryTag.value && tagToRemove.name === primaryTag.value.name) {
     removePrimaryTag()
   } else {
     removeAdditionalTag(tagToRemove)
@@ -121,7 +123,7 @@ const removePrimaryTag = () => {
 }
 
 const removeAdditionalTag = (tag: ApiTag) => {
-  const index = additionalTags.value.findIndex(t => t.id === tag.id)
+  const index = additionalTags.value.findIndex(t => t.name === tag.name)
   if (index > -1) {
     additionalTags.value.splice(index, 1)
     emitUpdate()
@@ -138,9 +140,9 @@ const removeLastTag = () => {
 }
 
 const setPrimaryTag = (tag: ApiTag) => {
-  if (primaryTag.value && primaryTag.value.id === tag.id) return
+  if (primaryTag.value && primaryTag.value.name === tag.name) return
   // Remove from additional tags if it exists
-  const idx = additionalTags.value.findIndex(t => t.id === tag.id)
+  const idx = additionalTags.value.findIndex(t => t.name === tag.name)
   if (idx > -1) {
     additionalTags.value.splice(idx, 1)
   }

@@ -103,8 +103,8 @@
 </template>
 
 <script setup lang="ts">
-import type { CreateProjectType } from '~/types/project'
-import type { ApiTag } from '~/types/post'
+import type { CreateProjectPayload } from '~/types/project'
+import type { ApiTag } from '~/types/tag'
 
 interface Props {
   modelValue?: boolean
@@ -112,7 +112,7 @@ interface Props {
 
 interface Emits {
   (e: 'update:modelValue', value: boolean): void
-  (e: 'create-project', project: CreateProjectType): void
+  (e: 'create-project', project: CreateProjectPayload): void
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -207,15 +207,19 @@ const handleCreateProject = async () => {
   }
   isLoading.value = true
   try {
-    const projectData: CreateProjectType = {
+    const projectData: CreateProjectPayload = {
       name: form.name.trim(),
       description: form.description.trim(),
       company: form.company.trim(),
-      tags: form.tags,
       status: (['active', 'completed', 'archived', 'on-hold'] as const).includes(form.status.value as any) 
-        ? form.status.value as 'active' | 'completed' | 'archived' | 'on-hold'
-        : 'active',
+      ? form.status.value as 'active' | 'completed' | 'archived' | 'on-hold'
+      : 'active',
+      tags: form.tags.map(tag => ({
+        name: tag.name,
+        category: tag.category ?? ''
+      })),
     }
+
     emit('create-project', projectData)
     resetForm()
     isOpen.value = false

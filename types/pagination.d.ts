@@ -1,4 +1,4 @@
-export interface Pagination {
+export type Pagination = {
   hasNext: boolean
   hasPrev: boolean
   limit: number

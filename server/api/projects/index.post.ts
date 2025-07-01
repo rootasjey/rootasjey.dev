@@ -1,6 +1,6 @@
 // POST /api/projects
+import type { ApiTag } from '~/types/tag'
 import { upsertProjectTags } from '~/server/utils/tags'
-import { ApiTag } from '~/types/post'
 
 export default defineEventHandler(async (event) => {
   const session = await requireUserSession(event)

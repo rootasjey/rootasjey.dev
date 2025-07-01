@@ -1,5 +1,5 @@
 import { ref } from 'vue'
-import type { ApiTag } from '~/types/post'
+import type { ApiTag } from '~/types/tag'
 
 export function useApiTags() {
   const tags = ref<ApiTag[]>([])

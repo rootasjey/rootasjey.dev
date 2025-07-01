@@ -1,4 +1,4 @@
-export interface Message {
+export type Message = {
   created_at: string
   id: number
   message: string
