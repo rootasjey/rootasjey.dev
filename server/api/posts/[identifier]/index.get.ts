@@ -1,16 +1,17 @@
 // GET /api/posts/:slug
 
 import { PostType } from "~/types/post"
+import { getPostByIdentifier } from '~/server/utils/post'
 
 export default defineEventHandler(async (event) => {
-  const slug = decodeURIComponent(getRouterParam(event, 'slug') ?? '')
+  const identifier = decodeURIComponent(getRouterParam(event, 'identifier') ?? '')
   const db = hubDatabase()
   const blobStorage = hubBlob()
 
-  if (!slug) {
+  if (!identifier) {
     throw createError({
       statusCode: 400,
-      message: 'Post slug is required',
+      message: 'Post identifier is required',
     })
   }
 
@@ -18,26 +19,14 @@ export default defineEventHandler(async (event) => {
   try {
     const session = await getUserSession(event) // (optional - for private projects)
     if (session && session.user) { userId = session.user.id }
-  } catch (error) { /* No session, continue as anonymous user */}
+  } catch (error) { /* No session, continue as anonymous user */ }
 
-   const post: PostType | null = await db
-  .prepare(`
-    SELECT 
-      p.*,
-      u.avatar as user_avatar,
-      u.name as user_name
-    FROM posts p
-    JOIN users u ON p.user_id = u.id
-    WHERE p.slug = ? 
-    LIMIT 1
-  `)
-  .bind(slug)
-  .first()
+  const post: PostType | null = await getPostByIdentifier(db, identifier)
 
   if (!post) {
     throw createError({
       statusCode: 404,
-      message: `Post "${slug}" not found`
+      message: `Post "${identifier}" not found`
     })
   }
 
@@ -48,9 +37,21 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  if (typeof post.links   === 'string') { post.links = JSON.parse(post.links) }
-  if (typeof post.styles  === 'string') { post.styles = JSON.parse(post.styles) }
-  if (typeof post.tags    === 'string') { post.tags = JSON.parse(post.tags) }
+  // Fetch tags from join table
+  const tagsResult = await db.prepare(`
+    SELECT t.* FROM tags t
+    JOIN post_tags pt ON pt.tag_id = t.id
+    WHERE pt.post_id = ?
+    ORDER BY pt.rowid ASC
+  `).bind(post.id).all()
+
+  post.tags = (tagsResult.results || []).map(t => ({
+    id: Number(t.id),
+    name: String(t.name),
+    category: typeof t.category === 'string' ? t.category : '',
+    created_at: t.created_at ? String(t.created_at) : '',
+    updated_at: t.updated_at ? String(t.updated_at) : ''
+  }))
 
   const articleBlob = await blobStorage.get(post.blob_path as string)
   if (articleBlob) {
@@ -60,11 +61,11 @@ export default defineEventHandler(async (event) => {
 
   try {
     await db
-    .prepare(`UPDATE posts SET metrics_views = metrics_views + 1 WHERE id = ?1`)
-    .bind(post.id)
-    .run()
+      .prepare(`UPDATE posts SET metrics_views = metrics_views + 1 WHERE id = ?1`)
+      .bind(post.id)
+      .run()
   } catch (error) {
-    console.error(`Failed to update view count for post ${slug}:`, error)
+    console.error(`Failed to update view count for post ${post.id}:`, error)
   }
 
   post.image = {

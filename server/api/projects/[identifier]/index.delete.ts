@@ -1,23 +1,20 @@
-// DELETE /api/projects/:slug
+// DELETE /api/projects/[identifier]
 
-import { ProjectType } from "~/types/project"
+import { getProjectByIdentifier } from "~/server/utils/project"
 
 export default defineEventHandler(async (event) => {
   const session = await requireUserSession(event)
   const db = hubDatabase()
-  const slug = decodeURIComponent(getRouterParam(event, 'slug') ?? '')
+  const identifier = decodeURIComponent(getRouterParam(event, 'identifier') ?? '')
 
-  if (!slug) {
+  if (!identifier) {
     throw createError({
       statusCode: 400,
-      message: 'Project slug is required.',
+      message: 'Project identifier is required.',
     })
   }
 
-  const project: ProjectType | null = await db
-  .prepare(`SELECT * FROM projects WHERE slug = ? LIMIT 1`)
-  .bind(slug)
-  .first()
+  const project = await getProjectByIdentifier(db, identifier)
 
   if (!project) {
     throw createError({

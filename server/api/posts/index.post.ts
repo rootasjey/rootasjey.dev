@@ -1,6 +1,7 @@
 // POST /api/posts/create
 import { createPostData } from '~/server/utils/post'
-import { PostType } from '~/types/post'
+import { ApiTag, PostType } from '~/types/post'
+import { upsertPostTags } from '~/server/utils/tags'
 
 export default defineEventHandler(async (event) => {
   const session = await requireUserSession(event)
@@ -18,27 +19,23 @@ export default defineEventHandler(async (event) => {
   const userId = session.user.id
   const postData = createPostData(body, userId)
 
-  const articleBlob = createArticle()
-  const blob_path = `posts/${postData.slug}/article.json`
-  
-  await blobStorage.put(blob_path, JSON.stringify(articleBlob))
-  postData.blob_path = blob_path
-  
+  // Remove blob_path from postData for initial insert
+  postData.blob_path = ''
+
   if (typeof postData.links   === 'object') { postData.links = JSON.stringify(postData.links) }
   if (typeof postData.styles  === 'object') { postData.styles = JSON.stringify(postData.styles) }
-  if (typeof postData.tags    === 'object') { postData.tags = JSON.stringify(postData.tags) }
 
+  // Insert post without blob_path first
   const result = await db.prepare(`
     INSERT INTO posts (
-      blob_path, description, image_src, image_alt,
+      description, image_src, image_alt,
       language, links, metrics_comments, metrics_likes, metrics_views,
-      name, slug, styles, tags, user_id, status
+      name, slug, styles, user_id, status
     ) VALUES (
-      ?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15
+      ?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13
     )
   `)
   .bind(
-    postData.blob_path,
     postData.description,
     postData.image_src,
     postData.image_alt,
@@ -50,15 +47,14 @@ export default defineEventHandler(async (event) => {
     postData.name,
     postData.slug,
     postData.styles,
-    postData.tags,
     postData.user_id,
     postData.status
   ).run()
 
   const createdPost: PostType | null = await db
-  .prepare(`SELECT * FROM posts WHERE id = ?1`)
-  .bind(result.meta.last_row_id)
-  .first()
+    .prepare(`SELECT * FROM posts WHERE id = ?1`)
+    .bind(result.meta.last_row_id)
+    .first()
 
   if (!createdPost) {
     throw createError({
@@ -67,11 +63,28 @@ export default defineEventHandler(async (event) => {
     })
   }
 
+  // Now create the article blob using the post's ID
+  const articleBlob = createArticle()
+  const blob_path = `posts/${createdPost.id}/article.json`
+  await blobStorage.put(blob_path, JSON.stringify(articleBlob))
+
+  // Update the post with the blob_path
+  await db.prepare(`UPDATE posts SET blob_path = ? WHERE id = ?`)
+    .bind(blob_path, createdPost.id)
+    .run()
+
+  // --- TAGS: Process tags after post insert ---
+  let createdTags: ApiTag[] = []
+  if (Array.isArray(body.tags)) {
+    createdTags = await upsertPostTags(db, createdPost.id, body.tags)
+  }
+
   const newPost: PostType = {
     ...createdPost,
+    blob_path,
     links:  typeof createdPost.links   === 'string' ? JSON.parse(createdPost.links)   : createdPost.links,
     styles: typeof createdPost.styles  === 'string' ? JSON.parse(createdPost.styles)  : createdPost.styles,
-    tags:   typeof createdPost.tags    === 'string' ? JSON.parse(createdPost.tags)    : createdPost.tags,
+    tags:   createdTags,
   }
 
   return newPost

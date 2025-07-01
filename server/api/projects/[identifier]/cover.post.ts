@@ -1,20 +1,21 @@
-// POST /api/project/[slug]/cover
+// POST /api/project/[identifier]/cover
 
+import { getProjectByIdentifier } from '~/server/utils/project'
 import { Jimp } from "jimp";
 
 export default defineEventHandler(async (event) => {
   const session = await requireUserSession(event)
   const userId = session.user.id
-  const slug = decodeURIComponent(getRouterParam(event, 'slug') ?? '')
+  const identifier = decodeURIComponent(getRouterParam(event, 'identifier') ?? '')
   const formData = await readMultipartFormData(event)
   const db = hubDatabase()
   const hb = hubBlob()
-  
+
   const file = formData?.find(item => item.name === 'file')?.data
   const fileName = formData?.find(item => item.name === 'fileName')?.data.toString()
   const type = formData?.find(item => item.name === 'type')?.data.toString()
 
-  if (!slug || !file || !fileName || !type) {
+  if (!identifier || !file || !fileName || !type) {
     throw createError({
       statusCode: 400,
       message: 'Missing required fields',
@@ -30,10 +31,7 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  const project = await db
-  .prepare(`SELECT * FROM projects WHERE slug = ? LIMIT 1`)
-  .bind(slug)
-  .first()
+  const project = await getProjectByIdentifier(db, identifier)
 
   if (!project) {
     throw createError({
@@ -50,7 +48,7 @@ export default defineEventHandler(async (event) => {
   }
 
   const extension = type.split('/')[1]
-  const coverFolder = `projects/${project.slug}/cover`
+  const coverFolder = `projects/${project.id}/cover`
 
   // Process the original image with Jimp
   const originalImage = await Jimp.fromBuffer(file)

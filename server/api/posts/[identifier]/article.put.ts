@@ -1,15 +1,18 @@
 // PUT /api/posts/[slug]/article
 
+import { getPostByIdentifier } from "~/server/utils/post"
+import { PostType } from "~/types/post"
+
 export default defineEventHandler(async (event) => {
   const session = await requireUserSession(event)
   const db = hubDatabase()
-  const slug = decodeURIComponent(getRouterParam(event, 'slug') ?? '')
   const body = await readBody(event)
+  const identifier = decodeURIComponent(getRouterParam(event, 'identifier') ?? '')
 
-  if (!slug) {
+  if (!identifier) {
     throw createError({
       statusCode: 400,
-      message: 'Post slug is required',
+      message: 'Post identifier is required',
     })
   }
 
@@ -21,10 +24,7 @@ export default defineEventHandler(async (event) => {
   }
 
   const userId = session.user.id
-  const post = await db
-  .prepare(`SELECT * FROM posts WHERE slug = ? LIMIT 1`)
-  .bind(slug)
-  .first()
+  const post: PostType | null = await getPostByIdentifier(db, identifier)
 
   if (!post) {
     throw createError({

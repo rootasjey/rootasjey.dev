@@ -1,50 +1,53 @@
-// PUT /api/posts/[slug]/index.put.ts
+// PUT /api/posts/[identifier]/index.put.ts
 import { z } from 'zod'
-import { PostType } from "~/types/post"
+import { ApiTag, PostType } from "~/types/post"
+import { upsertPostTags } from '~/server/utils/tags'
+import { getPostByIdentifier } from '~/server/utils/post'
 
 const updatePostSchema = z.object({
-  name: z.string().min(1).max(255).optional(),
+  name: z.string().min(1).max(255),
   description: z.string().max(1000).optional(),
-  tags: z.array(z.string().min(1).max(50)).max(20).optional(),
+  tags: z.array(z.object({
+    name: z.string().min(1).max(50),
+    category: z.string().max(50).optional()
+  })).max(20).optional(),
   language: z.enum(['en', 'fr']).optional(),
-  slug: z.string().min(1).max(255).optional(),
+  slug: z.string().min(1).max(255),
+  newSlug: z.string().min(1).max(255).optional(),
   status: z.enum(['draft', 'published', 'archived']).optional(),
 })
 
 export default defineEventHandler(async (event) => {
   const session = await requireUserSession(event)
   const userId = session.user.id
-  const slug = decodeURIComponent(getRouterParam(event, 'slug') ?? '')
-  const body = await readBody(event)
+  const identifier = decodeURIComponent(getRouterParam(event, 'identifier') ?? '')
   const db = hubDatabase()
 
-  handleParamErrors({ slug, body })
-  const validatedBody = updatePostSchema.parse(body)
+  if (!identifier) {
+    throw createError({
+      statusCode: 400,
+      message: 'Post identifier is required',
+    })
+  }
 
-  let post: PostType | null = await db
-  .prepare(`SELECT * FROM posts WHERE slug = ? LIMIT 1`)
-  .bind(slug)
-  .first()
+  const validatedBody = await readValidatedBody(event, updatePostSchema.parse)
+  let post: PostType | null = await getPostByIdentifier(db, identifier)
 
   handlePostErrors(post, userId)
   post = post as PostType
 
-  // Only generate/update slug if explicitly provided in body
-  const shouldUpdateSlug = body.slug !== undefined
-  const newSlug = shouldUpdateSlug ? body.slug : post.slug
-
   // Check for slug uniqueness if slug is being updated
-  if (validatedBody.slug && validatedBody.slug !== post.slug) {
+  if (validatedBody.newSlug && validatedBody.newSlug !== post.slug) {
     const slugExists = await db.prepare(`
       SELECT id FROM posts WHERE slug = ? AND id != ?
     `)
-    .bind(validatedBody.slug, post.id)
+    .bind(validatedBody.newSlug, post.id)
     .first()
 
     if (slugExists) {
       throw createError({
         statusCode: 409,
-        statusMessage: 'Slug already exists'
+        statusMessage: `Slug "${validatedBody.newSlug}" already exists for another post.`,
       })
     }
   }
@@ -65,14 +68,6 @@ export default defineEventHandler(async (event) => {
     updateFields.push('description = ?')
     updateValues.push(validatedBody.description)
     updateData.description = validatedBody.description
-  }
-
-  if (validatedBody.tags !== undefined) {
-    // Convert tags array to JSON string for storage
-    const tagsJson = JSON.stringify(validatedBody.tags)
-    updateFields.push('tags = ?')
-    updateValues.push(tagsJson)
-    updateData.tags = validatedBody.tags
   }
 
   if (validatedBody.language !== undefined) {
@@ -108,15 +103,10 @@ export default defineEventHandler(async (event) => {
 
   // Only proceed if there are fields to update
   if (updateFields.length === 0) {
-    const tags: string[] =  post.tags ? JSON.parse(post.tags as unknown as string) : []
     return {
       success: true,
       message: 'No changes to update',
-      post: {
-        ...post,
-        tags,
-        canEdit: true
-      }
+      post,
     }
   }
 
@@ -146,58 +136,10 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-
-  // Handle blob files relocation only if slug is being updated
-  if (shouldUpdateSlug && post.slug !== newSlug) {
-    const blobStorage = hubBlob()
-    const oldPrefix = `posts/${post.slug}`
-    const newPrefix = `posts/${newSlug}`
-
-    try {
-      // List all blobs with the old slug prefix
-      const blobList = await blobStorage.list({ prefix: oldPrefix })
-      
-      // Relocate each blob to the new path
-      for (const blobItem of blobList.blobs) {
-        const oldPath = blobItem.pathname
-        const relativePath = oldPath.replace(oldPrefix, '')
-        const newPath = `${newPrefix}${relativePath}`
-        
-        // Get the blob content
-        const blobContent = await blobStorage.get(oldPath)
-        
-        if (blobContent) {
-          // Upload to new location
-          await blobStorage.put(newPath, blobContent)
-          // Delete from old location
-          await blobStorage.delete(oldPath)
-        }
-      }
-
-      // Update blob_path in database if it exists
-      if (post.blob_path) {
-        const newBlobPath = post.blob_path.replace(oldPrefix, newPrefix)
-        await db.prepare(`UPDATE posts SET blob_path = ? WHERE id = ?`)
-          .bind(newBlobPath, post.id)
-          .run()
-      }
-
-      // Update image_src in database if it exists (for cover images)
-      if (post.image_src) {
-        const newImageSrc = post.image_src.replace(oldPrefix, newPrefix)
-        await db.prepare(`UPDATE posts SET image_src = ? WHERE id = ?`)
-          .bind(newImageSrc, post.id)
-          .run()
-      }
-
-    } catch (error) {
-      console.error(`Failed to relocate blobs from ${oldPrefix} to ${newPrefix}:`, error)
-      // You might want to throw an error here or handle it gracefully
-      throw createError({
-        statusCode: 500,
-        message: 'Failed to relocate post files during slug update',
-      })
-    }
+  // --- TAGS: Process tags after post update ---
+  let createdTags: ApiTag[] = []
+  if (validatedBody.tags !== undefined) {
+    createdTags = await upsertPostTags(db, post.id, validatedBody.tags)
   }
 
   const updatedPost: PostType | null = await db
@@ -214,14 +156,14 @@ export default defineEventHandler(async (event) => {
 
   const formattedPost: PostType = {
     ...updatedPost,
-    links:  typeof updatedPost.links  === 'string' ? JSON.parse(updatedPost.links || '[]') : updatedPost.links,
-    tags:   typeof updatedPost.tags   === 'string' ? JSON.parse(updatedPost.tags || '[]') : updatedPost.tags,
-    styles: typeof updatedPost.styles === 'string' ? JSON.parse(updatedPost.styles || '{}') : updatedPost.styles,
     image: {
       alt: updatedPost.image_alt as string || "",
       ext: updatedPost.image_ext as string || "",
       src: updatedPost.image_src as string || ""
-    }
+    },
+    links:  typeof updatedPost.links  === 'string' ? JSON.parse(updatedPost.links || '[]') : updatedPost.links,
+    styles: typeof updatedPost.styles === 'string' ? JSON.parse(updatedPost.styles || '{}') : updatedPost.styles,
+    tags:   createdTags,
   }
 
   // Remove redundant fields
@@ -235,22 +177,6 @@ export default defineEventHandler(async (event) => {
     success: true,
   }
 })
-
-const handleParamErrors = ({ slug, body }: { slug?: string, body: any }) => {
-  if (!slug) {
-    throw createError({
-      statusCode: 400,
-      message: 'Post slug is required',
-    })
-  }
-
-  if (!body.name) {
-    throw createError({
-      statusCode: 400,
-      message: 'Post name is required',
-    })
-  }
-}
 
 const handlePostErrors = (post: any, userId?: number) => {
   if (!post) {

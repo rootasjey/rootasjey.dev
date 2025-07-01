@@ -32,9 +32,23 @@ export default defineEventHandler(async (event) => {
     if (typeof project.links === 'string') {
       try { project.links = JSON.parse(project.links) } catch { project.links = [] }
     }
-    if (typeof project.tags === 'string') {
-      try { project.tags = JSON.parse(project.tags) } catch { project.tags = [] }
-    }
+
+    // Fetch tags from join table
+    const db = hubDatabase()
+    const tagsResult = await db.prepare(`
+      SELECT t.* FROM tags t
+      JOIN project_tags pt ON pt.tag_id = t.id
+      WHERE pt.project_id = ?
+      ORDER BY pt.rowid ASC
+    `).bind(project.id).all()
+    
+    project.tags = (tagsResult.results || []).map(t => ({
+      id: Number(t.id),
+      name: String(t.name),
+      category: typeof t.category === 'string' ? t.category : '',
+      created_at: t.created_at ? String(t.created_at) : '',
+      updated_at: t.updated_at ? String(t.updated_at) : ''
+    }))
 
     project.image = {
       alt: project.image_alt || "",

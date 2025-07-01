@@ -1,22 +1,20 @@
-// DELETE /api/posts/[slug]/cover
-import { PostType } from "~/types/post"
+// DELETE /api/projects/[identifier]/cover
+import { getProjectByIdentifier } from '~/server/utils/project'
+import { ProjectType } from "~/types/project"
 
 export default defineEventHandler(async (event) => {
   const session = await requireUserSession(event)
   const userId = session.user.id
-  const slug = decodeURIComponent(getRouterParam(event, 'slug') ?? '')
+  const identifier = decodeURIComponent(getRouterParam(event, 'identifier') ?? '')
   const db = hubDatabase()
 
-  let post: PostType | null = await db
-  .prepare(`SELECT * FROM posts WHERE slug = ? LIMIT 1`)
-  .bind(slug)
-  .first()
+  let project: ProjectType | null = await getProjectByIdentifier(db, identifier)
 
-  handleErrors({ post, userId })
-  post = post as PostType
+  handleErrors({ project, userId })
+  project = project as ProjectType
 
   try {
-    const prefix = post.image_src as string
+    const prefix = project.image_src as string
     const blobList = await hubBlob().list({ prefix })
     
     for (const blobItem of blobList.blobs) {
@@ -25,17 +23,18 @@ export default defineEventHandler(async (event) => {
 
     await db
     .prepare(`
-      UPDATE posts 
+      UPDATE projects 
       SET image_src = '', image_alt = '', image_ext = '', updated_at = CURRENT_TIMESTAMP
       WHERE id = ?
     `)
-    .bind(post.id)
+    .bind(project.id)
     .run()
 
     return { 
+      error: null,
       success: true,
       message: 'Image removed successfully',
-      post,
+      project,
     }
   } catch (error) {
     console.log(error)
@@ -43,35 +42,35 @@ export default defineEventHandler(async (event) => {
       error,
       success: false,
       message: 'Failed to remove image',
-      post,
+      project,
     }
   }
 })
 
 type HandleErrorsProps = {
-  post: PostType | null
+  project: ProjectType | null
   userId: number
 }
 
-const handleErrors = ({ post, userId }: HandleErrorsProps) => {
-  if (!post) {
+const handleErrors = ({ project, userId } : HandleErrorsProps) => {
+  if (!project) {
     throw createError({
       statusCode: 404,
-      message: 'Post not found',
+      message: 'Project not found',
     })
   }
 
-  if (post.user_id !== userId) {
+  if (project.user_id !== userId) {
     throw createError({
       statusCode: 403,
-      message: 'You are not authorized to update this post',
+      message: 'You are not authorized to update this project',
     })
   }
 
-  if (!post.image_src) {
+  if (!project.image_src) {
     throw createError({
       statusCode: 400,
-      message: 'Post does not have an image',
+      message: 'Project does not have an image',
     })
   }
 }

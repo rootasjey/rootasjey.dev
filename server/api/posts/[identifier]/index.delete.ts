@@ -1,5 +1,6 @@
 // DELETE /api/posts/:slug
 
+import { getPostByIdentifier } from "~/server/utils/post"
 import { PostType } from "~/types/post"
 
 export default defineEventHandler(async (event) => {
@@ -7,20 +8,16 @@ export default defineEventHandler(async (event) => {
   const db = hubDatabase()
   const blobStorage = hubBlob()
 
-  const slug = decodeURIComponent(getRouterParam(event, 'slug') ?? '')
-  if (!slug) {
+  const identifier = decodeURIComponent(getRouterParam(event, 'identifier') ?? '')
+  if (!identifier) {
     throw createError({
       statusCode: 400,
-      message: 'Post slug is required.',
+      message: 'Post identifier is required',
     })
   }
 
   const userId = session.user.id
-
-  const post: PostType | null = await db
-  .prepare(`SELECT * FROM posts WHERE slug = ? LIMIT 1`)
-  .bind(slug)
-  .first()
+  const post: PostType | null = await getPostByIdentifier(db, identifier)
 
   if (!post) {
     throw createError({
@@ -67,7 +64,7 @@ export default defineEventHandler(async (event) => {
 
   return {
     message: "Post deleted successfully",
-    id: post.id,
-    slug: post.slug
+    post,
+    success: true,
   }
 })

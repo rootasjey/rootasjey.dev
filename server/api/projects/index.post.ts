@@ -1,4 +1,6 @@
 // POST /api/projects
+import { upsertProjectTags } from '~/server/utils/tags'
+import { ApiTag } from '~/types/post'
 
 export default defineEventHandler(async (event) => {
   const session = await requireUserSession(event)
@@ -10,13 +12,9 @@ export default defineEventHandler(async (event) => {
   // Create a slug from the project name
   const slug = body.name.toLowerCase().replaceAll(" ", "-")
 
-  const articleBlob = createArticle()
-  const blob_path = `projects/${slug}/article.json`
-
-  await blobStorage.put(blob_path, JSON.stringify(articleBlob))
-
+  // Insert project first (without blob_path)
   const project = {
-    blob_path,
+    blob_path: '',
     company: body.company || "",
     created_at: new Date().toISOString(),
     description: body.description || "",
@@ -25,7 +23,6 @@ export default defineEventHandler(async (event) => {
     links: typeof body.links === 'object' ? JSON.stringify(body.links || []) : '[]',
     name: body.name,
     slug,
-    tags: typeof body.tags === 'object' ? JSON.stringify(body.tags || []) : '[]',
     updated_at: new Date().toISOString(),
     user_id: userId,
     status: body.status || "active",
@@ -35,20 +32,50 @@ export default defineEventHandler(async (event) => {
     INSERT INTO projects (
       blob_path, company, created_at,
       description, image_alt, image_src, links, name,
-      slug, tags, updated_at, user_id, status
+      slug, updated_at, user_id, status
     ) VALUES (
-      ?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13
+      ?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12
     )
   `)
 
   const result = await insertStmt
-  .bind(...Object.values(project))
-  .run()
+    .bind(
+      project.blob_path,
+      project.company,
+      project.created_at,
+      project.description,
+      project.image_alt,
+      project.image_src,
+      project.links,
+      project.name,
+      project.slug,
+      project.updated_at,
+      project.user_id,
+      project.status
+    )
+    .run()
+
+  // Now create the article blob using the project's ID
+  const articleBlob = createArticle()
+  const blob_path = `projects/${result.meta.last_row_id}/article.json`
+  await blobStorage.put(blob_path, JSON.stringify(articleBlob))
+
+  // Update the project with the blob_path
+  await db.prepare(`UPDATE projects SET blob_path = ? WHERE id = ?`)
+    .bind(blob_path, result.meta.last_row_id)
+    .run()
+
+  // --- TAGS: Process tags after project insert ---
+  let createdTags: ApiTag[] = []
+  if (Array.isArray(body.tags)) {
+    createdTags = await upsertProjectTags(db, result.meta.last_row_id, body.tags)
+  }
 
   return {
     id: result.meta.last_row_id,
     ...project,
+    blob_path,
     links: body.links || [],
-    tags: body.tags || [],
+    tags: createdTags,
   }
 })
