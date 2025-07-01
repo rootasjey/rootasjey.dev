@@ -1,6 +1,6 @@
 import { useApiTags } from '~/composables/useApiTags'
 import type { ApiTag } from '~/types/tag'
-import type { PostType } from '~/types/post'
+import type { Post } from '~/types/post'
 
 // Tag helpers
 function getPrimaryTag(tags: ApiTag[]): ApiTag | undefined {
@@ -23,7 +23,7 @@ export function usePostEditor() {
   let updatePostMetaTimer: NodeJS.Timeout
   const fileInput = ref<HTMLInputElement>()
   const jsonFileInput = ref<HTMLInputElement>()
-  const post = ref<PostType | undefined>(undefined)
+  const post = ref<Post | undefined>(undefined)
   const canEdit = ref(false)
 
   // Tags management (API-driven)
@@ -60,7 +60,7 @@ export function usePostEditor() {
     error.value = null
     try {
       await fetchTags()
-      const fetchedPost = await $fetch<PostType>(`/api/posts/${route.params.slug}`)
+      const fetchedPost = await $fetch<Post>(`/api/posts/${route.params.slug}`)
       post.value = fetchedPost
       selectedLanguage.value = languages.value.find(l => l.value === fetchedPost.language) ?? languages.value[0]
       canEdit.value = fetchedPost.user_id === user.value?.id
@@ -176,8 +176,8 @@ export function usePostEditor() {
       tags: post.value.tags,
       language: post.value.language,
       status: post.value.status,
-      created_at: post.value.created_at,
-      updated_at: post.value.updated_at,
+      created_at: post.value.createdAt,
+      updated_at: post.value.updatedAt,
       image: post.value.image,
     }
     const jsonString = JSON.stringify(exportData, null, 2)
@@ -291,7 +291,7 @@ export function usePostEditor() {
   // Update post meta
   const updatePost = async () => {
     saving.value = true
-    const { post: updatedPost } = await $fetch<{ post: PostType }>(
+    const { post: updatedPost } = await $fetch<{ post: Post }>(
       `/api/posts/${route.params.slug}/`, {
         method: 'PUT',
         body: {
@@ -306,7 +306,7 @@ export function usePostEditor() {
     )
     saving.value = false
     if (!post.value) return
-    post.value.updated_at = updatedPost.updated_at
+    post.value.updatedAt = updatedPost.updatedAt
   }
 
   // Cover image
@@ -346,7 +346,7 @@ export function usePostEditor() {
   }
 
   // Handlers for header events
-  function onHeaderFieldUpdate<K extends keyof PostType>({ field, value }: { field: K, value: PostType[K] }) {
+  function onHeaderFieldUpdate<K extends keyof Post>({ field, value }: { field: K, value: Post[K] }) {
     if (!post.value) return
     post.value[field] = value
   }

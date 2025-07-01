@@ -25,7 +25,7 @@
 </template>
 
 <script setup lang="ts">
-import type { PostType } from '~/types/post'
+import type { Post } from '~/types/post'
 
 interface MenuItem {
   label: string
@@ -40,7 +40,7 @@ interface MenuItem {
 }
 
 interface PostMenuProps {
-  post: PostType
+  post: Post
   size?: 'xs' | 'sm' | 'md' | 'lg'
   align?: 'start' | 'center' | 'end'
   side?: 'top' | 'right' | 'bottom' | 'left'
@@ -51,16 +51,16 @@ interface PostMenuProps {
 }
 
 interface PostMenuEmits {
-  (e: 'edit', post: PostType): void
-  (e: 'delete', post: PostType): void
-  (e: 'publish', post: PostType): void
-  (e: 'unpublish', post: PostType): void
-  (e: 'duplicate', post: PostType): void
-  (e: 'archive', post: PostType): void
-  (e: 'share', post: PostType): void
-  (e: 'export', post: PostType): void
-  (e: 'view-stats', post: PostType): void
-  (e: 'menu-action', action: string, post: PostType): void
+  (e: 'edit', post: Post): void
+  (e: 'delete', post: Post): void
+  (e: 'publish', post: Post): void
+  (e: 'unpublish', post: Post): void
+  (e: 'duplicate', post: Post): void
+  (e: 'archive', post: Post): void
+  (e: 'share', post: Post): void
+  (e: 'export', post: Post): void
+  (e: 'view-stats', post: Post): void
+  (e: 'menu-action', action: string, post: Post): void
 }
 
 const props = withDefaults(defineProps<PostMenuProps>(), {

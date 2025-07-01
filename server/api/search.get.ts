@@ -1,10 +1,10 @@
-import { PostType } from "~/types/post"
+import { Post } from "~/types/post"
 import { ProjectType } from "~/types/project"
 import data from '~/server/api/experiments/data.json'
 import { ExperimentSearchResult, Experiment } from "~/types/experiment"
 
 type ProjectSearchType = ProjectType & { type: "project" }
-type SearchResult = (PostType & { type: "post" }) | ProjectSearchType | ExperimentSearchResult
+type SearchResult = (Post & { type: "post" }) | ProjectSearchType | ExperimentSearchResult
 
 export default defineEventHandler(async (event) => {
   const { q } = getQuery(event) as { q?: string }
@@ -44,8 +44,6 @@ export default defineEventHandler(async (event) => {
   // Normalize posts
   const posts: SearchResult[] = (postsQuery.results || []).map((post: any) => {
     if (typeof post.links   === 'string') { post.links  = JSON.parse(post.links) }
-    if (typeof post.tags    === 'string') { post.tags   = JSON.parse(post.tags) }
-    if (typeof post.styles  === 'string') { post.styles = JSON.parse(post.styles) }
 
     post.image = {
       alt: post.image_alt || "",

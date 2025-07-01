@@ -131,12 +131,12 @@
         <div class="text-align-start flex flex-col">
           <h4>{{ post.user?.name }}</h4>
           <span class="text-size-3 text-gray-500 dark:text-gray-400">
-            {{ formatPublishedDate(post.published_at ?? post.updated_at) }}
+            {{ formatPublishedDate(post.publishedAt ?? post.updatedAt) }}
           </span>
 
           <div class="flex items-center gap-2 justify-center">
             <span class="text-size-3 text-gray-500 dark:text-gray-500 dark:hover:text-gray-200 transition">
-              Last updated on {{ formatUpdatedDate(post.updated_at ?? post.created_at) }}
+              Last updated on {{ formatUpdatedDate(post.updatedAt ?? post.createdAt) }}
             </span>
             <UIcon :name="saving === undefined ? '' : saving ? 'i-loading' : 'i-check'"
               :class="saving ? 'animate-spin text-muted' : 'text-lime-300'" />
@@ -185,7 +185,7 @@
 
 <script lang="ts" setup>
 import { ref, computed, watch } from 'vue'
-import type { PostType } from '~/types/post'
+import type { Post } from '~/types/post'
 import type { ApiTag } from '~/types/tag'
 
 type LabelValue = {
@@ -194,7 +194,7 @@ type LabelValue = {
 }
 
 interface Props {
-  post?: PostType;
+  post?: Post;
   canEdit: boolean;
   availableTags: ApiTag[];
   availableStatuses: LabelValue[];

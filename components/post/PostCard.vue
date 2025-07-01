@@ -23,8 +23,8 @@
       <!-- Post Meta -->
       <div class="p-0 absolute bottom-4">
         <div class="text-xs text-gray-500 dark:text-gray-500">
-          <time v-if="post.created_at" :datetime="post.created_at">
-            {{ formatDate(post.created_at) }}
+          <time v-if="post.createdAt" :datetime="post.createdAt">
+            {{ formatDate(post.createdAt) }}
           </time>
         </div>
         
@@ -41,10 +41,10 @@
 </template>
 
 <script setup lang="ts">
-import type { PostType } from '~/types/post'
+import type { Post } from '~/types/post'
 
 interface Props {
-  post: PostType
+  post: Post
 }
 
 defineProps<Props>()

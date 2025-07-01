@@ -59,7 +59,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { PostType } from '~/types/post'
+import type { Post } from '~/types/post'
 
 interface Props {
   isLoading?: boolean
@@ -68,8 +68,8 @@ interface Props {
   createDialogModel?: boolean
   editDialogModel?: boolean
   deleteDialogModel?: boolean
-  editingPost?: PostType | null
-  deletingPost?: PostType | null
+  editingPost?: Post | null
+  deletingPost?: Post | null
 }
 
 withDefaults(defineProps<Props>(), {
@@ -86,7 +86,7 @@ withDefaults(defineProps<Props>(), {
 defineEmits<{
   'create-post': [postData: any]
   'update-post': [updateData: any]
-  'delete-post': [post: PostType]
+  'delete-post': [post: Post]
   'retry-error': []
   'update:createDialogModel': [modelValue: boolean]
   'update:editDialogModel': [modelValue: boolean]

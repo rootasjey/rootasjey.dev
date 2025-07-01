@@ -56,16 +56,16 @@
 </template>
 
 <script setup lang="ts">
-import type { PostType } from '~/types/post'
+import type { Post } from '~/types/post'
 
 interface Props {
   modelValue?: boolean
-  post?: PostType | null
+  post?: Post | null
 }
 
 interface Emits {
   (e: 'update:modelValue', value: boolean): void
-  (e: 'delete-post', post: PostType): void
+  (e: 'delete-post', post: Post): void
 }
 
 const props = withDefaults(defineProps<Props>(), {

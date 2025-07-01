@@ -1,4 +1,4 @@
-import type { CreatePostPayload, PostType, UpdatePostPayload } from '~/types/post'
+import type { CreatePostPayload, Post, UpdatePostPayload } from '~/types/post'
 
 interface UsePostManagementOptions {
   autoFetch?: boolean
@@ -8,7 +8,7 @@ export const usePosts = (options: UsePostManagementOptions = {}) => {
   const { autoFetch = true } = options
 
   /** List of published posts. */
-  const list = ref<PostType[]>([])
+  const list = ref<Post[]>([])
   const isLoading = ref(false)
   const error = ref<string | null>(null)
 
@@ -39,7 +39,7 @@ export const usePosts = (options: UsePostManagementOptions = {}) => {
 
     try {
       const data = await $fetch("/api/posts")
-      list.value = data as unknown as PostType[] ?? []
+      list.value = data as unknown as Post[] ?? []
       return list.value
     } catch (err) {
       handleError('fetch posts', err)
@@ -63,7 +63,7 @@ export const usePosts = (options: UsePostManagementOptions = {}) => {
 
       // Only add to posts array if it's published (not draft)
       if (newPost.status !== 'draft') {
-        list.value.unshift(newPost as PostType)
+        list.value.unshift(newPost as Post)
       }
 
       return newPost
@@ -81,7 +81,7 @@ export const usePosts = (options: UsePostManagementOptions = {}) => {
     error.value = null
 
     try {
-      const { post: updatedPost } = await $fetch<{ post: PostType }>(`/api/posts/${payload.id}`, {
+      const { post: updatedPost } = await $fetch<{ post: Post }>(`/api/posts/${payload.id}`, {
         method: "PUT",
         body: payload,
       })
@@ -134,7 +134,7 @@ export const usePosts = (options: UsePostManagementOptions = {}) => {
   }
 
   // Utility functions
-  const findPostBySlug = (postSlug: string): PostType | undefined => {
+  const findPostBySlug = (postSlug: string): Post | undefined => {
     return list.value.find(p => p.slug === postSlug)
   }
 
@@ -143,7 +143,7 @@ export const usePosts = (options: UsePostManagementOptions = {}) => {
   }
 
   // Optimistic updates for better UX
-  const addPostOptimistically = (post: PostType) => {
+  const addPostOptimistically = (post: Post) => {
     if (post.status !== 'draft') {
       list.value.unshift(post)
     }
@@ -156,7 +156,7 @@ export const usePosts = (options: UsePostManagementOptions = {}) => {
     }
   }
 
-  const updatePostOptimistically = (postSlug: string, updateData: Partial<PostType>) => {
+  const updatePostOptimistically = (postSlug: string, updateData: Partial<Post>) => {
     const postIndex = list.value.findIndex(p => p.slug === postSlug)
     if (postIndex !== -1) {
       list.value[postIndex] = { ...list.value[postIndex], ...updateData }

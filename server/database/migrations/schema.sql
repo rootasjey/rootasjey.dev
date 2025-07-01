@@ -47,7 +47,6 @@ CREATE TABLE IF NOT EXISTS posts (
   published_at DATETIME,
   slug TEXT NOT NULL UNIQUE,
   status TEXT DEFAULT 'draft' CHECK (status IN ('draft', 'published', 'archived')),
-  styles TEXT DEFAULT "{}" CHECK (json_valid(styles)),
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   user_id INTEGER NOT NULL,
   

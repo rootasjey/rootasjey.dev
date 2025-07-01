@@ -134,10 +134,10 @@
 </template>
 
 <script setup lang="ts">
-import type { PostType } from '~/types/post'
+import type { Post } from '~/types/post'
 
 interface PostItemProps {
-  post: PostType
+  post: Post
   variant?: 'default' | 'compact' | 'detailed'
   showMenu?: boolean
   showPrimaryTag?: boolean
@@ -160,16 +160,16 @@ interface PostItemProps {
 }
 
 interface PostItemEmits {
-  (e: 'click', post: PostType): void
-  (e: 'edit', post: PostType): void
-  (e: 'delete', post: PostType): void
-  (e: 'publish', post: PostType): void
-  (e: 'duplicate', post: PostType): void
-  (e: 'unpublish', post: PostType): void
-  (e: 'archive', post: PostType): void
-  (e: 'share', post: PostType): void
-  (e: 'export', post: PostType): void
-  (e: 'view-stats', post: PostType): void
+  (e: 'click', post: Post): void
+  (e: 'edit', post: Post): void
+  (e: 'delete', post: Post): void
+  (e: 'publish', post: Post): void
+  (e: 'duplicate', post: Post): void
+  (e: 'unpublish', post: Post): void
+  (e: 'archive', post: Post): void
+  (e: 'share', post: Post): void
+  (e: 'export', post: Post): void
+  (e: 'view-stats', post: Post): void
 }
 
 const props = withDefaults(defineProps<PostItemProps>(), {
@@ -275,7 +275,7 @@ const statusText = computed(() => {
 
 // Date formatting
 const dateFormatted = computed(() => {
-  const date = new Date(props.post.updated_at || props.post.created_at)
+  const date = new Date(props.post.updatedAt || props.post.createdAt)
   const now = new Date()
   const diffInHours = (now.getTime() - date.getTime()) / (1000 * 60 * 60)
   

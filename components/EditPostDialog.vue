@@ -124,12 +124,12 @@
 </template>
 
 <script setup lang="ts">
-import type { PostType, UpdatePostPayload } from '~/types/post'
+import type { Post, UpdatePostPayload } from '~/types/post'
 import type { ApiTag } from '~/types/tag'
 
 interface Props {
   modelValue?: boolean
-  post?: PostType | null
+  post?: Post | null
 }
 
 interface Emits {
@@ -239,7 +239,7 @@ const markAsChanged = () => {
   )
 }
 
-const populateForm = (post: PostType) => {
+const populateForm = (post: Post) => {
   form.name = post.name || ''
   form.description = post.description || ''
   form.slug = post.slug || ''

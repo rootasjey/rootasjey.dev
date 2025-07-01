@@ -1,4 +1,4 @@
-import type { PostType } from '~/types/post'
+import type { Post } from '~/types/post'
 
 export const usePostDialogs = () => {
   // Dialog open/close states
@@ -7,8 +7,8 @@ export const usePostDialogs = () => {
   const isDeleteDialogOpen = ref(false)
 
   // Post references for edit/delete operations
-  const editingPost = ref<PostType | null>(null)
-  const deletingPost = ref<PostType | null>(null)
+  const editingPost = ref<Post | null>(null)
+  const deletingPost = ref<Post | null>(null)
 
   // Dialog history for navigation (optional feature)
   const dialogHistory = ref<string[]>([])
@@ -38,7 +38,7 @@ export const usePostDialogs = () => {
   }
 
   // Edit dialog methods
-  const openEditDialog = (post: PostType) => {
+  const openEditDialog = (post: Post) => {
     if (!post) {
       console.warn('Cannot open edit dialog: post is required')
       return
@@ -57,7 +57,7 @@ export const usePostDialogs = () => {
   }
 
   // Delete dialog methods
-  const openDeleteDialog = (post: PostType) => {
+  const openDeleteDialog = (post: Post) => {
     if (!post) {
       console.warn('Cannot open delete dialog: post is required')
       return
@@ -192,7 +192,7 @@ export const usePostDialogs = () => {
   })
 
   // Dialog transition helpers
-  const transitionFromCreateToEdit = (post: PostType) => {
+  const transitionFromCreateToEdit = (post: Post) => {
     closeCreateDialog()
     openEditDialog(post)
   }
@@ -206,7 +206,7 @@ export const usePostDialogs = () => {
   }
 
   // Batch operations for multiple dialogs
-  const openDialogSequence = (sequence: Array<{ type: 'create' | 'edit' | 'delete', post?: PostType }>) => {
+  const openDialogSequence = (sequence: Array<{ type: 'create' | 'edit' | 'delete', post?: Post }>) => {
     if (sequence.length === 0) return
 
     const [first, ...rest] = sequence

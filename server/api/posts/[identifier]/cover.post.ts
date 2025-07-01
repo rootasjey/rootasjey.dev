@@ -2,7 +2,7 @@
 
 import { Jimp } from "jimp"
 import { getPostByIdentifier } from "~/server/utils/post"
-import { PostType } from "~/types/post"
+import { ApiPost } from "~/types/post"
 
 export default defineEventHandler(async (event) => {
   const session = await requireUserSession(event)
@@ -33,7 +33,7 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  const post: PostType | null = await getPostByIdentifier(db, identifier)
+  const post: ApiPost | null = await getPostByIdentifier(db, identifier)
 
   if (!post) {
     throw createError({

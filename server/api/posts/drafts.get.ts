@@ -1,5 +1,6 @@
 // GET /api/posts/drafts
-import { PostType } from "~/types/post"
+import { convertApiToPost } from "~/server/utils/post"
+import { ApiPost, Post } from "~/types/post"
 
 export default defineEventHandler(async (event) => {
   const session = await requireUserSession(event)
@@ -15,37 +16,22 @@ export default defineEventHandler(async (event) => {
   .bind(userId)
   .all()
   
-  const drafts = []
-  for (const post of rows.results) {
-    if (typeof post.links   === 'string') { post.links  = JSON.parse(post.links || '[]') }
-    if (typeof post.styles  === 'string') { post.styles = JSON.parse(post.styles || '{}') }
-
-    // Fetch tags from join table
+  const drafts: Post[] = []
+  for (const apiPost of rows.results as ApiPost[]) {
     const tagsResult = await db.prepare(`
       SELECT t.* FROM tags t
       JOIN post_tags pt ON pt.tag_id = t.id
       WHERE pt.post_id = ?
       ORDER BY pt.rowid ASC
-    `).bind(post.id).all()
-    post.tags = (tagsResult.results || []).map(t => ({
-      id: Number(t.id),
-      name: String(t.name),
-      category: typeof t.category === 'string' ? t.category : '',
-      created_at: t.created_at ? String(t.created_at) : '',
-      updated_at: t.updated_at ? String(t.updated_at) : ''
-    }))
+    `).bind(apiPost.id).all()
 
-    // Reconstruct image object
-    post.image = {
-      alt: post.image_alt || "",
-      src: post.image_src || ""
-    }
+    const draft = convertApiToPost(apiPost, {
+      tags: tagsResult.results,
+      userName: session.user.name,
+    })
 
-    // Remove redundant fields
-    delete post.image_alt
-    delete post.image_src
-    drafts.push(post)
+    drafts.push(draft)
   }
 
-  return drafts as PostType[]
+  return drafts
 })

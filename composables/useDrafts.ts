@@ -1,4 +1,4 @@
-import type { PostType } from '~/types/post'
+import type { Post } from '~/types/post'
 
 interface UseDraftsOptions {
   autoFetch?: boolean
@@ -16,7 +16,7 @@ export const useDrafts = (options: UseDraftsOptions = {}) => {
 
   // State
   const showDrafts = ref(false)
-  const list = ref<PostType[]>([])
+  const list = ref<Post[]>([])
   const isFetchingDrafts = ref(false)
   const draftsError = ref<string | null>(null)
   const lastFetchTime = ref<Date | null>(null)
@@ -86,7 +86,7 @@ export const useDrafts = (options: UseDraftsOptions = {}) => {
 
     try {
       const data = await $fetch('/api/posts/drafts')
-      list.value = (data as PostType[]) ?? []
+      list.value = (data as Post[]) ?? []
       lastFetchTime.value = new Date()
       return list.value
     } catch (error) {
@@ -124,12 +124,12 @@ export const useDrafts = (options: UseDraftsOptions = {}) => {
   }
 
   // Draft management utilities
-  const addDraft = (draft: PostType) => {
+  const addDraft = (draft: Post) => {
     // Add to beginning of array (most recent first)
     list.value.unshift(draft)
   }
 
-  const updateDraft = (draftId: number, updates: Partial<PostType>) => {
+  const updateDraft = (draftId: number, updates: Partial<Post>) => {
     const index = list.value.findIndex(d => d.id === draftId)
     if (index !== -1) {
       list.value[index] = { ...list.value[index], ...updates }
@@ -143,12 +143,12 @@ export const useDrafts = (options: UseDraftsOptions = {}) => {
     }
   }
 
-  const findDraftById = (draftId: string | number): PostType | undefined => {
+  const findDraftById = (draftId: string | number): Post | undefined => {
     return list.value.find(d => d.id === draftId)
   }
 
   // Move draft to published (when publishing)
-  const moveDraftToPublished = (draftId: string | number): PostType | null => {
+  const moveDraftToPublished = (draftId: string | number): Post | null => {
     const index = list.value.findIndex(d => d.id === draftId)
     if (index !== -1) {
       const [draft] = list.value.splice(index, 1)
@@ -177,16 +177,16 @@ export const useDrafts = (options: UseDraftsOptions = {}) => {
     return {
       total: draftCount.value,
       createdToday: list.value.filter(d => 
-        new Date(d.created_at) >= today
+        new Date(d.createdAt) >= today
       ).length,
       createdThisWeek: list.value.filter(d => 
-        new Date(d.created_at) >= thisWeek
+        new Date(d.createdAt) >= thisWeek
       ).length,
       createdThisMonth: list.value.filter(d => 
-        new Date(d.created_at) >= thisMonth
+        new Date(d.createdAt) >= thisMonth
       ).length,
       lastUpdated: list.value.length > 0 
-        ? Math.max(...list.value.map(d => new Date(d.updated_at).getTime()))
+        ? Math.max(...list.value.map(d => new Date(d.updatedAt).getTime()))
         : null
     }
   }

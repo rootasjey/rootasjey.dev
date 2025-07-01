@@ -1,7 +1,7 @@
 // PUT /api/posts/[slug]/article
 
 import { getPostByIdentifier } from "~/server/utils/post"
-import { PostType } from "~/types/post"
+import { ApiPost } from "~/types/post"
 
 export default defineEventHandler(async (event) => {
   const session = await requireUserSession(event)
@@ -10,27 +10,18 @@ export default defineEventHandler(async (event) => {
   const identifier = decodeURIComponent(getRouterParam(event, 'identifier') ?? '')
 
   if (!identifier) {
-    throw createError({
-      statusCode: 400,
-      message: 'Post identifier is required',
-    })
+    throw createError({ statusCode: 400, message: 'Post identifier is required' })
   }
 
   if (!body.article) {
-    throw createError({
-      statusCode: 400,
-      message: 'Post article is required',
-    })
+    throw createError({ statusCode: 400, message: 'Post article is required' })
   }
 
   const userId = session.user.id
-  const post: PostType | null = await getPostByIdentifier(db, identifier)
+  const post: ApiPost | null = await getPostByIdentifier(db, identifier)
 
   if (!post) {
-    throw createError({
-      statusCode: 404,
-      message: 'Post not found',
-    })
+    throw createError({ statusCode: 404, message: 'Post not found' })
   }
 
   // Check if the user is the author of the post
@@ -57,10 +48,14 @@ export default defineEventHandler(async (event) => {
     .bind(post.id)
     .run()
 
-    const updatedPost = await db
+    const updatedPost: ApiPost | null = await db
     .prepare(`SELECT * FROM posts WHERE id = ? LIMIT 1`)
     .bind(post.id)
     .first()
+
+    if (!updatedPost) {
+      throw createError({ statusCode: 404, message: 'Updated post not found' })
+    }
 
     return {
       message: 'Post article updated successfully',

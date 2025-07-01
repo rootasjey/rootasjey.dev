@@ -1,4 +1,4 @@
-import type { CreatePostPayload, PostType } from '~/types/post'
+import type { CreatePostPayload, Post } from '~/types/post'
 import type { ApiTag, Tag } from '~/types/tag'
 
 export function usePostActions(dependencies: {
@@ -81,7 +81,7 @@ export function usePostActions(dependencies: {
     }
   }
 
-  const handleDeletePost = async (post: PostType) => {
+  const handleDeletePost = async (post: Post) => {
     try {
       await posts.deletePost(post.slug)
       
@@ -100,7 +100,7 @@ export function usePostActions(dependencies: {
     }
   }
 
-  const handleDuplicatePost = async (post: PostType) => {
+  const handleDuplicatePost = async (post: Post) => {
     try {
       await handleCreatePost({
         name: `${post.name} (Copy-${new Date().getTime()})`,
@@ -120,7 +120,7 @@ export function usePostActions(dependencies: {
     }
   }
 
-  const handlePublishDraft = async (draft: PostType) => {
+  const handlePublishDraft = async (draft: Post) => {
     try {
       await handleUpdatePost({
         id: draft.id,
@@ -142,7 +142,7 @@ export function usePostActions(dependencies: {
     }
   }
 
-  const handleUnpublishPost = async (post: PostType) => {
+  const handleUnpublishPost = async (post: Post) => {
     try {
       await handleUpdatePost({
         id: post.id,
@@ -167,7 +167,7 @@ export function usePostActions(dependencies: {
     }
   }
 
-  const handleArchivePost = async (post: PostType) => {
+  const handleArchivePost = async (post: Post) => {
     try {
       await handleUpdatePost({
         id: post.id,
@@ -189,7 +189,7 @@ export function usePostActions(dependencies: {
     }
   }
 
-  const handleSharePost = (post: PostType) => {
+  const handleSharePost = (post: Post) => {
     const url = `${window.location.origin}/posts/${post.slug}`
     
     if (navigator.share) {
@@ -212,14 +212,14 @@ export function usePostActions(dependencies: {
     })
   }
 
-  const handleExportPost = (post: PostType) => {
+  const handleExportPost = (post: Post) => {
     const exportData = {
       name: post.name,
       description: post.description,
       tags: post.tags || [],
       content: post.article,
-      created_at: post.created_at,
-      updated_at: post.updated_at
+      created_at: post.createdAt,
+      updated_at: post.updatedAt
     }
     
     const blob = new Blob([JSON.stringify(exportData, null, 2)], {
@@ -290,10 +290,10 @@ export function usePostActions(dependencies: {
     URL.revokeObjectURL(url)
   }
 
-  const formatLastUpdated = (posts: PostType[]) => {
+  const formatLastUpdated = (posts: Post[]) => {
     if (posts.length === 0) return 'never'
     
-    const latestUpdate = Math.max(...posts.map(p => new Date(p.updated_at).getTime()))
+    const latestUpdate = Math.max(...posts.map(p => new Date(p.updatedAt).getTime()))
     const date = new Date(latestUpdate)
     const now = new Date()
     const diffInHours = (now.getTime() - date.getTime()) / (1000 * 60 * 60)
@@ -305,7 +305,7 @@ export function usePostActions(dependencies: {
     return date.toLocaleDateString()
   }
 
-  const handleViewStats = (post: PostType) => {
+  const handleViewStats = (post: Post) => {
     // Navigate to stats page or open stats modal
     navigateTo(`/posts/${post.slug}/stats`)
   }
@@ -320,15 +320,15 @@ export function usePostActions(dependencies: {
   }
 
   // Tag-specific utility functions (adapt as needed for tag objects)
-  const getPostPrimaryTag = (post: PostType & { tags?: ApiTag[] }): ApiTag | undefined => {
+  const getPostPrimaryTag = (post: Post): ApiTag | undefined => {
     return Array.isArray(post.tags) && post.tags.length > 0 ? post.tags[0] : undefined
   }
 
-  const getPostSecondaryTags = (post: PostType & { tags?: ApiTag[] }): ApiTag[] => {
+  const getPostSecondaryTags = (post: Post): ApiTag[] => {
     return Array.isArray(post.tags) && post.tags.length > 1 ? post.tags.slice(1) : []
   }
 
-  const hasPostSecondaryTags = (post: PostType & { tags?: ApiTag[] }): boolean => {
+  const hasPostSecondaryTags = (post: Post): boolean => {
     return Array.isArray(post.tags) && post.tags.length > 1
   }
 

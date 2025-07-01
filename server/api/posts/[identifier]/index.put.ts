@@ -1,9 +1,9 @@
 // PUT /api/posts/[identifier]/index.put.ts
 import { z } from 'zod'
 import { ApiTag } from '~/types/tag'
-import { PostType } from "~/types/post"
+import { ApiPost, Post } from "~/types/post"
 import { upsertPostTags } from '~/server/utils/tags'
-import { getPostByIdentifier } from '~/server/utils/post'
+import { convertApiToPost, getPostByIdentifier } from '~/server/utils/post'
 
 const updatePostSchema = z.object({
   name: z.string().min(1).max(255),
@@ -40,17 +40,17 @@ export default defineEventHandler(async (event) => {
   }
 
   const validatedBody = await readValidatedBody(event, updatePostSchema.parse)
-  let post = await getPostByIdentifier(db, identifier)
+  let apiPost = await getPostByIdentifier(db, identifier)
 
-  handlePostErrors(post, userId)
-  post = post as PostType
+  handlePostErrors(apiPost, userId)
+  apiPost = apiPost as ApiPost
 
   // Check for slug uniqueness if slug is being updated
-  if (validatedBody.slug && validatedBody.slug !== post.slug) {
+  if (validatedBody.slug && validatedBody.slug !== apiPost.slug) {
     const slugExists = await db.prepare(`
       SELECT id FROM posts WHERE slug = ? AND id != ?
     `)
-    .bind(validatedBody.slug, post.id)
+    .bind(validatedBody.slug, apiPost.id)
     .first()
 
     if (slugExists) {
@@ -97,13 +97,13 @@ export default defineEventHandler(async (event) => {
     updateData.status = validatedBody.status
 
     // Set published_at when changing to published
-    if (validatedBody.status === 'published' && post.status !== 'published') {
+    if (validatedBody.status === 'published' && apiPost.status !== 'published') {
       updateFields.push('published_at = ?')
       updateValues.push(new Date().toISOString())
       updateData.published_at = new Date().toISOString()
     }
     // Clear published_at when changing from published
-    else if (validatedBody.status !== 'published' && post.status === 'published') {
+    else if (validatedBody.status !== 'published' && apiPost.status === 'published') {
       updateFields.push('published_at = ?')
       updateValues.push(null)
       updateData.published_at = null
@@ -115,7 +115,7 @@ export default defineEventHandler(async (event) => {
     return {
       success: true,
       message: 'No changes to update',
-      post,
+      post: apiPost,
     }
   }
 
@@ -124,7 +124,7 @@ export default defineEventHandler(async (event) => {
   updateValues.push(new Date().toISOString())
 
   // Add WHERE clause values
-  updateValues.push(post.id, userId)
+  updateValues.push(apiPost.id, userId)
 
   // Execute update
   const updateQuery = `
@@ -148,41 +148,26 @@ export default defineEventHandler(async (event) => {
   // --- TAGS: Process tags after post update ---
   let createdTags: ApiTag[] = []
   if (validatedBody.tags !== undefined) {
-    createdTags = await upsertPostTags(db, post.id, validatedBody.tags)
+    createdTags = await upsertPostTags(db, apiPost.id, validatedBody.tags)
   }
 
-  const updatedPost: PostType | null = await db
+  const updatedPost: ApiPost | null = await db
   .prepare(`SELECT * FROM posts WHERE id = ? LIMIT 1`)
-  .bind(post.id)
+  .bind(apiPost.id)
   .first()
 
   if (!updatedPost) {
-    throw createError({
-      statusCode: 500,
-      message: 'Failed to update post',
-    })
+    throw createError({ statusCode: 500, message: 'Failed to update post' })
   }
 
-  const formattedPost: PostType = {
-    ...updatedPost,
-    image: {
-      alt: updatedPost.image_alt as string || "",
-      ext: updatedPost.image_ext as string || "",
-      src: updatedPost.image_src as string || ""
-    },
-    links:  typeof updatedPost.links  === 'string' ? JSON.parse(updatedPost.links || '[]') : updatedPost.links,
-    styles: typeof updatedPost.styles === 'string' ? JSON.parse(updatedPost.styles || '{}') : updatedPost.styles,
-    tags:   createdTags,
-  }
-
-  // Remove redundant fields
-  delete formattedPost.image_alt
-  delete formattedPost.image_ext
-  delete formattedPost.image_src
+  const post = convertApiToPost(updatedPost, {
+    tags: createdTags,
+    userName: session.user.name,
+  })
 
   return {
     message: 'Post updated successfully',
-    post: formattedPost,
+    post,
     success: true,
   }
 })

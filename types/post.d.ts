@@ -1,13 +1,17 @@
 import type { ApiTag, Tag } from "./tag"
 
-export type PostType = {
+/**
+ * Post structure used in the application.
+ * This type is used for displaying posts in the UI.
+ */
+export type Post = {
   /** Post article in JSON format. */
   article?: object
   /** Blob path to the article. */
-  blob_path?: string
+  blobPath?: string
   /** True if the user is the author of the post. */
   canEdit?: boolean
-  created_at: string
+  createdAt: string
   description: string
   id: number
   isDeleteDialogOpen?: boolean
@@ -16,46 +20,57 @@ export type PostType = {
     ext: string
     src: string
   }
-  image_alt?: string
-  image_ext?: string
-  image_src?: string
   language: string
-  styles?: {
-    meta?: {
-      align: 'start' | 'center'
-    }
-  }
   links: PostLink[]
   metrics: {
     comments: number
     likes: number
     views: number
   }
-  metrics_comments?: number
-  metrics_likes?: number
-  metrics_views?: number
   name: string
   /** Computed property: first tag as primary tag */
   primaryTag?: ApiTag
-  published_at?: string
+  publishedAt?: string
   /** Computed property: remaining tags after primary */
   secondaryTags?: ApiTag[]
   slug: string
   status: 'draft' | 'published' | 'archived'
   tags: ApiTag[]
-  updated_at: string
-  user_id: number
+  updatedAt: string
   user?: {
+    id?: number
     avatar?: string
     name?: string
   }
-  user_avatar?: string
-  user_name?: string
 }
 
 export type PostLink = {
   href: string
   name: string
+}
+
+/**
+ * Post structure used in the API and database.
+ */
+export type ApiPost = {
+  id: number
+  blob_path: string | null
+  created_at: string
+  description: string | null
+  image_alt: string | null
+  image_ext: string | null
+  image_src: string | null
+  language: 'en' | 'fr' | 'es' | 'de' | 'it'
+  links: string // JSON string in DB
+  metrics_comments: number
+  metrics_likes: number
+  metrics_views: number
+  name: string
+  published_at: string | null
+  slug: string
+  status: 'draft' | 'published' | 'archived'
+  updated_at: string
+  user_id: number
 }
 
 // ------
@@ -69,7 +84,7 @@ export type CreatePostPayload = {
   tags?: Tag[]
 }
 
-interface UpdatePostPayload {
+export type UpdatePostPayload = {
   description: string
   id: number
   name: string

@@ -1,6 +1,6 @@
 // DELETE /api/posts/[slug]/cover
 import { getPostByIdentifier } from "~/server/utils/post"
-import { PostType } from "~/types/post"
+import { ApiPost } from "~/types/post"
 
 export default defineEventHandler(async (event) => {
   const session = await requireUserSession(event)
@@ -8,10 +8,10 @@ export default defineEventHandler(async (event) => {
   const db = hubDatabase()
   const identifier = decodeURIComponent(getRouterParam(event, 'identifier') ?? '')
 
-  let post: PostType | null = await getPostByIdentifier(db, identifier)
+  let post: ApiPost | null = await getPostByIdentifier(db, identifier)
 
   handleErrors({ post, userId })
-  post = post as PostType
+  post = post as ApiPost
 
   try {
     const prefix = post.image_src as string
@@ -47,7 +47,7 @@ export default defineEventHandler(async (event) => {
 })
 
 type HandleErrorsProps = {
-  post: PostType | null
+  post: ApiPost | null
   userId: number
 }
 
