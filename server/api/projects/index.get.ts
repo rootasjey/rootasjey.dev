@@ -1,6 +1,6 @@
 // GET /api/projects
 
-import { ProjectType } from "~/types/project"
+import { Project } from "~/types/project"
 
 export default defineEventHandler(async (event) => {
   const query = getQuery(event)
@@ -73,7 +73,7 @@ export default defineEventHandler(async (event) => {
     .first()
 
   return {
-    projects: dbResponse.results as ProjectType[],
+    projects: dbResponse.results as Project[],
     pagination: {
       total: countResponse?.count ?? 0,
       limit,

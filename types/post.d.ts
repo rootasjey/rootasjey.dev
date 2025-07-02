@@ -14,12 +14,12 @@ export type Post = {
   createdAt: string
   description: string
   id: number
-  isDeleteDialogOpen?: boolean
   image: {
     alt: string
     ext: string
     src: string
   }
+  isDeleteDialogOpen?: boolean
   language: string
   links: PostLink[]
   metrics: {

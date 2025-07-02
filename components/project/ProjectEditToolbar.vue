@@ -54,10 +54,10 @@
 </template>
 
 <script lang="ts" setup>
-import type { ProjectType } from '~/types/project';
+import type { Project } from '~/types/project';
 
 interface Props {
-  project: ProjectType;
+  project: Project;
   canEdit: boolean;
   loggedIn: boolean;
 }

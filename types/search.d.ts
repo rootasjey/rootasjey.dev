@@ -8,3 +8,14 @@ export type SearchResult = {
   updated_at: string
   type: "post" | "project" | "experiment"
 }
+
+export type ExperimentSearchResult = Experiment & {
+  created_at: string
+  tags: string[]
+  type: "experiment"
+  updated_at: string
+}
+export type ProjectSearchResult = Project & { type: "project" }
+export type PostSearchResult = Post & { type: "post" }
+
+export type ApiSearchResult = PostSearchResult | ProjectSearchResult | ExperimentSearchResult

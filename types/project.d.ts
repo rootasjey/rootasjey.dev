@@ -1,22 +1,19 @@
 import type { ApiTag, Tag } from './tag'
 
-export type ProjectType = {
+export type Project = {
   article?: object
   /** Blob path to the article. */
-  blob_path: string
+  blobPath: string
   company: string
-  created_at: string
+  createdAt: string
   description: string
-  end_date?: string
+  endDate?: string
   id: number
   image: {
     alt: string
     ext: string
     src: string
   }
-  image_alt?: string
-  image_ext?: string
-  image_src?: string
   isDeleteDialogOpen?: boolean
   links: ProjectLink[] & never[]
   metrics?: {
@@ -24,32 +21,53 @@ export type ProjectType = {
     likes: number
     views: number
   }
-  metrics_comments?: number
-  metrics_likes?: number
-  metrics_views?: number
   name: string
-  post?: string
   /** Computed property: first tag as primary tag */
   primaryTag?: ApiTag
   /** Computed property: remaining tags after primary */
   secondaryTags?: ApiTag[]
   slug: string
-  start_date?: string
+  startDate?: string
   status: 'active' | 'completed' | 'archived' | 'on-hold'
   tags: ApiTag[]
   updated_at: string
-  user_id: number
   user?: {
+    id: number
     avatar?: string
     name?: string
   }
-  user_avatar?: string
-  user_name?: string
 }
 
 export type ProjectLink = {
   href: string
   name: string
+}
+
+/**
+ * Project structure used in the API and database.
+ */
+export type ApiProject = {
+  id: number
+  blob_path?: string
+  company?: string
+  created_at: string
+  description?: string
+  end_date?: string
+  image_alt?: string
+  image_ext?: string
+  image_src?: string
+  links: string // JSON string in DB
+  metrics_comments: number
+  metrics_likes: number
+  metrics_views: number
+  name: string
+  slug: string
+  start_date?: string
+  status: 'active' | 'completed' | 'archived' | 'on-hold'
+  updated_at: string
+  user_id: number
+  user_avatar?: string
+  user_name?: string
 }
 
 // ------

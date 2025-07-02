@@ -1,6 +1,6 @@
 import { useApiTags } from '~/composables/useApiTags'
 import type { ApiTag } from '~/types/tag'
-import type { ProjectType } from '~/types/project'
+import type { Project } from '~/types/project'
 
 export function useProjectPage(slug: string) {
   const { loggedIn, user } = useUserSession()
@@ -10,6 +10,7 @@ export function useProjectPage(slug: string) {
     fetchProjectTags,
     assignProjectTags,
   } = useApiTags()
+
   const fileInput = ref<HTMLInputElement | null>(null)
   const isUploading = ref(false)
   let _articleTimer: NodeJS.Timeout
@@ -19,7 +20,7 @@ export function useProjectPage(slug: string) {
   const projectTags = ref<ApiTag[]>([])
 
   // Project, loading, and error state
-  const project = ref<ProjectType | undefined>(undefined)
+  const project = ref<Project | undefined>(undefined)
   const loading = ref(true)
   const error = ref<string | null>(null)
 
@@ -38,7 +39,7 @@ export function useProjectPage(slug: string) {
     try {
       await fetchTags()
       const data = await $fetch(`/api/projects/${slug}`)
-      project.value = data as unknown as ProjectType
+      project.value = data as unknown as Project
       // Fetch tags for this project from API
       const apiTags = await fetchProjectTags(project.value.id)
       projectTags.value = apiTags
@@ -54,7 +55,7 @@ export function useProjectPage(slug: string) {
   // Fetch on composable init
   fetchProject()
 
-  const canEdit = ref<boolean>(loggedIn.value && project.value?.user_id === user.value?.id)
+  const canEdit = ref<boolean>(loggedIn.value && project.value?.user?.id === user.value?.id)
 
   const openFilePicker = () => fileInput.value?.click()
 
@@ -108,15 +109,16 @@ export function useProjectPage(slug: string) {
       tags: project.value.tags,
       company: project.value.company,
       article: project.value.article,
-      created_at: project.value.created_at,
+      created_at: project.value.createdAt,
       description: project.value.description,
       id: project.value.id,
       image: project.value.image,
       links: project.value.links,
       name: project.value.name,
       slug: project.value.slug,
-      post: project.value.post,
-      user_id: project.value.user_id,
+      user_id: project.value.user?.id,
+      user_name: project.value.user?.name,
+      user_avatar: project.value.user?.avatar,
       updated_at: project.value.updated_at,
       status: project.value.status,
     }
@@ -170,10 +172,9 @@ export function useProjectPage(slug: string) {
   const toggleCanEdit = () => {
     if (!loggedIn.value || !project.value) return
     canEdit.value = !canEdit.value
-    project.value.user_id = canEdit.value ? user.value?.id ?? -1 : -1
   }
 
-  const updateProject = async (payload: ProjectType) => {
+  const updateProject = async (payload: Project) => {
     if (!project.value) return
     project.value = payload
 

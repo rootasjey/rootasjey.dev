@@ -13,27 +13,18 @@ export default defineEventHandler(async (event) => {
   const body = await readValidatedBody(event, updateArticleSchema.parse)
 
   if (!identifier) {
-    throw createError({
-      statusCode: 400,
-      message: "Project identifier is required",
-    })
+    throw createError({ statusCode: 400, message: "Project identifier is required" })
   }
 
   const userId = session.user.id
   const project = await getProjectByIdentifier(db, identifier)
 
   if (!project) {
-    throw createError({
-      statusCode: 404,
-      message: 'Project not found',
-    })
+    throw createError({ statusCode: 404, message: 'Project not found' })
   }
 
   if (project.user_id !== userId) {
-    throw createError({
-      statusCode: 403,
-      message: 'You are not authorized to update this project',
-    })
+    throw createError({ statusCode: 403, message: 'You are not authorized to update this project' })
   }
 
   try {

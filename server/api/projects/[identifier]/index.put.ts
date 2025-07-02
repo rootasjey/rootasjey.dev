@@ -1,10 +1,10 @@
 // PUT /api/projects/[identifier]/index.put.ts
 
 import { z } from 'zod'
-import { ProjectType } from "~/types/project"
+import { ApiProject } from "~/types/project"
 import type { ApiTag } from '~/types/tag'
 import { upsertProjectTags } from '~/server/utils/tags'
-import { getProjectByIdentifier } from '~/server/utils/project'
+import { convertApiProjectToProject, getProjectByIdentifier } from '~/server/utils/project'
 
 const updateProjectSchema = z.object({
   name: z.string().min(1).max(255),
@@ -29,31 +29,25 @@ export default defineEventHandler(async (event) => {
   const isNumericId = typeof identifier === "number" || /^\d+$/.test(String(identifier))
 
   if (!identifier) {
-    throw createError({
-      statusCode: 400,
-      message: 'Project identifier is required',
-    })
+    throw createError({ statusCode: 400, message: 'Project identifier is required' })
   }
 
   if (!isNumericId) {
-    throw createError({
-      statusCode: 400,
-      message: `Project identifier must be a numeric ID for this endpoint, received: ${identifier}`,
-    })
+    throw createError({ statusCode: 400, message: `Project identifier must be a numeric ID (received: ${identifier})` })
   }
 
   const validatedBody = await readValidatedBody(event, updateProjectSchema.parse)
-  let project = await getProjectByIdentifier(db, identifier)
+  let apiProject = await getProjectByIdentifier(db, identifier)
 
-  handleProjectErrors(project, userId)
-  project = project as ProjectType
+  handleProjectErrors(apiProject, userId)
+  apiProject = apiProject as ApiProject
 
   // Check for slug uniqueness if slug is being updated
-  if (validatedBody.slug && validatedBody.slug !== project.slug) {
+  if (validatedBody.slug && validatedBody.slug !== apiProject.slug) {
     const slugExists = await db.prepare(`
       SELECT id FROM projects WHERE slug = ? AND id != ?
     `)
-    .bind(validatedBody.slug, project.id)
+    .bind(validatedBody.slug, apiProject.id)
     .first()
 
     if (slugExists) {
@@ -110,74 +104,50 @@ export default defineEventHandler(async (event) => {
     return {
       success: true,
       message: 'No changes to update',
-      project,
+      project: apiProject,
     }
   }
 
-  // Add updated_at timestamp
   updateFields.push('updated_at = ?')
   updateValues.push(new Date().toISOString())
 
   // Add WHERE clause values
-  updateValues.push(project.id, userId)
-
-  // Execute update
-  const updateQuery = `
-    UPDATE projects
-    SET ${updateFields.join(', ')}
-    WHERE id = ? AND user_id = ?
-  `
+  updateValues.push(apiProject.id, userId)
 
   const updateResult = await db
-    .prepare(updateQuery)
+    .prepare(`
+      UPDATE projects
+      SET ${updateFields.join(', ')}
+      WHERE id = ? AND user_id = ?
+    `)
     .bind(...updateValues)
     .run()
 
   if (!updateResult.success) {
-    throw createError({
-      statusCode: 500,
-      statusMessage: updateResult.error,
-    })
+    throw createError({ statusCode: 500, statusMessage: updateResult.error })
   }
 
   // --- TAGS: Process tags after project update ---
   let updatedTags: ApiTag[] = []
   if (validatedBody.tags !== undefined) {
-    updatedTags = await upsertProjectTags(db, project.id, validatedBody.tags)
+    updatedTags = await upsertProjectTags(db, apiProject.id, validatedBody.tags)
   }
 
-  const updatedProject = await db
+  const updatedProject: ApiProject | null = await db
     .prepare(`SELECT * FROM projects WHERE id = ? LIMIT 1`)
-    .bind(project.id)
+    .bind(apiProject.id)
     .first()
 
   if (!updatedProject) {
-    throw createError({
-      statusCode: 500,
-      message: 'Failed to retrieve updated project',
-    })
+    throw createError({ statusCode: 404, message: 'Failed to retrieve updated project' })
   }
 
-  const formattedProject: Partial<ProjectType> = {
-    ...updatedProject,
-    links: typeof updatedProject.links === 'string' ? JSON.parse(updatedProject.links || '[]') : updatedProject.links,
-    tags: updatedTags,
-    image: {
-      alt: updatedProject.image_alt as string || "",
-      ext:  updatedProject.image_ext as string || "",
-      src: updatedProject.image_src as string || "",
-    }
-  }
-
-  // Remove redundant fields
-  delete formattedProject.image_alt
-  delete formattedProject.image_ext
-  delete formattedProject.image_src
+  const project = convertApiProjectToProject(updatedProject, { tags: updatedTags })
 
   return {
     success: true,
     message: 'Project updated successfully',
-    project: formattedProject,
+    project,
   }
 })
 
@@ -188,6 +158,7 @@ function handleProjectErrors(project: any, userId?: number) {
       message: 'Project not found',
     })
   }
+
   if (project.user_id !== userId) {
     throw createError({
       statusCode: 403,

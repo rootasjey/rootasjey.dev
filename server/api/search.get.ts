@@ -1,10 +1,6 @@
-import { Post } from "~/types/post"
-import { ProjectType } from "~/types/project"
 import data from '~/server/api/experiments/data.json'
-import { ExperimentSearchResult, Experiment } from "~/types/experiment"
-
-type ProjectSearchType = ProjectType & { type: "project" }
-type SearchResult = (Post & { type: "post" }) | ProjectSearchType | ExperimentSearchResult
+import { Experiment } from "~/types/experiment"
+import { ApiSearchResult } from "~/types/search"
 
 export default defineEventHandler(async (event) => {
   const { q } = getQuery(event) as { q?: string }
@@ -42,7 +38,7 @@ export default defineEventHandler(async (event) => {
   .run()
 
   // Normalize posts
-  const posts: SearchResult[] = (postsQuery.results || []).map((post: any) => {
+  const posts: ApiSearchResult[] = (postsQuery.results || []).map((post: any) => {
     if (typeof post.links   === 'string') { post.links  = JSON.parse(post.links) }
 
     post.image = {
@@ -69,7 +65,7 @@ export default defineEventHandler(async (event) => {
   })
 
   // Normalize projects
-  const projects: SearchResult[] = (projectsQuery.results || []).map((project: any) => {
+  const projects: ApiSearchResult[] = (projectsQuery.results || []).map((project: any) => {
     if (typeof project.tags === "string") {
       project.tags = JSON.parse(project.tags)
     }
@@ -99,7 +95,7 @@ export default defineEventHandler(async (event) => {
 
   // Search experiments (in-memory, case-insensitive substring match)
   const qLower = search.toLowerCase()
-  const experiments: SearchResult[] = (Array.isArray(data) ? data : []).filter((exp: Experiment) => {
+  const experiments: ApiSearchResult[] = (Array.isArray(data) ? data : []).filter((exp: Experiment) => {
     return (
       (exp.name && exp.name.toLowerCase().includes(qLower)) ||
       (exp.description && exp.description.toLowerCase().includes(qLower))

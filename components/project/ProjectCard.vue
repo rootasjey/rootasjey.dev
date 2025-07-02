@@ -41,7 +41,7 @@
       <div v-if="project.tags && project.tags.length > 0" class="flex flex-wrap gap-2 mb-4">
         <span 
           v-for="tag in project.tags.slice(0, 3)" 
-          :key="tag"
+          :key="tag.name"
           class="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 rounded-full"
         >
           {{ tag }}
@@ -59,10 +59,10 @@
 
 <script lang="ts" setup>
 import { NuxtImg } from '#components';
-import type { ProjectType } from '~/types/project';
+import type { Project } from '~/types/project';
 
 interface Props {
-  project: ProjectType
+  project: Project
 }
 
 defineProps<Props>()

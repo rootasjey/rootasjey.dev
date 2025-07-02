@@ -1,6 +1,6 @@
 // DELETE /api/projects/[identifier]/cover
 import { getProjectByIdentifier } from '~/server/utils/project'
-import { ProjectType } from "~/types/project"
+import { ApiProject } from "~/types/project"
 
 export default defineEventHandler(async (event) => {
   const session = await requireUserSession(event)
@@ -8,10 +8,10 @@ export default defineEventHandler(async (event) => {
   const identifier = decodeURIComponent(getRouterParam(event, 'identifier') ?? '')
   const db = hubDatabase()
 
-  let project: ProjectType | null = await getProjectByIdentifier(db, identifier)
+  let project: ApiProject | null = await getProjectByIdentifier(db, identifier)
 
   handleErrors({ project, userId })
-  project = project as ProjectType
+  project = project as ApiProject
 
   try {
     const prefix = project.image_src as string
@@ -48,7 +48,7 @@ export default defineEventHandler(async (event) => {
 })
 
 type HandleErrorsProps = {
-  project: ProjectType | null
+  project: ApiProject | null
   userId: number
 }
 

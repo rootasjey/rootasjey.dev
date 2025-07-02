@@ -138,11 +138,11 @@
 
 <script setup lang="ts">
 import type { ApiTag } from '~/types/tag'
-import type { ProjectType, UpdateProjectPayload } from '~/types/project'
+import type { Project, UpdateProjectPayload } from '~/types/project'
 
 interface Props {
   modelValue?: boolean
-  project?: ProjectType | null
+  project?: Project
 }
 
 interface Emits {
@@ -152,7 +152,6 @@ interface Emits {
 
 const props = withDefaults(defineProps<Props>(), {
   modelValue: false,
-  project: null
 })
 
 const emit = defineEmits<Emits>()
@@ -263,14 +262,14 @@ const markAsChanged = () => {
   )
 }
 
-const populateForm = (project: ProjectType) => {
+const populateForm = (project: Project) => {
   form.name = project.name || ''
   form.description = project.description || ''
   form.company = project.company || ''
   form.tags = Array.isArray(project.tags) ? [...project.tags] : []
   form.status = convertStatus(project.status)
-  form.startDate = project.start_date ? formatDateForInput(project.start_date) : ''
-  form.endDate = project.end_date ? formatDateForInput(project.end_date) : ''
+  form.startDate = project.startDate ? formatDateForInput(project.startDate) : ''
+  form.endDate = project.endDate ? formatDateForInput(project.endDate) : ''
   
   // Store original values for change detection
   originalForm.name = form.name

@@ -91,7 +91,7 @@
         </div>
         <div class="text-align-start flex flex-col">
           <h4>{{ project.user?.name }}</h4>
-          <span class="text-size-3 text-gray-500 dark:text-gray-400">{{ formatDate(project.created_at) }}</span>
+          <span class="text-size-3 text-gray-500 dark:text-gray-400">{{ formatDate(project.createdAt) }}</span>
           <div class="flex items-center gap-2 justify-center">
             <span class="text-size-3 text-gray-500 dark:text-gray-500 dark:hover:text-gray-200 transition">
               Last updated on {{ formatDate(project.updated_at) }}
@@ -121,11 +121,11 @@
 </template>
 
 <script lang="ts" setup>
-import type { ProjectType } from '~/types/project';
+import type { Project } from '~/types/project';
 import { computed, ref } from 'vue';
 
 const props = defineProps<{
-  project: ProjectType;
+  project: Project;
   canEdit: boolean;
   saving?: boolean;
 }>();

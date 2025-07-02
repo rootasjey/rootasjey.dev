@@ -189,7 +189,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { CreateProjectPayload, ProjectLink, ProjectType } from '~/types/project'
+import type { CreateProjectPayload, ProjectLink, Project } from '~/types/project'
 const { loggedIn } = useUserSession()
 
 useHead({
@@ -230,10 +230,10 @@ const _colors = [
 ]
 
 const isEditDialogOpen = ref(false)
-const projectToEdit = ref<ProjectType | null>(null)
+const projectToEdit = ref<Project | null>(null)
 
 // Handler to open the edit dialog
-const openEditDialog = (project: ProjectType) => {
+const openEditDialog = (project: Project) => {
   projectToEdit.value = project
   isEditDialogOpen.value = true
 }
@@ -246,13 +246,13 @@ const handleUpdateProjectDialog = async (updateData: any) => {
     company: updateData.company,
     tags: updateData.tags,
     status: updateData.status,
-    start_date: updateData.startDate,
-    end_date: updateData.endDate,
+    startDate: updateData.startDate,
+    endDate: updateData.endDate,
   })
   isEditDialogOpen.value = false
   projectToEdit.value = null
 }
-const projectMenuItems = (project: ProjectType) => {
+const projectMenuItems = (project: Project) => {
   if (!loggedIn.value) return []
 
   return [
@@ -273,7 +273,7 @@ const projectMenuItems = (project: ProjectType) => {
 }
 
 const { data, status, refresh } = await useFetch('/api/projects')
-const projects = data.value?.projects as ProjectType[]
+const projects = data.value?.projects as Project[]
 
 const handleCreateProject = async (payload: CreateProjectPayload) => {
   try {
@@ -289,7 +289,7 @@ const handleCreateProject = async (payload: CreateProjectPayload) => {
   }
 }
 
-const updateProject = async (projectId: string, payload: Partial<ProjectType>) => {
+const updateProject = async (projectId: string, payload: Partial<Project>) => {
   try {
     await $fetch(`/api/projects/${projectId}`, {
       method: "PUT",
@@ -303,7 +303,7 @@ const updateProject = async (projectId: string, payload: Partial<ProjectType>) =
   }
 }
 
-const deleteProject = async (project: ProjectType) => {
+const deleteProject = async (project: Project) => {
   project.isDeleteDialogOpen = false
   try {
     await $fetch(`/api/projects/${project.id}`, {
@@ -316,7 +316,7 @@ const deleteProject = async (project: ProjectType) => {
   }
 }
 
-const extractProjectLink = (project: ProjectType) => {
+const extractProjectLink = (project: Project) => {
   const link = project.links?.find((l: ProjectLink) => l.name === 'project')
   return link?.href || ''
 }

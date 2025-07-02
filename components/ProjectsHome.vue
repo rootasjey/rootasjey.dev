@@ -47,10 +47,10 @@
 </template>
 
 <script lang="ts" setup>
-import type { ProjectType } from '~/types/project';
+import type { Project } from '~/types/project';
 
 interface Props {
-  projects: ProjectType[];
+  projects: Project[];
   projectsLoading: boolean;
   projectsError: boolean;
 }
