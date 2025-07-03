@@ -1,22 +1,19 @@
-import { useApiTags } from '~/composables/useApiTags'
 import type { ApiTag } from '~/types/tag'
 import type { Project } from '~/types/project'
 
 export function useProjectPage(slug: string) {
   const { loggedIn, user } = useUserSession()
-  const {
-    tags: allTags,
-    fetchTags,
-    fetchProjectTags,
-    assignProjectTags,
-  } = useApiTags()
+  const tagsStore = useTagsStore()
+
+  // Initialize tags store
+  tagsStore.initialize()
 
   const fileInput = ref<HTMLInputElement | null>(null)
   const isUploading = ref(false)
   let _articleTimer: NodeJS.Timeout
   const saving = ref(false)
   const showTagsDialog = ref(false)
-  const selectedPrimaryTag = ref<ApiTag | null>(null)
+
   const projectTags = ref<ApiTag[]>([])
 
   // Project, loading, and error state
@@ -37,13 +34,13 @@ export function useProjectPage(slug: string) {
     loading.value = true
     error.value = null
     try {
-      await fetchTags()
+      await tagsStore.fetchTags()
       const data = await $fetch(`/api/projects/${slug}`)
       project.value = data as unknown as Project
       // Fetch tags for this project from API
-      const apiTags = await fetchProjectTags(project.value.id)
+      const apiTags = await tagsStore.fetchProjectTags(project.value.id)
       projectTags.value = apiTags
-      selectedPrimaryTag.value = getPrimaryTag(apiTags) || null
+
     } catch (err: any) {
       error.value = err?.message || 'Failed to load project.'
       project.value = undefined
@@ -136,7 +133,7 @@ export function useProjectPage(slug: string) {
     }, 0)
   }
 
-  const availableTags = computed(() => allTags.value.map(tag => ({ label: tag.name, value: tag.id, tag })))
+  const availableTags = computed(() => tagsStore.allTags.map((tag: ApiTag) => ({ label: tag.name, value: tag.id, tag })))
   const primaryTag = computed(() => getPrimaryTag(projectTags.value))
   const secondaryTags = computed(() => getSecondaryTags(projectTags.value))
 
@@ -145,9 +142,9 @@ export function useProjectPage(slug: string) {
     if (!project.value) return
     try {
       saving.value = true
-      await assignProjectTags(project.value.id, projectTags.value.map((t: ApiTag) => t.id))
+      await tagsStore.assignProjectTags(project.value.id, projectTags.value.map((t: ApiTag) => t.id))
       project.value.tags = [...projectTags.value]
-      selectedPrimaryTag.value = getPrimaryTag(projectTags.value) || null
+
       showTagsDialog.value = false
       useToast().toast({
         title: 'Tags updated',
@@ -213,7 +210,7 @@ export function useProjectPage(slug: string) {
     isUploading,
     saving,
     showTagsDialog,
-    selectedPrimaryTag,
+
     projectTags,
     project,
     canEdit,

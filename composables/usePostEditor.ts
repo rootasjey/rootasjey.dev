@@ -1,4 +1,3 @@
-import { useApiTags } from '~/composables/useApiTags'
 import type { ApiTag } from '~/types/tag'
 import type { Post } from '~/types/post'
 
@@ -27,15 +26,14 @@ export function usePostEditor() {
   const canEdit = ref(false)
 
   // Tags management (API-driven)
-  const {
-    tags: allTags,
-    fetchTags,
-    createTag,
-    assignPostTags,
-  } = useApiTags()
+  const tagsStore = useTagsStore()
+
+  // Initialize tags store
+  tagsStore.initialize()
+
   const showTagsDialog = ref(false)
   const postTags = ref<ApiTag[]>([])
-  const selectedPrimaryTag = ref<ApiTag | null>(null)
+
 
   const languages = ref([
     { label: 'English', value: 'en' },
@@ -59,11 +57,11 @@ export function usePostEditor() {
     loading.value = true
     error.value = null
     try {
-      await fetchTags()
+      await tagsStore.fetchTags()
       const fetchedPost = await $fetch<Post>(`/api/posts/${route.params.slug}`)
       post.value = fetchedPost
       selectedLanguage.value = languages.value.find(l => l.value === fetchedPost.language) ?? languages.value[0]
-      canEdit.value = fetchedPost.user_id === user.value?.id
+      canEdit.value = fetchedPost.user?.id === user.value?.id
       // Fetch tags for this post from API
       const apiTags = await $fetch<ApiTag[]>(`/api/posts/${route.params.slug}/tags`)
       postTags.value = apiTags
@@ -113,13 +111,11 @@ export function usePostEditor() {
   )
 
   // Computed properties for tags
-  const availableTags = computed(() => allTags.value)
-  const primaryTag = computed(() => getPrimaryTag(postTags.value))
-  const secondaryTags = computed(() => getSecondaryTags(postTags.value))
+  const availableTags = computed(() => tagsStore.allTags)
   const suggestedTags = computed(() => {
     if (!post.value?.name && !post.value?.description) return []
     const content = `${post.value?.name || ''} ${post.value?.description || ''}`.toLowerCase()
-    return getSuggestedTags(content, 5, allTags.value).filter((tag: ApiTag) => !postTags.value.some(t => t.id === tag.id))
+    return getSuggestedTags(content, 5, tagsStore.allTags).filter((tag: ApiTag) => !postTags.value.some(t => t.id === tag.id))
   })
 
   // Tags management methods
@@ -140,7 +136,7 @@ export function usePostEditor() {
     try {
       saving.value = true
       // Assign tags via API
-      await assignPostTags(post.value.id, postTags.value.map(t => t.id))
+      await tagsStore.assignPostTags(post.value.id, postTags.value.map(t => t.id))
       post.value.tags = [...postTags.value]
       selectedPrimaryTag.value = getPrimaryTag(postTags.value) || null
       showTagsDialog.value = false
@@ -213,7 +209,7 @@ export function usePostEditor() {
         let importedTags: ApiTag[] = []
         if (typeof importedData.tags[0] === 'string') {
           // Try to match by name from allTags
-          importedTags = importedData.tags.map((tagName: string) => allTags.value.find(t => t.name === tagName)).filter(Boolean)
+          importedTags = importedData.tags.map((tagName: string) => tagsStore.allTags.find(t => t.name === tagName)).filter(Boolean)
         } else {
           importedTags = importedData.tags
         }
@@ -373,8 +369,6 @@ export function usePostEditor() {
 
     // Computed
     availableTags,
-    primaryTag,
-    secondaryTags,
     suggestedTags,
 
     // Methods - Tags

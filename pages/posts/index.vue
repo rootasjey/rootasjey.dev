@@ -272,12 +272,12 @@ const dialogs = usePostDialogs()
 const drafts = useDrafts({ autoFetch: loggedIn.value, disabled: !loggedIn.value })
 const posts = usePosts()
 
-const tags = useApiTags()
-await tags.fetchTags()
+const tagsStore = useTagsStore()
+await tagsStore.fetchTags()
 
 // Tag statistics and helpers for API-driven tags
 const tagStats = computed(() => {
-  const all = tags.tags.value
+  const all = tagsStore.allTags
   return {
     total: all.length,
     custom: all.filter(t => t.category === 'custom').length,
@@ -293,7 +293,7 @@ const popularTags = computed(() => {
     })
   })
   // Sort tags by usage
-  return tags.tags.value
+  return tagsStore.allTags
     .map(tag => ({ ...tag, count: tagCounts[tag.id] || 0 }))
     .sort((a, b) => b.count - a.count)
     .filter(t => t.count > 0)
@@ -301,7 +301,7 @@ const popularTags = computed(() => {
 
 const unusedTags = computed(() => {
   const usedTagIds = new Set(posts.list.value.flatMap(post => post.tags?.map(t => t.id) || []))
-  return tags.tags.value.filter(tag => !usedTagIds.has(tag.id))
+  return tagsStore.allTags.filter(tag => !usedTagIds.has(tag.id))
 })
 
 const getTagUsage = (tag: ApiTag) => {
@@ -312,7 +312,7 @@ const actions = usePostActions({
   posts,
   drafts,
   dialogs,
-  tags,
+  tags: tagsStore,
 })
 
 // UI state

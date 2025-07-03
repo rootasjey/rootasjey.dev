@@ -5,7 +5,7 @@ export function usePostActions(dependencies: {
   posts: ReturnType<typeof usePosts>
   drafts: ReturnType<typeof useDrafts>
   dialogs: ReturnType<typeof usePostDialogs>
-  tags: ReturnType<typeof useApiTags>
+  tags: ReturnType<typeof useTagsStore>
 }) {
   const { posts, drafts, dialogs, tags: tagManagement } = dependencies
 

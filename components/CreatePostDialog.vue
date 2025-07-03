@@ -91,9 +91,8 @@
 </template>
 
 <script setup lang="ts">
-import { useApiTags } from '~/composables/useApiTags'
 import type { CreatePostPayload } from '~/types/post'
-import { ApiTag } from '~/types/tag'
+import type { ApiTag } from '~/types/tag'
 
 interface Props {
   modelValue?: boolean
@@ -110,8 +109,11 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<Emits>()
 
-// Use API tags composable
-const tagsApi = useApiTags()
+// Use tags store
+const tagsStore = useTagsStore()
+
+// Initialize tags store
+tagsStore.initialize()
 
 // Refs for focus management
 const nameInputRef = ref<HTMLInputElement>()
