@@ -1,5 +1,5 @@
 import { ApiProject, Project } from "~/types/project"
-import type { ApiTag } from "~/types/tag"
+
 
 /**
  * Retrieve a project by numeric ID or slug.
@@ -34,15 +34,6 @@ export function convertApiProjectToProject(
   }
 ): Project {
   const tags = options?.tags || []
-  const primaryTag = tags.length > 0 ? {
-    id: Number(tags[0].id),
-    name: String(tags[0].name),
-    category: typeof tags[0].category === 'string' ? tags[0].category : '',
-    created_at: tags[0].created_at ? String(tags[0].created_at) : '',
-    updated_at: tags[0].updated_at ? String(tags[0].updated_at) : ''
-  } : undefined
-  
-  const secondaryTags = (tags.length > 1 ? tags.slice(1) : []) as ApiTag[]
 
   return {
     article: JSON.parse(options?.article ?? JSON.stringify(createArticle())),
@@ -64,8 +55,7 @@ export function convertApiProjectToProject(
       views: apiProject.metrics_views,
     },
     name: apiProject.name,
-    primaryTag,
-    secondaryTags,
+
     slug: apiProject.slug,
     startDate: apiProject.start_date,
     status: apiProject.status,

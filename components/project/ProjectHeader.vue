@@ -12,7 +12,7 @@
       <!-- Primary Tag Display/Edit -->
       <div class="flex items-center gap-2 mt-2 justify-center">
         <div v-if="!canEdit && primaryTag" class="px-2 py-1 rounded-full text-xs bg-blue-100 dark:bg-blue-900 shadow-sm">
-          {{ primaryTag }}
+          {{ primaryTag.name }}
         </div>
         <div class="max-w-40" v-if="canEdit">
           <USelect v-model="selectedPrimaryTag" :items="availableTags" placeholder="Primary tag"
@@ -78,8 +78,8 @@
       </div>
       <!-- Secondary Tags Display -->
       <div v-if="secondaryTags.length > 0" class="flex flex-wrap gap-2 mt-3 justify-center">
-        <UBadge v-for="tag in secondaryTags" :key="tag" variant="outline" color="gray" size="sm">
-          {{ tag }}
+        <UBadge v-for="tag in secondaryTags" :key="tag.name" variant="outline" color="gray" size="sm">
+          {{ tag.name }}
         </UBadge>
       </div>
     </div>
@@ -144,10 +144,16 @@ const availableStatuses = [
   { label: 'On Hold', value: 'on-hold' },
   { label: 'Archived', value: 'archived' },
 ];
-const availableTags = computed(() => (props.project.tags || []).map(tag => ({ label: tag, value: tag })));
-const selectedPrimaryTag = ref(props.project.primaryTag || '');
-const primaryTag = computed(() => props.project.primaryTag || '');
-const secondaryTags = computed(() => props.project.secondaryTags || []);
+const availableTags = computed(() => (props.project.tags || []).map(tag => ({ label: tag.name, value: tag.name })));
+const selectedPrimaryTag = ref('');
+const primaryTag = computed(() => {
+  if (!props.project.tags) return null
+  return props.project.tags.find(tag => tag.category === 'primary') || props.project.tags[0] || null
+});
+const secondaryTags = computed(() => {
+  if (!props.project.tags) return []
+  return props.project.tags.filter(tag => tag.category !== 'primary')
+});
 
 function formatDate(date: string | Date): string {
   if (!date) return 'Unknown Date';

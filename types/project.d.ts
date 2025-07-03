@@ -22,10 +22,6 @@ export type Project = {
     views: number
   }
   name: string
-  /** Computed property: first tag as primary tag */
-  primaryTag?: ApiTag
-  /** Computed property: remaining tags after primary */
-  secondaryTags?: ApiTag[]
   slug: string
   startDate?: string
   status: 'active' | 'completed' | 'archived' | 'on-hold'

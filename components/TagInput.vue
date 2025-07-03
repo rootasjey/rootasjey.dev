@@ -48,8 +48,10 @@ let tempTagId = -1
 // Initialize from modelValue
 watchImmediate(() => props.modelValue, (newTags) => {
   if (newTags && newTags.length > 0) {
-    primaryTag.value = newTags[0]
-    additionalTags.value = newTags.slice(1)
+    // Find primary tag by category, fallback to first tag
+    const primary = newTags.find(tag => tag.category === 'primary') || newTags[0]
+    primaryTag.value = primary
+    additionalTags.value = newTags.filter(tag => tag.id !== primary.id)
   } else {
     primaryTag.value = null
     additionalTags.value = []
@@ -95,8 +97,10 @@ const addTagFromInput = () => {
 
   // Add as primary tag if none exists, otherwise as additional tag
   if (!primaryTag.value) {
+    tag.category = 'primary'
     primaryTag.value = tag
   } else {
+    tag.category = 'secondary'
     additionalTags.value.push(tag)
   }
 

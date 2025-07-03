@@ -28,11 +28,7 @@ export type Post = {
     views: number
   }
   name: string
-  /** Computed property: first tag as primary tag */
-  primaryTag?: ApiTag
   publishedAt?: string
-  /** Computed property: remaining tags after primary */
-  secondaryTags?: ApiTag[]
   slug: string
   status: 'draft' | 'published' | 'archived'
   tags: ApiTag[]

@@ -21,13 +21,7 @@ export function useProjectPage(slug: string) {
   const loading = ref(true)
   const error = ref<string | null>(null)
 
-  // Tag helpers
-  function getPrimaryTag(tags: ApiTag[]): ApiTag | undefined {
-    return tags.find(t => t.category === 'primary')
-  }
-  function getSecondaryTags(tags: ApiTag[]): ApiTag[] {
-    return tags.filter(t => t.category !== 'primary')
-  }
+
 
   // Fetch project data and tags
   const fetchProject = async () => {
@@ -134,8 +128,7 @@ export function useProjectPage(slug: string) {
   }
 
   const availableTags = computed(() => tagsStore.allTags.map((tag: ApiTag) => ({ label: tag.name, value: tag.id, tag })))
-  const primaryTag = computed(() => getPrimaryTag(projectTags.value))
-  const secondaryTags = computed(() => getSecondaryTags(projectTags.value))
+
 
   // Tag management methods
   const saveTagsEdit = async () => {
@@ -219,8 +212,7 @@ export function useProjectPage(slug: string) {
 
     // Computed
     availableTags,
-    primaryTag,
-    secondaryTags,
+
 
     // Methods
     saveTagsEdit,

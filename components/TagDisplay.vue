@@ -90,9 +90,12 @@ const props = withDefaults(defineProps<Props>(), {
 
 defineEmits<Emits>()
 
-const primaryTag = computed(() => props.tags[0] || null)
+const primaryTag = computed(() => {
+  return props.tags.find(tag => tag.category === 'primary') || props.tags[0] || null
+})
+
 const secondaryTags = computed(() => {
-  const secondary = props.tags.slice(1)
+  const secondary = props.tags.filter(tag => tag.category !== 'primary')
   return props.maxVisibleTags > 0 ? secondary.slice(0, props.maxVisibleTags) : secondary
 })
 </script>

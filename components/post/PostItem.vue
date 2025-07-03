@@ -199,20 +199,14 @@ const postUrl = computed(() => {
 
 const primaryTag = computed(() => {
   if (!props.post.tags || props.post.tags.length === 0) return null
-  // Return the first tag as primary
-  return props.post.tags.length > 0 ? props.post.tags[0] : null
+  // Find primary tag by category, fallback to first tag
+  return props.post.tags.find(tag => tag.category === 'primary') || props.post.tags[0] || null
 })
 
 const secondaryTags = computed(() => {
   if (!props.post.tags || props.post.tags.length === 0) return []
-  // Return all tags except the first one
-  if (props.post.tags.length === 1) return []
-  // Slice to get secondary tags, excluding the primary tag
-  if (props.maxSecondaryTags <= 0) return props.post.tags.slice(1)
-  // Limit the number of secondary tags to maxSecondaryTags
-  if (props.post.tags.length <= props.maxSecondaryTags) return props.post.tags.slice(1, props.post.tags.length)
-  // Otherwise, return all secondary tags
-  return props.post.tags.slice(1)
+  // Return all tags that are not primary
+  return props.post.tags.filter(tag => tag.category !== 'primary')
 })
 
 const visibleSecondaryTags = computed(() => {

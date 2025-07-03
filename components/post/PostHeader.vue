@@ -15,7 +15,7 @@
       <div class="flex items-center gap-2 mt-2 justify-center">
         <!-- Primary Tag Display/Edit -->
         <div v-if="!canEdit && primaryTag" class="px-2 py-1 rounded-full text-xs bg-blue-100 dark:bg-blue-900 shadow-sm">
-          {{ primaryTag }}
+          {{ primaryTag.name }}
         </div>
 
         <div class="max-w-40" v-if="canEdit">
@@ -117,7 +117,7 @@
           color="gray"
           size="sm"
         >
-          {{ tag }}
+          {{ tag.name }}
         </UBadge>
       </div>
     </div>
@@ -229,10 +229,12 @@ function emitUpdate(field: string, value: any) {
 }
 
 const primaryTag = computed(() => {
-  return props.post?.tags?.[0] || ''
+  if (!props.post?.tags) return null
+  return props.post.tags.find(tag => tag.category === 'primary') || props.post.tags[0] || null
 })
 const secondaryTags = computed(() => {
-  return Array.isArray(props.post?.tags) ? props.post.tags.slice(1) : []
+  if (!props.post?.tags) return []
+  return props.post.tags.filter(tag => tag.category !== 'primary')
 })
 
 function formatPublishedDate(date: string | Date): string {

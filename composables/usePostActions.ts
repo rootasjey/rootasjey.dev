@@ -1,5 +1,5 @@
 import type { CreatePostPayload, Post } from '~/types/post'
-import type { ApiTag, Tag } from '~/types/tag'
+import type { Tag } from '~/types/tag'
 
 export function usePostActions(dependencies: {
   posts: ReturnType<typeof usePosts>
@@ -272,8 +272,8 @@ export function usePostActions(dependencies: {
       description: post.description,
       tags: post.tags || [],
       content: post.article,
-      created_at: post.created_at,
-      updated_at: post.updated_at
+      created_at: post.createdAt,
+      updated_at: post.updatedAt
     }))
     
     const blob = new Blob([JSON.stringify(exportData, null, 2)], {
@@ -319,18 +319,7 @@ export function usePostActions(dependencies: {
     }
   }
 
-  // Tag-specific utility functions (adapt as needed for tag objects)
-  const getPostPrimaryTag = (post: Post): ApiTag | undefined => {
-    return Array.isArray(post.tags) && post.tags.length > 0 ? post.tags[0] : undefined
-  }
 
-  const getPostSecondaryTags = (post: Post): ApiTag[] => {
-    return Array.isArray(post.tags) && post.tags.length > 1 ? post.tags.slice(1) : []
-  }
-
-  const hasPostSecondaryTags = (post: Post): boolean => {
-    return Array.isArray(post.tags) && post.tags.length > 1
-  }
 
   return {
     // CRUD operations
@@ -358,9 +347,6 @@ export function usePostActions(dependencies: {
     handleAddTag,
     handleRetryError,
     
-    // Tag utilities
-    getPostPrimaryTag,
-    getPostSecondaryTags,
-    hasPostSecondaryTags,
+
   }
 }

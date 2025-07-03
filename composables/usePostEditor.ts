@@ -2,12 +2,6 @@ import type { ApiTag } from '~/types/tag'
 import type { Post } from '~/types/post'
 
 // Tag helpers
-function getPrimaryTag(tags: ApiTag[]): ApiTag | undefined {
-  return tags.find(t => t.category === 'primary')
-}
-function getSecondaryTags(tags: ApiTag[]): ApiTag[] {
-  return tags.filter(t => t.category !== 'primary')
-}
 function getSuggestedTags(content: string, limit = 5, allTags: ApiTag[] = []): ApiTag[] {
   if (!content) return []
   const lower = content.toLowerCase()
@@ -65,7 +59,7 @@ export function usePostEditor() {
       // Fetch tags for this post from API
       const apiTags = await $fetch<ApiTag[]>(`/api/posts/${route.params.slug}/tags`)
       postTags.value = apiTags
-      selectedPrimaryTag.value = getPrimaryTag(apiTags) || null
+
       if (!fetchedPost) {
         error.value = 'Post not found.'
       }
@@ -105,7 +99,7 @@ export function usePostEditor() {
     () => post.value?.tags,
     (tags) => {
       postTags.value = tags ? [...tags] : []
-      selectedPrimaryTag.value = getPrimaryTag(postTags.value) || null
+
     },
     { immediate: true }
   )
@@ -127,7 +121,7 @@ export function usePostEditor() {
   const cancelTagsEdit = () => {
     if (post.value?.tags) {
       postTags.value = [...post.value.tags]
-      selectedPrimaryTag.value = getPrimaryTag(post.value.tags) || null
+
     }
     showTagsDialog.value = false
   }
@@ -138,7 +132,7 @@ export function usePostEditor() {
       // Assign tags via API
       await tagsStore.assignPostTags(post.value.id, postTags.value.map(t => t.id))
       post.value.tags = [...postTags.value]
-      selectedPrimaryTag.value = getPrimaryTag(postTags.value) || null
+
       showTagsDialog.value = false
       useToast().toast({
         title: 'Tags updated',
@@ -215,7 +209,7 @@ export function usePostEditor() {
         }
         post.value.tags = importedTags
         postTags.value = [...importedTags]
-        selectedPrimaryTag.value = getPrimaryTag(importedTags) || null
+
       }
       if (importedData.language) {
         post.value.language = importedData.language
@@ -268,21 +262,14 @@ export function usePostEditor() {
       () => post.value?.slug,
       () => post.value?.status,
       () => selectedLanguage.value,
-      () => selectedPrimaryTag.value,
+
     ],
     () => {
       clearTimeout(updatePostMetaTimer)
       updatePostMetaTimer = setTimeout(updatePost, 2000)
     },
   )
-  watch(selectedPrimaryTag, (newPrimaryTag) => {
-    if (!post.value || !canEdit.value) return
-    const currentTags = postTags.value || []
-    const secondary = getSecondaryTags(currentTags)
-    const newTags = newPrimaryTag ? [newPrimaryTag, ...secondary] : secondary
-    postTags.value = [...newTags]
-    post.value.tags = [...newTags]
-  })
+
 
   // Update post meta
   const updatePost = async () => {
@@ -346,8 +333,8 @@ export function usePostEditor() {
     if (!post.value) return
     post.value[field] = value
   }
-  function onPrimaryTagUpdate(val: ApiTag | null) {
-    selectedPrimaryTag.value = val
+  function onPrimaryTagUpdate(_val: ApiTag | null) {
+    // This function is no longer needed with the new tag system
   }
   function onLanguageUpdate(val: any) {
     selectedLanguage.value = val
@@ -362,7 +349,7 @@ export function usePostEditor() {
     saving,
     showTagsDialog,
     postTags,
-    selectedPrimaryTag,
+
     languages,
     availableStatuses,
     selectedLanguage,
