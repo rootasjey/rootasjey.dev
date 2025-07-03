@@ -7,8 +7,8 @@ export const usePostDialogs = () => {
   const isDeleteDialogOpen = ref(false)
 
   // Post references for edit/delete operations
-  const editingPost = ref<Post | null>(null)
-  const deletingPost = ref<Post | null>(null)
+  const editingPost = ref<Post | undefined>(undefined)
+  const deletingPost = ref<Post | undefined>(undefined)
 
   // Dialog history for navigation (optional feature)
   const dialogHistory = ref<string[]>([])
@@ -52,7 +52,7 @@ export const usePostDialogs = () => {
 
   const closeEditDialog = () => {
     isEditDialogOpen.value = false
-    editingPost.value = null
+    editingPost.value = undefined
     removeFromHistory('edit')
   }
 
@@ -71,7 +71,7 @@ export const usePostDialogs = () => {
 
   const closeDeleteDialog = () => {
     isDeleteDialogOpen.value = false
-    deletingPost.value = null
+    deletingPost.value = undefined
     removeFromHistory('delete')
   }
 
@@ -80,8 +80,8 @@ export const usePostDialogs = () => {
     isCreateDialogOpen.value = false
     isEditDialogOpen.value = false
     isDeleteDialogOpen.value = false
-    editingPost.value = null
-    deletingPost.value = null
+    editingPost.value = undefined
+    deletingPost.value = undefined
     dialogHistory.value = []
   }
 

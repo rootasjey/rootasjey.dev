@@ -63,24 +63,24 @@ import type { Post } from '~/types/post'
 
 interface Props {
   isLoading?: boolean
-  error?: string | null
+  error?: string
   showDialogs?: boolean
   createDialogModel?: boolean
   editDialogModel?: boolean
   deleteDialogModel?: boolean
-  editingPost?: Post | null
-  deletingPost?: Post | null
+  editingPost?: Post
+  deletingPost?: Post
 }
 
 withDefaults(defineProps<Props>(), {
   isLoading: false,
-  error: null,
+  error: undefined,
   showDialogs: false,
   createDialogModel: false,
   editDialogModel: false,
   deleteDialogModel: false,
-  editingPost: null,
-  deletingPost: null
+  editingPost: undefined,
+  deletingPost: undefined
 })
 
 defineEmits<{

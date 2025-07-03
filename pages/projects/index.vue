@@ -1,44 +1,22 @@
 <template>
   <div class="w-full bg-[#F1F1F1] dark:bg-[#000] flex flex-col items-center min-h-screen">
-    <!-- Hero Section -->
-    <section class="w-[820px] mt-24 md:mt-42 mb-12 text-center p-2 md:p-8">
-      <div class="flex items-center justify-center gap-3 mb-6">
-        <h1 class="font-body text-6xl font-600 text-gray-800 dark:text-gray-200">
-          Projects
-        </h1>
-      </div>
-      
-      <h4 class="text-size-5 font-300 mb-6 text-gray-800 dark:text-gray-200 max-w-2xl mx-auto">
-        A curated collection of creative endeavors. 
-        Each project represents a step in the journey of learning, creating, and sharing.
-      </h4>
-      <h4 class="text-size-5 font-300 mb-6 text-gray-800 dark:text-gray-200 max-w-2xl mx-auto">
-        I tagged them according to their technologies and for which company they were made.
-        Most of my projects are open source. Feel free to explore and contribute.
-      </h4>
-
-      <div v-if="loggedIn" class="mb-8">
-        <UButton 
-          @click="isCreateDialogOpen = true" 
-          btn="soft" 
-          size="xs" 
-          class="hover:scale-101 active:scale-99 transition dark:bg-gray-800 dark:text-gray-200"
-        >
-          <span class="i-ph-plus mr-2"></span>
-          <span>Add a project</span>
-        </UButton>
-      </div>
-
-      <!-- Project navigation dots -->
-      <div class="colored-dots flex flex-row gap-3 justify-center mb-8">
-        <ULink v-for="(project, index) in projects" :key="project.slug" 
-          :to="`#${project.slug}`" 
-          :style="{ color: _colors[index]?.replace('color-', '') || '#8F87F1' }" 
-          class="hover:scale-150 transition-all duration-300 text-xl opacity-70 hover:opacity-100">
-          •
-        </ULink>
-      </div>
-    </section>
+    <ProjectsHeader
+      :is-loading="status === 'pending'"
+      :show-dialogs="loggedIn"
+      :create-dialog-model="isCreateDialogOpen"
+      :edit-dialog-model="isEditDialogOpen"
+      :delete-dialog-model="isDeleteDialogOpen"
+      :editing-project="projectToEdit"
+      :deleting-project="projectToDelete"
+      :projects="projects"
+      :colors="_colors"
+      @create-project="handleCreateProject"
+      @update-project="handleUpdateProjectDialog"
+      @delete-project="handleDeleteProject"
+      @update:create-dialog-model="isCreateDialogOpen = $event"
+      @update:edit-dialog-model="isEditDialogOpen = $event"
+      @update:delete-dialog-model="isDeleteDialogOpen = $event"
+    />
 
     <!-- Loading State -->
     <section v-if="status === 'pending'" class="w-[820px] mb-12">
@@ -153,38 +131,12 @@
               </UDropdownMenu>
             </div>
           </ULink>
-          
-          <!-- Delete Dialog -->
-          <UDialog v-if="loggedIn" v-model:open="project.isDeleteDialogOpen" :title="`Delete ${project.name}`"
-            description="Are you sure you want to delete this project? This action cannot be undone.">
-            <template #default>
-              <div class="flex flex-col gap-3 pt-4">
-                <UButton btn="solid-gray" @click="project.isDeleteDialogOpen = false" class="w-full">
-                  Cancel
-                </UButton>
-                <UButton btn="solid-red" @click="deleteProject(project)" class="w-full">
-                  Delete Project
-                </UButton>
-              </div>
-            </template>
-          </UDialog>
+
         </article>
       </div>
     </section>
 
-    <!-- Create Project Dialog -->
-    <CreateProjectDialog 
-      v-model="isCreateDialogOpen"
-      @create-project="handleCreateProject"
-    />
-
     <Footer class="mt-24 mb-42" :class="{ 'w-[1100px]': projects.length !== 0 }" />
-
-    <EditProjectDialog
-      v-model="isEditDialogOpen"
-      :project="projectToEdit"
-      @update-project="handleUpdateProjectDialog"
-    />
   </div>
 </template>
 
@@ -232,6 +184,9 @@ const _colors = [
 const isEditDialogOpen = ref(false)
 const projectToEdit = ref<Project | undefined>(undefined)
 
+const isDeleteDialogOpen = ref(false)
+const projectToDelete = ref<Project | undefined>(undefined)
+
 // Handler to open the edit dialog
 const openEditDialog = (project: Project) => {
   projectToEdit.value = project
@@ -252,6 +207,19 @@ const handleUpdateProjectDialog = async (updateData: any) => {
   isEditDialogOpen.value = false
   projectToEdit.value = undefined
 }
+
+// Handler to open the delete dialog
+const openDeleteDialog = (project: Project) => {
+  projectToDelete.value = project
+  isDeleteDialogOpen.value = true
+}
+
+// Handler for delete project event
+const handleDeleteProject = async (project: Project) => {
+  isDeleteDialogOpen.value = false
+  projectToDelete.value = undefined
+  await deleteProject(project)
+}
 const projectMenuItems = (project: Project) => {
   if (!loggedIn.value) return []
 
@@ -266,7 +234,7 @@ const projectMenuItems = (project: Project) => {
     {
       label: 'Delete',
       onClick: () => {
-        project.isDeleteDialogOpen = true
+        openDeleteDialog(project)
       }
     }
   ]
@@ -304,12 +272,11 @@ const updateProject = async (projectId: string, payload: Partial<Project>) => {
 }
 
 const deleteProject = async (project: Project) => {
-  project.isDeleteDialogOpen = false
   try {
     await $fetch(`/api/projects/${project.id}`, {
       method: "DELETE",
     })
-    
+
     await refresh()
   } catch (error) {
     console.error('Failed to delete project:', error)

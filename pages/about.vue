@@ -153,16 +153,18 @@
         blending logic with imagination to create solutions that are both functional and expressive.
       </p>
       <p>
-        For this website, I blended my own minimal tastes with 
+        For this website, I blended my own colorful tastes with 
         the beautiful 
         <ULink to="https://sense.ektothemes.com/" class="arrow" target="_blank" rel="noopener noreferrer">
           <span>Sense</span>
         </ULink> 
-        and 
+        , 
         <ULink to="https://onflow.priority.vision/" class="arrow" target="_blank" rel="noopener noreferrer">
           <span>OnFlow</span>
         </ULink> 
-        Ghost theme.
+        Ghost theme. 
+        I've also liked the islands disposal on this 
+        <ULink to="https://prismic-demo-glideai.nuxt.dev/" class="arrow" target="_blank" rel="noopener noreferrer"><span>glide.ai website</span></ULink>
       </p>
     </section>
 

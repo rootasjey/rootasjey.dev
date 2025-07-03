@@ -50,9 +50,7 @@ useHead({
 })
 
 const posts = usePosts()
-
 const { data: experiments, status: experimentStatus } = await useFetch('/api/experiments')
-
 const { data: projectData, status: projectStatus } = await useFetch('/api/projects', {
   query: {
     visibility: 'public',

@@ -169,9 +169,9 @@
       <template #footer="{ totalCount }">
         <div v-if="totalCount > 0" class="text-xs text-gray-500 dark:text-gray-400 text-center">
           {{ totalCount }} published post{{ totalCount === 1 ? '' : 's' }}
-          <span v-if="tags.tags.value.length > 0" class="mx-2">•</span>
-          <span v-if="tags.tags.value.length > 0">
-            {{ tags.tags.value.length }} tag{{ tags.tags.value.length === 1 ? '' : 's' }} available
+          <span v-if="tagStats.total > 0" class="mx-2">•</span>
+          <span v-if="tagStats.total > 0">
+            {{ tagStats.total }} tag{{ tagStats.total === 1 ? '' : 's' }} available
           </span>
         </div>
       </template>
@@ -334,7 +334,7 @@ const combinedErrorMessage = computed(() => {
   const errors = []
   if (posts.error.value) errors.push(posts.error.value)
   if (drafts.draftsError.value) errors.push(drafts.draftsError.value)
-  return errors.length > 0 ? errors.join('; ') : null
+  return errors.length > 0 ? errors.join('; ') : undefined
 })
 
 // Tag management methods
@@ -343,9 +343,9 @@ const handleClearUnusedTags = async () => {
   if (!confirmClear) return
   const unused = unusedTags.value
   for (const tag of unused) {
-    await tags.deleteTag(tag.id)
+    await tagsStore.deleteTag(tag.id)
   }
-  tags.fetchTags()
+  tagsStore.fetchTags()
   toast({
     title: 'Unused tags cleared',
     description: `Removed ${unused.length} unused tags`,
@@ -356,7 +356,7 @@ const handleClearUnusedTags = async () => {
 }
 
 const handleExportTags = () => {
-  const exportData = tags.tags.value
+  const exportData = tagsStore.allTags
   const blob = new Blob([JSON.stringify(exportData, null, 2)], {
     type: 'application/json'
   })

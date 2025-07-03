@@ -14,7 +14,6 @@ export type Project = {
     ext: string
     src: string
   }
-  isDeleteDialogOpen?: boolean
   links: ProjectLink[] & never[]
   metrics?: {
     comments: number
