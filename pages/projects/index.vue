@@ -178,7 +178,7 @@
       @create-project="handleCreateProject"
     />
 
-    <Footer class="mt-24 mb-42 w-[1100px]" />
+    <Footer class="mt-24 mb-42" :class="{ 'w-[1100px]': projects.length !== 0 }" />
 
     <EditProjectDialog
       v-model="isEditDialogOpen"
@@ -230,7 +230,7 @@ const _colors = [
 ]
 
 const isEditDialogOpen = ref(false)
-const projectToEdit = ref<Project | null>(null)
+const projectToEdit = ref<Project | undefined>(undefined)
 
 // Handler to open the edit dialog
 const openEditDialog = (project: Project) => {
@@ -250,7 +250,7 @@ const handleUpdateProjectDialog = async (updateData: any) => {
     endDate: updateData.endDate,
   })
   isEditDialogOpen.value = false
-  projectToEdit.value = null
+  projectToEdit.value = undefined
 }
 const projectMenuItems = (project: Project) => {
   if (!loggedIn.value) return []

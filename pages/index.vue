@@ -17,7 +17,7 @@
       </h5>
     </section>
 
-    <PostsHome :posts="posts" v-if="posts.list.value.length" />
+    <PostsHome :posts="posts" />
 
     <ProjectsHome 
       v-if="projects.length"

@@ -20,9 +20,7 @@
       <PostCard v-for="post in posts.list.value" :key="post.id" :post="post" />
     </div>
     
-    <div v-else class="text-center py-8">
-      <div class="text-gray-600 dark:text-gray-400">No posts available</div>
-    </div>
+    <PostsHomeEmpty v-else />
   </section>
 </template>
 
@@ -32,6 +30,6 @@ interface Props {
   posts: PostsComposable
 }
 
-const props = defineProps<Props>();
+defineProps<Props>();
 
 </script>
