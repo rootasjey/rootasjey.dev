@@ -15,12 +15,14 @@
         I prefer collaboration over hierarchy, sharing over locking, incitation over coercion. 
         Life is like a movie which we take on course and won't see the end, and I'll try to share as much love as I can.
       </h5>
+      <h5 class="text-size-4 font-400 mb-4 text-gray-800 dark:text-gray-200">
+        {{ greeting }}, it's {{ formattedTime }}.
+      </h5>
     </section>
 
     <PostsHome :posts="posts" />
 
     <ProjectsHome 
-      v-if="projects.length"
       :projects="projects" 
       :projectsLoading="projectStatus === 'pending'" 
       :projectsError="projectStatus === 'error'" 
@@ -47,10 +49,6 @@ useHead({
   ],
 })
 
-// Fetch '/api/how-many-items' to get the number of items in the database
-// const { data } = await useFetch("/api/home/how-many-items")
-// const navigation = useNavigation(data.value ?? fallbackData)
-// const fallbackData = { projects: 0, posts: 0, experiments: 0 }
 const posts = usePosts()
 
 const { data: experiments, status: experimentStatus } = await useFetch('/api/experiments')
@@ -63,6 +61,11 @@ const { data: projectData, status: projectStatus } = await useFetch('/api/projec
 })
 
 const projects = projectData.value.projects
+
+const currentTime = ref(new Date())
+const formattedTime = computed(() => {
+  return formatDate(currentTime.value)
+})
 
 const greeting = computed(() => {
   const hour = new Date().getHours()
@@ -79,7 +82,10 @@ const formatDate = (dateString) => {
   return date.toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'short',
-    day: 'numeric'
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
   })
 }
 

@@ -1,7 +1,7 @@
 <template>
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
     <!-- Sample Card 1 -->
-    <UCard class="relative rounded-0 px-0 border b-gray-200/40 opacity-60">
+    <UCard class="relative rounded-0 px-0 border b-gray-200/40 opacity-60 hover:opacity-100">
       <div class="py-4">
         <div class="flex flex-wrap gap-2 mb-2">
           <span class="text-xs font-medium text-gray-600 dark:text-gray-400">
@@ -28,7 +28,7 @@
     </UCard>
 
     <!-- Sample Card 2 -->
-    <UCard class="relative rounded-0 px-0 border b-gray-200/40 opacity-60">
+    <UCard class="relative rounded-0 px-0 border b-gray-200/40 opacity-60 hover:opacity-100">
       <div class="py-4">
         <div class="flex flex-wrap gap-2 mb-2">
           <span class="text-xs font-medium text-gray-600 dark:text-gray-400">
@@ -62,11 +62,16 @@
             Create
           </span>
         </div>
-        <h3 class="font-body text-size-8 font-700 line-height-tight text-gray-800 dark:text-gray-200">
+        <h3 class="font-body text-size-8 font-700 mb-2 line-height-tight text-gray-800 dark:text-gray-200">
           Create Your First Post
         </h3>
+        <p class="text-gray-600 dark:text-gray-400 text-sm mb-3">
+          This is it. Your first post. 
+          And the beginning of your journey.
+        </p>
         <p class="text-gray-600 dark:text-gray-400 text-sm mb-6">
-          Start sharing your ideas and stories with the world. Your voice matters!
+          Write a memory about your latest project, a book you just finished, 
+          a trip you took, or anything else that comes to mind.
         </p>
         <UButton
           to="/posts"

@@ -40,9 +40,7 @@
       </ULink>
     </div>
     
-    <div v-else class="text-center py-8">
-      <div class="text-gray-600 dark:text-gray-400">No projects available</div>
-    </div>
+    <ProjectsHomeEmpty v-else />
   </section>
 </template>
 
@@ -66,3 +64,13 @@ const iconProjects: { [key: string]: string } = {
   "comptoirs": "i-ph-storefront",
 }
 </script>
+
+<style scoped>
+.line-clamp-3 {
+  display: -webkit-box;
+  line-clamp: 3;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+</style>
