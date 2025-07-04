@@ -134,9 +134,9 @@
         </UButton>
       </div>
 
-      <!-- Posts List -->
-      <div v-else-if="posts.length > 0" :class="listClasses">
-        <PostItem
+      <!-- Posts Grid -->
+      <div v-else-if="posts.length > 0" :class="gridClasses">
+        <PostCard
           v-for="post in displayedPosts"
           :key="post.id"
           :post="post"
@@ -146,6 +146,7 @@
           :show-secondary-tags="showSecondaryTags"
           :show-word-count="showWordCount"
           :show-draft-badge="showDraftBadge"
+          :show-archived-badge="true"
           :show-status-indicator="showStatusIndicator"
           v-bind="itemProps"
           @edit="$emit('edit', $event)"
@@ -423,18 +424,21 @@ const contentClasses = computed(() => {
   return classes
 })
 
-const listClasses = computed(() => {
-  const classes = ['space-y-4']
-  
+const gridClasses = computed(() => {
+  const classes = ['grid gap-6']
+
   switch (props.variant) {
     case 'compact':
-      classes.push('space-y-2')
+      classes.push('grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4')
       break
     case 'detailed':
-      classes.push('space-y-6')
+      classes.push('grid-cols-1 md:grid-cols-2 gap-8')
+      break
+    default:
+      classes.push('grid-cols-1 md:grid-cols-2 lg:grid-cols-3')
       break
   }
-  
+
   return classes
 })
 

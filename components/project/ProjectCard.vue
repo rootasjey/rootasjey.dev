@@ -9,9 +9,11 @@
     <div class="p-4 flex flex-col justify-between bg-white dark:bg-[#141418] rounded-xl h-100% relative">
       <!-- Content Section -->
       <div>
-        <h3 class="font-body text-xl font-600 text-gray-800 dark:text-gray-200 mb-3">
-          {{ title }}
-        </h3>
+        <ULink :to="project ? `/projects/${project.slug}` : '#'" class="hover:underline decoration-offset-4">
+          <h3 class="font-body text-xl font-600 text-gray-800 dark:text-gray-200 mb-3">
+            {{ title }}
+          </h3>
+        </ULink>
         <p class="text-gray-600 dark:text-gray-400 text-sm mb-6 leading-relaxed">
           {{ description }}
         </p>

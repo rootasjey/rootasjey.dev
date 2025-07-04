@@ -18,165 +18,44 @@
       @update:delete-dialog-model="dialogs.deleteDialogModel.value = $event"
     />
 
-    <!-- Drafts Section -->
-    <PostsSection
-      v-if="loggedIn"
-      class="w-[720px]"
-      :posts="drafts.list.value"
-      title="Drafts"
-      section-type="Draft"
-      icon="i-icon-park-outline:notebook-and-pen"
-      icon-color="#f59e0b"
-      menu-variant="minimal"
-      :collapsible="true"
-      :expanded="drafts.showDrafts.value"
-      :is-loading="drafts.isFetchingDrafts.value"
-      :error="drafts.draftsError.value"
-      :show-draft-badge="true"
-      :show-status-indicator="true"
-      :show-refresh-action="true"
-      :show-add-action="true"
-      :show-primary-tag="true"
-      :show-secondary-tags="true"
-      empty-state-title="No drafts yet"
-      empty-state-description="Start writing a new post to create your first draft."
-      empty-action-text="Write New Post"
-      empty-action-icon="i-lucide-pen-tool"
-      @toggle="drafts.toggleDrafts"
-      @refresh="drafts.refreshDrafts"
-      @add="dialogs.openCreateDialog"
-      @retry="drafts.retryFetchDrafts"
-      @empty-action="dialogs.openCreateDialog"
+    <!-- Posts Tabs Interface -->
+    <PostsTabs
+      :published-posts="posts.list.value"
+      :draft-posts="drafts.list.value"
+      :archived-posts="archivedPosts.list.value"
+      :is-published-loading="posts.isLoading.value"
+      :is-drafts-loading="drafts.isFetchingDrafts.value"
+      :is-archived-loading="archivedPosts.isFetchingArchived.value"
+      :published-error="posts.error.value"
+      :drafts-error="drafts.draftsError.value"
+      :archived-error="archivedPosts.archivedError.value"
+      :logged-in="loggedIn"
+      :default-tab="defaultTab"
+      @tab-change="handleTabChange"
+      @create-post="dialogs.openCreateDialog"
       @edit="dialogs.openEditDialog"
       @delete="dialogs.openDeleteDialog"
       @publish="actions.handlePublishDraft"
-      @duplicate="actions.handleDuplicatePost"
-    >
-      <template #actions="{ posts: draftPosts, isLoading }">
-        <div class="flex items-center gap-2">
-          <UButton
-            size="xs"
-            btn="soft-gray"
-            class="dark:color-#f59e0b"
-            :loading="isLoading"
-            @click="drafts.refreshDrafts"
-          >
-            <UIcon name="i-ph-arrows-counter-clockwise-duotone" />
-            <span>Refresh</span>
-          </UButton>
-          
-          <UButton
-            size="xs"
-            btn="soft-gray"
-            class="dark:color-#f59e0b"
-            @click="dialogs.openCreateDialog"
-          >
-            <UIcon name="i-lucide-pen-tool" />
-            <span>New Draft</span>
-          </UButton>
-
-          <UButton
-            v-if="draftPosts.length > 0"
-            size="xs"
-            btn="soft-gray"
-            class="dark:color-#f59e0b"
-            @click="actions.handleBulkArchiveDrafts"
-          >
-            <UIcon name="i-lucide-archive" />
-            <span>Archive</span>
-          </UButton>
-        </div>
-      </template>
-
-      <template #footer="{ posts: draftPosts, totalCount }">
-        <div v-if="totalCount > 0" class="text-xs text-gray-500 dark:text-gray-400 text-center">
-          {{ totalCount }} draft{{ totalCount === 1 ? '' : 's' }} • 
-          Last updated {{ actions.formatLastUpdated(draftPosts) }}
-        </div>
-      </template>
-    </PostsSection>
-
-    <!-- Published Posts Section -->
-    <PostsSection
-      :posts="posts.list.value"
-      title="Published"
-      section-type="Post"
-      class="w-[720px]"
-      icon="i-ph-article"
-      icon-color="#3b82f6"
-      menu-variant="minimal"
-      :is-loading="posts.isLoading.value"
-      :error="posts.error.value"
-      :show-primary-tag="true"
-      :show-secondary-tags="true"
-      :show-word-count="true"
-      :show-draft-badge="false"
-      :show-refresh-action="true"
-      empty-state-title="No published posts yet"
-      empty-state-description="Your published posts will appear here once you start sharing your thoughts with the world."
-      empty-action-text="Publish First Post"
-      empty-action-icon="i-lucide-send"
-      @refresh="posts.fetchPosts"
-      @retry="posts.fetchPosts"
-      @empty-action="dialogs.openCreateDialog"
-      @edit="dialogs.openEditDialog"
-      @delete="dialogs.openDeleteDialog"
       @unpublish="actions.handleUnpublishPost"
-      @duplicate="actions.handleDuplicatePost"
       @archive="actions.handleArchivePost"
+      @unarchive="handleUnarchivePost"
+      @duplicate="actions.handleDuplicatePost"
       @share="actions.handleSharePost"
       @export="actions.handleExportPost"
       @view-stats="actions.handleViewStats"
-    >
-      <template #actions="{ posts: publishedPosts }">
-        <div class="flex items-center gap-2">
-          <UButton
-            btn="soft-gray"
-            size="xs"
-            class="dark:color-#3b82f6"
-            :loading="posts.isLoading.value"
-            @click="posts.fetchPosts"
-          >
-            <UIcon name="i-ph-arrows-counter-clockwise-duotone" />
-            <span>Refresh</span>
-          </UButton>
+      @refresh-published="posts.fetchPosts"
+      @refresh-drafts="drafts.refreshDrafts"
+      @refresh-archived="archivedPosts.refreshArchived"
+      @retry-published="posts.fetchPosts"
+      @retry-drafts="drafts.retryFetchDrafts"
+      @retry-archived="archivedPosts.retryFetchArchived"
+      @bulk-export="actions.handleBulkExport"
+      @bulk-archive-drafts="actions.handleBulkArchiveDrafts"
+      @bulk-restore-archived="handleBulkRestoreArchived"
+      @manage-tags="showTagManagement = true"
+    />
 
-          <UButton
-            v-if="publishedPosts.length > 0"
-            btn="soft-gray"
-            size="xs"
-            class="dark:color-#3b82f6"
-            @click="actions.handleBulkExport"
-          >
-            <UIcon name="i-lucide-download" />
-            <span>Export All</span>
-          </UButton>
-
-          <!-- Tag Management Button -->
-          <UButton
-            v-if="loggedIn"
-            btn="soft-gray"
-            size="xs"
-            class="dark:color-#3b82f6"
-            @click="showTagManagement = true"
-          >
-            <UIcon name="i-lucide-tags" />
-            <span>Manage Tags</span>
-          </UButton>
-        </div>
-      </template>
-
-      <template #footer="{ totalCount }">
-        <div v-if="totalCount > 0" class="text-xs text-gray-500 dark:text-gray-400 text-center">
-          {{ totalCount }} published post{{ totalCount === 1 ? '' : 's' }}
-          <span v-if="tagStats.total > 0" class="mx-2">•</span>
-          <span v-if="tagStats.total > 0">
-            {{ tagStats.total }} tag{{ tagStats.total === 1 ? '' : 's' }} available
-          </span>
-        </div>
-      </template>
-    </PostsSection>
-
+    <!-- Empty State (shown when no content in any tab) -->
     <PostsEmptyState v-if="!hasAnyContent && !isAnyLoading" class="w-3xl mt-12" />
 
     <!-- Tag Management Modal -->
@@ -256,6 +135,7 @@
 
 <script lang="ts" setup>
 import type { ApiTag } from '~/types/tag'
+import type { Post } from '~/types/post'
 
 useHead({
   title: "root • posts",
@@ -271,6 +151,14 @@ const { loggedIn } = useUserSession()
 const dialogs = usePostDialogs()
 const drafts = useDrafts({ autoFetch: loggedIn.value, disabled: !loggedIn.value })
 const posts = usePosts()
+const archivedPosts = useArchivedPosts({ autoFetch: loggedIn.value, disabled: !loggedIn.value })
+
+// Tab management
+const defaultTab = ref<'published' | 'drafts' | 'archived'>('published')
+
+const handleTabChange = (tab: string) => {
+  defaultTab.value = tab as 'published' | 'drafts' | 'archived'
+}
 
 const tagsStore = useTagsStore()
 await tagsStore.fetchTags()
@@ -315,20 +203,51 @@ const actions = usePostActions({
   tags: tagsStore,
 })
 
+// Additional action handlers for archived posts
+const handleUnarchivePost = async (post: Post) => {
+  try {
+    await actions.handleUpdatePost({
+      id: post.id,
+      name: post.name,
+      description: post.description,
+      tags: post.tags || [],
+      slug: post.slug || '',
+      status: 'draft'
+    })
+
+    // Move from archived to drafts
+    archivedPosts.removeArchivedPost(post.id)
+    drafts.addDraft({ ...post, status: 'draft' })
+  } catch (error: any) {
+    console.error('Failed to unarchive post:', error)
+  }
+}
+
+const handleBulkRestoreArchived = async () => {
+  const confirmRestore = confirm('Restore all archived posts to drafts?')
+  if (!confirmRestore) return
+
+  try {
+    for (const post of archivedPosts.list.value) {
+      await handleUnarchivePost(post)
+    }
+  } catch (error) {
+    console.error('Failed to restore archived posts:', error)
+  }
+}
+
 // UI state
 const showTagManagement = ref(false)
 
-const hasAnyContent = computed(() => 
-  posts.hasPosts.value || drafts.hasDrafts.value
+const hasAnyContent = computed(() =>
+  posts.hasPosts.value || drafts.hasDrafts.value || archivedPosts.hasArchived.value
 )
 
-const isAnyLoading = computed(() => 
-  posts.isAnyLoading.value || drafts.isFetchingDrafts.value
+const isAnyLoading = computed(() =>
+  posts.isAnyLoading.value || drafts.isFetchingDrafts.value || archivedPosts.isFetchingArchived.value
 )
 
-const hasAnyError = computed(() => 
-  posts.error.value || drafts.draftsError.value
-)
+
 
 const combinedErrorMessage = computed(() => {
   const errors = []
@@ -382,7 +301,7 @@ onBeforeRouteLeave(() => {
   }
 })
 
-onBeforeRouteLeave((leaveGuard) => {
+onBeforeRouteLeave(() => {
   if (dialogs.hasOpenDialog.value) {
     const answer = window.confirm(
       'You have an open dialog. Are you sure you want to leave?'
