@@ -1,48 +1,38 @@
 <template>
   <UCard
     :class="[
-      'relative rounded-lg border transition-all duration-200 hover:shadow-md',
-      cardClasses
+      'relative rounded-0 border transition-all duration-200 hover:shadow-md',
+      cardClasses,
+      cardHoverBorderColor,
+      {
+        'opacity-50 transform scale-95 shadow-lg': isDragging,
+        'border-width-2': isDragging
+      }
     ]"
     class="group"
+    :draggable="isDragEnabled && showDragHandle && dragHandleActive"
+    @dragstart="handleCardDragStart"
+    @dragend="handleCardDragEnd"
   >
-    <!-- Post Content -->
-    <div class="p-4">
-      <!-- Status and Menu Row -->
-      <div class="flex items-start justify-between mb-3">
-        <!-- Status Pills -->
-        <div class="flex items-center gap-2">
-          <!-- Draft Badge -->
-          <UBadge
-            v-if="isDraft && showDraftBadge"
-            variant="soft"
-            color="amber"
-            size="xs"
-          >
-            Draft
-          </UBadge>
+    <div class="pt-4">
+      <div
+        v-if="showDragHandle"
+        class="absolute left-0 top-0 w-100% flex gap-2 items-center opacity-0 group-hover:opacity-100 transition-opacity cursor-grab active:cursor-grabbing"
+        :class="[
+          cardDragBgColor,
+          { 'opacity-100': isDragging }
+        ]"
+        :aria-label="dragHandleAriaLabel"
+        @mousedown="enableDrag"
+      >
+        <UIcon
+          name="i-ph-dots-six-vertical-light"
+          class="w-4 h-4 text-white"
+        />
+        <span class="text-white text-sm">You can drag this card</span>
+      </div>
 
-          <!-- Archived Badge -->
-          <UBadge
-            v-if="isArchived && showArchivedBadge"
-            variant="soft"
-            color="gray"
-            size="xs"
-          >
-            Archived
-          </UBadge>
-
-          <!-- Status Indicator -->
-          <div v-if="showStatusIndicator" class="flex-shrink-0">
-            <div
-              :class="statusIndicatorClasses"
-              class="w-2 h-2 rounded-full"
-              :title="statusText"
-            />
-          </div>
-        </div>
-
-        <!-- Action Menu -->
+      <div class="absolute right-4 top-7 flex items-center gap-2">
         <div v-if="showMenu" class="opacity-0 group-hover:opacity-100 transition-opacity">
           <slot name="menu" :post="post">
             <PostMenu
@@ -64,31 +54,53 @@
         </div>
       </div>
 
-      <!-- Primary Tag -->
-      <div v-if="primaryTag && showPrimaryTag" class="mb-2">
-        <UBadge
-          variant="soft"
-          color="blue"
-          size="xs"
-        >
-          {{ primaryTag.name }}
-        </UBadge>
+      <div class="flex items-start justify-between mb-3">
+        <div class="flex items-center gap-2">
+          <UBadge
+            v-if="isDraft && showDraftBadge"
+            variant="soft"
+            color="amber"
+            size="xs"
+          >
+            Draft
+          </UBadge>
+
+          <UBadge
+            v-if="isArchived && showArchivedBadge"
+            variant="soft"
+            color="gray"
+            size="xs"
+          >
+            Archived
+          </UBadge>
+
+          <div v-if="showStatusIndicator" class="flex-shrink-0">
+            <div
+              :class="statusIndicatorClasses"
+              class="w-2 h-2 rounded-full"
+              :title="statusText"
+            />
+          </div>
+        </div>
       </div>
 
-      <!-- Title with Link -->
+      <div v-if="primaryTag && showPrimaryTag" class="mb-2">
+        <span class="text-xs font-medium text-gray-600 dark:text-gray-400">
+          {{ primaryTag.name }}
+        </span>
+      </div>
+
       <ULink :to="postUrl" :disabled="linkDisabled" class="block">
-        <h3 :class="titleClasses" class="line-clamp-2 break-words mb-2">
+        <h3 :class="titleClasses" class="mb-2">
           {{ post.name }}
         </h3>
       </ULink>
 
-      <!-- Description -->
       <p v-if="post.description"
-          class="text-gray-600 dark:text-gray-400 text-sm mb-4 line-clamp-3">
+          class="text-gray-600 dark:text-gray-400 text-sm mb-4">
         {{ post.description }}
       </p>
 
-      <!-- Secondary Tags -->
       <div v-if="secondaryTags.length > 0 && showSecondaryTags" class="flex flex-wrap gap-1 mb-3">
         <UBadge
           v-for="tag in visibleSecondaryTags"
@@ -111,10 +123,8 @@
     </div>
 
     <template #footer>
-      <!-- Post Meta -->
-      <div class="px-4 pb-4 flex items-center justify-between text-xs text-gray-500 dark:text-gray-500">
+      <div class="pb-4 text-xs text-gray-500 dark:text-gray-500">
         <div class="flex items-center gap-3">
-          <!-- Date -->
           <time
             :datetime="dateFormatted.iso"
             :title="dateFormatted.full"
@@ -122,18 +132,16 @@
             {{ dateFormatted.relative }}
           </time>
 
-          <!-- Word Count -->
+          <span v-if="wordCount && showWordCount" class="text-gray-400 dark:text-gray-600">•</span>
           <div v-if="wordCount && showWordCount" class="flex items-center gap-1">
-            <span class="text-gray-400 dark:text-gray-600">•</span>
             <span>{{ wordCount }} words</span>
           </div>
         </div>
 
-        <!-- Read More Link -->
         <ULink
           :to="postUrl"
           :disabled="linkDisabled"
-          class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-500 transition-colors"
+          class="text-sm font-500 hover:underline decoration-offset-4"
         >
           Read more →
         </ULink>
@@ -167,6 +175,10 @@ interface PostCardProps {
     disabled?: boolean
     destructive?: boolean
   }>
+  // Drag and drop props
+  showDragHandle?: boolean
+  isDragEnabled?: boolean
+  sourceTab?: 'published' | 'drafts' | 'archived'
 }
 
 interface PostCardEmits {
@@ -180,6 +192,9 @@ interface PostCardEmits {
   (e: 'share', post: Post): void
   (e: 'export', post: Post): void
   (e: 'view-stats', post: Post): void
+  // Drag and drop events
+  (e: 'drag-start', post: Post, sourceTab: string): void
+  (e: 'drag-end', post: Post): void
 }
 
 const props = withDefaults(defineProps<PostCardProps>(), {
@@ -194,10 +209,13 @@ const props = withDefaults(defineProps<PostCardProps>(), {
   maxSecondaryTags: 3,
   dateFormat: 'relative',
   linkDisabled: false,
-  menuItems: () => []
+  menuItems: () => [],
+  showDragHandle: false,
+  isDragEnabled: false,
+  sourceTab: 'published'
 })
 
-defineEmits<PostCardEmits>()
+const emit = defineEmits<PostCardEmits>()
 
 // Computed properties
 const isDraft = computed(() => props.post.status === 'draft')
@@ -229,6 +247,20 @@ const hiddenSecondaryTagsCount = computed(() => {
   return Math.max(0, secondaryTags.value.length - props.maxSecondaryTags)
 })
 
+const cardHoverBorderColor = computed(() => {
+  if (isDraft.value) return 'hover:border-lime-5 dark:hover:border-amber-200'
+  if (isPublished.value) return 'hover:border-blue-500 dark:hover:border-blue-300'
+  if (isArchived.value) return 'hover:border-gray-500 dark:hover:border-gray-300'
+  return 'hover:border-gray-300 dark:hover:border-gray-600'
+})
+
+const cardDragBgColor = computed(() => {
+  if (isDraft.value) return 'bg-lime-5 dark:bg-amber-200'
+  if (isPublished.value) return 'bg-blue-500 dark:bg-blue-300'
+  if (isArchived.value) return 'bg-gray-500 dark:bg-gray-300'
+  return 'bg-gray-300 dark:bg-gray-600'
+})
+
 // Styling based on variant and state
 const cardClasses = computed(() => {
   const classes = []
@@ -239,24 +271,18 @@ const cardClasses = computed(() => {
     classes.push('p-6')
   }
 
-  if (isDraft.value) {
-    classes.push('opacity-75 border-amber-200 dark:border-amber-800')
-  } else if (isArchived.value) {
-    classes.push('opacity-60 border-gray-300 dark:border-gray-600')
-  } else {
-    classes.push('border-gray-200 dark:border-gray-700')
-  }
-
   return classes
 })
 
 const titleClasses = computed(() => {
-  const classes = ['font-body text-lg font-600 text-gray-800 dark:text-gray-200']
+  const classes = ['font-body font-700 line-height-tight text-gray-800 dark:text-gray-200']
 
   if (props.variant === 'compact') {
     classes.push('text-base')
   } else if (props.variant === 'detailed') {
     classes.push('text-xl')
+  } else {
+    classes.push('text-size-8')
   }
 
   if (isDraft.value) {
@@ -324,23 +350,120 @@ const wordCount = computed(() => {
   return words ? words.length : null
 })
 
+// Drag and drop functionality
+const isDragging = ref(false)
+
+const dragHandleAriaLabel = computed(() => {
+  return `Drag to move "${props.post.name}" to a different status`
+})
+
+// Drag handle state management
+const dragHandleActive = ref(false)
+
+// Enable drag when handle is pressed
+const enableDrag = () => {
+  if (!props.isDragEnabled || !props.sourceTab) {
+    return
+  }
+
+  dragHandleActive.value = true
+
+  // Add global mouse up listener to disable drag
+  const handleGlobalMouseUp = () => {
+    dragHandleActive.value = false
+    document.removeEventListener('mouseup', handleGlobalMouseUp)
+  }
+
+  document.addEventListener('mouseup', handleGlobalMouseUp)
+}
+
+// Handle card drag start
+const handleCardDragStart = (event: DragEvent) => {
+  // For testing, allow drag without handle activation
+  if (!props.isDragEnabled || !props.sourceTab || !dragHandleActive.value) {
+    event.preventDefault()
+    return false
+  }
+
+  isDragging.value = true
+
+  // Set up the drag data
+  if (event.dataTransfer) {
+    event.dataTransfer.effectAllowed = 'move'
+    event.dataTransfer.setData('application/json', JSON.stringify({
+      post: props.post,
+      sourceTab: props.sourceTab
+    }))
+
+    // Create a custom drag image
+    const dragImage = createDragImage()
+    if (dragImage) {
+      event.dataTransfer.setDragImage(dragImage, 0, 0)
+    }
+  }
+
+  emit('drag-start', props.post, props.sourceTab)
+  return true
+}
+
+// Handle card drag end
+const handleCardDragEnd = () => {
+  isDragging.value = false
+  dragHandleActive.value = false
+  emit('drag-end', props.post)
+}
+
+// Create a custom drag image
+const createDragImage = (): HTMLElement | null => {
+  try {
+    const dragImage = document.createElement('div')
+    dragImage.className = 'drag-image'
+    dragImage.style.cssText = `
+      position: absolute;
+      top: -1000px;
+      left: -1000px;
+      padding: 8px 12px;
+      background: rgba(255, 255, 255, 0.95);
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      font-size: 14px;
+      font-weight: 500;
+      color: #374151;
+      white-space: wrap;
+      max-width: 300px;
+      z-index: 1000;
+    `
+    dragImage.textContent = props.post.name
+
+    document.body.appendChild(dragImage)
+
+    // Clean up after a short delay
+    setTimeout(() => {
+      if (document.body.contains(dragImage)) {
+        document.body.removeChild(dragImage)
+      }
+    }, 100)
+
+    return dragImage
+  } catch (error) {
+    console.warn('Failed to create drag image:', error)
+    return null
+  }
+}
+
+// Clean up drag state when component unmounts
+onUnmounted(() => {
+  isDragging.value = false
+})
 
 </script>
 
 <style scoped>
-.line-clamp-2 {
-  display: -webkit-box;
-  line-clamp: 2;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.line-clamp-3 {
-  display: -webkit-box;
-  line-clamp: 3;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+/* Custom drag image styling */
+.drag-image {
+  font-family: system-ui, -apple-system, sans-serif;
+  pointer-events: none;
+  user-select: none;
 }
 </style>

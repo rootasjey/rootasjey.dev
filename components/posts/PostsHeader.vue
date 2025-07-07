@@ -1,14 +1,14 @@
 <template>
-  <header class="w-[820px] mt-24 md:mt-42 mb-12 text-center p-2 md:p-8">
+  <header class="w-full max-w-4xl mx-auto mt-24 md:mt-42 mb-12 p-2 md:p-0">
     <div>
-      <div class="flex items-center justify-center gap-3 mb-6">
+      <div class="flex items-center gap-3 mb-2">
         <h1 class="font-body text-6xl font-600 text-gray-800 dark:text-gray-200">
           Posts
         </h1>
       </div>
       
-      <h4 class="text-size-5 font-300 mb-6 text-gray-800 dark:text-gray-200 max-w-2xl mx-auto">
-        Inner thoughts, shared with the world.
+      <h4 class="text-size-5 font-300 mb-6 text-gray-800 dark:text-gray-200 max-w-2xl">
+        Some reflections on code, creativity, knowledge, and various topics.
       </h4>
     </div>
 

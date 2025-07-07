@@ -53,6 +53,7 @@
       @bulk-archive-drafts="actions.handleBulkArchiveDrafts"
       @bulk-restore-archived="handleBulkRestoreArchived"
       @manage-tags="showTagManagement = true"
+      @post-status-change="handlePostStatusChange"
     />
 
     <!-- Empty State (shown when no content in any tab) -->
@@ -255,6 +256,40 @@ const combinedErrorMessage = computed(() => {
   if (drafts.draftsError.value) errors.push(drafts.draftsError.value)
   return errors.length > 0 ? errors.join('; ') : undefined
 })
+
+// Drag and drop handler
+const handlePostStatusChange = async (post: Post, newStatus: 'draft' | 'published' | 'archived') => {
+  try {
+    await actions.handleUpdatePost({
+      id: post.id,
+      name: post.name,
+      description: post.description,
+      tags: post.tags || [],
+      slug: post.slug || '',
+      status: newStatus
+    })
+
+    // Refresh the appropriate lists
+    if (newStatus === 'published' || post.status === 'published') {
+      posts.fetchPosts()
+    }
+    if (newStatus === 'draft' || post.status === 'draft') {
+      drafts.refreshDrafts()
+    }
+    if (newStatus === 'archived' || post.status === 'archived') {
+      archivedPosts.refreshArchived()
+    }
+  } catch (error: any) {
+    console.error('Failed to update post status via drag and drop:', error)
+    toast({
+      title: 'Failed to update post status',
+      description: error?.message || 'Unknown error occurred',
+      duration: 5000,
+      showProgress: true,
+      toast: 'soft-error'
+    })
+  }
+}
 
 // Tag management methods
 const handleClearUnusedTags = async () => {

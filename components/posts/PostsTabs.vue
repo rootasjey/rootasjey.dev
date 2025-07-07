@@ -7,11 +7,15 @@
       @update:model-value="handleTabChange"
       class="w-full"
     >
-      <UTabsList class="grid grid-cols-3 w-full mb-6">
+      <UTabsList class="grid grid-cols-3 mb-6">
         <UTabsTrigger
           value="published"
           :leading="publishedIcon"
-          :tabs-active="publishedTabStyle"
+          :class="publishedDropZoneClasses"
+          @dragover="handlePublishedDragOver"
+          @dragenter="handlePublishedDragEnter"
+          @dragleave="handlePublishedDragLeave"
+          @drop="handlePublishedDrop"
         >
           Published
           <UBadge
@@ -29,13 +33,17 @@
           v-if="loggedIn"
           value="drafts"
           :leading="draftsIcon"
-          :tabs-active="draftsTabStyle"
+          :class="draftsDropZoneClasses"
+          @dragover="handleDraftsDragOver"
+          @dragenter="handleDraftsDragEnter"
+          @dragleave="handleDraftsDragLeave"
+          @drop="handleDraftsDrop"
         >
           Drafts
           <UBadge
             v-if="draftsCount > 0"
             variant="soft"
-            color="amber"
+            color="lime"
             size="xs"
             class="ml-2"
           >
@@ -47,7 +55,11 @@
           v-if="loggedIn"
           value="archived"
           :leading="archivedIcon"
-          :tabs-active="archivedTabStyle"
+          :class="archivedDropZoneClasses"
+          @dragover="handleArchivedDragOver"
+          @dragenter="handleArchivedDragEnter"
+          @dragleave="handleArchivedDragLeave"
+          @drop="handleArchivedDrop"
         >
           Archived
           <UBadge
@@ -84,6 +96,8 @@
           @share="$emit('share', $event)"
           @export="$emit('export', $event)"
           @view-stats="$emit('view-stats', $event)"
+          @drag-start="() => {}"
+          @drag-end="() => {}"
         >
           <template #actions>
             <div class="flex items-center gap-2">
@@ -142,6 +156,8 @@
           @delete="$emit('delete', $event)"
           @publish="$emit('publish', $event)"
           @duplicate="$emit('duplicate', $event)"
+          @drag-start="() => {}"
+          @drag-end="() => {}"
         >
           <template #actions>
             <div class="flex items-center gap-2">
@@ -200,6 +216,8 @@
           @publish="$emit('publish', $event)"
           @duplicate="$emit('duplicate', $event)"
           @unarchive="$emit('unarchive', $event)"
+          @drag-start="() => {}"
+          @drag-end="() => {}"
         >
           <template #actions>
             <div class="flex items-center gap-2">
@@ -234,6 +252,7 @@
 
 <script setup lang="ts">
 import type { Post } from '~/types/post'
+import type { DragData } from '~/composables/useDragAndDrop'
 
 interface PostsTabsProps {
   // Posts data
@@ -288,6 +307,9 @@ interface PostsTabsEmits {
   (e: 'bulk-archive-drafts'): void
   (e: 'bulk-restore-archived'): void
   (e: 'manage-tags'): void
+
+  // Drag and drop actions
+  (e: 'post-status-change', post: Post, newStatus: 'draft' | 'published' | 'archived'): void
 }
 
 const props = withDefaults(defineProps<PostsTabsProps>(), {
@@ -305,13 +327,9 @@ const draftsCount = computed(() => props.draftPosts.length)
 const archivedCount = computed(() => props.archivedPosts.length)
 
 // Tab styling
-const publishedIcon = 'i-ph-article'
-const draftsIcon = 'i-icon-park-outline:notebook-and-pen'
-const archivedIcon = 'i-lucide-archive'
-
-const publishedTabStyle = 'soft-blue'
-const draftsTabStyle = 'soft-amber'
-const archivedTabStyle = 'soft-gray'
+const publishedIcon = 'i-ph-newspaper-clipping-duotone'
+const draftsIcon = 'i-ph-toilet-paper-duotone'
+const archivedIcon = 'i-ph-archive-duotone'
 
 // Tab change handler
 const handleTabChange = (tab: string | number) => {
@@ -324,4 +342,41 @@ const handleTabChange = (tab: string | number) => {
 watch(() => props.defaultTab, (newTab) => {
   activeTab.value = newTab
 })
+
+// Drag and drop functionality
+const { dragOverTarget, handleDragOver, handleDragEnter, handleDragLeave, handleDrop, getTargetStatus } = useDragAndDrop({
+  onDrop: async (data: DragData, targetTab: string) => {
+    const newStatus = getTargetStatus(targetTab)
+    emit('post-status-change', data.post, newStatus)
+  }
+})
+
+// Drop zone handlers for each tab
+const handlePublishedDragOver = (event: DragEvent) => handleDragOver(event, 'published')
+const handlePublishedDragEnter = (event: DragEvent) => handleDragEnter(event, 'published')
+const handlePublishedDragLeave = (event: DragEvent) => handleDragLeave(event, 'published')
+const handlePublishedDrop = (event: DragEvent) => handleDrop(event, 'published')
+
+const handleDraftsDragOver = (event: DragEvent) => handleDragOver(event, 'drafts')
+const handleDraftsDragEnter = (event: DragEvent) => handleDragEnter(event, 'drafts')
+const handleDraftsDragLeave = (event: DragEvent) => handleDragLeave(event, 'drafts')
+const handleDraftsDrop = (event: DragEvent) => handleDrop(event, 'drafts')
+
+const handleArchivedDragOver = (event: DragEvent) => handleDragOver(event, 'archived')
+const handleArchivedDragEnter = (event: DragEvent) => handleDragEnter(event, 'archived')
+const handleArchivedDragLeave = (event: DragEvent) => handleDragLeave(event, 'archived')
+const handleArchivedDrop = (event: DragEvent) => handleDrop(event, 'archived')
+
+// Computed classes for drop zone highlighting
+const publishedDropZoneClasses = computed(() => ({
+  'ring-2 ring-blue-400 ring-opacity-50 bg-blue-50 dark:bg-blue-900/20': dragOverTarget.value === 'published'
+}))
+
+const draftsDropZoneClasses = computed(() => ({
+  'ring-2 ring-lime-400 ring-opacity-50 bg-amber-50 dark:bg-amber-900/20': dragOverTarget.value === 'drafts'
+}))
+
+const archivedDropZoneClasses = computed(() => ({
+  'ring-2 ring-gray-400 ring-opacity-50 bg-gray-50 dark:bg-gray-900/20': dragOverTarget.value === 'archived'
+}))
 </script>

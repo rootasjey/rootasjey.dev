@@ -13,15 +13,15 @@
         @update:model-value="val => emitUpdate('description', val)" />
       
       <div class="flex items-center gap-2 mt-2 justify-center">
-        <!-- Primary Tag Display/Edit -->
-        <div v-if="!canEdit && primaryTag" class="px-2 py-1 rounded-full text-xs bg-blue-100 dark:bg-blue-900 shadow-sm">
-          {{ primaryTag.name }}
+        <!-- Tags Display/Edit -->
+        <div v-if="!canEdit && post.tags.length > 0" class="px-2 py-1 rounded-full text-xs bg-blue-100 dark:bg-blue-900 shadow-sm">
+          {{ post.tags.map(tag => tag.name).join(', ') }}
         </div>
 
         <div class="max-w-40" v-if="canEdit">
-          <USelect v-model="selectedPrimaryTagLocal" :items="availableTags || []" item-key="name" placeholder="Primary tag">
+          <USelect v-model="post.tags" :items="availableTags || []" item-key="name" placeholder="Tags...">
             <template #trigger>
-              <UIcon name="i-lucide-tag" v-if="selectedPrimaryTagLocal" />
+              <UIcon name="i-lucide-tag" v-if="post.tags.length > 0" />
               <UIcon name="i-lucide-plus" v-else />
             </template>
           </USelect>
@@ -199,7 +199,6 @@ interface Props {
   availableTags: ApiTag[];
   availableStatuses: LabelValue[];
   languages: LabelValue[];
-  selectedPrimaryTag: ApiTag | null;
   selectedLanguage: LabelValue | null;
   saving?: boolean;
 }
@@ -207,19 +206,14 @@ interface Props {
 const props = defineProps<Props>()
 const emit = defineEmits([
   'update:post',
-  'update:primaryTag',
   'update:language',
   'uploadCover',
   'removeCover',
   'showTagsDialog',
 ])
 
-const selectedPrimaryTagLocal = ref(props.selectedPrimaryTag)
 const selectedLanguageLocal = ref(props.selectedLanguage)
 
-watch(selectedPrimaryTagLocal, (val) => {
-  emit('update:primaryTag', val)
-})
 watch(selectedLanguageLocal, (val) => {
   emit('update:language', val)
 })

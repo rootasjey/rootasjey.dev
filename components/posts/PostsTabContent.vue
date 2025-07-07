@@ -55,10 +55,14 @@
         :show-primary-tag="true"
         :show-secondary-tags="true"
         :show-word-count="true"
-        :show-draft-badge="true"
-        :show-archived-badge="true"
+        :show-draft-badge="false"
+        :show-archived-badge="false"
         :show-status-indicator="false"
         :menu-variant="'minimal'"
+        :show-drag-handle="true"
+        :is-drag-enabled="true"
+        variant="default"
+        :source-tab="getSourceTabFromTitle(title)"
         @edit="$emit('edit', $event)"
         @delete="$emit('delete', $event)"
         @publish="$emit('publish', $event)"
@@ -69,6 +73,8 @@
         @share="$emit('share', $event)"
         @export="$emit('export', $event)"
         @view-stats="$emit('view-stats', $event)"
+        @drag-start="$emit('drag-start', $event)"
+        @drag-end="$emit('drag-end', $event)"
       />
     </div>
 
@@ -135,13 +141,24 @@ interface PostsTabContentEmits {
   (e: 'share', post: Post): void
   (e: 'export', post: Post): void
   (e: 'view-stats', post: Post): void
-  
+
   // Control actions
   (e: 'refresh'): void
   (e: 'retry'): void
   (e: 'empty-action'): void
+
+  // Drag and drop actions
+  (e: 'drag-start', post: Post, sourceTab: string): void
+  (e: 'drag-end', post: Post): void
 }
 
 defineProps<PostsTabContentProps>()
 defineEmits<PostsTabContentEmits>()
+
+// Helper function to determine source tab from title
+const getSourceTabFromTitle = (title: string): 'published' | 'drafts' | 'archived' => {
+  if (title.toLowerCase().includes('draft')) return 'drafts'
+  if (title.toLowerCase().includes('archived')) return 'archived'
+  return 'published'
+}
 </script>
