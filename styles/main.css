@@ -19,6 +19,28 @@ body {
   padding: 0px;
 }
 
+/* Global text selection styling */
+::selection {
+  color: white;
+  background-color: #2D292E;
+}
+
+::-moz-selection {
+  color: white;
+  background-color: #2D292E;
+}
+
+/* Dark mode text selection */
+.dark ::selection {
+  color: #2D292E;
+  background-color: #E7E5E4;
+}
+
+.dark ::-moz-selection {
+  color: #2D292E;
+  background-color: #E7E5E4;
+}
+
 @keyframes gradientBorder {
   0% {
     background-position: 0% 50%;
