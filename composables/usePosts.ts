@@ -85,18 +85,18 @@ export const usePosts = (options: UsePostManagementOptions = {}) => {
         method: "PUT",
         body: payload,
       })
-      
+
       // Handle status changes
       const postIndex = list.value.findIndex(p => p.id === payload.id)
-      
-      // Remove from published posts if changed to draft
-      if (updatedPost.status === 'draft' && postIndex !== -1) {
+
+      // Remove from published posts if changed to draft or archived
+      if ((updatedPost.status === 'draft' || updatedPost.status === 'archived') && postIndex !== -1) {
         list.value.splice(postIndex, 1)
-      } else if (updatedPost.status !== 'draft') {
-        postIndex !== -1 
-          // Update or add to published posts
+      } else if (updatedPost.status === 'published') {
+        postIndex !== -1
+          // Update existing published post
           ? list.value[postIndex] = { ...list.value[postIndex], ...updatedPost }
-          : list.value.unshift(updatedPost) // Was a draft, now published - add to posts
+          : list.value.unshift(updatedPost) // Was a draft/archived, now published - add to published posts
       }
 
       return updatedPost

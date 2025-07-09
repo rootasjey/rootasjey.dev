@@ -255,7 +255,7 @@ export function usePostActions(dependencies: {
           description: draft.description,
           tags: draft.tags || [],
           slug: draft.slug || '',
-          status: 'draft',
+          status: 'archived',
         })
       }
       
