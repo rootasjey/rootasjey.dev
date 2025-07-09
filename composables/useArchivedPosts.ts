@@ -2,27 +2,24 @@ import type { Post } from '~/types/post'
 
 interface UseArchivedPostsOptions {
   autoFetch?: boolean
-  storageKey?: string
   /** Disable the composable if the user is not logged in. */
   disabled?: boolean
 }
 
 export const useArchivedPosts = (options: UseArchivedPostsOptions = {}) => {
-  const { 
-    autoFetch = false, 
-    storageKey = 'show_archived',
+  const {
+    autoFetch = false,
     disabled = false,
   } = options
 
   // State
-  const showArchived = ref(false)
   const list = ref<Post[]>([])
   const isFetchingArchived = ref(false)
   const archivedError = ref<string | null>(null)
   const lastFetchTime = ref<Date | null>(null)
 
   // Cache management
-  const cacheTimeout = 5 * 60 * 1000 // 5 minutes
+  const cacheTimeout = 1 * 60 * 1000 // 1 minutes
   const isArchivedCacheValid = computed(() => {
     if (!lastFetchTime.value) return false
     return Date.now() - lastFetchTime.value.getTime() < cacheTimeout
@@ -31,45 +28,12 @@ export const useArchivedPosts = (options: UseArchivedPostsOptions = {}) => {
   // Computed properties
   const archivedCount = computed(() => list.value.length)
   const hasArchived = computed(() => archivedCount.value > 0)
-  const shouldShowArchivedSection = computed(() => showArchived.value && hasArchived.value)
-  const isArchivedEmpty = computed(() => showArchived.value && !hasArchived.value && !isFetchingArchived.value)
-
-  // Archived status for UI
-  const archivedVisibilityStatus = computed(() => {
-    if (!showArchived.value) return 'hidden'
-    if (isFetchingArchived.value) return 'loading'
-    if (hasArchived.value) return 'visible'
-    return 'empty'
-  })
-
-  // Storage management
-  const loadArchivedPreferences = () => {
-    if (typeof window === 'undefined') return false
-    
-    try {
-      const stored = localStorage.getItem(storageKey)
-      return stored === 'true'
-    } catch (error) {
-      console.warn('Failed to load archived preferences from localStorage:', error)
-      return false
-    }
-  }
-
-  const saveArchivedPreferences = (visible: boolean) => {
-    if (typeof window === 'undefined') return
-    
-    try {
-      localStorage.setItem(storageKey, visible.toString())
-    } catch (error) {
-      console.warn('Failed to save archived preferences to localStorage:', error)
-    }
-  }
 
   // Archived posts fetching
   const fetchArchivedPosts = async (force = false) => {
-    if (disabled) { 
+    if (disabled) {
       console.warn('No user is logged in so the fetching of archived posts is skipped.')
-      return list.value 
+      return list.value
     }
 
     // Skip if already fetching
@@ -77,9 +41,6 @@ export const useArchivedPosts = (options: UseArchivedPostsOptions = {}) => {
 
     // Skip if cache is valid and not forcing
     if (!force && isArchivedCacheValid.value) return list.value
-
-    // Skip if archived posts are hidden (unless forcing)
-    if (!force && !showArchived.value) return list.value
 
     isFetchingArchived.value = true
     archivedError.value = null
@@ -96,31 +57,6 @@ export const useArchivedPosts = (options: UseArchivedPostsOptions = {}) => {
     } finally {
       isFetchingArchived.value = false
     }
-  }
-
-  // Archived status management
-  const toggleArchived = async () => {
-    const newStatus = !showArchived.value
-    showArchived.value = newStatus
-    saveArchivedPreferences(newStatus)
-
-    // Fetch archived posts when showing them
-    if (newStatus) {
-      await fetchArchivedPosts()
-    }
-  }
-
-  const showArchivedSection = async () => {
-    if (showArchived.value) return
-    
-    showArchived.value = true
-    saveArchivedPreferences(true)
-    await fetchArchivedPosts()
-  }
-
-  const hideArchivedSection = () => {
-    showArchived.value = false
-    saveArchivedPreferences(false)
   }
 
   // Archived post management utilities
@@ -193,24 +129,11 @@ export const useArchivedPosts = (options: UseArchivedPostsOptions = {}) => {
 
   // Auto-initialization
   const initializeArchived = async () => {
-    // Load preferences from localStorage
-    showArchived.value = loadArchivedPreferences()
-
-    // Auto-fetch if enabled and archived posts should be visible
-    if (autoFetch && showArchived.value) {
+    // Auto-fetch if enabled
+    if (autoFetch) {
       await fetchArchivedPosts()
     }
   }
-
-  // Watchers
-  watch(showArchived, (newValue) => {
-    saveArchivedPreferences(newValue)
-    
-    // Fetch archived posts when showing them
-    if (newValue && !isArchivedCacheValid.value) {
-      fetchArchivedPosts()
-    }
-  })
 
   // Error handling
   const clearArchivedError = () => {
@@ -235,7 +158,6 @@ export const useArchivedPosts = (options: UseArchivedPostsOptions = {}) => {
 
   return {
     // State (readonly)
-    showArchived: readonly(showArchived),
     list,
     isFetchingArchived: readonly(isFetchingArchived),
     archivedError: readonly(archivedError),
@@ -244,15 +166,7 @@ export const useArchivedPosts = (options: UseArchivedPostsOptions = {}) => {
     // Computed
     archivedCount,
     hasArchived,
-    shouldShowArchivedSection,
-    isArchivedEmpty,
-    archivedVisibilityStatus,
     isArchivedCacheValid,
-
-    // Visibility management
-    toggleArchived,
-    showArchivedSection,
-    hideArchivedSection,
 
     // Archived post fetching
     fetchArchivedPosts,
@@ -272,15 +186,6 @@ export const useArchivedPosts = (options: UseArchivedPostsOptions = {}) => {
     clearArchivedError,
     initializeArchived,
     cleanup,
-
-    // For v-model binding
-    archivedVisibilityModel: computed({
-      get: () => showArchived.value,
-      set: (value: boolean) => {
-        if (value) showArchivedSection()
-        else hideArchivedSection()
-      }
-    }),
   }
 }
 

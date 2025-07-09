@@ -248,8 +248,6 @@ const isAnyLoading = computed(() =>
   posts.isAnyLoading.value || drafts.isFetchingDrafts.value || archivedPosts.isFetchingArchived.value
 )
 
-
-
 const combinedErrorMessage = computed(() => {
   const errors = []
   if (posts.error.value) errors.push(posts.error.value)
