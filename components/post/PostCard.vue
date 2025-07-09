@@ -248,16 +248,16 @@ const hiddenSecondaryTagsCount = computed(() => {
 })
 
 const cardHoverBorderColor = computed(() => {
-  if (isDraft.value) return 'hover:border-lime-5 dark:hover:border-amber-200'
-  if (isPublished.value) return 'hover:border-blue-500 dark:hover:border-blue-300'
-  if (isArchived.value) return 'hover:border-gray-500 dark:hover:border-gray-300'
+  if (isDraft.value) return 'hover:border-lime-5 dark:hover:border-lime-7'
+  if (isPublished.value) return 'hover:border-blue-500 dark:hover:border-blue-6'
+  if (isArchived.value) return 'hover:border-gray-500 dark:hover:border-gray-900'
   return 'hover:border-gray-300 dark:hover:border-gray-600'
 })
 
 const cardDragBgColor = computed(() => {
-  if (isDraft.value) return 'bg-lime-5 dark:bg-amber-200'
-  if (isPublished.value) return 'bg-blue-500 dark:bg-blue-300'
-  if (isArchived.value) return 'bg-gray-500 dark:bg-gray-300'
+  if (isDraft.value) return 'bg-lime-5 dark:bg-lime-7'
+  if (isPublished.value) return 'bg-blue-500 dark:bg-blue-6'
+  if (isArchived.value) return 'bg-gray-500 dark:bg-gray-900'
   return 'bg-gray-300 dark:bg-gray-600'
 })
 

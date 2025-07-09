@@ -8,7 +8,6 @@
         :available-tags="postEditor.availableTags.value"
         :available-statuses="postEditor.availableStatuses"
         :languages="postEditor.languages.value"
-        :selected-primary-tag="postEditor.selectedPrimaryTag.value"
         :selected-language="postEditor.selectedLanguage.value"
         :saving="postEditor.saving.value"
         @update:post="postEditor.onHeaderFieldUpdate"

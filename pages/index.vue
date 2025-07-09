@@ -15,7 +15,7 @@
         I prefer collaboration over hierarchy, sharing over locking, incitation over coercion. 
         Life is like a movie which we take on course and won't see the end, and I'll try to share as much love as I can.
       </h5>
-      <h5 class="text-size-4 font-400 mb-4 text-gray-800 dark:text-gray-200">
+      <h5 class="text-size-5 font-300 mb-4 text-gray-800 dark:text-gray-200">
         {{ greeting }}, it's {{ formattedTime }}.
       </h5>
     </section>
