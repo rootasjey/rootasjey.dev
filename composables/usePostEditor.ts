@@ -247,7 +247,7 @@ export function usePostEditor() {
     articleTimer = setTimeout(() => updatePostArticle(value), 2000)
   }
   const updatePostArticle = async (value: Object) => {
-    await $fetch(`/api/posts/${route.params.slug}/article`, {
+    await $fetch(`/api/posts/${post.value?.id}/article`, {
       method: 'PUT',
       body: { article: value },
     })
@@ -275,7 +275,7 @@ export function usePostEditor() {
   const updatePost = async () => {
     saving.value = true
     const { post: updatedPost } = await $fetch<{ post: Post }>(
-      `/api/posts/${route.params.slug}/`, {
+      `/api/posts/${post.value?.id}/`, {
         method: 'PUT',
         body: {
           tags: postTags.value.map(t => t.id), // send tag IDs
