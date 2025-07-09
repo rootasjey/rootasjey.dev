@@ -34,7 +34,14 @@ export default defineNuxtConfig({
     },
   },
 
-  modules: ["@nuxthub/core", "@nuxt/image", "@una-ui/nuxt", "nuxt-auth-utils", "@pinia/nuxt"],
+  modules: [
+    "@nuxthub/core",
+    "@nuxt/image",
+    "@una-ui/nuxt",
+    "nuxt-auth-utils",
+    "@pinia/nuxt",
+    "@nuxt/test-utils/module",
+  ],
   unocss: {
     preflight: true,
     icons: {
@@ -63,7 +70,7 @@ export default defineNuxtConfig({
     },
   },
   una: {
-    prefix: "u",
+    prefix: "U",
     themeable: true,
   },
 })
