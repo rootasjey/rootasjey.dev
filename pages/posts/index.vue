@@ -154,11 +154,44 @@ const drafts = useDrafts({ autoFetch: loggedIn.value, disabled: !loggedIn.value 
 const posts = usePosts()
 const archivedPosts = useArchivedPosts({ autoFetch: loggedIn.value, disabled: !loggedIn.value })
 
-// Tab management
+// Tab management with persistence
+const POSTS_TAB_STORAGE_KEY = 'posts-selected-tab'
+
+// Initialize tab state with persistence
+const getStoredTab = (): 'published' | 'drafts' | 'archived' => {
+  if (typeof window !== 'undefined') {
+    try {
+      const stored = localStorage.getItem(POSTS_TAB_STORAGE_KEY)
+      if (stored && ['published', 'drafts', 'archived'].includes(stored)) {
+        return stored as 'published' | 'drafts' | 'archived'
+      }
+    } catch (error) {
+      console.warn('Failed to read tab state from localStorage:', error)
+    }
+  }
+  return 'published' // Default fallback
+}
+
 const defaultTab = ref<'published' | 'drafts' | 'archived'>('published')
 
+// Restore tab state on client-side mount
+onMounted(() => {
+  const storedTab = getStoredTab()
+  defaultTab.value = storedTab
+})
+
 const handleTabChange = (tab: string) => {
-  defaultTab.value = tab as 'published' | 'drafts' | 'archived'
+  const tabValue = tab as 'published' | 'drafts' | 'archived'
+  defaultTab.value = tabValue
+
+  // Persist tab selection to localStorage
+  if (typeof window !== 'undefined') {
+    try {
+      localStorage.setItem(POSTS_TAB_STORAGE_KEY, tabValue)
+    } catch (error) {
+      console.warn('Failed to save tab state to localStorage:', error)
+    }
+  }
 }
 
 const tagsStore = useTagsStore()
