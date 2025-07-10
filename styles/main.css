@@ -11,10 +11,6 @@ body {
   width: fit-content;
 }
 
-[tooltip~="black"] {
-  border: none;
-}
-
 .tooltip-content {
   padding: 0px;
 }

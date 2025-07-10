@@ -18,7 +18,6 @@
       @update:delete-dialog-model="dialogs.deleteDialogModel.value = $event"
     />
 
-    <!-- Posts Tabs Interface -->
     <PostsTabs
       :published-posts="posts.list.value"
       :draft-posts="drafts.list.value"
@@ -56,86 +55,19 @@
       @post-status-change="handlePostStatusChange"
     />
 
-    <!-- Empty State (shown when no content in any tab) -->
     <PostsEmptyState v-if="!hasAnyContent && !isAnyLoading" class="w-3xl mt-12" />
 
-    <!-- Tag Management Modal -->
-    <UDialog v-model:open="showTagManagement" title="Tag Management" description="Manage your post tags">
-      <div class="space-y-4">
-        <!-- Tag Statistics -->
-        <div class="grid grid-cols-2 gap-4">
-          <div class="bg-gray-50 dark:bg-gray-800 p-3 rounded-lg">
-            <div class="text-sm font-medium text-gray-700 dark:text-gray-300">Total Tags</div>
-            <div class="text-2xl font-bold text-gray-900 dark:text-white">{{ tagStats.total }}</div>
-          </div>
-          <div class="bg-gray-50 dark:bg-gray-800 p-3 rounded-lg">
-            <div class="text-sm font-medium text-gray-700 dark:text-gray-300">Custom Tags</div>
-            <div class="text-2xl font-bold text-gray-900 dark:text-white">{{ tagStats.custom }}</div>
-          </div>
-        </div>
-
-        <!-- Popular Tags -->
-        <div v-if="popularTags.length > 0">
-          <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Popular Tags</h4>
-          <div class="flex flex-wrap gap-2">
-            <UBadge
-              v-for="tag in popularTags.slice(0, 10)"
-              :key="tag.name"
-              :label="`${tag} (${getTagUsage(tag)})`"
-              color="blue"
-              variant="outline"
-              size="sm"
-            />
-          </div>
-        </div>
-
-        <!-- Unused Tags -->
-        <div v-if="unusedTags.length > 0">
-          <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Unused Tags</h4>
-          <div class="flex flex-wrap gap-2">
-            <UBadge
-              v-for="tag in unusedTags.slice(0, 10)"
-              :key="tag.name"
-              :label="tag.name"
-              color="gray"
-              variant="outline"
-              size="sm"
-            />
-          </div>
-          <UButton
-            v-if="unusedTags.length > 0"
-            btn="outline"
-            size="xs"
-            class="mt-2"
-            @click="handleClearUnusedTags"
-          >
-            Clear Unused Tags
-          </UButton>
-        </div>
-      </div>
-
-      <template #footer>
-        <div class="flex gap-2 justify-end">
-          <UButton 
-            @click="showTagManagement = false" 
-            btn="outline" 
-            label="Close"
-          />
-          <UButton 
-            @click="handleExportTags" 
-            btn="soft"
-            label="Export Tags" 
-          />
-        </div>
-      </template>
-    </UDialog>
+    <PostsTagManagementModal
+      v-model:open="showTagManagement"
+      :posts="allPosts"
+      @tags-updated="handleTagsUpdated"
+    />
 
     <Footer class="mt-24 mb-36 w-[720px] mx-auto" />
   </div>
 </template>
 
 <script lang="ts" setup>
-import type { ApiTag } from '~/types/tag'
 import type { Post } from '~/types/post'
 
 useHead({
@@ -184,7 +116,6 @@ const handleTabChange = (tab: string) => {
   const tabValue = tab as 'published' | 'drafts' | 'archived'
   defaultTab.value = tabValue
 
-  // Persist tab selection to localStorage
   if (typeof window !== 'undefined') {
     try {
       localStorage.setItem(POSTS_TAB_STORAGE_KEY, tabValue)
@@ -197,37 +128,14 @@ const handleTabChange = (tab: string) => {
 const tagsStore = useTagsStore()
 await tagsStore.fetchTags()
 
-// Tag statistics and helpers for API-driven tags
-const tagStats = computed(() => {
-  const all = tagsStore.allTags
-  return {
-    total: all.length,
-    custom: all.filter(t => t.category === 'custom').length,
-  }
-})
+const allPosts = computed(() => [
+  ...posts.list.value,
+  ...drafts.list.value,
+  ...archivedPosts.list.value
+])
 
-const popularTags = computed(() => {
-  // Count tag usage in all posts
-  const tagCounts: Record<number, number> = {}
-  posts.list.value.forEach(post => {
-    post.tags?.forEach(tag => {
-      tagCounts[tag.id] = (tagCounts[tag.id] || 0) + 1
-    })
-  })
-  // Sort tags by usage
-  return tagsStore.allTags
-    .map(tag => ({ ...tag, count: tagCounts[tag.id] || 0 }))
-    .sort((a, b) => b.count - a.count)
-    .filter(t => t.count > 0)
-})
-
-const unusedTags = computed(() => {
-  const usedTagIds = new Set(posts.list.value.flatMap(post => post.tags?.map(t => t.id) || []))
-  return tagsStore.allTags.filter(tag => !usedTagIds.has(tag.id))
-})
-
-const getTagUsage = (tag: ApiTag) => {
-  return posts.list.value.reduce((acc, post) => acc + (post.tags?.some(t => t.id === tag.id) ? 1 : 0), 0)
+const handleTagsUpdated = async () => {
+  await tagsStore.fetchTags()
 }
 
 const actions = usePostActions({
@@ -237,7 +145,6 @@ const actions = usePostActions({
   tags: tagsStore,
 })
 
-// Additional action handlers for archived posts
 const handleUnarchivePost = async (post: Post) => {
   try {
     await actions.handleUpdatePost({
@@ -270,7 +177,6 @@ const handleBulkRestoreArchived = async () => {
   }
 }
 
-// UI state
 const showTagManagement = ref(false)
 
 const hasAnyContent = computed(() =>
@@ -300,7 +206,6 @@ const handlePostStatusChange = async (post: Post, newStatus: 'draft' | 'publishe
       status: newStatus
     })
 
-    // Refresh the appropriate lists
     if (newStatus === 'published' || post.status === 'published') {
       posts.fetchPosts()
     }
@@ -320,45 +225,6 @@ const handlePostStatusChange = async (post: Post, newStatus: 'draft' | 'publishe
       toast: 'soft-error'
     })
   }
-}
-
-// Tag management methods
-const handleClearUnusedTags = async () => {
-  const confirmClear = confirm('Remove all unused tags? This action cannot be undone.')
-  if (!confirmClear) return
-  const unused = unusedTags.value
-  for (const tag of unused) {
-    await tagsStore.deleteTag(tag.id)
-  }
-  tagsStore.fetchTags()
-  toast({
-    title: 'Unused tags cleared',
-    description: `Removed ${unused.length} unused tags`,
-    duration: 5000,
-    showProgress: true,
-    toast: 'soft-success'
-  })
-}
-
-const handleExportTags = () => {
-  const exportData = tagsStore.allTags
-  const blob = new Blob([JSON.stringify(exportData, null, 2)], {
-    type: 'application/json'
-  })
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url
-  a.download = `tags-export-${new Date().toISOString().split('T')[0]}.json`
-  document.body.appendChild(a)
-  a.click()
-  document.body.removeChild(a)
-  URL.revokeObjectURL(url)
-  toast({
-    title: 'Tags exported',
-    duration: 5000,
-    showProgress: true,
-    toast: 'soft-success'
-  })
 }
 
 onBeforeRouteLeave(() => {
