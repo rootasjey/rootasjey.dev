@@ -27,6 +27,7 @@
                 v-model="newTagName"
                 placeholder="Tag name"
                 class="flex-1"
+                size="xs"
                 :disabled="isCreatingTag"
               />
               <USelect
@@ -37,6 +38,7 @@
                 label="Tag Category"
                 placeholder="Category"
                 class="w-32"
+                size="xs"
                 :disabled="isCreatingTag"
               />
               <UButton
@@ -58,51 +60,18 @@
       <div v-if="tags.length > 0">
         <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Tags</h4>
         <div class="flex flex-wrap gap-2">
-          <UTooltip
+          <UBadge
             v-for="tag in tags"
             :key="tag.id"
-            :_tooltip-content="{
-              side: 'top',
-            }"
-            tooltip="white"
+            :badge="tag.isUsed ? 'soft-green' : 'soft-gray'"
+            size="xs"
+            closable
+            class="cursor-pointer rounded-full"
+            @click.self="handleEditTag(tag)"
+            @close="handleDeleteTag(tag)"
           >
-            <template #default>
-              <UBadge
-                :badge="tag.isUsed ? 'soft-green' : 'soft-gray'"
-                size="xs"
-                icon=""
-                class="cursor-pointer"
-              >
-                <span
-                  :class="tag.isUsed ? 'i-tabler-circle-filled text-green-500' : 'i-tabler-circle-filled text-gray-400'"
-                  class="text-7px mr-1"
-                />
-                {{ tag.isUsed ? `${tag.name} (${tag.count})` : tag.name }}
-              </UBadge>
-            </template>
-            <template #content>
-              <div class="flex items-center gap-1 p-1">
-                <UButton
-                  @click="handleEditTag(tag)"
-                  btn="ghost"
-                  size="xs"
-                  class="text-gray-800 dark:text-gray-400"
-                >
-                  <UIcon name="i-ph-pencil-simple-line-duotone" size="3" class="mr-1" />
-                  <span class="font-600 text-size-3">Edit</span>
-                </UButton>
-                <UButton
-                  @click="handleDeleteTag(tag)"
-                  btn="ghost"
-                  size="xs"
-                  class="text-gray-800 dark:text-gray-400"
-                >
-                  <UIcon name="i-ph-trash-simple-duotone" size="3" class="mr-1" />
-                  <span class="font-600 text-size-3">Delete</span>
-                </UButton>
-              </div>
-            </template>
-          </UTooltip>
+            {{ tag.isUsed ? `${tag.name} (${tag.count})` : tag.name }}
+          </UBadge>
         </div>
       </div>
     </div>
@@ -153,21 +122,31 @@
         />
       </div>
       <template #footer>
-        <div class="flex gap-2 justify-end">
-          <UButton 
-            @click="showEditDialog = false" 
-            btn="ghost" 
-            label="Cancel"
+        <div class="w-full flex gap-2 justify-between">
+          <UButton
+            @click="editingTag && handleDeleteTag(editingTag)"
+            btn="link-pink"
             size="xs"
+            label="Delete Tag"
+            :loading="isDeletingTag"
+            :disabled="isUpdatingTag || !editingTag"
           />
-          <UButton 
-            @click="handleUpdateTag" 
-            btn="solid-pink"
-            size="xs"
-            label="Update Tag"
-            :loading="isUpdatingTag"
-            :disabled="!editingTagName.trim()"
-          />
+          <div class="flex gap-2">
+            <UButton
+              @click="showEditDialog = false"
+              btn="ghost-gray"
+              label="Cancel"
+              size="xs"
+            />
+            <UButton
+              @click="handleUpdateTag"
+              btn="solid-black"
+              size="xs"
+              label="Update Tag"
+              :loading="isUpdatingTag"
+              :disabled="!editingTagName.trim()"
+            />
+          </div>
         </div>
       </template>
     </UDialog>
@@ -195,7 +174,7 @@
           />
           <UButton 
             @click="handleConfirmDelete" 
-            btn="solid-pink"
+            btn="soft-red"
             size="xs"
             label="Delete Tag"
             :loading="isDeletingTag"
