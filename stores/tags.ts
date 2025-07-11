@@ -172,13 +172,11 @@ export const useTagsStore = defineStore('tags', () => {
     )
   }
 
-  // Clear cache (useful for testing or manual refresh)
   const clearCache = () => {
     lastFetchTime.value = null
     error.value = null
   }
 
-  // Initialize store (fetch tags on first access)
   const initialize = async () => {
     if (tags.value.length === 0 && !isLoading.value) {
       await fetchTags()
@@ -188,6 +186,7 @@ export const useTagsStore = defineStore('tags', () => {
   return {
     // State
     tags: readonly(tags),
+    isCacheValid: readonly(isCacheValid),
     isLoading: readonly(isLoading),
     error: readonly(error),
     lastFetchTime: readonly(lastFetchTime),
@@ -195,7 +194,6 @@ export const useTagsStore = defineStore('tags', () => {
     // Getters
     allTags,
     tagsByCategory,
-    isCacheValid,
     
     // Actions
     fetchTags,

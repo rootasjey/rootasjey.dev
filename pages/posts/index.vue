@@ -57,7 +57,7 @@
 
     <PostsEmptyState v-if="!hasAnyContent && !isAnyLoading" class="w-3xl mt-12" />
 
-    <PostsTagManagementModal
+    <TagManagementModal
       v-model:open="showTagManagement"
       :posts="allPosts"
       @tags-updated="handleTagsUpdated"
