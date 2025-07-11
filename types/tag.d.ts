@@ -20,3 +20,13 @@ export type Tag = {
   name: string
   category?: string
 }
+
+export interface TagWithUsage extends ApiTag {
+  count: number
+  isUsed: boolean
+}
+
+export interface TagStats {
+  total: number
+  custom: number
+}

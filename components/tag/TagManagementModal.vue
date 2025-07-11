@@ -84,7 +84,7 @@
 
 <script lang="ts" setup>
 import type { Post } from '~/types/post'
-import type { CategoryOption } from '~/composables/useTagManagement'
+import type { CategoryOption } from '~/types/category'
 import { useTagManagement } from '~/composables/useTagManagement'
 
 interface Props {

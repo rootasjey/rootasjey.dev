@@ -1,21 +1,6 @@
 import type { ApiTag } from '~/types/tag'
 import type { Post } from '~/types/post'
-
-export interface TagWithUsage extends ApiTag {
-  count: number
-  isUsed: boolean
-}
-
-export interface TagStats {
-  total: number
-  custom: number
-}
-
-export interface CategoryOption {
-  label: string
-  value: string
-  class?: string
-}
+import type { CategoryOption } from '~/types/category'
 
 export function useTagManagement(posts: Ref<Post[]>) {
   const tagStore = useTagStore()

@@ -12,7 +12,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { TagStats } from '~/composables/useTagManagement'
+import type { TagStats } from '~/types/tag'
 
 interface Props {
   stats: TagStats

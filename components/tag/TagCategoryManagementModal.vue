@@ -34,7 +34,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { CategoryOption } from '~/composables/useTagManagement'
+import type { CategoryOption } from '~/types/category'
 
 interface Props {
   open: boolean

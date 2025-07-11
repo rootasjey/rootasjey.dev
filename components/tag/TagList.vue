@@ -19,7 +19,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { TagWithUsage } from '~/composables/useTagManagement'
+import type { TagWithUsage } from '~/types/tag'
 
 interface Props {
   tags: TagWithUsage[]
