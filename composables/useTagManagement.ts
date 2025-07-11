@@ -28,11 +28,10 @@ export function useTagManagement(posts: Ref<Post[]>) {
   const customCategories = ref<CategoryOption[]>([])
   const baseCategoryOptions: CategoryOption[] = [
     { label: 'General', value: 'general' },
-    { label: 'Custom', value: 'custom' },
     { label: 'Primary', value: 'primary' },
-    { label: 'Technology', value: 'technology' },
-    { label: 'Design', value: 'design' },
-    { label: 'Business', value: 'business' }
+    { label: 'Secondary', value: 'secondary' },
+    { label: 'Custom', value: 'custom' },
+    { label: 'Theme', value: 'theme' }
   ]
 
   // Computed properties

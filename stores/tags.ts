@@ -185,11 +185,11 @@ export const useTagStore = defineStore('tags', () => {
 
   return {
     // State
-    tags: readonly(tags),
-    isCacheValid: readonly(isCacheValid),
-    isLoading: readonly(isLoading),
-    error: readonly(error),
-    lastFetchTime: readonly(lastFetchTime),
+    tags,
+    isCacheValid,
+    isLoading,
+    error,
+    lastFetchTime,
     
     // Getters
     allTags,
