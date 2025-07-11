@@ -1,6 +1,7 @@
 import extratorUna from '@una-ui/extractor-vue-script'
 import presetUna from '@una-ui/preset'
 import prefixes from '@una-ui/preset/prefixes'
+import presetAnimations from 'unocss-preset-animations'
 
 import {
   presetAttributify,
@@ -34,6 +35,7 @@ export default {
         sense: 'General Sans',
       },
     }),
+    presetAnimations(),
     presetUna(),
   ],
   shortcuts: [
