@@ -214,7 +214,7 @@ watch(() => tagManagement.newTagCategory.value, (newValue, oldValue) => {
 
 // Initialize tags when component is mounted
 onMounted(async () => {
-  const tagsStore = useTagsStore()
-  await tagsStore.initialize()
+  const tagStore = useTagStore()
+  await tagStore.initialize()
 })
 </script>

@@ -125,7 +125,7 @@ const handleTabChange = (tab: string) => {
   }
 }
 
-const tagsStore = useTagsStore()
+const tagsStore = useTagStore()
 await tagsStore.fetchTags()
 
 const allPosts = computed(() => [

@@ -3,7 +3,7 @@ import type { Project } from '~/types/project'
 
 export function useProjectPage(slug: string) {
   const { loggedIn, user } = useUserSession()
-  const tagsStore = useTagsStore()
+  const tagsStore = useTagStore()
 
   // Initialize tags store
   tagsStore.initialize()

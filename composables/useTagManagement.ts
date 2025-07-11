@@ -18,7 +18,7 @@ export interface CategoryOption {
 }
 
 export function useTagManagement(posts: Ref<Post[]>) {
-  const tagStore = useTagsStore()
+  const tagStore = useTagStore()
 
   // State for tag creation
   const newTagName = ref('')

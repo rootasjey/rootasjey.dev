@@ -20,7 +20,7 @@ export function usePostEditor() {
   const canEdit = ref(false)
 
   // Tags management (API-driven)
-  const tagsStore = useTagsStore()
+  const tagsStore = useTagStore()
 
   // Initialize tags store
   tagsStore.initialize()

@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import type { ApiTag } from '~/types/tag'
 
-export const useTagsStore = defineStore('tags', () => {
+export const useTagStore = defineStore('tags', () => {
   // State
   const tags = ref<ApiTag[]>([])
   const isLoading = ref(false)

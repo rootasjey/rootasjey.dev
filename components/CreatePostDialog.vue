@@ -110,7 +110,7 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits<Emits>()
 
 // Use tags store
-const tagsStore = useTagsStore()
+const tagsStore = useTagStore()
 
 // Initialize tags store
 tagsStore.initialize()

@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { mount } from '@vue/test-utils'
-import TagManagementModal from '~/components/posts/TagManagementModal.vue'
+import TagManagementModal from '~/components/tag/TagManagementModal.vue'
 import type { Post } from '~/types/post'
 import type { ApiTag } from '~/types/tag'
 
@@ -18,9 +18,9 @@ const mockTagsStore = {
   deleteTag: vi.fn()
 }
 
-// Mock the useTagsStore composable
+// Mock the useTagStore composable
 vi.mock('~/stores/tags', () => ({
-  useTagsStore: () => mockTagsStore
+  useTagStore: () => mockTagsStore
 }))
 
 // Mock the useToast composable
