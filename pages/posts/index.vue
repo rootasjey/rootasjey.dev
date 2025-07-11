@@ -55,7 +55,9 @@
       @post-status-change="handlePostStatusChange"
     />
 
-    <PostsEmptyState v-if="!hasAnyContent && !isAnyLoading" class="w-3xl mt-12" />
+    <ClientOnly>
+      <PostsEmptyState v-if="!hasAnyContent && !isAnyLoading" class="w-3xl mt-12" />
+    </ClientOnly>
 
     <TagManagementModal
       v-model:open="showTagManagement"

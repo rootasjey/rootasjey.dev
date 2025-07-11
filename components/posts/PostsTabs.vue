@@ -76,175 +76,268 @@
 
       <!-- Published Posts Tab -->
       <UTabsContent value="published">
-        <PostsTabContent
-          :posts="publishedPosts"
-          :is-loading="isPublishedLoading"
-          :error="publishedError"
-          title="Published Posts"
-          empty-title="No published posts yet"
-          empty-description="Your published posts will appear here once you start sharing your thoughts with the world."
-          empty-action-text="Publish First Post"
-          empty-action-icon="i-lucide-send"
-          @refresh="$emit('refresh-published')"
-          @retry="$emit('retry-published')"
-          @empty-action="$emit('create-post')"
-          @edit="$emit('edit', $event)"
-          @delete="$emit('delete', $event)"
-          @unpublish="$emit('unpublish', $event)"
-          @duplicate="$emit('duplicate', $event)"
-          @archive="$emit('archive', $event)"
-          @share="$emit('share', $event)"
-          @export="$emit('export', $event)"
-          @view-stats="$emit('view-stats', $event)"
-          @drag-start="() => {}"
-          @drag-end="() => {}"
-        >
-          <template #actions>
-            <div class="flex items-center gap-2">
-              <UButton
-                btn="soft-gray"
-                size="xs"
-                class="dark:color-#3b82f6"
-                :loading="isPublishedLoading"
-                @click="$emit('refresh-published')"
-              >
-                <UIcon name="i-ph-arrows-counter-clockwise-duotone" />
-                <span>Refresh</span>
-              </UButton>
+        <ClientOnly>
+          <PostsTabContent
+            :posts="publishedPosts"
+            :is-loading="isPublishedLoading"
+            :error="publishedError"
+            title="Published Posts"
+            empty-title="No published posts yet"
+            empty-description="Your published posts will appear here once you start sharing your thoughts with the world."
+            empty-action-text="Publish First Post"
+            empty-action-icon="i-lucide-send"
+            @refresh="$emit('refresh-published')"
+            @retry="$emit('retry-published')"
+            @empty-action="$emit('create-post')"
+            @edit="$emit('edit', $event)"
+            @delete="$emit('delete', $event)"
+            @unpublish="$emit('unpublish', $event)"
+            @duplicate="$emit('duplicate', $event)"
+            @archive="$emit('archive', $event)"
+            @share="$emit('share', $event)"
+            @export="$emit('export', $event)"
+            @view-stats="$emit('view-stats', $event)"
+            @drag-start="() => {}"
+            @drag-end="() => {}"
+          >
+            <template #actions>
+              <div class="flex items-center gap-2">
+                <UButton
+                  btn="soft-gray"
+                  size="xs"
+                  class="dark:color-#3b82f6"
+                  :loading="isPublishedLoading"
+                  @click="$emit('refresh-published')"
+                >
+                  <UIcon name="i-ph-arrows-counter-clockwise-duotone" />
+                  <span>Refresh</span>
+                </UButton>
 
-              <UButton
-                v-if="publishedPosts.length > 0"
-                btn="soft-gray"
-                size="xs"
-                class="dark:color-#3b82f6"
-                @click="$emit('bulk-export')"
-              >
-                <UIcon name="i-lucide-download" />
-                <span>Export All</span>
-              </UButton>
+                <UButton
+                  v-if="publishedPosts.length > 0"
+                  btn="soft-gray"
+                  size="xs"
+                  class="dark:color-#3b82f6"
+                  @click="$emit('bulk-export')"
+                >
+                  <UIcon name="i-lucide-download" />
+                  <span>Export All</span>
+                </UButton>
 
-              <UButton
-                v-if="loggedIn"
-                btn="soft-gray"
-                size="xs"
-                class="dark:color-#3b82f6"
-                @click="$emit('manage-tags')"
-              >
-                <UIcon name="i-lucide-tags" />
-                <span>Manage Tags</span>
-              </UButton>
+                <UButton
+                  v-if="loggedIn"
+                  btn="soft-gray"
+                  size="xs"
+                  class="dark:color-#3b82f6"
+                  @click="$emit('manage-tags')"
+                >
+                  <UIcon name="i-lucide-tags" />
+                  <span>Manage Tags</span>
+                </UButton>
+              </div>
+            </template>
+          </PostsTabContent>
+
+          <template #fallback>
+            <div class="w-full">
+              <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center gap-3">
+                  <h2 class="text-xl font-600 text-gray-800 dark:text-gray-200">
+                    Published Posts
+                  </h2>
+                </div>
+                <div class="flex items-center gap-2">
+                  <UButton
+                    btn="soft-gray"
+                    size="xs"
+                    class="dark:color-#3b82f6"
+                    disabled
+                  >
+                    <UIcon name="i-ph-arrows-counter-clockwise-duotone" />
+                    <span>Refresh</span>
+                  </UButton>
+                </div>
+              </div>
+              <div class="flex items-center justify-center py-12">
+                <div class="flex items-center gap-3 text-gray-600 dark:text-gray-400">
+                  <UIcon name="i-lucide-loader-2" class="animate-spin" />
+                  <span>Loading posts...</span>
+                </div>
+              </div>
             </div>
           </template>
-        </PostsTabContent>
+        </ClientOnly>
       </UTabsContent>
 
       <!-- Drafts Tab -->
       <UTabsContent v-if="loggedIn" value="drafts">
-        <PostsTabContent
-          :posts="draftPosts"
-          :is-loading="isDraftsLoading"
-          :error="draftsError"
-          title="Draft Posts"
-          empty-title="No drafts yet"
-          empty-description="Start writing a new post to create your first draft."
-          empty-action-text="Write New Post"
-          empty-action-icon="i-lucide-pen-tool"
-          @refresh="$emit('refresh-drafts')"
-          @retry="$emit('retry-drafts')"
-          @empty-action="$emit('create-post')"
-          @edit="$emit('edit', $event)"
-          @delete="$emit('delete', $event)"
-          @publish="$emit('publish', $event)"
-          @duplicate="$emit('duplicate', $event)"
-          @drag-start="() => {}"
-          @drag-end="() => {}"
-        >
-          <template #actions>
-            <div class="flex items-center gap-2">
-              <UButton
-                size="xs"
-                btn="soft-gray"
-                class="dark:color-#f59e0b"
-                :loading="isDraftsLoading"
-                @click="$emit('refresh-drafts')"
-              >
-                <UIcon name="i-ph-arrows-counter-clockwise-duotone" />
-                <span>Refresh</span>
-              </UButton>
+        <ClientOnly>
+          <PostsTabContent
+            :posts="draftPosts"
+            :is-loading="isDraftsLoading"
+            :error="draftsError"
+            title="Draft Posts"
+            empty-title="No drafts yet"
+            empty-description="Start writing a new post to create your first draft."
+            empty-action-text="Write New Post"
+            empty-action-icon="i-lucide-pen-tool"
+            @refresh="$emit('refresh-drafts')"
+            @retry="$emit('retry-drafts')"
+            @empty-action="$emit('create-post')"
+            @edit="$emit('edit', $event)"
+            @delete="$emit('delete', $event)"
+            @publish="$emit('publish', $event)"
+            @duplicate="$emit('duplicate', $event)"
+            @drag-start="() => {}"
+            @drag-end="() => {}"
+          >
+            <template #actions>
+              <div class="flex items-center gap-2">
+                <UButton
+                  size="xs"
+                  btn="soft-gray"
+                  class="dark:color-#f59e0b"
+                  :loading="isDraftsLoading"
+                  @click="$emit('refresh-drafts')"
+                >
+                  <UIcon name="i-ph-arrows-counter-clockwise-duotone" />
+                  <span>Refresh</span>
+                </UButton>
 
-              <UButton
-                size="xs"
-                btn="soft-gray"
-                class="dark:color-#f59e0b"
-                @click="$emit('create-post')"
-              >
-                <UIcon name="i-lucide-pen-tool" />
-                <span>New Draft</span>
-              </UButton>
+                <UButton
+                  size="xs"
+                  btn="soft-gray"
+                  class="dark:color-#f59e0b"
+                  @click="$emit('create-post')"
+                >
+                  <UIcon name="i-lucide-pen-tool" />
+                  <span>New Draft</span>
+                </UButton>
 
-              <UButton
-                v-if="draftPosts.length > 0"
-                size="xs"
-                btn="soft-gray"
-                class="dark:color-#f59e0b"
-                @click="$emit('bulk-archive-drafts')"
-              >
-                <UIcon name="i-lucide-archive" />
-                <span>Archive</span>
-              </UButton>
+                <UButton
+                  v-if="draftPosts.length > 0"
+                  size="xs"
+                  btn="soft-gray"
+                  class="dark:color-#f59e0b"
+                  @click="$emit('bulk-archive-drafts')"
+                >
+                  <UIcon name="i-lucide-archive" />
+                  <span>Archive</span>
+                </UButton>
+              </div>
+            </template>
+          </PostsTabContent>
+
+          <template #fallback>
+            <div class="w-full">
+              <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center gap-3">
+                  <h2 class="text-xl font-600 text-gray-800 dark:text-gray-200">
+                    Draft Posts
+                  </h2>
+                </div>
+                <div class="flex items-center gap-2">
+                  <UButton
+                    size="xs"
+                    btn="soft-gray"
+                    class="dark:color-#f59e0b"
+                    disabled
+                  >
+                    <UIcon name="i-ph-arrows-counter-clockwise-duotone" />
+                    <span>Refresh</span>
+                  </UButton>
+                </div>
+              </div>
+              <div class="flex items-center justify-center py-12">
+                <div class="flex items-center gap-3 text-gray-600 dark:text-gray-400">
+                  <UIcon name="i-lucide-loader-2" class="animate-spin" />
+                  <span>Loading drafts...</span>
+                </div>
+              </div>
             </div>
           </template>
-        </PostsTabContent>
+        </ClientOnly>
       </UTabsContent>
 
       <!-- Archived Posts Tab -->
       <UTabsContent v-if="loggedIn" value="archived">
-        <PostsTabContent
-          :posts="archivedPosts"
-          :is-loading="isArchivedLoading"
-          :error="archivedError"
-          title="Archived Posts"
-          empty-title="No archived posts yet"
-          empty-description="Posts you archive will appear here. They remain private and can be restored anytime."
-          empty-action-text="View Published Posts"
-          empty-action-icon="i-lucide-eye"
-          @refresh="$emit('refresh-archived')"
-          @retry="$emit('retry-archived')"
-          @empty-action="() => handleTabChange('published')"
-          @edit="$emit('edit', $event)"
-          @delete="$emit('delete', $event)"
-          @publish="$emit('publish', $event)"
-          @duplicate="$emit('duplicate', $event)"
-          @unarchive="$emit('unarchive', $event)"
-          @drag-start="() => {}"
-          @drag-end="() => {}"
-        >
-          <template #actions>
-            <div class="flex items-center gap-2">
-              <UButton
-                size="xs"
-                btn="soft-gray"
-                class="dark:color-#6b7280"
-                :loading="isArchivedLoading"
-                @click="$emit('refresh-archived')"
-              >
-                <UIcon name="i-ph-arrows-counter-clockwise-duotone" />
-                <span>Refresh</span>
-              </UButton>
+        <ClientOnly>
+          <PostsTabContent
+            :posts="archivedPosts"
+            :is-loading="isArchivedLoading"
+            :error="archivedError"
+            title="Archived Posts"
+            empty-title="No archived posts yet"
+            empty-description="Posts you archive will appear here. They remain private and can be restored anytime."
+            empty-action-text="View Published Posts"
+            empty-action-icon="i-lucide-eye"
+            @refresh="$emit('refresh-archived')"
+            @retry="$emit('retry-archived')"
+            @empty-action="() => handleTabChange('published')"
+            @edit="$emit('edit', $event)"
+            @delete="$emit('delete', $event)"
+            @publish="$emit('publish', $event)"
+            @duplicate="$emit('duplicate', $event)"
+            @unarchive="$emit('unarchive', $event)"
+            @drag-start="() => {}"
+            @drag-end="() => {}"
+          >
+            <template #actions>
+              <div class="flex items-center gap-2">
+                <UButton
+                  size="xs"
+                  btn="soft-gray"
+                  class="dark:color-#6b7280"
+                  :loading="isArchivedLoading"
+                  @click="$emit('refresh-archived')"
+                >
+                  <UIcon name="i-ph-arrows-counter-clockwise-duotone" />
+                  <span>Refresh</span>
+                </UButton>
 
-              <UButton
-                v-if="archivedPosts.length > 0"
-                size="xs"
-                btn="soft-gray"
-                class="dark:color-#6b7280"
-                @click="$emit('bulk-restore-archived')"
-              >
-                <UIcon name="i-lucide-archive-restore" />
-                <span>Restore All</span>
-              </UButton>
+                <UButton
+                  v-if="archivedPosts.length > 0"
+                  size="xs"
+                  btn="soft-gray"
+                  class="dark:color-#6b7280"
+                  @click="$emit('bulk-restore-archived')"
+                >
+                  <UIcon name="i-lucide-archive-restore" />
+                  <span>Restore All</span>
+                </UButton>
+              </div>
+            </template>
+          </PostsTabContent>
+
+          <template #fallback>
+            <div class="w-full">
+              <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center gap-3">
+                  <h2 class="text-xl font-600 text-gray-800 dark:text-gray-200">
+                    Archived Posts
+                  </h2>
+                </div>
+                <div class="flex items-center gap-2">
+                  <UButton
+                    size="xs"
+                    btn="soft-gray"
+                    class="dark:color-#6b7280"
+                    disabled
+                  >
+                    <UIcon name="i-ph-arrows-counter-clockwise-duotone" />
+                    <span>Refresh</span>
+                  </UButton>
+                </div>
+              </div>
+              <div class="flex items-center justify-center py-12">
+                <div class="flex items-center gap-3 text-gray-600 dark:text-gray-400">
+                  <UIcon name="i-lucide-loader-2" class="animate-spin" />
+                  <span>Loading archived posts...</span>
+                </div>
+              </div>
             </div>
           </template>
-        </PostsTabContent>
+        </ClientOnly>
       </UTabsContent>
     </UTabs>
   </div>
