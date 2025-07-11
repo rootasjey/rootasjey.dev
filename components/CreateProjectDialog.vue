@@ -58,6 +58,7 @@
               id="create-tags"
               v-model="form.tags"
               placeholder="Select or add tags..."
+              :enable-autocomplete="true"
             />
             <p v-if="errors.tags" id="tags-error" class="text-red-500 text-sm mt-1" role="alert">
               {{ errors.tags }}

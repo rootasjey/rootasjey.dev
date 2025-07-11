@@ -5,10 +5,8 @@
         <!-- Name Field -->
         <div class="grid grid-cols-3 items-center gap-4">
           <ULabel for="edit-name" class="text-right">
-            Name 
-            <UIcon name="i-ph-star-four" class="inline-block ml-1" 
-              :class="{ 'text-pink-600': errors.name, 'text-lime-600': !errors.name }"
-              title="Post name is required and should be descriptive."/>
+            Name <span :class="{ 'text-pink-600': errors.name, 'text-blue-500': !errors.name }"
+              title="Post name is required and should be descriptive.">*</span>
           </ULabel>
           <div class="col-span-2">
             <UInput 
@@ -44,10 +42,8 @@
         <!-- Slug Field -->
         <div class="grid grid-cols-3 items-center gap-4">
           <ULabel for="edit-slug" class="text-right">
-            Slug 
-            <UIcon name="i-ph-star-four" class="inline-block ml-1" 
-              :class="{ 'text-pink-600': errors.slug, 'text-lime-600': !errors.slug }"
-              title="Slug is used in the URL. It should be unique and descriptive."/>
+            Slug <span :class="{ 'text-pink-600': errors.slug, 'text-blue-500': !errors.slug }"
+              title="Slug is used in the URL. It should be unique and descriptive.">*</span>
           </ULabel>
           <UInput 
             id="edit-slug" 
@@ -67,16 +63,15 @@
         <!-- Tags Field -->
         <div class="grid grid-cols-3 items-start gap-4 mb-4">
           <ULabel for="edit-tags" class="text-right pt-2">
-            Tags 
-            <UIcon name="i-ph-star-four" class="inline-block ml-1" 
-              :class="{ 'text-pink-600': errors.tags, 'text-lime-600': !errors.tags }"
-              title="You must categorize your post with at least one tag."/>
+            Tags <span :class="{ 'text-pink-600': errors.tags, 'text-blue-500': !errors.tags }"
+              title="You must categorize your post with at least one tag.">*</span>
           </ULabel>
           <div class="col-span-2">
             <TagInput
               id="edit-tags"
               v-model="form.tags"
               placeholder="Select or add tags..."
+              :enable-autocomplete="true"
               @update:model-value="markAsChanged"
             />
             <p v-if="errors.tags" id="edit-tags-error" class="text-red-500 text-sm mt-1" role="alert">

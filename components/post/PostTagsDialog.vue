@@ -5,6 +5,7 @@
       <TagInput
         v-model="postTagsLocal"
         placeholder="Add tags..."
+        :enable-autocomplete="true"
       />
       <!-- Quick Tag Suggestions -->
       <div v-if="suggestedTags && suggestedTags.length > 0">

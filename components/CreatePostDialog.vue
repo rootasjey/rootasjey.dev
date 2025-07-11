@@ -5,7 +5,8 @@
         <!-- Name Field -->
         <div class="grid grid-cols-3 items-center gap-4">
           <ULabel for="create-name" class="text-right">
-            Name *
+            Name <span :class="{ 'text-pink-600': errors.name, 'text-blue-500': !errors.name }"
+              title="Slug is used in the URL. It should be unique and descriptive.">*</span>
           </ULabel>
           <div class="col-span-2">
             <UInput 
@@ -39,13 +40,15 @@
         <!-- Tags Field -->
         <div class="grid grid-cols-3 items-start gap-4 mb-2">
           <ULabel for="create-tags" class="text-right pt-2">
-            Tags *
+            Tags <span :class="{ 'text-pink-600': errors.tags, 'text-blue-500': !errors.tags }"
+              title="You must categorize your post with at least one tag.">*</span>
           </ULabel>
           <div class="col-span-2">
             <TagInput
               id="create-tags"
               v-model="form.tags"
               placeholder="Select or add tags..."
+              :enable-autocomplete="true"
             />
             <p v-if="errors.tags" id="tags-error" class="text-red-500 text-sm mt-1" role="alert">
               {{ errors.tags }}

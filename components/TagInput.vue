@@ -1,14 +1,40 @@
 <template>
   <div class="tag-input">
     <div class="form-group">
-      <UInput
-        v-model="inputValue"
-        type="text"
-        :placeholder="placeholder"
-        @keydown="handleKeydown"
-      />
+      <div class="input-container">
+        <UInput
+          ref="inputRef"
+          v-model="inputValue"
+          type="text"
+          :placeholder="placeholder"
+          @keydown="handleKeydown"
+          @input="handleInput"
+          @focus="handleFocus"
+          @blur="handleBlur"
+        />
+
+        <!-- Autocomplete Dropdown -->
+        <div
+          v-if="enableAutocomplete && showSuggestions && filteredSuggestions.length > 0"
+          class="suggestions-dropdown"
+        >
+          <div
+            v-for="(suggestion, index) in filteredSuggestions"
+            :key="suggestion.id"
+            class="suggestion-item"
+            :class="{ 'suggestion-item-active': index === selectedSuggestionIndex }"
+            @mousedown.prevent="selectSuggestion(suggestion)"
+            @mouseenter="selectedSuggestionIndex = index"
+          >
+            <span class="suggestion-name">{{ suggestion.name }}</span>
+            <span v-if="suggestion.category" class="suggestion-category">{{ suggestion.category }}</span>
+          </div>
+        </div>
+      </div>
+
       <p class="form-help">
         Press <UKbd label="Enter" /> or <UKbd label="," /> to add tags. The first tag will be your primary tag.
+        <span v-if="enableAutocomplete"> Use arrow keys to navigate suggestions.</span>
       </p>
     </div>
 
@@ -25,6 +51,7 @@ import type { ApiTag } from '~/types/tag'
 interface Props {
   modelValue: ApiTag[]
   placeholder?: string
+  enableAutocomplete?: boolean
 }
 
 interface Emits {
@@ -32,15 +59,24 @@ interface Emits {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  placeholder: 'Enter tags... (Press Enter or comma to add)'
+  placeholder: 'Enter tags... (Press Enter or comma to add)',
+  enableAutocomplete: false
 })
 
 const emit = defineEmits<Emits>()
+
+// Tags store integration (only when autocomplete is enabled)
+const tagStore = props.enableAutocomplete ? useTagStore() : null
 
 // Reactive state
 const inputValue = ref('')
 const primaryTag = ref<ApiTag | null>(null)
 const additionalTags = ref<ApiTag[]>([])
+
+// Autocomplete state
+const inputRef = ref<HTMLInputElement>()
+const showSuggestions = ref(false)
+const selectedSuggestionIndex = ref(-1)
 
 // For generating unique negative ids for new tags
 let tempTagId = -1
@@ -66,8 +102,54 @@ const allCurrentTags = computed(() => {
   return tags
 })
 
+// Autocomplete computed properties
+const filteredSuggestions = computed(() => {
+  if (!props.enableAutocomplete || !tagStore || !inputValue.value.trim()) {
+    return []
+  }
+
+  const query = inputValue.value.trim().toLowerCase()
+  const currentTagNames = allCurrentTags.value.map(tag => tag.name.toLowerCase())
+
+  return tagStore.allTags
+    .filter(tag => {
+      // Filter out already selected tags
+      if (currentTagNames.includes(tag.name.toLowerCase())) {
+        return false
+      }
+      // Filter by name match
+      return tag.name.toLowerCase().includes(query)
+    })
+    .slice(0, 8) // Limit to 8 suggestions for performance and UX
+})
+
 // Methods
 const handleKeydown = (event: KeyboardEvent) => {
+  // Handle autocomplete navigation
+  if (props.enableAutocomplete && showSuggestions.value && filteredSuggestions.value.length > 0) {
+    if (event.key === 'ArrowDown') {
+      event.preventDefault()
+      selectedSuggestionIndex.value = Math.min(
+        selectedSuggestionIndex.value + 1,
+        filteredSuggestions.value.length - 1
+      )
+      return
+    } else if (event.key === 'ArrowUp') {
+      event.preventDefault()
+      selectedSuggestionIndex.value = Math.max(selectedSuggestionIndex.value - 1, 0)
+      return
+    } else if (event.key === 'Enter' && selectedSuggestionIndex.value >= 0) {
+      event.preventDefault()
+      selectSuggestion(filteredSuggestions.value[selectedSuggestionIndex.value])
+      return
+    } else if (event.key === 'Escape') {
+      event.preventDefault()
+      hideSuggestions()
+      return
+    }
+  }
+
+  // Original key handling
   if (event.key === 'Enter' || event.key === ',') {
     event.preventDefault()
     addTagFromInput()
@@ -160,6 +242,57 @@ const setPrimaryTag = (tag: ApiTag) => {
 const emitUpdate = () => {
   emit('update:modelValue', allCurrentTags.value)
 }
+
+// Autocomplete methods
+const handleInput = (event?: Event) => {
+  if (props.enableAutocomplete) {
+    selectedSuggestionIndex.value = -1
+    // Use the event target value to get the current input value
+    const currentValue = event?.target ? (event.target as HTMLInputElement).value : inputValue.value
+    showSuggestions.value = currentValue.trim().length > 0
+  }
+}
+
+const handleFocus = () => {
+  if (props.enableAutocomplete && inputValue.value.trim().length > 0) {
+    showSuggestions.value = true
+  }
+}
+
+const handleBlur = () => {
+  // Delay hiding suggestions to allow for click selection
+  setTimeout(() => {
+    hideSuggestions()
+  }, 150)
+}
+
+const selectSuggestion = (suggestion: ApiTag) => {
+  // Create a copy of the existing tag with the appropriate category
+  const tagCopy: ApiTag = {
+    ...suggestion,
+    category: !primaryTag.value ? 'primary' : 'secondary'
+  }
+
+  if (!primaryTag.value) {
+    primaryTag.value = tagCopy
+  } else {
+    additionalTags.value.push(tagCopy)
+  }
+
+  inputValue.value = ''
+  hideSuggestions()
+  emitUpdate()
+}
+
+const hideSuggestions = () => {
+  showSuggestions.value = false
+  selectedSuggestionIndex.value = -1
+}
+
+// Initialize tags store if autocomplete is enabled
+if (props.enableAutocomplete && tagStore) {
+  tagStore.initialize()
+}
 </script>
 
 <style scoped>
@@ -173,6 +306,10 @@ const emitUpdate = () => {
   display: flex;
   flex-direction: column;
   gap: 0.5rem; /* 8px */
+}
+
+.input-container {
+  position: relative;
 }
 
 .form-label {
@@ -234,6 +371,86 @@ const emitUpdate = () => {
 @media (prefers-color-scheme: dark) {
   .tag-preview {
     background-color: #1f2937; /* bg-gray-800 */
+  }
+}
+
+/* Autocomplete dropdown styles */
+.suggestions-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  background-color: white;
+  border: 1px solid #d1d5db; /* border-gray-300 */
+  border-radius: 0.5rem; /* 8px */
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  max-height: 200px;
+  overflow-y: auto;
+  margin-top: 0.25rem; /* 4px */
+}
+
+/* Dark mode for suggestions dropdown */
+@media (prefers-color-scheme: dark) {
+  .suggestions-dropdown {
+    background-color: #1f2937; /* bg-gray-800 */
+    border-color: #374151; /* border-gray-600 */
+  }
+}
+
+.suggestion-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem; /* 12px */
+  cursor: pointer;
+  border-bottom: 1px solid #f3f4f6; /* border-gray-100 */
+  transition: background-color 0.15s ease-in-out;
+}
+
+.suggestion-item:last-child {
+  border-bottom: none;
+}
+
+.suggestion-item:hover,
+.suggestion-item-active {
+  background-color: #f9fafb; /* bg-gray-50 */
+}
+
+/* Dark mode for suggestion items */
+@media (prefers-color-scheme: dark) {
+  .suggestion-item {
+    border-bottom-color: #374151; /* border-gray-600 */
+  }
+
+  .suggestion-item:hover,
+  .suggestion-item-active {
+    background-color: #374151; /* bg-gray-600 */
+  }
+}
+
+.suggestion-name {
+  font-weight: 500;
+  color: #111827; /* text-gray-900 */
+}
+
+.suggestion-category {
+  font-size: 0.75rem; /* 12px */
+  color: #6b7280; /* text-gray-500 */
+  background-color: #f3f4f6; /* bg-gray-100 */
+  padding: 0.125rem 0.5rem; /* 2px 8px */
+  border-radius: 0.25rem; /* 4px */
+}
+
+/* Dark mode for suggestion content */
+@media (prefers-color-scheme: dark) {
+  .suggestion-name {
+    color: #f9fafb; /* text-gray-50 */
+  }
+
+  .suggestion-category {
+    color: #d1d5db; /* text-gray-300 */
+    background-color: #4b5563; /* bg-gray-600 */
   }
 }
 </style>
