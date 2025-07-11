@@ -70,6 +70,7 @@
               <UBadge
                 :badge="tag.isUsed ? 'soft-green' : 'soft-gray'"
                 size="xs"
+                icon=""
                 class="cursor-pointer"
               >
                 <span
@@ -202,6 +203,40 @@
         </div>
       </template>
     </UDialog>
+
+    <!-- Category Creation Dialog -->
+    <UDialog v-model:open="showCategoryDialog" title="Add New Category" description="Create a new category for organizing your tags">
+      <div class="space-y-4">
+        <UInput
+          v-model="newCategoryName"
+          label="Category Name"
+          placeholder="Enter category name"
+          :error="categoryError"
+          @keyup.enter="handleCreateCategory"
+        />
+        <div v-if="categoryError" class="text-sm text-red-600 dark:text-red-400">
+          {{ categoryError }}
+        </div>
+      </div>
+      <template #footer>
+        <div class="flex gap-2 justify-end">
+          <UButton
+            @click="handleCancelCategoryCreation"
+            btn="ghost"
+            label="Cancel"
+            size="xs"
+          />
+          <UButton
+            @click="handleCreateCategory"
+            btn="solid"
+            label="Add Category"
+            size="xs"
+            :loading="isCreatingCategory"
+            :disabled="!newCategoryName.trim()"
+          />
+        </div>
+      </template>
+    </UDialog>
   </UDialog>
 </template>
 
@@ -230,8 +265,9 @@ const showLocal = computed({
 
 // Tag management state
 const tagsStore = useTagsStore()
+const { toast } = useToast()
 const newTagName = ref('')
-const newTagCategory = ref('general')
+const newTagCategory = ref({ label: 'General', value: 'general' })
 const isCreatingTag = ref(false)
 const isClearingUnused = ref(false)
 const isExporting = ref(false)
@@ -248,8 +284,15 @@ const showDeleteDialog = ref(false)
 const deletingTag = ref<ApiTag | null>(null)
 const isDeletingTag = ref(false)
 
-// Category options
-const categoryOptions = [
+// Category creation state
+const showCategoryDialog = ref(false)
+const newCategoryName = ref('')
+const isCreatingCategory = ref(false)
+const categoryError = ref('')
+const previousCategoryValue = ref({ label: 'General', value: 'general' })
+
+// Category options (reactive for dynamic additions)
+const baseCategoryOptions = [
   { label: 'General', value: 'general' },
   { label: 'Custom', value: 'custom' },
   { label: 'Primary', value: 'primary' },
@@ -257,6 +300,14 @@ const categoryOptions = [
   { label: 'Design', value: 'design' },
   { label: 'Business', value: 'business' }
 ]
+
+const customCategories = ref<Array<{ label: string; value: string }>>([])
+
+const categoryOptions = computed(() => [
+  ...baseCategoryOptions,
+  ...customCategories.value,
+  { label: '+ Add New Category', value: '__add_new__', class: 'text-blue-600 dark:text-blue-400 font-medium' }
+])
 
 // Computed properties
 const tagStats = computed(() => {
@@ -310,9 +361,9 @@ const handleCreateTag = async () => {
 
   isCreatingTag.value = true
   try {
-    await tagsStore.createTag(newTagName.value.trim(), newTagCategory.value)
+    await tagsStore.createTag(newTagName.value.trim(), newTagCategory.value.value)
     newTagName.value = ''
-    newTagCategory.value = 'general'
+    newTagCategory.value = { label: 'General', value: 'general' }
     emit('tags-updated')
   } catch (error: any) {
     toast({
@@ -435,6 +486,87 @@ const handleExportTags = () => {
     isExporting.value = false
   }
 }
+
+// Category creation methods
+const validateCategoryName = (name: string): string => {
+  if (!name.trim()) {
+    return 'Category name is required'
+  }
+
+  const normalizedName = name.trim().toLowerCase()
+  const existingCategories = [
+    ...baseCategoryOptions.map(cat => cat.value.toLowerCase()),
+    ...customCategories.value.map(cat => cat.value.toLowerCase())
+  ]
+
+  if (existingCategories.includes(normalizedName)) {
+    return 'Category already exists'
+  }
+
+  return ''
+}
+
+const handleCreateCategory = async () => {
+  categoryError.value = validateCategoryName(newCategoryName.value)
+  if (categoryError.value) return
+
+  isCreatingCategory.value = true
+  try {
+    const categoryValue = newCategoryName.value.trim().toLowerCase()
+    const categoryLabel = newCategoryName.value.trim()
+
+    // Add to custom categories
+    customCategories.value.push({
+      label: categoryLabel,
+      value: categoryValue
+    })
+
+    // Select the new category
+    newTagCategory.value = { label: categoryLabel, value: categoryValue }
+
+    // Close modal and reset
+    showCategoryDialog.value = false
+    newCategoryName.value = ''
+    categoryError.value = ''
+
+    toast({
+      title: 'Category created successfully',
+      description: `"${categoryLabel}" category has been added`,
+      duration: 3000,
+      showProgress: true,
+      toast: 'soft-success'
+    })
+  } catch (error: any) {
+    toast({
+      title: 'Failed to create category',
+      description: error?.message || 'Unknown error occurred',
+      duration: 5000,
+      showProgress: true,
+      toast: 'soft-error'
+    })
+  } finally {
+    isCreatingCategory.value = false
+  }
+}
+
+const handleCancelCategoryCreation = () => {
+  showCategoryDialog.value = false
+  newCategoryName.value = ''
+  categoryError.value = ''
+  // Keep the previous category selection
+}
+
+// Watch for category selection changes
+watch(newTagCategory, (newValue, oldValue) => {
+  if (newValue.value === '__add_new__') {
+    previousCategoryValue.value = oldValue
+    showCategoryDialog.value = true
+    // Reset the select to previous value temporarily
+    nextTick(() => {
+      newTagCategory.value = previousCategoryValue.value
+    })
+  }
+})
 
 // Initialize tags when component is mounted
 onMounted(async () => {
