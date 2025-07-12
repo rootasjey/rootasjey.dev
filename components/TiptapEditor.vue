@@ -18,6 +18,10 @@
         <UButton @click="editor.chain().focus().toggleHighlight().run()"
           :class="{ 'is-active': editor.isActive('highlight') }" icon btn="~" label="i-lucide-highlighter" />
 
+        <!-- Code Controls -->
+        <div class="separator"></div>
+        <CodeDropdown :editor="editor" />
+
         <!-- Link -->
         <div class="separator"></div>
         <UPopover :popper-class="['!p-2']">
@@ -61,8 +65,12 @@ import Highlight from '@tiptap/extension-highlight'
 import TaskList from '@tiptap/extension-task-list'
 import TaskItem from '@tiptap/extension-task-item'
 import TextAlign from '@tiptap/extension-text-align'
+import Code from '@tiptap/extension-code'
+import CodeBlock from '@tiptap/extension-code-block'
+import Blockquote from '@tiptap/extension-blockquote'
 import SlashCommands from './commands/commands'
 import suggestion from './commands/suggestion'
+import CodeDropdown from './CodeDropdown.vue'
 
 const props = defineProps({
   canEdit: {
@@ -103,6 +111,11 @@ const editor = new Editor({
         color: '#000',
         width: 4,
       },
+      // Disable the built-in code, codeBlock, and blockquote from StarterKit
+      // so we can use our own configurations
+      code: false,
+      codeBlock: false,
+      blockquote: false,
     }),
     SlashCommands.configure({
       suggestion,
@@ -129,6 +142,13 @@ const editor = new Editor({
     TextAlign.configure({
       types: ['heading', 'paragraph'],
     }),
+    Code,
+    CodeBlock.configure({
+      HTMLAttributes: {
+        class: 'code-block',
+      },
+    }),
+    Blockquote,
   ],
   content: typeof props.modelValue === "string" ? JSON.parse(props.modelValue) : props.modelValue,
   onUpdate: () => {
@@ -291,33 +311,90 @@ onBeforeUnmount(() => {
 
   /* Code and preformatted text styles */
   code {
-    background-color: var(--purple-light);
-    border-radius: 0.4rem;
-    color: var(--black);
-    font-size: 0.85rem;
-    padding: 0.25em 0.3em;
+    background-color: #F3F4F6;
+    border: 1px solid #E5E7EB;
+    border-radius: 0.375rem;
+    color: #DC2626;
+    font-size: 0.875rem;
+    font-family: 'JetBrainsMono', 'Monaco', 'Consolas', monospace;
+    padding: 0.125rem 0.375rem;
+    font-weight: 500;
   }
 
   pre {
-    background: var(--black);
+    background: #1F2937;
+    border: 1px solid #374151;
     border-radius: 0.5rem;
-    color: var(--white);
-    font-family: 'JetBrainsMono', monospace;
+    color: #F9FAFB;
+    font-family: 'JetBrainsMono', 'Monaco', 'Consolas', monospace;
     margin: 1.5rem 0;
-    padding: 0.75rem 1rem;
+    padding: 1rem;
+    overflow-x: auto;
+    position: relative;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
 
     code {
       background: none;
+      border: none;
       color: inherit;
-      font-size: 0.8rem;
+      font-size: 0.875rem;
       padding: 0;
+      font-weight: 400;
+    }
+  }
+
+  /* Code block specific styling */
+  .code-block {
+    background: #1F2937;
+    border: 1px solid #374151;
+    border-radius: 0.5rem;
+    color: #F9FAFB;
+    font-family: 'JetBrainsMono', 'Monaco', 'Consolas', monospace;
+    margin: 1.5rem 0;
+    padding: 1rem;
+    overflow-x: auto;
+    position: relative;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+
+    &:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #5046E5, #8B5CF6);
+      border-radius: 0.5rem 0.5rem 0 0;
     }
   }
 
   blockquote {
-    border-left: 3px solid var(--gray-3);
+    background: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    border-left: 4px solid #5046E5;
+    border-radius: 0 0.375rem 0.375rem 0;
     margin: 1.5rem 0;
-    padding-left: 1rem;
+    padding: 1rem 1.25rem;
+    position: relative;
+    font-style: italic;
+    color: #475569;
+
+    &:before {
+      content: '"';
+      position: absolute;
+      top: 0.5rem;
+      left: 0.75rem;
+      font-size: 2rem;
+      color: #5046E5;
+      opacity: 0.3;
+      font-family: serif;
+      line-height: 1;
+    }
+
+    p {
+      margin: 0;
+      padding-left: 1.5rem;
+    }
   }
 
   hr {
@@ -395,6 +472,43 @@ onBeforeUnmount(() => {
 
   ul[data-type="taskList"] li input[type="checkbox"] {
     accent-color: #8B5CF6;
+  }
+
+  code {
+    background-color: #374151;
+    border-color: #4B5563;
+    color: #F87171;
+  }
+
+  blockquote {
+    background: #1F2937;
+    border-color: #374151;
+    border-left-color: #8B5CF6;
+    color: #D1D5DB;
+
+    &:before {
+      color: #8B5CF6;
+    }
+
+    p {
+      color: #D1D5DB;
+    }
+  }
+
+  .code-block {
+    background: #111827;
+    border-color: #374151;
+    color: #F9FAFB;
+
+    &:before {
+      background: linear-gradient(90deg, #8B5CF6, #A855F7);
+    }
+  }
+
+  pre {
+    background: #111827;
+    border-color: #374151;
+    color: #F9FAFB;
   }
 }
 

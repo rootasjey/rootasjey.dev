@@ -7,6 +7,7 @@
       <ul class="list-disc list-inside space-y-2 mb-6">
         <li><strong>Heading Dropdown:</strong> H1-H6 and Paragraph options</li>
         <li><strong>Text Formatting:</strong> Bold, Italic, Strike, Underline, Highlight</li>
+        <li><strong>Code Dropdown:</strong> Inline Code, Code Block, Block Quote</li>
         <li><strong>Lists:</strong> Bullet lists, Ordered lists, Task lists (checkboxes)</li>
         <li><strong>Text Alignment:</strong> Left, Center, Right, Justify</li>
         <li><strong>Links:</strong> Add/edit/remove links</li>
@@ -39,6 +40,7 @@
       <ol class="list-decimal list-inside space-y-2">
         <li>Try the heading dropdown - select different heading levels</li>
         <li>Test text formatting - select text and use bold, italic, underline, highlight</li>
+        <li><strong>NEW:</strong> Test the code dropdown - try inline code, code blocks, and block quotes</li>
         <li>Create different list types - bullet, numbered, and task lists</li>
         <li>Test text alignment options</li>
         <li>Add and edit links</li>
@@ -112,6 +114,42 @@ const editorContent = ref({
         { type: "text", text: "Try typing " },
         { type: "text", text: "/", marks: [{ type: "code" }] },
         { type: "text", text: " to see the enhanced slash commands!" }
+      ]
+    },
+    {
+      type: "heading",
+      attrs: { level: 2 },
+      content: [{ type: "text", text: "New Code Features" }]
+    },
+    {
+      type: "paragraph",
+      content: [
+        { type: "text", text: "You can now use inline code like " },
+        { type: "text", text: "console.log('Hello World')", marks: [{ type: "code" }] },
+        { type: "text", text: " or create code blocks:" }
+      ]
+    },
+    {
+      type: "codeBlock",
+      content: [
+        { type: "text", text: "function greet(name) {\n  return `Hello, ${name}!`;\n}\n\nconsole.log(greet('World'));" }
+      ]
+    },
+    {
+      type: "paragraph",
+      content: [
+        { type: "text", text: "You can also create block quotes for important notes:" }
+      ]
+    },
+    {
+      type: "blockquote",
+      content: [
+        {
+          type: "paragraph",
+          content: [
+            { type: "text", text: "This is a block quote. Perfect for highlighting important information, quotes, or notes." }
+          ]
+        }
       ]
     },
     {
