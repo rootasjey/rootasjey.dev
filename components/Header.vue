@@ -77,7 +77,11 @@
 </template>
 
 <script lang="ts" setup>
-const { loggedIn, clear } = useUserSession()
+import type { NDropdownMenuProps } from '@una-ui/nuxt'
+
+type MenuItems = NDropdownMenuProps[] & { label: string, onClick: () => void }[] & {}[]
+
+const { loggedIn, clear, user } = useUserSession()
 const route = useRoute()
 const router = useRouter()
 const showSearch = ref(false)
@@ -101,20 +105,35 @@ const links = [
   },
 ]
 
-const userMenuItems = [
-  {
-    label: 'Profile',
-    onClick: () => router.push('/user'),
-  },
-  {},
-  {
-    label: 'Logout',
-    onClick: () => {
-      clear()
-      router.replace("/")
-    },
-  },
-]
+const userMenuItems = computed(() => {
+  const items: MenuItems = [
+    {
+      label: 'Profile',
+      onClick: () => router.push('/user'),
+    }
+  ]
+
+  // Add Admin link for admin users
+  if (user.value?.role === 'admin') {
+    items.push({
+      label: 'Admin',
+      onClick: () => router.push('/admin?tab=dashboard'),
+    })
+  }
+
+  items.push(
+    {},
+    {
+      label: 'Logout',
+      onClick: () => {
+        clear()
+        router.replace("/")
+      },
+    }
+  )
+
+  return items
+})
 
 const timeIcon = computed(() => {
   const hour = new Date().getHours()

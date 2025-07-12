@@ -165,6 +165,8 @@
         Ghost theme. 
         I've also liked the islands disposal on this 
         <ULink to="https://prismic-demo-glideai.nuxt.dev/" class="arrow" target="_blank" rel="noopener noreferrer"><span>glide.ai website</span></ULink>
+        , and the text selection on 
+        <ULink to="https://www.tabbyml.com/agent" class="arrow" target="_blank" rel="noopener noreferrer"><span>Tabby</span></ULink>.
       </p>
     </section>
 
