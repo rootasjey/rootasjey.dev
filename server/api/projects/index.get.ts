@@ -50,6 +50,12 @@ export default defineEventHandler(async (event) => {
       updated_at: t.updated_at ? String(t.updated_at) : ''
     }))
 
+    project.createdAt = project.created_at ? String(project.created_at) : ''
+    project.updatedAt = project.updated_at ? String(project.updated_at) : ''
+
+    delete project.created_at
+    delete project.updated_at
+
     project.image = {
       alt: project.image_alt || "",
       ext: project.image_ext || "",
