@@ -2,50 +2,49 @@
   <div>
     <bubble-menu :editor="editor" :tippy-options="{ duration: 100, maxWidth: 'none' }" v-if="editor">
       <div class="bubble-menu">
-        <UButton 
-          @click="() => toggleHeading(editor, 1)" 
-          :class="{ 'is-active': editor.isActive('heading', { level: 1 }) }"
-          icon btn="~" label="i-lucide-heading-1" 
-        />
-        <UButton 
-          @click="() => toggleHeading(editor, 2)" 
-          :class="{ 'is-active': editor.isActive('heading', { level: 2 }) }"
-          icon btn="~" label="i-lucide-heading-2" 
-        />
-        <UButton 
-          @click="() => toggleHeading(editor, 3)" 
-          :class="{ 'is-active': editor.isActive('heading', { level: 3 }) }"
-          icon btn="~" label="i-lucide-heading-3" 
-        />
-        <UButton 
-          @click="() => toggleHeading(editor, 4)" 
-          :class="{ 'is-active': editor.isActive('heading', { level: 4 }) }"
-          icon btn="~" label="i-lucide-heading-4" 
-        />
+        <!-- Heading Dropdown -->
+        <HeadingDropdown :editor="editor" />
+
+        <!-- Text Formatting -->
+        <div class="separator"></div>
         <UButton @click="editor.chain().focus().toggleBold().run()" :class="{ 'is-active': editor.isActive('bold') }"
           icon btn="~" label="i-lucide-bold" />
         <UButton @click="editor.chain().focus().toggleItalic().run()"
           :class="{ 'is-active': editor.isActive('italic') }" icon btn="~" label="i-lucide-italic" />
         <UButton @click="editor.chain().focus().toggleStrike().run()"
           :class="{ 'is-active': editor.isActive('strike') }" icon btn="~" label="i-lucide-strikethrough" />
+        <UButton @click="editor.chain().focus().toggleUnderline().run()"
+          :class="{ 'is-active': editor.isActive('underline') }" icon btn="~" label="i-lucide-underline" />
+        <UButton @click="editor.chain().focus().toggleHighlight().run()"
+          :class="{ 'is-active': editor.isActive('highlight') }" icon btn="~" label="i-lucide-highlighter" />
 
+        <!-- Link -->
+        <div class="separator"></div>
         <UPopover :popper-class="['!p-2']">
           <template #trigger>
-            <UButton icon btn="~" label="i-icon-park-outline:link" :class="{ 'is-active': editor.isActive('link') }" @click="onOpenLinkPopover" />
+            <UButton icon btn="~" label="i-ph-link" :class="{ 'is-active': editor.isActive('link') }" @click="onOpenLinkPopover" />
           </template>
 
           <div class="flex flex-col gap-2 min-w-[200px] p-2">
             <UInput v-model="linkUrl" placeholder="Enter URL..." @keydown.enter.prevent.stop="setLink" />
             <div class="flex gap-2">
-              <UButton size="sm" color="primary" @click="setLink" 
-                :label="editor.isActive('link') ? 'Update link' : 'Add link'" 
-                btn="soft" 
+              <UButton size="sm" color="primary" @click="setLink"
+                :label="editor.isActive('link') ? 'Update link' : 'Add link'"
+                btn="soft"
               />
               <UButton v-if="editor.isActive('link')" size="sm" color="gray"
                 @click="editor.chain().focus().unsetLink().run()" label="Remove link" btn="soft" />
             </div>
           </div>
         </UPopover>
+
+        <!-- List Controls -->
+        <div class="separator"></div>
+        <ListDropdown :editor="editor" />
+
+        <!-- Text Alignment -->
+        <div class="separator"></div>
+        <TextAlignDropdown :editor="editor" />
       </div>
     </bubble-menu>
     <editor-content :editor="editor" class="mt-8" />
@@ -57,10 +56,13 @@ import StarterKit from '@tiptap/starter-kit'
 import { BubbleMenu, Editor, EditorContent } from '@tiptap/vue-3'
 import Link from '@tiptap/extension-link'
 import Image from '@tiptap/extension-image'
+import Underline from '@tiptap/extension-underline'
+import Highlight from '@tiptap/extension-highlight'
+import TaskList from '@tiptap/extension-task-list'
+import TaskItem from '@tiptap/extension-task-item'
+import TextAlign from '@tiptap/extension-text-align'
 import SlashCommands from './commands/commands'
 import suggestion from './commands/suggestion'
-
-type Level = 1 | 2 | 3 | 4 | 5 | 6
 
 const props = defineProps({
   canEdit: {
@@ -116,6 +118,17 @@ const editor = new Editor({
         rel: "noopener noreferrer",
       },
     }),
+    Underline,
+    Highlight.configure({
+      multicolor: true,
+    }),
+    TaskList,
+    TaskItem.configure({
+      nested: true,
+    }),
+    TextAlign.configure({
+      types: ['heading', 'paragraph'],
+    }),
   ],
   content: typeof props.modelValue === "string" ? JSON.parse(props.modelValue) : props.modelValue,
   onUpdate: () => {
@@ -139,15 +152,7 @@ const setLink = () => {
   linkUrl.value = ''
 }
 
-const toggleHeading = (editor: Editor | null, level: Level) => {
-  if (!editor) return
 
-  if (editor.isActive("heading", { level })) {
-    editor.chain().focus().setNode("paragraph").run()
-  } else {
-    editor.chain().focus().toggleNode("heading", "paragraph", { level }).run()
-  }
-}
 
 onBeforeUnmount(() => {
   editor.destroy()
@@ -190,9 +195,48 @@ onBeforeUnmount(() => {
     list-style: decimal-leading-zero;
     margin-left: 1.75rem;
   }
-  
+
   ul {
     list-style: disc;
+  }
+
+  /* Task list styles */
+  ul[data-type="taskList"] {
+    list-style: none;
+    padding: 0;
+    margin-left: 0;
+
+    li {
+      display: flex;
+      align-items: flex-start;
+      margin: 0.5rem 0;
+
+      > label {
+        flex: 0 0 auto;
+        margin-right: 0.5rem;
+        user-select: none;
+        cursor: pointer;
+      }
+
+      > div {
+        flex: 1 1 auto;
+      }
+
+      input[type="checkbox"] {
+        cursor: pointer;
+        margin: 0;
+        width: 1rem;
+        height: 1rem;
+        accent-color: #5046E5;
+      }
+
+      &[data-checked="true"] {
+        > div {
+          text-decoration: line-through;
+          opacity: 0.6;
+        }
+      }
+    }
   }
 
   /* Heading styles */
@@ -237,6 +281,12 @@ onBeforeUnmount(() => {
   /* Paragraph styles */
   p {
     color: #1E1E2E;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
   }
 
   /* Code and preformatted text styles */
@@ -295,11 +345,56 @@ onBeforeUnmount(() => {
       color: #64e1f1;
     }
   }
+
+  /* Text formatting styles */
+  u {
+    text-decoration: underline;
+    text-decoration-color: #5046E5;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 2px;
+  }
+
+  mark {
+    background-color: #FEF08A;
+    color: #1F2937;
+    padding: 0.1em 0.2em;
+    border-radius: 0.25rem;
+  }
+
+  /* Text alignment styles */
+  .tiptap [style*="text-align: left"] {
+    text-align: left;
+  }
+
+  .tiptap [style*="text-align: center"] {
+    text-align: center;
+  }
+
+  .tiptap [style*="text-align: right"] {
+    text-align: right;
+  }
+
+  .tiptap [style*="text-align: justify"] {
+    text-align: justify;
+  }
 }
 
 .dark .tiptap {
   p {
     color: #ABADBA;
+  }
+
+  mark {
+    background-color: #FCD34D;
+    color: #1F2937;
+  }
+
+  u {
+    text-decoration-color: #8B5CF6;
+  }
+
+  ul[data-type="taskList"] li input[type="checkbox"] {
+    accent-color: #8B5CF6;
   }
 }
 
@@ -313,27 +408,48 @@ onBeforeUnmount(() => {
   box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: row;
+  align-items: center;
   gap: 0.6rem;
   padding: 0.2rem 0.8rem;
+
+  .separator {
+    width: 1px;
+    height: 1.5rem;
+    background-color: var(--c-border);
+    margin: 0 0.2rem;
+  }
 
   button {
     background-color: unset;
     padding: 0.2rem 0.6rem;
     border-radius: 0.5rem;
-    transition: background-color 0.3s ease;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
 
     &:hover {
-      background-color: transparent;
-      /* background-color: var(--c-border); */
+      background-color: rgba(80, 70, 229, 0.1);
+      border-color: rgba(80, 70, 229, 0.2);
     }
 
     &.is-active {
       background-color: #5046E5;
       color: #fff;
+      border-color: #5046E5;
 
       &:hover {
         background-color: #635ade;
+        border-color: #635ade;
       }
+    }
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    flex-wrap: wrap;
+    max-width: 90vw;
+
+    .separator {
+      display: none;
     }
   }
 }

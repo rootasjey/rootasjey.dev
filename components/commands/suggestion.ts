@@ -1,7 +1,6 @@
 import tippy from 'tippy.js';
 import { VueRenderer } from '@tiptap/vue-3'
 import CommandsList from './CommandsList.vue';
-const route = useRoute()
 
 export default {
   items: ({ query }: { query: string }) => {
@@ -50,6 +49,66 @@ export default {
             .focus()
             .deleteRange(range)
             .setMark('italic')
+            .run()
+        },
+      },
+      {
+        title: 'Underline',
+        icon: 'i-lucide-underline',
+        command: ({ editor, range }: { editor: any; range: any }) => {
+          editor
+            .chain()
+            .focus()
+            .deleteRange(range)
+            .setMark('underline')
+            .run()
+        },
+      },
+      {
+        title: 'Highlight',
+        icon: 'i-lucide-highlighter',
+        command: ({ editor, range }: { editor: any; range: any }) => {
+          editor
+            .chain()
+            .focus()
+            .deleteRange(range)
+            .setMark('highlight')
+            .run()
+        },
+      },
+      {
+        title: 'Bullet List',
+        icon: 'i-lucide-list',
+        command: ({ editor, range }: { editor: any; range: any }) => {
+          editor
+            .chain()
+            .focus()
+            .deleteRange(range)
+            .toggleBulletList()
+            .run()
+        },
+      },
+      {
+        title: 'Numbered List',
+        icon: 'i-lucide-list-ordered',
+        command: ({ editor, range }: { editor: any; range: any }) => {
+          editor
+            .chain()
+            .focus()
+            .deleteRange(range)
+            .toggleOrderedList()
+            .run()
+        },
+      },
+      {
+        title: 'Task List',
+        icon: 'i-lucide-list-checks',
+        command: ({ editor, range }: { editor: any; range: any }) => {
+          editor
+            .chain()
+            .focus()
+            .deleteRange(range)
+            .toggleTaskList()
             .run()
         },
       },
