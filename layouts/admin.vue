@@ -1,10 +1,10 @@
 <template>
-  <div class="min-h-screen w-full bg-gray-50 dark:bg-gray-900">
+  <div class="min-h-screen w-full bg-gray-50 dark:bg-[#0C0A09]">
     <Header />
 
     <div class="flex pt-16">
       <!-- Left Sidebar Navigation -->
-      <aside class="w-64 h-86% rounded-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 fixed left-2 top-22 z-10">
+      <aside class="w-64 h-86% rounded-2 bg-white dark:bg-[#0D0D0D] border border-gray-200 dark:border-gray-700 fixed left-2 top-22 z-10">
         <!-- Admin Header -->
         <header class="p-6 border-b border-gray-200 dark:border-gray-700">
           <div>
@@ -26,11 +26,11 @@
                 :class="[
                   'w-full px-4 py-3 rounded-lg text-sm font-medium transition-colors flex items-center gap-3 text-left',
                   activeTab === tab.value
-                    ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100'
-                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
+                    ? 'border b-blue hover:bg-blue-6/20 text-gray-900 dark:text-gray-100'
+                    : 'text-gray-700 dark:text-gray-300 border b-dashed b-transparent hover:b-gray-3'
                 ]"
               >
-                <span :class="tab.icon" class="text-lg"></span>
+                <span :class="tab.icon" class="text-md"></span>
                 {{ tab.label }}
               </button>
             </li>
@@ -55,7 +55,7 @@
       <main class="flex-1 ml-64">
         <div class="p-6">
           <!-- Tab Content -->
-          <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 min-h-[600px]">
+          <div class="bg-white dark:bg-[#0D0D0D] rounded-lg border border-gray-200 dark:border-gray-700 min-h-[600px]">
             <!-- Debug info -->
             <div class="p-4 border-b border-gray-200 dark:border-gray-700 text-sm text-gray-500">
               Active tab: {{ activeTab }} | Route: {{ route.path }} | Query: {{ JSON.stringify(route.query) }}

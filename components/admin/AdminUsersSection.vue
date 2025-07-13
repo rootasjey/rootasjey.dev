@@ -1,16 +1,5 @@
 <template>
   <div class="p-6">
-    <!-- Test Content -->
-    <div class="mb-6 p-4 bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-lg">
-      <h3 class="text-lg font-600 text-orange-800 dark:text-orange-200 mb-2">
-        ✅ Users Section Loaded
-      </h3>
-      <p class="text-orange-700 dark:text-orange-300 text-sm">
-        The users management section is working correctly.
-      </p>
-    </div>
-
-    <!-- Header with Actions -->
     <div class="flex items-center justify-between mb-6">
       <div>
         <h2 class="text-2xl font-600 font-body text-gray-800 dark:text-gray-200 mb-2">
@@ -225,6 +214,7 @@
 
 <script setup lang="ts">
 import type { User } from '#auth-utils'
+import type { UserRoleStats } from '~/types/user'
 
 // Data
 const searchQuery = ref('')
@@ -236,7 +226,7 @@ const isChangingRole = ref(false)
 const selectedUser = ref<User | null>(null)
 const newRole = ref('')
 
-const stats = ref({
+const stats: Ref<UserRoleStats> = ref({
   total: 0,
   admins: 0,
   moderators: 0,
@@ -273,7 +263,7 @@ const filteredUsers = computed(() => {
 
 // Methods
 const getRoleBadgeClass = (role: string) => {
-  const roleMap = {
+  const roleMap: { [key: string]: string } = {
     admin: 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200',
     moderator: 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200',
     user: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
@@ -342,8 +332,8 @@ const fetchUsers = async () => {
   try {
     loading.value = true
     const response = await $fetch('/api/admin/users')
-    users.value = response.users || []
-    stats.value = response.stats || { total: 0, admins: 0, moderators: 0, regular: 0 }
+    users.value = (response.users as unknown as User[]) || []
+    stats.value = (response.stats as UserRoleStats) || { total: 0, admins: 0, moderators: 0, regular: 0 }
   } catch (error) {
     console.error('Error fetching users:', error)
   } finally {

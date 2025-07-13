@@ -30,3 +30,10 @@ export interface TagStats {
   total: number
   custom: number
 }
+
+export interface TagUsageStats {
+  total: number
+  used: number
+  unused: number
+  categories: number
+}

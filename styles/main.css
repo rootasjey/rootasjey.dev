@@ -15,6 +15,28 @@ body {
   padding: 0px;
 }
 
+.table-text-tooltip {
+  padding: 4px 8px;
+  max-width: 350px;
+  font-family: 'Satoshi', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.25rem;
+
+  border-style: dashed;
+  border-radius: 0.5rem;
+  border-color: hsla(0, 0%, 100%, 0.43);
+
+  @media (max-width: 640px) {
+    max-width: 90vw;
+  }
+}
+
+.dark .table-text-tooltip {
+  background-color: #111;
+  color: white;
+}
+
 /* Global text selection styling */
 ::selection {
   color: white;

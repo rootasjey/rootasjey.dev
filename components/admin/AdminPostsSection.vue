@@ -35,8 +35,9 @@
     </div>
 
     <!-- Bulk Actions Bar -->
-    <div v-if="selectedPosts.length > 0" class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-6">
-      <div class="flex items-center justify-between">
+    <div v-if="selectedPosts.length > 0" 
+      class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-6">
+      <div class="flex items-center justify-start gap-4">
         <div class="flex items-center gap-4">
           <span class="text-sm font-600 text-blue-800 dark:text-blue-200">
             {{ selectedPosts.length }} post{{ selectedPosts.length === 1 ? '' : 's' }} selected
@@ -54,17 +55,17 @@
         <div class="flex items-center gap-2">
           <UButton
             @click="handleBulkPublish"
-            btn="soft-green"
+            btn="soft"
             size="xs"
             :disabled="!canBulkPublish"
           >
-            <span class="i-ph-eye mr-1"></span>
+            <span class="i-ph-upload mr-1"></span>
             Publish
           </UButton>
           
           <UButton
             @click="handleBulkArchive"
-            btn="soft-orange"
+            btn="soft"
             size="xs"
           >
             <span class="i-ph-archive mr-1"></span>
@@ -73,7 +74,7 @@
           
           <UButton
             @click="handleBulkDelete"
-            btn="soft-red"
+            btn="soft"
             size="xs"
           >
             <span class="i-ph-trash mr-1"></span>
@@ -104,7 +105,7 @@
           <UBadge
             v-if="draftPosts.length > 0"
             variant="soft"
-            color="lime"
+            color="lime-6"
             size="xs"
             class="ml-2"
           >
@@ -438,6 +439,7 @@
 <script setup lang="ts">
 import type { Post } from '~/types/post'
 import type { ColumnDef } from '@tanstack/vue-table'
+import { resolveComponent } from 'vue'
 
 // Data management
 const searchQuery = ref('')
@@ -486,8 +488,24 @@ const tableColumns: ColumnDef<Post>[] = [
     cell: ({ row }) => {
       const post = row.original
       return h('div', { class: 'min-w-0' }, [
-        h('div', { class: 'font-medium text-gray-900 dark:text-gray-100 truncate' }, post.name),
-        post.description ? h('div', { class: 'text-sm text-gray-500 dark:text-gray-400 truncate mt-1' }, post.description) : null
+        // Post title with tooltip
+        h(resolveComponent('UTooltip'), {}, {
+          default: () => h('div', {
+            class: 'font-medium text-gray-900 dark:text-gray-100 truncate cursor-help'
+          }, post.name),
+          content: () => h('div', {
+            class: 'table-text-tooltip'
+          }, post.name)
+        }),
+        // Post description with tooltip (if exists)
+        post.description ? h(resolveComponent('UTooltip'), {}, {
+          default: () => h('div', {
+            class: 'text-sm text-gray-500 dark:text-gray-400 max-w-sm truncate mt-1 cursor-help'
+          }, post.description),
+          content: () => h('div', {
+            class: 'table-text-tooltip'
+          }, post.description)
+        }) : null
       ])
     },
     enableSorting: true,
@@ -545,8 +563,6 @@ const tableColumns: ColumnDef<Post>[] = [
     enableSorting: false,
   },
 ]
-
-
 
 // Computed properties
 const canBulkPublish = computed(() => {

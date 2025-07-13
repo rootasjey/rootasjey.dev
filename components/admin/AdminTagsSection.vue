@@ -1,15 +1,5 @@
 <template>
   <div class="p-6">
-    <!-- Test Content -->
-    <div class="mb-6 p-4 bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-lg">
-      <h3 class="text-lg font-600 text-purple-800 dark:text-purple-200 mb-2">
-        ✅ Tags Section Loaded
-      </h3>
-      <p class="text-purple-700 dark:text-purple-300 text-sm">
-        The tags management section is working correctly.
-      </p>
-    </div>
-
     <!-- Header with Actions -->
     <div class="flex items-center justify-between mb-6">
       <div>
@@ -224,7 +214,7 @@
 </template>
 
 <script setup lang="ts">
-import type { ApiTag, TagWithUsage } from '~/types/tag'
+import type { TagUsageStats, TagWithUsage } from '~/types/tag'
 
 // Data
 const searchQuery = ref('')
@@ -238,7 +228,7 @@ const newTag = ref({
   category: 'general'
 })
 
-const stats = ref({
+const stats: Ref<TagUsageStats> = ref({
   total: 0,
   used: 0,
   unused: 0,
@@ -290,8 +280,8 @@ const fetchTags = async () => {
   try {
     loading.value = true
     const response = await $fetch('/api/admin/tags/with-usage')
-    tags.value = response.tags || []
-    stats.value = response.stats || { total: 0, used: 0, unused: 0, categories: 0 }
+    tags.value = (response.tags as unknown as TagWithUsage[]) || []
+    stats.value = (response.stats as TagUsageStats) || { total: 0, used: 0, unused: 0, categories: 0 }
   } catch (error) {
     console.error('Error fetching tags:', error)
   } finally {
