@@ -13,8 +13,77 @@
     <!-- Game Section -->
     <section class="w-full max-w-4xl px-4 mb-16">
       <div class="flex flex-col items-center justify-center">
+        <!-- Topic Selection -->
+        <div v-if="!gameStarted" class="topic-selection mb-8 w-full">
+          <h3 class="text-xl font-600 text-gray-800 dark:text-gray-200 mb-4 text-center">
+            Choose a Topic
+          </h3>
+
+          <div v-if="loadingTopics" class="text-center py-8">
+            <div class="animate-spin w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full mx-auto mb-2"></div>
+            <p class="text-gray-600 dark:text-gray-400">Loading topics...</p>
+          </div>
+
+          <div v-else-if="topics.length === 0" class="text-center py-8">
+            <p class="text-gray-600 dark:text-gray-400 mb-4">No topics available</p>
+            <UButton @click="seedInitialData" btn="outline-blue">
+              Seed Initial Data
+            </UButton>
+          </div>
+
+          <div v-else>
+            <!-- Start Game Button (moved above topic cards) -->
+            <UButton
+              @click="startGame"
+              :disabled="!selectedTopic || loadingGame"
+              btn="~"
+              class="w-full mb-6 light:btn-glowing dark:bg-[#426AFE]"
+              leading="i-ph-play"
+            >
+              <span v-if="loadingGame">Loading...</span>
+              <span v-else>Start Game</span>
+            </UButton>
+
+            <!-- Topic Cards with responsive layout -->
+            <div class="space-y-3 md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 md:gap-4 md:space-y-0">
+              <div
+                v-for="topic in topics"
+                :key="topic.id"
+                class="topic-card cursor-pointer p-4 rounded-lg border-2 transition-all duration-200 hover:shadow-md relative"
+                :class="selectedTopic?.id === topic.id
+                  ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                  : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-black hover:border-gray-300 dark:hover:border-gray-600'"
+                @click="selectedTopic = topic"
+              >
+                <div class="flex items-center gap-3">
+                  <span :class="topic.icon" class="text-2xl text-blue-600 dark:text-blue-400"></span>
+                  <div class="flex-1">
+                    <h4 class="font-semibold text-gray-800 dark:text-gray-200">{{ topic.name }}</h4>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">{{ topic.description }}</p>
+                    <div class="flex items-center gap-4 mt-1">
+                      <span class="text-xs text-gray-500 dark:text-gray-500">{{ topic.cardCount }} pairs</span>
+                      <span class="text-xs font-500 px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-900 text-gray-600 dark:text-gray-400">
+                        {{ topic.difficulty }}
+                      </span>
+                    </div>
+                  </div>
+
+                  <!-- Play button for selected topic -->
+                  <div
+                    v-if="selectedTopic?.id === topic.id"
+                    class="play-button flex items-center justify-center w-6 h-full bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white rounded-r-md transition-colors duration-200 absolute right-0 top-0 cursor-pointer"
+                    @click.stop="startGame"
+                  >
+                    <span class="i-ph-play text-sm"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- Game Stats -->
-        <div class="flex gap-6 mb-6 text-center">
+        <div v-if="gameStarted" class="flex gap-6 mb-6 text-center">
           <div class="stat-item">
             <div class="text-2xl font-600 text-gray-800 dark:text-gray-200">{{ moves }}</div>
             <div class="text-sm text-gray-600 dark:text-gray-400">Moves</div>
@@ -30,7 +99,7 @@
         </div>
 
         <!-- Game Grid -->
-        <div class="game-container mb-6 rounded-lg shadow-lg">
+        <div v-if="gameStarted" class="game-container mb-6 rounded-lg shadow-lg">
           <div class="grid grid-cols-4 gap-3 p-4">
             <div
               v-for="(card, index) in cards"
@@ -59,7 +128,15 @@
         </div>
 
         <!-- Controls -->
-        <div class="controls flex flex-wrap gap-4 justify-center mb-8">
+        <div v-if="gameStarted" class="controls flex flex-wrap gap-4 justify-center mb-8">
+          <UButton
+            @click="backToTopicSelection"
+            btn="outline-gray"
+            leading="i-ph-arrow-left"
+          >
+            Back to Topics
+          </UButton>
+
           <UButton
             @click="resetGame"
             btn="outline-gray"
@@ -80,7 +157,7 @@
 
         <!-- Fun Fact Display -->
         <div
-          v-if="currentFact"
+          v-if="gameStarted && currentFact"
           class="fact-display bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-8 max-w-2xl"
         >
           <div class="flex items-start gap-3">
@@ -100,8 +177,8 @@
         </div>
 
         <!-- Win Message -->
-        <div 
-          v-if="gameWon" 
+        <div
+          v-if="gameStarted && gameWon"
           class="win-message bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-6 text-center max-w-md"
         >
           <div class="text-4xl mb-3">🎉</div>
@@ -123,7 +200,7 @@
 
     <!-- Game Story Section -->
     <section class="w-full max-w-4xl px-4 mb-16">
-      <div class="explanations bg-gray-50 dark:bg-gray-800 rounded-lg p-6">
+      <div class="explanations border b-transparent bg-gray-50 dark:bg-[#111] dark:hover:b-gray-600 rounded-lg p-6">
         <h3 class="text-2xl font-600 text-gray-800 dark:text-gray-200 mb-4">
           <span class="i-ph-cards mr-2"></span>
           The Memory Challenge
@@ -156,16 +233,7 @@
 </template>
 
 <script lang="ts" setup>
-// Game data and types
-interface Card {
-  id: number
-  text: string
-  icon: string
-  pairId: number
-  isFlipped: boolean
-  isMatched: boolean
-  fact: string
-}
+import type { Card, CardPair, Topic } from '~/types/paired'
 
 // SEO
 useHead({
@@ -189,6 +257,14 @@ const currentFact = ref('')
 const startTime = ref<number | null>(null)
 const elapsedTime = ref(0)
 const timerInterval = ref<NodeJS.Timeout | null>(null)
+
+// Topic selection state
+const topics = ref<Topic[]>([])
+const selectedTopic = ref<Topic | null>(null)
+const loadingTopics = ref(false)
+const loadingGame = ref(false)
+const gameStarted = ref(false)
+const currentCardPairs = ref<CardPair[]>([])
 
 // Card data - programming concepts and their applications
 const cardPairs = [
@@ -236,10 +312,13 @@ const cardPairs = [
 
 // Game functions
 const initializeGame = () => {
+  // Use current card pairs (dynamic) or fallback to hardcoded for backward compatibility
+  const pairsToUse = currentCardPairs.value.length > 0 ? currentCardPairs.value : cardPairs
+
   // Create card pairs
   const gameCards: Card[] = []
 
-  cardPairs.forEach((pair, index) => {
+  pairsToUse.forEach((pair, index) => {
     // Add first card of the pair
     gameCards.push({
       id: index * 2,
@@ -332,7 +411,8 @@ const flipCard = (index: number) => {
         currentFact.value = firstCard.fact
 
         // Check if game is won
-        if (matchedPairs.value === cardPairs.length) {
+        const pairsToUse = currentCardPairs.value.length > 0 ? currentCardPairs.value : cardPairs
+        if (matchedPairs.value === pairsToUse.length) {
           gameWon.value = true
           if (timerInterval.value) {
             clearInterval(timerInterval.value)
@@ -398,9 +478,70 @@ const formatTime = (seconds: number): string => {
   return `${mins}:${secs.toString().padStart(2, '0')}`
 }
 
+// Topic management functions
+const fetchTopics = async () => {
+  loadingTopics.value = true
+  try {
+    const response = await $fetch('/api/experiments/paired/topics') as any
+    if (response.success) {
+      topics.value = response.topics
+    }
+  } catch (error) {
+    console.error('Error fetching topics:', error)
+  } finally {
+    loadingTopics.value = false
+  }
+}
+
+const seedInitialData = async () => {
+  try {
+    await $fetch('/api/experiments/paired/seed', { method: 'POST' } as any)
+    await fetchTopics()
+  } catch (error) {
+    console.error('Error seeding data:', error)
+  }
+}
+
+const startGame = async () => {
+  if (!selectedTopic.value) return
+
+  loadingGame.value = true
+  try {
+    const response = await $fetch(`/api/experiments/paired/${selectedTopic.value.id}`) as any
+    if (response.success) {
+      currentCardPairs.value = response.topic.cardPairs
+      gameStarted.value = true
+      initializeGame()
+    }
+  } catch (error) {
+    console.error('Error loading game data:', error)
+  } finally {
+    loadingGame.value = false
+  }
+}
+
+const backToTopicSelection = () => {
+  gameStarted.value = false
+  selectedTopic.value = null
+  // Reset game state
+  cards.value = []
+  flippedCards.value = []
+  moves.value = 0
+  matchedPairs.value = 0
+  isProcessing.value = false
+  gameWon.value = false
+  currentFact.value = ''
+  startTime.value = null
+  elapsedTime.value = 0
+  if (timerInterval.value) {
+    clearInterval(timerInterval.value)
+    timerInterval.value = null
+  }
+}
+
 // Initialize game on mount
 onMounted(() => {
-  initializeGame()
+  fetchTopics()
 })
 
 // Cleanup timer on unmount
@@ -578,6 +719,23 @@ onUnmounted(() => {
     opacity: 1;
     transform: scale(1);
   }
+}
+
+/* Topic card play button styling */
+.topic-card {
+  position: relative;
+}
+
+.play-button {
+  width: 25px;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  border-left: 1px solid rgba(59, 130, 246, 0.3);
+  transition: width 0.2s ease;
+}
+
+.play-button:hover {
+  width: 30px;
 }
 
 /* Responsive adjustments */
