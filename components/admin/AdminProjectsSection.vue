@@ -70,7 +70,7 @@
               icon
               btn="ghost-gray"
               size="xs"
-              class="i-ph-dots-three-vertical"
+              label="i-ph-dots-three-vertical-bold"
             />
           </UDropdownMenu>
         </div>
