@@ -12,6 +12,7 @@
         <li><strong>Text Alignment:</strong> Left, Center, Right, Justify</li>
         <li><strong>Links:</strong> Add/edit/remove links</li>
         <li><strong>Slash Commands:</strong> Type "/" to see enhanced commands</li>
+        <li><strong>🆕 Drag Handle:</strong> Hover over content blocks to see the drag handle (⋮⋮) on the left - drag to reorder content!</li>
       </ul>
     </div>
 
@@ -45,6 +46,7 @@
         <li>Test text alignment options</li>
         <li>Add and edit links</li>
         <li>Use slash commands by typing "/" in the editor</li>
+        <li><strong>🆕 NEW:</strong> Test the drag handle - hover over any content block to see the drag handle (⋮⋮) appear on the left, then drag to reorder content</li>
         <li>Check that the bubble menu appears when selecting text</li>
         <li>Verify that all features work on mobile (responsive design)</li>
       </ol>

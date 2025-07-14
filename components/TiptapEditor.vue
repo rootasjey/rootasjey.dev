@@ -51,6 +51,16 @@
         <TextAlignDropdown :editor="editor" />
       </div>
     </bubble-menu>
+
+    <!-- Drag Handle -->
+    <DragHandle :editor="editor" v-if="editor && canEdit" :tippy-options="{ placement: 'left' }">
+      <div class="drag-handle hover:scale-120 active:scale-99 transition-all">
+        <UIcon name="i-ph-dots-six-vertical-light" 
+          class="text-gray-400 hover:text-gray-600 dark:hover:text-black transition-colors" 
+        />
+      </div>
+    </DragHandle>
+
     <editor-content :editor="editor" class="mt-8" />
   </div>
 </template>
@@ -68,9 +78,13 @@ import TextAlign from '@tiptap/extension-text-align'
 import Code from '@tiptap/extension-code'
 import CodeBlock from '@tiptap/extension-code-block'
 import Blockquote from '@tiptap/extension-blockquote'
+import { DragHandle } from '@tiptap/extension-drag-handle-vue-3'
 import SlashCommands from './commands/commands'
 import suggestion from './commands/suggestion'
 import CodeDropdown from './CodeDropdown.vue'
+import HeadingDropdown from './HeadingDropdown.vue'
+import ListDropdown from './ListDropdown.vue'
+import TextAlignDropdown from './TextAlignDropdown.vue'
 
 const props = defineProps({
   canEdit: {
@@ -108,7 +122,7 @@ const editor = new Editor({
   extensions: [
     StarterKit.configure({
       dropcursor: {
-        color: '#000',
+        color: '#FFCB61',
         width: 4,
       },
       // Disable the built-in code, codeBlock, and blockquote from StarterKit
@@ -172,8 +186,6 @@ const setLink = () => {
   linkUrl.value = ''
 }
 
-
-
 onBeforeUnmount(() => {
   editor.destroy()
 })
@@ -194,6 +206,12 @@ onBeforeUnmount(() => {
 
 .tiptap {
   transition: all 0.3s ease;
+  padding: 0 24px;
+
+  ::selection {
+    color: white;
+    background-color: #1F1F1F;
+  }
   
   :first-child {
     margin-top: 0;
@@ -228,7 +246,7 @@ onBeforeUnmount(() => {
 
     li {
       display: flex;
-      align-items: flex-start;
+      align-items: center;
       margin: 0.5rem 0;
 
       > label {
@@ -457,6 +475,11 @@ onBeforeUnmount(() => {
 }
 
 .dark .tiptap {
+  ::selection {
+    color: #1F1F1F;
+    background-color: #FFF;
+  }
+
   p {
     color: #ABADBA;
   }
@@ -565,6 +588,32 @@ onBeforeUnmount(() => {
     .separator {
       display: none;
     }
+  }
+}
+
+/* Drag Handle Styles */
+.drag-handle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  cursor: grab;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.dark .drag-handle {
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.9);
   }
 }
 </style>
