@@ -40,7 +40,9 @@ export function createTopicData(
     description,
     difficulty: options.difficulty || 'medium',
     icon: options.icon || 'i-ph-cards',
-    cardPairs
+    cardPairs,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
   }
 }
 

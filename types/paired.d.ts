@@ -35,4 +35,6 @@ export type TopicData = {
   difficulty: 'easy' | 'medium' | 'hard'
   icon: string
   cardPairs: CardPair[]
+  createdAt?: string
+  updatedAt?: string
 }

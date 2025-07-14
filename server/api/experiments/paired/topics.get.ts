@@ -20,7 +20,9 @@ export default defineEventHandler(async (event) => {
           description: topicData?.description || '',
           cardCount: topicData?.cardPairs?.length || 0,
           difficulty: topicData?.difficulty || 'medium',
-          icon: topicData?.icon || 'i-ph-cards'
+          icon: topicData?.icon || 'i-ph-cards',
+          createdAt: topicData?.createdAt || '',
+          updatedAt: topicData?.updatedAt || '',
         }
       })
     )
