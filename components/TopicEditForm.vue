@@ -271,7 +271,15 @@ const parseJsonInput = () => {
     if (Array.isArray(parsed)) {
       form.value.cardPairs = parsed
     }
-  } catch (error) {
+  } catch (error: any) {
+    console.error('Failed to parse JSON:', error)
+
+    toast({
+      title: 'JSON Parse Error (reverted back to previous state)',
+      description: error.toString(),
+      toast: 'soft-error',
+      duration: 5000
+    })
     // Invalid JSON, revert to current form data
     updateJsonInput()
   }
