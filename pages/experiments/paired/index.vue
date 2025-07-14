@@ -15,7 +15,7 @@
       <div class="flex flex-col items-center justify-center">
         <!-- Topic Selection -->
         <div v-if="!gameStarted" class="topic-selection mb-8 w-full">
-          <h3 class="text-xl font-600 text-gray-800 dark:text-gray-200 mb-4 text-center">
+          <h3 class="text-xl font-600 text-gray-800 dark:text-gray-200 mb-4 border-b b-dashed pb-2">
             Choose a Topic
           </h3>
 
@@ -33,21 +33,56 @@
 
           <div v-else>
             <!-- Start Game Button (moved above topic cards) -->
-            <UButton
-              @click="startGame"
-              :disabled="!selectedTopic || loadingGame"
-              btn="~"
-              class="w-full mb-6 light:btn-glowing dark:bg-[#426AFE]"
-              leading="i-ph-play"
-            >
-              <span v-if="loadingGame">Loading...</span>
-              <span v-else>Start Game</span>
-            </UButton>
+            <div class="flex gap-2">
+              <UButton
+                @click="startGame"
+                :disabled="!selectedTopic || loadingGame"
+                btn="~"
+                class="grow mb-6 light:btn-glowing dark:bg-[#426AFE]"
+                leading="i-ph-play"
+              >
+                <span v-if="loadingGame">Loading...</span>
+                <span v-else>Start Game</span>
+              </UButton>
+              <div class="flex">
+                <UButton
+                  icon
+                  label="i-ph-magnifying-glass-bold"
+                  btn="soft-blue"
+                  @click="showSearch = !showSearch"
+                />
+              </div>
+              <UButton
+                icon
+                label="i-ph-gear"
+                @click="navigateTo('/experiments/paired/admin')"
+                btn="soft-gray"
+                v-if="loggedIn"
+              />
+            </div>
+
+            <!-- Search Input -->
+             <UCollapsible v-model:open="showSearch">
+              <UCollapsibleContent>
+                <div class="mb-6">
+                  <UInput
+                    v-model="searchQuery"
+                    placeholder="Search topics by name, description, or difficulty..."
+                    :trailing="searchQuery.trim() ? 'i-ph-x-bold' : undefined"
+                    @trailing="clearSearch"
+                    :una="{
+                      inputTrailing: 'pointer-events-auto cursor-pointer',
+                    }"
+                    class="w-full"
+                  />
+                </div>
+              </UCollapsibleContent>
+            </UCollapsible>
 
             <!-- Topic Cards with responsive layout -->
             <div class="space-y-3 md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 md:gap-4 md:space-y-0">
               <div
-                v-for="topic in topics"
+                v-for="topic in filteredTopics"
                 :key="topic.id"
                 class="topic-card cursor-pointer p-4 rounded-lg border-2 transition-all duration-200 hover:shadow-md relative"
                 :class="selectedTopic?.id === topic.id
@@ -234,6 +269,7 @@
 
 <script lang="ts" setup>
 import type { Card, CardPair, Topic } from '~/types/paired'
+const { loggedIn } = useUserSession()
 
 // SEO
 useHead({
@@ -265,6 +301,29 @@ const loadingTopics = ref(false)
 const loadingGame = ref(false)
 const gameStarted = ref(false)
 const currentCardPairs = ref<CardPair[]>([])
+
+// Search state
+const showSearch = ref(false)
+const searchQuery = ref('')
+
+// Computed property for filtered topics
+const filteredTopics = computed(() => {
+  if (!searchQuery.value.trim()) {
+    return topics.value
+  }
+
+  const query = searchQuery.value.toLowerCase().trim()
+  return topics.value.filter(topic =>
+    topic.name.toLowerCase().includes(query) ||
+    topic.description.toLowerCase().includes(query) ||
+    topic.difficulty.toLowerCase().includes(query)
+  )
+})
+
+// Search methods
+const clearSearch = () => {
+  searchQuery.value = ''
+}
 
 // Card data - programming concepts and their applications
 const cardPairs = [
