@@ -34,14 +34,5 @@
     "tags": ["game", "memory", "cards", "knowledge"],
     "created_at": "2025-05-01T12:00:00Z",
     "updated_at": "2025-05-01T12:00:00Z"
-  },
-  {
-    "id": 5,
-    "name": "Memocards",
-    "description": "A memory card game to help me remember various knowledge.",
-    "slug": "memocards",
-    "tags": ["game", "memory", "cards", "knowledge"],
-    "created_at": "2025-05-01T12:00:00Z",
-    "updated_at": "2025-05-01T12:00:00Z"
   }
 ]
