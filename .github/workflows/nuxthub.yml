@@ -5,9 +5,6 @@ jobs:
   deploy:
     name: "Deploy to NuxtHub"
     runs-on: ubuntu-latest
-    environment:
-      name: ${{ github.ref == 'refs/heads/master' && 'production' || 'preview' }}
-      url: ${{ steps.deploy.outputs.deployment-url }}
     permissions:
       contents: read
       id-token: write
@@ -27,11 +24,10 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Build application
-        run: npm run build
+      - name: Ensure NuxtHub module is installed
+        run: npx nuxthub@latest ensure
 
-      - name: Deploy to NuxtHub
-        uses: nuxt-hub/action@v1
-        id: deploy
+      - name: Build & Deploy to NuxtHub
+        uses: nuxt-hub/action@v2
         with:
-          project-key: rootasjey-dev-u8wo
+          project-key: rootasjey-dev-kk4a
