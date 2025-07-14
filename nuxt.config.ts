@@ -41,6 +41,7 @@ export default defineNuxtConfig({
     "nuxt-auth-utils",
     "@pinia/nuxt",
     "@nuxt/test-utils/module",
+    "nuxt-shiki",
   ],
   unocss: {
     preflight: true,
