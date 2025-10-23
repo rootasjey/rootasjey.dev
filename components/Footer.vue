@@ -56,6 +56,8 @@
       <span class="mx-1">&middot;</span>
       <span class="font-600">{{ new Date().getFullYear() }}</span>
     </p>
+
+    <ThemeSelector class="mt-4" />
   </footer>
 </template>
 

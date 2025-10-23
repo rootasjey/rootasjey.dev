@@ -19,7 +19,7 @@
         Professional Profile
       </h2>
       <p class="text-gray-700 dark:text-gray-300 mb-4">
-        I'm a creative developer with 8 years of experience specializing in fullstack web applications with an emphasis 
+        I'm a creative developer with {{ new Date().getFullYear() - new Date(2015) }} years of experience specializing in fullstack web applications with an emphasis
         on frontend development. I combine technical expertise with an artistic sensibility to create intuitive, 
         engaging digital experiences. My approach is methodical yet innovative, focusing on clean code architecture 
         while embracing creative solutions to complex problems.
@@ -234,11 +234,11 @@
       <div class="flex flex-row flex-wrap justify-between">
         <div class="w-full md:w-1/2.3 lg:w-1/3">
           <div class="flex justify-between items-start mb-2">
-            <h3 class="font-500 text-gray-800 dark:text-gray-200">Kwotes</h3>
+            <h3 class="font-500 text-gray-800 dark:text-gray-200">Verbatims</h3>
           </div>
           <div class="text-accent font-500 mb-2">Quotes app • web</div>
           <p class="text-gray-700 dark:text-gray-300 mb-3">
-            Discover Kwotes, your go-to companion for inspiring, motivating, and sharing moments of
+            Discover Verbatims, your go-to companion for inspiring, motivating, and sharing moments of
             wisdom anytime, anywhere.
           </p>
           <div class="tags flex flex-wrap gap-2 mt-2">

@@ -1,21 +1,21 @@
 <template>
   <div class="w-[600px] mt-24 rounded-xl p-8 pb-[38vh] flex flex-col transition-all duration-500 overflow-y-auto">
-    <section class="mb-12">
+    <section class="mb-9">
       <h1 class="font-600">Jérémie Corpinot</h1>
       <h2 class="color-gray-600 font-500 dark:color-gray-500">
-        {{ new Date().getFullYear() - new Date(2015) }} ans • dévelopeur web & mobile
+        {{ new Date().getFullYear() - new Date(2015) }} ans • développeur web & mobile
       </h2>
       <h2 class="color-gray-400 dark:color-gray-600">Yvelines, France</h2>
     </section>
 
     <!-- Introduction -->
     <section class="mb-6">
-      <h2 class="text-4 font-500 text-gray-800 dark:text-gray-200 mb-4">
+      <h2 class="flex items-center text-4 font-500 text-gray-800 dark:text-gray-200 mb-2">
         <span class="i-ph-user-circle mr-2"></span>
-        Profile Professionel
+        Profil
       </h2>
       <p class="text-size-4 text-gray-700 dark:text-gray-300 mb-4">
-        Je suis un développeur avec 8 ans d'expérience spécialisé dans les applications web et mobile, avec une
+        Je suis un développeur avec {{ new Date().getFullYear() - new Date(2015) }} ans d'expérience spécialisé dans les applications web et mobile, avec une
         emphase sur le développement d'interfaces utilisateur. Je combine une expertise technique avec une sensibilité artistique pour
         créer des expériences numériques intuitives et engageantes.
       </p>
@@ -23,7 +23,7 @@
 
     <!-- Skills -->
     <section class="mb-8">
-      <h2 class="text-4 font-500 text-gray-800 dark:text-gray-200 mb-4">
+      <h2 class="flex items-center text-4 font-500 text-gray-800 dark:text-gray-200 mb-4">
         <span class="i-ph-code mr-2"></span>
         Compétences Techniques
       </h2>
@@ -39,9 +39,9 @@
         <div>
           <h3 class="font-500 text-gray-800 dark:text-gray-200 mb-2">Backend & Tools</h3>
           <ul class="list-disc list-inside text-size-3 font-500 text-gray-500 dark:text-gray-300">
-            <li>Node.js</li>
+            <li>Node.js, Bun</li>
             <li>Git/GitLab</li>
-            <li>Figma</li>
+            <li>PostgreSQL, Prisma, NoSQL</li>
           </ul>
         </div>
       </div>
@@ -49,15 +49,15 @@
 
     <!-- Work Experience -->
     <section class="workexperience mb-6">
-      <h2 class="text-4 font-500 text-gray-800 dark:text-gray-200 mb-4">
+      <h2 class="flex items-center text-4 font-500 text-gray-800 dark:text-gray-200 mb-4">
         <span class="i-ph-briefcase mr-2"></span>
         Expérience Professionnelle
       </h2>
 
-      <div>
+      <div class="mt-6">
         <div class="flex justify-between items-start">
           <div class="text-accent font-500 mb-2">Logora</div>
-          <span class="text-sm text-gray-600 dark:text-gray-400">Juil 2024 - Jan 2025</span>
+          <span class="text-sm text-gray-600 dark:text-gray-400">2024 - 2025</span>
         </div>
         <p class="text-gray-600 dark:text-gray-400 text-sm italic mb-3">
           Startup dans les industries d'organes de presse et de la loi
@@ -75,11 +75,102 @@
           <span>API Integration</span>
         </div>
       </div>
+
+      <div class="mt-6">
+        <div class="flex justify-between items-start">
+          <div class="text-accent font-500 mb-2">Comptoirs</div>
+          <span class="text-sm text-gray-600 dark:text-gray-400">2023 - 2024</span>
+        </div>
+        <p class="text-gray-600 dark:text-gray-400 text-sm italic mb-3">
+          PME dans le développement logiciel
+        </p>
+        <ul class="list-disc list-outside ml-5 text-gray-700 dark:text-gray-300 mb-3">
+          <li>Créer un dashboard de suivi des appareils connectés</li>
+          <li>Mise en place d'un design system avec l'équipe design</li>
+          <li>Intégration d'APIs pour la gestion des données</li>
+        </ul>
+        <div class="tags flex flex-wrap gap-2 mt-2">
+          <span>React</span>
+          <span>Typescript</span>
+          <span>Design System</span>
+          <span>API Integration</span>
+        </div>
+      </div>
+
+      <div class="mt-6">
+        <div class="flex justify-between items-start">
+          <div class="text-accent font-500 mb-2">Servier</div>
+          <span class="text-sm text-gray-600 dark:text-gray-400">2022 - 2023</span>
+        </div>
+        <p class="text-gray-600 dark:text-gray-400 text-sm italic mb-3">
+          Groupe pharmaceutique international
+        </p>
+        <ul class="list-disc list-outside ml-5 text-gray-700 dark:text-gray-300 mb-3">
+          <li>Refonte du site web vitrine français MyHealthPartner</li>
+          <li>Étroite collaboration avec l'équipe design</li>
+          <li>Mise en place d'une solution complète front, back, APIs, DevOps</li>
+          <li>Intégration d'APIs Strapi pour la gestion des données</li>
+          <li>Déploiement de l'application sur des environnements cloud Azure</li>
+        </ul>
+        <div class="tags flex flex-wrap gap-2 mt-2">
+          <span>Next.js</span>
+          <span>Typescript</span>
+          <span>Azure</span>
+          <span>Strapi</span>
+        </div>
+      </div>
+
+      <div class="mt-6">
+        <div class="flex justify-between items-start">
+          <div class="text-accent font-500 mb-2">Fabernovel</div>
+          <span class="text-sm text-gray-600 dark:text-gray-400">2019</span>
+        </div>
+        <p class="text-gray-600 dark:text-gray-400 text-sm italic mb-3">
+          Cabinet de conseil en innovation et transformation digitale
+        </p>
+        <ul class="list-disc list-outside ml-5 text-gray-700 dark:text-gray-300 mb-3">
+          <li>Mission pour un client dans le secteur bancaire</li>
+          <li>Amélioration d'un portail interne de gestion de clients</li>
+          <li>Ajout de fonctionnalités de reporting et d'analyse</li>
+          <li>Apprentissage de nouveaux frameworks et langages: Kaiju.js, Scala</li>
+        </ul>
+        <div class="tags flex flex-wrap gap-2 mt-2">
+          <span>Typescript</span>
+          <span>Kaiju.js</span>
+          <span>Scala</span>
+        </div>
+      </div>
+
+      <div class="mt-6">
+        <div class="flex justify-between items-start">
+          <div class="text-accent font-500 mb-2">Dassault Systèmes</div>
+          <span class="text-sm text-gray-600 dark:text-gray-400">2015 - 2019</span>
+        </div>
+        <p class="text-gray-600 dark:text-gray-400 text-sm italic mb-3">
+          Éditeur de logiciels de conception 3D, maquette numérique et gestion du cycle de vie des produits
+        </p>
+        <ul class="list-disc list-outside ml-5 text-gray-700 dark:text-gray-300 mb-3">
+          <li>Développement d'une application de stockage de fichiers</li>
+          <li>Intégration d'API tierces (GoogleDrive, OneDrive, Box)</li>
+          <li>Intégration de solutions de modélisation 3D</li>
+          <li>Collaboration avec des équipes pluridisciplinaires (design, tests)</li>
+          <li>Utilisation de C#, .NET, pour les tests end-to-end</li>
+          <li>Rédaction de spécifications techniques</li>
+          <li>Passation de connaissances aux équipes de développement</li>
+          <li>Participation à des revues de code</li>
+          <li>Gestion de releases de l'application</li>
+        </ul>
+        <div class="tags flex flex-wrap gap-2 mt-2">
+          <span>JavaScript</span>
+          <span>API</span>
+          <span>3D Modeling</span>
+        </div>
+      </div>
     </section>
 
     <!-- Education -->
     <section class="mb-12">
-      <h2 class="text-lg font-500 text-gray-800 dark:text-gray-200 mb-2">
+      <h2 class="flex items-center text-lg font-500 text-gray-800 dark:text-gray-200 mb-2">
         <span class="i-ph-graduation-cap mr-2"></span>
         Education
       </h2>
@@ -102,7 +193,7 @@
 
     <!-- Personal Projects -->
     <section class="mb-12">
-      <h2 class="text-4 font-500 text-gray-800 dark:text-gray-200 mb-6">
+      <h2 class="flex items-center text-4 font-500 text-gray-800 dark:text-gray-200 mb-3">
         <span class="i-ph-rocket-launch mr-2"></span>
         Projets Personnels
       </h2>
@@ -110,7 +201,11 @@
       <div class="flex flex-row flex-wrap justify-between">
         <div class="w-full md:w-1/2.3 lg:w-1/3">
           <div class="flex justify-between items-start">
-            <h3 class="font-500 text-gray-800 dark:text-gray-200">Kwotes</h3>
+            <h3 class="font-500 text-gray-800 dark:text-gray-200">
+              <a href="https://verbatims.cc" target="_blank">
+                Verbatims
+              </a>
+            </h3>
           </div>
           <div class="text-size-3 text-gray-500 font-500 mb-2">App de citations • web</div>
           <p class="text-size-3 font-500 text-gray-600 dark:text-gray-300 mb-3">
@@ -125,7 +220,11 @@
 
         <div class="w-full md:w-1/2.3 lg:w-1/3">
           <div class="flex justify-between items-start">
-            <h3 class="font-500 text-gray-800 dark:text-gray-200">Unsplasharp</h3>
+            <h3 class="font-500 text-gray-800 dark:text-gray-200">
+              <a href="https://github.com/rootasjey/unsplasharp" target="_blank">
+                UnsplashSharp
+              </a>
+            </h3>
           </div>
           <div class="text-size-3 text-gray-500 font-500 mb-2">Bibliothèque en C# • .NET</div>
           <p class="text-size-3 font-500 text-gray-600 dark:text-gray-300 mb-3">
@@ -143,8 +242,7 @@
     
     <!-- Interests -->
     <section class="mb-12">
-      <h2 class="text-4 font-500 text-gray-800 dark:text-gray-200 mb-6">
-        <span class="i-ph-heart mr-2"></span>
+      <h2 class="flex items-center text-4 font-500 text-gray-800 dark:text-gray-200 mb-3">
         Intérêts
       </h2>
 
@@ -155,7 +253,7 @@
             Activité Physique
           </h3>
           <p class="text-size-4 text-gray-500 dark:text-gray-300">
-            Marche rapide en forêt
+            Marche en forêt
           </p>
         </div>
 
@@ -165,7 +263,7 @@
             Créatif
           </h3>
           <p class="text-size-4 text-gray-500 dark:text-gray-300">
-            Illustrations, portraits
+            Illustrations, portraits: <a href="https://zimablue.cc/" target="_blank" class="underline">zimablue.cc</a>
           </p>
         </div>
 
@@ -193,7 +291,7 @@
 
     <!-- Connect -->
     <section>
-      <h2 class="text-lg font-500 text-gray-800 dark:text-gray-200 mb-4">
+      <h2 class="flex items-center text-lg font-500 text-gray-800 dark:text-gray-200 mb-4">
         <span class="i-ph-handshake mr-2"></span>
         Prenons contact
       </h2>

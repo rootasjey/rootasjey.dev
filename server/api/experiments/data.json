@@ -34,5 +34,14 @@
     "tags": ["game", "memory", "cards", "knowledge"],
     "created_at": "2025-05-01T12:00:00Z",
     "updated_at": "2025-05-01T12:00:00Z"
+  },
+  {
+    "id": 5,
+    "name": "L'homme revolte",
+    "description": "L'homme révolté de Camus.",
+    "slug": "l-homme-revolte",
+    "tags": ["document", "books", "writings", "story"],
+    "created_at": "2025-07-16T12:00:00Z",
+    "updated_at": "2025-07-16T12:00:00Z"
   }
 ]
