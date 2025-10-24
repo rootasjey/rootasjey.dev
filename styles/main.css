@@ -70,3 +70,52 @@ body {
     background-position: 0% 50%;
   }
 }
+
+/* Print-friendly CV layout */
+@media print {
+  /* Page setup */
+  @page {
+    size: A4;
+    margin: 12mm;
+  }
+
+  /* Hide everything by default, then re-enable the CV */
+  body * {
+    visibility: hidden;
+  }
+
+  .cv-viewer, .cv-viewer * {
+    visibility: visible;
+  }
+
+  /* Position the CV content at the top-left and make it full width */
+  .cv-viewer {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+
+  /* Remove extra padding/shadows/margins for clean PDF */
+  .cv-wrapper {
+    width: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+  }
+
+  /* Hide any UI controls explicitly */
+  .no-print {
+    display: none !important;
+  }
+
+  html, body {
+    background: #fff !important;
+  }
+
+  /* Preserve colors when printing */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}

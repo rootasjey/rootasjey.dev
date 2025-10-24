@@ -119,6 +119,10 @@ const userMenuItems = computed(() => {
       label: 'Admin',
       onClick: () => router.push('/admin?tab=dashboard'),
     })
+    items.push({
+      label: 'Documents',
+      onClick: () => router.push('/documents'),
+    })
   }
 
   items.push(
