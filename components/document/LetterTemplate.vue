@@ -1,6 +1,6 @@
 <template>
   <div class="letter-wrapper w-[600px] mt-24 rounded-xl p-8 pb-[38vh] flex flex-col transition-all duration-500 overflow-y-auto">
-    <section class="mb-12">
+    <section class="mb-0">
       <h1 class="font-600 mb-4">{{ letter.title }}</h1>
       <h2 v-if="letter.companyName || letter.position" class="color-gray-600 font-500 dark:color-gray-500 mb-8">
         <template v-if="letter.position">Candidature au poste de {{ letter.position }}</template>
@@ -24,7 +24,7 @@
     </section>
 
     <!-- Footer -->
-    <footer class="mt-16 text-size-3">
+    <footer class="no-print mt-16 text-size-3">
       <div class="flex gap-4">
         <ULink to="/" class="footer-button">
           <span class="i-ph-house-simple text-size-3 mr-2"></span>

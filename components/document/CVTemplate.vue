@@ -98,7 +98,7 @@
       </h2>
 
       <div class="flex flex-row flex-wrap justify-between">
-        <div v-for="project in cv.projects" :key="project.name" class="w-full md:w-1/2">
+        <div v-for="project in cv.projects" :key="project.name" class="w-1/2.4">
           <div class="flex justify-between items-start">
             <h3 class="font-500 text-gray-800 dark:text-gray-200">
               <a v-if="project.url" :href="project.url" target="_blank">{{ project.name }}</a>

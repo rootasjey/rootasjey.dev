@@ -23,6 +23,7 @@ export default defineNuxtConfig({
     cache: true,
     database: true,
     kv: true,
+    browser: true,
   },
 
   image: {

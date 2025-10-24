@@ -11,6 +11,7 @@
     "test": "vitest"
   },
   "dependencies": {
+    "@cloudflare/puppeteer": "^1.0.4",
     "@tiptap/extension-blockquote": "^2.26.1",
     "@tiptap/extension-bubble-menu": "^2.14.0",
     "@tiptap/extension-code": "^2.26.1",
@@ -31,6 +32,7 @@
     "@tiptap/vue-3": "^2.14.0",
     "@una-ui/nuxt": "^0.65.0",
     "jimp": "^1.6.0",
+    "puppeteer": "^24.26.1",
     "tippy.js": "^6.3.7"
   },
   "devDependencies": {
