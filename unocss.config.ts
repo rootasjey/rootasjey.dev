@@ -38,6 +38,11 @@ export default {
     presetAnimations(),
     presetUna(),
   ],
+  safelist: [
+    // Ensure these rules are always generated
+    // because they are generated dynamically
+    'i-ph-tree', 'i-ph-device-mobile-camera', 'i-ph-film-slate', 'i-ph-paint-brush',
+  ],
   shortcuts: [
     {
       "btn-glowing": "from-primary-500 via-primary-600 to-primary-700 bg-gradient-to-r text-white shadow-lg shadow-primary-500/50 hover:bg-gradient-to-br dark:shadow-lg dark:shadow-primary-800/80 dark:focus:ring-primary-800",

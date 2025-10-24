@@ -1,6 +1,4 @@
 import { eventHandler, getRouterParam, getRequestURL, setHeader, createError } from 'h3'
-// hubBrowser is provided by @nuxthub/core when hub.browser is enabled
-declare const hubBrowser: (opts?: any) => Promise<{ page: any, browser: any }>
 
 // Generate a PDF for a cover letter page using NuxtHub's Browser (Cloudflare)
 export default eventHandler(async (event) => {
@@ -17,7 +15,6 @@ export default eventHandler(async (event) => {
   await page.setViewport({ width: 1200, height: 1800 })
   await page.emulateMediaType('print')
   await page.goto(url, { waitUntil: 'networkidle0' })
-  await page.waitForTimeout(300)
 
   const pdf = await page.pdf({
     format: 'A4',
